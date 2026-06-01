@@ -151,12 +151,12 @@ body {
 .panel { animation:fadeUp .45s ease-out .22s both; }
 
 /* Header */
-.header { display:flex; align-items:center; justify-content:center; padding:20px 110px 8px 0; position:relative; min-height:48px; }
-.header h1 { font-size:1.1rem; font-weight:650; letter-spacing:-.02em; cursor:default; user-select:none; text-align:right; }
-.header-actions { position:absolute; right:0; top:16px; display:flex; gap:4px; align-items:center; background:var(--card); border-radius:20px; padding:3px 4px; box-shadow:var(--shadow-xs); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+.header { display:flex; align-items:center; justify-content:center; padding:10px 100px 6px 0; position:relative; min-height:44px; }
+.header h1 { font-size:1rem; font-weight:650; letter-spacing:-.02em; cursor:default; user-select:none; text-align:right; }
+.header-actions { position:absolute; right:0; top:6px; display:flex; gap:4px; align-items:center; background:var(--card); border-radius:20px; padding:3px 4px; box-shadow:var(--shadow-xs); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
 
 .lang-switch { display:flex; gap:2px; background:var(--border); border-radius:14px; padding:2px; }
-.lang-btn { border:none; background:none; font-size:.63rem; font-weight:700; padding:5px 9px; border-radius:12px; cursor:pointer; color:var(--text-muted); transition:all .18s; font-family:var(--font); min-width:28px; min-height:28px; }
+.lang-btn { border:none; background:none; font-size:.63rem; font-weight:700; padding:5px 9px; border-radius:12px; cursor:pointer; color:var(--text-muted); transition:all .18s; font-family:var(--font); min-width:36px; min-height:36px; }
 .lang-btn.active { background:var(--card); color:var(--text); box-shadow:var(--shadow-xs); }
 .lang-btn:active { transform:scale(.92); }
 
@@ -167,7 +167,7 @@ body {
 .progress-section { padding:20px 22px; margin:14px 0 18px; transition:all .3s; }
 .progress-section:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
 .progress-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
-.progress-num { font-size:2.4rem; font-weight:750; color:var(--love); line-height:1; font-feature-settings:"tnum"; }
+.progress-num { font-size:2rem; font-weight:750; color:var(--love); line-height:1; font-feature-settings:"tnum"; }
 .progress-unit { font-size:.82rem; color:var(--text-muted); font-weight:500; }
 .progress-sub { font-size:.78rem; color:var(--text-muted); margin-bottom:14px; }
 .progress-track { height:7px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:10px; }
@@ -187,13 +187,13 @@ body {
 
 /* Calendar */
 .cal-nav { display:flex; align-items:center; margin-bottom:10px; gap:10px; }
-.cal-nav .nav-btn { width:40px; height:40px; border:none; border-radius:50%; background:var(--card); font-size:1rem; cursor:pointer; color:var(--text); box-shadow:var(--shadow-xs); flex-shrink:0; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); transition:transform .12s; display:flex; align-items:center; justify-content:center; }
+.cal-nav .nav-btn { width:44px; height:44px; border:none; border-radius:50%; background:var(--card); font-size:1.1rem; cursor:pointer; color:var(--text); box-shadow:var(--shadow-xs); flex-shrink:0; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); transition:transform .12s; display:flex; align-items:center; justify-content:center; }
 .cal-nav .nav-btn:active { transform:scale(.88); background:var(--border); }
 .cal-nav .month-label { flex:1; text-align:center; font-size:1.05rem; font-weight:700; }
-.cal-nav .today-pill { font-size:.7rem; font-weight:700; color:var(--love); padding:8px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:36px; border:none; cursor:pointer; flex-shrink:0; transition:transform .12s; }
+.cal-nav .today-pill { font-size:.7rem; font-weight:700; color:var(--love); padding:6px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:44px; border:none; cursor:pointer; flex-shrink:0; transition:transform .12s; }
 .cal-nav .today-pill:active { transform:scale(.92); }
 
-.calendar { padding:14px 12px 10px; margin-bottom:12px; touch-action:pan-y; user-select:none; transition:all .3s; }
+.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; transition:all .3s; }
 .calendar:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
 .weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
@@ -220,7 +220,7 @@ body {
 .day .mini-dot.pink { background:var(--rose); }
 .day .mini-dot.gold { background:var(--gold); }
 
-.legend { display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:14px; font-size:.65rem; color:var(--text-muted); justify-content:center; }
+.legend { display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:14px; font-size:.7rem; color:var(--text-muted); justify-content:center; }
 .legend span { display:flex; align-items:center; gap:5px; }
 .legend span::before { content:''; width:9px; height:9px; border-radius:50%; display:inline-block; flex-shrink:0; }
 .legend .l-period::before { background:var(--love); }
@@ -260,7 +260,7 @@ body {
 
 /* Year */
 .year-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:4px; }
-.year-cell { aspect-ratio:1; border-radius:8px; font-size:.55rem; font-weight:650; display:flex; align-items:center; justify-content:center; background:var(--border); color:var(--text-muted); cursor:pointer; transition:all .15s; min-width:24px; min-height:24px; }
+.year-cell { aspect-ratio:1; border-radius:8px; font-size:.62rem; font-weight:650; display:flex; align-items:center; justify-content:center; background:var(--border); color:var(--text-muted); cursor:pointer; transition:all .15s; min-width:24px; min-height:24px; }
 .year-cell.has-period { background:var(--love); color:#fff!important; }
 .year-cell.has-period.multi { box-shadow:0 0 0 2px var(--teal); }
 
@@ -358,7 +358,7 @@ body {
 @keyframes toastIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
 /* FAB */
-.fab { position:fixed; bottom:36px; right:max(20px,calc(50% - 230px)); width:56px; height:56px; border-radius:50%; background:var(--love); color:#fff; border:none; box-shadow:var(--fab-shadow); font-size:1.5rem; cursor:pointer; z-index:50; transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .2s; display:flex; align-items:center; justify-content:center; }
+.fab { position:fixed; bottom:36px; right:20px; width:56px; height:56px; border-radius:50%; background:var(--love); color:#fff; border:none; box-shadow:var(--fab-shadow); font-size:1.5rem; cursor:pointer; z-index:50; transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .2s; display:flex; align-items:center; justify-content:center; }
 .fab.hidden { transform:scale(0); opacity:0; pointer-events:none; }
 .fab:active { transform:scale(.85)!important; }
 @keyframes fabPulse { 0%,100%{box-shadow:var(--fab-shadow)} 50%{box-shadow:0 4px 28px rgba(196,90,107,.5)} }
@@ -505,19 +505,19 @@ body {
   <div class="panel" id="panel-tips"><div id="tips-list"></div></div>
 
   <div class="panel" id="panel-settings">
-    <!-- Anniversary date setting -->
+    <!-- Dual Anniversary -->
     <div class="card" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold);margin-bottom:14px">
-      <h3>💕 <span id="anniversary-title">纪念日</span></h3>
-      <div class="stat-row"><span id="ann-label">在一起的日子</span><span class="val"><input type="date" id="anniversaryDate" onchange="saveAnniversary()" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
-      <div style="text-align:center;font-size:.7rem;color:var(--love);margin-top:6px;font-style:italic" id="ann-count"></div>
+      <h3>💕 <span id="anniversary-title">Datumi koji znače</span></h3>
+      <div class="stat-row"><span>✨ Prvi put smo se sreli</span><span class="val"><input type="date" id="annDateMet" onchange="saveAnniversaries()" value="2026-03-19" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
+      <div class="stat-row"><span>♥ Zajedno smo od</span><span class="val"><input type="date" id="annDateLove" onchange="saveAnniversaries()" value="2026-05-07" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
+      <div style="text-align:center;font-size:.7rem;color:var(--love);margin-top:8px;font-style:italic" id="ann-count"></div>
     </div>
 
     <div class="dev-signature">
       <div class="dev-name">张梓桐 · Barry Zhang</div>
       <div class="dev-for">za Anđelu Nemet ♥</div>
       <div class="dev-divider"></div>
-      <div class="dev-tagline">Iz Pekinga u Vojvodinu<br>sa ljubavlju napravljeno</div>
-      <div class="dev-location" style="font-size:.64rem;opacity:.7;margin-top:6px">从北京到伏伊伏丁那 · 跨越山海只为你</div>
+      <div class="dev-tagline">Od Pekinga do Vojvodine<br>preko planina i mora, samo za tebe</div>
     </div>
     <div style="height:14px"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-lang"></span><span class="setting-hint" id="set-h-lang"></span></div>
@@ -661,7 +661,8 @@ const I18N = {
    ================================================================ */
 let lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
-let anniversaryDate = localStorage.getItem('cycle-anniversary') || '';
+let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
+let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 
 function t(key, fallback) {
   const keys = key.split('.'); let val = I18N[lang] || I18N['sr'];
@@ -676,22 +677,27 @@ function switchTheme(th) { applyTheme(th); }
 /* ================================================================
    ANNIVERSARY
    ================================================================ */
-function saveAnniversary() {
-  anniversaryDate = document.getElementById('anniversaryDate').value;
-  localStorage.setItem('cycle-anniversary', anniversaryDate);
+function saveAnniversaries() {
+  annDateMet = document.getElementById('annDateMet').value;
+  annDateLove = document.getElementById('annDateLove').value;
+  localStorage.setItem('cycle-ann-met', annDateMet);
+  localStorage.setItem('cycle-ann-love', annDateLove);
   updateAnniversaryCount();
   renderCalendar();
 }
 function updateAnniversaryCount() {
-  const el = document.getElementById('ann-count');
-  if (!anniversaryDate) { if(el) el.textContent = ''; return; }
-  const days = daysDiff(new Date(anniversaryDate), today());
-  if (days >= 0) el.textContent = t('anniversaryCount').replace('{n}', days);
+  var el = document.getElementById('ann-count');
+  if (!el) return;
+  var parts = [];
+  if (annDateMet) { var d = daysDiff(new Date(annDateMet), today()); if (d >= 0) parts.push('✨ ' + d + ' dana od prvog susreta'); }
+  if (annDateLove) { var d = daysDiff(new Date(annDateLove), today()); if (d >= 0) parts.push('♥ ' + d + ' dana zajedno'); }
+  el.innerHTML = parts.join('<br>');
 }
 function isAnniversary(d) {
-  if (!anniversaryDate) return false;
-  const ad = new Date(anniversaryDate);
-  return d.getDate() === ad.getDate() && d.getMonth() === ad.getMonth();
+  var result = 0;
+  if (annDateMet) { var ad = new Date(annDateMet); if (d.getDate()===ad.getDate() && d.getMonth()===ad.getMonth()) result = 1; }
+  if (annDateLove) { var ad = new Date(annDateLove); if (d.getDate()===ad.getDate() && d.getMonth()===ad.getMonth()) result = 2; }
+  return result;
 }
 
 /* ================================================================
@@ -708,7 +714,8 @@ function loadState() {
     const old = localStorage.getItem(k);
     if (old) { try { const d=JSON.parse(old); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; } catch(e){} }
   }
-  return { records:[], symptoms:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
+  // Default: May 28, 2026 = Anđela's first recorded period
+  return { records:[new Date(2026,4,28)], symptoms:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
 }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ records:state.records.map(fmtDate), symptoms:state.symptoms, settings:state.settings, _migrated:true })); }
 let state = loadState();
@@ -870,7 +877,7 @@ function updateLangUI(){
   document.getElementById('weekdaysRow').innerHTML=wd.map((d,i)=>`<span${i>=5?' style="color:var(--rose);opacity:.6"':''}>${d}</span>`).join('');
   const lg=t('legend');
   document.getElementById('legend').innerHTML=`<span class="l-period">${lg[0]}</span><span class="l-fertile">${lg[1]}</span><span class="l-follicular">${lg[2]}</span><span class="l-luteal">${lg[3]}</span><span style="font-weight:700;font-size:.66rem;">▣ ${lg[4]}</span>`;
-  if (anniversaryDate) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
+  if (annDateMet || annDateLove) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
   const pl=t('progressLabels');
   document.querySelector('.lbl-period').textContent=pl[0];document.querySelector('.lbl-follicular').textContent=pl[1];
   document.querySelector('.lbl-ovulation').textContent=pl[2];document.querySelector('.lbl-luteal').textContent=pl[3];
@@ -886,7 +893,6 @@ function updateLangUI(){
   document.getElementById('save-settings-btn').textContent=st.save;
   document.getElementById('export-btn').textContent=st.export;document.getElementById('import-btn').textContent=st.import;document.getElementById('clear-btn').textContent=st.clear;
   document.getElementById('anniversary-title').textContent = st.anniversary;
-  document.getElementById('ann-label').textContent = st.anniversaryLabel;
   const ss=t('stats');
   document.getElementById('st-title-cycle').textContent=ss.cycleTitle;document.getElementById('st-title-history').textContent=ss.historyTitle;document.getElementById('st-title-pred').textContent=ss.predTitle;
   document.getElementById('st-l-count').textContent=ss.count;document.getElementById('st-l-avg').textContent=ss.avg;document.getElementById('st-l-range').textContent=ss.range;document.getElementById('st-l-reg').textContent=ss.reg;
@@ -916,16 +922,16 @@ function renderCalendar(){
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
     const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
     const key=fmtDate(d); const hasSymptom=state.symptoms[key]&&Object.entries(state.symptoms[key]).some(([k,v])=>k!=='notes'&&v>0);
-    const isAnn = isAnniversary(d);
+    const annType = isAnniversary(d);
     const el=document.createElement('div'); el.className='day';
     if(!inMonth) el.classList.add('other-month');
     if(isToday) el.classList.add('today');
     if(phase) el.classList.add(phase);
     if(phase==='period-on'&&recordedStarts.has(key)) el.classList.add('recorded');
-    if(isAnn) el.classList.add('anniversary');
+    if(annType>0) el.classList.add('anniversary');
     el.textContent=d.getDate();
     if(hasSymptom&&!phase){const dot=document.createElement('span');dot.className='mini-dot pink';el.appendChild(dot);}
-    if(isAnn&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
+    if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
     if(inMonth) el.addEventListener('click',()=>openModal(d,pred));
     grid.appendChild(el);
   }
@@ -1015,7 +1021,7 @@ function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById
 function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
 function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
 function renderTips(){const pred=predict();const td=today();const phase=getPhase(td,pred);let cat='period';if(phase==='period-on'||phase==='period-mid')cat='period';else if(phase==='ovulation'||phase==='fertile')cat='ovulation';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};const tips=t('tips.'+cat);document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
-function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('anniversaryDate').value=anniversaryDate;updateAnniversaryCount();}
+function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;updateAnniversaryCount();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||5;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
 function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
 function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(){try{const d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error();state.records=d.records.map(r=>new Date(r));state.symptoms=d.symptoms||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false,...d.settings};saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
