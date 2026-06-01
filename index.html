@@ -19,12 +19,12 @@
   --teal: #5E9BAA; --teal-light: #E6F2F5;
   --sage: #80B5A0; --sage-light: #E8F4EE;
   --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #F5EEF8;
-  --bg: #F8F6F4; --card: rgba(255,255,255,0.82); --text: #2D2A2B; --text-muted: #9C9496;
-  --border: #EBE5E4; --radius: 16px; --radius-sm: 10px;
-  --shadow-xs: 0 1px 3px rgba(45,42,43,0.04), 0 1px 2px rgba(45,42,43,0.03);
-  --shadow-sm: 0 2px 8px rgba(45,42,43,0.05), 0 1px 3px rgba(45,42,43,0.04);
-  --shadow-md: 0 8px 24px rgba(45,42,43,0.06), 0 2px 6px rgba(45,42,43,0.04);
-  --shadow-lg: 0 16px 40px rgba(45,42,43,0.08), 0 4px 12px rgba(45,42,43,0.05);
+  --bg: #F2EBE6; --card: rgba(255,251,248,0.88); --text: #2D2A2B; --text-muted: #9C9496;
+  --border: #E8DFD8; --radius: 16px; --radius-sm: 10px;
+  --shadow-xs: 0 1px 3px rgba(140,120,110,0.06), 0 1px 2px rgba(140,120,110,0.04);
+  --shadow-sm: 0 2px 8px rgba(140,120,110,0.06), 0 1px 3px rgba(140,120,110,0.04);
+  --shadow-md: 0 4px 14px rgba(140,120,110,0.08), 0 8px 24px rgba(140,120,110,0.05);
+  --shadow-lg: 0 8px 30px rgba(140,120,110,0.10), 0 16px 40px rgba(140,120,110,0.06);
   --fab-shadow: 0 6px 24px rgba(196,90,107,0.35);
   --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --blur: blur(16px) saturate(1.08);
@@ -50,9 +50,7 @@ body {
   min-height: 100vh; display:flex; justify-content:center;
   -webkit-tap-highlight-color: transparent; transition: background .4s, color .4s;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-  background-image:
-    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(212,122,138,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 85%, rgba(94,155,170,0.04) 0%, transparent 60%);
+  background: linear-gradient(165deg, #F2EBE6 0%, #F5EDE8 40%, #F0E8E4 100%);
   background-attachment: fixed;
 }
 [data-theme="dark"] body {
@@ -146,12 +144,12 @@ body {
 /* Glass cards */
 .glass, .progress-section, .calendar, .card, .setting-row, .tip-card, .onboarding, .reminder-banner {
   background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
-  border:1px solid rgba(0,0,0,0.04); border-radius:var(--radius); box-shadow:var(--shadow-sm);
+  border:1px solid rgba(200,180,170,0.12); border-radius:var(--radius); box-shadow:var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.5);
 }
 [data-theme="dark"] .glass, [data-theme="dark"] .progress-section,
 [data-theme="dark"] .calendar, [data-theme="dark"] .card,
 [data-theme="dark"] .setting-row, [data-theme="dark"] .tip-card {
-  border:1px solid rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06); box-shadow:var(--shadow-sm);
 }
 
 /* Entrance */
@@ -211,8 +209,10 @@ body {
 .weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
 .days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-.day:nth-child(7n+6), .day:nth-child(7n+7) { background:rgba(0,0,0,.015); }
-[data-theme="dark"] .day:nth-child(7n+6), [data-theme="dark"] .day:nth-child(7n+7) { background:rgba(255,255,255,.015); }
+.day:nth-child(7n+6), .day:nth-child(7n+7) { background:rgba(212,122,138,0.04); }
+[data-theme="dark"] .day:nth-child(7n+6), [data-theme="dark"] .day:nth-child(7n+7) { background:rgba(255,255,255,.02); }
+.day.today { font-weight:700; box-shadow:inset 0 0 0 2px var(--text); background:rgba(45,42,43,0.03); }
+.day.period-on { box-shadow:0 0 0 3px rgba(196,90,107,0.18), 0 2px 8px rgba(196,90,107,0.18); }
 .day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; }
 .day:active { transform:scale(.93); background:var(--border); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
@@ -704,27 +704,25 @@ function switchTheme(th) { applyTheme(th); }
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
    ================================================================ */
 const HOLIDAYS = [
-  // 🇨🇳 China
-  {d:'2026-01-01',name:{sr:'Nova Godina (Kina)',zh:'元旦',en:'New Year'},country:'cn'},
-  {d:'2026-02-16',name:{sr:'Kineska Nova Godina (veče)',zh:'除夕',en:'CNY Eve'},country:'cn'},
-  {d:'2026-02-17',name:{sr:'Kineska Nova Godina',zh:'春节',en:'Chinese New Year'},country:'cn'},
-  {d:'2026-03-03',name:{sr:'Festival lampiona',zh:'元宵节',en:'Lantern Festival'},country:'cn'},
-  {d:'2026-04-05',name:{sr:'Čingming festival',zh:'清明节',en:'Qingming'},country:'cn'},
-  {d:'2026-05-01',name:{sr:'Praznik rada (Kina)',zh:'劳动节',en:'Labour Day'},country:'cn'},
-  {d:'2026-06-19',name:{sr:'Festival zmajevih čamaca',zh:'端午节',en:'Dragon Boat'},country:'cn'},
-  {d:'2026-08-19',name:{sr:'Kineski Dan zaljubljenih',zh:'七夕',en:'Qixi Festival'},country:'cn'},
-  {d:'2026-09-25',name:{sr:'Festival sredine jeseni',zh:'中秋节',en:'Mid-Autumn'},country:'cn'},
-  {d:'2026-10-01',name:{sr:'Nacionalni dan Kine',zh:'国庆节',en:'National Day'},country:'cn'},
-  // 🇷🇸 Serbia
-  {d:'2026-01-01',name:{sr:'Nova Godina',zh:'新年',en:'New Year'},country:'rs'},
-  {d:'2026-01-07',name:{sr:'Božić',zh:'东正教圣诞节',en:'Orthodox Christmas'},country:'rs'},
-  {d:'2026-01-27',name:{sr:'Sveti Sava',zh:'圣萨瓦日',en:'St. Sava Day'},country:'rs'},
-  {d:'2026-02-15',name:{sr:'Dan državnosti',zh:'塞尔维亚国庆日',en:'Statehood Day'},country:'rs'},
-  {d:'2026-04-12',name:{sr:'Vaskrs',zh:'东正教复活节',en:'Orthodox Easter'},country:'rs'},
-  {d:'2026-05-01',name:{sr:'Praznik rada',zh:'劳动节',en:'Labour Day'},country:'rs'},
-  {d:'2026-05-09',name:{sr:'Dan pobede',zh:'胜利日',en:'Victory Day'},country:'rs'},
-  {d:'2026-06-28',name:{sr:'Vidovdan',zh:'维多夫丹',en:'St. Vitus Day'},country:'rs'},
-  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs'}
+  {d:'2026-01-01',name:{sr:'Nova Godina (Kina)',zh:'元旦',en:'New Year'},country:'cn',desc:{sr:'Nov početak, vreme kada zajedno sanjamo o lepšoj godini.',zh:'新的一年，和身边的人一起许下美好的愿望。',en:'A fresh start, dreaming together of a kinder year ahead.'}},
+  {d:'2026-02-16',name:{sr:'Kineska Nova Godina (veče)',zh:'除夕',en:'CNY Eve'},country:'cn',desc:{sr:'Porodična večera koja spaja generacije, uz vatromet.',zh:'全家围坐吃年夜饭，在爆竹声中送走旧岁。',en:'Generations gather for the reunion feast, bidding farewell to the old year.'}},
+  {d:'2026-02-17',name:{sr:'Kineska Nova Godina',zh:'春节',en:'Chinese New Year'},country:'cn',desc:{sr:'Prvi dan proleća donosi radost i crvene koverte pune ljubavi.',zh:'新春第一天，红包和祝福让整个月都暖暖的。',en:'The first day of spring brings red envelopes and warm wishes all month.'}},
+  {d:'2026-03-03',name:{sr:'Festival lampiona',zh:'元宵节',en:'Lantern Festival'},country:'cn',desc:{sr:'Slatke pirinčane knedle i lampioni — noć puna svetlosti.',zh:'吃一碗软糯的汤圆，看花灯照亮夜空。',en:'Sweet rice balls and lanterns that turn the night into a sea of light.'}},
+  {d:'2026-04-05',name:{sr:'Čingming festival',zh:'清明节',en:'Qingming'},country:'cn',desc:{sr:'Dan kada se sećamo onih koji su otišli, dok priroda budi novi život.',zh:'在春天的细雨中，轻轻想起那些远去的亲人。',en:'A quiet spring day to remember those we have loved and lost.'}},
+  {d:'2026-05-01',name:{sr:'Praznik rada (Kina)',zh:'劳动节',en:'Labour Day'},country:'cn',desc:{sr:'Dan odmora za sve koji svojim radom čine svet boljim.',zh:'停下忙碌的脚步，对自己说一声辛苦了。',en:'A day of rest for every hand that helps the world go round.'}},
+  {d:'2026-06-19',name:{sr:'Festival zmajevih čamaca',zh:'端午节',en:'Dragon Boat'},country:'cn',desc:{sr:'Miris zongija i ritam zmajevih čamaca — sećanje na pesnika Qu Yuana.',zh:'粽叶飘香，龙舟竞渡，纪念一位心怀家国的诗人。',en:'Fragrant zongzi and racing dragon boats, remembering a poet who loved his people.'}},
+  {d:'2026-08-19',name:{sr:'Kineski Dan zaljubljenih',zh:'七夕',en:'Qixi Festival'},country:'cn',desc:{sr:'Zvezdana noć ljubavi — kad se dvoje sastaje na Nebeskom mostu.',zh:'七夕之夜，愿天下有情人终成眷属。',en:'A starry night of love — two hearts meet across the Milky Way.'}},
+  {d:'2026-09-25',name:{sr:'Festival sredine jeseni',zh:'中秋节',en:'Mid-Autumn'},country:'cn',desc:{sr:'Pun mesec, porodica na okupu i miris mesečevog kolača.',zh:'月圆人团圆，月饼的甜香就是家的味道。',en:'Full moon, family gathered, and the sweet taste of mooncakes — home at its warmest.'}},
+  {d:'2026-10-01',name:{sr:'Nacionalni dan Kine',zh:'国庆节',en:'National Day'},country:'cn',desc:{sr:'Zlatna nedelja slave i ponosa — Kina u najlepšim bojama.',zh:'黄金周里红旗飘扬，举国同庆这属于每一个人的节日。',en:'A golden week of national pride, when the land dresses in its finest colors.'}},
+  {d:'2026-01-01',name:{sr:'Nova Godina',zh:'新年',en:'New Year'},country:'rs',desc:{sr:'Uz vatromet, rakiju i tople zagrljaje — nova godina stiže.',zh:'在烟花和家人的拥抱中，迎接全新的一年。',en:'With fireworks, rakija, and warm embraces — a fresh year begins.'}},
+  {d:'2026-01-07',name:{sr:'Božić',zh:'东正教圣诞节',en:'Orthodox Christmas'},country:'rs',desc:{sr:'Mir Božiji, Hristos se rodi — uz badnjak, česnicu i toplinu doma.',zh:'在橡木火光和祝福面包的香气中，感受家的温暖。',en:'Christ is born — the oak log burns, the bread is broken, and home feels holy.'}},
+  {d:'2026-01-27',name:{sr:'Sveti Sava',zh:'圣萨瓦日',en:'St. Sava Day'},country:'rs',desc:{sr:'Dan prosvetitelja — praznik dece, učitelja i znanja.',zh:'纪念塞尔维亚最伟大的教育家的日子，属于孩子们和老师的温暖节日。',en:'A day for teachers and children, honoring Serbia\'s patron saint of learning.'}},
+  {d:'2026-02-15',name:{sr:'Dan državnosti',zh:'塞尔维亚国庆日',en:'Statehood Day'},country:'rs',desc:{sr:'Dan ponosa — sećanje na ustanke koji su utrli put slobodi.',zh:'一个骄傲的日子——纪念为自由开辟道路的先辈们。',en:'A day of pride — remembering the uprisings that paved the way to freedom.'}},
+  {d:'2026-04-12',name:{sr:'Vaskrs',zh:'东正教复活节',en:'Orthodox Easter'},country:'rs',desc:{sr:'Hristos vaskrse — kucamo se farbanim jajima, slavimo pobedu života.',zh:'主复活了——碰响彩蛋，庆祝生命的胜利和春天的重生。',en:'Christ is risen — painted eggs are tapped, celebrating life\'s triumph over death.'}},
+  {d:'2026-05-01',name:{sr:'Praznik rada',zh:'劳动节',en:'Labour Day'},country:'rs',desc:{sr:'Majski uranak, izleti u prirodu — dan odmora za sve vredne ruke.',zh:'五一去郊游，在自然中放松，犒劳辛勤的自己。',en:'May Day picnics in nature — a well-earned rest for every hard-working soul.'}},
+  {d:'2026-05-09',name:{sr:'Dan pobede',zh:'胜利日',en:'Victory Day'},country:'rs',desc:{sr:'Sa cvećem i tihim ponosom, sećamo se heroja koji su doneli mir.',zh:'带着鲜花和安静的骄傲，铭记那些带来和平的英雄。',en:'With flowers and quiet pride, we remember the heroes who brought peace.'}},
+  {d:'2026-06-28',name:{sr:'Vidovdan',zh:'维多夫丹',en:'St. Vitus Day'},country:'rs',desc:{sr:'Dan sećanja i duboke tišine — kad smo kao narod sabrani u veri.',zh:'一个沉思和纪念的日子，塞尔维亚民族信仰与记忆交汇的时刻。',en:'A day of remembrance and quiet reflection, when a nation gathers in its memory.'}},
+  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs',desc:{sr:'Cvet nade na reveru — dan kada se sećamo cene mira.',zh:'胸前别一朵象征希望的鲜花，铭记和平的代价。',en:'A flower of hope on the lapel, remembering the cost of peace.'}}
 ];
 
 function getHoliday(dateKey) {
@@ -1103,7 +1101,7 @@ document.getElementById('fabBtn').addEventListener('click',()=>{
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];return (h.country==='cn'?'🇨🇳 ':'🇷🇸 ')+n});document.getElementById('modal-holiday').textContent=hNames.join(', ');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flag=h.country==='cn'?'🇨🇳':'🇷🇸';return flag+' <b>'+n+'</b><br><span style="font-size:.7rem;color:var(--text-muted)">'+d+'</span>'});document.getElementById('modal-holiday').textContent=hNames.join(', ');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
