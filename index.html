@@ -586,7 +586,7 @@ const I18N = {
   daysUntil:'Još {n} dana do sledeće menstruacije', daysOverdue:'Kašnjenje {n} dana', day:' dana', periodDay:'{n}. dan ciklusa', expected:'Očekivano',
   onboarding:'👋 Dobrodošla, Anđelo! Dodirni bilo koji datum da započneš. ♥',
   fabLabel:'Danas je',
-  greeting:{morning:'Dobro jutro, Anđelo moja ♥',afternoon:'Dobar dan, sunce moje ☀️',evening:'Dobro veče, zvezdo moja 🌙',msg:'Tvoje telo je neverovatno. Hajde da zajedno pratimo tvoj ciklus.',sub:'— sa ljubavlju, Barry',dismiss:'♥ Zatvori'},
+  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'Dobro jutro, anđele moj. Želim ti divan dan — budi nežna prema sebi.',sub:'— Sa ljubavlju, Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'Prijatno popodne, moja draga. Napravi pauzu, popij čaj i odmori — brineš me kad preteruješ.',sub:'— Tvoj Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'Dobro veče, najlepša moja. Polako večeras — zaslužuješ miran i topao kraj dana.',sub:'— Sa ljubavlju, tvoj Barry'},night:{icon:'🌙',name:'Anđelo!',msg:'Zašto si još uvek budna? Odmah na spavanje! Brinem kad ne spavaš, znaš.',sub:'— Voli te, Barry'},dismiss:'♥ Zatvori'},
   stats:{cycleTitle:'📈 Statistika ciklusa',historyTitle:'📅 Nedavni ciklusi',predTitle:'🔮 Predviđanje',count:'Zabeleženih ciklusa',avg:'Prosečan ciklus',range:'Najkraći / Najduži',reg:'Regularnost',next:'Sledeća menstruacija',ovulation:'Ovulacija',fertile:'Plodni dani',confidence:'Pouzdanost',future:'Buduća predviđanja'},
   historyLabel:'● Kratak  ● Normalan  ● Dug  (tačka = ciklus)',
   modal:{details:'Detalji datuma',marked:'Zabeležen početak',phase:'Faza',day:'Dan ciklusa',symptoms:'Simptomi',mark:'Označi početak',unmark:'Ukloni',close:'Zatvori',quickSymptom:'Brzi unos',notesPlaceholder:'Beleške...'},
@@ -614,7 +614,7 @@ const I18N = {
   daysUntil:'距下次月经还有 {n} 天', daysOverdue:'已推迟 {n} 天', day:'天', periodDay:'经期第 {n} 天', expected:'预计',
   onboarding:'👋 欢迎！点击日历开始记录吧 ♥',
   fabLabel:'今天来了',
-  greeting:{morning:'早安，我的天使 Anđelo ♥',afternoon:'下午好，我的太阳 ☀️',evening:'晚安，我的星星 🌙',msg:'你的身体很了不起。让我们一起追踪你的周期。',sub:'— 爱你的 Barry',dismiss:'♥ 开始'},
+  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'早安，我的天使。愿你今天温柔待自己。',sub:'— 爱你的 Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'下午了，亲爱的。休息一下，喝杯茶——你太拼了我会心疼。',sub:'— 你的 Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'晚上好，最美的你。慢慢来——你值得一个温暖平静的夜晚。',sub:'— 爱你的 Barry'},night:{icon:'🌙',name:'Anđelo！',msg:'怎么还没睡？快去睡觉！你不睡我会担心的，知道吗。',sub:'— 想你的 Barry'},dismiss:'♥ 开始'},
   stats:{cycleTitle:'📈 周期统计',historyTitle:'📅 近期周期',predTitle:'🔮 当前预测',count:'已记录周期数',avg:'平均周期',range:'最短 / 最长',reg:'规律性',next:'下次月经',ovulation:'排卵日',fertile:'易孕窗口',confidence:'置信度',future:'未来预测周期'},
   historyLabel:'● 偏短  ● 正常  ● 偏长  (每点=一个周期)',
   modal:{details:'日期详情',marked:'已记录的经期开始日',phase:'阶段',day:'周期第几天',symptoms:'已记录症状',mark:'标记经期开始',unmark:'取消标记',close:'关闭',quickSymptom:'快速记录症状',notesPlaceholder:'添加备注...'},
@@ -642,7 +642,7 @@ const I18N = {
   daysUntil:'{n} days until next period', daysOverdue:'{n} days late', day:' days', periodDay:'Period Day {n}', expected:'Expected',
   onboarding:'👋 Welcome, Anđela! Tap any date to begin. ♥',
   fabLabel:'Period today',
-  greeting:{morning:'Good morning, my Anđela ♥',afternoon:'Good afternoon, my sunshine ☀️',evening:'Good evening, my star 🌙',msg:'Your body is amazing. Let\'s track your cycle together.',sub:'— with love, Barry',dismiss:'♥ Enter'},
+  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'Good morning, my angel. Wishing you a wonderful day — be gentle with yourself.',sub:'— With love, Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'Good afternoon, my dear. Take a break, have some tea — you worry me when you overdo it.',sub:'— Your Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'Good evening, my most beautiful. Take it slow tonight — you deserve a peaceful end to the day.',sub:'— With love, your Barry'},night:{icon:'🌙',name:'Anđelo!',msg:'Why are you still awake? Go to sleep right now! I worry when you don\'t sleep, you know.',sub:'— Love, Barry'},dismiss:'♥ Enter'},
   stats:{cycleTitle:'📈 Cycle Statistics',historyTitle:'📅 Recent Cycles',predTitle:'🔮 Prediction',count:'Cycles recorded',avg:'Average cycle',range:'Shortest / Longest',reg:'Regularity',next:'Next period',ovulation:'Ovulation',fertile:'Fertile window',confidence:'Confidence',future:'Future predictions'},
   historyLabel:'● Short  ● Normal  ● Long  (dot = cycle)',
   modal:{details:'Date Details',marked:'Recorded Period Start',phase:'Phase',day:'Cycle day',symptoms:'Symptoms',mark:'Mark Period Start',unmark:'Remove',close:'Close',quickSymptom:'Quick Symptom Log',notesPlaceholder:'Add notes...'},
@@ -724,22 +724,21 @@ const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
    GREETING OVERLAY
    ================================================================ */
 function showGreeting() {
-  var lastGreet = localStorage.getItem('cycle-last-greet');
-  var td = fmtDate(today());
-  if (lastGreet === td) return;
+  // Show every time the page opens — no daily limit
   var overlay = document.getElementById('greetingOverlay');
   if (!overlay) return;
   var g = t('greeting');
-  if (!g || !g.morning) return; // Guard against i18n failure
+  if (!g || !g.morning) return;
   var hour = new Date().getHours();
-  var greetingMsg = g.morning;
-  var icon = '✨';
-  if (hour >= 12 && hour < 18) { greetingMsg = g.afternoon; icon = '☀️'; }
-  else if (hour >= 18 || hour < 5) { greetingMsg = g.evening; icon = '🌟'; }
-  document.getElementById('greetingIcon').textContent = icon;
-  document.getElementById('greetingName').textContent = greetingMsg;
-  document.getElementById('greetingMsg').textContent = g.msg;
-  document.getElementById('greetingSub').textContent = g.sub;
+  var slot;
+  if (hour >= 5 && hour < 12) slot = g.morning;
+  else if (hour >= 12 && hour < 18) slot = g.afternoon;
+  else if (hour >= 18 && hour < 23) slot = g.evening;
+  else slot = g.night; // 23:00 - 05:00
+  document.getElementById('greetingIcon').textContent = slot.icon;
+  document.getElementById('greetingName').textContent = slot.name;
+  document.getElementById('greetingMsg').textContent = slot.msg;
+  document.getElementById('greetingSub').textContent = slot.sub;
   document.getElementById('greetingDismiss').textContent = g.dismiss;
   overlay.style.display = 'flex';
   overlay.classList.remove('hidden');
