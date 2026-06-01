@@ -2,7 +2,7 @@
 <html lang="sr" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;650;700;750&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -19,7 +19,7 @@
   --teal: #5E9BAA; --teal-light: #E6F2F5;
   --sage: #80B5A0; --sage-light: #E8F4EE;
   --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #F5EEF8;
-  --bg: #F7F5F4; --card: rgba(255,255,255,0.78); --text: #2D2A2B; --text-muted: #9C9496;
+  --bg: #F8F6F4; --card: rgba(255,255,255,0.82); --text: #2D2A2B; --text-muted: #9C9496;
   --border: #EBE5E4; --radius: 16px; --radius-sm: 10px;
   --shadow-xs: 0 1px 3px rgba(45,42,43,0.04), 0 1px 2px rgba(45,42,43,0.03);
   --shadow-sm: 0 2px 8px rgba(45,42,43,0.05), 0 1px 3px rgba(45,42,43,0.04);
@@ -146,7 +146,7 @@ body {
 /* Glass cards */
 .glass, .progress-section, .calendar, .card, .setting-row, .tip-card, .onboarding, .reminder-banner {
   background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
-  border:1px solid rgba(255,255,255,0.45); border-radius:var(--radius); box-shadow:var(--shadow-sm);
+  border:1px solid rgba(0,0,0,0.04); border-radius:var(--radius); box-shadow:var(--shadow-sm);
 }
 [data-theme="dark"] .glass, [data-theme="dark"] .progress-section,
 [data-theme="dark"] .calendar, [data-theme="dark"] .card,
@@ -165,7 +165,7 @@ body {
 
 /* Header */
 .header { display:flex; align-items:center; justify-content:center; padding:10px 100px 6px 0; position:relative; min-height:44px; }
-.header h1 { font-size:1rem; font-weight:650; letter-spacing:-.02em; cursor:default; user-select:none; text-align:right; }
+.header h1 { font-size:1rem; font-weight:600; letter-spacing:-.02em; cursor:default; user-select:none; text-align:right; }
 .header-actions { position:absolute; right:0; top:6px; display:flex; gap:4px; align-items:center; background:var(--card); border-radius:20px; padding:3px 4px; box-shadow:var(--shadow-xs); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
 
 .lang-switch { display:flex; gap:2px; background:var(--border); border-radius:14px; padding:2px; }
@@ -180,14 +180,14 @@ body {
 .progress-section { padding:20px 22px; margin:14px 0 18px; transition:all .3s; }
 .progress-section:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
 .progress-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
-.progress-num { font-size:2rem; font-weight:750; color:var(--love); line-height:1; font-feature-settings:"tnum"; }
+.progress-num { font-size:2rem; font-weight:700; color:var(--love); line-height:1; font-feature-settings:"tnum"; }
 .progress-unit { font-size:.82rem; color:var(--text-muted); font-weight:500; }
 .progress-sub { font-size:.78rem; color:var(--text-muted); margin-bottom:14px; }
 .progress-track { height:7px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:10px; }
 .progress-fill { height:100%; border-radius:4px; transition:width .5s ease, background .5s ease; }
 .progress-labels { display:flex; justify-content:space-between; font-size:.64rem; color:var(--text-muted); }
-.progress-labels span.current { color:var(--text); font-weight:650; }
-.phase-badge { display:inline-block; padding:5px 14px; border-radius:14px; font-size:.7rem; font-weight:650; margin-top:10px; letter-spacing:.01em; }
+.progress-labels span.current { color:var(--text); font-weight:600; }
+.phase-badge { display:inline-block; padding:5px 14px; border-radius:14px; font-size:.7rem; font-weight:600; margin-top:10px; letter-spacing:.01em; }
 .phase-badge.period { background:var(--rose-light); color:var(--rose-dark); }
 .phase-badge.follicular { background:var(--sage-light); color:#3D6B55; }
 .phase-badge.ovulation, .phase-badge.fertile { background:var(--teal-light); color:#2D5F6E; }
@@ -216,7 +216,7 @@ body {
 .day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; }
 .day:active { transform:scale(.93); background:var(--border); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
-.day.today { font-weight:750; box-shadow:inset 0 0 0 1.5px var(--text); }
+.day.today { font-weight:700; box-shadow:inset 0 0 0 1.5px var(--text); }
 .day.period-on { background:var(--love); color:#fff!important; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(196,90,107,.22); }
 .day.period-on.recorded { box-shadow:0 0 0 4px rgba(196,90,107,.22),0 0 0 6px rgba(196,90,107,.1); }
 .day.period-mid { background:var(--rose-light); color:var(--rose); font-weight:600; }
@@ -256,12 +256,12 @@ body {
 
 .card { padding:18px; margin-bottom:12px; transition:all .3s; }
 .card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
-.card h3 { font-size:.75rem; color:var(--text-muted); font-weight:650; margin-bottom:14px; text-transform:uppercase; letter-spacing:.04em; }
+.card h3 { font-size:.75rem; color:var(--text-muted); font-weight:600; margin-bottom:14px; text-transform:uppercase; letter-spacing:.04em; }
 .stat-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:.84rem; }
 .stat-row:last-child { border-bottom:none; }
 .stat-row .val { font-weight:700; font-feature-settings:"tnum"; }
 
-.cycle-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:.66rem; font-weight:650; margin-left:4px; }
+.cycle-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:.66rem; font-weight:600; margin-left:4px; }
 .cycle-badge.high { background:var(--sage-light); color:#3D6B55; }
 .cycle-badge.medium { background:#FFF3E0; color:#E65100; }
 .cycle-badge.low { background:var(--rose-light); color:var(--rose-dark); }
@@ -277,14 +277,14 @@ body {
 
 /* Year */
 .year-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:4px; }
-.year-cell { aspect-ratio:1; border-radius:8px; font-size:.62rem; font-weight:650; display:flex; align-items:center; justify-content:center; background:var(--border); color:var(--text-muted); cursor:pointer; transition:all .15s; min-width:24px; min-height:24px; }
+.year-cell { aspect-ratio:1; border-radius:8px; font-size:.62rem; font-weight:600; display:flex; align-items:center; justify-content:center; background:var(--border); color:var(--text-muted); cursor:pointer; transition:all .15s; min-width:24px; min-height:24px; }
 .year-cell.has-period { background:var(--love); color:#fff!important; }
 .year-cell.has-period.multi { box-shadow:0 0 0 2px var(--teal); }
 
 /* Symptom */
 .symptom-mini { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
 .symptom-mini .sym-chip { padding:7px 14px; border-radius:18px; border:1px solid var(--border); font-size:.7rem; cursor:pointer; background:var(--card); color:var(--text-muted); transition:all .15s; font-family:var(--font); min-height:36px; }
-.symptom-mini .sym-chip.on { border-color:var(--love); background:var(--rose-light); color:var(--love); font-weight:650; }
+.symptom-mini .sym-chip.on { border-color:var(--love); background:var(--rose-light); color:var(--love); font-weight:600; }
 .symptom-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px; }
 .symptom-item { background:var(--card); border-radius:var(--radius); padding:16px 8px; text-align:center; box-shadow:var(--shadow-sm); cursor:pointer; border:2px solid transparent; transition:all .18s; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
 .symptom-item:active { transform:scale(.94); }
@@ -307,7 +307,7 @@ body {
 .tip-source { font-size:.6rem; color:var(--gold); font-style:italic; margin-top:2px; display:block; }
 
 /* Knowledge */
-.knowledge-toggle { display:block; width:100%; text-align:center; padding:10px; font-size:.7rem; color:var(--teal); font-weight:650; cursor:pointer; border:none; background:none; font-family:var(--font); }
+.knowledge-toggle { display:block; width:100%; text-align:center; padding:10px; font-size:.7rem; color:var(--teal); font-weight:600; cursor:pointer; border:none; background:none; font-family:var(--font); }
 .knowledge-panel { display:none; background:var(--bg); border-radius:12px; padding:16px 18px; margin-top:8px; text-align:left; }
 .knowledge-panel.open { display:block; animation:fadeUp .25s ease-out; }
 .knowledge-panel h4 { font-size:.76rem; font-weight:700; color:var(--text); margin-bottom:6px; }
@@ -321,7 +321,7 @@ body {
 .setting-row input[type="number"]:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.15); }
 .setting-row select { padding:7px 12px; border:1px solid var(--border); border-radius:10px; font-size:.8rem; font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
 
-.btn { display:block; width:100%; padding:14px; border:none; border-radius:var(--radius); font-size:.84rem; font-weight:650; cursor:pointer; text-align:center; transition:all .18s; margin-bottom:8px; font-family:var(--font); letter-spacing:.01em; }
+.btn { display:block; width:100%; padding:14px; border:none; border-radius:var(--radius); font-size:.84rem; font-weight:600; cursor:pointer; text-align:center; transition:all .18s; margin-bottom:8px; font-family:var(--font); letter-spacing:.01em; }
 .btn:active { transform:scale(.96); }
 .btn-primary { background:var(--love); color:#fff; box-shadow:0 4px 14px rgba(196,90,107,.3); }
 .btn-primary:active { box-shadow:0 2px 8px rgba(196,90,107,.2); }
@@ -340,7 +340,7 @@ body {
   content:''; position:absolute; inset:0;
   background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%);
 }
-.dev-signature .dev-name { font-size:1.2rem; font-weight:750; letter-spacing:.02em; position:relative; }
+.dev-signature .dev-name { font-size:1.2rem; font-weight:700; letter-spacing:.02em; position:relative; }
 .dev-signature .dev-for { font-size:.72rem; opacity:.9; margin-top:4px; position:relative; font-style:italic; }
 .dev-signature .dev-divider { width:50px; height:2px; background:rgba(255,255,255,.4); margin:12px auto; border-radius:1px; position:relative; }
 .dev-signature .dev-tagline { font-size:.66rem; opacity:.8; line-height:1.6; position:relative; }
@@ -358,7 +358,7 @@ body {
 .modal { background:var(--card); border-radius:22px 22px 0 0; width:100%; max-width:420px; padding:24px 22px 32px; animation:slideUp .3s cubic-bezier(.32,.72,0,1); max-height:85vh; overflow-y:auto; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); box-shadow:0 -8px 40px rgba(0,0,0,.12); }
 @keyframes slideUp { from{transform:translateY(100%) scale(.97)} to{transform:translateY(0) scale(1)} }
 .modal h2 { font-size:1rem; margin-bottom:12px; text-align:center; font-weight:700; }
-.modal .date-display { text-align:center; font-size:1.8rem; font-weight:750; margin-bottom:16px; color:var(--love); }
+.modal .date-display { text-align:center; font-size:1.8rem; font-weight:700; margin-bottom:16px; color:var(--love); }
 .modal .info-row { display:flex; justify-content:space-between; padding:10px 0; font-size:.8rem; color:var(--text-muted); border-bottom:1px solid var(--border); }
 .modal .info-row:last-child { border-bottom:none; }
 .modal .divider { font-size:.68rem; color:var(--text-muted); text-align:center; margin:16px 0 8px; letter-spacing:1px; }
@@ -381,7 +381,7 @@ body {
 .fab.hidden { transform:scale(0); opacity:0; pointer-events:none; }
 .fab:active { transform:scale(.85)!important; }
 @keyframes fabPulse { 0%,100%{box-shadow:var(--fab-shadow)} 50%{box-shadow:0 2px 18px rgba(196,90,107,.3)} }
-.fab .fab-label { position:absolute; right:66px; background:var(--text); color:var(--bg); padding:7px 16px; border-radius:18px; font-size:.68rem; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .2s; font-family:var(--font); font-weight:650; }
+.fab .fab-label { position:absolute; right:66px; background:var(--text); color:var(--bg); padding:7px 16px; border-radius:18px; font-size:.68rem; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .2s; font-family:var(--font); font-weight:600; }
 .fab:active .fab-label { opacity:1; }
 
 /* Rose petals (easter egg) */
@@ -393,7 +393,7 @@ body {
 @keyframes celebrateIn { 0%{opacity:0;transform:translateX(-50%) translateY(30px) scale(.8)} 60%{transform:translateX(-50%) translateY(-5px) scale(1.05)} 100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
 .cycle-celebration .celeb-icon { font-size:2.5rem; display:block; animation:celebrateBounce .8s ease-out .2s both; }
 @keyframes celebrateBounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
-.cycle-celebration .celeb-text { font-size:.8rem; color:var(--love); font-weight:650; margin-top:4px; }
+.cycle-celebration .celeb-text { font-size:.8rem; color:var(--love); font-weight:600; margin-top:4px; }
 
 /* Empty state */
 .empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
@@ -430,7 +430,7 @@ body {
 <div class="app">
   <div class="header">
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
-    <div id="titleLoveCounter" style="font-size:.62rem;color:var(--gold);font-style:italic;text-align:center;margin-top:-2px"></div>
+    <div id="titleLoveCounter" style="font-size:.72rem;color:var(--love);font-weight:600;text-align:center;margin-top:2px;background:var(--rose-light);border-radius:12px;padding:3px 14px;display:inline-block"></div>
     <div class="header-actions">
       <div class="moon-phase" id="moonPhase" title="月相 · Moon Phase"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
@@ -510,6 +510,11 @@ body {
       <div style="text-align:center;font-size:2rem;font-weight:800;color:var(--love);" id="cc-count">0</div>
       <div style="text-align:center;font-size:.7rem;color:var(--text-muted);" id="cc-subtitle"></div>
     </div>
+    <!-- Love days card -->
+    <div class="card" id="loveDaysCard" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)">
+      <h3>💕 <span id="love-days-title">Dani zajedno</span></h3>
+      <div id="love-days-content" style="text-align:center;line-height:2"></div>
+    </div>
   </div>
 
   <div class="panel" id="panel-symptoms">
@@ -572,7 +577,7 @@ body {
     <div class="info-row"><span id="m-l-phase"></span><span id="modal-phase">--</span></div>
     <div class="info-row" id="modal-day-row" style="display:none"><span id="m-l-day"></span><span id="modal-day"></span></div>
     <div class="info-row" id="modal-symp-row" style="display:none"><span id="m-l-symp"></span><span id="modal-symp"></span></div>
-    <div class="info-row" id="modal-holiday-row" style="display:none"><span>🎌 <span id="m-l-holiday">Praznik</span></span><span id="modal-holiday"></span></div>
+    <div class="info-row" id="modal-holiday-row" style="display:none"><span>🎌 <span id="m-l-holiday"></span></span><span id="modal-holiday"></span></div>
     <button class="knowledge-toggle" id="knowledgeToggle" onclick="toggleKnowledge()"></button>
     <div class="knowledge-panel" id="knowledgePanel"></div>
     <div class="divider" id="m-divider"></div>
@@ -787,6 +792,14 @@ function updateLoveCounter() {
   if (!el || !annDateLove) return;
   var days = daysDiff(new Date(annDateLove), today());
   if (days >= 0) el.textContent = '♥ ' + days + (lang==='sr'?' dana zajedno':lang==='en'?' days together':' 天在一起');
+  // Also update the stats card
+  var card = document.getElementById('love-days-content');
+  if (!card) return;
+  var parts = [];
+  if (annDateMet) { var d = daysDiff(new Date(annDateMet), today()); if (d >= 0) parts.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' + d + (lang==='sr'?' dana od prvog susreta':lang==='en'?' days since we met':' 天前初次相遇') + '</div>'); }
+  if (annDateLove) { var d = daysDiff(new Date(annDateLove), today()); if (d >= 0) parts.push('<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' + d + (lang==='sr'?' dana zajedno':lang==='en'?' days together':' 天在一起') + '</div>'); }
+  card.innerHTML = parts.join('<div style="height:4px"></div>');
+  document.getElementById('love-days-title').textContent = lang==='sr'?'💕 Dani zajedno':lang==='en'?'💕 Our Days':'💕 我们的日子';
 }
 function randomThinkingOfYou() {
   if (Math.random() > 0.18) return; // 18% chance
@@ -979,7 +992,7 @@ function updateLangUI(){
   document.getElementById('cc-title').textContent = '💝 ' + t('cycleCounter').replace('{n}', '');
   const md=t('modal');
   document.getElementById('m-l-phase').textContent=md.phase;document.getElementById('m-l-day').textContent=md.day;document.getElementById('m-l-symp').textContent=md.symptoms;
-  document.getElementById('m-divider').textContent=md.quickSymptom;document.getElementById('modal-close-btn').textContent=md.close;
+  document.getElementById('m-l-holiday').textContent=lang==='sr'?'Praznik':lang==='en'?'Holiday':'节日';document.getElementById('m-divider').textContent=md.quickSymptom;document.getElementById('modal-close-btn').textContent=md.close;
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
@@ -1090,7 +1103,7 @@ document.getElementById('fabBtn').addEventListener('click',()=>{
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){return (h.country==='cn'?'🇨🇳 ':'🇷🇸 ')+h.name[lang]||h.name['sr']});document.getElementById('modal-holiday').textContent=hNames.join(', ');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];return (h.country==='cn'?'🇨🇳 ':'🇷🇸 ')+n});document.getElementById('modal-holiday').textContent=hNames.join(', ');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
