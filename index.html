@@ -2,6 +2,7 @@
 <html lang="sr" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;650;700;750&display=swap" rel="stylesheet">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -199,7 +200,7 @@ body {
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
 .days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
 .day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; }
-.day:active { transform:scale(.85); }
+.day:active { transform:scale(.93); background:var(--border); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
 .day.today { font-weight:750; box-shadow:inset 0 0 0 1.5px var(--text); }
 .day.period-on { background:var(--love); color:#fff!important; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(196,90,107,.22); }
@@ -339,7 +340,7 @@ body {
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; display:flex; align-items:flex-end; justify-content:center; }
 .modal-overlay.hidden { display:none; }
 .modal { background:var(--card); border-radius:22px 22px 0 0; width:100%; max-width:420px; padding:24px 22px 32px; animation:slideUp .3s cubic-bezier(.32,.72,0,1); max-height:85vh; overflow-y:auto; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); box-shadow:0 -8px 40px rgba(0,0,0,.12); }
-@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+@keyframes slideUp { from{transform:translateY(100%) scale(.97)} to{transform:translateY(0) scale(1)} }
 .modal h2 { font-size:1rem; margin-bottom:12px; text-align:center; font-weight:700; }
 .modal .date-display { text-align:center; font-size:1.8rem; font-weight:750; margin-bottom:16px; color:var(--love); }
 .modal .info-row { display:flex; justify-content:space-between; padding:10px 0; font-size:.8rem; color:var(--text-muted); border-bottom:1px solid var(--border); }
@@ -441,9 +442,9 @@ body {
   <div class="reminder-banner" id="reminderBanner" style="display:none"></div>
 
   <div class="cal-nav">
-    <button class="nav-btn" onclick="changeMonth(-1)">◂</button>
+    <button class="nav-btn" onclick="changeMonth(-1)" aria-label="Prethodni mesec">◂</button>
     <span class="month-label" id="monthLabel"></span>
-    <button class="nav-btn" onclick="changeMonth(1)">▸</button>
+    <button class="nav-btn" onclick="changeMonth(1)" aria-label="Sledeći mesec">▸</button>
     <button class="today-pill" id="todayBtn" onclick="goToday()"></button>
   </div>
 
@@ -546,7 +547,7 @@ body {
   <span class="fab-label" id="fab-label"></span>
 </button>
 
-<div class="modal-overlay hidden" id="modal">
+<div class="modal-overlay hidden" id="modal" role="dialog" aria-modal="true" aria-label="Detalji datuma">
   <div class="modal">
     <h2 id="modal-title"></h2><div class="date-display" id="modal-date"></div>
     <div class="info-row"><span id="m-l-phase"></span><span id="modal-phase">--</span></div>
@@ -841,7 +842,7 @@ function predict() {
   def.lastStart=d0(sorted[sorted.length-1]);
   if(sorted.length===1){def.nextStart=addDays(def.lastStart,settings.cycleLength);}
   else{for(let i=1;i<sorted.length;i++) def.cycles.push(daysDiff(d0(sorted[i-1]),d0(sorted[i])));const recent=def.cycles.slice(-6);def.avgCycle=Math.round(recent.reduce((a,b)=>a+b,0)/recent.length);def.minCycle=Math.min(...recent);def.maxCycle=Math.max(...recent);const variance=recent.reduce((s,c)=>s+(c-def.avgCycle)**2,0)/recent.length;def.stdDev=Math.round(Math.sqrt(variance)*10)/10;if(def.stdDev<=3)def.confidence='high';else if(def.stdDev<=6)def.confidence='medium';else def.confidence='low';const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;def.nextStart=addDays(def.lastStart,useLen);}
-  const td=today();if(def.nextStart&&td>def.nextStart){const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;const elapsed=daysDiff(def.lastStart,td);const passed=Math.floor(elapsed/useLen);if(passed>0){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}if(td>def.nextStart){def.isOverdue=true;def.overdueDays=daysDiff(def.nextStart,td);}}
+  const td=today();if(def.nextStart&&td>def.nextStart){const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;const elapsed=daysDiff(def.lastStart,td);const passed=Math.floor(elapsed/useLen);if(passed>=1){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}def.isOverdue=(td>def.nextStart);if(def.isOverdue)def.overdueDays=daysDiff(def.nextStart,td);}
   if(def.nextStart){def.ovulation=addDays(def.nextStart,-14);def.fertileStart=addDays(def.ovulation,-3);def.fertileEnd=addDays(def.ovulation,2);const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;for(let i=1;i<=2;i++){const np=addDays(def.nextStart,useLen*i);def.futurePeriods.push({start:np,ovulation:addDays(np,-14),fertileStart:addDays(np,-17),fertileEnd:addDays(np,-11)});}}
   return def;
 }
@@ -913,11 +914,11 @@ function applyAllUI(){updateLangUI();renderCalendar();if(symptomDate)renderSympt
    ================================================================ */
 function renderCalendar(){
   const pred=predict(); const td=today();
-  document.getElementById('monthLabel').textContent=`${viewYear}年 ${viewMonth+1}月`;
+  document.getElementById('monthLabel').textContent = lang==='sr' ? `${viewMonth+1}. mesec ${viewYear}.` : lang==='en' ? `${t('months')[viewMonth]} ${viewYear}` : `${viewYear}年 ${viewMonth+1}月`;
   const first=new Date(viewYear,viewMonth,1); let dow=first.getDay(); dow=dow===0?6:dow-1;
   const gridStart=addDays(first,-dow); const grid=document.getElementById('daysGrid'); grid.innerHTML='';
   const recordedStarts=new Set(state.records.map(fmtDate));
-  document.getElementById('predLegend').style.display=pred.futurePeriods.length>0?'':'none';
+  var plEl=document.getElementById('predLegend'); if(pred.futurePeriods.length>0){plEl.style.display='';plEl.textContent=lang==='sr'?'※ Prozirni datumi su predviđanja':lang==='en'?'※ Faded dates are future predictions':'※ 半透明标记为未来周期预测';} else plEl.style.display='none';
   for(let i=0;i<42;i++){
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
     const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
@@ -929,7 +930,7 @@ function renderCalendar(){
     if(phase) el.classList.add(phase);
     if(phase==='period-on'&&recordedStarts.has(key)) el.classList.add('recorded');
     if(annType>0) el.classList.add('anniversary');
-    el.textContent=d.getDate();
+    el.textContent=d.getDate(); el.setAttribute('role','button'); el.setAttribute('aria-label',fmtDate(d));
     if(hasSymptom&&!phase){const dot=document.createElement('span');dot.className='mini-dot pink';el.appendChild(dot);}
     if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
     if(inMonth) el.addEventListener('click',()=>openModal(d,pred));
@@ -961,12 +962,12 @@ function updateProgress(pred){
 
 function updateStats(pred){
   document.getElementById('st-count').textContent=state.records.length;
-  if(state.records.length>=2){document.getElementById('st-avg').textContent=pred.avgCycle+t('day');document.getElementById('st-range').textContent=`${pred.minCycle} / ${pred.maxCycle}${t('day')}`;const cL={high:'高',medium:'中',low:'低'},cC={high:'high',medium:'medium',low:'low'};document.getElementById('st-regularity').innerHTML=`${cL[pred.confidence]} <span class="cycle-badge ${cC[pred.confidence]}">±${pred.stdDev}</span>`;}
+  if(state.records.length>=2){document.getElementById('st-avg').textContent=pred.avgCycle+t('day');document.getElementById('st-range').textContent=`${pred.minCycle} / ${pred.maxCycle}${t('day')}`;var regL=lang==='sr'?{high:'Visoka',medium:'Srednja',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};document.getElementById('st-regularity').innerHTML=`${regL[pred.confidence]} <span class="cycle-badge ${({high:'high',medium:'medium',low:'low'})[pred.confidence]}">±${pred.stdDev}</span>`;}
   else{document.getElementById('st-avg').textContent='--';document.getElementById('st-range').textContent='--';document.getElementById('st-regularity').textContent='--';}
   document.getElementById('st-next').textContent=pred.nextStart?fmtDate(pred.nextStart):'--';
   document.getElementById('st-ovulation').textContent=pred.ovulation?fmtDate(pred.ovulation):'--';
   document.getElementById('st-fertile').textContent=pred.fertileStart&&pred.fertileEnd?`${fmtDate(pred.fertileStart)} ~ ${fmtDate(pred.fertileEnd)}`:'--';
-  const cl={high:'高',medium:'中',low:'低'};document.getElementById('st-confidence').textContent=state.records.length>=2?`${cl[pred.confidence]} (±${pred.stdDev})`:'--';
+  document.getElementById('st-confidence').textContent=state.records.length>=2?`${regL[pred.confidence]} (±${pred.stdDev})`:'--';
   if(pred.futurePeriods.length>0){document.getElementById('futurePredRow').style.display='';document.getElementById('st-future').textContent=pred.futurePeriods.map(fp=>fmtDate(fp.start)).join(', ');}
   else{document.getElementById('futurePredRow').style.display='none';}
 }
@@ -980,7 +981,7 @@ function updateHistoryDots(pred){
 
 function updateYearOverview(pred){
   const grid=document.getElementById('yearGrid'); const yr=viewYear;
-  document.getElementById('yearLabel').textContent=`${yr}年`;
+  document.getElementById('yearLabel').textContent = lang==='sr' ? `${yr}.` : lang==='en' ? `${yr}` : `${yr}年`;
   const byMonth={}; state.records.forEach(r=>{const m=r.getMonth();if(r.getFullYear()===yr){byMonth[m]=(byMonth[m]||0)+1;}});
   grid.innerHTML=t('months').map((name,i)=>{const count=byMonth[i]||0;let cls='year-cell';if(count===1)cls+=' has-period';else if(count>1)cls+=' has-period multi';return`<div class="${cls}" title="${name}: ${count>0?count+t('day'):'--'}" onclick="goToMonth(${i})">${name}</div>`;}).join('');
 }
@@ -997,7 +998,7 @@ function updateFab(){const fab=document.getElementById('fabBtn');if(state.record
 
 document.getElementById('fabBtn').addEventListener('click',()=>{
   const td=today(); const isMarked=state.records.some(r=>sameDay(r,td));
-  if(isMarked){toast(fmtDate(td)+' - već označeno');return;}
+  if(isMarked){toast(fmtDate(td)+(lang==='sr'?' - već označeno':lang==='en'?' - already marked':' - 已标记过'));return;}
   state.records.push(new Date(td)); state.records.sort((a,b)=>a-b); saveState(); renderAll(); updateFab();
   toast(t('toast.marked')); checkCycleCelebration();
   const fab=document.getElementById('fabBtn'); fab.classList.add('celebrate'); setTimeout(()=>fab.classList.remove('celebrate'),500);
