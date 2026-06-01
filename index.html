@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="sr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>周期记录 · Cycle Tracker</title>
+<title>Anđelin Ciklus · 天使的周期</title>
 <style>
 /* ================================================================
-   DESIGN SYSTEM — Soft Clinical Luxury
+   DESIGN TOKENS — Barry ♥ Anđela
    ================================================================ */
 :root {
   --rose: #D47A8A; --rose-dark: #B85C6E; --rose-light: #FDF0F3; --rose-mist: #F5E0E6;
+  --love: #C45A6B; --lipa: #7A9E7E; --dust: #E8D5C4; --gold: #D4A76A;
   --teal: #5E9BAA; --teal-light: #E6F2F5;
   --sage: #80B5A0; --sage-light: #E8F4EE;
   --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #F5EEF8;
@@ -19,23 +20,22 @@
   --shadow-sm: 0 2px 8px rgba(45,42,43,0.05), 0 1px 3px rgba(45,42,43,0.04);
   --shadow-md: 0 8px 24px rgba(45,42,43,0.06), 0 2px 6px rgba(45,42,43,0.04);
   --shadow-lg: 0 16px 40px rgba(45,42,43,0.08), 0 4px 12px rgba(45,42,43,0.05);
-  --fab-shadow: 0 6px 24px rgba(212,122,138,0.35);
+  --fab-shadow: 0 6px 24px rgba(196,90,107,0.35);
   --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --blur: blur(16px) saturate(1.08);
 }
 
 [data-theme="dark"] {
   --rose: #E898A8; --rose-dark: #D47A8A; --rose-light: #2A1E22; --rose-mist: #35242A;
+  --love: #D47A8A; --lipa: #8FC7B0; --dust: #3D3430; --gold: #C49A5E;
   --teal: #7ABCCB; --teal-light: #14282E;
   --sage: #8FC7B0; --sage-light: #14281E;
   --lavender: #D4B8E0; --lavender-dark: #A888BB; --lavender-light: #241D2A;
   --bg: #19161A; --card: rgba(35,31,34,0.78); --text: #E6DDDE; --text-muted: #8F8386;
   --border: #2F292B;
-  --shadow-xs: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.18);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2);
-  --shadow-lg: 0 16px 40px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.25);
-  --fab-shadow: 0 6px 24px rgba(232,152,168,0.3);
+  --shadow-xs: 0 1px 3px rgba(0,0,0,0.2); --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.3); --shadow-lg: 0 16px 40px rgba(0,0,0,0.35);
+  --fab-shadow: 0 6px 24px rgba(212,122,138,0.3);
   --blur: blur(20px) saturate(1.2);
 }
 
@@ -55,67 +55,123 @@ body {
     radial-gradient(ellipse 60% 40% at 80% 85%, rgba(122,188,203,0.05) 0%, transparent 60%);
 }
 
-.app { width:100%; max-width:420px; padding:12px 16px 120px; }
+.app { width:100%; max-width:420px; padding:12px 16px 120px; position:relative; }
 
-/* Glass card base */
+/* ---- Floating Stars (Anđela = Angel) ---- */
+.floating-stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
+.star {
+  position:fixed; opacity:0.08; animation: starFloat 8s ease-in-out infinite alternate;
+  font-size:14px; color:var(--gold);
+}
+.star:nth-child(1){top:8%;left:5%;animation-delay:0s;font-size:18px}
+.star:nth-child(2){top:15%;right:8%;animation-delay:-1.5s;font-size:14px}
+.star:nth-child(3){top:30%;left:12%;animation-delay:-3s;font-size:12px}
+.star:nth-child(4){top:45%;right:5%;animation-delay:-4.5s;font-size:20px}
+.star:nth-child(5){top:55%;left:3%;animation-delay:-2s;font-size:16px}
+.star:nth-child(6){top:70%;right:10%;animation-delay:-5s;font-size:14px}
+.star:nth-child(7){top:80%;left:8%;animation-delay:-6s;font-size:22px}
+.star:nth-child(8){top:88%;right:6%;animation-delay:-1s;font-size:12px}
+.star:nth-child(9){top:22%;left:15%;animation-delay:-3.5s;font-size:15px}
+.star:nth-child(10){top:60%;right:15%;animation-delay:-2.5s;font-size:24px}
+.star:nth-child(11){top:38%;left:18%;animation-delay:-4s;font-size:13px}
+.star:nth-child(12){top:92%;left:14%;animation-delay:-5.5s;font-size:16px}
+.star.bright { opacity:0.15; text-shadow:0 0 8px var(--gold); }
+@keyframes starFloat { 0%{transform:translateY(0) rotate(0deg)} 100%{transform:translateY(-12px) rotate(8deg)} }
+[data-theme="dark"] .star { opacity:0.12; }
+[data-theme="dark"] .star.bright { opacity:0.22; }
+
+/* ---- Greeting Overlay ---- */
+.greeting-overlay {
+  position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  animation: greetIn .6s ease-out;
+}
+.greeting-overlay.hiding { animation: greetOut .5s ease-in forwards; }
+@keyframes greetIn { from{opacity:0} to{opacity:1} }
+@keyframes greetOut { to{opacity:0;pointer-events:none} }
+.greeting-card {
+  background:var(--card); border-radius:20px; padding:32px 28px; text-align:center;
+  max-width:340px; box-shadow:var(--shadow-lg); backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur); position:relative; overflow:hidden;
+}
+.greeting-card::before {
+  content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+  background:radial-gradient(circle, rgba(212,122,138,0.06) 0%, transparent 70%);
+  animation: greetGlow 3s ease-in-out infinite;
+}
+@keyframes greetGlow { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+.greeting-icon { font-size:3rem; display:block; margin-bottom:8px; animation: greetBounce .8s ease-out .2s both; }
+@keyframes greetBounce { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
+.greeting-name { font-size:1.5rem; font-weight:700; color:var(--love); margin-bottom:6px; font-style:italic; }
+.greeting-msg { font-size:.82rem; color:var(--text-muted); line-height:1.6; }
+.greeting-sub { font-size:.7rem; color:var(--gold); margin-top:8px; }
+.greeting-dismiss { margin-top:18px; padding:10px 28px; border-radius:22px; border:none; background:var(--love); color:#fff; font-size:.82rem; font-weight:600; cursor:pointer; font-family:var(--font); transition:transform .15s; }
+.greeting-dismiss:active { transform:scale(.94); }
+
+/* ---- Feather particles (in greeting) ---- */
+.feather {
+  position:absolute; pointer-events:none; opacity:0.25;
+  animation: featherFall 4s ease-in-out infinite;
+}
+@keyframes featherFall {
+  0%{transform:translateY(-40px) rotate(0deg);opacity:0}
+  20%{opacity:0.3}
+  80%{opacity:0.15}
+  100%{transform:translateY(60px) rotate(45deg);opacity:0}
+}
+
+/* ---- Moon Phase ---- */
+.moon-phase {
+  display:inline-flex; align-items:center; gap:4px; font-size:.65rem; color:var(--gold);
+  font-weight:500;
+}
+.moon-icon { font-size:1rem; }
+
+/* Glass cards */
 .glass, .progress-section, .calendar, .card, .setting-row, .tip-card, .onboarding, .reminder-banner {
-  background: var(--card); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-  border: 1px solid rgba(255,255,255,0.45);
-  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  border:1px solid rgba(255,255,255,0.45); border-radius:var(--radius); box-shadow:var(--shadow-sm);
 }
 [data-theme="dark"] .glass, [data-theme="dark"] .progress-section,
 [data-theme="dark"] .calendar, [data-theme="dark"] .card,
-[data-theme="dark"] .setting-row, [data-theme="dark"] .tip-card,
-[data-theme="dark"] .onboarding, [data-theme="dark"] .reminder-banner {
-  border: 1px solid rgba(255,255,255,0.06);
+[data-theme="dark"] .setting-row, [data-theme="dark"] .tip-card {
+  border:1px solid rgba(255,255,255,0.06);
 }
 
-/* Staggered entrance */
-@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-.progress-section { animation: fadeUp .45s ease-out both; }
-.cal-nav         { animation: fadeUp .45s ease-out .06s both; }
-.calendar        { animation: fadeUp .45s ease-out .12s both; }
-.legend          { animation: fadeUp .45s ease-out .15s both; }
-.tabs            { animation: fadeUp .45s ease-out .18s both; }
-.panel           { animation: fadeUp .45s ease-out .22s both; }
-.fab             { animation: fadeUp .45s ease-out .3s both, fabPulse 3s ease-in-out .6s infinite; }
+/* Entrance */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.progress-section { animation:fadeUp .45s ease-out both; }
+.cal-nav { animation:fadeUp .45s ease-out .06s both; }
+.calendar { animation:fadeUp .45s ease-out .12s both; }
+.legend { animation:fadeUp .45s ease-out .15s both; }
+.tabs { animation:fadeUp .45s ease-out .18s both; }
+.panel { animation:fadeUp .45s ease-out .22s both; }
 
 /* Header */
 .header { display:flex; align-items:center; justify-content:center; padding:20px 0 8px; position:relative; gap:8px; }
-.header h1 { font-size:1.3rem; font-weight:650; letter-spacing:-.02em; }
+.header h1 { font-size:1.3rem; font-weight:650; letter-spacing:-.02em; cursor:default; user-select:none; }
 .header-actions { position:absolute; right:0; top:18px; display:flex; gap:6px; align-items:center; }
 
 .lang-switch { display:flex; gap:2px; background:var(--border); border-radius:14px; padding:2px; }
-.lang-btn {
-  border:none; background:none; font-size:.63rem; font-weight:700;
-  padding:5px 9px; border-radius:12px; cursor:pointer; color:var(--text-muted);
-  transition:all .18s; font-family:var(--font); min-width:28px; min-height:28px;
-}
+.lang-btn { border:none; background:none; font-size:.63rem; font-weight:700; padding:5px 9px; border-radius:12px; cursor:pointer; color:var(--text-muted); transition:all .18s; font-family:var(--font); min-width:28px; min-height:28px; }
 .lang-btn.active { background:var(--card); color:var(--text); box-shadow:var(--shadow-xs); }
 .lang-btn:active { transform:scale(.92); }
 
-.theme-btn {
-  width:32px; height:32px; border-radius:50%; border:none; background:var(--card);
-  font-size:1rem; cursor:pointer; box-shadow:var(--shadow-xs); transition:transform .15s;
-  display:flex; align-items:center; justify-content:center; color:var(--text);
-}
+.theme-btn { width:32px; height:32px; border-radius:50%; border:none; background:var(--card); font-size:1rem; cursor:pointer; box-shadow:var(--shadow-xs); transition:transform .15s; display:flex; align-items:center; justify-content:center; color:var(--text); }
 .theme-btn:active { transform:scale(.85) rotate(20deg); }
 
 /* Progress */
 .progress-section { padding:20px 22px; margin:14px 0 18px; transition:all .3s; }
 .progress-section:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
 .progress-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
-.progress-num { font-size:2.4rem; font-weight:750; color:var(--rose); line-height:1; font-feature-settings:"tnum"; }
+.progress-num { font-size:2.4rem; font-weight:750; color:var(--love); line-height:1; font-feature-settings:"tnum"; }
 .progress-unit { font-size:.82rem; color:var(--text-muted); font-weight:500; }
 .progress-sub { font-size:.78rem; color:var(--text-muted); margin-bottom:14px; }
 .progress-track { height:7px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:10px; }
 .progress-fill { height:100%; border-radius:4px; transition:width .5s ease, background .5s ease; }
 .progress-labels { display:flex; justify-content:space-between; font-size:.64rem; color:var(--text-muted); }
 .progress-labels span.current { color:var(--text); font-weight:650; }
-.phase-badge {
-  display:inline-block; padding:5px 14px; border-radius:14px;
-  font-size:.7rem; font-weight:650; margin-top:10px; letter-spacing:.01em;
-}
+.phase-badge { display:inline-block; padding:5px 14px; border-radius:14px; font-size:.7rem; font-weight:650; margin-top:10px; letter-spacing:.01em; }
 .phase-badge.period { background:var(--rose-light); color:var(--rose-dark); }
 .phase-badge.follicular { background:var(--sage-light); color:#3D6B55; }
 .phase-badge.ovulation, .phase-badge.fertile { background:var(--teal-light); color:#2D5F6E; }
@@ -123,83 +179,60 @@ body {
 .phase-badge.late { background:#FFF3E0; color:#E65100; }
 [data-theme="dark"] .phase-badge.late { background:#3D2000; color:#FFB74D; }
 
-/* Onboarding */
-.onboarding { padding:16px 18px; margin-bottom:14px; display:none; align-items:center; gap:12px; font-size:.8rem; color:var(--text-muted); line-height:1.5; }
-.onboarding .ob-icon { font-size:2rem; flex-shrink:0; }
-.onboarding .ob-dismiss { margin-left:auto; font-size:1.2rem; cursor:pointer; color:var(--text-muted); padding:4px; transition:transform .12s; }
-.onboarding .ob-dismiss:active { transform:scale(.8); }
-
-/* Calendar nav */
-.cal-nav { display:flex; align-items:center; margin-bottom:10px; gap:10px; }
-.cal-nav .nav-btn {
-  width:40px; height:40px; border:none; border-radius:50%;
-  background:var(--card); font-size:1rem; cursor:pointer; color:var(--text);
-  box-shadow:var(--shadow-xs); flex-shrink:0; backdrop-filter:var(--blur);
-  -webkit-backdrop-filter:var(--blur); transition:transform .12s, background .15s;
-  display:flex; align-items:center; justify-content:center;
-}
-.cal-nav .nav-btn:active { transform:scale(.88); background:var(--border); }
-.cal-nav .month-label { flex:1; text-align:center; font-size:1.05rem; font-weight:700; }
-.cal-nav .today-pill {
-  font-size:.7rem; font-weight:700; color:var(--rose);
-  padding:8px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:36px;
-  border:none; cursor:pointer; flex-shrink:0; transition:transform .12s;
-}
-.cal-nav .today-pill:active { transform:scale(.92); }
+/* Anđelin ciklus label */
+.andjelin-label { text-align:center; font-size:.68rem; color:var(--gold); font-style:italic; margin-top:2px; letter-spacing:.02em; }
 
 /* Calendar */
+.cal-nav { display:flex; align-items:center; margin-bottom:10px; gap:10px; }
+.cal-nav .nav-btn { width:40px; height:40px; border:none; border-radius:50%; background:var(--card); font-size:1rem; cursor:pointer; color:var(--text); box-shadow:var(--shadow-xs); flex-shrink:0; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); transition:transform .12s; display:flex; align-items:center; justify-content:center; }
+.cal-nav .nav-btn:active { transform:scale(.88); background:var(--border); }
+.cal-nav .month-label { flex:1; text-align:center; font-size:1.05rem; font-weight:700; }
+.cal-nav .today-pill { font-size:.7rem; font-weight:700; color:var(--love); padding:8px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:36px; border:none; cursor:pointer; flex-shrink:0; transition:transform .12s; }
+.cal-nav .today-pill:active { transform:scale(.92); }
+
 .calendar { padding:14px 12px 10px; margin-bottom:12px; touch-action:pan-y; user-select:none; transition:all .3s; }
 .calendar:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
 .weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
 .days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-.day {
-  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-  border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer;
-  position:relative; transition:transform .1s, background .2s, box-shadow .2s;
-  color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px;
-}
+.day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; }
 .day:active { transform:scale(.85); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
 .day.today { font-weight:750; box-shadow:inset 0 0 0 1.5px var(--text); }
-/* Period */
-.day.period-on { background:var(--rose); color:#fff !important; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(212,122,138,.22); }
-.day.period-on.recorded { box-shadow:0 0 0 4px rgba(212,122,138,.22), 0 0 0 6px rgba(212,122,138,.1); }
+.day.period-on { background:var(--love); color:#fff!important; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(196,90,107,.22); }
+.day.period-on.recorded { box-shadow:0 0 0 4px rgba(196,90,107,.22),0 0 0 6px rgba(196,90,107,.1); }
 .day.period-mid { background:var(--rose-light); color:var(--rose); font-weight:600; }
-/* Predicted */
 .day.period-pred { background:var(--rose-mist); color:var(--rose-dark); }
-.day.period-pred-first { background:var(--rose); color:#fff; font-weight:700; opacity:.55; border-radius:50%; }
+.day.period-pred-first { background:var(--love); color:#fff; font-weight:700; opacity:.55; border-radius:50%; }
 .day.period-future { background:var(--rose-mist); color:var(--rose-dark); opacity:.35; }
-.day.period-future-first { background:var(--rose); color:#fff; font-weight:700; opacity:.25; border-radius:50%; }
-/* Ovulation / Fertile */
+.day.period-future-first { background:var(--love); color:#fff; font-weight:700; opacity:.25; border-radius:50%; }
 .day.ovulation { background:var(--teal); color:#fff; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(94,155,170,.22); }
 .day.fertile { background:var(--teal-light); color:#2D5F6E; }
-/* Luteal / Follicular */
 .day.luteal { background:var(--lavender-light); color:var(--lavender-dark); }
 .day.follicular { background:var(--sage-light); color:#3D6B55; }
+/* Anniversary marker */
+.day.anniversary { box-shadow:inset 0 0 0 2px var(--gold); }
+.day.anniversary::after { content:'♥'; position:absolute; top:1px; right:2px; font-size:.45rem; color:var(--love); }
 .day .mini-dot { position:absolute; bottom:3px; width:5px; height:5px; border-radius:50%; }
 .day .mini-dot.pink { background:var(--rose); }
-.day .mini-dot.blue { background:var(--teal); }
+.day .mini-dot.gold { background:var(--gold); }
 
 .legend { display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:14px; font-size:.65rem; color:var(--text-muted); justify-content:center; }
 .legend span { display:flex; align-items:center; gap:5px; }
 .legend span::before { content:''; width:9px; height:9px; border-radius:50%; display:inline-block; flex-shrink:0; }
-.legend .l-period::before { background:var(--rose); }
+.legend .l-period::before { background:var(--love); }
 .legend .l-fertile::before { background:var(--teal); }
 .legend .l-follicular::before { background:var(--sage); }
 .legend .l-luteal::before { background:var(--lavender); }
+.legend .l-heart::before { content:'♥'; background:none; color:var(--love); font-size:.6rem; line-height:1; }
 
 /* Tabs */
 .tabs { display:flex; padding:5px; box-shadow:var(--shadow-sm); margin-bottom:16px; gap:2px; border-radius:var(--radius); background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
-.tab {
-  flex:1; text-align:center; padding:12px 0; font-size:.74rem;
-  font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:12px;
-  transition:all .22s cubic-bezier(.4,0,.2,1); border:none; background:none; font-family:var(--font);
-}
+.tab { flex:1; text-align:center; padding:12px 0; font-size:.74rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:12px; transition:all .22s cubic-bezier(.4,0,.2,1); border:none; background:none; font-family:var(--font); }
 .tab.active { background:var(--text); color:var(--bg); box-shadow:var(--shadow-xs); }
 
 .panel { display:none; }
-.panel.active { display:block; animation: fadeUp .3s ease-out; }
+.panel.active { display:block; animation:fadeUp .3s ease-out; }
 
 .card { padding:18px; margin-bottom:12px; transition:all .3s; }
 .card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
@@ -224,49 +257,39 @@ body {
 
 /* Year */
 .year-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:4px; }
-.year-cell {
-  aspect-ratio:1; border-radius:8px; font-size:.55rem; font-weight:650;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--border); color:var(--text-muted); cursor:pointer;
-  transition:all .15s; min-width:24px; min-height:24px;
-}
-.year-cell.has-period { background:var(--rose); color:#fff !important; }
+.year-cell { aspect-ratio:1; border-radius:8px; font-size:.55rem; font-weight:650; display:flex; align-items:center; justify-content:center; background:var(--border); color:var(--text-muted); cursor:pointer; transition:all .15s; min-width:24px; min-height:24px; }
+.year-cell.has-period { background:var(--love); color:#fff!important; }
 .year-cell.has-period.multi { box-shadow:0 0 0 2px var(--teal); }
 
 /* Symptom */
 .symptom-mini { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
-.symptom-mini .sym-chip {
-  padding:7px 14px; border-radius:18px; border:1px solid var(--border);
-  font-size:.7rem; cursor:pointer; background:var(--card); color:var(--text-muted);
-  transition:all .15s; font-family:var(--font); min-height:36px;
-}
-.symptom-mini .sym-chip.on { border-color:var(--rose); background:var(--rose-light); color:var(--rose); font-weight:650; }
+.symptom-mini .sym-chip { padding:7px 14px; border-radius:18px; border:1px solid var(--border); font-size:.7rem; cursor:pointer; background:var(--card); color:var(--text-muted); transition:all .15s; font-family:var(--font); min-height:36px; }
+.symptom-mini .sym-chip.on { border-color:var(--love); background:var(--rose-light); color:var(--love); font-weight:650; }
 .symptom-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px; }
-.symptom-item {
-  background:var(--card); border-radius:var(--radius); padding:16px 8px;
-  text-align:center; box-shadow:var(--shadow-sm); cursor:pointer;
-  border:2px solid transparent; transition:all .18s; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
-}
+.symptom-item { background:var(--card); border-radius:var(--radius); padding:16px 8px; text-align:center; box-shadow:var(--shadow-sm); cursor:pointer; border:2px solid transparent; transition:all .18s; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
 .symptom-item:active { transform:scale(.94); }
-.symptom-item.selected { border-color:var(--rose); background:var(--rose-light); }
+.symptom-item.selected { border-color:var(--love); background:var(--rose-light); }
 .symptom-item .emoji { font-size:1.5rem; display:block; margin-bottom:3px; }
 .symptom-item .sname { font-size:.68rem; color:var(--text-muted); }
 .symptom-dots { display:flex; justify-content:center; gap:5px; margin-top:6px; }
 .symptom-dots .dot { width:8px; height:8px; border-radius:50%; background:var(--border); transition:background .15s; }
-.symptom-dots .dot.on { background:var(--rose); }
+.symptom-dots .dot.on { background:var(--love); }
 
 /* Tips */
 .tip-card { padding:16px 18px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; transition:all .3s; }
 .tip-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.tip-card.tcm { border-left:3px solid var(--love); }
+.tip-card.serbian { border-left:3px solid var(--lipa); }
 .tip-icon { font-size:1.5rem; flex-shrink:0; }
 .tip-body { flex:1; }
 .tip-phase-label { font-size:.64rem; color:var(--text-muted); display:block; margin-bottom:2px; }
 .tip-text { font-size:.8rem; color:var(--text); line-height:1.55; }
+.tip-source { font-size:.6rem; color:var(--gold); font-style:italic; margin-top:2px; display:block; }
 
 /* Knowledge */
 .knowledge-toggle { display:block; width:100%; text-align:center; padding:10px; font-size:.7rem; color:var(--teal); font-weight:650; cursor:pointer; border:none; background:none; font-family:var(--font); }
 .knowledge-panel { display:none; background:var(--bg); border-radius:12px; padding:16px 18px; margin-top:8px; text-align:left; }
-.knowledge-panel.open { display:block; animation: fadeUp .25s ease-out; }
+.knowledge-panel.open { display:block; animation:fadeUp .25s ease-out; }
 .knowledge-panel h4 { font-size:.76rem; font-weight:700; color:var(--text); margin-bottom:6px; }
 .knowledge-panel p { font-size:.73rem; color:var(--text-muted); line-height:1.6; }
 
@@ -275,27 +298,39 @@ body {
 .setting-label { font-size:.84rem; font-weight:550; }
 .setting-hint { font-size:.68rem; color:var(--text-muted); display:block; margin-top:2px; }
 .setting-row input[type="number"] { width:60px; padding:7px 8px; border:1px solid var(--border); border-radius:10px; font-size:.84rem; text-align:center; font-family:var(--font); background:var(--card); color:var(--text); }
-.setting-row input[type="number"]:focus { outline:none; border-color:var(--rose); box-shadow:0 0 0 3px rgba(212,122,138,.15); }
+.setting-row input[type="number"]:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.15); }
 .setting-row select { padding:7px 12px; border:1px solid var(--border); border-radius:10px; font-size:.8rem; font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
 
 .btn { display:block; width:100%; padding:14px; border:none; border-radius:var(--radius); font-size:.84rem; font-weight:650; cursor:pointer; text-align:center; transition:all .18s; margin-bottom:8px; font-family:var(--font); letter-spacing:.01em; }
 .btn:active { transform:scale(.96); }
-.btn-primary { background:var(--rose); color:#fff; box-shadow:0 4px 14px rgba(212,122,138,.3); }
-.btn-primary:active { box-shadow:0 2px 8px rgba(212,122,138,.2); }
-.btn-outline { background:transparent; color:var(--rose); border:2px solid var(--rose); }
+.btn-primary { background:var(--love); color:#fff; box-shadow:0 4px 14px rgba(196,90,107,.3); }
+.btn-primary:active { box-shadow:0 2px 8px rgba(196,90,107,.2); }
+.btn-outline { background:transparent; color:var(--love); border:2px solid var(--love); }
 .btn-danger { background:var(--rose-light); color:var(--rose-dark); }
 .btn-ghost { background:var(--border); color:var(--text-muted); }
 
-/* Developer credit - prominent */
+/* Developer signature */
 .dev-signature {
-  background: linear-gradient(135deg, var(--rose) 0%, var(--lavender-dark) 100%);
-  color:#fff; border-radius:var(--radius); padding:20px 22px; margin-top:18px;
+  background:linear-gradient(135deg, var(--love) 0%, var(--lavender-dark) 100%);
+  color:#fff; border-radius:var(--radius); padding:24px 22px; margin-top:18px;
   text-align:center; box-shadow:0 8px 32px rgba(142,111,163,.25);
+  position:relative; overflow:hidden;
 }
-.dev-signature .dev-name { font-size:1.15rem; font-weight:750; letter-spacing:.02em; }
-.dev-signature .dev-role { font-size:.72rem; opacity:.85; margin-top:2px; display:block; }
-.dev-signature .dev-divider { width:40px; height:2px; background:rgba(255,255,255,.4); margin:10px auto; border-radius:1px; }
-.dev-signature .dev-tagline { font-size:.68rem; opacity:.75; line-height:1.5; }
+.dev-signature::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%);
+}
+.dev-signature .dev-name { font-size:1.2rem; font-weight:750; letter-spacing:.02em; position:relative; }
+.dev-signature .dev-for { font-size:.72rem; opacity:.9; margin-top:4px; position:relative; font-style:italic; }
+.dev-signature .dev-divider { width:50px; height:2px; background:rgba(255,255,255,.4); margin:12px auto; border-radius:1px; position:relative; }
+.dev-signature .dev-tagline { font-size:.66rem; opacity:.8; line-height:1.6; position:relative; }
+.dev-signature .dev-location { font-size:.62rem; opacity:.65; margin-top:6px; position:relative; }
+
+/* Footer */
+.app-footer { text-align:center; padding:10px 0 20px; }
+.footer-divider { width:60px; height:1px; background:var(--gold); margin:0 auto 12px; opacity:.4; }
+.footer-credit { font-size:.7rem; color:var(--gold); font-style:italic; }
+.footer-credit-cn { font-size:.64rem; color:var(--text-muted); margin-top:2px; }
 
 /* Modal */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; display:flex; align-items:flex-end; justify-content:center; }
@@ -303,7 +338,7 @@ body {
 .modal { background:var(--card); border-radius:22px 22px 0 0; width:100%; max-width:420px; padding:24px 22px 32px; animation:slideUp .3s cubic-bezier(.32,.72,0,1); max-height:85vh; overflow-y:auto; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); box-shadow:0 -8px 40px rgba(0,0,0,.12); }
 @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
 .modal h2 { font-size:1rem; margin-bottom:12px; text-align:center; font-weight:700; }
-.modal .date-display { text-align:center; font-size:1.8rem; font-weight:750; margin-bottom:16px; color:var(--rose); }
+.modal .date-display { text-align:center; font-size:1.8rem; font-weight:750; margin-bottom:16px; color:var(--love); }
 .modal .info-row { display:flex; justify-content:space-between; padding:10px 0; font-size:.8rem; color:var(--text-muted); border-bottom:1px solid var(--border); }
 .modal .info-row:last-child { border-bottom:none; }
 .modal .divider { font-size:.68rem; color:var(--text-muted); text-align:center; margin:16px 0 8px; letter-spacing:1px; }
@@ -312,7 +347,7 @@ body {
 
 .symptom-note { margin-top:14px; }
 .symptom-note textarea { width:100%; border:1px solid var(--border); border-radius:12px; padding:12px; font-size:.78rem; resize:vertical; min-height:56px; font-family:var(--font); background:var(--card); color:var(--text); }
-.symptom-note textarea:focus { outline:none; border-color:var(--rose); box-shadow:0 0 0 3px rgba(212,122,138,.1); }
+.symptom-note textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.1); }
 
 /* Toast */
 #toastContainer { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:6px; align-items:center; pointer-events:none; }
@@ -320,44 +355,70 @@ body {
 @keyframes toastIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
 /* FAB */
-.fab { position:fixed; bottom:36px; right:max(20px, calc(50% - 230px)); width:56px; height:56px; border-radius:50%; background:var(--rose); color:#fff; border:none; box-shadow:var(--fab-shadow); font-size:1.5rem; cursor:pointer; z-index:50; transition:transform .2s cubic-bezier(.34,1.56,.64,1), opacity .2s; display:flex; align-items:center; justify-content:center; }
+.fab { position:fixed; bottom:36px; right:max(20px,calc(50% - 230px)); width:56px; height:56px; border-radius:50%; background:var(--love); color:#fff; border:none; box-shadow:var(--fab-shadow); font-size:1.5rem; cursor:pointer; z-index:50; transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .2s; display:flex; align-items:center; justify-content:center; }
 .fab.hidden { transform:scale(0); opacity:0; pointer-events:none; }
-.fab:active { transform:scale(.85) !important; }
-@keyframes fabPulse { 0%,100%{box-shadow:var(--fab-shadow)} 50%{box-shadow:0 4px 28px rgba(212,122,138,.5)} }
+.fab:active { transform:scale(.85)!important; }
+@keyframes fabPulse { 0%,100%{box-shadow:var(--fab-shadow)} 50%{box-shadow:0 4px 28px rgba(196,90,107,.5)} }
 .fab .fab-label { position:absolute; right:66px; background:var(--text); color:var(--bg); padding:7px 16px; border-radius:18px; font-size:.68rem; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .2s; font-family:var(--font); font-weight:650; }
 .fab:active .fab-label { opacity:1; }
+
+/* Rose petals (easter egg) */
+.petal { position:fixed; pointer-events:none; z-index:300; animation:petalFall 4s ease-in forwards; font-size:1.2rem; }
+@keyframes petalFall { 0%{opacity:1;transform:translateY(-20px) rotate(0deg) translateX(0)} 100%{opacity:0;transform:translateY(105vh) rotate(720deg) translateX(80px)} }
+
+/* Cycle celebration */
+.cycle-celebration { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); z-index:250; text-align:center; animation:celebrateIn .6s ease-out; pointer-events:none; }
+@keyframes celebrateIn { 0%{opacity:0;transform:translateX(-50%) translateY(30px) scale(.8)} 60%{transform:translateX(-50%) translateY(-5px) scale(1.05)} 100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} }
+.cycle-celebration .celeb-icon { font-size:2.5rem; display:block; animation:celebrateBounce .8s ease-out .2s both; }
+@keyframes celebrateBounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.cycle-celebration .celeb-text { font-size:.8rem; color:var(--love); font-weight:650; margin-top:4px; }
 
 /* Empty state */
 .empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
 .empty-icon { font-size:3rem; display:block; margin-bottom:12px; }
 
-/* Reminder */
 .reminder-banner { padding:14px 18px; margin:12px 0; font-size:.76rem; color:var(--rose-dark); text-align:center; display:flex; align-items:center; gap:8px; justify-content:center; }
 .reminder-banner .dismiss { margin-left:auto; cursor:pointer; font-weight:700; opacity:.5; font-size:.9rem; }
-
 .pred-legend { font-size:.62rem; color:var(--text-muted); text-align:center; margin-top:4px; }
-
-/* Celebration burst */
-@keyframes celebrate { 0%{transform:scale(1)} 30%{transform:scale(1.4)} 100%{transform:scale(1)} }
-.celebrate { animation: celebrate .5s ease-out; }
+.celebrate { animation:celebrateBounce .5s ease-out; }
 </style>
 </head>
 <body>
 
+<!-- Floating Stars -->
+<div class="floating-stars">
+  <span class="star">✦</span><span class="star bright">✦</span><span class="star">✦</span>
+  <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
+  <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
+  <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
+</div>
+
+<!-- Greeting Overlay -->
+<div class="greeting-overlay hidden" id="greetingOverlay">
+  <div class="greeting-card">
+    <span class="greeting-icon" id="greetingIcon">✨</span>
+    <div class="greeting-name" id="greetingName">Anđelo moja</div>
+    <div class="greeting-msg" id="greetingMsg"></div>
+    <div class="greeting-sub" id="greetingSub"></div>
+    <button class="greeting-dismiss" id="greetingDismiss" onclick="dismissGreeting()">♥</button>
+  </div>
+</div>
+
 <div class="app">
   <div class="header">
-    <h1>🌸 <span id="h-title"></span></h1>
+    <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
     <div class="header-actions">
-      <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <div class="moon-phase" id="moonPhase" title="月相 · Moon Phase"></div>
+      <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
       <div class="lang-switch" id="langSwitch">
         <button class="lang-btn" data-lang="zh-CN">中</button>
+        <button class="lang-btn active" data-lang="sr">SR</button>
         <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="sr">SR</button>
       </div>
     </div>
   </div>
 
-  <div class="onboarding" id="onboardingBanner">
+  <div class="onboarding" id="onboardingBanner" style="display:none">
     <span class="ob-icon">👋</span><span id="ob-text"></span>
     <span class="ob-dismiss" onclick="dismissOnboarding()">✕</span>
   </div>
@@ -370,6 +431,7 @@ body {
       <span class="lbl-period"></span><span class="lbl-follicular"></span><span class="lbl-ovulation"></span><span class="lbl-luteal"></span>
     </div>
     <div style="text-align:center"><span class="phase-badge" id="pg-badge"></span></div>
+    <div class="andjelin-label">— Anđelin ciklus —</div>
   </div>
 
   <div class="reminder-banner" id="reminderBanner" style="display:none"></div>
@@ -408,7 +470,7 @@ body {
       <div class="history-label" id="historyLabel" style="font-size:.62rem;color:var(--text-muted);margin-top:6px"></div>
     </div>
     <div class="card" id="yearOverviewCard">
-      <h3>📅 年度概览 <span id="yearLabel" style="font-weight:400;font-size:.7rem;color:var(--text-muted)"></span></h3>
+      <h3>📅 <span id="year-overview-title">年度概览</span> <span id="yearLabel" style="font-weight:400;font-size:.7rem;color:var(--text-muted)"></span></h3>
       <div class="year-grid" id="yearGrid"></div>
     </div>
     <div class="card"><h3 id="st-title-pred"></h3>
@@ -417,6 +479,12 @@ body {
       <div class="stat-row"><span id="st-l-fert"></span><span class="val" id="st-fertile">--</span></div>
       <div class="stat-row"><span id="st-l-conf"></span><span class="val" id="st-confidence">--</span></div>
       <div class="stat-row" id="futurePredRow" style="display:none"><span id="st-l-future"></span><span class="val" id="st-future"></span></div>
+    </div>
+    <!-- Cycle counter -->
+    <div class="card" id="cycleCounterCard" style="display:none">
+      <h3>💝 <span id="cc-title">一起走过的周期</span></h3>
+      <div style="text-align:center;font-size:2rem;font-weight:800;color:var(--love);" id="cc-count">0</div>
+      <div style="text-align:center;font-size:.7rem;color:var(--text-muted);" id="cc-subtitle"></div>
     </div>
   </div>
 
@@ -433,11 +501,19 @@ body {
   <div class="panel" id="panel-tips"><div id="tips-list"></div></div>
 
   <div class="panel" id="panel-settings">
+    <!-- Anniversary date setting -->
+    <div class="card" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold);margin-bottom:14px">
+      <h3>💕 <span id="anniversary-title">纪念日</span></h3>
+      <div class="stat-row"><span id="ann-label">在一起的日子</span><span class="val"><input type="date" id="anniversaryDate" onchange="saveAnniversary()" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
+      <div style="text-align:center;font-size:.7rem;color:var(--love);margin-top:6px;font-style:italic" id="ann-count"></div>
+    </div>
+
     <div class="dev-signature">
-      <span class="dev-name">张梓桐 (Barry Zhang)</span>
-      <span class="dev-role">全栈开发者 · Full-Stack Developer</span>
+      <div class="dev-name">张梓桐 (Barry Zhang)</div>
+      <div class="dev-for">za Anđelu Nemet ♥</div>
       <div class="dev-divider"></div>
-      <span class="dev-tagline">精心打造的周期追踪应用<br>Cycle Tracker — Crafted with care</span>
+      <div class="dev-tagline">Napravljeno sa ljubavlju<br>用心为 Anđela 制作</div>
+      <div class="dev-location">Beograd ↔ Shanghai · 2026</div>
     </div>
     <div style="height:14px"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-lang"></span><span class="setting-hint" id="set-h-lang"></span></div>
@@ -454,6 +530,11 @@ body {
     <button class="btn btn-outline" id="import-btn" onclick="document.getElementById('importFile').click()"></button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     <button class="btn btn-danger" id="clear-btn" onclick="clearAllData()"></button>
+    <div class="app-footer">
+      <div class="footer-divider"></div>
+      <div class="footer-credit">Napravljeno sa ljubavlju za Anđelu</div>
+      <div class="footer-credit-cn">用心为 Anđela 制作 · Made with ♥ for Anđela</div>
+    </div>
   </div>
 </div>
 
@@ -484,129 +565,151 @@ body {
 
 <script>
 /* ================================================================
-   i18n — 三语言数据
+   i18n — Full 3-language data (sr as default for Anđela)
    ================================================================ */
 const I18N = {
-'zh-CN': {
-  appTitle:'周期记录', theme:'暗色模式', themeHint:'切换深色/浅色主题',
-  weekdays:['一','二','三','四','五','六','日'],
-  months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-  today:'今天', tabs:['统计','症状','贴士','设置'],
-  legend:['经期','排卵/易孕','卵泡期','黄体期','今天'],
-  progressLabels:['经期','卵泡期','排卵','黄体期'],
-  phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测经期开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
-  phaseBadges:{period:'经期中',follicular:'卵泡期',ovulation:'排卵日',fertile:'易孕期',luteal:'黄体期',late:'已推迟'},
-  knowledgeToggle:'📖 了解这个阶段 ▾', knowledgeToggleHide:'收起 ▴',
-  knowledge:{period:{title:'关于经期',desc:'这是月经周期的第一阶段。子宫内膜脱落，伴随出血排出体外。',what:'雌激素和孕激素都处于最低水平。子宫内膜正在脱落。',symptoms:'腹部绞痛、疲劳、情绪波动、头痛、腰酸',tips:'多补充铁质、注意保暖、避免剧烈运动、保证睡眠'},follicular:{title:'关于卵泡期',desc:'经期结束后，卵巢中的卵泡开始发育，雌激素逐渐上升。',what:'脑垂体分泌FSH刺激卵泡生长。雌激素上升使子宫内膜重新增厚。',symptoms:'精力恢复、思维清晰、皮肤状态改善、性欲增强',tips:'适合开始新计划、增加运动强度、均衡饮食'},ovulation:{title:'关于排卵期',desc:'成熟卵子从卵巢释放，是最易受孕的时期。卵子存活约24小时，但精子可存活5天。',what:'LH激素激增触发排卵。雌激素达到峰值。基础体温在排卵后会略微升高。',symptoms:'轻微腹痛（排卵痛）、分泌物增多呈蛋清状、性欲增强、体温微升',tips:'如有备孕计划这是最佳时机、体能高峰适合运动、注意补充蛋白质'},luteal:{title:'关于黄体期',desc:'排卵后到下次月经前的阶段。黄体分泌孕激素，为可能的怀孕做准备。',what:'孕激素上升使子宫内膜更加稳定。如未受孕，黄体退化，激素下降，触发下一次月经。',symptoms:'经前综合征(PMS)、乳房胀痛、情绪波动、水肿、食欲变化',tips:'减少咖啡因和盐分、补充维生素B6和镁、轻度运动缓解不适'},fertile:{title:'关于易孕期',desc:'包括排卵日前后的几天，是怀孕可能性最高的时间段。',what:'精子在女性体内可存活3-5天，卵子排出后可存活约24小时。排卵日前后共约6天为"易孕窗口"。',symptoms:'分泌物清亮黏滑、性欲增强、基础体温变化',tips:'备孕可隔天同房、注意补充叶酸、保持良好作息'}},
-  emptyState:'点击日历标记你的第一次经期', emptySymptom:'点击日历中的日期<br>来记录当日症状',
-  daysUntil:'距下次月经还有 {n} 天', daysOverdue:'已推迟 {n} 天', day:'天', periodDay:'经期第 {n} 天', expected:'预计',
-  onboarding:'👋 欢迎使用周期记录！点击日历中的任意日期开始记录你的第一次经期。',
-  fabLabel:'今天来了',
-  stats:{cycleTitle:'📈 周期统计',historyTitle:'📅 近期周期',predTitle:'🔮 当前预测',count:'已记录周期数',avg:'平均周期',range:'最短 / 最长',reg:'规律性',next:'下次月经',ovulation:'排卵日',fertile:'易孕窗口',confidence:'置信度',future:'未来预测周期'},
-  historyLabel:'● 偏短  ● 正常  ● 偏长  (每点=一个周期)',
-  modal:{details:'日期详情',marked:'已记录的经期开始日',phase:'阶段',day:'周期第几天',symptoms:'已记录症状',mark:'标记经期开始',unmark:'取消标记',close:'关闭',quickSymptom:'快速记录症状',notesPlaceholder:'添加备注...'},
-  symptoms:{cramps:'痛经',mood:'情绪',flow:'流量',headache:'头痛',fatigue:'疲劳',cravings:'食欲'},
-  tips:{period:[{icon:'🩸',text:'经期身体流失铁质，多吃红肉、菠菜、黑芝麻等富含铁的食物。'},{icon:'♨',text:'注意腹部保暖，可使用暖水袋或暖宝宝缓解不适。'},{icon:'💧',text:'多喝温水，避免冰冷饮品，有助于促进血液循环。'},{icon:'🧘',text:'轻度拉伸或瑜伽有助缓解不适，避免剧烈运动。'},{icon:'😴',text:'经期身体消耗较大，保证充足的睡眠和休息。'}],follicular:[{icon:'💪',text:'卵泡期雌激素上升，精力和体能恢复中，适合开启新运动计划。'},{icon:'🥗',text:'新陈代谢较好，多吃蔬菜水果，均衡营养。'},{icon:'🎯',text:'思维清晰精力充沛，适合处理复杂任务和做重要决定。'}],ovulation:[{icon:'⭐',text:'排卵期，如有备孕计划，这几天是最佳时机。'},{icon:'🏃',text:'体能处于高峰，适合高强度训练。'},{icon:'💆',text:'雌激素峰值，皮肤状态好，适合社交活动。'}],luteal:[{icon:'🍵',text:'黄体期减少咖啡因摄入，可能加重焦虑和情绪波动。'},{icon:'🧘',text:'经前可能情绪波动，试试冥想或深呼吸放松心情。'},{icon:'🌿',text:'适当补充维生素B6和镁，有助缓解经前不适。'},{icon:'🍌',text:'易水肿，减少盐分，多吃香蕉等富含钾的食物。'}]},
-  settings:{lang:'语言 / Language / Jezik',langHint:'切换界面语言',theme:'主题',themeHint:'深色/浅色模式',cycle:'默认周期长度',cycleHint:'系统自动计算，可手动覆盖',period:'默认经期天数',periodHint:'每次经期持续天数',override:'使用手动值预测',overrideHint:'开启后忽略自动计算',save:'💾 保存设置',export:'📤 导出数据 (JSON)',import:'📥 导入数据 (JSON)',clear:'🗑 清除所有数据',clearConfirm:'确定清除所有数据？此操作不可恢复！'},
-  toast:{saved:'设置已保存 ✓',marked:'已标记为经期开始 ✓',unmarked:'已取消标记',symptomSaved:'症状记录已保存 ✓',symptomQuick:'症状已更新 ✓',exported:'数据已导出 ✓',imported:'数据导入成功 ✓',importError:'导入失败：格式不正确',cleared:'所有数据已清除'},
-  reminder:{beforePeriod:'⏰ 预计 {days} 天后经期开始，可以提前准备哦',late:'⚠️ 经期已推迟 {days} 天，建议关注身体状况',ovulation:'✨ 今天是排卵期，备孕的最佳时机'}
-},
-'en': {
-  appTitle:'Cycle Tracker', theme:'Dark Mode', themeHint:'Switch between dark and light theme',
-  weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-  months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  today:'Today', tabs:['Stats','Symptoms','Tips','Settings'],
-  legend:['Period','Ovul./Fertile','Follicular','Luteal','Today'],
-  progressLabels:['Period','Follicular','Ovulation','Luteal'],
-  phases:{'period-on':'Period Start','period-mid':'Period','period-pred-first':'Predicted Start','period-pred':'Predicted','period-future-first':'Future Pred.','period-future':'Future Pred.','ovulation':'Ovulation','fertile':'Fertile','luteal':'Luteal','follicular':'Follicular'},
-  phaseBadges:{period:'Period',follicular:'Follicular',ovulation:'Ovulation',fertile:'Fertile',luteal:'Luteal',late:'Late'},
-  knowledgeToggle:'📖 Learn about this phase ▾', knowledgeToggleHide:'Hide ▴',
-  knowledge:{period:{title:'About the Menstrual Phase',desc:'The uterine lining sheds and is discharged with blood. This is the first phase.',what:'Estrogen and progesterone are at their lowest. The endometrium is being shed.',symptoms:'Cramps, fatigue, mood swings, headaches, lower back pain',tips:'Increase iron intake, keep warm, avoid intense exercise, get enough sleep'},follicular:{title:'About the Follicular Phase',desc:'After menstruation, follicles develop and estrogen rises.',what:'FSH stimulates follicle growth. Rising estrogen rebuilds the uterine lining.',symptoms:'Energy returning, clear thinking, improved skin, increased libido',tips:'Great for new projects, increase exercise, balanced nutrition'},ovulation:{title:'About Ovulation',desc:'A mature egg is released. Most fertile time. Egg ~24h, sperm up to 5 days.',what:'LH surge triggers ovulation. Estrogen peaks. BBT rises slightly after.',symptoms:'Mild pelvic pain, egg-white mucus, increased libido, slight temperature rise',tips:'Best time for conception, peak physical performance, good for social activities'},luteal:{title:'About the Luteal Phase',desc:'Between ovulation and next period. The corpus luteum produces progesterone.',what:'Progesterone stabilizes the lining. If no pregnancy, corpus luteum degrades.',symptoms:'PMS, breast tenderness, mood swings, bloating, food cravings',tips:'Reduce caffeine and salt, supplement B6 and magnesium, light exercise helps'},fertile:{title:'About the Fertile Window',desc:'Days around ovulation when pregnancy is most likely.',what:'Sperm survive 3-5 days. Egg survives ~24h. ~6 days form the fertile window.',symptoms:'Clear stretchy mucus, increased libido, basal temperature changes',tips:'For conception every other day, supplement folic acid, maintain good sleep'}},
-  emptyState:'Tap a date to record your first period', emptySymptom:'Tap a date on the calendar<br>to log symptoms',
-  daysUntil:'{n} days until next period', daysOverdue:'{n} days late', day:' days', periodDay:'Period Day {n}', expected:'Expected',
-  onboarding:'👋 Welcome! Tap any date on the calendar to record your first period.',
-  fabLabel:'Period today',
-  stats:{cycleTitle:'📈 Cycle Statistics',historyTitle:'📅 Recent Cycles',predTitle:'🔮 Prediction',count:'Cycles recorded',avg:'Average cycle',range:'Shortest / Longest',reg:'Regularity',next:'Next period',ovulation:'Ovulation',fertile:'Fertile window',confidence:'Confidence',future:'Future predictions'},
-  historyLabel:'● Short  ● Normal  ● Long  (dot = cycle)',
-  modal:{details:'Date Details',marked:'Recorded Period Start',phase:'Phase',day:'Cycle day',symptoms:'Symptoms',mark:'Mark Period Start',unmark:'Remove',close:'Close',quickSymptom:'Quick Symptom Log',notesPlaceholder:'Add notes...'},
-  symptoms:{cramps:'Cramps',mood:'Mood',flow:'Flow',headache:'Headache',fatigue:'Fatigue',cravings:'Cravings'},
-  tips:{period:[{icon:'🩸',text:'Your body loses iron — eat iron-rich foods like red meat, spinach, and sesame.'},{icon:'♨',text:'Keep your abdomen warm. A heating pad can help relieve discomfort.'},{icon:'💧',text:'Drink plenty of warm water and avoid icy drinks for better circulation.'},{icon:'🧘',text:'Gentle stretching or yoga helps ease discomfort. Avoid intense exercise.'},{icon:'😴',text:'Your body is working hard — get enough sleep and rest.'}],follicular:[{icon:'💪',text:'Estrogen is rising, energy returning — great time for a new fitness routine.'},{icon:'🥗',text:'Metabolism improving. Eat plenty of vegetables and fruits.'},{icon:'🎯',text:'Clear thinking and high energy — ideal for complex tasks and big decisions.'}],ovulation:[{icon:'⭐',text:'Ovulation phase. If planning pregnancy, these are your most fertile days.'},{icon:'🏃',text:'Physical performance peaks — great for high-intensity workouts.'},{icon:'💆',text:'Estrogen at peak — skin looks great, good time for social events.'}],luteal:[{icon:'🍵',text:'Reduce caffeine — it can worsen anxiety and mood swings.'},{icon:'🧘',text:'You may feel more emotional. Try meditation or deep breathing.'},{icon:'🌿',text:'Vitamin B6 and magnesium may ease premenstrual symptoms.'},{icon:'🍌',text:'Prone to bloating? Reduce salt, eat potassium-rich foods like bananas.'}]},
-  settings:{lang:'Language / 语言 / Jezik',langHint:'Switch interface language',theme:'Theme',themeHint:'Dark / Light mode',cycle:'Default cycle length',cycleHint:'Auto-calculated, can override',period:'Default period length',periodHint:'Duration of each period',override:'Use manual values',overrideHint:'Ignore auto-calculation',save:'💾 Save Settings',export:'📤 Export Data (JSON)',import:'📥 Import Data (JSON)',clear:'🗑 Clear All Data',clearConfirm:'Are you sure? This cannot be undone!'},
-  toast:{saved:'Settings saved ✓',marked:'Marked as period start ✓',unmarked:'Mark removed',symptomSaved:'Symptoms saved ✓',symptomQuick:'Symptoms updated ✓',exported:'Data exported ✓',imported:'Data imported ✓',importError:'Import failed: invalid format',cleared:'All data cleared'},
-  reminder:{beforePeriod:'⏰ Period expected in {days} days — time to prepare',late:'⚠️ Period is {days} days late — consider checking with your doctor',ovulation:'✨ Today is ovulation day — peak fertility'}
-},
 'sr': {
-  appTitle:'Ciklus Tracker', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
+  appTitle:'Anđelin Ciklus', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
   weekdays:['Pon','Uto','Sre','Čet','Pet','Sub','Ned'],
   months:['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'],
   today:'Danas', tabs:['Statistika','Simptomi','Saveti','Podeš.'],
-  legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas'],
+  legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas','Ljubav'],
   progressLabels:['Menstr.','Folikul.','Ovulacija','Lutealna'],
   phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
   phaseBadges:{period:'Menstruacija',follicular:'Folikularna',ovulation:'Ovulacija',fertile:'Plodni dani',luteal:'Lutealna',late:'Kašnjenje'},
   knowledgeToggle:'📖 Saznaj više o ovoj fazi ▾', knowledgeToggleHide:'Sakrij ▴',
-  knowledge:{period:{title:'O menstrualnoj fazi',desc:'Sluzokoža materice se ljušti i izbacuje sa krvlju.',what:'Estrogen i progesteron su na najnižem nivou. Endometrijum se odvaja.',symptoms:'Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima',tips:'Povećajte unos gvožđa, zagrejte stomak, izbegavajte naporne vežbe, spavajte dovoljno'},follicular:{title:'O folikularnoj fazi',desc:'Posle menstruacije, folikuli u jajnicima se razvijaju i estrogen raste.',what:'Hipofiza luči FSH koji stimuliše rast folikula. Estrogen obnavlja sluzokožu.',symptoms:'Povratak energije, jasnije razmišljanje, bolja koža, povećan libido',tips:'Odlično vreme za nove projekte, povećajte vežbanje, uravnotežena ishrana'},ovulation:{title:'O ovulaciji',desc:'Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.',what:'LH talas pokreće ovulaciju. Estrogen dostiže vrhunac. Bazalna temperatura blago raste.',symptoms:'Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature',tips:'Najbolje vreme za začeće, fizičke performanse na vrhuncu'},luteal:{title:'O lutealnoj fazi',desc:'Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.',what:'Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.',symptoms:'PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom',tips:'Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu'},fertile:{title:'O plodnim danima',desc:'Dani oko ovulacije kada je najveća verovatnoća začeća.',what:'Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h. Oko 6 dana čini plodni prozor.',symptoms:'Bistar rastegljiv sekret, povećan libido, promene bazalne temperature',tips:'Za začeće svaki drugi dan, folna kiselina, dobar san'}},
+  knowledge:{period:{title:'O menstrualnoj fazi',desc:'Sluzokoža materice se ljušti i izbacuje sa krvlju.',what:'Estrogen i progesteron su na najnižem nivou. Endometrijum se odvaja.',symptoms:'Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima',tips:'Povećajte unos gvožđa, zagrejte stomak, izbegavajte naporne vežbe, spavajte dovoljno'},follicular:{title:'O folikularnoj fazi',desc:'Posle menstruacije, folikuli u jajnicima se razvijaju i estrogen raste.',what:'Hipofiza luči FSH koji stimuliše rast folikula. Estrogen obnavlja sluzokožu.',symptoms:'Povratak energije, jasnije razmišljanje, bolja koža, povećan libido',tips:'Odlično vreme za nove projekte, povećajte vežbanje, uravnotežena ishrana'},ovulation:{title:'O ovulaciji',desc:'Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.',what:'LH talas pokreće ovulaciju. Estrogen dostiže vrhunac.',symptoms:'Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature',tips:'Najbolje vreme za začeće, fizičke performanse na vrhuncu'},luteal:{title:'O lutealnoj fazi',desc:'Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.',what:'Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.',symptoms:'PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom',tips:'Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu'},fertile:{title:'O plodnim danima',desc:'Dani oko ovulacije kada je najveća verovatnoća začeća.',what:'Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h.',symptoms:'Bistar rastegljiv sekret, povećan libido, promene bazalne temperature',tips:'Za začeće svaki drugi dan, folna kiselina, dobar san'}},
   emptyState:'Dodirnite datum za prvi unos', emptySymptom:'Dodirnite datum na kalendaru<br>za unos simptoma',
   daysUntil:'Još {n} dana do sledeće menstruacije', daysOverdue:'Kašnjenje {n} dana', day:' dana', periodDay:'{n}. dan ciklusa', expected:'Očekivano',
-  onboarding:'👋 Dobrodošli! Dodirnite bilo koji datum na kalendaru da biste zabeležili prvu menstruaciju.',
+  onboarding:'👋 Dobrodošla, Anđelo! Dodirni bilo koji datum da započneš. ♥',
   fabLabel:'Danas je',
+  greeting:{morning:'Dobro jutro, Anđelo moja ♥',afternoon:'Dobar dan, sunce moje ☀️',evening:'Dobro veče, zvezdo moja 🌙',msg:'Tvoje telo je neverovatno. Hajde da zajedno pratimo tvoj ciklus.',sub:'— sa ljubavlju, Barry',dismiss:'♥ Zatvori'},
   stats:{cycleTitle:'📈 Statistika ciklusa',historyTitle:'📅 Nedavni ciklusi',predTitle:'🔮 Predviđanje',count:'Zabeleženih ciklusa',avg:'Prosečan ciklus',range:'Najkraći / Najduži',reg:'Regularnost',next:'Sledeća menstruacija',ovulation:'Ovulacija',fertile:'Plodni dani',confidence:'Pouzdanost',future:'Buduća predviđanja'},
   historyLabel:'● Kratak  ● Normalan  ● Dug  (tačka = ciklus)',
   modal:{details:'Detalji datuma',marked:'Zabeležen početak',phase:'Faza',day:'Dan ciklusa',symptoms:'Simptomi',mark:'Označi početak',unmark:'Ukloni',close:'Zatvori',quickSymptom:'Brzi unos',notesPlaceholder:'Beleške...'},
   symptoms:{cramps:'Grčevi',mood:'Raspoloženje',flow:'Protok',headache:'Glavobolja',fatigue:'Umor',cravings:'Apetit'},
-  tips:{period:[{icon:'🩸',text:'Telo gubi gvožđe — jedite crveno meso, spanać i susam.'},{icon:'♨',text:'Zagrejte stomak termoforom ili toplom vodom.'},{icon:'💧',text:'Pijte dosta tople vode, izbegavajte ledene napitke.'},{icon:'🧘',text:'Blago istezanje ili joga ublažavaju tegobe.'},{icon:'😴',text:'Vaše telo naporno radi — spavajte dovoljno.'}],follicular:[{icon:'💪',text:'Estrogen raste, energija se vraća — odlično za novi fitnes plan.'},{icon:'🥗',text:'Metabolizam se poboljšava. Jedite dosta povrća i voća.'},{icon:'🎯',text:'Jasno razmišljanje i visoka energija za važne odluke.'}],ovulation:[{icon:'⭐',text:'Faza ovulacije. Ako planirate trudnoću, najplodniji dani.'},{icon:'🏃',text:'Fizičke performanse na vrhuncu — odlično za intenzivne treninge.'},{icon:'💆',text:'Estrogen na vrhuncu — koža sjajna, dobro vreme za druženja.'}],luteal:[{icon:'🍵',text:'Smanjite kofein — može pogoršati anksioznost.'},{icon:'🧘',text:'Emotivniji ste pred menstruaciju. Pokušajte meditaciju.'},{icon:'🌿',text:'Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.'},{icon:'🍌',text:'Skloni nadutosti? Smanjite so, jedite banane.'}]},
-  settings:{lang:'Jezik / Language / 语言',langHint:'Promenite jezik',theme:'Tema',themeHint:'Tamni / Svetli režim',cycle:'Dužina ciklusa',cycleHint:'Automatski, možete ručno',period:'Trajanje menstruacije',periodHint:'Trajanje svake menstruacije',override:'Ručne vrednosti',overrideHint:'Ignoriši automatski proračun',save:'💾 Sačuvaj',export:'📤 Izvezi (JSON)',import:'📥 Uvezi (JSON)',clear:'🗑 Obriši sve',clearConfirm:'Sigurni ste? Nepovratno!'},
-  toast:{saved:'Sačuvano ✓',marked:'Označeno ✓',unmarked:'Uklonjeno',symptomSaved:'Sačuvano ✓',symptomQuick:'Ažurirano ✓',exported:'Izvezeno ✓',imported:'Uvezeno ✓',importError:'Greška: neispravan format',cleared:'Obrisano'},
-  reminder:{beforePeriod:'⏰ Menstruacija za {days} dana — vreme za pripremu',late:'⚠️ Kašnjenje {days} dana — konsultujte lekara',ovulation:'✨ Danas je ovulacija — vrhunac plodnosti'}
+  tips:{period:[{icon:'🩸',text:'Telo gubi gvožđe — jedite crveno meso, spanać i susam.',source:'',tcm:false},{icon:'♨',text:'Zagrejte stomak termoforom ili toplom vodom.',source:'',tcm:false},{icon:'🍵',text:'Popijte čaj od šipurka posle obroka — umiruje grčeve.',source:'Srpska tradicija',tcm:false},{icon:'🧘',text:'Blago istezanje ili joga ublažavaju tegobe.',source:'',tcm:false},{icon:'🫘',text:'Crveni pasulj i susam bogati gvožđem — tradicionalni srpski saveznik.',source:'Srpska kuhinja',tcm:false}],follicular:[{icon:'💪',text:'Estrogen raste, energija se vraća — odlično za novi fitnes plan.',source:'',tcm:false},{icon:'🥗',text:'Jedite dosta povrća i voća za uravnoteženu ishranu.',source:'',tcm:false},{icon:'🌿',text:'U kineskoj medicini, ovo je vreme za jačanje krvi (养血). Probajte goji bobice.',source:'中医智慧',tcm:true},{icon:'🎯',text:'Jasno razmišljanje i visoka energija za važne odluke.',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'Faza ovulacije — najplodniji dani.',source:'',tcm:false},{icon:'🏃',text:'Fizičke performanse na vrhuncu — odlično za treninge.',source:'',tcm:false},{icon:'🌸',text:'U kineskoj tradiciji, ovo je vreme ravnoteže (阴阳调和). Uživajte u prirodi.',source:'中医智慧',tcm:true}],luteal:[{icon:'🍵',text:'Smanjite kofein — može pogoršati anksioznost.',source:'',tcm:false},{icon:'🌿',text:'Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.',source:'',tcm:false},{icon:'🫚',text:'Topla voda sa đumbirom i crvenim datulama greje telo pred ciklus.',source:'中医智慧 · 姜枣茶',tcm:true},{icon:'🍌',text:'Skloni nadutosti? Smanjite so, jedite banane.',source:'',tcm:false}]},
+  settings:{lang:'Jezik / Language / 语言',langHint:'Promenite jezik',theme:'Tema',themeHint:'Tamni / Svetli režim',cycle:'Dužina ciklusa',cycleHint:'Automatski, možete ručno',period:'Trajanje menstruacije',periodHint:'Trajanje svake menstruacije',override:'Ručne vrednosti',overrideHint:'Ignoriši automatski proračun',save:'💾 Sačuvaj',export:'📤 Izvezi (JSON)',import:'📥 Uvezi (JSON)',clear:'🗑 Obriši sve',clearConfirm:'Sigurni ste? Nepovratno!',anniversary:'Godišnjica',anniversaryHint:'Dan kada ste počeli'},
+  toast:{saved:'Sačuvano ✓',marked:'Označeno ✓',unmarked:'Uklonjeno',symptomSaved:'Sačuvano ✓',symptomQuick:'Ažurirano ✓',exported:'Izvezeno ✓',imported:'Uvezeno ✓',importError:'Greška',cleared:'Obrisano'},
+  reminder:{beforePeriod:'⏰ Menstruacija za {days} dana — spremi se, dušo',late:'⚠️ Kašnjenje {days} dana — konsultuj lekara',ovulation:'✨ Danas je ovulacija — vrhunac plodnosti'},
+  cycleCounter:'Zajedno: {n} ciklusa', cycleCounterSub:'Barry prati svaki tvoj ciklus ♥',
+  anniversaryTitle:'💕 Godišnjica', anniversaryLabel:'Zajedno od', anniversaryCount:'{n} dana zajedno ♥',
+  yearTitle:'Godišnji pregled'
+},
+'zh-CN': {
+  appTitle:'Anđelin Ciklus · 天使的周期', theme:'暗色模式', themeHint:'切换深色/浅色主题',
+  weekdays:['一','二','三','四','五','六','日'],
+  months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+  today:'今天', tabs:['统计','症状','贴士','设置'],
+  legend:['经期','排卵/易孕','卵泡期','黄体期','今天','♥纪念日'],
+  progressLabels:['经期','卵泡期','排卵','黄体期'],
+  phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
+  phaseBadges:{period:'经期中',follicular:'卵泡期',ovulation:'排卵日',fertile:'易孕期',luteal:'黄体期',late:'已推迟'},
+  knowledgeToggle:'📖 了解这个阶段 ▾', knowledgeToggleHide:'收起 ▴',
+  knowledge:{period:{title:'关于经期',desc:'月经周期的第一阶段。子宫内膜脱落，伴随出血排出体外。',what:'雌激素和孕激素都处于最低水平。子宫内膜正在脱落。',symptoms:'腹部绞痛、疲劳、情绪波动、头痛、腰酸',tips:'多补充铁质、注意保暖、避免剧烈运动、保证睡眠'},follicular:{title:'关于卵泡期',desc:'经期结束后，卵泡开始发育，雌激素逐渐上升。',what:'脑垂体分泌FSH刺激卵泡生长。雌激素上升使子宫内膜重新增厚。',symptoms:'精力恢复、思维清晰、皮肤状态改善',tips:'适合开始新计划、增加运动强度、均衡饮食'},ovulation:{title:'关于排卵期',desc:'成熟卵子从卵巢释放，是最易受孕的时期。',what:'LH激素激增触发排卵。雌激素达到峰值。',symptoms:'轻微腹痛、分泌物增多、性欲增强、体温微升',tips:'备孕最佳时机、体能高峰适合运动'},luteal:{title:'关于黄体期',desc:'排卵后到下次月经前的阶段。黄体分泌孕激素。',what:'孕激素上升稳定子宫内膜。如未受孕，黄体退化。',symptoms:'PMS、乳房胀痛、情绪波动、水肿、食欲变化',tips:'减少咖啡因和盐分、补充B6和镁、轻度运动'},fertile:{title:'关于易孕期',desc:'排卵日前后几天，怀孕可能性最高的时间段。',what:'精子可存活3-5天。卵子约24小时。共约6天易孕窗口。',symptoms:'分泌物清亮黏滑、性欲增强、基础体温变化',tips:'备孕可隔天同房、补充叶酸、保持良好作息'}},
+  emptyState:'点击日历标记第一次经期', emptySymptom:'点击日历中的日期<br>来记录当日症状',
+  daysUntil:'距下次月经还有 {n} 天', daysOverdue:'已推迟 {n} 天', day:'天', periodDay:'经期第 {n} 天', expected:'预计',
+  onboarding:'👋 欢迎！点击日历开始记录吧 ♥',
+  fabLabel:'今天来了',
+  greeting:{morning:'早安，我的天使 Anđelo ♥',afternoon:'下午好，我的太阳 ☀️',evening:'晚安，我的星星 🌙',msg:'你的身体很了不起。让我们一起追踪你的周期。',sub:'— 爱你的 Barry',dismiss:'♥ 开始'},
+  stats:{cycleTitle:'📈 周期统计',historyTitle:'📅 近期周期',predTitle:'🔮 当前预测',count:'已记录周期数',avg:'平均周期',range:'最短 / 最长',reg:'规律性',next:'下次月经',ovulation:'排卵日',fertile:'易孕窗口',confidence:'置信度',future:'未来预测周期'},
+  historyLabel:'● 偏短  ● 正常  ● 偏长  (每点=一个周期)',
+  modal:{details:'日期详情',marked:'已记录的经期开始日',phase:'阶段',day:'周期第几天',symptoms:'已记录症状',mark:'标记经期开始',unmark:'取消标记',close:'关闭',quickSymptom:'快速记录症状',notesPlaceholder:'添加备注...'},
+  symptoms:{cramps:'痛经',mood:'情绪',flow:'流量',headache:'头痛',fatigue:'疲劳',cravings:'食欲'},
+  tips:{period:[{icon:'🩸',text:'经期身体流失铁质，多吃红肉、菠菜、黑芝麻等富含铁的食物。',source:'',tcm:false},{icon:'♨',text:'注意腹部保暖，可使用暖水袋或暖宝宝缓解不适。',source:'',tcm:false},{icon:'🍵',text:'喝杯红枣姜茶，暖宫驱寒，缓解经期不适。',source:'中医养生 · 姜枣茶',tcm:true},{icon:'🧘',text:'轻度拉伸或瑜伽有助缓解不适，避免剧烈运动。',source:'',tcm:false},{icon:'🫘',text:'红豆补血养心——相思之物，亦养身之物。',source:'中医智慧 · 红豆',tcm:true}],follicular:[{icon:'💪',text:'卵泡期雌激素上升，精力和体能恢复中，适合开启新运动计划。',source:'',tcm:false},{icon:'🥗',text:'新陈代谢较好，多吃蔬菜水果，均衡营养。',source:'',tcm:false},{icon:'🌿',text:'中医认为此时宜养血（养血），枸杞红枣茶正当时。',source:'中医智慧',tcm:true},{icon:'🎯',text:'思维清晰精力充沛，适合处理复杂任务和做重要决定。',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'排卵期，如有备孕计划，这几天是最佳时机。',source:'',tcm:false},{icon:'🏃',text:'体能处于高峰，适合高强度训练。',source:'',tcm:false},{icon:'🌸',text:'中医讲究阴阳调和，此时阴阳平衡，适合赏花散步。',source:'中医养生',tcm:true}],luteal:[{icon:'🍵',text:'黄体期减少咖啡因摄入，可能加重焦虑和情绪波动。',source:'',tcm:false},{icon:'🌿',text:'适当补充维生素B6和镁，有助缓解经前不适。',source:'',tcm:false},{icon:'🫚',text:'姜枣茶温经散寒——东方古老的温柔。',source:'中医智慧 · 姜枣茶',tcm:true},{icon:'🍌',text:'易水肿，减少盐分，多吃香蕉等富含钾的食物。',source:'',tcm:false}]},
+  settings:{lang:'语言 / Language / Jezik',langHint:'切换界面语言',theme:'主题',themeHint:'深色/浅色模式',cycle:'默认周期长度',cycleHint:'系统自动计算，可手动覆盖',period:'默认经期天数',periodHint:'每次经期持续天数',override:'使用手动值预测',overrideHint:'开启后忽略自动计算',save:'💾 保存设置',export:'📤 导出数据 (JSON)',import:'📥 导入数据 (JSON)',clear:'🗑 清除所有数据',clearConfirm:'确定清除所有数据？此操作不可恢复！',anniversary:'纪念日',anniversaryHint:'你们在一起的那一天'},
+  toast:{saved:'设置已保存 ✓',marked:'已标记 ✓',unmarked:'已取消标记',symptomSaved:'症状已保存 ✓',symptomQuick:'症状已更新 ✓',exported:'数据已导出 ✓',imported:'数据导入成功 ✓',importError:'导入失败',cleared:'所有数据已清除'},
+  reminder:{beforePeriod:'⏰ 预计 {days} 天后经期开始，提前准备哦',late:'⚠️ 经期已推迟 {days} 天，建议关注身体状况',ovulation:'✨ 今天是排卵期，备孕的最佳时机'},
+  cycleCounter:'一起走过 {n} 个周期', cycleCounterSub:'Barry 记录着你的每一个周期 ♥',
+  anniversaryTitle:'💕 纪念日', anniversaryLabel:'在一起的日子', anniversaryCount:'已相恋 {n} 天 ♥',
+  yearTitle:'年度概览'
+},
+'en': {
+  appTitle:'Anđelin Ciklus · Angel\'s Cycle', theme:'Dark Mode', themeHint:'Switch theme',
+  weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  today:'Today', tabs:['Stats','Symptoms','Tips','Settings'],
+  legend:['Period','Ovul./Fertile','Follicular','Luteal','Today','♥ Love'],
+  progressLabels:['Period','Follicular','Ovulation','Luteal'],
+  phases:{'period-on':'Period Start','period-mid':'Period','period-pred-first':'Predicted Start','period-pred':'Predicted','period-future-first':'Future Pred.','period-future':'Future Pred.','ovulation':'Ovulation','fertile':'Fertile','luteal':'Luteal','follicular':'Follicular'},
+  phaseBadges:{period:'Period',follicular:'Follicular',ovulation:'Ovulation',fertile:'Fertile',luteal:'Luteal',late:'Late'},
+  knowledgeToggle:'📖 Learn about this phase ▾', knowledgeToggleHide:'Hide ▴',
+  knowledge:{period:{title:'Menstrual Phase',desc:'The uterine lining sheds. First phase of the cycle.',what:'Estrogen and progesterone at lowest. Endometrium shedding.',symptoms:'Cramps, fatigue, mood swings, headaches',tips:'Increase iron, keep warm, avoid intense exercise, sleep well'},follicular:{title:'Follicular Phase',desc:'Follicles develop and estrogen rises.',what:'FSH stimulates follicle growth. Estrogen rebuilds lining.',symptoms:'Energy returning, clear thinking, better skin',tips:'Great for new projects, increase exercise, balanced nutrition'},ovulation:{title:'Ovulation',desc:'Mature egg released. Most fertile time.',what:'LH surge triggers ovulation. Estrogen peaks.',symptoms:'Mild pelvic pain, egg-white mucus, increased libido',tips:'Best time for conception, peak performance'},luteal:{title:'Luteal Phase',desc:'Between ovulation and next period.',what:'Progesterone stabilizes lining. Corpus luteum degrades if no pregnancy.',symptoms:'PMS, breast tenderness, mood swings, bloating',tips:'Reduce caffeine and salt, supplement B6 and magnesium'},fertile:{title:'Fertile Window',desc:'Days around ovulation when pregnancy is most likely.',what:'Sperm survive 3-5 days. Egg ~24h. ~6-day fertile window.',symptoms:'Clear mucus, increased libido, temperature changes',tips:'Every other day for conception, folic acid, good sleep'}},
+  emptyState:'Tap a date to record your first period', emptySymptom:'Tap a date on the calendar<br>to log symptoms',
+  daysUntil:'{n} days until next period', daysOverdue:'{n} days late', day:' days', periodDay:'Period Day {n}', expected:'Expected',
+  onboarding:'👋 Welcome, Anđela! Tap any date to begin. ♥',
+  fabLabel:'Period today',
+  greeting:{morning:'Good morning, my Anđela ♥',afternoon:'Good afternoon, my sunshine ☀️',evening:'Good evening, my star 🌙',msg:'Your body is amazing. Let\'s track your cycle together.',sub:'— with love, Barry',dismiss:'♥ Enter'},
+  stats:{cycleTitle:'📈 Cycle Statistics',historyTitle:'📅 Recent Cycles',predTitle:'🔮 Prediction',count:'Cycles recorded',avg:'Average cycle',range:'Shortest / Longest',reg:'Regularity',next:'Next period',ovulation:'Ovulation',fertile:'Fertile window',confidence:'Confidence',future:'Future predictions'},
+  historyLabel:'● Short  ● Normal  ● Long  (dot = cycle)',
+  modal:{details:'Date Details',marked:'Recorded Period Start',phase:'Phase',day:'Cycle day',symptoms:'Symptoms',mark:'Mark Period Start',unmark:'Remove',close:'Close',quickSymptom:'Quick Symptom Log',notesPlaceholder:'Add notes...'},
+  symptoms:{cramps:'Cramps',mood:'Mood',flow:'Flow',headache:'Headache',fatigue:'Fatigue',cravings:'Cravings'},
+  tips:{period:[{icon:'🩸',text:'Your body loses iron — eat iron-rich foods like red meat and spinach.',source:'',tcm:false},{icon:'♨',text:'Keep your abdomen warm. A heating pad helps relieve discomfort.',source:'',tcm:false},{icon:'🍵',text:'Try rosehip tea after meals — a Serbian tradition for easing cramps.',source:'Serbian tradition',tcm:false},{icon:'🧘',text:'Gentle stretching or yoga helps. Avoid intense exercise.',source:'',tcm:false},{icon:'🫘',text:'Red beans nourish the blood — an ancient Chinese remedy for women.',source:'TCM Wisdom',tcm:true}],follicular:[{icon:'💪',text:'Estrogen rising, energy returning — great time for new fitness.',source:'',tcm:false},{icon:'🥗',text:'Eat plenty of vegetables and fruits for balanced nutrition.',source:'',tcm:false},{icon:'🌿',text:'In Chinese medicine, this is the time to nourish blood (养血). Try goji tea.',source:'TCM Wisdom',tcm:true},{icon:'🎯',text:'Clear thinking and high energy — ideal for important decisions.',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'Ovulation phase. Most fertile days if planning pregnancy.',source:'',tcm:false},{icon:'🏃',text:'Physical performance peaks — great for high-intensity workouts.',source:'',tcm:false},{icon:'🌸',text:'In Chinese tradition, a time of balance (阴阳调和). Enjoy nature.',source:'TCM Wisdom',tcm:true}],luteal:[{icon:'🍵',text:'Reduce caffeine — it can worsen anxiety and mood swings.',source:'',tcm:false},{icon:'🌿',text:'Vitamin B6 and magnesium may ease premenstrual symptoms.',source:'',tcm:false},{icon:'🫚',text:'Ginger tea with red dates warms the body — an ancient Eastern remedy.',source:'TCM Wisdom',tcm:true},{icon:'🍌',text:'Prone to bloating? Reduce salt, eat bananas.',source:'',tcm:false}]},
+  settings:{lang:'Language / 语言 / Jezik',langHint:'Switch language',theme:'Theme',themeHint:'Dark / Light mode',cycle:'Default cycle length',cycleHint:'Auto-calculated',period:'Default period length',periodHint:'Duration of each period',override:'Use manual values',overrideHint:'Ignore auto-calculation',save:'💾 Save Settings',export:'📤 Export Data (JSON)',import:'📥 Import Data (JSON)',clear:'🗑 Clear All Data',clearConfirm:'Are you sure? This cannot be undone!',anniversary:'Anniversary',anniversaryHint:'The day you two started'},
+  toast:{saved:'Saved ✓',marked:'Marked ✓',unmarked:'Removed',symptomSaved:'Saved ✓',symptomQuick:'Updated ✓',exported:'Exported ✓',imported:'Imported ✓',importError:'Import failed',cleared:'Cleared'},
+  reminder:{beforePeriod:'⏰ Period in {days} days — get ready, darling',late:'⚠️ Period {days} days late — check with doctor',ovulation:'✨ Ovulation day — peak fertility'},
+  cycleCounter:'Together: {n} cycles', cycleCounterSub:'Barry tracks every cycle for you ♥',
+  anniversaryTitle:'💕 Anniversary', anniversaryLabel:'Together since', anniversaryCount:'{n} days together ♥',
+  yearTitle:'Year Overview'
 }};
 
 /* ================================================================
    STATE
    ================================================================ */
-let lang = localStorage.getItem('cycle-lang') || 'zh-CN';
+let lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
+let anniversaryDate = localStorage.getItem('cycle-anniversary') || '';
 
 function t(key, fallback) {
-  const keys = key.split('.'); let val = I18N[lang];
+  const keys = key.split('.'); let val = I18N[lang] || I18N['sr'];
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
 function setLang(l) { lang = l; localStorage.setItem('cycle-lang', l); }
-function applyTheme(th) {
-  theme = th; localStorage.setItem('cycle-theme', th);
-  document.documentElement.setAttribute('data-theme', th);
-  document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙';
-  const sel = document.getElementById('set-theme'); if (sel) sel.value = th;
-}
+function applyTheme(th) { theme = th; localStorage.setItem('cycle-theme', th); document.documentElement.setAttribute('data-theme', th); document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙'; const sel = document.getElementById('set-theme'); if (sel) sel.value = th; }
 function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); }
 function switchTheme(th) { applyTheme(th); }
 
 /* ================================================================
-   DATA — Fixed timezone bug: all date keys use LOCAL time
+   ANNIVERSARY
    ================================================================ */
-const STORAGE_KEY = 'cycle-data-v4';
+function saveAnniversary() {
+  anniversaryDate = document.getElementById('anniversaryDate').value;
+  localStorage.setItem('cycle-anniversary', anniversaryDate);
+  updateAnniversaryCount();
+  renderCalendar();
+}
+function updateAnniversaryCount() {
+  const el = document.getElementById('ann-count');
+  if (!anniversaryDate) { if(el) el.textContent = ''; return; }
+  const days = daysDiff(new Date(anniversaryDate), today());
+  if (days >= 0) el.textContent = t('anniversaryCount').replace('{n}', days);
+}
+function isAnniversary(d) {
+  if (!anniversaryDate) return false;
+  const ad = new Date(anniversaryDate);
+  return d.getDate() === ad.getDate() && d.getMonth() === ad.getMonth();
+}
+
+/* ================================================================
+   DATA
+   ================================================================ */
+const STORAGE_KEY = 'cycle-data-v5';
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const d = JSON.parse(raw);
-      // Also migrate old v3 data
-      const oldRaw = localStorage.getItem('cycle-data-v3');
-      if (oldRaw && !d._migrated) {
-        const od = JSON.parse(oldRaw);
-        return { records:(od.records||[]).map(r=>new Date(r)), symptoms:od.symptoms||{}, settings:{cycleLength:28,periodLength:5,manualOverride:false,...od.settings}, _migrated:true };
-      }
-      return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, settings:{cycleLength:28,periodLength:5,manualOverride:false,...d.settings}, _migrated:true };
-    }
+    if (raw) { const d = JSON.parse(raw); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, settings:{cycleLength:28,periodLength:5,manualOverride:false,...d.settings}, _migrated:true }; }
   } catch(e) {}
+  // Migrate old data
+  for (const k of ['cycle-data-v4','cycle-data-v3','cycle-tracker-data']) {
+    const old = localStorage.getItem(k);
+    if (old) { try { const d=JSON.parse(old); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, settings:{cycleLength:28,periodLength:5,manualOverride:false,...d.settings}, _migrated:true }; } catch(e){} }
+  }
   return { records:[], symptoms:{}, settings:{cycleLength:28,periodLength:5,manualOverride:false}, _migrated:true };
 }
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ records:state.records.map(fmtDate), symptoms:state.symptoms, settings:state.settings, _migrated:true }));
-}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ records:state.records.map(fmtDate), symptoms:state.symptoms, settings:state.settings, _migrated:true })); }
 let state = loadState();
 
-// All date formatting now uses LOCAL timezone consistently
 const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 const addDays = (d,n) => { const r=new Date(d); r.setDate(r.getDate()+n); return r; };
@@ -615,47 +718,128 @@ const d0 = d => { const r=new Date(d); r.setHours(0,0,0,0); return r; };
 const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
 
 /* ================================================================
+   GREETING OVERLAY
+   ================================================================ */
+function showGreeting() {
+  const lastGreet = localStorage.getItem('cycle-last-greet');
+  const td = fmtDate(today());
+  if (lastGreet === td) return;
+  const overlay = document.getElementById('greetingOverlay');
+  const g = t('greeting');
+  const hour = new Date().getHours();
+  let greetingMsg = g.morning;
+  let icon = '✨';
+  if (hour >= 12 && hour < 18) { greetingMsg = g.afternoon; icon = '☀️'; }
+  else if (hour >= 18 || hour < 5) { greetingMsg = g.evening; icon = '🌟'; }
+  document.getElementById('greetingIcon').textContent = icon;
+  document.getElementById('greetingName').textContent = greetingMsg;
+  document.getElementById('greetingMsg').textContent = g.msg;
+  document.getElementById('greetingSub').textContent = g.sub;
+  document.getElementById('greetingDismiss').textContent = g.dismiss;
+  overlay.classList.remove('hidden');
+  // Simple feather-like particles
+  spawnFeathers();
+}
+function dismissGreeting() {
+  const overlay = document.getElementById('greetingOverlay');
+  overlay.classList.add('hiding');
+  setTimeout(() => { overlay.classList.add('hidden'); overlay.classList.remove('hiding'); }, 500);
+  localStorage.setItem('cycle-last-greet', fmtDate(today()));
+}
+function spawnFeathers() {
+  const card = document.querySelector('.greeting-card');
+  if (!card) return;
+  for (let i = 0; i < 8; i++) {
+    const feather = document.createElement('span');
+    feather.className = 'feather';
+    feather.textContent = ['🪶','✦','·'][i % 3];
+    feather.style.left = (10 + Math.random() * 80) + '%';
+    feather.style.top = (5 + Math.random() * 40) + '%';
+    feather.style.animationDelay = (Math.random() * 2) + 's';
+    feather.style.animationDuration = (3 + Math.random() * 3) + 's';
+    card.appendChild(feather);
+    setTimeout(() => feather.remove(), 5000);
+  }
+}
+
+/* ================================================================
+   MOON PHASE
+   ================================================================ */
+function updateMoonPhase() {
+  const el = document.getElementById('moonPhase');
+  // Simple moon phase approximation
+  const lp = 2551443; // lunar period in seconds
+  const nm = new Date('2000-01-06T18:14:00Z').getTime() / 1000;
+  const phase = ((Date.now() / 1000 - nm) % lp) / lp;
+  const icons = ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
+  const idx = Math.round(phase * 8) % 8;
+  el.innerHTML = `<span class="moon-icon">${icons[idx]}</span>`;
+}
+
+/* ================================================================
+   EASTER EGGS
+   ================================================================ */
+let titleClicks = 0;
+function handleTitleClick() {
+  titleClicks++;
+  if (titleClicks >= 5) { titleClicks = 0; spawnPetals(); }
+  setTimeout(() => { if (titleClicks < 5 && titleClicks > 0) titleClicks = 0; }, 2000);
+}
+function spawnPetals() {
+  const petals = ['🌸','💮','🌺','🩷','✿','🌷'];
+  for (let i = 0; i < 25; i++) {
+    const petal = document.createElement('span');
+    petal.className = 'petal';
+    petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+    petal.style.left = (Math.random() * 100) + '%';
+    petal.style.top = -(10 + Math.random() * 30) + 'px';
+    petal.style.animationDelay = (Math.random() * 1.5) + 's';
+    petal.style.animationDuration = (3 + Math.random() * 3) + 's';
+    petal.style.fontSize = (0.8 + Math.random() * 1.5) + 'rem';
+    document.body.appendChild(petal);
+    setTimeout(() => petal.remove(), 5000);
+  }
+}
+
+/* ================================================================
+   CYCLE CELEBRATION
+   ================================================================ */
+let lastCycleCount = 0;
+function checkCycleCelebration() {
+  const cycles = predict().cycles.length;
+  if (cycles > lastCycleCount && cycles >= 1 && state.records.length >= 2) {
+    lastCycleCount = cycles;
+    const el = document.createElement('div');
+    el.className = 'cycle-celebration';
+    el.innerHTML = `<span class="celeb-icon">💝</span><span class="celeb-text">${t('cycleCounter').replace('{n}', cycles)}</span>`;
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .6s'; }, 3000);
+    setTimeout(() => el.remove(), 4000);
+    // Update cycle counter
+    updateCycleCounter(cycles);
+  }
+}
+function updateCycleCounter(n) {
+  const card = document.getElementById('cycleCounterCard');
+  if (n > 0) { card.style.display = ''; document.getElementById('cc-count').textContent = n; document.getElementById('cc-subtitle').textContent = t('cycleCounterSub'); }
+  else card.style.display = 'none';
+}
+
+/* ================================================================
    PREDICTION
    ================================================================ */
 function predict() {
-  const {records,settings}=state;
-  const sorted=[...records].sort((a,b)=>a-b);
+  const {records,settings}=state; const sorted=[...records].sort((a,b)=>a-b);
   const def={lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:settings.cycleLength,periodLen:settings.periodLength,avgCycle:settings.cycleLength,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
   if(sorted.length===0) return def;
   def.lastStart=d0(sorted[sorted.length-1]);
   if(sorted.length===1){def.nextStart=addDays(def.lastStart,settings.cycleLength);}
-  else{
-    for(let i=1;i<sorted.length;i++) def.cycles.push(daysDiff(d0(sorted[i-1]),d0(sorted[i])));
-    const recent=def.cycles.slice(-6);
-    def.avgCycle=Math.round(recent.reduce((a,b)=>a+b,0)/recent.length);
-    def.minCycle=Math.min(...recent); def.maxCycle=Math.max(...recent);
-    const variance=recent.reduce((s,c)=>s+(c-def.avgCycle)**2,0)/recent.length;
-    def.stdDev=Math.round(Math.sqrt(variance)*10)/10;
-    if(def.stdDev<=3) def.confidence='high'; else if(def.stdDev<=6) def.confidence='medium'; else def.confidence='low';
-    const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;
-    def.nextStart=addDays(def.lastStart,useLen);
-  }
-  const td=today();
-  // Overdue: recalculate next period if current prediction has passed
-  if(def.nextStart&&td>def.nextStart){
-    const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;
-    const elapsed=daysDiff(def.lastStart,td);
-    const passed=Math.floor(elapsed/useLen);
-    if(passed>0){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}
-    // Still overdue after recalculation?
-    if(td>def.nextStart){def.isOverdue=true;def.overdueDays=daysDiff(def.nextStart,td);}
-    else{def.isOverdue=false;def.overdueDays=0;}
-  }
-  if(def.nextStart){def.ovulation=addDays(def.nextStart,-14);def.fertileStart=addDays(def.ovulation,-3);def.fertileEnd=addDays(def.ovulation,2);
-    const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;
-    for(let i=1;i<=2;i++){const np=addDays(def.nextStart,useLen*i);def.futurePeriods.push({start:np,ovulation:addDays(np,-14),fertileStart:addDays(np,-17),fertileEnd:addDays(np,-11)});}
-  }
+  else{for(let i=1;i<sorted.length;i++) def.cycles.push(daysDiff(d0(sorted[i-1]),d0(sorted[i])));const recent=def.cycles.slice(-6);def.avgCycle=Math.round(recent.reduce((a,b)=>a+b,0)/recent.length);def.minCycle=Math.min(...recent);def.maxCycle=Math.max(...recent);const variance=recent.reduce((s,c)=>s+(c-def.avgCycle)**2,0)/recent.length;def.stdDev=Math.round(Math.sqrt(variance)*10)/10;if(def.stdDev<=3)def.confidence='high';else if(def.stdDev<=6)def.confidence='medium';else def.confidence='low';const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;def.nextStart=addDays(def.lastStart,useLen);}
+  const td=today();if(def.nextStart&&td>def.nextStart){const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;const elapsed=daysDiff(def.lastStart,td);const passed=Math.floor(elapsed/useLen);if(passed>0){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}if(td>def.nextStart){def.isOverdue=true;def.overdueDays=daysDiff(def.nextStart,td);}}
+  if(def.nextStart){def.ovulation=addDays(def.nextStart,-14);def.fertileStart=addDays(def.ovulation,-3);def.fertileEnd=addDays(def.ovulation,2);const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;for(let i=1;i<=2;i++){const np=addDays(def.nextStart,useLen*i);def.futurePeriods.push({start:np,ovulation:addDays(np,-14),fertileStart:addDays(np,-17),fertileEnd:addDays(np,-11)});}}
   return def;
 }
 
-/* ================================================================
-   PHASE
-   ================================================================ */
 function getPhase(date,pred){
   const d=d0(date);
   for(const rec of state.records){const s=d0(rec),e=addDays(s,pred.periodLen-1);e.setHours(0,0,0,0);if(d>=s&&d<=e) return sameDay(d,s)?'period-on':'period-mid';}
@@ -672,15 +856,14 @@ function getPhase(date,pred){
    UI STATE
    ================================================================ */
 let viewYear=today().getFullYear(), viewMonth=today().getMonth();
-let selectedDate=null, symptomDate=null, knowledgeOpen=false, obDismissed=false;
-const toastQ=[]; let toastTimer=null;
+let selectedDate=null, symptomDate=null, knowledgeOpen=false;
 
 /* ================================================================
    UI UPDATE
    ================================================================ */
 function updateLangUI(){
-  document.getElementById('h-title').textContent=t('appTitle');
-  document.getElementById('todayBtn').textContent=t('today');
+  document.getElementById('h-title').textContent = t('appTitle');
+  document.getElementById('todayBtn').textContent = t('today');
   document.querySelectorAll('.tb-label').forEach((el,i)=>{el.textContent=t('tabs')[i];});
   document.getElementById('set-language').value=lang;
   document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);});
@@ -688,6 +871,7 @@ function updateLangUI(){
   document.getElementById('weekdaysRow').innerHTML=wd.map((d,i)=>`<span${i>=5?' style="color:var(--rose);opacity:.6"':''}>${d}</span>`).join('');
   const lg=t('legend');
   document.getElementById('legend').innerHTML=`<span class="l-period">${lg[0]}</span><span class="l-fertile">${lg[1]}</span><span class="l-follicular">${lg[2]}</span><span class="l-luteal">${lg[3]}</span><span style="font-weight:700;font-size:.66rem;">▣ ${lg[4]}</span>`;
+  if (anniversaryDate) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
   const pl=t('progressLabels');
   document.querySelector('.lbl-period').textContent=pl[0];document.querySelector('.lbl-follicular').textContent=pl[1];
   document.querySelector('.lbl-ovulation').textContent=pl[2];document.querySelector('.lbl-luteal').textContent=pl[3];
@@ -702,16 +886,19 @@ function updateLangUI(){
   ['set-l-lang','set-h-lang','set-l-theme','set-h-theme','set-l-cycle','set-h-cycle','set-l-period','set-h-period','set-l-override','set-h-override'].forEach(id=>{const el=document.getElementById(id);if(el){const k=id.replace('set-','').replace('l-','').replace('h-','');el.textContent=st[k]||'';}});
   document.getElementById('save-settings-btn').textContent=st.save;
   document.getElementById('export-btn').textContent=st.export;document.getElementById('import-btn').textContent=st.import;document.getElementById('clear-btn').textContent=st.clear;
+  document.getElementById('anniversary-title').textContent = st.anniversary;
+  document.getElementById('ann-label').textContent = st.anniversaryLabel;
   const ss=t('stats');
   document.getElementById('st-title-cycle').textContent=ss.cycleTitle;document.getElementById('st-title-history').textContent=ss.historyTitle;document.getElementById('st-title-pred').textContent=ss.predTitle;
   document.getElementById('st-l-count').textContent=ss.count;document.getElementById('st-l-avg').textContent=ss.avg;document.getElementById('st-l-range').textContent=ss.range;document.getElementById('st-l-reg').textContent=ss.reg;
   document.getElementById('st-l-next').textContent=ss.next;document.getElementById('st-l-ovu').textContent=ss.ovulation;document.getElementById('st-l-fert').textContent=ss.fertile;document.getElementById('st-l-conf').textContent=ss.confidence;document.getElementById('st-l-future').textContent=ss.future;
   document.getElementById('historyLabel').textContent=t('historyLabel');
+  document.getElementById('year-overview-title').textContent = t('yearTitle');
+  document.getElementById('cc-title').textContent = '💝 ' + t('cycleCounter').replace('{n}', '');
   const md=t('modal');
   document.getElementById('m-l-phase').textContent=md.phase;document.getElementById('m-l-day').textContent=md.day;document.getElementById('m-l-symp').textContent=md.symptoms;
   document.getElementById('m-divider').textContent=md.quickSymptom;document.getElementById('modal-close-btn').textContent=md.close;
   document.getElementById('fab-label').textContent=t('fabLabel');
-  if(!obDismissed) document.getElementById('ob-text').textContent=t('onboarding');
 }
 
 function applyAllUI(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();}
@@ -730,13 +917,16 @@ function renderCalendar(){
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
     const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
     const key=fmtDate(d); const hasSymptom=state.symptoms[key]&&Object.entries(state.symptoms[key]).some(([k,v])=>k!=='notes'&&v>0);
+    const isAnn = isAnniversary(d);
     const el=document.createElement('div'); el.className='day';
     if(!inMonth) el.classList.add('other-month');
     if(isToday) el.classList.add('today');
     if(phase) el.classList.add(phase);
     if(phase==='period-on'&&recordedStarts.has(key)) el.classList.add('recorded');
+    if(isAnn) el.classList.add('anniversary');
     el.textContent=d.getDate();
     if(hasSymptom&&!phase){const dot=document.createElement('span');dot.className='mini-dot pink';el.appendChild(dot);}
+    if(isAnn&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
     if(inMonth) el.addEventListener('click',()=>openModal(d,pred));
     grid.appendChild(el);
   }
@@ -749,7 +939,7 @@ function updateProgress(pred){
   const badges=t('phaseBadges');
   if(state.records.length===0){numEl.textContent='--';unitEl.textContent='';subEl.textContent=t('emptyState');fillEl.style.width='0%';badgeEl.textContent='';badgeEl.className='phase-badge';document.querySelectorAll('.progress-labels span').forEach(s=>s.classList.remove('current'));return;}
   const phase=getPhase(td,pred); let pct=0,label='',bCls='';document.querySelectorAll('.progress-labels span').forEach(s=>s.classList.remove('current'));
-  if(phase==='period-on'||phase==='period-mid'){const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return td>=s&&td<=e;});const dayNum=cur?daysDiff(d0(cur),td)+1:1;numEl.textContent=dayNum;unitEl.textContent=` / ${pred.periodLen}`;subEl.textContent=t('periodDay').replace('{n}',dayNum);pct=(dayNum/pred.periodLen)*15;label=badges.period;bCls='period';numEl.style.color='var(--rose)';document.querySelector('.lbl-period').classList.add('current');}
+  if(phase==='period-on'||phase==='period-mid'){const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return td>=s&&td<=e;});const dayNum=cur?daysDiff(d0(cur),td)+1:1;numEl.textContent=dayNum;unitEl.textContent=` / ${pred.periodLen}`;subEl.textContent=t('periodDay').replace('{n}',dayNum);pct=(dayNum/pred.periodLen)*15;label=badges.period;bCls='period';numEl.style.color='var(--love)';document.querySelector('.lbl-period').classList.add('current');}
   else if(pred.isOverdue){numEl.textContent=pred.overdueDays;unitEl.textContent='';subEl.textContent=`${t('daysOverdue').replace('{n}',pred.overdueDays)} · ${t('expected')} ${fmtDate(pred.nextStart)}`;bCls='late';label=badges.late;numEl.style.color='#E65100';pct=100;document.querySelector('.lbl-luteal').classList.add('current');}
   else{const totalLen=pred.nextStart?daysDiff(pred.lastStart,pred.nextStart):pred.cycleLen;const elapsed=daysDiff(pred.lastStart,td);const remain=pred.nextStart?daysDiff(td,pred.nextStart):totalLen-elapsed;pct=Math.min(100,Math.max(0,(elapsed/totalLen)*100));numEl.textContent=remain;unitEl.textContent='';
     if(remain>0&&remain<=7){label=badges.luteal;numEl.style.color='var(--lavender-dark)';bCls='luteal';document.querySelector('.lbl-luteal').classList.add('current');}
@@ -760,7 +950,7 @@ function updateProgress(pred){
     else{numEl.style.color='var(--text-muted)';}
     subEl.textContent=remain>=0?t('daysUntil').replace('{n}',remain):`${t('expected')} ${fmtDate(pred.nextStart)}`;}
   fillEl.style.width=pct+'%';
-  if(bCls==='period'||bCls==='late') fillEl.style.background='var(--rose)';else if(bCls==='follicular') fillEl.style.background='var(--sage)';else if(bCls==='ovulation'||bCls==='fertile') fillEl.style.background='var(--teal)';else if(bCls==='luteal') fillEl.style.background='var(--lavender)';
+  if(bCls==='period'||bCls==='late') fillEl.style.background='var(--love)';else if(bCls==='follicular') fillEl.style.background='var(--sage)';else if(bCls==='ovulation'||bCls==='fertile') fillEl.style.background='var(--teal)';else if(bCls==='luteal') fillEl.style.background='var(--lavender)';
   badgeEl.textContent=label;badgeEl.className='phase-badge '+bCls;
 }
 
@@ -791,7 +981,6 @@ function updateYearOverview(pred){
 }
 
 function goToMonth(m){viewMonth=m;renderCalendar();}
-
 function updateReminder(pred){
   const banner=document.getElementById('reminderBanner'); const td=today(); const phase=getPhase(td,pred); let msg=''; const r=t('reminder');
   if(phase==='ovulation') msg=r.ovulation;
@@ -799,61 +988,37 @@ function updateReminder(pred){
   else if(pred.nextStart){const remain=daysDiff(td,pred.nextStart);if(remain>0&&remain<=3) msg=r.beforePeriod.replace('{days}',remain);}
   if(msg){banner.style.display='flex';banner.innerHTML=`${msg} <span class="dismiss" onclick="this.parentElement.style.display='none'">✕</span>`;}else{banner.style.display='none';}
 }
+function updateFab(){const fab=document.getElementById('fabBtn');if(state.records.length===0){fab.classList.add('hidden');}else{fab.classList.remove('hidden');}}
 
-function updateFab(){
-  const fab=document.getElementById('fabBtn');
-  if(state.records.length===0){fab.classList.add('hidden');}else{fab.classList.remove('hidden');}
-}
 document.getElementById('fabBtn').addEventListener('click',()=>{
   const td=today(); const isMarked=state.records.some(r=>sameDay(r,td));
-  if(isMarked){toast(fmtDate(td)+' 已标记过');return;} // Fixed: no misleading "unmarked" message
+  if(isMarked){toast(fmtDate(td)+' - već označeno');return;}
   state.records.push(new Date(td)); state.records.sort((a,b)=>a-b); saveState(); renderAll(); updateFab();
-  toast(t('toast.marked'));
+  toast(t('toast.marked')); checkCycleCelebration();
   const fab=document.getElementById('fabBtn'); fab.classList.add('celebrate'); setTimeout(()=>fab.classList.remove('celebrate'),500);
 });
 
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){
-  selectedDate=new Date(date); const key=fmtDate(selectedDate); const phase=getPhase(date,pred); const isMarked=state.records.some(r=>sameDay(r,selectedDate)); const md=t('modal'); const phases=t('phases');
-  document.getElementById('modal-date').textContent=fmtDate(selectedDate); document.getElementById('modal-phase').textContent=phases[phase]||'--';
-  const dayRow=document.getElementById('modal-day-row');
-  if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}
-  else{dayRow.style.display='none';}
-  const sympRow=document.getElementById('modal-symp-row'); const symp=state.symptoms[key]; const symNames=t('symptoms');
-  if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}
-  document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});
-  const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');
-  if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}
-  else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}
-  renderKnowledge(phase,key); renderSymptomPanel(key);
-  document.getElementById('modal').classList.remove('hidden');
-}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
-function renderKnowledge(phase,dateKey){
-  const panel=document.getElementById('knowledgePanel'); const toggleBtn=document.getElementById('knowledgeToggle'); let cat=null;
-  if(phase&&(phase.startsWith('period'))) cat='period';
-  else if(phase==='ovulation') cat='ovulation'; else if(phase==='fertile') cat='fertile'; else if(phase==='follicular') cat='follicular'; else if(phase==='luteal') cat='luteal';
-  else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}
-  if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong style="font-size:.72rem;color:var(--text)">🩺 ${lang==='sr'?'Šta se dešava':lang==='en'?'What\'s happening':'身体在发生什么'}:</strong> ${kn.what}</p><p style="margin-top:6px"><strong style="font-size:.72rem;color:var(--text)">📋 ${lang==='sr'?'Simptomi':lang==='en'?'Symptoms':'常见症状'}:</strong> ${kn.symptoms}</p><p style="margin-top:6px"><strong style="font-size:.72rem;color:var(--text)">💡 ${lang==='sr'?'Saveti':lang==='en'?'Tips':'小贴士'}:</strong> ${kn.tips}</p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}
-  else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}
-}
+function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
-function togglePeriodRecord(){if(!selectedDate)return;const idx=state.records.findIndex(r=>sameDay(r,selectedDate));if(idx>=0){state.records.splice(idx,1);toast(t('toast.unmarked'));}else{state.records.push(new Date(selectedDate));state.records.sort((a,b)=>a-b);toast(t('toast.marked'));}saveState();renderAll();updateFab();openModal(selectedDate,predict());}
+function togglePeriodRecord(){if(!selectedDate)return;const idx=state.records.findIndex(r=>sameDay(r,selectedDate));if(idx>=0){state.records.splice(idx,1);toast(t('toast.unmarked'));}else{state.records.push(new Date(selectedDate));state.records.sort((a,b)=>a-b);toast(t('toast.marked'));checkCycleCelebration();}saveState();renderAll();updateFab();openModal(selectedDate,predict());}
 function removePeriodRecord(){if(!selectedDate)return;state.records=state.records.filter(r=>!sameDay(r,selectedDate));saveState();toast(t('toast.unmarked'));renderAll();updateFab();closeModal();}
-function quickToggleSymptom(name){if(!selectedDate)return;const key=fmtDate(selectedDate);if(!state.symptoms[key]) state.symptoms[key]={};const s=state.symptoms[key];s[name]=s[name]?0:2;if(s[name]===0) delete s[name];document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{if(chip.dataset.s===name) chip.classList.toggle('on',s[name]>0);});saveState();toast(t('toast.symptomQuick'));}
+function quickToggleSymptom(name){if(!selectedDate)return;const key=fmtDate(selectedDate);if(!state.symptoms[key])state.symptoms[key]={};const s=state.symptoms[key];s[name]=s[name]?0:2;if(s[name]===0)delete s[name];document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{if(chip.dataset.s===name)chip.classList.toggle('on',s[name]>0);});saveState();toast(t('toast.symptomQuick'));}
 
 /* ================================================================
    SYMPTOMS / TIPS / SETTINGS
    ================================================================ */
-function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById('symptom-date-label').textContent=dateKey+' '+t('modal.symptoms');document.getElementById('symptom-empty').style.display='none';document.getElementById('symptom-content').style.display='';const symp=state.symptoms[dateKey]||{};['cramps','mood','flow','headache','fatigue','cravings'].forEach(s=>{const lvl=symp[s]||0;const dots=document.getElementById('dots-'+s);if(!dots)return;dots.querySelectorAll('.dot').forEach((dot,i)=>{dot.className='dot'+(i<lvl?' on':'');});const item=dots.closest('.symptom-item');if(item) item.classList.toggle('selected',lvl>0);});document.getElementById('symptom-notes').value=symp.notes||'';}
-function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate]) state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
-function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate]) state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
-function renderTips(){const pred=predict();const td=today();const phase=getPhase(td,pred);let cat='period';if(phase==='period-on'||phase==='period-mid')cat='period';else if(phase==='ovulation'||phase==='fertile')cat='ovulation';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';const names={period:'经期',follicular:'卵泡期',ovulation:'排卵期',luteal:'黄体期'};const tips=t('tips.'+cat);document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span></div></div>`).join('');}
-function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;}
+function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById('symptom-date-label').textContent=dateKey+' '+t('modal.symptoms');document.getElementById('symptom-empty').style.display='none';document.getElementById('symptom-content').style.display='';const symp=state.symptoms[dateKey]||{};['cramps','mood','flow','headache','fatigue','cravings'].forEach(s=>{const lvl=symp[s]||0;const dots=document.getElementById('dots-'+s);if(!dots)return;dots.querySelectorAll('.dot').forEach((dot,i)=>{dot.className='dot'+(i<lvl?' on':'');});const item=dots.closest('.symptom-item');if(item)item.classList.toggle('selected',lvl>0);});document.getElementById('symptom-notes').value=symp.notes||'';}
+function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
+function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
+function renderTips(){const pred=predict();const td=today();const phase=getPhase(td,pred);let cat='period';if(phase==='period-on'||phase==='period-mid')cat='period';else if(phase==='ovulation'||phase==='fertile')cat='ovulation';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};const tips=t('tips.'+cat);document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
+function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('anniversaryDate').value=anniversaryDate;updateAnniversaryCount();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||5;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
-function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`cycle-data-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
+function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
 function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(){try{const d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error();state.records=d.records.map(r=>new Date(r));state.symptoms=d.symptoms||{};state.settings={cycleLength:28,periodLength:5,manualOverride:false,...d.settings};saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
 function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},settings:{cycleLength:28,periodLength:5,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
 
@@ -862,11 +1027,7 @@ function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={re
    ================================================================ */
 function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}renderAll();}
 function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();renderAll();}
-(function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60) changeMonth(diff>0?-1:1);});})();
-
-/* ================================================================
-   TABS
-   ================================================================ */
+(function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
@@ -875,37 +1036,25 @@ document.getElementById('set-theme').addEventListener('change',function(){switch
 /* ================================================================
    ONBOARDING
    ================================================================ */
-function dismissOnboarding(){obDismissed=true;document.getElementById('onboardingBanner').style.display='none';localStorage.setItem('cycle-ob-dismissed','1');}
-if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';}else{obDismissed=true;}
+function dismissOnboarding(){document.getElementById('onboardingBanner').style.display='none';localStorage.setItem('cycle-ob-dismissed','1');}
+if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';}
 
-/* ================================================================
-   TOAST — with stacking limit (max 3)
-   ================================================================ */
-function toast(msg){
-  const container=document.getElementById('toastContainer');
-  while(container.children.length>=3){container.firstChild.remove();}
-  const el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);
-  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';},1600);
-  setTimeout(()=>{if(el.parentNode)el.remove();},2000);
-}
+function toast(msg){const container=document.getElementById('toastContainer');while(container.children.length>=3){container.firstChild.remove();}const el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';},1600);setTimeout(()=>{if(el.parentNode)el.remove();},2000);}
 
-/* ================================================================
-   MODAL SWIPE-TO-DISMISS
-   ================================================================ */
-(function(){
-  let startY=0; const overlay=document.getElementById('modal');
-  overlay.addEventListener('touchstart',e=>{if(e.target===overlay||e.target.closest('.modal'))startY=e.touches[0].clientY;},{passive:true});
-  overlay.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientY-startY;if(diff>80&&!overlay.classList.contains('hidden'))closeModal();});
-})();
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this) closeModal();});
+/* Swipe to dismiss modal */
+(function(){let startY=0;const overlay=document.getElementById('modal');overlay.addEventListener('touchstart',e=>{if(e.target===overlay||e.target.closest('.modal'))startY=e.touches[0].clientY;},{passive:true});overlay.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientY-startY;if(diff>80&&!overlay.classList.contains('hidden'))closeModal();});})();
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 /* ================================================================
    RENDER ALL & INIT
    ================================================================ */
 function renderAll(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();}
-
-applyTheme(theme); setLang(lang); renderAll(); loadSettingsUI();
+applyTheme(theme);setLang(lang);renderAll();loadSettingsUI();
 if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';}
+showGreeting();
+updateMoonPhase();
+updateAnniversaryCount();
+updateCycleCounter(predict().cycles.length);
 </script>
 </body>
 </html>
