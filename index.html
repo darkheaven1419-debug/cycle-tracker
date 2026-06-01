@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Anđelin Ciklus · 天使的周期</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <style>
 /* ================================================================
    DESIGN TOKENS — Barry ♥ Anđela
@@ -86,6 +87,7 @@ body {
   background:rgba(0,0,0,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
   animation: greetIn .6s ease-out;
 }
+.greeting-overlay.hidden { display:none; }
 .greeting-overlay.hiding { animation: greetOut .5s ease-in forwards; }
 @keyframes greetIn { from{opacity:0} to{opacity:1} }
 @keyframes greetOut { to{opacity:0;pointer-events:none} }
@@ -398,6 +400,7 @@ body {
   <div class="greeting-card">
     <span class="greeting-icon" id="greetingIcon">✨</span>
     <div class="greeting-name" id="greetingName">Anđelo moja</div>
+    <div class="greeting-for" style="font-size:.78rem;color:var(--gold);margin-bottom:8px;font-style:italic">— za Anđelu Nemet —</div>
     <div class="greeting-msg" id="greetingMsg"></div>
     <div class="greeting-sub" id="greetingSub"></div>
     <button class="greeting-dismiss" id="greetingDismiss" onclick="dismissGreeting()">♥</button>
@@ -742,10 +745,20 @@ function showGreeting() {
 }
 function dismissGreeting() {
   const overlay = document.getElementById('greetingOverlay');
+  if (!overlay || overlay.classList.contains('hidden')) return;
   overlay.classList.add('hiding');
   setTimeout(() => { overlay.classList.add('hidden'); overlay.classList.remove('hiding'); }, 500);
   localStorage.setItem('cycle-last-greet', fmtDate(today()));
 }
+// Backup: ensure button works via JS + click outside to dismiss
+(function() {
+  const btn = document.getElementById('greetingDismiss');
+  if (btn) btn.addEventListener('click', dismissGreeting);
+  const overlay = document.getElementById('greetingOverlay');
+  if (overlay) overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) dismissGreeting();
+  });
+})();
 function spawnFeathers() {
   const card = document.querySelector('.greeting-card');
   if (!card) return;
