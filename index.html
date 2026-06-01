@@ -83,11 +83,11 @@ body {
 
 /* ---- Greeting Overlay ---- */
 .greeting-overlay {
-  position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center;
+  position:fixed; inset:0; z-index:500; align-items:center; justify-content:center;
   background:rgba(0,0,0,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
   animation: greetIn .6s ease-out;
 }
-.greeting-overlay.hidden { display:none; }
+.greeting-overlay.hidden { display:none !important; }
 .greeting-overlay.hiding { animation: greetOut .5s ease-in forwards; }
 @keyframes greetIn { from{opacity:0} to{opacity:1} }
 @keyframes greetOut { to{opacity:0;pointer-events:none} }
@@ -150,9 +150,9 @@ body {
 .panel { animation:fadeUp .45s ease-out .22s both; }
 
 /* Header */
-.header { display:flex; align-items:center; justify-content:center; padding:20px 0 8px; position:relative; gap:8px; }
-.header h1 { font-size:1.3rem; font-weight:650; letter-spacing:-.02em; cursor:default; user-select:none; }
-.header-actions { position:absolute; right:0; top:18px; display:flex; gap:6px; align-items:center; }
+.header { display:flex; align-items:center; justify-content:center; padding:20px 110px 8px 0; position:relative; min-height:48px; }
+.header h1 { font-size:1.1rem; font-weight:650; letter-spacing:-.02em; cursor:default; user-select:none; text-align:right; }
+.header-actions { position:absolute; right:0; top:16px; display:flex; gap:4px; align-items:center; background:var(--card); border-radius:20px; padding:3px 4px; box-shadow:var(--shadow-xs); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
 
 .lang-switch { display:flex; gap:2px; background:var(--border); border-radius:14px; padding:2px; }
 .lang-btn { border:none; background:none; font-size:.63rem; font-weight:700; padding:5px 9px; border-radius:12px; cursor:pointer; color:var(--text-muted); transition:all .18s; font-family:var(--font); min-width:28px; min-height:28px; }
@@ -724,14 +724,16 @@ const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
    GREETING OVERLAY
    ================================================================ */
 function showGreeting() {
-  const lastGreet = localStorage.getItem('cycle-last-greet');
-  const td = fmtDate(today());
+  var lastGreet = localStorage.getItem('cycle-last-greet');
+  var td = fmtDate(today());
   if (lastGreet === td) return;
-  const overlay = document.getElementById('greetingOverlay');
-  const g = t('greeting');
-  const hour = new Date().getHours();
-  let greetingMsg = g.morning;
-  let icon = '✨';
+  var overlay = document.getElementById('greetingOverlay');
+  if (!overlay) return;
+  var g = t('greeting');
+  if (!g || !g.morning) return; // Guard against i18n failure
+  var hour = new Date().getHours();
+  var greetingMsg = g.morning;
+  var icon = '✨';
   if (hour >= 12 && hour < 18) { greetingMsg = g.afternoon; icon = '☀️'; }
   else if (hour >= 18 || hour < 5) { greetingMsg = g.evening; icon = '🌟'; }
   document.getElementById('greetingIcon').textContent = icon;
@@ -739,15 +741,20 @@ function showGreeting() {
   document.getElementById('greetingMsg').textContent = g.msg;
   document.getElementById('greetingSub').textContent = g.sub;
   document.getElementById('greetingDismiss').textContent = g.dismiss;
+  overlay.style.display = 'flex';
   overlay.classList.remove('hidden');
-  // Simple feather-like particles
   spawnFeathers();
 }
 function dismissGreeting() {
-  const overlay = document.getElementById('greetingOverlay');
-  if (!overlay || overlay.classList.contains('hidden')) return;
+  var overlay = document.getElementById('greetingOverlay');
+  if (!overlay) return;
+  if (overlay.classList.contains('hidden')) return;
   overlay.classList.add('hiding');
-  setTimeout(() => { overlay.classList.add('hidden'); overlay.classList.remove('hiding'); }, 500);
+  setTimeout(function() {
+    overlay.classList.add('hidden');
+    overlay.classList.remove('hiding');
+    overlay.style.display = 'none';
+  }, 500);
   localStorage.setItem('cycle-last-greet', fmtDate(today()));
 }
 // Backup: ensure button works via JS + click outside to dismiss
