@@ -249,8 +249,9 @@ body {
 .flag-badge.cn { background:linear-gradient(135deg,#DE2910,#FF4500); }
 .flag-badge.rs { background:linear-gradient(135deg,#C6363C 33%,#0C4076 33%,#0C4076 66%,#fff 66%); color:#0C4076; }
 /* Expandable holiday detail */
-.holiday-name { cursor:pointer; font-weight:600; }
-.holiday-detail { display:none; font-size:.7rem; color:var(--text-muted); margin-top:2px; line-height:1.5; }
+.holiday-name { cursor:pointer; font-weight:600; color:var(--text); }
+.holiday-name:hover { color:var(--love); }
+.holiday-detail { display:none; font-size:.72rem; color:var(--text-muted); margin-top:4px; line-height:1.6; padding:8px 12px; background:var(--bg); border-radius:10px; }
 .holiday-detail.open { display:block; }
 
 .legend { display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:14px; font-size:.7rem; color:var(--text-muted); justify-content:center; }
@@ -837,6 +838,39 @@ function renderWeather(w) {
 }
 
 /* ================================================================
+   CALENDAR DATA LOADER — rich stories + solar terms
+   ================================================================ */
+var calendarExtraData = null;
+function loadCalendarData(cb) {
+  if (calendarExtraData) { cb(calendarExtraData); return; }
+  var cached = localStorage.getItem('cycle-caldata');
+  if (cached) { try { calendarExtraData = JSON.parse(cached); cb(calendarExtraData); return; } catch(e) {} }
+  fetch('calendar-data.json').then(function(r){return r.json()}).then(function(d){
+    calendarExtraData = d; localStorage.setItem('cycle-caldata', JSON.stringify(d)); cb(d);
+  }).catch(function(){});
+}
+function toggleHolidayStory(el, hid) {
+  var detail = document.getElementById('story-'+hid);
+  if (!detail) return;
+  var isOpen = detail.classList.contains('open');
+  if (isOpen) { detail.classList.remove('open'); el.textContent = el.textContent.replace(' ▴',' ▾'); return; }
+  // Load rich story if available
+  loadCalendarData(function(data) {
+    var holiday = null;
+    (data.holidays||[]).forEach(function(h) {
+      var hn = (h.name['en']||h.name['sr']).toLowerCase().replace(/[^a-z0-9]+/g,'-');
+      if (hn === hid) holiday = h;
+    });
+    if (holiday && holiday.story) {
+      var story = holiday.story[lang] || holiday.story[lang.split('-')[0]] || holiday.story['sr'];
+      detail.textContent = story;
+    }
+    detail.classList.add('open');
+    el.textContent = el.textContent.replace(' ▾',' ▴');
+  });
+}
+
+/* ================================================================
    ROMANTIC TOUCHES
    ================================================================ */
 function updateLoveCounter() {
@@ -1155,7 +1189,7 @@ document.getElementById('fabBtn').addEventListener('click',()=>{
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var flagFallback='<span class="flag-badge '+h.country+'">'+(h.country==='cn'?'中':'RS')+'</span>';return flagEmoji+' '+flagFallback+'<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\')">'+n+'</span><span class="holiday-detail">'+d+'</span>'});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var hid=(h.name['en']||h.name['sr']).toLowerCase().replace(/[^a-z0-9]+/g,'-');return flagEmoji+' <span class="holiday-name" onclick="toggleHolidayStory(this,\''+hid+'\')">'+n+' ▾</span><span class="holiday-detail" id="story-'+hid+'">'+d+'</span>'});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
