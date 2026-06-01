@@ -412,6 +412,7 @@ body {
 <div class="app">
   <div class="header">
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
+    <div id="titleLoveCounter" style="font-size:.62rem;color:var(--gold);font-style:italic;text-align:center;margin-top:-2px"></div>
     <div class="header-actions">
       <div class="moon-phase" id="moonPhase" title="月相 · Moon Phase"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
@@ -475,7 +476,7 @@ body {
       <div class="history-label" id="historyLabel" style="font-size:.62rem;color:var(--text-muted);margin-top:6px"></div>
     </div>
     <div class="card" id="yearOverviewCard">
-      <h3>📅 <span id="year-overview-title">年度概览</span> <span id="yearLabel" style="font-weight:400;font-size:.7rem;color:var(--text-muted)"></span></h3>
+      <h3>📅 <span id="year-overview-title"></span> <span id="yearLabel" style="font-weight:400;font-size:.7rem;color:var(--text-muted)"></span></h3>
       <div class="year-grid" id="yearGrid"></div>
     </div>
     <div class="card"><h3 id="st-title-pred"></h3>
@@ -515,7 +516,7 @@ body {
     </div>
 
     <div class="dev-signature">
-      <div class="dev-name">张梓桐 · Barry Zhang</div>
+      <div class="dev-name">张梓桐 · Barry Primus</div>
       <div class="dev-for">za Anđelu Nemet ♥</div>
       <div class="dev-divider"></div>
       <div class="dev-tagline">Od Pekinga do Vojvodine<br>preko planina i mora, samo za tebe</div>
@@ -582,18 +583,18 @@ const I18N = {
   phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
   phaseBadges:{period:'Menstruacija',follicular:'Folikularna',ovulation:'Ovulacija',fertile:'Plodni dani',luteal:'Lutealna',late:'Kašnjenje'},
   knowledgeToggle:'📖 Saznaj više o ovoj fazi ▾', knowledgeToggleHide:'Sakrij ▴',
-  knowledge:{period:{title:'O menstrualnoj fazi',desc:'Sluzokoža materice se ljušti i izbacuje sa krvlju.',what:'Estrogen i progesteron su na najnižem nivou. Endometrijum se odvaja.',symptoms:'Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima',tips:'Povećajte unos gvožđa, zagrejte stomak, izbegavajte naporne vežbe, spavajte dovoljno'},follicular:{title:'O folikularnoj fazi',desc:'Posle menstruacije, folikuli u jajnicima se razvijaju i estrogen raste.',what:'Hipofiza luči FSH koji stimuliše rast folikula. Estrogen obnavlja sluzokožu.',symptoms:'Povratak energije, jasnije razmišljanje, bolja koža, povećan libido',tips:'Odlično vreme za nove projekte, povećajte vežbanje, uravnotežena ishrana'},ovulation:{title:'O ovulaciji',desc:'Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.',what:'LH talas pokreće ovulaciju. Estrogen dostiže vrhunac.',symptoms:'Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature',tips:'Najbolje vreme za začeće, fizičke performanse na vrhuncu'},luteal:{title:'O lutealnoj fazi',desc:'Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.',what:'Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.',symptoms:'PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom',tips:'Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu'},fertile:{title:'O plodnim danima',desc:'Dani oko ovulacije kada je najveća verovatnoća začeća.',what:'Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h.',symptoms:'Bistar rastegljiv sekret, povećan libido, promene bazalne temperature',tips:'Za začeće svaki drugi dan, folna kiselina, dobar san'}},
+  knowledge:{period:{title:'O menstrualnoj fazi',desc:'Sluzokoža materice se ljušti i izbacuje se sa krvlju.',what:'Estrogen i progesteron su na najnižem nivou. Endometrijum se odvaja.',symptoms:'Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima',tips:'Povećajte unos gvožđa, zagrejte stomak, izbegavajte naporne vežbe, spavajte dovoljno'},follicular:{title:'O folikularnoj fazi',desc:'Posle menstruacije, folikuli u jajnicima se razvijaju i estrogen raste.',what:'Hipofiza luči FSH koji stimuliše rast folikula. Estrogen obnavlja sluzokožu.',symptoms:'Povratak energije, jasnije razmišljanje, bolja koža, povećan libido',tips:'Odlično vreme za nove projekte, povećajte vežbanje, uravnotežena ishrana'},ovulation:{title:'O ovulaciji',desc:'Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.',what:'LH talas pokreće ovulaciju. Estrogen dostiže vrhunac.',symptoms:'Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature',tips:'Najbolje vreme za začeće, fizičke performanse na vrhuncu'},luteal:{title:'O lutealnoj fazi',desc:'Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.',what:'Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.',symptoms:'PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom',tips:'Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu'},fertile:{title:'O plodnim danima',desc:'Dani oko ovulacije kada je najveća verovatnoća začeća.',what:'Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h.',symptoms:'Bistar rastegljiv sekret, povećan libido, promene bazalne temperature',tips:'Za začeće svaki drugi dan, folna kiselina, dobar san'}},
   emptyState:'Dodirnite datum za prvi unos', emptySymptom:'Dodirnite datum na kalendaru<br>za unos simptoma',
   daysUntil:'Još {n} dana do sledeće menstruacije', daysOverdue:'Kašnjenje {n} dana', day:' dana', periodDay:'{n}. dan ciklusa', expected:'Očekivano',
   onboarding:'👋 Dobrodošla, Anđelo! Dodirni bilo koji datum da započneš. ♥',
   fabLabel:'Danas je',
-  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'Dobro jutro, anđele moj. Želim ti divan dan — budi nežna prema sebi.',sub:'— Sa ljubavlju, Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'Prijatno popodne, moja draga. Napravi pauzu, popij čaj i odmori — brineš me kad preteruješ.',sub:'— Tvoj Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'Dobro veče, najlepša moja. Polako večeras — zaslužuješ miran i topao kraj dana.',sub:'— Sa ljubavlju, tvoj Barry'},night:{icon:'🌙',name:'Anđelo!',msg:'Zašto si još uvek budna? Odmah na spavanje! Brinem kad ne spavaš, znaš.',sub:'— Voli te, Barry'},dismiss:'♥ Zatvori'},
+  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'Dobro jutro, anđele moj. Želim ti divan dan — budi nežna prema sebi.',sub:'— Sa ljubavlju, Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'Prijatno popodne, moja draga. Napravi pauzu, popij čaj i odmori — brinem se kad preteruješ.',sub:'— Tvoj Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'Dobro veče, najlepša moja. Polako večeras — zaslužuješ miran i topao kraj dana.',sub:'— Sa ljubavlju, tvoj Barry'},night:{icon:'🌙',name:'Anđelo!',msg:'Zašto si još uvek budna? Odmah na spavanje! Brinem se kad ne spavaš, znaš.',sub:'— Voli te, Barry'},dismiss:'♥ Zatvori'},
   stats:{cycleTitle:'📈 Statistika ciklusa',historyTitle:'📅 Nedavni ciklusi',predTitle:'🔮 Predviđanje',count:'Zabeleženih ciklusa',avg:'Prosečan ciklus',range:'Najkraći / Najduži',reg:'Regularnost',next:'Sledeća menstruacija',ovulation:'Ovulacija',fertile:'Plodni dani',confidence:'Pouzdanost',future:'Buduća predviđanja'},
   historyLabel:'● Kratak  ● Normalan  ● Dug  (tačka = ciklus)',
   modal:{details:'Detalji datuma',marked:'Zabeležen početak',phase:'Faza',day:'Dan ciklusa',symptoms:'Simptomi',mark:'Označi početak',unmark:'Ukloni',close:'Zatvori',quickSymptom:'Brzi unos',notesPlaceholder:'Beleške...'},
-  symptoms:{cramps:'Grčevi',mood:'Raspoloženje',flow:'Protok',headache:'Glavobolja',fatigue:'Umor',cravings:'Apetit'},
-  tips:{period:[{icon:'🩸',text:'Telo gubi gvožđe — jedite crveno meso, spanać i susam.',source:'',tcm:false},{icon:'♨',text:'Zagrejte stomak termoforom ili toplom vodom.',source:'',tcm:false},{icon:'🍵',text:'Popijte čaj od šipurka posle obroka — umiruje grčeve.',source:'Srpska tradicija',tcm:false},{icon:'🧘',text:'Blago istezanje ili joga ublažavaju tegobe.',source:'',tcm:false},{icon:'🫘',text:'Crveni pasulj i susam bogati gvožđem — tradicionalni srpski saveznik.',source:'Srpska kuhinja',tcm:false}],follicular:[{icon:'💪',text:'Estrogen raste, energija se vraća — odlično za novi fitnes plan.',source:'',tcm:false},{icon:'🥗',text:'Jedite dosta povrća i voća za uravnoteženu ishranu.',source:'',tcm:false},{icon:'🌿',text:'U kineskoj medicini, ovo je vreme za jačanje krvi (养血). Probajte goji bobice.',source:'中医智慧',tcm:true},{icon:'🎯',text:'Jasno razmišljanje i visoka energija za važne odluke.',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'Faza ovulacije — najplodniji dani.',source:'',tcm:false},{icon:'🏃',text:'Fizičke performanse na vrhuncu — odlično za treninge.',source:'',tcm:false},{icon:'🌸',text:'U kineskoj tradiciji, ovo je vreme ravnoteže (阴阳调和). Uživajte u prirodi.',source:'中医智慧',tcm:true}],luteal:[{icon:'🍵',text:'Smanjite kofein — može pogoršati anksioznost.',source:'',tcm:false},{icon:'🌿',text:'Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.',source:'',tcm:false},{icon:'🫚',text:'Topla voda sa đumbirom i crvenim datulama greje telo pred ciklus.',source:'中医智慧 · 姜枣茶',tcm:true},{icon:'🍌',text:'Skloni nadutosti? Smanjite so, jedite banane.',source:'',tcm:false}]},
-  settings:{lang:'Jezik / Language / 语言',langHint:'Promenite jezik',theme:'Tema',themeHint:'Tamni / Svetli režim',cycle:'Dužina ciklusa',cycleHint:'Automatski, možete ručno',period:'Trajanje menstruacije',periodHint:'Trajanje svake menstruacije',override:'Ručne vrednosti',overrideHint:'Ignoriši automatski proračun',save:'💾 Sačuvaj',export:'📤 Izvezi (JSON)',import:'📥 Uvezi (JSON)',clear:'🗑 Obriši sve',clearConfirm:'Sigurni ste? Nepovratno!',anniversary:'Godišnjica',anniversaryHint:'Dan kada ste počeli'},
+  symptoms:{cramps:'Grčevi',mood:'Raspoloženje',flow:'Protok',headache:'Glavobolja',fatigue:'Umor',cravings:'Žudnja'},
+  tips:{period:[{icon:'🩸',text:'Telo gubi gvožđe — jedite crveno meso, spanać i susam.',source:'',tcm:false},{icon:'♨',text:'Zagrejte stomak termoforom ili toplom vodom.',source:'',tcm:false},{icon:'🍵',text:'Popijte čaj od šipurka posle obroka — umiruje grčeve.',source:'Srpska tradicija',tcm:false},{icon:'🧘',text:'Blago istezanje ili joga ublažavaju tegobe.',source:'',tcm:false},{icon:'🫘',text:'Crveni pasulj i susam bogati gvožđem — tradicionalni srpski izvor gvožđa.',source:'Srpska kuhinja',tcm:false}],follicular:[{icon:'💪',text:'Estrogen raste, energija se vraća — odlično za novi fitnes plan.',source:'',tcm:false},{icon:'🥗',text:'Jedite dosta povrća i voća za uravnoteženu ishranu.',source:'',tcm:false},{icon:'🌿',text:'U kineskoj medicini, ovo je vreme za jačanje krvi (养血). Probajte goji bobice.',source:'中医智慧',tcm:true},{icon:'🎯',text:'Jasno razmišljanje i visoka energija za važne odluke.',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'Faza ovulacije — najplodniji dani.',source:'',tcm:false},{icon:'🏃',text:'Fizičke performanse na vrhuncu — odlično za treninge.',source:'',tcm:false},{icon:'🌸',text:'U kineskoj tradiciji, ovo je vreme ravnoteže (阴阳调和). Uživajte u prirodi.',source:'中医智慧',tcm:true}],luteal:[{icon:'🍵',text:'Smanjite kofein — može pogoršati anksioznost.',source:'',tcm:false},{icon:'🌿',text:'Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.',source:'',tcm:false},{icon:'🫚',text:'Topla voda sa đumbirom i crvenim datulama greje telo pred ciklus.',source:'中医智慧 · 姜枣茶',tcm:true},{icon:'🍌',text:'Skloni nadutosti? Smanjite so, jedite banane.',source:'',tcm:false}]},
+  settings:{lang:'Jezik / Language / 语言',langHint:'Promenite jezik',theme:'Tema',themeHint:'Tamni / Svetli režim',cycle:'Dužina ciklusa',cycleHint:'Automatski, možete ručno',period:'Trajanje menstruacije',periodHint:'Trajanje svake menstruacije',override:'Ručne vrednosti',overrideHint:'Ignoriši automatski proračun',save:'💾 Sačuvaj',export:'📤 Izvezi (JSON)',import:'📥 Uvezi (JSON)',clear:'🗑 Obriši sve',clearConfirm:'Sigurna si? Ovo se ne može opozvati!',anniversary:'Godišnjica',anniversaryHint:'Dan kada ste počeli'},
   toast:{saved:'Sačuvano ✓',marked:'Označeno ✓',unmarked:'Uklonjeno',symptomSaved:'Sačuvano ✓',symptomQuick:'Ažurirano ✓',exported:'Izvezeno ✓',imported:'Uvezeno ✓',importError:'Greška',cleared:'Obrisano'},
   reminder:{beforePeriod:'⏰ Menstruacija za {days} dana — spremi se, dušo',late:'⚠️ Kašnjenje {days} dana — konsultuj lekara',ovulation:'✨ Danas je ovulacija — vrhunac plodnosti'},
   cycleCounter:'Zajedno: {n} ciklusa', cycleCounterSub:'Barry prati svaki tvoj ciklus ♥',
@@ -727,6 +728,26 @@ const addDays = (d,n) => { const r=new Date(d); r.setDate(r.getDate()+n); return
 const daysDiff = (a,b) => Math.round((b.getTime()-a.getTime())/86400000);
 const d0 = d => { const r=new Date(d); r.setHours(0,0,0,0); return r; };
 const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
+
+/* ================================================================
+   ROMANTIC TOUCHES
+   ================================================================ */
+function updateLoveCounter() {
+  var el = document.getElementById('titleLoveCounter');
+  if (!el || !annDateLove) return;
+  var days = daysDiff(new Date(annDateLove), today());
+  if (days >= 0) el.textContent = '♥ ' + days + (lang==='sr'?' dana zajedno':lang==='en'?' days together':' 天在一起');
+}
+function randomThinkingOfYou() {
+  if (Math.random() > 0.18) return; // 18% chance
+  var msgs = lang==='sr'
+    ? ['Upravo sam pomislio na tebe ♥','Nadam se da se osećaš dobro danas ✨','Tvoj osmeh mi je najdraža stvar 🌸','Mislim na tebe... uvek 💫','Barry je upravo pomislio na tebe 💝']
+    : lang==='en'
+    ? ['Just thought of you ♥','Hope you are feeling good today ✨','Your smile is my favorite thing 🌸','Thinking of you... always 💫','Barry was just thinking of you 💝']
+    : ['刚刚在想你 ♥','希望你今天心情好 ✨','你的笑容是我最喜欢的 🌸','一直在想你 💫','Barry 刚刚想到了你 💝'];
+  var msg = msgs[Math.floor(Math.random()*msgs.length)];
+  setTimeout(function(){ toast(msg); }, 3000);
+}
 
 /* ================================================================
    GREETING OVERLAY
@@ -890,7 +911,8 @@ function updateLangUI(){
   const emojis={cramps:'😣',mood:'😊',flow:'💧',headache:'🤕',fatigue:'😴',cravings:'🍫'};
   document.getElementById('modal-symptoms').innerHTML=['cramps','mood','flow','headache','fatigue','cravings'].map(s=>`<button class="sym-chip" data-s="${s}">${emojis[s]} ${syms[s]}</button>`).join('');
   const st=t('settings');
-  ['set-l-lang','set-h-lang','set-l-theme','set-h-theme','set-l-cycle','set-h-cycle','set-l-period','set-h-period','set-l-override','set-h-override'].forEach(id=>{const el=document.getElementById(id);if(el){const k=id.replace('set-','').replace('l-','').replace('h-','');el.textContent=st[k]||'';}});
+  ['set-l-lang','set-l-theme','set-l-cycle','set-l-period','set-l-override'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=st[id.replace('set-l-','')]||'';}});
+['set-h-lang','set-h-theme','set-h-cycle','set-h-period','set-h-override'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=st[id.replace('set-h-','')+'Hint']||'';}});
   document.getElementById('save-settings-btn').textContent=st.save;
   document.getElementById('export-btn').textContent=st.export;document.getElementById('import-btn').textContent=st.import;document.getElementById('clear-btn').textContent=st.clear;
   document.getElementById('anniversary-title').textContent = t('anniversaryTitle');
@@ -910,14 +932,14 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();}
+function applyAllUI(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();}
 
 /* ================================================================
    CALENDAR
    ================================================================ */
 function renderCalendar(){
   const pred=predict(); const td=today();
-  document.getElementById('monthLabel').textContent = lang==='sr' ? `${viewMonth+1}. mesec ${viewYear}.` : lang==='en' ? `${t('months')[viewMonth]} ${viewYear}` : `${viewYear}年 ${viewMonth+1}月`;
+  document.getElementById('monthLabel').textContent = lang==='sr' ? `${t('months')[viewMonth]} ${viewYear}.` : lang==='en' ? `${t('months')[viewMonth]} ${viewYear}` : `${viewYear}年${viewMonth+1}月`;
   const first=new Date(viewYear,viewMonth,1); let dow=first.getDay(); dow=dow===0?6:dow-1;
   const gridStart=addDays(first,-dow); const grid=document.getElementById('daysGrid'); grid.innerHTML='';
   const recordedStarts=new Set(state.records.map(fmtDate));
@@ -1046,7 +1068,7 @@ document.getElementById('set-theme').addEventListener('change',function(){switch
    ONBOARDING
    ================================================================ */
 function dismissOnboarding(){document.getElementById('onboardingBanner').style.display='none';localStorage.setItem('cycle-ob-dismissed','1');}
-if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';}
+function showOnboardingIfNeeded(){if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';document.getElementById('ob-text').textContent=t('onboarding');}}
 
 function toast(msg){const container=document.getElementById('toastContainer');while(container.children.length>=3){container.firstChild.remove();}const el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';},1600);setTimeout(()=>{if(el.parentNode)el.remove();},2000);}
 
@@ -1059,11 +1081,14 @@ document.getElementById('modal').addEventListener('click',function(e){if(e.targe
    ================================================================ */
 function renderAll(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();}
 applyTheme(theme);setLang(lang);renderAll();loadSettingsUI();
-if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';}
+showOnboardingIfNeeded();
 showGreeting();
 updateMoonPhase();
 updateAnniversaryCount();
 updateCycleCounter(predict().cycles.length);
+lastCycleCount = predict().cycles.length;
+updateLoveCounter();
+randomThinkingOfYou();
 </script>
 </body>
 </html>
