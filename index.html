@@ -110,8 +110,6 @@ body {
 .greeting-name { font-size:1.5rem; font-weight:700; color:var(--love); margin-bottom:6px; font-style:italic; }
 .greeting-msg { font-size:.82rem; color:var(--text-muted); line-height:1.6; }
 .greeting-sub { font-size:.7rem; color:var(--gold); margin-top:8px; }
-.greeting-dismiss { margin-top:18px; padding:10px 28px; border-radius:22px; border:none; background:var(--love); color:#fff; font-size:.82rem; font-weight:600; cursor:pointer; font-family:var(--font); transition:transform .15s; }
-.greeting-dismiss:active { transform:scale(.94); }
 
 /* ---- Feather particles (in greeting) ---- */
 .feather {
@@ -398,15 +396,15 @@ body {
   <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
 </div>
 
-<!-- Greeting Overlay -->
-<div class="greeting-overlay hidden" id="greetingOverlay">
-  <div class="greeting-card">
+<!-- Greeting Overlay — tap anywhere to close -->
+<div class="greeting-overlay hidden" id="greetingOverlay" onclick="this.style.display='none';this.classList.add('hidden')">
+  <div class="greeting-card" onclick="event.stopPropagation()">
     <span class="greeting-icon" id="greetingIcon">✨</span>
     <div class="greeting-name" id="greetingName">Anđelo moja</div>
     <div class="greeting-for" style="font-size:.78rem;color:var(--gold);margin-bottom:8px;font-style:italic">— za Anđelu Nemet —</div>
     <div class="greeting-msg" id="greetingMsg"></div>
     <div class="greeting-sub" id="greetingSub"></div>
-    <button class="greeting-dismiss" id="greetingDismiss" onclick="document.getElementById('greetingOverlay').style.display='none';document.getElementById('greetingOverlay').classList.add('hidden')">♥ Zatvori</button>
+    <div style="font-size:.62rem;color:var(--text-muted);margin-top:12px;opacity:.5">dodirni bilo gde za nastavak ♥</div>
   </div>
 </div>
 
@@ -515,11 +513,11 @@ body {
     </div>
 
     <div class="dev-signature">
-      <div class="dev-name">张梓桐 (Barry Zhang)</div>
+      <div class="dev-name">张梓桐 · Barry Zhang</div>
       <div class="dev-for">za Anđelu Nemet ♥</div>
       <div class="dev-divider"></div>
-      <div class="dev-tagline">Napravljeno sa ljubavlju<br>za Anđelu Nemet ♥</div>
-      <div class="dev-location">Vojvodina ↔ Peking · 2026</div>
+      <div class="dev-tagline">Iz Pekinga u Vojvodinu<br>sa ljubavlju napravljeno</div>
+      <div class="dev-location" style="font-size:.64rem;opacity:.7;margin-top:6px">从北京到伏伊伏丁那 · 跨越山海只为你</div>
     </div>
     <div style="height:14px"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-lang"></span><span class="setting-hint" id="set-h-lang"></span></div>
@@ -741,26 +739,12 @@ function showGreeting() {
   document.getElementById('greetingName').textContent = slot.name;
   document.getElementById('greetingMsg').textContent = slot.msg;
   document.getElementById('greetingSub').textContent = slot.sub;
-  // Dismiss button: direct DOM onclick already set in HTML — rock solid
+  // Overlay closes on tap — inline onclick handles it
   overlay.style.display = 'flex';
   overlay.classList.remove('hidden');
   spawnFeathers();
 }
-function dismissGreeting() {
-  var overlay = document.getElementById('greetingOverlay');
-  if (!overlay) return;
-  overlay.style.display = 'none';
-  overlay.classList.add('hidden');
-}
-// Backup: ensure button works via JS + click outside to dismiss
-(function() {
-  const btn = document.getElementById('greetingDismiss');
-  if (btn) btn.addEventListener('click', dismissGreeting);
-  const overlay = document.getElementById('greetingOverlay');
-  if (overlay) overlay.addEventListener('click', function(e) {
-    if (e.target === overlay) dismissGreeting();
-  });
-})();
+// Greeting dismissed by inline onclick on the overlay — no JS function needed
 function spawnFeathers() {
   const card = document.querySelector('.greeting-card');
   if (!card) return;
