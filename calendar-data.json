@@ -1,0 +1,698 @@
+{
+  "holidays": [
+    {
+      "id": "yuandan",
+      "date": "2026-01-01",
+      "dateDescription": {
+        "zh": "1月1日",
+        "sr": "1. januar",
+        "en": "January 1"
+      },
+      "name": {
+        "zh": "元旦",
+        "sr": "Nova Godina",
+        "en": "New Year's Day"
+      },
+      "country": "china",
+      "story": {
+        "zh": "每到元旦，我总会想起小时候父亲在阳台挂起的红灯笼。这一天是公历新年的开始，虽然不像春节那样隆重，但大家也会和家人朋友聚在一起，吃顿好的，聊聊过去一年的收获和遗憾。对我来说，元旦更像是一个温柔的提醒：翻过旧的一页，给自己一个新的开始。",
+        "sr": "Kada dođe Nova Godina, uvek se setim mirisa svežih kolača koje je baka pekla dok smo odbrojavali poslednje sekunde. Iako u kineskoj kulturi Lunar Nova Godina ima veći značaj, 1. januar je ipak dan kada ljudi širom Kine slave zajedno uz vatromet, večeru i iskrene želje za sreću u novoj godini. Za mene je to tišina posle ponoći, kada sve izgleda moguće.",
+        "en": "Every New Year's Day, I remember the red lanterns my father hung on our balcony as a child. Though it carries less weight than Spring Festival, January 1 is still a day when families and friends gather over a good meal, sharing stories of the past year's gains and regrets. For me, it is a gentle reminder to turn the page and give myself a fresh start."
+      }
+    },
+    {
+      "id": "chuxi",
+      "date": "2026-02-16",
+      "dateDescription": {
+        "zh": "2月16日",
+        "sr": "16. februar",
+        "en": "February 16"
+      },
+      "name": {
+        "zh": "除夕",
+        "sr": "Kineska Nova Godina – Badnje veče",
+        "en": "Chinese New Year's Eve"
+      },
+      "country": "china",
+      "story": {
+        "zh": "除夕是一年中最让我鼻子发酸的日子。全家人从四面八方赶回来，厨房里热气腾腾，妈妈在包饺子，爸爸在贴春联，电视里放着春晚。小时候我总守在灶台边等第一锅饺子出锅，那种期待的心情至今难忘。守岁到午夜，窗外鞭炮声响成一片，我知道，旧年真的过去了。",
+        "sr": "Kineska Nova Godina – Badnje veče je najemotivniji dan u godini. Cela porodica se okuplja, u kuhinji para na sve strane dok se prave kineske knedle, otac lepi crvene natpise na vrata, a televizija emituje novogodišnji program. Sećam se kako sam kao dete nestrpljivo čekao prvu seriju knedli – taj osećaj iščekivanja i danas nosim u srcu.",
+        "en": "Chinese New Year's Eve is the day that makes my throat tighten every time. The whole family travels home from far and wide, the kitchen steams as mom makes dumplings, dad pastes spring couplets on the door, and the Spring Festival Gala hums on TV. As a child I would stand by the stove waiting for the first batch of dumplings — that feeling of anticipation still stays with me. Staying up until midnight as fireworks roar outside, I know the old year has truly passed."
+      }
+    },
+    {
+      "id": "chunjie",
+      "date": "2026-02-17",
+      "dateDescription": {
+        "zh": "2月17日",
+        "sr": "17. februar",
+        "en": "February 17"
+      },
+      "name": {
+        "zh": "春节",
+        "sr": "Kineska Nova Godina",
+        "en": "Spring Festival / Chinese New Year"
+      },
+      "country": "china",
+      "story": {
+        "zh": "大年初一清晨，我是被鞭炮声叫醒的。穿上新衣，给长辈拜年，接过红包时那抹红色暖到心里。春节不只是农历新年的第一天，更是整个家族重新连接的时刻——那些平时疏于联系的堂表兄妹又聚在了一起，大人们聊着家长里短，孩子们满屋子跑。在这个节日里，所有人都被一种温柔的力量拉回了原点：家。",
+        "sr": "Prvog dana Lunarne Nove Godine budi me praskati petardi. Obučem novu odeću, pozdravljam starije i dobijam crvene koverte s novcem – toplina te boje greje srce. Prolećni festival nije samo prvi dan lunarne godine; to je trenutak kada se ceo rod ponovo povezuje, rođaci koje retko viđamo sede zajedno, a deca trče po kući. Na ovaj dan sve nas neka nežna sila vraća na isto mesto – kući.",
+        "en": "On the morning of Chinese New Year, I wake to the crackle of firecrackers. Dressed in new clothes, I greet the elders and receive red envelopes — that flash of red warms me to the core. Spring Festival is more than the first day of the lunar year; it is the moment an entire family reconnects. Cousins you barely see all year gather again, adults chat about everyday life, children race through the rooms. On this day, a gentle force pulls everyone back to the same place: home."
+      }
+    },
+    {
+      "id": "yuanxiaojie",
+      "date": "2026-03-03",
+      "dateDescription": {
+        "zh": "3月3日",
+        "sr": "3. mart",
+        "en": "March 3"
+      },
+      "name": {
+        "zh": "元宵节",
+        "sr": "Festival fenjera",
+        "en": "Lantern Festival"
+      },
+      "country": "china",
+      "story": {
+        "zh": "元宵节是春节的最后一个句号。这一天我总会吃一碗热腾腾的汤圆，软糯的外皮咬开，芝麻馅缓缓流出来，甜得恰到好处。小时候最期待的是晚上提灯笼出门，街上到处是花灯和谜语，整座城市都亮晶晶的。后来我明白了，元宵节的灯火不是为了照亮路，而是为了照亮人心里的团圆愿望。",
+        "sr": "Festival fenjera stavlja tačku na novogodišnje slavlje. Tog dana obavezno jedem slatke pirinčane knedle s crnim susamom – mekane su i tople, a slatki nadev curi kad zagrizem. Kao dete, najviše sam voleo da uveče izađem s fenjerom u ruci, dok su ulice bile preplavljene svetlima i zagonetkama. Kasnije sam shvatio: svetlost fenjera ne osvetljava put, već osvetljava želju svakog srca da bude s voljenima.",
+        "en": "Lantern Festival is the final period at the end of Spring Festival's long sentence. I always eat a bowl of piping-hot tangyuan — the soft glutinous rice skin gives way to a slow trickle of black sesame filling, sweet in just the right way. As a child, the best part was going out at night carrying a paper lantern, streets filled with colorful displays and riddles, the whole city aglow. I later understood: the lanterns are not meant to light the road — they light the wish for reunion deep in every heart."
+      }
+    },
+    {
+      "id": "qingmingjie",
+      "date": "2026-04-05",
+      "dateDescription": {
+        "zh": "4月5日",
+        "sr": "5. april",
+        "en": "April 5"
+      },
+      "name": {
+        "zh": "清明节",
+        "sr": "Čingming festival",
+        "en": "Qingming Festival / Tomb-Sweeping Day"
+      },
+      "country": "china",
+      "story": {
+        "zh": "清明前后总是细雨绵绵，空气里有泥土和青草的味道。这一天我们上山扫墓，在祖先墓前摆上鲜花和水果，烧一炷香，说几句心里话。对我而言，清明不是悲伤的日子，而是一个安静的约定——站在来处看看自己走了多远。春天的田野绿意盎然，仿佛在告诉我：生命在继续。",
+        "sr": "Za vreme Čingminga uvek pada sitna kiša, a vazduh miriše na zemlju i mladu travu. Tog dana odlazimo u planinu da očistimo grobove predaka, ostavimo cveće i voće, zapalimo tamjan i kažemo nekoliko reči iz srca. Za mene ovo nije tužan dan, već tihi dogovor – stati na mestu odakle smo krenuli i videti koliko smo daleko stigli. Prolećna polja blistaju u zelenilu, kao da govore: život ide dalje.",
+        "en": "Around Qingming, a fine rain always falls, and the air smells of earth and fresh grass. On this day we hike up the hills to tend our ancestors' graves, leave flowers and fruit, burn incense, and speak a few words from the heart. To me, Qingming is not a sad day — it is a quiet pact. Standing where I came from, I look at how far I have walked. The spring fields are lush and green, as if telling me: life goes on."
+      }
+    },
+    {
+      "id": "laodongjie",
+      "date": "2026-05-01",
+      "dateDescription": {
+        "zh": "5月1日",
+        "sr": "1. maj",
+        "en": "May 1"
+      },
+      "name": {
+        "zh": "劳动节",
+        "sr": "Praznik rada",
+        "en": "Labor Day / International Workers' Day"
+      },
+      "country": "china",
+      "story": {
+        "zh": "五一劳动节对我来说就是春天的黄金假期。学校或公司放几天假，大家趁着春光明媚出门踏青，公园里到处都是野餐垫和风筝。小时候我最喜欢这一天，不是因为什么宏大意义，而是因为爸爸妈妈终于不用上班，可以一整天陪着我。长大后我才真正理解，劳动节的意义在于：每一个辛勤工作的人都值得被尊重，也值得好好休息。",
+        "sr": "Praznik rada je zlatni prolećni odmor. Škole i firme su zatvorene nekoliko dana, i svi izlaze u prirodu dok sunce još nije prevruće – parkovi su puni ćebadi za piknik i zmajeva. Kao dete, najviše sam voleo ovaj dan jer mama i tata konačno nisu morali da rade i mogli su ceo dan da budu sa mnom. Tek kad sam odrastao, shvatio sam pravi smisao: svako ko vredno radi zaslužuje poštovanje – i dobar odmor.",
+        "en": "Labor Day is the golden spring holiday for me. Schools and offices close for a few days, and everyone heads outdoors while the spring sun is still gentle — parks fill with picnic blankets and kites. As a child, I loved this day not for any grand meaning, but because Mom and Dad finally did not have to work and could spend the whole day with me. Only as an adult did I truly understand: every person who works hard deserves respect — and a real rest."
+      }
+    },
+    {
+      "id": "duanwujie",
+      "date": "2026-06-19",
+      "dateDescription": {
+        "zh": "6月19日",
+        "sr": "19. jun",
+        "en": "June 19"
+      },
+      "name": {
+        "zh": "端午节",
+        "sr": "Festival zmajevih čamaca",
+        "en": "Dragon Boat Festival"
+      },
+      "country": "china",
+      "story": {
+        "zh": "端午节的清晨，家家户户的门前都挂上了艾草和菖蒲，空气里弥漫着草药特有的清香。我最期待的是剥开热腾腾的粽子——箬叶的香气渗进糯米里，咬一口，蛋黄和肉的咸香在嘴里化开。小时候外婆总说，端午的龙舟赛是为了纪念两千多年前的诗人屈原，当时的我听不懂，只顾着往手腕上系五彩绳。现在我知道了，端午节的味道，是记忆的味道。",
+        "sr": "Ujutro na Festival zmajevih čamaca, sva vrata su okićena grančicama pelina i irisa, a vazduh je ispunjen mirisom lekovitog bilja. Najviše se radujem kad odmotam vrući zongzi – miris lista bambusa se uvukao u lepljivi pirinač, a slani ukus žumanceta i svinjetine topi se u ustima. Baka je govorila da su trke zmajevih čamaca u spomen na pesnika Qu Yuana od pre 2000 godina – tada nisam razumeo, samo sam hteo da nosim šarene svilene narukvice. Sada znam: ukus ovog festivala je ukus sećanja.",
+        "en": "On Dragon Boat Festival morning, every door is hung with mugwort and calamus, the air filled with the distinct scent of medicinal herbs. What I look forward to most is unwrapping a steaming zongzi — the bamboo leaf's fragrance has seeped into the sticky rice, and one bite releases the savory richness of egg yolk and pork. My grandmother used to say the dragon boat races honor the poet Qu Yuan from two thousand years ago. I did not understand then; I only cared about the colorful silk bracelet on my wrist. Now I know: the taste of this festival is the taste of memory."
+      }
+    },
+    {
+      "id": "qixi",
+      "date": "2026-08-19",
+      "dateDescription": {
+        "zh": "8月19日",
+        "sr": "19. avgust",
+        "en": "August 19"
+      },
+      "name": {
+        "zh": "七夕",
+        "sr": "Festival zaljubljenih – Qixi",
+        "en": "Qixi / Double Seventh Festival"
+      },
+      "country": "china",
+      "story": {
+        "zh": "七夕的夜晚，外婆会指着天上的银河给我讲牛郎织女的故事——说他们一年只能在这一天通过鹊桥相会。小时候我总在葡萄架下偷听，相信能听到他们的悄悄话。现在这个节日被很多人过成了中国的情人节，但我觉得它最动人的不是浪漫，而是一年又一年、隔着银河也愿意奔赴的坚定。望向星空的时候，你会想起谁？",
+        "sr": "Uveče na Qixi, baka bi pokazivala na Mlečni put i pričala priču o pastiru i tkalji – koje se sastaju samo jednom godišnje preko mosta od svraka. Kao dete, krio sam se pod lozom i osluškivao, verujući da ću čuti njihov šapat. Danas ga mnogi slave kao kineski Dan zaljubljenih, ali meni je najlepši u njemu upornost – godinu za godinom, spremnost da pređeš čak i Mlečni put da bi bio s voljenom osobom. Kada pogledaš u zvezde, koga vidiš?",
+        "en": "On Qixi night, my grandmother would point at the Milky Way and tell the story of the cowherd and the weaver girl — who can meet only once a year across a bridge of magpies. As a child I would hide under the grapevine trellis, listening, believing I might hear their whispers. Today many celebrate it as Chinese Valentine's Day, but what moves me most is not the romance — it is the stubborn devotion, year after year, willing to cross even the Milky Way to be together. When you look up at the stars, who do you see?"
+      }
+    },
+    {
+      "id": "zhongqiujie",
+      "date": "2026-09-25",
+      "dateDescription": {
+        "zh": "9月25日",
+        "sr": "25. septembar",
+        "en": "September 25"
+      },
+      "name": {
+        "zh": "中秋节",
+        "sr": "Festival sredine jeseni",
+        "en": "Mid-Autumn Festival"
+      },
+      "country": "china",
+      "story": {
+        "zh": "中秋节的月亮是一年中最圆最亮的。小时候我们搬了桌椅到院子里，摆上月饼、柚子和茶，一家人围坐赏月。我总是先挑莲蓉蛋黄月饼，切成四份，每人一角。大人们说月亮上有嫦娥和玉兔，我眯着眼使劲看，好像真的看到了什么。如今离家远了，每到中秋抬头望月，才明白古人说的\"但愿人长久，千里共婵娟\"——是思念让月亮变得那么圆。",
+        "sr": "Na Festival sredine jeseni mesec je najsjajniji i najokrugliji u celoj godini. Kao dete, iznosili smo sto i stolice u dvorište, slagali mesečeve kolače, pomorandže i čaj, i cela porodica je sedela i posmatrala mesec. Uvek sam prvo birao kolač s lotosovim semenom i žumancetom, sekao ga na četiri dela – svako po jedan. Odrasli su pričali o boginji Change i zecu na mesecu; žmirkao sam i naprezao oči, kao da zaista nešto vidim. Sada, daleko od kuće, svaki put kad podignem pogled ka mesecu, razumem drevnu reč: \"Neka ljudi žive večno, i dele lepotu ovog meseca hiljadama milja daleko.\" Čežnja je ta koja čini mesec tako okruglim.",
+        "en": "The moon on Mid-Autumn Festival is the roundest and brightest of the entire year. As a child, we would carry tables and chairs into the courtyard, set out mooncakes, pomelos, and tea — the whole family sitting together to admire the moon. I always grabbed the lotus seed paste and egg yolk mooncake first, cutting it into four wedges, one for each person. The adults told stories of Chang'e and the jade rabbit on the moon; I squinted hard, as if I could almost see them. Now that I live far from home, every time I look up at the moon on this night, I understand the ancient verse: \"May we live long and share the beauty of this moon across a thousand miles.\" It is longing that makes the moon so full."
+      }
+    },
+    {
+      "id": "guoqingjie",
+      "date": "2026-10-01",
+      "dateDescription": {
+        "zh": "10月1日",
+        "sr": "1. oktobar",
+        "en": "October 1"
+      },
+      "name": {
+        "zh": "国庆节",
+        "sr": "Dan državnosti Kine",
+        "en": "National Day of China"
+      },
+      "country": "china",
+      "story": {
+        "zh": "国庆节是整条街都飘着红旗的日子。七天长假让整个城市慢了下来，人们出门旅行、回家探亲，街道上满是笑声。小时候最期待的是天安门的阅兵式，守在电视机前看得目不转睛。现在对我来说，国庆节更像是一种安静的仪式感：在这个忙碌的时代里，有几天可以停下来，什么都不想，和家人一起好好生活。",
+        "sr": "Dan državnosti Kine je dan kada su sve ulice okićene crvenim zastavama. Sedmodnevni odmor usporava ceo grad – ljudi putuju, posećuju porodice, ulice su pune smeha. Kao dete, najviše sam voleo da gledam paradu na Trgu nebeskog mira, zalepljen za televizor. Danas mi ovaj praznik donosi osećaj tihog rituala: u ovom užurbanom vremenu, imamo nekoliko dana da jednostavno zastanemo, ne mislimo ni na šta i budemo sa porodicom.",
+        "en": "National Day is when red flags line every street. The week-long holiday slows down the whole city — people travel, visit family, and the streets fill with laughter. As a child, what I loved most was the military parade at Tiananmen, my eyes glued to the TV. Now the day feels more like a quiet ritual to me: in this rushing era, we are given a few days to simply pause, think of nothing, and live ordinary life alongside family."
+      }
+    },
+    {
+      "id": "nova-godina",
+      "date": "2026-01-01",
+      "dateDescription": {
+        "zh": "1月1日",
+        "sr": "1. januar",
+        "en": "January 1"
+      },
+      "name": {
+        "zh": "元旦",
+        "sr": "Nova Godina",
+        "en": "New Year's Day"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "塞尔维亚的新年夜总是热闹非凡，广场上放烟花，家家户户的餐桌上摆满了食物。零点钟声敲响时，大家举杯祝福，有人还会在门外放一枪以驱走旧年的厄运。我特别喜欢塞尔维亚人的习惯：在新年第一天的清晨，把\"切斯尼察\"（一种藏有硬币的面包）分给全家人，吃到硬币的人会有一整年的好运。",
+        "sr": "Doček Nove Godine u Srbiji uvek je pun vreve – vatromet na trgovima, trpeze pune hrane u svakom domu. Kada sat otkuca ponoć, svi podižu čaše i nazdravljaju, a neko još uvek ispali metak u vazduh da otera stare nevolje. Najviše volim običaj da se na Novu Godinu iseče česnica – pogača s ugrađenim novčićem – i podeli porodici; onaj ko nađe novčić imaće sreće cele godine.",
+        "en": "Serbian New Year's Eve is always lively — fireworks in town squares, tables groaning with food in every home. When midnight strikes, everyone raises a glass and toasts, and some still fire a gunshot into the air to drive away the old year's bad luck. What I love most is the tradition of cutting česnica — a bread baked with a hidden coin — and sharing it among the family on New Year's morning; whoever finds the coin will have luck all year."
+      }
+    },
+    {
+      "id": "bozic",
+      "date": "2026-01-07",
+      "dateDescription": {
+        "zh": "1月7日",
+        "sr": "7. januar",
+        "en": "January 7"
+      },
+      "name": {
+        "zh": "东正教圣诞节",
+        "sr": "Božić",
+        "en": "Orthodox Christmas"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "塞尔维亚的圣诞节在1月7日，因为东正教沿用儒略历。节前四十天的斋戒终于在圣诞清晨结束，人们前往教堂参加子夜弥撒，教堂里烛光摇曳，唱诗声回荡。清晨回家后，一家人围在一起吃\"切斯尼察\"，烤乳猪是少不了的主菜。最让我感动的是\"Badnjak\"的习俗——圣诞节前夕，大家把橡树枝带回家烧掉，火光中寄托着对来年的祝福。",
+        "sr": "Božić u Srbiji pada 7. januara jer Srpska pravoslavna crkva koristi julijanski kalendar. Četrdesetodnevni post se završava na božićno jutro, a ljudi odlaze u crkvu na ponoćnu liturgiju gde sveće trepere i pojanje odzvanja. Kod kuće se posle bogosluženja porodica okuplja oko trpeze, a pečenje je glavno jelo. Ono što me najviše dirljuje je običaj Badnjaka – uoči Božića, u kuću se unosi hrastova grana i spaljuje, a u plamenu gore želje za blagoslovom u novoj godini.",
+        "en": "Serbian Christmas falls on January 7 because the Orthodox Church follows the Julian calendar. The forty-day fast ends on Christmas morning; people attend midnight liturgy where candles flicker and hymns echo through the church. Afterward, the family gathers around the table, with roast suckling pig as the centerpiece. What moves me most is the Badnjak tradition — on Christmas Eve, an oak branch is brought into the home and burned, carrying wishes for blessing in the flames."
+      }
+    },
+    {
+      "id": "sveti-sava",
+      "date": "2026-01-27",
+      "dateDescription": {
+        "zh": "1月27日",
+        "sr": "27. januar",
+        "en": "January 27"
+      },
+      "name": {
+        "zh": "圣萨瓦节",
+        "sr": "Sveti Sava",
+        "en": "St. Sava's Day"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "圣萨瓦节是塞尔维亚学校最重要的节日之一。圣萨瓦是塞尔维亚东正教会的创始人、教育家和作家，被尊为塞尔维亚的守护圣徒。这一天孩子们在学校参加朗诵比赛和文艺表演，献上赞美诗和短剧。对我来说，圣萨瓦节最美的瞬间是整个教室安静下来，大家一起唱响那首古老的赞美诗——那种跨越时间的联结感，让人心头发热。",
+        "sr": "Sveti Sava je jedan od najvažnijih praznika u srpskim školama. Sveti Sava je bio osnivač Srpske pravoslavne crkve, prosvetitelj i književnik, zaštitnik Srbije. Tog dana deca u školama učestvuju u recitacijama i priredbama, izvode himne i dramske komade. Meni je najlepši trenutak kada se celo učionica utiša i svi zajedno otpevaju drevnu himnu – osećaj povezanosti kroz vreme koji ti zagreje srce.",
+        "en": "St. Sava's Day is one of the most important days in Serbian schools. St. Sava was the founder of the Serbian Orthodox Church, an educator and writer, revered as the patron saint of Serbia. On this day, children participate in recitals and performances at school, singing hymns and performing short plays. The most beautiful moment for me is when the entire classroom falls silent and everyone sings the ancient hymn together — a feeling of connection across time that warms the heart."
+      }
+    },
+    {
+      "id": "dan-drzavnosti",
+      "date": "2026-02-15",
+      "dateDescription": {
+        "zh": "2月15日",
+        "sr": "15. februar",
+        "en": "February 15"
+      },
+      "name": {
+        "zh": "塞尔维亚国庆日",
+        "sr": "Dan državnosti Srbije",
+        "en": "Serbian Statehood Day"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "2月15日纪念的是1804年第一次塞尔维亚起义的爆发——那是塞族人反抗奥斯曼帝国统治、争取自由的开始。这一天也是塞尔维亚现行宪法的纪念日。全国放假，人们参观博物馆和历史遗迹，城市广场举行升旗仪式。每年这个时候，贝尔格莱德还透着冬日的寒气，但街头的三色旗和人们的微笑已经让人感到春天不远了。",
+        "sr": "Petnaesti februar obeležava početak Prvog srpskog ustanka 1804. godine – početak borbe Srba protiv Osmanskog carstva za slobodu. Ovaj dan je i Dan Ustava Srbije. Državni praznik je, muzeji i istorijska mesta su otvoreni za posete, a na gradskim trgovima se održavaju svečane ceremonije. U Beogradu je u ovo doba još hladno, ali trobojke na ulicama i osmesi ljudi govore da proleće nije daleko.",
+        "en": "February 15 marks the beginning of the First Serbian Uprising in 1804 — the start of the Serbian people's fight for freedom against the Ottoman Empire. It is also Constitution Day. It is a national holiday: people visit museums and historical sites, and flag-raising ceremonies are held in town squares. Belgrade is still cold this time of year, but the tricolor flags on the streets and the smiles on people's faces tell you spring is not far away."
+      }
+    },
+    {
+      "id": "vaskrs",
+      "date": "2026-04-12",
+      "dateDescription": {
+        "zh": "4月12日",
+        "sr": "12. april",
+        "en": "April 12"
+      },
+      "name": {
+        "zh": "东正教复活节",
+        "sr": "Vaskrs / Uskrs",
+        "en": "Orthodox Easter"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "复活节是塞尔维亚最温馨的节日之一。节前大家把鸡蛋染成红色，象征着基督的鲜血和新生命。复活节清晨，教堂钟声响起，人们互相问候\"Христос васкрсе！\"（基督复活了！），对方回答\"Ваистину васкрсе！\"（真的复活了！）。我最喜欢的是\"打蛋\"游戏——两个人各拿一个红蛋对碰，谁的蛋壳更硬谁就赢。小时候我总偷偷把鸡蛋握得紧紧的，想作弊赢过表哥。",
+        "sr": "Vaskrs je jedan od najmilih praznika u Srbiji. Pred praznik, jaja se farbaju u crveno – simbol Hristove krvi i novog života. Na Vaskrs jutro, crkvena zvona zvone, a ljudi se pozdravljaju: \"Hristos vaskrse!\" – \"Vaistinu vaskrse!\" Najviše volim igru tucanja jajima – dve osobe udaraju crvena jaja jedno o drugo, a čija je ljuska čvršća, taj pobedi. Kao dete, krišom sam stezao jaje u šaci da bih prevario rođaka.",
+        "en": "Easter is one of Serbia's most beloved holidays. Before the holiday, eggs are dyed red — symbolizing Christ's blood and new life. On Easter morning, church bells ring and people greet each other: \"Hristos vaskrse!\" (Christ is risen!) — \"Vaistinu vaskrse!\" (Truly, He is risen!). My favorite tradition is the egg-tapping game — two people each hold a red egg and tap them together; whoever's shell stays intact wins. As a child, I would secretly grip my egg tight, trying to cheat my way past my cousin."
+      }
+    },
+    {
+      "id": "praznik-rada",
+      "date": "2026-05-01",
+      "dateDescription": {
+        "zh": "5月1日",
+        "sr": "1. maj",
+        "en": "May 1"
+      },
+      "name": {
+        "zh": "劳动节",
+        "sr": "Praznik rada",
+        "en": "International Workers' Day"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "在塞尔维亚，劳动节是真正的春暖花开日。人们涌向郊外、河边和山林，举行传统的\"五一野餐\"。烤肉在炭火上滋滋作响，旁边摆着一大盆色拉和新鲜面包。我特别喜欢塞尔维亚人过节的态度——他们不赶时间，铺一块毯子躺在草地上，晒太阳、聊天、喝点小酒，一待就是一整天。这才是节日该有的样子。",
+        "sr": "Praznik rada je u Srbiji dan kada priroda konačno proleće. Ljudi hrle u prirodu – na izletišta, pored reka i u šume – na tradicionalni prvomajski uranak. Roštilj pucketa na žaru, pored njega činija puna salate i svežeg hleba. Najviše volim kako Srbi provode ovaj dan – bez žurbe, prostru ćebe po travi, sunčaju se, pričaju i piju po koje piće, i tako ceo dan. Tako treba da izgleda praznik.",
+        "en": "In Serbia, Labor Day is the day spring truly arrives. People flock to the countryside, riversides, and forests for the traditional May Day outing. Grills sizzle over charcoal, with large bowls of salad and fresh bread set nearby. What I love most is how Serbs celebrate — unhurried, they spread a blanket on the grass, sunbathe, chat, sip a little wine, and stay all day long. This is what a holiday should feel like."
+      }
+    },
+    {
+      "id": "dan-pobede",
+      "date": "2026-05-09",
+      "dateDescription": {
+        "zh": "5月9日",
+        "sr": "9. maj",
+        "en": "May 9"
+      },
+      "name": {
+        "zh": "胜利日",
+        "sr": "Dan pobede",
+        "en": "Victory Day"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "5月9日纪念的是二战结束时纳粹德国投降的日子。在塞尔维亚，这一天充满庄重的氛围——人们向无名英雄纪念碑献花，老兵佩戴勋章参加游行。虽然当年的参战者越来越少了，但每个城市中心的主要纪念碑前依然摆满了鲜花。每次看到白发苍苍的老人胸前挂满勋章，颤巍巍地敬礼，我都忍不住鼻子发酸。",
+        "sr": "Deveti maj je dan kada je okončan Drugi svetski rat u Evropi. U Srbiji je ovaj dan ispunjen dostojanstvom – ljudi polažu cveće na spomenike neznanim herojima, veterani nose svoja odlikovanja na paradama. Iako je sve manje onih koji su rat proživeli, cveće na centralnim spomenicima u svakom gradu nikad ne izostane. Uvek mi se stegne grlo kad vidim sede starce s ordenima kako drhtavom rukom salutiraju.",
+        "en": "May 9 marks the day Nazi Germany surrendered, ending World War II in Europe. In Serbia, this day carries a solemn dignity — people lay flowers at monuments to unknown heroes, and veterans wear their medals in parades. Though fewer of those who lived through the war remain each year, flowers still cover the central monuments in every city. It always tightens my throat to see elderly men and women, chests full of medals, raising a trembling hand in salute."
+      }
+    },
+    {
+      "id": "vidovdan",
+      "date": "2026-06-28",
+      "dateDescription": {
+        "zh": "6月28日",
+        "sr": "28. jun",
+        "en": "June 28"
+      },
+      "name": {
+        "zh": "维多夫丹节",
+        "sr": "Vidovdan",
+        "en": "St. Vitus Day / Vidovdan"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "维多夫丹是塞尔维亚历史中最沉重也最庄严的日子。1389年的这一天，塞尔维亚在中世纪的科索沃战役中迎战奥斯曼帝国，从此开启了长达数百年的被统治时期。但塞尔维亚人没有把它只当作一个失败的纪念日——他们会说\"科索沃的抉择\"高于胜败，是关于选择为信仰和自由而战。每年的这一天，人们前往修道院祈祷，在学校里朗诵诗歌。一位塞尔维亚诗人曾写道：\"圣维特节，一切都在发生，一切都在重复。\"",
+        "sr": "Vidovdan je najteži i najsvečaniji dan u srpskoj istoriji. Na današnji dan 1389. godine, srpska vojska se suočila sa Osmanskim carstvom u Kosovskom boju – poraz koji je doneo vekove ropstva. Ali Srbi ga ne pamte samo kao poraz; \"Kosovski izbor\" je, kako kažu, iznad pobede i poraza – to je odluka da se boriš za veru i slobodu. Svake godine ljudi odlaze u manastire na molitvu, a u školama se recituju stihovi. Kako je jedan srpski pesnik rekao: \"Vidovdan, sve se zbiva, sve se ponavlja.\"",
+        "en": "Vidovdan is the heaviest and most solemn day in Serbian history. On this day in 1389, the Serbian medieval army faced the Ottoman Empire in the Battle of Kosovo — a defeat that brought centuries of subjugation. But Serbs do not remember it simply as a loss; they speak of the \"Kosovo choice\" as something above victory and defeat — a decision to fight for faith and freedom. Each year, people visit monasteries to pray and children recite poetry in schools. As one Serbian poet wrote: \"Vidovdan, everything happens, everything repeats.\""
+      }
+    },
+    {
+      "id": "dan-primirja",
+      "date": "2026-11-11",
+      "dateDescription": {
+        "zh": "11月11日",
+        "sr": "11. novembar",
+        "en": "November 11"
+      },
+      "name": {
+        "zh": "停战日",
+        "sr": "Dan primirja",
+        "en": "Armistice Day"
+      },
+      "country": "serbia",
+      "story": {
+        "zh": "11月11日纪念的是第一次世界大战结束的日子。塞尔维亚在一战中付出了惨痛的代价——失去了大约三分之一的人口。这一天人们佩戴象征 remembrance 的标志——在塞尔维亚是纳扎兰卡花（一种阿尔巴尼亚木兰花）的别针。上午11点整，全国默哀一分钟。最打动我的是\"长者告慰\"的仪式——年长一代握着年轻人的手，把记忆和教训传递下去。",
+        "sr": "Jedanaesti novembar je dan kada je okončan Prvi svetski rat. Srbija je u Velikom ratu platila strašnu cenu – izgubila je oko trećine svog stanovništva. Tog dana ljudi nose značku sa cvetom Natalijine ramonde kao simbol sećanja. Tačno u 11 sati pre podne, cela nacija zastaje na minut ćutanja. Ono što me najviše dirne je ritual u kom starija generacija uzima mlađu za ruku i prenosi im uspomenu i pouku.",
+        "en": "November 11 marks the end of World War I. Serbia paid a terrible price in the Great War — losing about a third of its population. On this day, people wear a pin of the Natalija's ramonda flower as a symbol of remembrance. At exactly 11 a.m., the nation observes a minute of silence. What touches me most is the ritual of the elders taking the younger generation by the hand, passing down memory and lessons."
+      }
+    }
+  ],
+  "solarTerms": [
+    {
+      "date": "2026-01-05",
+      "name": {
+        "zh": "小寒",
+        "sr": "Mali hlad",
+        "en": "Minor Cold"
+      },
+      "story": {
+        "zh": "小寒是一年中最冷的时候，但冷得干净而宁静。清晨窗玻璃上结着霜花，呼出的气变成白雾。老人们说这时候要多吃温热滋补的食物——羊肉汤、红枣姜茶，把身体从里到外暖透。虽然天寒地冻，但腊梅已经悄然绽放，提醒我们春天已在路上。",
+        "sr": "Mali hlad je najhladniji period godine, ali hladnoća je čista i tiha. Ujutro se na prozorima stvara injica, a dah se pretvara u beli oblak. Stariji kažu da je vreme za tople i hranljive obroke – juneću supu, čaj od đumbira i urmi – da zagreješ telo iznutra. Iako je ledeno, zimski cvetovi već tiho cvatu, podsećajući nas da proleće nije daleko.",
+        "en": "Minor Cold is the coldest time of the year, but the chill is clean and still. Frost patterns form on the windows in the morning, and your breath turns to white clouds. The elders say this is the time for warm, nourishing foods — lamb soup, ginger and jujube tea — to warm the body from the inside out. Though the world is frozen, winter plum blossoms are already blooming quietly, reminding us that spring is on its way."
+      }
+    },
+    {
+      "date": "2026-01-20",
+      "name": {
+        "zh": "大寒",
+        "sr": "Veliki hlad",
+        "en": "Major Cold"
+      },
+      "story": {
+        "zh": "大寒是冬天的最后一个节气，也是最冷的冲刺。河水结到了最厚的时候，北方人家里的暖气烧得最旺。但正是在这最冷的日子里，年味越来越浓了——家家户户开始备年货、扫尘、贴窗花。大寒之后就是立春，所以它更像是一场告别：忍受最后的寒冷，等待破冰的瞬间。",
+        "sr": "Veliki hlad je poslednji ciklus zime i njen poslednji udar hladnoće. Reke su najzaleđenije, grejanje u domovima radi najjače. Ali upravo u ovim najhladnijim danima, oseća se približavanje Nove Godine – domaćinstva počinju pripreme, čišćenje i ukrašavanje prozora. Posle Velikog hlada dolazi Proleće, pa je ovo više kao oproštaj: izdrži poslednju hladnoću i čekaj trenutak kad led pukne.",
+        "en": "Major Cold is winter's final act, its last fierce blast. Rivers are frozen thickest, and home heating burns hottest. Yet in these coldest days, the flavor of the New Year grows stronger — families begin stocking up, cleaning the house, and pasting paper cutouts on windows. After Major Cold comes the Start of Spring, so this term feels more like a farewell: endure the final freeze and wait for the moment the ice breaks."
+      }
+    },
+    {
+      "date": "2026-02-04",
+      "name": {
+        "zh": "立春",
+        "sr": "Početak proleća",
+        "en": "Start of Spring"
+      },
+      "story": {
+        "zh": "立春是二十四节气中的第一个，意味着春天开始了。虽然天气可能还冷，但你能感觉到风不一样了——吹在脸上不再是刺骨的刀刃，而是带了一丝柔和的湿意。农村有\"打春牛\"的习俗，用泥土塑一头牛，鞭打它来唤醒耕种。对普通人来说，立春是一个心理上的转折点：是时候抖擞精神，开始新一年的计划了。",
+        "sr": "Početak proleća je prvi od 24 solarna ciklusa – označava da je proleće stiglo. Iako može biti još hladno, oseća se da je vetar drugačiji – više nije oštar kao nož, već nosi trag vlage i nežnosti. Na selima postoji običaj \"bičenja vola\" – prave vola od blata i udaraju ga bičem da probude zemlju za obradu. Za običnog čoveka, ovo je psihološka prekretnica: vreme da se otreseš i kreneš s planovima za novu godinu.",
+        "en": "Start of Spring is the first of the 24 solar terms, marking the arrival of spring. It may still be cold, but you can feel the difference in the wind — no longer a sharp blade against your face, but carrying a hint of soft moisture. In the countryside, there is a tradition of \"whipping the spring ox\" — a clay ox is struck to awaken the land for plowing. For most people, this is a psychological turning point: time to shake yourself awake and begin planning for the new year."
+      }
+    },
+    {
+      "date": "2026-02-19",
+      "name": {
+        "zh": "雨水",
+        "sr": "Kiše",
+        "en": "Rain Water"
+      },
+      "story": {
+        "zh": "雨水时节，冰雪开始融化，降水量逐渐增多。空气里弥漫着湿润的泥土气息，柳树开始泛出隐隐的鹅黄色。这段时间要特别注意保暖，老人说\"春捂秋冻\"，因为乍暖还寒最容易感冒。我喜欢这个节气名字里的温柔——不是暴雨，不是骤雨，只是\"雨水\"，细细的、无声的，却让整个世界慢慢苏醒。",
+        "sr": "U periodu Kiša, sneg i led počinju da se tope, a padavina je sve više. Vazduh je ispunjen vlažnim mirisom zemlje, a vrbe dobijaju blagu žutu nijansu. U ovo doba treba paziti na zdravlje – stari kažu \"proleće se nosi, jesen se kući\" jer je lako prehladiti se kad je naizmenično toplo i hladno. Volim nežnost u imenu ovog ciklusa – ne oluja, ne pljusak, samo \"kiše\", tihe i sitne, ali ceo svet polako budi.",
+        "en": "During Rain Water, ice and snow begin to melt and rainfall gradually increases. The air fills with the moist scent of earth, and willow trees start showing hints of pale yellow. This is a time to be careful with your health — elders say \"keep warm in spring, cool in autumn\" because the fluctuating temperatures make it easy to catch a cold. I love the gentleness in this term's name — not a storm, not a downpour, just \"rain water,\" fine and silent, yet it slowly wakes the whole world."
+      }
+    },
+    {
+      "date": "2026-03-05",
+      "name": {
+        "zh": "惊蛰",
+        "sr": "Buđenje insekata",
+        "en": "Awakening of Insects"
+      },
+      "story": {
+        "zh": "惊蛰的意思是春雷乍动，惊醒了冬眠的虫子和动物。这大概是我最喜欢的节气名字——画面感极强，仿佛能听见第一声春雷从远方滚来。这时候气温回升得很快，桃花开了，黄鹂开始歌唱。农民们知道，该春耕了。而对城市里的人来说，惊蛰像一个温柔的邀请：走出去吧，春天真的在这里了。",
+        "sr": "Buđenje insekata doslovno znači da prolećna grmljavina budi uspavane bube i životinje. Ovo mi je možda najdraže ime od svih 24 ciklusa – nosi tako živu sliku, kao da čuješ prvu grmljavinu kako dolazi iz daljine. Temperatura brzo raste, cveta breskva, pevaju ptice. Seljaci znaju: vreme je za prolećnu obradu. A za nas u gradu, ovo je nežan poziv: izađi napolje, proleće je zaista ovde.",
+        "en": "Awakening of Insects means the first spring thunder startles hibernating insects and animals awake. This might be my favorite solar term name — it is so vivid, as if you can hear the first rumble of thunder rolling in from afar. Temperatures rise quickly now; peach trees blossom, orioles begin to sing. Farmers know it is time for spring plowing. For city dwellers, it is a gentle invitation: step outside, spring is truly here."
+      }
+    },
+    {
+      "date": "2026-03-20",
+      "name": {
+        "zh": "春分",
+        "sr": "Prolećna ravnodnevica",
+        "en": "Spring Equinox"
+      },
+      "story": {
+        "zh": "春分这天，白天和黑夜一样长，各十二小时。古人说\"春分者，阴阳相半也\"，这一天天地达到了最完美的平衡。天气不冷不热，是最舒服的时候。人们喜欢在这一天放风筝、踏青、立鸡蛋——据说春分时地球地轴平衡，鸡蛋最容易竖起来。无论科学与否，在春分的阳光下试试立一个鸡蛋，那种心静手稳的专注本身，就是一件很美的事。",
+        "sr": "Na Prolećnu ravnodnevicu, dan i noć su jednako dugi – po dvanaest sati. Drevni Kinezi su govorili: \"Na ravnodnevicu, jin i jang su na pola.\" Vreme je savršeno – ni vruće ni hladno. Ljudi puštaju zmajeve, izlaze u prirodu i pokušavaju da usprave jaje – kaže se da je na ovaj dan to najlakše zbog položaja Zemljine ose. Bilo to tačno ili ne, sama koncentracija i mirna ruka dok pokušavaš da uspraviš jaje na prolećnom suncu – to je već lepo samo po sebi.",
+        "en": "On Spring Equinox, day and night are exactly equal — twelve hours each. The ancients said \"at the equinox, yin and yang are perfectly balanced,\" and the world achieves its most harmonious state. The weather is neither hot nor cold, simply perfect. People fly kites, go on outings, and try to balance eggs upright — legend says the Earth's tilted axis makes eggs easiest to stand on this day. Whether scientifically true or not, the focused stillness of trying to balance an egg in the spring sunlight is a beautiful thing in itself."
+      }
+    },
+    {
+      "date": "2026-04-05",
+      "name": {
+        "zh": "清明",
+        "sr": "Vedro i svetlo",
+        "en": "Clear and Bright"
+      },
+      "story": {
+        "zh": "清明不仅是节气，也是一个重要的传统节日。天清气朗，万物生长，到处是生机勃勃的绿色。这个时节最适合踏青——约上三五好友去郊外走走，看满山遍野的油菜花和野花。但同时，清明也是扫墓祭祖的日子。带着鲜花和点心去墓地，为逝去的亲人扫去墓碑上的尘埃。生与死，在这一天以一种温柔的方式交汇。",
+        "sr": "Vedro i svetlo nije samo solarni ciklus, već i važan tradicionalni praznik. Nebo je čisto, vazduh bistar, sve raste i zeleni se. Ovo je najbolje vreme za izlete – pozoveš par prijatelja i odeš u prirodu da vidiš polja žutog uljanog cveća i divljeg cveća. Ali istovremeno, ovo je i dan čišćenja grobova. Nosiš cveće i kolače na groblje, brišeš prašinu sa nadgrobnih ploča. Život i smrt se na ovaj dan susreću na jedan nežan način.",
+        "en": "Clear and Bright is not only a solar term but also an important traditional festival. The sky is clear, the air is bright, and everything is growing — green as far as the eye can see. This is the perfect time for a spring outing — invite a few friends and go to the countryside to see fields of rapeseed flowers and wild blossoms. At the same time, it is also the day for tending ancestral graves. You bring flowers and pastries to the cemetery, brush dust from the tombstones. Life and death meet on this day in a gentle way."
+      }
+    },
+    {
+      "date": "2026-04-20",
+      "name": {
+        "zh": "谷雨",
+        "sr": "Kiša za žito",
+        "en": "Grain Rain"
+      },
+      "story": {
+        "zh": "谷雨是春天的最后一个节气，意思是\"雨生百谷\"。绵绵的春雨灌溉着田野里的庄稼，稻谷和麦苗贪婪地吸收着水分。这是采茶的好时节——\"雨前茶\"被认为是一年中最鲜嫩的。小时候外婆总说，谷雨前后要多吃香椿，因为这时候的香椿芽最嫩最香。春天就要过去了，但每一场雨都在为夏天的丰收做准备。",
+        "sr": "Kiša za žito je poslednji prolećni ciklus – naziv govori da kiša rađa stotinu žitarica. Prolećne kiše natapaju polja, pirinač i pšenica pohlepno upijaju vodu. Ovo je najbolje vreme za berbu čaja – čaj ubran \"pred kišu\" smatra se najsvežijim u godini. Baka je uvek govorila da u ovo doba treba jesti mlade izdanke drveta toona – najnežniji su i najmirisniji. Proleće se polako završava, ali svaka kiša priprema letnju žetvu.",
+        "en": "Grain Rain is the last solar term of spring — its name means \"rain gives birth to a hundred grains.\" Spring rains soak the fields, and rice seedlings and wheat drink greedily. This is the prime season for tea picking — \"pre-rain tea\" is considered the most tender of the year. My grandmother always said that around this time you should eat Chinese toon shoots, as they are at their most tender and fragrant. Spring is slowly ending, but every rain shower is preparing the summer harvest."
+      }
+    },
+    {
+      "date": "2026-05-05",
+      "name": {
+        "zh": "立夏",
+        "sr": "Početak leta",
+        "en": "Start of Summer"
+      },
+      "story": {
+        "zh": "立夏意味着夏天正式开始了。太阳变得明亮而热情，树荫一天比一天浓密。古人有个很有趣的习俗：在这一天称体重，因为夏天容易让人消瘦，称一称提醒自己要注意身体。现在我更在意的是一杯冰凉的酸梅汤和切开的第一块西瓜。立夏给我的感觉是——准备好出汗，准备好大笑，准备好在这个季节活得更用力一些。",
+        "sr": "Početak leta znači da je leto zvanično počelo. Sunce postaje sjajno i žarko, hladowina sve gušća. Drevni Kinezi su imali zanimljiv običaj: na ovaj dan su se vagali, jer leti čovek lako smrša – podsetnik da pazi na zdravlje. Ja danas više razmišljam o hladnom čaju od suvih šljiva i prvoj krišci lubenice. Početak leta za mene znači: spremi se da se znojiš, spremi se da se smeješ, spremi se da živiš jače u ovom godišnjem dobu.",
+        "en": "Start of Summer means summer has officially begun. The sun becomes bright and ardent, and shade grows denser by the day. The ancients had an interesting custom: on this day they would weigh themselves, because summer makes people lose weight easily — a reminder to take care of one's health. Today, what I care about more is a glass of cold sour plum drink and the first slice of watermelon. Start of Summer says to me: get ready to sweat, get ready to laugh, get ready to live more intensely this season."
+      }
+    },
+    {
+      "date": "2026-05-21",
+      "name": {
+        "zh": "小满",
+        "sr": "Punoća klasja",
+        "en": "Grain Buds"
+      },
+      "story": {
+        "zh": "小满是我觉得最有哲学意味的节气名字。麦类作物开始灌浆饱满，但还没有完全成熟——\"小得盈满\"，留有余地。古人说\"满招损，谦受益\"，小满的状态正是一种不太满的、恰到好处的幸福。这个时候雨水增多，天气闷热，人要吃些清淡祛湿的食物。小满教会我：不必事事追求完美，恰好、刚好，就是最好的状态。",
+        "sr": "Punoća klasja je za mene najfilozofskije ime među solarnim ciklusima. Žitarice počinju da dobijaju zrno, ali još nisu potpuno zrele – \"malo punoće bez preterivanja.\" Drevni su govorili: \"Punoća donosi gubitak, skromnost donosi korist.\" Ovo je stanje sreće koja nije preterana, taman. U ovo doba pada sve više kiše, vreme je sparno, i treba jesti laganu hranu koja hladi telo. Punoća klasja me uči: ne mora sve biti savršeno – taman je najbolje.",
+        "en": "Grain Buds is, to me, the most philosophical of all the solar term names. Grains begin to fill with kernel but are not yet fully ripe — \"full within limits,\" leaving room. The ancients said \"fullness invites loss, humility brings gain.\" This is a state of happiness that is not overfull, just right. Rainfall increases now, the weather becomes muggy, and people eat light foods that dispel dampness. Grain Buds teaches me: not everything needs to be perfect — \"just right\" is the best state of all."
+      }
+    },
+    {
+      "date": "2026-06-05",
+      "name": {
+        "zh": "芒种",
+        "sr": "Žetva i setva",
+        "en": "Grain in Ear"
+      },
+      "story": {
+        "zh": "芒种是农事最繁忙的时节——有芒的麦子要抢收，有芒的稻子要赶紧种。这是一场与时间赛跑的季节大战。天气变得炎热，雷阵雨说来就来。小时候在农村，我看到大人们在田里挥汗如雨，收割、打谷、插秧，从黎明忙到天黑。芒种这个词本身就带着一种紧迫感，一种对大地的敬畏。也正因如此，收获的喜悦才格外珍贵。",
+        "sr": "Žetva i setva je najprometnije vreme u poljoprivredi – pšenicu treba požuriti da se požanje, a pirinač požuriti da se posadi. To je trka s vremenom. Vreme postaje vruće, iznenadne oluje dolaze niotkuda. Na selu sam gledao kako odrasli rade u poljima dok im znoj teče niz lice – žetva, vršidba, presađivanje – od svitanja do mraka. Ovo ime nosi osećaj hitnosti i strahopoštovanja prema zemlji. I baš zato je radost berbe posebno dragocena.",
+        "en": "Grain in Ear is the busiest farming season of the year — bearded wheat must be hastily harvested, and rice with its awns must be hastily planted. It is a race against time. The weather turns hot, and thunderstorms arrive without warning. In the countryside, I watched the adults working in the fields, sweat pouring down their faces — harvesting, threshing, transplanting — from dawn until dusk. The name itself carries a sense of urgency, a kind of reverence for the land. And that is precisely why the joy of the harvest is so precious."
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "name": {
+        "zh": "夏至",
+        "sr": "Letnja dugodnevica",
+        "en": "Summer Solstice"
+      },
+      "story": {
+        "zh": "夏至是一年中白天最长的一天。太阳直射北回归线，阳光像倾泻一样洒在大地上。从这天起，白天开始一天天变短，但真正的酷暑还在后面。古人说\"夏至一阴生\"，在极盛的阳气中，一丝阴气悄然滋生。这一天要吃面——\"冬至饺子夏至面\"，一碗凉面下肚，暑气消了一半。坐在傍晚漫长的余晖里，你会觉得时间被拉长了，这一天舍不得结束。",
+        "sr": "Letnja dugodnevica je najduži dan u godini. Sunce stoji tačno iznad Severnog obratnika, i svetlost se izliva kao vodopad. Od danas dani postaju kraći, ali prava vrućina tek dolazi. Drevni su govorili: \"Na letnju dugodnevicu rađa se jin\" – u vrhuncu janga, javlja se prvi dah jina. Na ovaj dan jedu se rezanci – \"zimi knedle, leti rezanci\" – hladan tanjir rezanaca rastera pola vrućine. Kad sediš u dugom večernjem sumraku, imaš osećaj da je vreme produženo – ne želiš da ovaj dan prođe.",
+        "en": "Summer Solstice is the longest day of the year. The sun shines directly on the Tropic of Cancer, pouring light like a waterfall over the earth. From this day, the days begin to shorten, but the real heat is yet to come. The ancients said \"on summer solstice, yin is born\" — at the peak of yang's dominance, a thread of yin quietly emerges. People eat noodles on this day — \"dumplings on winter solstice, noodles on summer solstice.\" A bowl of cold noodles dispels half the heat. Sitting in the long twilight, you feel time stretching, reluctant to let the day end."
+      }
+    },
+    {
+      "date": "2026-07-07",
+      "name": {
+        "zh": "小暑",
+        "sr": "Mala vrućina",
+        "en": "Minor Heat"
+      },
+      "story": {
+        "zh": "小暑标志着真正炎热的开始，但还不是最热的时候。蝉鸣声响彻整个下午，空气热烘烘的，即使坐着不动也会出汗。小时候最开心的事就是放学后买一根冰棍，坐在电扇前面慢慢吃。老话说\"小暑大暑，上蒸下煮\"——又闷又热的天气最考验人的耐性。这段时间要注意养心，因为天热心也容易烦躁。喝一碗绿豆汤，心静自然凉。",
+        "sr": "Mala vrućina označava početak istinske vrućine, ali još nije vrhunac. Cvrčci cvrče celo popodne, vazduh je vreo – čak i kad miruješ, znojiš se. Kao dete, najsrećniji sam bio kad posle škole kupim sladoled na štapiću i sednem ispred ventilatora. Stari kažu: \"Mala vrućina, velika vrućina – pareno i pečeno\" – sparno vreme testira strpljenje. U ovo doba treba negovati srce, jer vrućina lako donosi razdražljivost. Popij činiju supice od mungo pasulja – smiri srce, i hladnoća dolazi sama.",
+        "en": "Minor Heat marks the beginning of real heat, though it is not at its peak yet. Cicadas drone through the entire afternoon, the air is hot and heavy — you sweat even sitting still. As a child, the happiest moment was buying a popsicle after school and eating it slowly in front of the fan. The old saying goes \"Minor Heat, Major Heat — steaming above, boiling below.\" The muggy, sweltering weather tests your patience. This is a time to nurture the heart, because heat makes the mind irritable. Drink a bowl of mung bean soup — calm the heart, and coolness will follow."
+      }
+    },
+    {
+      "date": "2026-07-23",
+      "name": {
+        "zh": "大暑",
+        "sr": "Velika vrućina",
+        "en": "Major Heat"
+      },
+      "story": {
+        "zh": "大暑是一年中最热的时候，太阳像一团火球挂在头顶。午后经常有雷阵雨，雨水砸在滚烫的地面上蒸腾起一层白雾。这是荷花盛开的季节，池塘里碧绿的荷叶铺开，粉色和白色的荷花开得正盛。这么热的天，人们爱去水里避暑——游泳、漂流，或者干脆躲在空调房里吃西瓜。大暑虽然难熬，但它也是生命力最旺盛的时刻，热到极致，才能迎来秋天的清凉。",
+        "sr": "Velika vrućina je najtopliji period u godini, sunce visi kao vatrena lopta. Posle podne često navale grmljavinske kiše, a voda udari o usijano tlo i diže se bela para. Ovo je sezonu cvetanja lotosa – bare su prekrivene zelenim listovima, ružičasti i beli cvetovi su u punom sjaju. Na ovoj vrućini ljudi traže hlad u vodi – plivaju, voze splavove, ili prosto sede u klimatizovanoj sobi i jedu lubenicu. Iako je Velika vrućina teška, ona je i trenutak najsnažnije životne snage. Tek kad vrućina dostigne vrhunac, dočekaćemo jesenju svežinu.",
+        "en": "Major Heat is the hottest time of the year, the sun hanging like a ball of fire overhead. Afternoons often bring thunderstorms, rain pounding the scorched earth and sending up sheets of white steam. This is the season of lotus blossoms — ponds carpeted with green leaves, pink and white flowers in full glory. In this heat, people seek refuge in water — swimming, rafting, or simply hiding in air-conditioned rooms eating watermelon. Though Major Heat is hard to endure, it is also the peak of life's vitality. Only when the heat reaches its zenith can we welcome autumn's coolness."
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "name": {
+        "zh": "立秋",
+        "sr": "Početak jeseni",
+        "en": "Start of Autumn"
+      },
+      "story": {
+        "zh": "立秋到了，但夏天还没真正离开——\"秋老虎\"还会发威一段时间。不过早晚的风已经变凉了，吹在身上有一种久违的清爽感。梧桐树的叶子开始变黄，第一片落叶悄无声息地飘下。民间有\"贴秋膘\"的习俗——经过酷暑的消耗，立秋要吃点好的补补身体。对我来说，立秋像是一个深吸一口气的时刻：最火热的季节过去了，生活可以重新变得从容一些。",
+        "sr": "Početak jeseni je stigao, ali leto još uvek nije otišlo – \"jesenji tigar\" će još pokazati zube. Ipak, jutarnji i večernji povetarac je svežiji, dugo očekivana osveženje. Lišće platana počinje da žuti, prvi listovi tiho padaju. Narod ima običaj \"nalepiti jesenje salo\" – posle letnje potrošnje, na početku jeseni jedeš hranljivije da povratiš snagu. Za mene, Početak jeseni je kao jedan dubok udah: najtoplija sezona je iza nas, život ponovo može da bude sporiji i mirniji.",
+        "en": "Start of Autumn has arrived, but summer is not quite done yet — the \"autumn tiger\" will show its teeth for a while longer. Still, the morning and evening breezes have turned cooler, carrying a long-missed freshness. Plane tree leaves begin to yellow, the first few falling silently to the ground. There is a folk tradition called \"sticking autumn fat\" — after summer's depletion, you eat nourishing food at the start of autumn to replenish. For me, Start of Autumn feels like a deep breath: the most intense season is behind us, and life can slow down again."
+      }
+    },
+    {
+      "date": "2026-08-23",
+      "name": {
+        "zh": "处暑",
+        "sr": "Prestanak vrućine",
+        "en": "End of Heat"
+      },
+      "story": {
+        "zh": "处暑的意思是炎热的夏天终于要结束了。暑气一天天消退，秋天真正的凉意开始渗透进来。天空变得高远，云朵也显得轻盈了。这段时间人容易感到\"秋乏\"——夏天的消耗还没完全恢复，身体需要适应。我觉得处暑是大自然给我们的一种安慰：最苦的日子熬过去了，接下来是收获的、舒适的季节。早晚记得加件外套，别着凉。",
+        "sr": "Prestanak vrućine znači da se vruće leto konačno završava. Letnja žega svakim danom slabi, a prava jesenja svežina počinje da prožima vazduh. Nebo postaje više i vedrije, oblaci lakši. U ovo doba ljudi osećaju \"jesenji umor\" – telo se još nije oporavilo od letnje potrošnje. Ovo je prirodna uteha: najteži dani su iza nas, sledi sezona berbe i udobnosti. Ujutro i uveče ponesi jaknu – nemoj da se prehladiš.",
+        "en": "End of Heat means the hot summer is finally coming to a close. The lingering heat fades day by day, and true autumn coolness begins to seep into the air. The sky grows higher and clearer, the clouds lighter. This is a time when people feel \"autumn fatigue\" — the body has not fully recovered from summer's depletion and needs to adjust. I see End of Heat as nature's consolation: the hardest days are behind us, and the season of harvest and comfort lies ahead. Put on a light jacket in the morning and evening — do not catch a chill."
+      }
+    },
+    {
+      "date": "2026-09-07",
+      "name": {
+        "zh": "白露",
+        "sr": "Bela rosa",
+        "en": "White Dew"
+      },
+      "story": {
+        "zh": "白露是秋天最美的节气名字之一。夜晚气温下降，水汽在草木上凝结成晶莹的露珠，在清晨的阳光下闪闪发光。这时候秋意已经很浓了，大雁开始南飞，燕子也准备启程。老人们会提醒：\"白露身不露\"——天气凉了，不能再赤膊露背了。我喜欢清晨出门散步，看草叶上的露水打湿鞋尖，感受那种清冽而透明的凉意，整个人都清醒了。",
+        "sr": "Bela rosa je jedno od najlepših imena jesenjih ciklusa. Noću temperatura pada, vlaga se kondenzuje na travi i lišću u sjajne kapljice rose koje blistaju na jutarnjem suncu. Jesen je već duboko odmakla – divlje guske lete na jug, laste se spremaju za put. Stariji opominju: \"Na Belu rosu ne otkrivaj telo\" – hladno je, ne možeš više bez majice. Volim da ujutro izađem u šetnju, da rosa kvasim vrhove cipela, i da osetim tu hladnu, prozirnu svežinu koja te potpuno probudi.",
+        "en": "White Dew has one of the most beautiful names among the autumn solar terms. Night temperatures drop, and moisture condenses on grass and leaves into glistening dewdrops that sparkle in the morning sun. Autumn is now deep — wild geese begin flying south, and swallows prepare for their journey. The elders warn: \"When White Dew arrives, do not bare your skin\" — it is cold now; you can no longer go without a shirt. I love walking in the early morning, watching the dew wet the tips of my shoes, feeling that clear, transparent coldness that wakes you up completely."
+      }
+    },
+    {
+      "date": "2026-09-23",
+      "name": {
+        "zh": "秋分",
+        "sr": "Jesenja ravnodnevica",
+        "en": "Autumn Equinox"
+      },
+      "story": {
+        "zh": "秋分和春分一样，白天和黑夜再次平分。但秋分有一种特别的意味——从这天开始，夜晚将比白天越来越长。天气真正凉下来了，桂花开了，满城飘香。秋分也是\"中国农民丰收节\"，庆祝一年的收成。对我来说，秋分是一个内省的节气。自然界从繁盛走向收敛，人也应该跟着季节的节奏，从向外追逐转向向内沉淀。泡一杯桂花茶，安静地坐着，听听秋风的声音。",
+        "sr": "Kao i na prolećnu ravnodnevicu, na Jesenju ravnodnevicu dan i noć su ponovo jednaki. Ali ova ravnodnevica nosi posebno značenje – od danas noći postaju duže od dana. Vreme je istinski hladno, cvetaju kineski korenici cimeta, miris ispunjava ceo grad. Ovo je i \"Dan žetve kineskih seljaka\" – proslava godišnjeg roda. Za mene je ovo vreme unutrašnjeg preispitivanja. Kako priroda prelazi iz obilja u skupljanje, tako i čovek treba da prati ritam godišnjih doba – od jurcanja ka tišini. Skuvaj čaj od cvetova korenika cimeta, sedi mirno i slušaj zvuk jesenjeg vetra.",
+        "en": "Like the Spring Equinox, the Autumn Equinox once again balances day and night. But this one carries a special meaning — from this day forward, nights will grow longer than days. The weather has truly turned cool; osmanthus flowers bloom, their fragrance filling the entire city. This day is also China's Farmers' Harvest Festival, celebrating the year's bounty. For me, Autumn Equinox is a time of introspection. As nature shifts from abundance to contraction, people too should follow the season's rhythm — turning from outward pursuit toward inner quiet. Brew a cup of osmanthus tea, sit still, and listen to the sound of the autumn wind."
+      }
+    },
+    {
+      "date": "2026-10-08",
+      "name": {
+        "zh": "寒露",
+        "sr": "Hladna rosa",
+        "en": "Cold Dew"
+      },
+      "story": {
+        "zh": "寒露时节，露水更凉了，仿佛要凝成霜。北方的枫叶红了，漫山遍野像燃烧的火焰。南方的稻田里金黄的稻浪随风起伏，正是收获的尾声。这段时间要特别注意脚部的保暖——\"寒露脚不露\"，因为寒气容易从脚底侵入。重阳节也常在寒露前后，登高望远，插茱萸，喝菊花酒。站在山顶看遍野秋色，心里会涌起一种又美又惆怅的感觉——秋天，真的要深了。",
+        "sr": "U doba Hladne rose, kapljice su još hladnije, kao da hoće da se pretvore u mraz. Na severu lišće javora crveni, brda izgledaju kao da gore. Na jugu, zlatni talasi zrelog pirinča pokreću se na vetru – kraj berbe se bliži. U ovo doba treba posebno paziti na stopala – \"na Hladnu rosu ne otkrivaj noge\" – hladnoća lako ulazi kroz tabane. Praznik Devet dvostrukih (Chongyang) često pada u ovo vreme – penjanje na visine, nošenje drena, ispijanje vina od hrizantema. Kad stojiš na vrhu brda i gledaš boje jeseni, u srcu ti se mešaju lepota i tuga – jesen zaista postaje duboka.",
+        "en": "During Cold Dew, the dew grows colder, as if on the verge of turning to frost. In the north, maple leaves turn red, and the hills look like they are on fire. In the south, golden waves of ripe rice ripple in the wind — the harvest is nearing its end. You need to pay special attention to keeping your feet warm — \"on Cold Dew, do not bare your feet\" — because cold easily enters through the soles. The Double Ninth Festival often falls around this time — climbing high, wearing dogwood, drinking chrysanthemum wine. Standing on a mountaintop overlooking the autumn landscape, a feeling arises in your chest that is both beautiful and bittersweet — autumn is truly deepening."
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "name": {
+        "zh": "霜降",
+        "sr": "Pad mraza",
+        "en": "Frost Descent"
+      },
+      "story": {
+        "zh": "霜降意味着大地上开始出现霜冻——早晨起来，屋顶和草地上铺着一层薄薄的白霜。这是秋天的最后一个节气，柿子红了，市场上堆满了各种果实。北方人开始储存大白菜和萝卜过冬，街头烤红薯的香味弥漫在冷空气中。霜降之后就是冬天了，大自然在做最后的告别——把最浓烈的色彩涂在树叶上，然后一场风，满地金黄。",
+        "sr": "Pad mraza znači da se na zemlji pojavljuje prvi mraz – ujutro su krovovi i trava prekriveni tankim belim slojem. Ovo je poslednji jesenji ciklus. Draguljaste persimone su zrele, pijace su pune voća. Na severu ljudi skladište kupus i rotkve za zimu, a miris pečenog krompira iz uličnih pekara širi se hladnim vazduhom. Posle ovog ciklusa dolazi zima. Priroda se oprašta poslednji put – stavlja najjače boje na lišće, a onda jedan vetar i sve je zlatno na zemlji.",
+        "en": "Frost Descent means frost begins to appear on the ground — in the morning, rooftops and grass are dusted with a thin white layer. This is the last solar term of autumn. Persimmons turn red, and markets are piled high with fruits. In the north, people start stocking cabbages and radishes for winter; the smell of roasted sweet potatoes from street vendors drifts through the cold air. After Frost Descent comes winter. Nature is making its final farewell — painting the most vivid colors on the leaves, and then one gust of wind, and the ground is covered in gold."
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "name": {
+        "zh": "立冬",
+        "sr": "Početak zime",
+        "en": "Start of Winter"
+      },
+      "story": {
+        "zh": "立冬宣告冬天的开始。树叶几乎落尽了，枝丫光秃秃地伸向灰色的天空。北方已经开始供暖，屋里暖洋洋的，窗外寒风呼啸。立冬有\"补冬\"的习俗——吃一些热量高的食物来抵御严寒，比如羊肉火锅。以前每到立冬，妈妈就会炖一锅鸡汤，说是喝了整个冬天都不怕冷。冬天虽然萧瑟，但也有它的好：可以名正言顺地早睡晚起，窝在温暖的被窝里读一本厚厚的书。",
+        "sr": "Početak zime objavljuje dolazak zime. Lišće je gotovo opalo, grane gole stoje prema sivom nebu. Na severu je grejanje već uključeno – u kući je toplo i prijatno, dok napolju hladan vetar zavija. Običaj je da se zima \"dočeka snagom\" – jedu se kalorični obroci da telo izdrži hladnoću, kao što je jagnjeća čorba. Svake godine na Početak zime, mama bi skuvala čorbu od piletine i govorila da posle toga nećemo osećati hladnoću cele zime. Zima je sumorna, ali ima svoje čari: možeš bez griže savesti da legneš ranije i ustaneš kasnije, sklupčan pod toplim ćebetom, čitajući debelu knjigu.",
+        "en": "Start of Winter announces the arrival of winter. The trees are almost bare, branches stretching starkly against the gray sky. In the north, heating has already come on — warm and cozy indoors while the wind howls outside. There is a tradition of \"nourishing for winter\" — eating high-calorie foods to fortify against the cold, like lamb hotpot. On every Start of Winter, my mom would simmer a pot of chicken soup, saying that after drinking it, I would not feel the cold all winter. Winter may be bleak, but it has its comforts: you can go to bed early and wake up late with a clear conscience, curled under a warm blanket, reading a thick book."
+      }
+    },
+    {
+      "date": "2026-11-22",
+      "name": {
+        "zh": "小雪",
+        "sr": "Mali sneg",
+        "en": "Minor Snow"
+      },
+      "story": {
+        "zh": "小雪指的是开始下雪了，但雪量还不大，落在地上很快就化了。北方的第一场雪总是让人兴奋——孩子们冲到院子里伸出舌头接雪花，大人们也忍不住多看几眼。天气越来越冷，人们开始腌腊肉、晒鱼干，为过冬做准备。在南方，小雪时节人们爱吃糍粑——糯米蒸熟后捣烂，裹上芝麻和糖，软糯香甜，吃了让人从心里暖和起来。",
+        "sr": "Mali sneg znači da počinje da pada sneg, ali još uvek ne napada puno – otopi se brzo kad padne na zemlju. Prvi sneg na severu uvek izaziva uzbuđenje – deca istrčavaju u dvorište i hvataju pahulje jezikom, i odrasli ne mogu da odole a da ne pogledaju. Hladnoća je sve jača, ljudi počinju da suše meso i ribu za zimu. Na jugu, u doba Malog snega, prave se pirinčane kuglice – lepljivi pirinač se kuva, tuče, pa oblaže u susam i šećer – mekane su i slatke, i greju čoveka iznutra.",
+        "en": "Minor Snow means snow has started to fall, but it is still light — it melts quickly upon hitting the ground. The first snow of the year in the north always brings excitement — children run into the yard with tongues out to catch snowflakes, and even adults cannot help but steal a glance. The cold deepens, and people start curing pork and drying fish in preparation for winter. In the south, during Minor Snow, people make glutinous rice cakes — sticky rice steamed, pounded, and rolled in sesame and sugar. Soft and sweet, they warm you from the inside out."
+      }
+    },
+    {
+      "date": "2026-12-07",
+      "name": {
+        "zh": "大雪",
+        "sr": "Veliki sneg",
+        "en": "Major Snow"
+      },
+      "story": {
+        "zh": "大雪意味着雪下得更大了，大地被厚厚的白雪覆盖。北方很多地方已经\"千里冰封，万里雪飘\"，孩子们堆雪人、打雪仗，整个世界白了头。这段时间是进补的好时候，各种炖汤和火锅是最受欢迎的美食。我最喜欢在大雪天里做一件事：坐在窗边，看着外面的雪花无声地飘落，手里捧着一杯热茶，听屋内暖气片的轻响。世界变得很安静，心也跟着安静了下来。",
+        "sr": "Veliki sneg znači da sneg pada sve jače, zemlja prekrivena debelim belim pokrivačem. Na severu su reke zaleđene, sneg prekriva sve – deca prave beliće i grudvaju se, ceo svet je pobelio. Ovo je najbolje vreme za jačanje organizma – čorbe i fondue su najtraženija jela. Najviše volim da u vreme Velikog snega sednem pored prozora, gledam pahulje kako tiho padaju, držim šolju toplog čaja i slušam tiho zujanje grejanja. Svet postaje tih, i srce sledi.",
+        "en": "Major Snow means the snow falls heavier, and the earth is covered in a thick white blanket. In many northern places, \"a thousand miles are frozen, ten thousand miles of snow fly\" — children build snowmen and have snowball fights, the whole world turned white. This is an excellent time for nourishing the body, with various stews and hotpots being the most popular foods. What I love best during Major Snow is sitting by the window, watching snowflakes fall silently outside, a cup of hot tea in my hands, listening to the gentle hum of the radiator. The world grows very quiet, and my heart follows."
+      }
+    },
+    {
+      "date": "2026-12-22",
+      "name": {
+        "zh": "冬至",
+        "sr": "Zimska kratkodnevica",
+        "en": "Winter Solstice"
+      },
+      "story": {
+        "zh": "冬至是一年中夜晚最长的一天，也是冬天的至暗时刻。古人认为\"冬至一阳生\"——从这天起，白昼会一天天变长，阳气开始回升。中国人特别看重冬至，有\"冬至大如年\"的说法。这一天北方吃饺子，南方吃汤圆。小时候奶奶总说：\"冬至不吃饺子，耳朵会冻掉。\"我每次都信以为真，吃得格外认真。其实冬至的意义不是那碗饺子或汤圆，而是在最长的黑夜里，全家人围坐在一起的那盏灯火。",
+        "sr": "Zimska kratkodnevica je dan sa najdužom noći u godini – trenutak najdublje tame. Drevni Kinezi su verovali: \"Na zimsku kratkodnevicu rađa se jang\" – od danas dani postaju duži, jang energija se vraća. Kinezi ovaj dan posebno poštuju, kaže se \"Zimska kratkodnevica važna je kao Nova Godina.\" Na severu jedu knedle, na jugu slatke pirinčane knedle. Kao dete, baka je uvek govorila: \"Ako ne jedeš knedle na zimsku kratkodnevicu, smrznuće ti se uši.\" Verovao sam i jeo veoma ozbiljno. Ali pravi smisao nije u činiji knedli – već u svetlosti lampe oko koje je cela porodica okupljena u najdužoj noći.",
+        "en": "Winter Solstice has the longest night of the year — the darkest moment of winter. The ancients believed that \"on winter solstice, yang is born\" — from this day forward, daylight grows longer and yang energy begins to rise. Chinese people hold this day in high regard, saying \"Winter Solstice is as important as the New Year.\" In the north, people eat dumplings; in the south, they eat tangyuan (sweet glutinous rice balls). As a child, my grandmother always said: \"If you do not eat dumplings on winter solstice, your ears will freeze off.\" I believed it completely and ate with great seriousness. But the real meaning is not the dumplings or the rice balls — it is the lamplight around which the whole family gathers on the longest night of the year."
+      }
+    }
+  ]
+}
