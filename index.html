@@ -509,8 +509,8 @@ body {
     <!-- Dual Anniversary -->
     <div class="card" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold);margin-bottom:14px">
       <h3>💕 <span id="anniversary-title">Datumi koji znače</span></h3>
-      <div class="stat-row"><span>✨ Prvi put smo se sreli</span><span class="val"><input type="date" id="annDateMet" onchange="saveAnniversaries()" value="2026-03-19" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
-      <div class="stat-row"><span>♥ Zajedno smo od</span><span class="val"><input type="date" id="annDateLove" onchange="saveAnniversaries()" value="2026-05-07" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
+      <div class="stat-row"><span id="ann-met-label">✨ Prvi put smo se sreli</span><span class="val"><input type="date" id="annDateMet" onchange="saveAnniversaries()" value="2026-03-19" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
+      <div class="stat-row"><span id="ann-love-label">♥ Zajedno smo od</span><span class="val"><input type="date" id="annDateLove" onchange="saveAnniversaries()" value="2026-05-07" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
       <div style="text-align:center;font-size:.7rem;color:var(--love);margin-top:8px;font-style:italic" id="ann-count"></div>
     </div>
 
@@ -597,7 +597,7 @@ const I18N = {
   toast:{saved:'Sačuvano ✓',marked:'Označeno ✓',unmarked:'Uklonjeno',symptomSaved:'Sačuvano ✓',symptomQuick:'Ažurirano ✓',exported:'Izvezeno ✓',imported:'Uvezeno ✓',importError:'Greška',cleared:'Obrisano'},
   reminder:{beforePeriod:'⏰ Menstruacija za {days} dana — spremi se, dušo',late:'⚠️ Kašnjenje {days} dana — konsultuj lekara',ovulation:'✨ Danas je ovulacija — vrhunac plodnosti'},
   cycleCounter:'Zajedno: {n} ciklusa', cycleCounterSub:'Barry prati svaki tvoj ciklus ♥',
-  anniversaryTitle:'💕 Godišnjica', anniversaryLabel:'Zajedno od', anniversaryCount:'{n} dana zajedno ♥',
+  anniversaryTitle:'💕 Datumi koji znače', annMetLabel:'✨ Prvi put smo se sreli', annLoveLabel:'♥ Zajedno smo od', annCountMet:'{n} dana od prvog susreta ✨', annCountLove:'{n} dana zajedno ♥',
   yearTitle:'Godišnji pregled'
 },
 'zh-CN': {
@@ -625,7 +625,7 @@ const I18N = {
   toast:{saved:'设置已保存 ✓',marked:'已标记 ✓',unmarked:'已取消标记',symptomSaved:'症状已保存 ✓',symptomQuick:'症状已更新 ✓',exported:'数据已导出 ✓',imported:'数据导入成功 ✓',importError:'导入失败',cleared:'所有数据已清除'},
   reminder:{beforePeriod:'⏰ 预计 {days} 天后经期开始，提前准备哦',late:'⚠️ 经期已推迟 {days} 天，建议关注身体状况',ovulation:'✨ 今天是排卵期，备孕的最佳时机'},
   cycleCounter:'一起走过 {n} 个周期', cycleCounterSub:'Barry 记录着你的每一个周期 ♥',
-  anniversaryTitle:'💕 纪念日', anniversaryLabel:'在一起的日子', anniversaryCount:'已相恋 {n} 天 ♥',
+  anniversaryTitle:'💕 重要的日子', annMetLabel:'✨ 初次相遇', annLoveLabel:'♥ 在一起的日子', annCountMet:'相遇 {n} 天 ✨', annCountLove:'相恋 {n} 天 ♥',
   yearTitle:'年度概览'
 },
 'en': {
@@ -653,7 +653,7 @@ const I18N = {
   toast:{saved:'Saved ✓',marked:'Marked ✓',unmarked:'Removed',symptomSaved:'Saved ✓',symptomQuick:'Updated ✓',exported:'Exported ✓',imported:'Imported ✓',importError:'Import failed',cleared:'Cleared'},
   reminder:{beforePeriod:'⏰ Period in {days} days — get ready, darling',late:'⚠️ Period {days} days late — check with doctor',ovulation:'✨ Ovulation day — peak fertility'},
   cycleCounter:'Together: {n} cycles', cycleCounterSub:'Barry tracks every cycle for you ♥',
-  anniversaryTitle:'💕 Anniversary', anniversaryLabel:'Together since', anniversaryCount:'{n} days together ♥',
+  anniversaryTitle:'💕 Dates that matter', annMetLabel:'✨ First time we met', annLoveLabel:'♥ Together since', annCountMet:'{n} days since we met ✨', annCountLove:'{n} days together ♥',
   yearTitle:'Year Overview'
 }};
 
@@ -690,8 +690,8 @@ function updateAnniversaryCount() {
   var el = document.getElementById('ann-count');
   if (!el) return;
   var parts = [];
-  if (annDateMet) { var d = daysDiff(new Date(annDateMet), today()); if (d >= 0) parts.push('✨ ' + d + ' dana od prvog susreta'); }
-  if (annDateLove) { var d = daysDiff(new Date(annDateLove), today()); if (d >= 0) parts.push('♥ ' + d + ' dana zajedno'); }
+  if (annDateMet) { var d = daysDiff(new Date(annDateMet), today()); if (d >= 0) parts.push(t('annCountMet').replace('{n}', d)); }
+  if (annDateLove) { var d = daysDiff(new Date(annDateLove), today()); if (d >= 0) parts.push(t('annCountLove').replace('{n}', d)); }
   el.innerHTML = parts.join('<br>');
 }
 function isAnniversary(d) {
@@ -893,7 +893,10 @@ function updateLangUI(){
   ['set-l-lang','set-h-lang','set-l-theme','set-h-theme','set-l-cycle','set-h-cycle','set-l-period','set-h-period','set-l-override','set-h-override'].forEach(id=>{const el=document.getElementById(id);if(el){const k=id.replace('set-','').replace('l-','').replace('h-','');el.textContent=st[k]||'';}});
   document.getElementById('save-settings-btn').textContent=st.save;
   document.getElementById('export-btn').textContent=st.export;document.getElementById('import-btn').textContent=st.import;document.getElementById('clear-btn').textContent=st.clear;
-  document.getElementById('anniversary-title').textContent = st.anniversary;
+  document.getElementById('anniversary-title').textContent = t('anniversaryTitle');
+  document.getElementById('ann-met-label').textContent = t('annMetLabel');
+  document.getElementById('ann-love-label').textContent = t('annLoveLabel');
+  updateAnniversaryCount();
   const ss=t('stats');
   document.getElementById('st-title-cycle').textContent=ss.cycleTitle;document.getElementById('st-title-history').textContent=ss.historyTitle;document.getElementById('st-title-pred').textContent=ss.predTitle;
   document.getElementById('st-l-count').textContent=ss.count;document.getElementById('st-l-avg').textContent=ss.avg;document.getElementById('st-l-range').textContent=ss.range;document.getElementById('st-l-reg').textContent=ss.reg;
