@@ -62,6 +62,17 @@ body {
 }
 
 .app { width:100%; max-width:420px; padding:12px 16px 120px; position:relative; }
+.app::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
+  background:
+    radial-gradient(ellipse 30% 20% at 85% 8%, rgba(180,160,140,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 15% 90%, rgba(160,140,120,.04) 0%, transparent 50%);
+}
+[data-theme="dark"] .app::before {
+  background:
+    radial-gradient(ellipse 30% 20% at 85% 8%, rgba(200,180,160,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 15% 90%, rgba(180,160,140,.03) 0%, transparent 50%);
+}
 
 /* ---- Floating Stars (Anđela = Angel) ---- */
 .floating-stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
@@ -196,10 +207,12 @@ body {
 .cal-nav .today-pill:active { transform:scale(.92); }
 
 .calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; transition:all .3s; }
-.calendar:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.calendar:hover { box-shadow:var(--shadow-md); }
 .weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
 .days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.day:nth-child(7n+6), .day:nth-child(7n+7) { background:rgba(0,0,0,.015); }
+[data-theme="dark"] .day:nth-child(7n+6), [data-theme="dark"] .day:nth-child(7n+7) { background:rgba(255,255,255,.015); }
 .day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; }
 .day:active { transform:scale(.93); background:var(--border); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
@@ -221,6 +234,8 @@ body {
 .day .mini-dot { position:absolute; bottom:3px; width:5px; height:5px; border-radius:50%; }
 .day .mini-dot.pink { background:var(--rose); }
 .day .mini-dot.gold { background:var(--gold); }
+.day .holiday-cn { position:absolute; bottom:2px; left:3px; width:4px; height:4px; border-radius:50%; background:#E53935; }
+.day .holiday-rs { position:absolute; bottom:2px; right:3px; width:4px; height:4px; border-radius:50%; background:#0C4076; }
 
 .legend { display:flex; flex-wrap:wrap; gap:4px 14px; margin-bottom:14px; font-size:.7rem; color:var(--text-muted); justify-content:center; }
 .legend span { display:flex; align-items:center; gap:5px; }
@@ -557,6 +572,7 @@ body {
     <div class="info-row"><span id="m-l-phase"></span><span id="modal-phase">--</span></div>
     <div class="info-row" id="modal-day-row" style="display:none"><span id="m-l-day"></span><span id="modal-day"></span></div>
     <div class="info-row" id="modal-symp-row" style="display:none"><span id="m-l-symp"></span><span id="modal-symp"></span></div>
+    <div class="info-row" id="modal-holiday-row" style="display:none"><span>🎌 <span id="m-l-holiday">Praznik</span></span><span id="modal-holiday"></span></div>
     <button class="knowledge-toggle" id="knowledgeToggle" onclick="toggleKnowledge()"></button>
     <div class="knowledge-panel" id="knowledgePanel"></div>
     <div class="divider" id="m-divider"></div>
@@ -678,6 +694,37 @@ function setLang(l) { lang = l; localStorage.setItem('cycle-lang', l); }
 function applyTheme(th) { theme = th; localStorage.setItem('cycle-theme', th); document.documentElement.setAttribute('data-theme', th); document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙'; const sel = document.getElementById('set-theme'); if (sel) sel.value = th; }
 function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); }
 function switchTheme(th) { applyTheme(th); }
+
+/* ================================================================
+   HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
+   ================================================================ */
+const HOLIDAYS = [
+  // 🇨🇳 China
+  {d:'2026-01-01',name:{sr:'Nova Godina (Kina)',zh:'元旦',en:'New Year'},country:'cn'},
+  {d:'2026-02-16',name:{sr:'Kineska Nova Godina (veče)',zh:'除夕',en:'CNY Eve'},country:'cn'},
+  {d:'2026-02-17',name:{sr:'Kineska Nova Godina',zh:'春节',en:'Chinese New Year'},country:'cn'},
+  {d:'2026-03-03',name:{sr:'Festival lampiona',zh:'元宵节',en:'Lantern Festival'},country:'cn'},
+  {d:'2026-04-05',name:{sr:'Čingming festival',zh:'清明节',en:'Qingming'},country:'cn'},
+  {d:'2026-05-01',name:{sr:'Praznik rada (Kina)',zh:'劳动节',en:'Labour Day'},country:'cn'},
+  {d:'2026-06-19',name:{sr:'Festival zmajevih čamaca',zh:'端午节',en:'Dragon Boat'},country:'cn'},
+  {d:'2026-08-19',name:{sr:'Kineski Dan zaljubljenih',zh:'七夕',en:'Qixi Festival'},country:'cn'},
+  {d:'2026-09-25',name:{sr:'Festival sredine jeseni',zh:'中秋节',en:'Mid-Autumn'},country:'cn'},
+  {d:'2026-10-01',name:{sr:'Nacionalni dan Kine',zh:'国庆节',en:'National Day'},country:'cn'},
+  // 🇷🇸 Serbia
+  {d:'2026-01-01',name:{sr:'Nova Godina',zh:'新年',en:'New Year'},country:'rs'},
+  {d:'2026-01-07',name:{sr:'Božić',zh:'东正教圣诞节',en:'Orthodox Christmas'},country:'rs'},
+  {d:'2026-01-27',name:{sr:'Sveti Sava',zh:'圣萨瓦日',en:'St. Sava Day'},country:'rs'},
+  {d:'2026-02-15',name:{sr:'Dan državnosti',zh:'塞尔维亚国庆日',en:'Statehood Day'},country:'rs'},
+  {d:'2026-04-12',name:{sr:'Vaskrs',zh:'东正教复活节',en:'Orthodox Easter'},country:'rs'},
+  {d:'2026-05-01',name:{sr:'Praznik rada',zh:'劳动节',en:'Labour Day'},country:'rs'},
+  {d:'2026-05-09',name:{sr:'Dan pobede',zh:'胜利日',en:'Victory Day'},country:'rs'},
+  {d:'2026-06-28',name:{sr:'Vidovdan',zh:'维多夫丹',en:'St. Vitus Day'},country:'rs'},
+  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs'}
+];
+
+function getHoliday(dateKey) {
+  return HOLIDAYS.filter(function(h){return h.d===dateKey;});
+}
 
 /* ================================================================
    ANNIVERSARY
@@ -903,6 +950,7 @@ function updateLangUI(){
   const lg=t('legend');
   document.getElementById('legend').innerHTML=`<span class="l-period">${lg[0]}</span><span class="l-fertile">${lg[1]}</span><span class="l-follicular">${lg[2]}</span><span class="l-luteal">${lg[3]}</span><span style="font-weight:700;font-size:.66rem;">▣ ${lg[4]}</span>`;
   if (annDateMet || annDateLove) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
+  document.getElementById('legend').innerHTML += '<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#E53935;display:inline-block"></span>🇨🇳</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#0C4076;display:inline-block"></span>🇷🇸</span>';
   const pl=t('progressLabels');
   document.querySelector('.lbl-period').textContent=pl[0];document.querySelector('.lbl-follicular').textContent=pl[1];
   document.querySelector('.lbl-ovulation').textContent=pl[2];document.querySelector('.lbl-luteal').textContent=pl[3];
@@ -961,6 +1009,13 @@ function renderCalendar(){
     el.textContent=d.getDate(); el.setAttribute('role','button'); el.setAttribute('aria-label',fmtDate(d));
     if(hasSymptom&&!phase){const dot=document.createElement('span');dot.className='mini-dot pink';el.appendChild(dot);}
     if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
+    // Holiday dots
+    var holidays=getHoliday(key);
+    holidays.forEach(function(h){
+      var dot=document.createElement('span');
+      dot.className='holiday-'+h.country;
+      el.appendChild(dot);
+    });
     if(inMonth) el.addEventListener('click',()=>openModal(d,pred));
     grid.appendChild(el);
   }
@@ -1035,7 +1090,7 @@ document.getElementById('fabBtn').addEventListener('click',()=>{
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);document.getElementById('modal').classList.remove('hidden');}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){return (h.country==='cn'?'🇨🇳 ':'🇷🇸 ')+h.name[lang]||h.name['sr']});document.getElementById('modal-holiday').textContent=hNames.join(', ');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
