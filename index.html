@@ -849,24 +849,23 @@ function loadCalendarData(cb) {
     calendarExtraData = d; localStorage.setItem('cycle-caldata', JSON.stringify(d)); cb(d);
   }).catch(function(){});
 }
-function toggleHolidayStory(el, hid) {
-  var detail = document.getElementById('story-'+hid);
-  if (!detail) return;
+function toggleHolidayStory(uid, date, country) {
+  var detail = document.getElementById('hd-'+uid);
+  var nameEl = document.getElementById('hn-'+uid);
+  if (!detail || !nameEl) return;
   var isOpen = detail.classList.contains('open');
-  if (isOpen) { detail.classList.remove('open'); el.textContent = el.textContent.replace(' ▴',' ▾'); return; }
-  // Load rich story if available
+  if (isOpen) { detail.classList.remove('open'); nameEl.textContent = nameEl.textContent.replace(' ▴',' ▾'); return; }
   loadCalendarData(function(data) {
-    var holiday = null;
+    var story = null;
     (data.holidays||[]).forEach(function(h) {
-      var hn = (h.name['en']||h.name['sr']).toLowerCase().replace(/[^a-z0-9]+/g,'-');
-      if (hn === hid) holiday = h;
+      if (h.date === date && h.country === (country==='cn'?'china':'serbia')) story = h.story;
     });
-    if (holiday && holiday.story) {
-      var story = holiday.story[lang] || holiday.story[lang.split('-')[0]] || holiday.story['sr'];
-      detail.textContent = story;
+    if (story) {
+      var txt = story[lang] || story[lang.split('-')[0]] || story['sr'];
+      if (txt) detail.textContent = txt;
     }
     detail.classList.add('open');
-    el.textContent = el.textContent.replace(' ▾',' ▴');
+    nameEl.textContent = nameEl.textContent.replace(' ▾',' ▴');
   });
 }
 
@@ -1189,7 +1188,7 @@ document.getElementById('fabBtn').addEventListener('click',()=>{
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var hid=(h.name['en']||h.name['sr']).toLowerCase().replace(/[^a-z0-9]+/g,'-');return flagEmoji+' <span class="holiday-name" onclick="toggleHolidayStory(this,\''+hid+'\')">'+n+' ▾</span><span class="holiday-detail" id="story-'+hid+'">'+d+'</span>'});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
