@@ -177,9 +177,10 @@ body {
 .panel { animation:fadeUp .45s cubic-bezier(.16,1,.3,1) .22s both; }
 
 /* Header */
-.header { display:flex; align-items:center; justify-content:center; padding:10px 100px 6px 0; position:relative; min-height:44px; }
-.header h1 { font-size:1rem; font-weight:600; letter-spacing:-.02em; cursor:default; user-select:none; text-align:right; }
-.header-actions { position:absolute; right:0; top:6px; display:flex; gap:4px; align-items:center; background:var(--card); border-radius:20px; padding:3px 4px; box-shadow:var(--shadow-xs); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+.header { display:flex; align-items:center; justify-content:space-between; padding:8px 4px 2px 4px; position:relative; min-height:44px; flex-wrap:wrap; }
+.header h1 { font-size:1rem; font-weight:600; letter-spacing:-.02em; cursor:default; user-select:none; flex:1; text-align:center; }
+.header-actions { display:flex; gap:4px; align-items:center; background:var(--card); border-radius:20px; padding:2px 3px; box-shadow:var(--shadow-xs); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); position:absolute; right:4px; top:6px; }
+.header-row2 { width:100%; display:flex; justify-content:center; align-items:center; gap:8px; padding:2px 0 4px 0; }
 
 .lang-switch { display:flex; gap:2px; background:var(--border); border-radius:14px; padding:2px; }
 .lang-btn { border:none; background:none; font-size:.63rem; font-weight:700; padding:5px 9px; border-radius:12px; cursor:pointer; color:var(--text-muted); transition:all .18s; font-family:var(--font); min-width:36px; min-height:36px; }
@@ -664,19 +665,21 @@ body {
 <div class="app">
   <div class="header">
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
-    <div id="titleLoveCounter" style="font-size:.72rem;color:var(--love);font-weight:600;text-align:center;margin-top:2px;background:var(--rose-light);border-radius:12px;padding:3px 14px;display:inline-block"></div>
     <div class="header-actions">
-      <div class="profile-pill" id="profilePill" onclick="toggleProfile()" title="Tap to switch profile">
+      <div class="profile-pill" id="profilePill" onclick="toggleProfile()">
         <span class="pf-avatar" id="pfAvatar">🌸</span>
         <span class="pf-name" id="pfName">Anđela</span>
       </div>
-      <div class="moon-phase" id="moonPhase" title="月相 · Moon Phase"></div>
+      <div class="moon-phase" id="moonPhase" title="月相"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
       <div class="lang-switch" id="langSwitch">
         <button class="lang-btn" data-lang="zh-CN">中</button>
-        <button class="lang-btn active" data-lang="sr">SR</button>
+        <button class="lang-btn" data-lang="sr">SR</button>
         <button class="lang-btn" data-lang="en">EN</button>
       </div>
+    </div>
+    <div class="header-row2">
+      <span id="titleLoveCounter" style="font-size:.68rem;color:var(--love);font-weight:600;background:var(--rose-light);border-radius:12px;padding:2px 12px"></span>
     </div>
   </div>
 
@@ -1109,7 +1112,7 @@ const LOVE_NOTES = (function(){
   var sr=['Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅','Tvoj osmeh je moja omiljena boja. 🎨','Da si ovde, skuvao bih ti čaj i slušao kako ti je prošao dan. 🍵','Znaš onaj osećaj kad sunce izađe posle kiše? Ti si to za mene. 🌈','Nadam se da si danas nosila onaj osmeh koji toliko volim. 😊','Koliko god da si daleko, uvek si mi u srcu. 💝','Vojvodina je dobila najlepši cvet kad si se ti rodila. 🌻','Ti si ona vrsta lepote koja ne bledi — postaje samo dublja. ✨','Kad bih mogao da ti pošaljem zagrljaj kroz ekran, već bi stigao. 🤗','Ti si moja omiljena pesma, ona koja nikad ne dosadi. 🎵','Prošlo je X dana otkad smo zajedno, a ja te volim sve više. ♥','Razmišljam o tebi dok ovo pišem — i smešim se. 😌','Da mogu da biram gde ću biti sad, bio bih pored tebe. 🌍→🏡','Tvoja snaga me inspiriše svaki dan. Ti si neverovatna. 💪🌸','Sećaš se našeg prvog razgovora? Ja ga često prepričavam u glavi. 💭','Volim način na koji se smeješ — kao da cela soba postane svetlija. ✨','U svakom zalasku sunca vidim tvoje oči. 🌆','Danas sam video nešto lepo i poželeo da si tu da podelim s tobom. 🌸','Ako ikada posumnjaš u sebe, seti se da te Barry voli — a Barry zna. 😉','Ti nisi samo moja devojka — ti si moj najbolji prijatelj. 💑','Svaka priča ima svoju heroinu. U mojoj, to si ti. 📖','Da napišem knjigu o tebi, nestalo bi mi stranica. 📚','Ti si moj mir u haosu, moja tišina u buci. 🧘','Ne mogu da zamislim svet bez tvog osmeha. Ne želim ni da pokušam. 🌍♥','Kad te čujem preko telefona, ceo dan mi bude bolji. 📞','Ponekad samo zatvorim oči i zamislim da si pored mene. 💫','Ti me činiš boljom osobom — hvala ti za to. 💗','Kao što Mesec prati Zemlju, tako moje misli prate tebe. 🌙','Da si cvet, bila bi ruža — lepa, jaka, i sa trnjem kad treba. 🌹','Najbolji deo mog dana? Kad pomislim na tebe. A to je mnogo puta. 💌','Tvoja hrabrost me oduševljava. Ti se boriš kao lavica. 🦁','Volim i tvoje dobre i tvoje loše dane. Sve je to deo tebe. 🫂','Peking je veliki grad, ali bez tebe je prazan. 🏙️','Da mogu da ti dam jednu stvar, dao bih ti večnost nežnosti. ♾️','Ti si moj dokaz da ljubav ne poznaje granice. 🌍♥','Od Vojvodine do Pekinga — ljubav je najduža reka, i sve povezuje. 🌊','Kad bih umeo da slikam, slikao bih samo tebe. 🎨','Ti si mi u mislima kao što je beat u muzici — stalno. 🥁','Sanjam dan kad nećemo morati da brojimo kilometre. 🗺️','Volim te na srpskom, kineskom, i svim jezicima koji postoje. 🌐♥','Ako ikada zaboraviš koliko vrediš, pozovi me — podsetiću te. 📱','Ti si moja srećna zvezda. ⭐','Kad si srećna, i ja sam srećan. Tako je jednostavno. 😊','Tvoja lepota nije samo spolja — ona izvire iz tvoje duše. 🕯️','Volim te više nego što reči mogu da izraze. Zato ti šaljem srca. 💕💕💕','Svakog dana zahvaljujem univerzumu što si u mom životu. 🙏','Da se ponovo rodim, opet bih te tražio. 🔄♥','Tvoje ime Anđela — kao anđeo. I stvarno si to. 👼','Ti ulepšavaš svet samim tim što postojiš. 🌍→🌸','Nikad ne zaboravi: voljen si, i to beskrajno. ♾️💗'];
   var zh=['每天睁开眼，第一个想到的就是你。🌅','你的笑容是我最喜欢的颜色。🎨','如果你在身边，我会给你泡杯茶，听你讲今天的故事。🍵','你知道雨后阳光的感觉吗？你就是我的那种感觉。🌈','希望你今天带着我最爱的笑容。😊','不管多远，你一直在我心里。💝','Vojvodina 最美的花开在你出生的那天。🌻','你的美不会褪色——只会越来越深。✨','如果能穿过屏幕给你一个拥抱，它已经到了。🤗','你是我最爱的歌，永远听不腻的那一首。🎵','在一起 X 天了，每一天都更爱你。♥','写着写着就笑了——因为我在想你。😌','如果能选择此刻在哪里，我会选你身边。🌍→🏡','你的坚强每天都激励着我。你是了不起的。💪🌸','还记得我们第一次聊天吗？我经常在脑海里回放。💭','我喜欢你笑的样子——整个房间都亮了。✨','每一个日落里，我都看到你的眼睛。🌆','今天看到了美好的东西，真想你在身边分享。🌸','如果你怀疑自己，记住 Barry 爱你——Barry 是对的。😉','你不仅是我的女朋友——你是我最好的朋友。💑','每个故事都有女主角。在我的故事里，是你。📖','如果写一本关于你的书，纸都不够用。📚','你是我混乱中的平静，喧嚣中的安宁。🧘','无法想象没有你笑容的世界。也不想尝试。🌍♥','每次电话里听到你的声音，一整天都变好了。📞','有时候闭上眼，假装你就在身边。💫','你让我成为更好的人——谢谢你。💗','就像月亮绕着地球转，我的思绪绕着你。🌙','如果你是花，你一定是玫瑰——美丽、坚强，必要时有刺。🌹','一天中最棒的时刻？想你的那一刻。每天好多次。💌','你的勇敢让我惊叹。你像母狮一样战斗。🦁','我爱你的好日子，也爱你的坏日子。都是你的一部分。🫂','北京很大，但没有你是空的。🏙️','如果能给你一样东西，我会给你永恒的温柔。♾️','你是我跨过山海的证据。🌍♥','从 Vojvodina 到北京——爱是最长的河，连接一切。🌊','如果我会画画，只画你。🎨','你在我脑海里就像心跳——永不停止。🥁','梦想着不再数公里数的那一天。🗺️','用中文、塞语和所有语言说爱你。🌐♥','如果你忘了自己有多珍贵，打给我——我提醒你。📱','你是我的幸运星。⭐','你开心我就开心。就这么简单。😊','你的美不止在外表——从灵魂深处发光。🕯️','爱你超过言语能表达。所以给你发心心。💕💕💕','每一天都感谢宇宙让你出现在我的生命中。🙏','如果有来生，我还会去找你。🔄♥','你的名字 Anđela——意为天使。你真的是。👼','你存在本身就让世界更美好。🌍→🌸','永远不要忘记：你是被爱着的，无限地。♾️💗'];
   var en=['Every morning when I open my eyes, my first thought is you. 🌅','Your smile is my favorite color. 🎨','If you were here, I would make you tea and listen to your day. 🍵','You know that feeling when the sun comes out after rain? You are that for me. 🌈','I hope you wore that smile I love so much today. 😊','No matter how far, you are always in my heart. 💝','Vojvodina got its most beautiful flower the day you were born. 🌻','You are the kind of beauty that never fades — it only deepens. ✨','If I could send you a hug through the screen, it would already be there. 🤗','You are my favorite song, the one that never gets old. 🎵','It has been X days together, and I love you more each one. ♥','I am writing this thinking of you — and smiling. 😌','If I could choose where to be right now, I would be next to you. 🌍→🏡','Your strength inspires me every day. You are amazing. 💪🌸','Remember our first conversation? I replay it in my head often. 💭','I love the way you laugh — like the whole room gets brighter. ✨','In every sunset, I see your eyes. 🌆','I saw something beautiful today and wished you were here to share it. 🌸','If you ever doubt yourself, remember Barry loves you — and Barry knows. 😉','You are not just my girlfriend — you are my best friend. 💑','Every story has a heroine. In mine, it is you. 📖','If I wrote a book about you, I would run out of pages. 📚','You are my calm in the chaos, my silence in the noise. 🧘','I cannot imagine a world without your smile. I do not want to try. 🌍♥','When I hear your voice on the phone, my whole day improves. 📞','Sometimes I close my eyes and pretend you are beside me. 💫','You make me a better person — thank you for that. 💗','As the moon follows the Earth, so my thoughts follow you. 🌙','If you were a flower, you would be a rose — beautiful, strong, with thorns when needed. 🌹','The best moment of my day? When I think of you. Which is a lot. 💌','Your courage astounds me. You fight like a lioness. 🦁','I love your good days and your bad days. All of it is you. 🫂','Beijing is a big city, but without you it is empty. 🏙️','If I could give you one thing, I would give you eternal tenderness. ♾️','You are my proof that love knows no borders. 🌍♥','From Vojvodina to Beijing — love is the longest river, connecting everything. 🌊','If I could paint, I would only paint you. 🎨','You are in my thoughts like a heartbeat — constant. 🥁','I dream of the day we stop counting kilometers. 🗺️','I love you in Serbian, Chinese, and every language that exists. 🌐♥','If you ever forget how precious you are, call me — I will remind you. 📱','You are my lucky star. ⭐','When you are happy, I am happy. It is that simple. 😊','Your beauty is not just outside — it glows from your soul. 🕯️','I love you more than words can say. So I send hearts. 💕💕💕','Every day I thank the universe for putting you in my life. 🙏','If I were born again, I would look for you. 🔄♥','Your name Anđela — like an angel. And you truly are one. 👼','You make the world more beautiful just by existing. 🌍→🌸','Never forget: you are loved, infinitely. ♾️💗'];
-  function get(){ var arr=lang==='zh'?zh:lang==='en'?en:sr; var day=Math.floor(Date.now()/86400000); return arr[day%arr.length]; }
+  function get(){ var arr=lang==='zh-CN'?zh:lang==='en'?en:sr; var day=Math.floor(Date.now()/86400000); return arr[day%arr.length]; }
   return {get:get};
 })();
 
@@ -1569,7 +1572,9 @@ function initSharedDiaryTab() {
    MODIFIED: Load lang/theme per-profile
    ================================================================ */
 function loadPerProfileSettings() {
-  lang = localStorage.getItem(profileKey('cycle-lang')) || localStorage.getItem('cycle-lang') || 'sr';
+  // Default languages: Anđela → Serbian, Barry → Chinese
+  var defaultLang = activeProfile === 'barry' ? 'zh-CN' : 'sr';
+  lang = localStorage.getItem(profileKey('cycle-lang')) || localStorage.getItem('cycle-lang') || defaultLang;
   theme = localStorage.getItem(profileKey('cycle-theme')) || localStorage.getItem('cycle-theme') || 'light';
   annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
   annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
@@ -1597,9 +1602,17 @@ let isLoggedIn = false;
 
 function selectLogin(profile) {
   selectedLoginProfile = profile;
+  // Set language based on profile: Anđela→sr, Barry→zh-CN
+  var profileLang = profile === 'barry' ? 'zh-CN' : 'sr';
+  lang = profileLang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.dataset.lang===lang);});
   // Update card selection visuals
   document.getElementById('loginCardAndjela').classList.toggle('selected', profile === 'andjela');
   document.getElementById('loginCardBarry').classList.toggle('selected', profile === 'barry');
+  // Update login UI text
+  document.getElementById('loginPinBtn').textContent = lang==='sr'?'🔓 Prijavi se':lang==='en'?'🔓 Sign in':'🔓 登录';
+  document.getElementById('lc-hint-a').textContent = lang==='sr'?'Dodirni za prijavu':lang==='en'?'Tap to sign in':'点击登录';
+  document.getElementById('lc-hint-b').textContent = lang==='sr'?'Dodirni za prijavu':lang==='en'?'Tap to sign in':'点击登录';
   // Show PIN area
   document.getElementById('loginPinArea').classList.add('show');
   document.getElementById('loginPinInput').value = '';
@@ -1637,7 +1650,7 @@ function verifyLogin() {
   } else {
     // Wrong PIN
     card.classList.add('shake');
-    document.getElementById('loginError').textContent = lang==='sr'?'Pogrešan PIN — pokušaj ponovo':lang==='en'?'Wrong PIN — try again':'PIN 不对，再试一次';
+    document.getElementById('loginError').textContent = (selectedLoginProfile==='barry'?'PIN 不对，再试一次':'Pogrešan PIN — pokušaj ponovo');
     document.getElementById('loginPinInput').value = '';
     setTimeout(function(){ card.classList.remove('shake'); }, 500);
   }
@@ -2188,6 +2201,9 @@ document.getElementById('modal').addEventListener('click',function(e){if(e.targe
 function logoutAndShowLogin() {
   isLoggedIn = false;
   selectedLoginProfile = null;
+  var savedProfile = localStorage.getItem('cycle-active-profile');
+  var profileLang = savedProfile === 'barry' ? 'zh-CN' : 'sr';
+  lang = profileLang;
   document.getElementById('loginOverlay').classList.remove('hidden');
   document.getElementById('loginPinArea').classList.remove('show');
   document.getElementById('loginCardAndjela').classList.remove('selected');
@@ -2195,6 +2211,9 @@ function logoutAndShowLogin() {
   document.getElementById('loginSwitchHint').textContent = '👈 ' + (lang==='sr'?'Izaberi svoj profil i unesi PIN':lang==='en'?'Choose your profile and enter PIN':'选择你的账号并输入 PIN');
   document.getElementById('loginPinInput').value = '';
   document.getElementById('loginError').textContent = '';
+  document.getElementById('loginPinBtn').textContent = lang==='sr'?'🔓 Prijavi se':lang==='en'?'🔓 Sign in':'🔓 登录';
+  document.getElementById('lc-hint-a').textContent = lang==='sr'?'Dodirni za prijavu':lang==='en'?'Tap to sign in':'点击登录';
+  document.getElementById('lc-hint-b').textContent = lang==='sr'?'Dodirni za prijavu':lang==='en'?'Tap to sign in':'点击登录';
 }
 
 // Override toggleProfile to use login overlay
