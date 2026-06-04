@@ -255,6 +255,9 @@ body {
 /* Anniversary marker */
 .day.anniversary { box-shadow:inset 0 0 0 2px var(--gold); }
 .day.anniversary::after { content:'♥'; position:absolute; top:1px; right:2px; font-size:.45rem; color:var(--love); }
+.day.birthday { box-shadow:inset 0 0 0 2px var(--gold); background:linear-gradient(135deg,var(--rose-light),#FFF8E7); }
+.day.birthday::after { content:'🎂'; position:absolute; top:0; right:1px; font-size:.48rem; }
+[data-theme="dark"] .day.birthday { background:linear-gradient(135deg,#2A1E22,#2A2218); }
 .day .mini-dot { position:absolute; bottom:3px; width:5px; height:5px; border-radius:50%; }
 .day .mini-dot.pink { background:var(--rose); }
 .day .mini-dot.gold { background:var(--gold); }
@@ -836,6 +839,11 @@ body {
     <div class="card" id="loveDaysCard" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)">
       <h3>💕 <span id="love-days-title">Dani zajedno</span></h3>
       <div id="love-days-content" style="text-align:center;line-height:2"></div>
+    </div>
+    <!-- Birthday Countdown -->
+    <div class="card" id="birthdayCard" style="background:linear-gradient(135deg,#FFF8E7,var(--rose-light));border:1px solid var(--gold)">
+      <h3>🎂 <span id="birthday-title">Rođendani</span></h3>
+      <div id="birthday-content" style="text-align:center;line-height:2"></div>
     </div>
     <!-- Daily Love Note -->
     <div class="love-note-card" id="loveNoteCard">
@@ -1865,6 +1873,58 @@ function getSolarTerm(dateKey) {
 }
 
 /* ================================================================
+   BIRTHDAYS
+   ================================================================ */
+const BIRTHDAYS = { barry: { month:8, day:19, name:{sr:'Barryjev rođendan',en:'Barry\'s Birthday','zh-CN':'Barry 的生日'} }, andjela: { month:7, day:27, name:{sr:'Anđelin rođendan',en:'Anđela\'s Birthday','zh-CN':'Anđela 的生日'} } };
+
+function getBirthday(date) {
+  var m=date.getMonth(), d=date.getDate();
+  for (var k in BIRTHDAYS) { if (BIRTHDAYS[k].month===m && BIRTHDAYS[k].day===d) return k; }
+  return null;
+}
+function daysUntilBirthday(bdayKey) {
+  var b=BIRTHDAYS[bdayKey], now=new Date(), target=new Date(now.getFullYear(),b.month,b.day);
+  if (target < now) target.setFullYear(target.getFullYear()+1);
+  return Math.ceil((target-now)/86400000);
+}
+function renderBirthdayCard() {
+  var card = document.getElementById('birthdayCard');
+  if (!card) return;
+  document.getElementById('birthday-title').textContent = lang==='sr'?'🎂 Rođendani':lang==='en'?'🎂 Birthdays':'🎂 生日';
+  var parts=[];
+  for (var k in BIRTHDAYS) {
+    var days = daysUntilBirthday(k);
+    var emoji = k==='andjela'?'🌸':'👦';
+    var name = BIRTHDAYS[k].name[lang]||BIRTHDAYS[k].name['sr'];
+    var dateStr = (BIRTHDAYS[k].month+1)+'/'+BIRTHDAYS[k].day;
+    parts.push('<div style="font-size:.82rem"><span style="color:var(--gold)">🎂</span> '+name+' ('+dateStr+')<br><span style="font-size:.68rem;color:var(--text-muted)">'+(lang==='sr'?'Još '+days+' dana':lang==='en'?days+' days away':'还有 '+days+' 天')+'</span></div>');
+  }
+  document.getElementById('birthday-content').innerHTML = parts.join('<div style="height:6px"></div>')+'<div style="font-size:.62rem;color:var(--text-muted);margin-top:4px">'+(lang==='sr'?'🎁 Ne zaboravi poklon!':lang==='en'?'🎁 Don\'t forget a gift!':'🎁 别忘了礼物！')+'</div>';
+}
+
+/* ================================================================
+   HOLIDAY DAYS OFF
+   ================================================================ */
+const HOLIDAY_DAYS = {
+  '2026-01-01':{cn:'1 dan',rs:'2 dana',zh:'1天',sr:'1 dan',en:'1 day'},
+  '2026-02-16':{cn:'7 dana (Prolećni festival)',rs:'—',zh:'7天（春节长假）',sr:'7 dana (Prolećni festival)',en:'7 days (Spring Festival)'},
+  '2026-02-17':{cn:'7 dana (Prolećni festival)',rs:'—',zh:'7天（春节长假）',sr:'7 dana (Prolećni festival)',en:'7 days (Spring Festival)'},
+  '2026-03-03':{cn:'1 dan',rs:'—',zh:'1天',sr:'1 dan',en:'1 day'},
+  '2026-04-05':{cn:'3 dana',rs:'—',zh:'3天',sr:'3 dana',en:'3 days'},
+  '2026-05-01':{cn:'5 dana',rs:'2 dana',zh:'5天',sr:'5 dana',en:'5 days'},
+  '2026-06-19':{cn:'3 dana',rs:'—',zh:'3天',sr:'3 dana',en:'3 days'},
+  '2026-08-19':{cn:'1 dan',rs:'—',zh:'1天',sr:'1 dan',en:'1 day'},
+  '2026-09-25':{cn:'3 dana',rs:'—',zh:'3天',sr:'3 dana',en:'3 days'},
+  '2026-10-01':{cn:'7 dana (Zlatna nedelja)',rs:'—',zh:'7天（黄金周）',sr:'7 dana (Zlatna nedelja)',en:'7 days (Golden Week)'},
+  '2026-01-07':{cn:'—',rs:'2 dana',zh:'—',sr:'2 dana',en:'2 days'},
+  '2026-01-27':{cn:'—',rs:'1 dan (školski praznik)',zh:'—',sr:'1 dan (školski praznik)',en:'1 day (school holiday)'},
+  '2026-02-15':{cn:'—',rs:'2 dana (Dan državnosti)',zh:'—',sr:'2 dana (Dan državnosti)',en:'2 days (Statehood Day)'},
+  '2026-04-12':{cn:'—',rs:'4 dana (Vaskrs)',zh:'—',sr:'4 dana (Vaskrs)',en:'4 days (Easter)'},
+  '2026-06-28':{cn:'—',rs:'1 dan',zh:'—',sr:'1 dan',en:'1 day'},
+  '2026-11-11':{cn:'—',rs:'1 dan',zh:'—',sr:'1 dan',en:'1 day'}
+};
+
+/* ================================================================
    ANNIVERSARY
    ================================================================ */
 function saveAnniversaries() {
@@ -2189,7 +2249,7 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();renderRelTips();renderHug();renderGratitude();renderSong();renderCheckin();renderSpecialBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
+function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();renderRelTips();renderHug();renderGratitude();renderSong();renderCheckin();renderSpecialBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
 function renderAll(){applyAllUI();}
 
 /* ================================================================
@@ -2213,6 +2273,7 @@ function renderCalendar(){
     if(phase) el.classList.add(phase);
     if(phase==='period-on'&&recordedStarts.has(key)) el.classList.add('recorded');
     if(annType>0) el.classList.add('anniversary');
+    if(getBirthday(d)) el.classList.add('birthday');
     el.textContent=d.getDate(); el.setAttribute('role','button'); el.setAttribute('aria-label',fmtDate(d));
     if(hasSymptom&&!phase){const dot=document.createElement('span');dot.className='mini-dot pink';el.appendChild(dot);}
     if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
@@ -2306,7 +2367,7 @@ document.getElementById('fabBtn').addEventListener('click',()=>{
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'});var daysOff=HOLIDAY_DAYS[key];var daysOffHtml='';if(daysOff){var cnOff=daysOff.zh||daysOff.cn||'';var rsOff=daysOff.sr||daysOff.rs||'';if(cnOff)daysOffHtml+='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🇨🇳 '+cnOff+'</div>';if(rsOff)daysOffHtml+='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🇷🇸 '+rsOff+'</div>';}var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'+daysOffHtml;});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
 function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
