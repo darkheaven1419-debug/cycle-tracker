@@ -2460,7 +2460,7 @@ function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={re
 function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}renderAll();}
 function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();renderAll();}
 (function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
-document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
+document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
 document.getElementById('set-theme').addEventListener('change',function(){switchTheme(this.value);});
@@ -2770,7 +2770,7 @@ function updateSharedSymptoms() {
   if (activeProfile !== 'andjela') return;
   var key = fmtDate(today());
   var symptoms = state.symptoms[key];
-  if (symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(symptoms));
+  if (symptoms) { localStorage.setItem('shared-symptoms', JSON.stringify(symptoms)); pushAllSharedData(); }
 }
 
 // Special badge for Anđela
