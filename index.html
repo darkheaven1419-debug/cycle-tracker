@@ -427,6 +427,146 @@ body {
 .reminder-banner .dismiss { margin-left:auto; cursor:pointer; font-weight:700; opacity:.5; font-size:.9rem; }
 .pred-legend { font-size:.62rem; color:var(--text-muted); text-align:center; margin-top:4px; }
 .celebrate { animation:celebrateBounce .5s ease-out; }
+
+/* ================================================================
+   NEW FEATURES CSS — Profile / Love Note / Mood / Diary / Garden
+   ================================================================ */
+
+/* Profile Switcher */
+.profile-pill {
+  display:flex; align-items:center; gap:5px; background:var(--card);
+  border-radius:20px; padding:3px 4px; box-shadow:var(--shadow-xs);
+  backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  cursor:pointer; transition:all .2s; border:1.5px solid transparent;
+  position:relative; margin-right:6px;
+}
+.profile-pill.active-profile { border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.15); }
+.profile-pill .pf-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.85rem; }
+.profile-pill .pf-name { font-size:.65rem; font-weight:700; color:var(--text); padding-right:4px; }
+.profile-pill:active { transform:scale(.93); }
+
+/* Love Note Card */
+.love-note-card {
+  background:linear-gradient(135deg, var(--rose-light), #FFF5F0);
+  border:1px solid var(--gold); border-radius:var(--radius);
+  padding:18px; margin-bottom:12px; text-align:center;
+  position:relative; overflow:hidden; transition:all .3s;
+}
+.love-note-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.love-note-card::before {
+  content:''; position:absolute; top:-30%; left:-30%; width:160%; height:160%;
+  background:radial-gradient(circle, rgba(212,122,138,0.05) 0%, transparent 60%);
+  animation:loveGlow 4s ease-in-out infinite;
+}
+@keyframes loveGlow { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.15);opacity:1} }
+.love-note-icon { font-size:2rem; display:block; margin-bottom:6px; animation:loveFloat 3s ease-in-out infinite; }
+@keyframes loveFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.love-note-text { font-size:.82rem; color:var(--text); line-height:1.6; font-style:italic; }
+.love-note-signature { font-size:.68rem; color:var(--gold); margin-top:8px; }
+[data-theme="dark"] .love-note-card { background:linear-gradient(135deg, #2A1E22, #2A221E); }
+
+/* Mood Picker */
+.mood-picker { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; padding:4px 0; }
+.mood-emoji { width:38px; height:38px; border-radius:50%; border:2px solid transparent; background:var(--card); font-size:1.2rem; cursor:pointer; transition:all .18s; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-xs); }
+.mood-emoji:active { transform:scale(.85); }
+.mood-emoji.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.15); box-shadow:0 0 0 4px rgba(196,90,107,.15); animation:moodPop .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes moodPop { 0%{transform:scale(.8)} 60%{transform:scale(1.2)} 100%{transform:scale(1.15)} }
+.mood-today-label { font-size:.68rem; color:var(--text-muted); text-align:center; margin-bottom:8px; }
+
+/* Streak */
+.streak-display { text-align:center; padding:6px 0; }
+.streak-flame { font-size:2rem; display:inline-block; animation:flameFlicker 1.5s ease-in-out infinite; }
+@keyframes flameFlicker { 0%,100%{transform:scale(1) rotate(-2deg)} 25%{transform:scale(1.08) rotate(2deg)} 50%{transform:scale(1) rotate(-1deg)} 75%{transform:scale(1.05) rotate(1deg)} }
+.streak-num { font-size:1.4rem; font-weight:800; color:var(--love); font-feature-settings:"tnum"; }
+.streak-label { font-size:.68rem; color:var(--text-muted); }
+.streak-badge { display:inline-block; padding:4px 12px; border-radius:12px; font-size:.7rem; font-weight:700; margin-top:4px; }
+.streak-badge.hot { background:#FFF3E0; color:#E65100; }
+.streak-badge.warm { background:var(--rose-light); color:var(--rose-dark); }
+.streak-badge.cold { background:var(--border); color:var(--text-muted); }
+[data-theme="dark"] .streak-badge.hot { background:#3D2000; color:#FFB74D; }
+
+/* Mood History Mini Chart */
+.mood-history { display:flex; gap:3px; align-items:flex-end; justify-content:center; height:40px; padding:8px 0; }
+.mood-bar { width:10px; border-radius:3px 3px 0 0; transition:height .3s; min-height:4px; }
+.mood-bar.happy{background:var(--gold)} .mood-bar.loved{background:var(--love)}
+.mood-bar.frustrated{background:#E57373} .mood-bar.tired{background:var(--lavender)}
+.mood-bar.sad{background:var(--teal)} .mood-bar.excited{background:#FFB74D}
+.mood-bar.anxious{background:var(--sage)} .mood-bar.meh{background:var(--border)}
+
+/* One-line Diary */
+.diary-prompt { font-size:.75rem; color:var(--text-muted); margin-bottom:8px; font-style:italic; text-align:center; }
+.diary-input-row { display:flex; gap:8px; }
+.diary-input-row input { flex:1; border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:.78rem; font-family:var(--font); background:var(--card); color:var(--text); transition:border-color .2s; }
+.diary-input-row input:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.1); }
+.diary-submit { width:40px; height:40px; border:none; border-radius:50%; background:var(--love); color:#fff; font-size:1rem; cursor:pointer; flex-shrink:0; transition:transform .15s; box-shadow:0 2px 8px rgba(196,90,107,.2); }
+.diary-submit:active { transform:scale(.88); }
+.diary-history-item { padding:10px 0; border-bottom:1px solid var(--border); font-size:.78rem; display:flex; justify-content:space-between; align-items:flex-start; }
+.diary-history-item:last-child { border-bottom:none; }
+.diary-history-date { font-size:.64rem; color:var(--text-muted); min-width:48px; }
+.diary-history-text { flex:1; color:var(--text); line-height:1.5; padding:0 8px; }
+
+/* Tomorrow Forecast */
+.forecast-card {
+  background:linear-gradient(135deg, var(--lavender-light), var(--teal-light));
+  border-radius:var(--radius); padding:14px 18px; margin-top:12px;
+  text-align:center; font-size:.78rem; color:var(--text); line-height:1.6;
+  border:1px solid rgba(142,111,163,.12);
+}
+.forecast-card .fc-icon { font-size:1.4rem; display:block; margin-bottom:4px; }
+.forecast-card .fc-phase { font-weight:700; color:var(--lavender-dark); }
+[data-theme="dark"] .forecast-card { background:linear-gradient(135deg, #1E1A25, #14282E); }
+
+/* Virtual Garden */
+.garden-card { text-align:center; padding:24px 18px; }
+.garden-plant { font-size:3.5rem; display:block; transition:all .5s cubic-bezier(.34,1.56,.64,1); }
+.garden-soil { width:80px; height:10px; background:linear-gradient(180deg, #8B6914, #5C3D0E); border-radius:50%; margin:0 auto; opacity:.5; }
+.garden-pot { width:60px; height:24px; background:linear-gradient(180deg, #C49A5E, #A07840); border-radius:4px 4px 12px 12px; margin:0 auto; }
+.garden-msg { font-size:.7rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.garden-streak-hint { font-size:.62rem; color:var(--gold); margin-top:4px; }
+
+/* Shared Diary Tab */
+.partner-diary-card {
+  background:linear-gradient(135deg, var(--rose-light), var(--lavender-light));
+  border:1px solid var(--gold); border-radius:var(--radius);
+  padding:20px; margin-bottom:14px; transition:all .3s;
+}
+[data-theme="dark"] .partner-diary-card { background:linear-gradient(135deg, #2A1E22, #241D2A); }
+.partner-diary-card:hover { box-shadow:var(--shadow-md); }
+.diary-date-nav { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+.diary-date-nav .dd-date { flex:1; text-align:center; font-weight:700; font-size:.9rem; }
+.diary-date-nav .dd-btn { width:36px; height:36px; border-radius:50%; border:none; background:var(--card); font-size:1rem; cursor:pointer; box-shadow:var(--shadow-xs); display:flex; align-items:center; justify-content:center; color:var(--text); }
+.diary-section-label { font-size:.7rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+.diary-entry-box { background:var(--card); border-radius:12px; padding:14px; margin-bottom:12px; min-height:60px; }
+.diary-entry-box textarea { width:100%; border:none; background:transparent; font-family:var(--font); font-size:.78rem; color:var(--text); resize:vertical; min-height:50px; line-height:1.6; }
+.diary-entry-box textarea:focus { outline:none; }
+.diary-entry-box .de-author { font-size:.62rem; color:var(--gold); margin-bottom:4px; }
+.diary-entry-box .de-text { font-size:.78rem; color:var(--text); line-height:1.6; }
+.diary-entry-box .de-time { font-size:.6rem; color:var(--text-muted); margin-top:6px; }
+.diary-entry-box.empty { text-align:center; color:var(--text-muted); font-size:.72rem; font-style:italic; padding:20px; }
+.diary-save-btn { display:block; width:100%; padding:10px; border:none; border-radius:12px; background:var(--love); color:#fff; font-weight:600; font-size:.76rem; cursor:pointer; margin-top:6px; font-family:var(--font); transition:transform .15s; }
+.diary-save-btn:active { transform:scale(.95); }
+.diary-save-btn:disabled { opacity:.5; cursor:not-allowed; }
+.diary-sync-status { text-align:center; font-size:.6rem; color:var(--text-muted); margin-top:8px; }
+.diary-sync-status.synced { color:var(--sage); }
+.diary-fb-setup { text-align:center; padding:20px; background:var(--card); border-radius:12px; }
+.diary-fb-setup h4 { font-size:.8rem; margin-bottom:8px; color:var(--text); }
+.diary-fb-setup ol { text-align:left; font-size:.7rem; color:var(--text-muted); line-height:1.8; padding-left:20px; }
+.diary-fb-setup input { width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; font-size:.7rem; margin:4px 0; font-family:var(--font); background:var(--card); color:var(--text); }
+
+/* Shared Diary — guided prompts */
+.sd-field { margin-bottom:14px; }
+.sd-label { font-size:.72rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:4px; margin-bottom:4px; }
+.sd-emoji { font-size:1rem; }
+.sd-input { width:100%; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.76rem; font-family:var(--font); background:var(--card); color:var(--text); resize:vertical; line-height:1.5; transition:border-color .2s; }
+.sd-input:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.1); }
+.sd-locked { text-align:center; padding:30px 20px; }
+.sd-locked-icon { font-size:3rem; display:block; margin-bottom:10px; }
+.sd-locked-text { font-size:.78rem; color:var(--text-muted); line-height:1.6; }
+.sd-partner-field { margin-bottom:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+.sd-partner-field:last-child { border-bottom:none; }
+.sd-partner-q { font-size:.65rem; color:var(--text-muted); margin-bottom:2px; }
+.sd-partner-a { font-size:.78rem; color:var(--text); line-height:1.5; }
+.sd-empty { text-align:center; padding:20px; color:var(--text-muted); font-size:.74rem; font-style:italic; }
 </style>
 </head>
 <body>
@@ -456,6 +596,10 @@ body {
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
     <div id="titleLoveCounter" style="font-size:.72rem;color:var(--love);font-weight:600;text-align:center;margin-top:2px;background:var(--rose-light);border-radius:12px;padding:3px 14px;display:inline-block"></div>
     <div class="header-actions">
+      <div class="profile-pill" id="profilePill" onclick="toggleProfile()" title="Tap to switch profile">
+        <span class="pf-avatar" id="pfAvatar">🌸</span>
+        <span class="pf-name" id="pfName">Anđela</span>
+      </div>
       <div class="moon-phase" id="moonPhase" title="月相 · Moon Phase"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
       <div class="lang-switch" id="langSwitch">
@@ -513,6 +657,7 @@ body {
     <button class="tab active" data-panel="stats">📊 <span class="tb-label"></span></button>
     <button class="tab" data-panel="symptoms">📝 <span class="tb-label"></span></button>
     <button class="tab" data-panel="tips">💡 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="diary">💌 <span class="tb-label"></span></button>
     <button class="tab" data-panel="settings">⚙ <span class="tb-label"></span></button>
   </div>
 
@@ -544,10 +689,68 @@ body {
       <div style="text-align:center;font-size:2rem;font-weight:800;color:var(--love);" id="cc-count">0</div>
       <div style="text-align:center;font-size:.7rem;color:var(--text-muted);" id="cc-subtitle"></div>
     </div>
+    <!-- Tea Room -->
+    <div class="card" id="teaCard" style="background:linear-gradient(135deg,var(--sage-light),var(--dust));border:1px solid var(--sage)">
+      <h3>🍵 <span id="tea-title">Barry's Tea Room</span></h3>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span style="font-size:2rem" id="tea-icon">🍵</span>
+        <div>
+          <div style="font-weight:600;font-size:.82rem;color:var(--text)" id="tea-name"></div>
+          <div style="font-size:.7rem;color:var(--text-muted);margin-top:2px" id="tea-desc"></div>
+          <div style="font-size:.65rem;color:var(--love);margin-top:4px;font-style:italic" id="tea-msg"></div>
+        </div>
+      </div>
+    </div>
     <!-- Love days card -->
     <div class="card" id="loveDaysCard" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)">
       <h3>💕 <span id="love-days-title">Dani zajedno</span></h3>
       <div id="love-days-content" style="text-align:center;line-height:2"></div>
+    </div>
+    <!-- Daily Love Note -->
+    <div class="love-note-card" id="loveNoteCard">
+      <span class="love-note-icon" id="loveNoteIcon">💌</span>
+      <div class="love-note-text" id="loveNoteText"></div>
+      <div class="love-note-signature" id="loveNoteSig"></div>
+    </div>
+    <!-- Mood Check-in + Streak -->
+    <div class="card" id="moodCard">
+      <h3>😊 <span id="mood-title">Daily Mood</span></h3>
+      <div class="mood-today-label" id="mood-today-label"></div>
+      <div class="mood-picker" id="moodPicker"></div>
+      <div class="streak-display" id="streakDisplay">
+        <span class="streak-flame">🔥</span>
+        <div><span class="streak-num" id="streakNum">0</span></div>
+        <div class="streak-label" id="streakLabel"></div>
+        <div class="streak-badge cold" id="streakBadge"></div>
+      </div>
+      <div style="margin-top:10px">
+        <span style="font-size:.62rem;color:var(--text-muted)" id="mood-history-label"></span>
+        <div class="mood-history" id="moodHistory"></div>
+      </div>
+    </div>
+    <!-- One-line Diary -->
+    <div class="card" id="diaryCard">
+      <h3>📓 <span id="diary-title">Today's Note</span></h3>
+      <div class="diary-prompt" id="diaryPrompt"></div>
+      <div class="diary-input-row">
+        <input type="text" id="diaryInput" maxlength="140" placeholder="...">
+        <button class="diary-submit" onclick="saveDiary()">✓</button>
+      </div>
+      <div id="diaryHistory" style="margin-top:8px"></div>
+    </div>
+    <!-- Tomorrow Forecast -->
+    <div class="forecast-card" id="forecastCard">
+      <span class="fc-icon">🔮</span>
+      <span id="forecastText"></span>
+    </div>
+    <!-- Virtual Garden -->
+    <div class="card garden-card" id="gardenCard">
+      <h3>🌱 <span id="garden-title">Our Garden</span></h3>
+      <span class="garden-plant" id="gardenPlant">🌰</span>
+      <div class="garden-soil"></div>
+      <div class="garden-pot"></div>
+      <div class="garden-msg" id="gardenMsg"></div>
+      <div class="garden-streak-hint" id="gardenHint"></div>
     </div>
   </div>
 
@@ -562,6 +765,60 @@ body {
   </div>
 
   <div class="panel" id="panel-tips"><div id="tips-list"></div></div>
+
+  <div class="panel" id="panel-diary">
+    <div class="diary-date-nav">
+      <button class="dd-btn" onclick="sharedDiaryNav(-1)">◂</button>
+      <span class="dd-date" id="sharedDiaryDate"></span>
+      <button class="dd-btn" onclick="sharedDiaryNav(1)">▸</button>
+      <button class="dd-btn" style="font-size:.7rem" onclick="sharedDiaryGoToday()">📍</button>
+    </div>
+
+    <!-- MY ENTRY — guided prompts -->
+    <div class="card" id="sharedDiaryMyCard">
+      <h3>✏️ <span id="sd-my-title">My Reflection</span></h3>
+      <div style="font-size:.68rem;color:var(--gold);margin-bottom:10px;font-style:italic" id="sd-my-hint"></div>
+
+      <div class="sd-field">
+        <label class="sd-label"><span class="sd-emoji">💝</span> <span id="sd-l-happy">What made me happy today</span></label>
+        <textarea class="sd-input" id="sd-happy" rows="2" placeholder="..."></textarea>
+      </div>
+      <div class="sd-field">
+        <label class="sd-label"><span class="sd-emoji">🤔</span> <span id="sd-l-uncomf">What felt a little uncomfortable</span></label>
+        <textarea class="sd-input" id="sd-uncomf" rows="2" placeholder="..."></textarea>
+      </div>
+      <div class="sd-field">
+        <label class="sd-label"><span class="sd-emoji">🙏</span> <span id="sd-l-thanks">Something I want to thank you for</span></label>
+        <textarea class="sd-input" id="sd-thanks" rows="2" placeholder="..."></textarea>
+      </div>
+      <div class="sd-field">
+        <label class="sd-label"><span class="sd-emoji">💪</span> <span id="sd-l-wish">Something I hope we can improve together</span></label>
+        <textarea class="sd-input" id="sd-wish" rows="2" placeholder="..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="sd-save-btn" onclick="saveSharedDiary()" style="margin-top:8px">💾 <span id="sd-save-text">Save & Unlock Partner's Entry</span></button>
+      <div style="text-align:center;font-size:.62rem;color:var(--text-muted);margin-top:4px" id="sd-save-hint">✍️ <span id="sd-gate-hint">写完后才能查看伴侣的日记哦</span></div>
+    </div>
+
+    <!-- PARTNER'S ENTRY — locked until I write -->
+    <div class="card" id="sharedDiaryPartnerCard" style="display:none">
+      <h3>👀 <span id="sd-partner-title">Partner's Reflection</span></h3>
+      <div id="sharedDiaryPartnerContent"></div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+        <span style="font-size:.62rem;color:var(--text-muted)" id="sd-sync-hint"></span>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-outline" onclick="exportSharedDiary()" style="flex:1;font-size:.7rem;margin-bottom:0">📤 <span id="sd-export">Share My Entry</span></button>
+          <button class="btn btn-outline" onclick="importSharedDiary()" style="flex:1;font-size:.7rem;margin-bottom:0">📥 <span id="sd-import">Import Partner's</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="card" style="margin-top:14px">
+      <h3>📜 <span id="sd-history-title">Recent Diary</span></h3>
+      <div id="sharedDiaryHistory"></div>
+    </div>
+  </div>
 
   <div class="panel" id="panel-settings">
     <!-- Dual Anniversary -->
@@ -636,7 +893,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
   weekdays:['Pon','Uto','Sre','Čet','Pet','Sub','Ned'],
   months:['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'],
-  today:'Danas', tabs:['Statistika','Simptomi','Saveti','Podeš.'],
+  today:'Danas', tabs:['Statistika','Simptomi','Saveti','Dnevnik','Podeš.'],
   legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas','Ljubav'],
   progressLabels:['Menstr.','Folikul.','Ovulacija','Lutealna'],
   phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
@@ -664,7 +921,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'暗色模式', themeHint:'切换深色/浅色主题',
   weekdays:['一','二','三','四','五','六','日'],
   months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-  today:'今天', tabs:['统计','症状','贴士','设置'],
+  today:'今天', tabs:['统计','症状','贴士','日记','设置'],
   legend:['经期','排卵/易孕','卵泡期','黄体期','今天','♥纪念日'],
   progressLabels:['经期','卵泡期','排卵','黄体期'],
   phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
@@ -692,7 +949,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Dark Mode', themeHint:'Switch theme',
   weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
   months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  today:'Today', tabs:['Stats','Symptoms','Tips','Settings'],
+  today:'Today', tabs:['Stats','Symptoms','Tips','Diary','Settings'],
   legend:['Period','Ovul./Fertile','Follicular','Luteal','Today','♥ Love'],
   progressLabels:['Period','Follicular','Ovulation','Luteal'],
   phases:{'period-on':'Period Start','period-mid':'Period','period-pred-first':'Predicted Start','period-pred':'Predicted','period-future-first':'Future Pred.','period-future':'Future Pred.','ovulation':'Ovulation','fertile':'Fertile','luteal':'Luteal','follicular':'Follicular'},
@@ -718,20 +975,491 @@ const I18N = {
 }};
 
 /* ================================================================
-   STATE
+   i18n EXTENSION — New Features
    ================================================================ */
+const I18N_EXT = {
+'sr': {
+  profileName: 'Anđela', profileName2: 'Barry',
+  loveNoteDefault: 'Svakog dana mislim na tebe — ti si najlepši deo mog sveta. 💕', loveNoteSig: '— Tvoj Barry',
+  moodTitle: '😊 Raspoloženje', moodToday: 'Kako se osećaš danas?',
+  moodHistoryLabel: 'Poslednjih 7 dana',
+  streakLabel: 'dana zaredom!', streakLabel0: 'Započni niz!', streakBadgeHot: 'Sjajno! 🔥', streakBadgeWarm: 'Dobro ✨', streakBadgeCold: 'Započni danas 🌱',
+  diaryTitle: '📓 Moja rečenica', diaryPrompt: 'Danas ______ me je nasmejalo.', diaryPlaceholder: 'upiši jednu rečenicu...',
+  gardenTitle: '🌱 Naša bašta', gardenSeed: 'Zalivaj me svaki dan — klikni na emoji iznad! 🌱', gardenSprout: 'Tvoj niz raste... nastavi dalje! 🌿', gardenGrowing: 'Sve si bliže cvetanju! 🌷', gardenBudding: 'Skoro procvetala — još malo! 🎀', gardenBlooming: 'Prelepo cvetaš! Kao naša ljubav. 🌸✨',
+  forecastTomorrow: 'Sutra', forecastFollicular: 'Sutra si u folikularnoj fazi — energija raste, sjajan dan za planove! 💪',
+  forecastOvulation: 'Sutra je ovulacija — tvoje telo sija najjače! ✨', forecastLuteal: 'Sutra ulaziš u lutealnu fazu — uspori malo, zaslužuješ odmor 🌙',
+  forecastPeriod: 'Sutra bi mogla da krene menstruacija — pripremi grejač i čaj 💗',
+  forecastNormal: 'Slušaj svoje telo. Ti si neverovatna svakog dana. 🌸',
+  moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
+  moodNames: ['Srećno','Voljeno','Frustrirano','Umorno','Tužno','Uzbuđeno','Anksiozno','Meh'],
+  sharedDiaryTab: 'Dnevnik',
+  profileSwitch: 'Profil promenjen'
+},
+'zh': {
+  profileName: 'Anđela', profileName2: 'Barry',
+  loveNoteDefault: '每一天都在想你——你是我世界里最美好的一部分。💕', loveNoteSig: '— 你的 Barry',
+  moodTitle: '😊 今日心情', moodToday: '今天感觉怎么样？',
+  moodHistoryLabel: '最近7天',
+  streakLabel: '天连续记录！', streakLabel0: '开始打卡吧！', streakBadgeHot: '太棒了！🔥', streakBadgeWarm: '不错 ✨', streakBadgeCold: '今天开始 🌱',
+  diaryTitle: '📓 一行日记', diaryPrompt: '今天______让我笑了。', diaryPlaceholder: '写一句话...',
+  gardenTitle: '🌱 我们的花园', gardenSeed: '每天给我浇水——点击上面 emoji 打卡！🌱', gardenSprout: '你的坚持开始发芽了...继续加油！🌿', gardenGrowing: '越来越茁壮了！🌷', gardenBudding: '快要开花了——再坚持一下！🎀', gardenBlooming: '绽放得真美！就像我们的爱。🌸✨',
+  forecastTomorrow: '明天', forecastFollicular: '明天进入卵泡期——精力回升，适合做计划！💪',
+  forecastOvulation: '明天是排卵日——你的身体最有光彩！✨', forecastLuteal: '明天进入黄体期——放慢节奏，你值得好好休息 🌙',
+  forecastPeriod: '明天可能会来月经——准备好暖宝宝和热茶 💗',
+  forecastNormal: '听从你的身体。每一天你都很了不起。🌸',
+  moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
+  moodNames: ['开心','被爱','烦躁','疲惫','难过','兴奋','焦虑','还行'],
+  sharedDiaryTab: '日记',
+  profileSwitch: '已切换账号'
+},
+'en': {
+  profileName: 'Anđela', profileName2: 'Barry',
+  loveNoteDefault: 'Every day I think of you — you are the most beautiful part of my world. 💕', loveNoteSig: '— Your Barry',
+  moodTitle: '😊 Daily Mood', moodToday: 'How are you feeling today?',
+  moodHistoryLabel: 'Last 7 days',
+  streakLabel: 'day streak!', streakLabel0: 'Start your streak!', streakBadgeHot: 'Amazing! 🔥', streakBadgeWarm: 'Good ✨', streakBadgeCold: 'Start today 🌱',
+  diaryTitle: '📓 One-Line Diary', diaryPrompt: 'Today ______ made me smile.', diaryPlaceholder: 'write one sentence...',
+  gardenTitle: '🌱 Our Garden', gardenSeed: 'Water me daily — tap an emoji above! 🌱', gardenSprout: 'Your streak is sprouting... keep going! 🌿', gardenGrowing: 'Getting stronger! 🌷', gardenBudding: 'Almost blooming — just a bit more! 🎀', gardenBlooming: 'Blooming beautifully! Just like our love. 🌸✨',
+  forecastTomorrow: 'Tomorrow', forecastFollicular: 'Tomorrow you enter the follicular phase — energy rising, great day for plans! 💪',
+  forecastOvulation: 'Tomorrow is ovulation — your body shines brightest! ✨', forecastLuteal: 'Tomorrow begins the luteal phase — slow down, you deserve rest 🌙',
+  forecastPeriod: 'Tomorrow your period may start — get your heating pad and tea ready 💗',
+  forecastNormal: 'Listen to your body. You are amazing every single day. 🌸',
+  moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
+  moodNames: ['Happy','Loved','Frustrated','Tired','Sad','Excited','Anxious','Meh'],
+  sharedDiaryTab: 'Diary',
+  profileSwitch: 'Profile switched'
+}};
+
+// Love Notes Pool (60 entries per language)
+const LOVE_NOTES = (function(){
+  var sr=['Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅','Tvoj osmeh je moja omiljena boja. 🎨','Da si ovde, skuvao bih ti čaj i slušao kako ti je prošao dan. 🍵','Znaš onaj osećaj kad sunce izađe posle kiše? Ti si to za mene. 🌈','Nadam se da si danas nosila onaj osmeh koji toliko volim. 😊','Koliko god da si daleko, uvek si mi u srcu. 💝','Vojvodina je dobila najlepši cvet kad si se ti rodila. 🌻','Ti si ona vrsta lepote koja ne bledi — postaje samo dublja. ✨','Kad bih mogao da ti pošaljem zagrljaj kroz ekran, već bi stigao. 🤗','Ti si moja omiljena pesma, ona koja nikad ne dosadi. 🎵','Prošlo je X dana otkad smo zajedno, a ja te volim sve više. ♥','Razmišljam o tebi dok ovo pišem — i smešim se. 😌','Da mogu da biram gde ću biti sad, bio bih pored tebe. 🌍→🏡','Tvoja snaga me inspiriše svaki dan. Ti si neverovatna. 💪🌸','Sećaš se našeg prvog razgovora? Ja ga često prepričavam u glavi. 💭','Volim način na koji se smeješ — kao da cela soba postane svetlija. ✨','U svakom zalasku sunca vidim tvoje oči. 🌆','Danas sam video nešto lepo i poželeo da si tu da podelim s tobom. 🌸','Ako ikada posumnjaš u sebe, seti se da te Barry voli — a Barry zna. 😉','Ti nisi samo moja devojka — ti si moj najbolji prijatelj. 💑','Svaka priča ima svoju heroinu. U mojoj, to si ti. 📖','Da napišem knjigu o tebi, nestalo bi mi stranica. 📚','Ti si moj mir u haosu, moja tišina u buci. 🧘','Ne mogu da zamislim svet bez tvog osmeha. Ne želim ni da pokušam. 🌍♥','Kad te čujem preko telefona, ceo dan mi bude bolji. 📞','Ponekad samo zatvorim oči i zamislim da si pored mene. 💫','Ti me činiš boljom osobom — hvala ti za to. 💗','Kao što Mesec prati Zemlju, tako moje misli prate tebe. 🌙','Da si cvet, bila bi ruža — lepa, jaka, i sa trnjem kad treba. 🌹','Najbolji deo mog dana? Kad pomislim na tebe. A to je mnogo puta. 💌','Tvoja hrabrost me oduševljava. Ti se boriš kao lavica. 🦁','Volim i tvoje dobre i tvoje loše dane. Sve je to deo tebe. 🫂','Peking je veliki grad, ali bez tebe je prazan. 🏙️','Da mogu da ti dam jednu stvar, dao bih ti večnost nežnosti. ♾️','Ti si moj dokaz da ljubav ne poznaje granice. 🌍♥','Od Vojvodine do Pekinga — ljubav je najduža reka, i sve povezuje. 🌊','Kad bih umeo da slikam, slikao bih samo tebe. 🎨','Ti si mi u mislima kao što je beat u muzici — stalno. 🥁','Sanjam dan kad nećemo morati da brojimo kilometre. 🗺️','Volim te na srpskom, kineskom, i svim jezicima koji postoje. 🌐♥','Ako ikada zaboraviš koliko vrediš, pozovi me — podsetiću te. 📱','Ti si moja srećna zvezda. ⭐','Kad si srećna, i ja sam srećan. Tako je jednostavno. 😊','Tvoja lepota nije samo spolja — ona izvire iz tvoje duše. 🕯️','Volim te više nego što reči mogu da izraze. Zato ti šaljem srca. 💕💕💕','Svakog dana zahvaljujem univerzumu što si u mom životu. 🙏','Da se ponovo rodim, opet bih te tražio. 🔄♥','Tvoje ime Anđela — kao anđeo. I stvarno si to. 👼','Ti ulepšavaš svet samim tim što postojiš. 🌍→🌸','Nikad ne zaboravi: voljen si, i to beskrajno. ♾️💗'];
+  var zh=['每天睁开眼，第一个想到的就是你。🌅','你的笑容是我最喜欢的颜色。🎨','如果你在身边，我会给你泡杯茶，听你讲今天的故事。🍵','你知道雨后阳光的感觉吗？你就是我的那种感觉。🌈','希望你今天带着我最爱的笑容。😊','不管多远，你一直在我心里。💝','Vojvodina 最美的花开在你出生的那天。🌻','你的美不会褪色——只会越来越深。✨','如果能穿过屏幕给你一个拥抱，它已经到了。🤗','你是我最爱的歌，永远听不腻的那一首。🎵','在一起 X 天了，每一天都更爱你。♥','写着写着就笑了——因为我在想你。😌','如果能选择此刻在哪里，我会选你身边。🌍→🏡','你的坚强每天都激励着我。你是了不起的。💪🌸','还记得我们第一次聊天吗？我经常在脑海里回放。💭','我喜欢你笑的样子——整个房间都亮了。✨','每一个日落里，我都看到你的眼睛。🌆','今天看到了美好的东西，真想你在身边分享。🌸','如果你怀疑自己，记住 Barry 爱你——Barry 是对的。😉','你不仅是我的女朋友——你是我最好的朋友。💑','每个故事都有女主角。在我的故事里，是你。📖','如果写一本关于你的书，纸都不够用。📚','你是我混乱中的平静，喧嚣中的安宁。🧘','无法想象没有你笑容的世界。也不想尝试。🌍♥','每次电话里听到你的声音，一整天都变好了。📞','有时候闭上眼，假装你就在身边。💫','你让我成为更好的人——谢谢你。💗','就像月亮绕着地球转，我的思绪绕着你。🌙','如果你是花，你一定是玫瑰——美丽、坚强，必要时有刺。🌹','一天中最棒的时刻？想你的那一刻。每天好多次。💌','你的勇敢让我惊叹。你像母狮一样战斗。🦁','我爱你的好日子，也爱你的坏日子。都是你的一部分。🫂','北京很大，但没有你是空的。🏙️','如果能给你一样东西，我会给你永恒的温柔。♾️','你是我跨过山海的证据。🌍♥','从 Vojvodina 到北京——爱是最长的河，连接一切。🌊','如果我会画画，只画你。🎨','你在我脑海里就像心跳——永不停止。🥁','梦想着不再数公里数的那一天。🗺️','用中文、塞语和所有语言说爱你。🌐♥','如果你忘了自己有多珍贵，打给我——我提醒你。📱','你是我的幸运星。⭐','你开心我就开心。就这么简单。😊','你的美不止在外表——从灵魂深处发光。🕯️','爱你超过言语能表达。所以给你发心心。💕💕💕','每一天都感谢宇宙让你出现在我的生命中。🙏','如果有来生，我还会去找你。🔄♥','你的名字 Anđela——意为天使。你真的是。👼','你存在本身就让世界更美好。🌍→🌸','永远不要忘记：你是被爱着的，无限地。♾️💗'];
+  var en=['Every morning when I open my eyes, my first thought is you. 🌅','Your smile is my favorite color. 🎨','If you were here, I would make you tea and listen to your day. 🍵','You know that feeling when the sun comes out after rain? You are that for me. 🌈','I hope you wore that smile I love so much today. 😊','No matter how far, you are always in my heart. 💝','Vojvodina got its most beautiful flower the day you were born. 🌻','You are the kind of beauty that never fades — it only deepens. ✨','If I could send you a hug through the screen, it would already be there. 🤗','You are my favorite song, the one that never gets old. 🎵','It has been X days together, and I love you more each one. ♥','I am writing this thinking of you — and smiling. 😌','If I could choose where to be right now, I would be next to you. 🌍→🏡','Your strength inspires me every day. You are amazing. 💪🌸','Remember our first conversation? I replay it in my head often. 💭','I love the way you laugh — like the whole room gets brighter. ✨','In every sunset, I see your eyes. 🌆','I saw something beautiful today and wished you were here to share it. 🌸','If you ever doubt yourself, remember Barry loves you — and Barry knows. 😉','You are not just my girlfriend — you are my best friend. 💑','Every story has a heroine. In mine, it is you. 📖','If I wrote a book about you, I would run out of pages. 📚','You are my calm in the chaos, my silence in the noise. 🧘','I cannot imagine a world without your smile. I do not want to try. 🌍♥','When I hear your voice on the phone, my whole day improves. 📞','Sometimes I close my eyes and pretend you are beside me. 💫','You make me a better person — thank you for that. 💗','As the moon follows the Earth, so my thoughts follow you. 🌙','If you were a flower, you would be a rose — beautiful, strong, with thorns when needed. 🌹','The best moment of my day? When I think of you. Which is a lot. 💌','Your courage astounds me. You fight like a lioness. 🦁','I love your good days and your bad days. All of it is you. 🫂','Beijing is a big city, but without you it is empty. 🏙️','If I could give you one thing, I would give you eternal tenderness. ♾️','You are my proof that love knows no borders. 🌍♥','From Vojvodina to Beijing — love is the longest river, connecting everything. 🌊','If I could paint, I would only paint you. 🎨','You are in my thoughts like a heartbeat — constant. 🥁','I dream of the day we stop counting kilometers. 🗺️','I love you in Serbian, Chinese, and every language that exists. 🌐♥','If you ever forget how precious you are, call me — I will remind you. 📱','You are my lucky star. ⭐','When you are happy, I am happy. It is that simple. 😊','Your beauty is not just outside — it glows from your soul. 🕯️','I love you more than words can say. So I send hearts. 💕💕💕','Every day I thank the universe for putting you in my life. 🙏','If I were born again, I would look for you. 🔄♥','Your name Anđela — like an angel. And you truly are one. 👼','You make the world more beautiful just by existing. 🌍→🌸','Never forget: you are loved, infinitely. ♾️💗'];
+  function get(){ var arr=lang==='zh'?zh:lang==='en'?en:sr; var day=Math.floor(Date.now()/86400000); return arr[day%arr.length]; }
+  return {get:get};
+})();
+
+/* ================================================================
+   PROFILE SYSTEM
+   ================================================================ */
+let activeProfile = localStorage.getItem('cycle-active-profile') || 'andjela';
+function profileKey(base) { return base + '-' + activeProfile; }
+function switchProfile(p) {
+  if (p === activeProfile) return;
+  activeProfile = p;
+  localStorage.setItem('cycle-active-profile', p);
+  state = loadState();
+  lastCycleCount = predict().cycles.length;
+  updateProfileUI();
+  renderAll();
+  loadSettingsUI();
+  if (p === 'andjela') { showGreeting(); }
+  toast((lang==='sr'?'Profil: ':'') + (p==='andjela' ? '🌸 Anđela' : '👦 Barry') + ' · ' + t('profileSwitch'));
+}
+function toggleProfile() { switchProfile(activeProfile === 'andjela' ? 'barry' : 'andjela'); }
+function updateProfileUI() {
+  var pill = document.getElementById('profilePill');
+  var avatar = document.getElementById('pfAvatar');
+  var name = document.getElementById('pfName');
+  if (activeProfile === 'andjela') {
+    avatar.textContent = '🌸'; name.textContent = t('profileName');
+    pill.classList.add('active-profile');
+  } else {
+    avatar.textContent = '👦'; name.textContent = t('profileName2');
+    pill.classList.remove('active-profile');
+  }
+  // Show/hide cycle-related cards for Barry
+  var isAndjela = activeProfile === 'andjela';
+  var pc = document.getElementById('progressSection');
+  var rc = document.getElementById('reminderBanner');
+  var fab = document.getElementById('fabBtn');
+  var cyc = document.getElementById('cycleCounterCard');
+  var tea = document.getElementById('teaCard');
+  if (pc) pc.style.display = isAndjela ? '' : 'none';
+  if (rc && !isAndjela) rc.style.display = 'none';
+  if (fab) fab.style.display = isAndjela ? '' : 'none';
+  if (tea) tea.style.display = isAndjela ? '' : 'none';
+}
+
+/* ================================================================
+   STATE (modified for profiles)
+   ================================================================ */
+const STORAGE_KEY_BASE = 'cycle-data-v6';
+function loadState() {
+  var key = profileKey(STORAGE_KEY_BASE);
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) { const d = JSON.parse(raw); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:d.moods||{}, diaries:d.diaries||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
+  } catch(e) {}
+  // Try old key
+  try {
+    const old = localStorage.getItem('cycle-data-v5');
+    if (old && activeProfile === 'andjela') { const d=JSON.parse(old); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
+  } catch(e) {}
+  return { records:activeProfile==='andjela'?[new Date(2026,4,28)]:[], symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
+}
+function saveState() { localStorage.setItem(profileKey(STORAGE_KEY_BASE), JSON.stringify({ records:state.records.map(fmtDate), symptoms:state.symptoms, moods:state.moods, diaries:state.diaries, settings:state.settings, _migrated:true })); }
+let state = loadState();
+
+/* ================================================================
+   MOOD & STREAK
+   ================================================================ */
+const MOOD_EMOJIS = ['😊','🥰','😤','😴','😢','🤩','😰','😐'];
+const MOOD_KEYS = ['happy','loved','frustrated','tired','sad','excited','anxious','meh'];
+function getMood(dateKey) { return state.moods && state.moods[dateKey] ? state.moods[dateKey].mood : null; }
+function setMood(dateKey, moodKey) {
+  if (!state.moods) state.moods = {};
+  if (state.moods[dateKey] && state.moods[dateKey].mood === moodKey) { delete state.moods[dateKey]; saveState(); renderMoodSection(); return; }
+  state.moods[dateKey] = { mood: moodKey, time: Date.now() };
+  saveState();
+  renderMoodSection();
+  renderGarden();
+  toast(t('moodNames')[MOOD_KEYS.indexOf(moodKey)] + ' ✓');
+}
+function calculateStreak() {
+  if (!state.moods) return 0;
+  var td = today(); var streak = 0; var d = new Date(td);
+  while (true) {
+    var key = fmtDate(d);
+    if (state.moods[key]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  // Also count today if not yet checked but yesterday was
+  if (streak === 0) {
+    var yest = new Date(td); yest.setDate(yest.getDate() - 1);
+    if (state.moods[fmtDate(yest)]) streak = 0; // broken
+  }
+  return streak;
+}
+function renderMoodSection() {
+  var td = fmtDate(today());
+  var todayMood = getMood(td);
+  document.getElementById('mood-today-label').textContent = t('moodToday');
+  document.getElementById('mood-title').textContent = t('moodTitle');
+  // Render emoji picker
+  var picker = document.getElementById('moodPicker');
+  picker.innerHTML = '';
+  MOOD_EMOJIS.forEach(function(emoji, i) {
+    var btn = document.createElement('span');
+    btn.className = 'mood-emoji' + (todayMood === MOOD_KEYS[i] ? ' picked' : '');
+    btn.textContent = emoji;
+    btn.title = t('moodNames')[i];
+    btn.onclick = function() { setMood(td, MOOD_KEYS[i]); };
+    picker.appendChild(btn);
+  });
+  // Streak
+  var streak = calculateStreak();
+  document.getElementById('streakNum').textContent = streak;
+  document.getElementById('streakLabel').textContent = streak > 0 ? t('streakLabel') : t('streakLabel0');
+  var badge = document.getElementById('streakBadge');
+  if (streak >= 7) { badge.textContent = t('streakBadgeHot'); badge.className = 'streak-badge hot'; }
+  else if (streak >= 3) { badge.textContent = t('streakBadgeWarm'); badge.className = 'streak-badge warm'; }
+  else { badge.textContent = t('streakBadgeCold'); badge.className = 'streak-badge cold'; }
+  document.getElementById('streakDisplay').style.display = '';
+  // Mood history
+  document.getElementById('mood-history-label').textContent = t('moodHistoryLabel');
+  var hist = document.getElementById('moodHistory');
+  hist.innerHTML = '';
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(today()); d.setDate(d.getDate() - i);
+    var m = getMood(fmtDate(d));
+    var bar = document.createElement('div');
+    bar.className = 'mood-bar';
+    bar.style.height = m ? '28px' : '6px';
+    if (m) bar.classList.add(m);
+    bar.title = m ? (t('moodNames')[MOOD_KEYS.indexOf(m)] + ' ' + fmtDate(d)) : fmtDate(d);
+    hist.appendChild(bar);
+  }
+}
+
+/* ================================================================
+   ONE-LINE DIARY
+   ================================================================ */
+function saveDiary() {
+  var input = document.getElementById('diaryInput');
+  var text = input.value.trim();
+  if (!text) return;
+  if (!state.diaries) state.diaries = {};
+  var key = fmtDate(today());
+  if (!state.diaries[key]) state.diaries[key] = [];
+  state.diaries[key].push({ text: text, time: Date.now() });
+  saveState();
+  input.value = '';
+  renderDiarySection();
+  toast('📓 ✓');
+}
+function renderDiarySection() {
+  document.getElementById('diary-title').textContent = t('diaryTitle');
+  document.getElementById('diaryPrompt').textContent = t('diaryPrompt');
+  document.getElementById('diaryInput').placeholder = t('diaryPlaceholder');
+  var key = fmtDate(today());
+  var entries = (state.diaries && state.diaries[key]) ? state.diaries[key] : [];
+  var hist = document.getElementById('diaryHistory');
+  if (entries.length === 0) { hist.innerHTML = ''; return; }
+  hist.innerHTML = entries.slice().reverse().map(function(e) {
+    var t = new Date(e.time);
+    var timeStr = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
+    return '<div class="diary-history-item"><span class="diary-history-date">' + timeStr + '</span><span class="diary-history-text">' + e.text + '</span></div>';
+  }).join('');
+}
+
+/* ================================================================
+   LOVE NOTE
+   ================================================================ */
+function renderLoveNote() {
+  // Only show love note when Anđela is the active profile
+  // (Barry writes the notes for Anđela)
+  document.getElementById('loveNoteText').textContent = LOVE_NOTES.get();
+  document.getElementById('loveNoteSig').textContent = t('loveNoteSig');
+  // Random icon
+  var icons = ['💌','💝','💗','💕','💖','🕊️','✨','🌷'];
+  document.getElementById('loveNoteIcon').textContent = icons[Math.floor(Math.random() * icons.length)];
+}
+
+/* ================================================================
+   TOMORROW FORECAST
+   ================================================================ */
+function renderForecast() {
+  if (activeProfile !== 'andjela') { document.getElementById('forecastCard').style.display = 'none'; return; }
+  var pred = predict();
+  var tomorrow = addDays(today(), 1);
+  var phase = getPhase(tomorrow, pred);
+  var text = '';
+  if (phase === 'period-on' || phase === 'period-mid' || phase === 'period-pred-first' || phase === 'period-pred') {
+    text = t('forecastPeriod');
+  } else if (phase === 'ovulation') {
+    text = t('forecastOvulation');
+  } else if (phase === 'follicular') {
+    text = t('forecastFollicular');
+  } else if (phase === 'luteal' || phase === 'fertile') {
+    text = t('forecastLuteal');
+  } else {
+    text = t('forecastNormal');
+  }
+  document.getElementById('forecastText').textContent = text;
+  document.getElementById('forecastCard').style.display = '';
+}
+
+/* ================================================================
+   VIRTUAL GARDEN
+   ================================================================ */
+function renderGarden() {
+  document.getElementById('garden-title').textContent = t('gardenTitle');
+  var streak = calculateStreak();
+  var plant, msg;
+  if (streak === 0) { plant = '🌰'; msg = t('gardenSeed'); }
+  else if (streak <= 2) { plant = '🌱'; msg = t('gardenSprout'); }
+  else if (streak <= 7) { plant = '🌿'; msg = t('gardenGrowing'); }
+  else if (streak <= 14) { plant = '🌷'; msg = t('gardenBudding'); }
+  else { plant = '🌸'; msg = t('gardenBlooming'); }
+  // Cycle phase color for Anđela
+  if (activeProfile === 'andjela' && streak > 0) {
+    var pred = predict(); var phase = getPhase(today(), pred);
+    if (phase && (phase.startsWith('period'))) plant = '🌹';
+    else if (phase === 'ovulation') plant = '🌻';
+    else if (phase === 'luteal') plant = '🌷';
+  }
+  document.getElementById('gardenPlant').textContent = plant;
+  document.getElementById('gardenMsg').textContent = msg;
+  document.getElementById('gardenHint').textContent = streak < 3 ? '💧 ' + t('gardenSeed') : '';
+}
+
+/* ================================================================
+   SHARED DIARY — localStorage + copy-paste sync
+   Gate: MUST write own entry before seeing partner's
+   ================================================================ */
+const SD_KEY = 'shared-diary'; // { 'YYYY-MM-DD': { barry: {happy,uncomf,thanks,wish,time}, andjela: {...} } }
+let sharedDiaryViewDate = new Date();
+
+function loadSharedDiaryData() {
+  try { return JSON.parse(localStorage.getItem(SD_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+function saveSharedDiaryData(data) { localStorage.setItem(SD_KEY, JSON.stringify(data)); }
+
+function sharedDiaryNav(dir) {
+  sharedDiaryViewDate.setDate(sharedDiaryViewDate.getDate() + dir);
+  renderSharedDiary();
+}
+function sharedDiaryGoToday() { sharedDiaryViewDate = new Date(); renderSharedDiary(); }
+
+function saveSharedDiary() {
+  var dateKey = fmtDate(sharedDiaryViewDate);
+  var happy = document.getElementById('sd-happy').value.trim();
+  var uncomf = document.getElementById('sd-uncomf').value.trim();
+  var thanks = document.getElementById('sd-thanks').value.trim();
+  var wish = document.getElementById('sd-wish').value.trim();
+  if (!happy && !uncomf && !thanks && !wish) { toast(lang==='sr'?'Napiši bar nešto...':lang==='en'?'Write at least something...':'至少写点什么吧...'); return; }
+  var allData = loadSharedDiaryData();
+  if (!allData[dateKey]) allData[dateKey] = {};
+  allData[dateKey][activeProfile] = { happy:happy, uncomf:uncomf, thanks:thanks, wish:wish, time:Date.now() };
+  saveSharedDiaryData(allData);
+  renderSharedDiary();
+  toast('💌 ' + (lang==='sr'?'Sačuvano! Sad možeš da vidiš partnerov unos.':lang==='en'?'Saved! Now you can see your partner\'s entry.':'已保存！现在可以看到伴侣的日记了。'));
+}
+
+function exportSharedDiary() {
+  var dateKey = fmtDate(sharedDiaryViewDate);
+  var allData = loadSharedDiaryData();
+  var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
+  if (!myEntry) { toast(lang==='sr'?'Prvo sačuvaj svoj unos':lang==='en'?'Save your entry first':'请先保存你的日记'); return; }
+  var exportObj = { date:dateKey, author:activeProfile, entry:myEntry };
+  var text = JSON.stringify(exportObj);
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function(){ toast('📤 ' + (lang==='sr'?'Kopirano! Pošalji partneru.':lang==='en'?'Copied! Send to your partner.':'已复制！发给伴侣吧。')); });
+  } else {
+    // Fallback: show in a prompt
+    prompt(lang==='sr'?'Kopiraj i pošalji partneru:':lang==='en'?'Copy and send to partner:':'复制并发送给伴侣：', text);
+  }
+}
+
+function importSharedDiary() {
+  var text = prompt(lang==='sr'?'Zalepi partnerov tekst ovde:':lang==='en'?'Paste partner\'s text here:':'请粘贴伴侣分享的文本：');
+  if (!text) return;
+  try {
+    var imported = JSON.parse(text);
+    if (!imported.date || !imported.author || !imported.entry) throw new Error();
+    var allData = loadSharedDiaryData();
+    if (!allData[imported.date]) allData[imported.date] = {};
+    allData[imported.date][imported.author] = imported.entry;
+    saveSharedDiaryData(allData);
+    if (imported.date === fmtDate(sharedDiaryViewDate)) renderSharedDiary();
+    toast('📥 ' + (lang==='sr'?'Uvezeno!':lang==='en'?'Imported!':'已导入！'));
+  } catch(e) {
+    toast(lang==='sr'?'Neispravan format':lang==='en'?'Invalid format':'格式不对哦');
+  }
+}
+
+function renderSharedDiary() {
+  var dateKey = fmtDate(sharedDiaryViewDate);
+  document.getElementById('sharedDiaryDate').textContent = dateKey;
+  // Translate labels
+  document.getElementById('sd-my-title').textContent = lang==='sr'?'✏️ Moj osvrt':lang==='en'?'✏️ My Reflection':'✏️ 我的总结';
+  document.getElementById('sd-my-hint').textContent = lang==='sr'?'Iskreno o danu — što više detalja, to bolje 💫':lang==='en'?'Be honest about your day — the more detail the better 💫':'坦诚地回顾一天——越详细越好 💫';
+  document.getElementById('sd-l-happy').textContent = lang==='sr'?'💝 Šta me je danas obradovalo':lang==='en'?'💝 What made me happy today':'💝 今天让我开心的事';
+  document.getElementById('sd-l-uncomf').textContent = lang==='sr'?'🤔 Šta mi je malo zasmetalo':lang==='en'?'🤔 What felt a little uncomfortable':'🤔 让我有点不舒服的事';
+  document.getElementById('sd-l-thanks').textContent = lang==='sr'?'🙏 Želim da ti se zahvalim za...':lang==='en'?'🙏 I want to thank you for...':'🙏 我想感谢你的...';
+  document.getElementById('sd-l-wish').textContent = lang==='sr'?'💪 Voleo/la bih da zajedno poradimo na...':lang==='en'?'💪 I hope we can work on...':'💪 我希望我们能一起改进的...';
+  document.getElementById('sd-save-text').textContent = lang==='sr'?'💾 Sačuvaj i otključaj partnerov unos':lang==='en'?'💾 Save & Unlock Partner\'s Entry':'💾 保存并解锁伴侣日记';
+  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'✍️ Moraš sačuvati svoj unos pre nego što vidiš partnerov':lang==='en'?'✍️ You must save your entry before seeing your partner\'s':'✍️ 保存自己的日记后才能查看伴侣的哦';
+  document.getElementById('sd-partner-title').textContent = lang==='sr'?'👀 Partnerov osvrt':lang==='en'?'👀 Partner\'s Reflection':'👀 伴侣的总结';
+  document.getElementById('sd-sync-hint').textContent = lang==='sr'?'📤 Izvezi svoj unos → pošalji partneru → 📥 Partner uveze → oboje vidite!':lang==='en'?'📤 Export your entry → send to partner → 📥 Partner imports → both can see!':'📤 导出你的日记 → 发给伴侣 → 📥 伴侣导入 → 互相看到！';
+  document.getElementById('sd-export').textContent = lang==='sr'?'📤 Podeli moj unos':lang==='en'?'📤 Share My Entry':'📤 分享我的日记';
+  document.getElementById('sd-import').textContent = lang==='sr'?'📥 Uvezi partnerov':lang==='en'?'📥 Import Partner\'s':'📥 导入伴侣的';
+  document.getElementById('sd-history-title').textContent = lang==='sr'?'📜 Istorija':lang==='en'?'📜 History':'📜 历史记录';
+
+  var allData = loadSharedDiaryData();
+  var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+  var partnerEntry = allData[dateKey] && allData[dateKey][partnerProfile];
+
+  // Fill my inputs if already saved
+  document.getElementById('sd-happy').value = myEntry ? (myEntry.happy || '') : '';
+  document.getElementById('sd-uncomf').value = myEntry ? (myEntry.uncomf || '') : '';
+  document.getElementById('sd-thanks').value = myEntry ? (myEntry.thanks || '') : '';
+  document.getElementById('sd-wish').value = myEntry ? (myEntry.wish || '') : '';
+
+  // Show/hide partner card based on gate
+  var partnerCard = document.getElementById('sharedDiaryPartnerCard');
+  if (myEntry) {
+    partnerCard.style.display = '';
+    if (partnerEntry) {
+      var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+      var timeStr = '';
+      if (partnerEntry.time) { var t = new Date(partnerEntry.time); timeStr = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0'); }
+      var html = '<div style="font-size:.62rem;color:var(--gold);margin-bottom:8px">' + partnerName + (timeStr?' · '+timeStr:'') + '</div>';
+      var questions = [
+        {q:lang==='sr'?'💝 Obradovalo':lang==='en'?'💝 Happy':'💝 开心的事', a:partnerEntry.happy},
+        {q:lang==='sr'?'🤔 Zasmetalo':lang==='en'?'🤔 Uncomfortable':'🤔 不舒服的事', a:partnerEntry.uncomf},
+        {q:lang==='sr'?'🙏 Zahvalnost':lang==='en'?'🙏 Thanks':'🙏 感谢', a:partnerEntry.thanks},
+        {q:lang==='sr'?'💪 Da poradimo':lang==='en'?'💪 To improve':'💪 希望改进', a:partnerEntry.wish}
+      ];
+      questions.forEach(function(item) {
+        if (item.a) html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a">'+item.a+'</div></div>';
+      });
+      if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
+        html += '<div class="sd-empty">'+(lang==='sr'?'Nema unosa':lang==='en'?'No entry':'没有记录')+'</div>';
+      }
+      document.getElementById('sharedDiaryPartnerContent').innerHTML = html;
+    } else {
+      document.getElementById('sharedDiaryPartnerContent').innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao — ili nije podelio — svoj osvrt za ovaj dan.':lang==='en'?'Your partner hasn\'t written — or hasn\'t shared — their reflection for this day yet.':'伴侣还没写——或者还没分享——这一天的总结。')+'</div></div>';
+    }
+  } else {
+    partnerCard.style.display = 'none';
+  }
+
+  // Render history
+  renderSharedDiaryHistory(allData);
+}
+
+function renderSharedDiaryHistory(allData) {
+  var items = [];
+  Object.keys(allData).forEach(function(date) {
+    var day = allData[date];
+    var barry = day['barry'];
+    var andjela = day['andjela'];
+    if (barry || andjela) items.push({date:date, barry:barry, andjela:andjela});
+  });
+  items.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  var hist = document.getElementById('sharedDiaryHistory');
+  if (items.length === 0) {
+    hist.innerHTML = '<div class="sd-empty">'+(lang==='sr'?'Još nema unosa — započnite danas! 💌':lang==='en'?'No entries yet — start today! 💌':'还没有日记——今天就开始吧！💌')+'</div>';
+    return;
+  }
+  hist.innerHTML = items.slice(0,14).map(function(item) {
+    var parts = [];
+    if (item.andjela) {
+      var preview = (item.andjela.happy||item.andjela.thanks||item.andjela.uncomf||item.andjela.wish||'').substring(0,60);
+      parts.push('<div style="margin-bottom:4px"><span style="font-size:.62rem;color:var(--love)">🌸 Anđela:</span> <span style="font-size:.74rem;color:var(--text)">'+preview+(preview.length>=60?'...':'')+'</span></div>');
+    }
+    if (item.barry) {
+      var preview = (item.barry.happy||item.barry.thanks||item.barry.uncomf||item.barry.wish||'').substring(0,60);
+      parts.push('<div><span style="font-size:.62rem;color:var(--teal)">👦 Barry:</span> <span style="font-size:.74rem;color:var(--text)">'+preview+(preview.length>=60?'...':'')+'</span></div>');
+    }
+    return '<div class="card" style="padding:12px;margin-bottom:6px"><div style="font-size:.68rem;font-weight:700;color:var(--text-muted);margin-bottom:4px">📅 '+item.date+'</div>'+parts.join('')+'</div>';
+  }).join('');
+}
+
+function initSharedDiaryTab() {
+  sharedDiaryViewDate = new Date();
+  renderSharedDiary();
+}
+
+/* ================================================================
+   MODIFIED: Load lang/theme per-profile
+   ================================================================ */
+function loadPerProfileSettings() {
+  lang = localStorage.getItem(profileKey('cycle-lang')) || localStorage.getItem('cycle-lang') || 'sr';
+  theme = localStorage.getItem(profileKey('cycle-theme')) || localStorage.getItem('cycle-theme') || 'light';
+  annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
+  annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+}
+function setLang(l) { lang = l; localStorage.setItem(profileKey('cycle-lang'), l); localStorage.setItem('cycle-lang', l); }
+function applyTheme(th) { theme = th; localStorage.setItem(profileKey('cycle-theme'), th); localStorage.setItem('cycle-theme', th); document.documentElement.setAttribute('data-theme', th); document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙'; var sel = document.getElementById('set-theme'); if (sel) sel.value = th; }
+function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); }
+function switchTheme(th) { applyTheme(th); }
+
+/* ================================================================
+   MODIFIED: init
+   ================================================================ */
+// loadPerProfileSettings() is called in the INIT section below
 let lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
 let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
 let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+// Profile-aware overrides happen in loadPerProfileSettings() below
 
 function t(key, fallback) {
-  const keys = key.split('.'); let val = I18N[lang] || I18N['sr'];
+  // Check I18N_EXT first (new features), then main I18N
+  const keys = key.split('.');
+  let val = I18N_EXT[lang] || I18N_EXT['sr'];
+  let found = false;
+  for (const k of keys) { if (val && val[k] !== undefined) { val = val[k]; found = true; } else { found = false; break; } }
+  if (found) return val;
+  val = I18N[lang] || I18N['sr'];
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
-function setLang(l) { lang = l; localStorage.setItem('cycle-lang', l); }
-function applyTheme(th) { theme = th; localStorage.setItem('cycle-theme', th); document.documentElement.setAttribute('data-theme', th); document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙'; const sel = document.getElementById('set-theme'); if (sel) sel.value = th; }
 function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); }
 function switchTheme(th) { applyTheme(th); }
 
@@ -809,24 +1537,10 @@ function isAnniversary(d) {
 }
 
 /* ================================================================
-   DATA
+   DATA — migrated to profile-aware storage above
    ================================================================ */
-const STORAGE_KEY = 'cycle-data-v5';
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { const d = JSON.parse(raw); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
-  } catch(e) {}
-  // Migrate old data
-  for (const k of ['cycle-data-v4','cycle-data-v3','cycle-tracker-data']) {
-    const old = localStorage.getItem(k);
-    if (old) { try { const d=JSON.parse(old); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; } catch(e){} }
-  }
-  // Default: May 28, 2026 = Anđela's first recorded period
-  return { records:[new Date(2026,4,28)], symptoms:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
-}
-function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ records:state.records.map(fmtDate), symptoms:state.symptoms, settings:state.settings, _migrated:true })); }
-let state = loadState();
+// Storage key and state are now defined in the Profile System section above
+// fmtDate and utility functions below remain unchanged
 
 const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
@@ -854,13 +1568,16 @@ function renderWeather(w) {
   card.style.display='';
   document.getElementById('weatherBj').innerHTML='<div style="font-size:.65rem;color:var(--text-muted)">🏙 北京·朝阳</div><div style="font-size:1.5rem;font-weight:700">'+Math.round(w.bj.temperature_2m)+'°</div><div style="font-size:1.2rem">'+weatherIcon(w.bj.weather_code)+'</div><div style="font-size:.6rem;color:var(--text-muted)">湿度 '+w.bj.relative_humidity_2m+'%</div>';
   document.getElementById('weatherKi').innerHTML='<div style="font-size:.65rem;color:var(--text-muted)">🏡 Kikinda</div><div style="font-size:1.5rem;font-weight:700">'+Math.round(w.ki.temperature_2m)+'°</div><div style="font-size:1.2rem">'+weatherIcon(w.ki.weather_code)+'</div><div style="font-size:.6rem;color:var(--text-muted)">Vlažnost '+w.ki.relative_humidity_2m+'%</div>';
-  // Romantic weather message
-  var msgs=[], bjc=w.bj.weather_code, kic=w.ki.weather_code;
-  if(bjc<=3&&kic<=3) msgs.push(lang==='sr'?'☀️ Oboje imate sunce — kao da se nebo smeje za nas':lang==='en'?'☀️ Sunny in both cities — the sky smiles for us':'☀️ 两座城市都是晴天——天空在为我们微笑');
-  else if(bjc>45&&kic>45) msgs.push(lang==='sr'?'🌧️ Kiša pada na oba mesta — ali mislim na tebe':lang==='en'?'🌧️ Rain in both places — thinking of you':'🌧️ 两地都在下雨——但我在想你');
-  else if(bjc<=3) msgs.push(lang==='sr'?'☀️ Ovde je sunce, nadam se da će i tebi uskoro':lang==='en'?'☀️ Sunny here, hope it reaches you soon':'☀️ 我这里阳光很好，希望很快也能照到你');
-  document.getElementById('weatherLove').textContent=msgs[0]||'';
-  document.getElementById('weatherLove').style.display=msgs.length?'':'none';
+  // Serbian weather proverbs + Barry's personal touch
+  var proverbs=[], bjc=w.bj.weather_code, kic=w.ki.weather_code;
+  if(kic<=3) proverbs.push({sr:'Sunce nosi radost ☀️',barry:lang==='sr'?'Barry kaže: Sunce u Kikindi — kao tvoj osmeh ovde u Pekingu.':lang==='en'?'Barry says: Sun in Kikinda — like your smile here in Beijing.':'Barry说：Kikinda的阳光——就像你的笑容照到了北京。'});
+  else if(kic>=45&&kic<=67) proverbs.push({sr:'Pada kao iz kabla 🌧️',barry:lang==='sr'?'Barry kaže: Kiša u Kikindi... da sam tamo, skuvao bih ti čaj.':lang==='en'?'Barry says: Rain in Kikinda... if I were there, I\'d make you tea.':'Barry说：Kikinda下雨了...如果我在，会给你煮杯茶。'});
+  else if(kic>=71&&kic<=77) proverbs.push({sr:'Magla ko testa 🌫️',barry:lang==='sr'?'Barry kaže: Magla u ravnici — izgleda kao san. Čuvaj se na putu.':lang==='en'?'Barry says: Fog in the plains — looks like a dream. Be safe on the road.':'Barry说：平原起雾了——像梦一样。路上小心。'});
+  else if(kic>=85) proverbs.push({sr:'Hladno ko u Sibiru ❄️',barry:lang==='sr'?'Barry kaže: Tako hladno! Nosi šal i jaknu, molim te.':lang==='en'?'Barry says: So cold! Please wear a scarf and jacket.':'Barry说：太冷了！请一定戴围巾穿外套。'});
+  else proverbs.push({sr:'Vreme se menja — kao i mi 💫',barry:lang==='sr'?'Barry kaže: Nebo je drugačije, ali uvek mislim na tebe.':lang==='en'?'Barry says: The sky changes, but I always think of you.':'Barry说：天气会变，但我对你的思念不变。'});
+  var proverb=proverbs[0];
+  document.getElementById('weatherLove').innerHTML='<div style="font-style:italic;margin-bottom:2px">"'+proverb.sr+'"</div><div style="font-size:.65rem;opacity:.85">'+proverb.barry+'</div>';
+  document.getElementById('weatherLove').style.display='';
 }
 
 /* ================================================================
@@ -913,6 +1630,7 @@ function updateLoveCounter() {
   document.getElementById('love-days-title').textContent = lang==='sr'?'💕 Dani zajedno':lang==='en'?'💕 Our Days':'💕 我们的日子';
 }
 function randomThinkingOfYou() {
+  if (activeProfile !== 'andjela') return;
   if (Math.random() > 0.18) return; // 18% chance
   var msgs = lang==='sr'
     ? ['Upravo sam pomislio na tebe ♥','Nadam se da se osećaš dobro danas ✨','Tvoj osmeh mi je najdraža stvar 🌸','Mislim na tebe... uvek 💫','Barry je upravo pomislio na tebe 💝']
@@ -1107,7 +1825,7 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();}
+function applyAllUI(){updateLangUI();renderCalendar();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
 
 /* ================================================================
    CALENDAR
@@ -1239,9 +1957,9 @@ function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])st
 function renderTips(){const pred=predict();const td=today();const phase=getPhase(td,pred);let cat='period';if(phase==='period-on'||phase==='period-mid')cat='period';else if(phase==='ovulation'||phase==='fertile')cat='ovulation';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};const tips=t('tips.'+cat);document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
 function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;updateAnniversaryCount();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||5;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
-function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
-function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(){try{const d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error();state.records=d.records.map(r=>new Date(r));state.symptoms=d.symptoms||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false,...d.settings};saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
-function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},settings:{cycleLength:28,periodLength:7,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
+function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${activeProfile}-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
+function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(){try{const d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error();state.records=d.records.map(r=>new Date(r));state.symptoms=d.symptoms||{};state.moods=d.moods||{};state.diaries=d.diaries||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false,...d.settings};saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
+function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},moods:{},diaries:{},settings:{cycleLength:28,periodLength:7,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
 
 /* ================================================================
    NAVIGATION
@@ -1249,7 +1967,7 @@ function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={re
 function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}renderAll();}
 function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();renderAll();}
 (function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
-document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}});});
+document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
 document.getElementById('set-theme').addEventListener('change',function(){switchTheme(this.value);});
@@ -1258,7 +1976,7 @@ document.getElementById('set-theme').addEventListener('change',function(){switch
    ONBOARDING
    ================================================================ */
 function dismissOnboarding(){document.getElementById('onboardingBanner').style.display='none';localStorage.setItem('cycle-ob-dismissed','1');}
-function showOnboardingIfNeeded(){if(state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';document.getElementById('ob-text').textContent=t('onboarding');}}
+function showOnboardingIfNeeded(){if(activeProfile==='andjela'&&state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';document.getElementById('ob-text').textContent=t('onboarding');}}
 
 function toast(msg){const container=document.getElementById('toastContainer');while(container.children.length>=3){container.firstChild.remove();}const el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);setTimeout(()=>{el.classList.add('out');},2800);setTimeout(()=>{if(el.parentNode)el.remove();},3300);}
 
@@ -1267,17 +1985,21 @@ function toast(msg){const container=document.getElementById('toastContainer');wh
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 /* ================================================================
-   RENDER ALL & INIT
+   INIT — all features
    ================================================================ */
-function renderAll(){updateLangUI();renderCalendar();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();}
-applyTheme(theme);setLang(lang);renderAll();loadSettingsUI();fetchWeather();loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
+loadPerProfileSettings(); // Must be first — overrides lang/theme/annDates per active profile
+applyTheme(theme);setLang(lang);
+renderAll();loadSettingsUI();
+fetchWeather();
+loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
 showOnboardingIfNeeded();
-showGreeting();
+if (activeProfile === 'andjela') showGreeting();
 updateMoonPhase();
 updateAnniversaryCount();
 updateCycleCounter(predict().cycles.length);
 lastCycleCount = predict().cycles.length;
 updateLoveCounter();
+updateProfileUI();
 randomThinkingOfYou();
 </script>
 </body>
