@@ -1575,20 +1575,17 @@ function initSharedDiaryTab() {
 function loadPerProfileSettings() {
   // Default languages: Anđela → Serbian, Barry → Chinese
   var defaultLang = activeProfile === 'barry' ? 'zh-CN' : 'sr';
-  // ONLY use profile-specific key — never fall back to global to avoid cross-contamination
   var savedLang = localStorage.getItem(profileKey('cycle-lang'));
-  // Migration: if saved lang conflicts with profile default (from buggy old version), reset
-  if (!savedLang || (activeProfile === 'barry' && savedLang === 'sr') || (activeProfile === 'andjela' && savedLang === 'zh-CN')) {
-    savedLang = null;
-  }
-  lang = savedLang || defaultLang;
+  // Only use saved lang if it's a valid language code; otherwise use profile default
+  var validLangs = { 'sr':1, 'zh-CN':1, 'en':1 };
+  lang = (savedLang && validLangs[savedLang]) ? savedLang : defaultLang;
   theme = localStorage.getItem(profileKey('cycle-theme')) || 'light';
   annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
   annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 }
-function setLang(l) { lang = l; localStorage.setItem(profileKey('cycle-lang'), l); localStorage.setItem('cycle-lang', l); }
+function setLang(l) { lang = l; document.documentElement.setAttribute('lang', l); localStorage.setItem(profileKey('cycle-lang'), l); localStorage.setItem('cycle-lang', l); }
 function applyTheme(th) { theme = th; localStorage.setItem(profileKey('cycle-theme'), th); localStorage.setItem('cycle-theme', th); document.documentElement.setAttribute('data-theme', th); document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙'; var sel = document.getElementById('set-theme'); if (sel) sel.value = th; }
-function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); }
+// switchLanguage defined below after STATE vars
 function switchTheme(th) { applyTheme(th); }
 
 /* ================================================================
