@@ -567,9 +567,79 @@ body {
 .sd-partner-q { font-size:.65rem; color:var(--text-muted); margin-bottom:2px; }
 .sd-partner-a { font-size:.78rem; color:var(--text); line-height:1.5; }
 .sd-empty { text-align:center; padding:20px; color:var(--text-muted); font-size:.74rem; font-style:italic; }
+
+/* ================================================================
+   LOGIN OVERLAY
+   ================================================================ */
+.login-overlay {
+  position:fixed; inset:0; z-index:1000; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  background:var(--bg);
+  transition:opacity .5s, visibility .5s;
+}
+.login-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+.login-title { font-size:1.2rem; font-weight:700; color:var(--text); margin-bottom:6px; text-align:center; }
+.login-subtitle { font-size:.72rem; color:var(--gold); font-style:italic; margin-bottom:24px; text-align:center; }
+.login-cards { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+.login-card {
+  background:var(--card); border-radius:20px; padding:24px 20px;
+  text-align:center; cursor:pointer; transition:all .25s;
+  box-shadow:var(--shadow-md); border:2px solid transparent;
+  width:140px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  position:relative; overflow:hidden;
+}
+.login-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+.login-card.selected { border-color:var(--love); box-shadow:0 0 0 6px rgba(196,90,107,.12), var(--shadow-lg); transform:scale(1.03); }
+.login-card .lc-avatar { font-size:3rem; display:block; margin-bottom:8px; }
+.login-card .lc-name { font-size:.85rem; font-weight:700; color:var(--text); }
+.login-card .lc-hint { font-size:.6rem; color:var(--text-muted); margin-top:4px; }
+.login-pin-area { margin-top:18px; display:none; flex-direction:column; align-items:center; gap:8px; }
+.login-pin-area.show { display:flex; }
+.login-pin-input { width:120px; padding:10px; border:2px solid var(--border); border-radius:14px; font-size:1.2rem; text-align:center; letter-spacing:8px; font-family:var(--font); background:var(--card); color:var(--text); transition:border-color .2s; }
+.login-pin-input:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 4px rgba(196,90,107,.1); }
+.login-pin-btn { padding:10px 32px; border:none; border-radius:20px; background:var(--love); color:#fff; font-weight:700; font-size:.78rem; cursor:pointer; font-family:var(--font); transition:transform .15s; box-shadow:0 4px 14px rgba(196,90,107,.25); }
+.login-pin-btn:active { transform:scale(.93); }
+.login-error { font-size:.65rem; color:#E53935; min-height:18px; text-align:center; }
+.login-card.shake { animation:shake .5s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+.login-switch-hint { font-size:.62rem; color:var(--text-muted); margin-top:20px; text-align:center; }
+
+/* GitHub token settings */
+.token-row { display:none; }
+.token-row.show { display:flex; flex-direction:column; gap:6px; }
+.token-row input { width:100%; padding:8px; border:1px solid var(--border); border-radius:10px; font-size:.72rem; font-family:var(--font); background:var(--card); color:var(--text); }
+
 </style>
 </head>
 <body>
+
+<!-- ================================================================
+   LOGIN OVERLAY — Two profile cards + PIN
+   ================================================================ -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-title" id="loginTitle">🌸 Anđelin Ciklus</div>
+  <div class="login-subtitle" id="loginSubtitle">— Za Anđelu i Barryja —</div>
+  <div class="login-cards">
+    <!-- Anđela Card -->
+    <div class="login-card" id="loginCardAndjela" onclick="selectLogin('andjela')">
+      <span class="lc-avatar">🌸</span>
+      <div class="lc-name">Anđela</div>
+      <div class="lc-hint" id="lc-hint-a">Dodirni za prijavu</div>
+    </div>
+    <!-- Barry Card -->
+    <div class="login-card" id="loginCardBarry" onclick="selectLogin('barry')">
+      <span class="lc-avatar">👦</span>
+      <div class="lc-name">Barry</div>
+      <div class="lc-hint" id="lc-hint-b">Dodirni za prijavu</div>
+    </div>
+  </div>
+  <div class="login-pin-area" id="loginPinArea">
+    <input type="password" inputmode="numeric" maxlength="4" class="login-pin-input" id="loginPinInput" placeholder="····" onkeydown="if(event.key==='Enter')verifyLogin()">
+    <button class="login-pin-btn" onclick="verifyLogin()" id="loginPinBtn">🔓 Prijavi se</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+  <div class="login-switch-hint" id="loginSwitchHint">👈 Izaberi svoj profil i unesi PIN</div>
+</div>
 
 <!-- Floating Stars -->
 <div class="floating-stars">
@@ -845,6 +915,10 @@ body {
     <div class="setting-row"><div><span class="setting-label" id="set-l-cycle"></span><span class="setting-hint" id="set-h-cycle"></span></div><input type="number" id="set-cycle" min="20" max="60" value="28"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-period"></span><span class="setting-hint" id="set-h-period"></span></div><input type="number" id="set-period" min="2" max="10" value="7"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-override"></span><span class="setting-hint" id="set-h-override"></span></div><input type="checkbox" id="set-override" style="width:18px;height:18px;cursor:pointer"></div>
+    <div class="setting-row token-row show" id="tokenSettingRow">
+      <div><span class="setting-label">🔑 GitHub Token</span><span class="setting-hint" id="set-h-token">Za sinhronizaciju dnevnika na oba telefona</span></div>
+      <input type="password" id="set-gh-token" placeholder="ghp_..." style="width:100%;font-size:.7rem;padding:8px" onchange="saveGitHubToken()">
+    </div>
     <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()"></button>
     <button class="btn btn-outline" id="export-btn" onclick="exportData()"></button>
     <button class="btn btn-outline" id="import-btn" onclick="document.getElementById('importFile').click()"></button>
@@ -1265,17 +1339,55 @@ function renderGarden() {
 }
 
 /* ================================================================
-   SHARED DIARY — localStorage + copy-paste sync
+   SHARED DIARY — localStorage + GitHub API cross-device sync
    Gate: MUST write own entry before seeing partner's
    ================================================================ */
-const SD_KEY = 'shared-diary'; // { 'YYYY-MM-DD': { barry: {happy,uncomf,thanks,wish,time}, andjela: {...} } }
+const SD_KEY = 'shared-diary';
+const GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
+const GITHUB_FILE = 'shared-diary.json';
 let sharedDiaryViewDate = new Date();
 
+function getGitHubToken() { return localStorage.getItem('gh-token') || ''; }
+
 function loadSharedDiaryData() {
-  try { return JSON.parse(localStorage.getItem(SD_KEY)) || {}; }
-  catch(e) { return {}; }
+  try { return JSON.parse(localStorage.getItem(SD_KEY)) || {}; } catch(e) { return {}; }
 }
 function saveSharedDiaryData(data) { localStorage.setItem(SD_KEY, JSON.stringify(data)); }
+
+// Fetch shared diary from GitHub (read-only, works without token for public repos)
+async function fetchSharedDiaryFromGitHub() {
+  var token = getGitHubToken();
+  var headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  try {
+    var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { headers: headers, cache: 'no-store' });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    var content = decodeURIComponent(escape(atob(data.content)));
+    return { data: JSON.parse(content), sha: data.sha };
+  } catch(e) { return null; }
+}
+
+// Push shared diary to GitHub
+async function pushSharedDiaryToGitHub(diaryData) {
+  var token = getGitHubToken();
+  if (!token) return false; // No token = can't write
+  var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+  // Get current sha
+  var sha = null;
+  try {
+    var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { headers: headers, cache: 'no-store' });
+    if (resp.ok) { var d = await resp.json(); sha = d.sha; }
+  } catch(e) {}
+  // Push
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(diaryData, null, 2))));
+  var body = { message: '💌 Update shared diary', content: content };
+  if (sha) body.sha = sha;
+  try {
+    var putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+    return putResp.ok;
+  } catch(e) { return false; }
+}
 
 function sharedDiaryNav(dir) {
   sharedDiaryViewDate.setDate(sharedDiaryViewDate.getDate() + dir);
@@ -1283,7 +1395,7 @@ function sharedDiaryNav(dir) {
 }
 function sharedDiaryGoToday() { sharedDiaryViewDate = new Date(); renderSharedDiary(); }
 
-function saveSharedDiary() {
+async function saveSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
   var happy = document.getElementById('sd-happy').value.trim();
   var uncomf = document.getElementById('sd-uncomf').value.trim();
@@ -1294,8 +1406,38 @@ function saveSharedDiary() {
   if (!allData[dateKey]) allData[dateKey] = {};
   allData[dateKey][activeProfile] = { happy:happy, uncomf:uncomf, thanks:thanks, wish:wish, time:Date.now() };
   saveSharedDiaryData(allData);
+
+  // Try push to GitHub for cross-device sync
+  if (getGitHubToken()) {
+    var ok = await pushSharedDiaryToGitHub(allData);
+    if (ok) {
+      toast('💌 ' + (lang==='sr'?'Sačuvano i sinhronizovano! 🌐':lang==='en'?'Saved & synced! 🌐':'已保存并同步！🌐'));
+    } else {
+      toast('💌 ' + (lang==='sr'?'Sačuvano lokalno (greška pri sinhronizaciji)':lang==='en'?'Saved locally (sync error)':'已本地保存（同步失败）'));
+    }
+  } else {
+    toast('💌 ' + (lang==='sr'?'Sačuvano! Dodaj GitHub Token u Podešavanjima za sinhronizaciju.':lang==='en'?'Saved! Add GitHub Token in Settings for sync.':'已保存！在设置中添加 GitHub Token 即可同步。'));
+  }
+
+  // Try pull partner's entry
+  await pullPartnerEntry(dateKey);
   renderSharedDiary();
-  toast('💌 ' + (lang==='sr'?'Sačuvano! Sad možeš da vidiš partnerov unos.':lang==='en'?'Saved! Now you can see your partner\'s entry.':'已保存！现在可以看到伴侣的日记了。'));
+}
+
+async function pullPartnerEntry(dateKey) {
+  if (!getGitHubToken()) return;
+  var ghData = await fetchSharedDiaryFromGitHub();
+  if (!ghData || !ghData.data) return;
+  // Merge GitHub data into localStorage
+  var localData = loadSharedDiaryData();
+  var updated = false;
+  Object.keys(ghData.data).forEach(function(d) {
+    if (!localData[d] || JSON.stringify(localData[d]) !== JSON.stringify(ghData.data[d])) {
+      localData[d] = ghData.data[d];
+      updated = true;
+    }
+  });
+  if (updated) saveSharedDiaryData(localData);
 }
 
 function exportSharedDiary() {
@@ -1308,7 +1450,6 @@ function exportSharedDiary() {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function(){ toast('📤 ' + (lang==='sr'?'Kopirano! Pošalji partneru.':lang==='en'?'Copied! Send to your partner.':'已复制！发给伴侣吧。')); });
   } else {
-    // Fallback: show in a prompt
     prompt(lang==='sr'?'Kopiraj i pošalji partneru:':lang==='en'?'Copy and send to partner:':'复制并发送给伴侣：', text);
   }
 }
@@ -1330,10 +1471,9 @@ function importSharedDiary() {
   }
 }
 
-function renderSharedDiary() {
+async function renderSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
   document.getElementById('sharedDiaryDate').textContent = dateKey;
-  // Translate labels
   document.getElementById('sd-my-title').textContent = lang==='sr'?'✏️ Moj osvrt':lang==='en'?'✏️ My Reflection':'✏️ 我的总结';
   document.getElementById('sd-my-hint').textContent = lang==='sr'?'Iskreno o danu — što više detalja, to bolje 💫':lang==='en'?'Be honest about your day — the more detail the better 💫':'坦诚地回顾一天——越详细越好 💫';
   document.getElementById('sd-l-happy').textContent = lang==='sr'?'💝 Šta me je danas obradovalo':lang==='en'?'💝 What made me happy today':'💝 今天让我开心的事';
@@ -1343,23 +1483,24 @@ function renderSharedDiary() {
   document.getElementById('sd-save-text').textContent = lang==='sr'?'💾 Sačuvaj i otključaj partnerov unos':lang==='en'?'💾 Save & Unlock Partner\'s Entry':'💾 保存并解锁伴侣日记';
   document.getElementById('sd-gate-hint').textContent = lang==='sr'?'✍️ Moraš sačuvati svoj unos pre nego što vidiš partnerov':lang==='en'?'✍️ You must save your entry before seeing your partner\'s':'✍️ 保存自己的日记后才能查看伴侣的哦';
   document.getElementById('sd-partner-title').textContent = lang==='sr'?'👀 Partnerov osvrt':lang==='en'?'👀 Partner\'s Reflection':'👀 伴侣的总结';
-  document.getElementById('sd-sync-hint').textContent = lang==='sr'?'📤 Izvezi svoj unos → pošalji partneru → 📥 Partner uveze → oboje vidite!':lang==='en'?'📤 Export your entry → send to partner → 📥 Partner imports → both can see!':'📤 导出你的日记 → 发给伴侣 → 📥 伴侣导入 → 互相看到！';
+  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'🌐 Automatska sinhronizacija uključena':lang==='en'?'🌐 Auto-sync enabled':'🌐 自动同步已开启') : (lang==='sr'?'📤 Izvezi svoj unos → pošalji partneru → 📥 Partner uveze → oboje vidite!':lang==='en'?'📤 Export your entry → send to partner → 📥 Partner imports → both can see!':'📤 导出你的日记 → 发给伴侣 → 📥 伴侣导入 → 互相看到！');
   document.getElementById('sd-export').textContent = lang==='sr'?'📤 Podeli moj unos':lang==='en'?'📤 Share My Entry':'📤 分享我的日记';
   document.getElementById('sd-import').textContent = lang==='sr'?'📥 Uvezi partnerov':lang==='en'?'📥 Import Partner\'s':'📥 导入伴侣的';
   document.getElementById('sd-history-title').textContent = lang==='sr'?'📜 Istorija':lang==='en'?'📜 History':'📜 历史记录';
+
+  // Try pull from GitHub first
+  if (getGitHubToken()) await pullPartnerEntry(dateKey);
 
   var allData = loadSharedDiaryData();
   var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   var partnerEntry = allData[dateKey] && allData[dateKey][partnerProfile];
 
-  // Fill my inputs if already saved
   document.getElementById('sd-happy').value = myEntry ? (myEntry.happy || '') : '';
   document.getElementById('sd-uncomf').value = myEntry ? (myEntry.uncomf || '') : '';
   document.getElementById('sd-thanks').value = myEntry ? (myEntry.thanks || '') : '';
   document.getElementById('sd-wish').value = myEntry ? (myEntry.wish || '') : '';
 
-  // Show/hide partner card based on gate
   var partnerCard = document.getElementById('sharedDiaryPartnerCard');
   if (myEntry) {
     partnerCard.style.display = '';
@@ -1382,13 +1523,12 @@ function renderSharedDiary() {
       }
       document.getElementById('sharedDiaryPartnerContent').innerHTML = html;
     } else {
-      document.getElementById('sharedDiaryPartnerContent').innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao — ili nije podelio — svoj osvrt za ovaj dan.':lang==='en'?'Your partner hasn\'t written — or hasn\'t shared — their reflection for this day yet.':'伴侣还没写——或者还没分享——这一天的总结。')+'</div></div>';
+      document.getElementById('sharedDiaryPartnerContent').innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.':lang==='en'?'Your partner hasn\'t written their reflection for this day yet — or it hasn\'t synced.':'伴侣还没写这一天的总结——或者还没同步过来。')+'</div></div>';
     }
   } else {
     partnerCard.style.display = 'none';
   }
 
-  // Render history
   renderSharedDiaryHistory(allData);
 }
 
@@ -1447,6 +1587,62 @@ let lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
 let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
 let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+
+/* ================================================================
+   LOGIN SYSTEM
+   ================================================================ */
+const LOGIN_PINS = { andjela: '0919', barry: '0827' };
+let selectedLoginProfile = null;
+let isLoggedIn = false;
+
+function selectLogin(profile) {
+  selectedLoginProfile = profile;
+  // Update card selection visuals
+  document.getElementById('loginCardAndjela').classList.toggle('selected', profile === 'andjela');
+  document.getElementById('loginCardBarry').classList.toggle('selected', profile === 'barry');
+  // Show PIN area
+  document.getElementById('loginPinArea').classList.add('show');
+  document.getElementById('loginPinInput').value = '';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginSwitchHint').textContent = lang==='sr'?'Unesi svoj PIN':lang==='en'?'Enter your PIN':'输入你的 PIN';
+  setTimeout(function(){ document.getElementById('loginPinInput').focus(); }, 300);
+}
+
+function verifyLogin() {
+  var pin = document.getElementById('loginPinInput').value;
+  var card = selectedLoginProfile === 'andjela' ? document.getElementById('loginCardAndjela') : document.getElementById('loginCardBarry');
+  if (pin === LOGIN_PINS[selectedLoginProfile]) {
+    // Correct PIN
+    activeProfile = selectedLoginProfile;
+    localStorage.setItem('cycle-active-profile', activeProfile);
+    isLoggedIn = true;
+    document.getElementById('loginOverlay').classList.add('hidden');
+    // Initialize app with logged-in profile
+    loadPerProfileSettings();
+    state = loadState();
+    lastCycleCount = predict().cycles.length;
+    applyTheme(theme); setLang(lang);
+    renderAll(); loadSettingsUI();
+    fetchWeather();
+    loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
+    showOnboardingIfNeeded();
+    if (activeProfile === 'andjela') showGreeting();
+    updateMoonPhase();
+    updateAnniversaryCount();
+    updateCycleCounter(predict().cycles.length);
+    lastCycleCount = predict().cycles.length;
+    updateLoveCounter();
+    updateProfileUI();
+    randomThinkingOfYou();
+  } else {
+    // Wrong PIN
+    card.classList.add('shake');
+    document.getElementById('loginError').textContent = lang==='sr'?'Pogrešan PIN — pokušaj ponovo':lang==='en'?'Wrong PIN — try again':'PIN 不对，再试一次';
+    document.getElementById('loginPinInput').value = '';
+    setTimeout(function(){ card.classList.remove('shake'); }, 500);
+  }
+}
+
 // Profile-aware overrides happen in loadPerProfileSettings() below
 
 function t(key, fallback) {
@@ -1955,7 +2151,8 @@ function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById
 function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
 function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
 function renderTips(){const pred=predict();const td=today();const phase=getPhase(td,pred);let cat='period';if(phase==='period-on'||phase==='period-mid')cat='period';else if(phase==='ovulation'||phase==='fertile')cat='ovulation';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};const tips=t('tips.'+cat);document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
-function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;updateAnniversaryCount();}
+function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){localStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');}else{localStorage.removeItem('gh-token');}}
+function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||5;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
 function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${activeProfile}-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
 function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(){try{const d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error();state.records=d.records.map(r=>new Date(r));state.symptoms=d.symptoms||{};state.moods=d.moods||{};state.diaries=d.diaries||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false,...d.settings};saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
@@ -1985,22 +2182,60 @@ function toast(msg){const container=document.getElementById('toastContainer');wh
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 /* ================================================================
-   INIT — all features
+   LOGOUT — return to login screen
    ================================================================ */
-loadPerProfileSettings(); // Must be first — overrides lang/theme/annDates per active profile
-applyTheme(theme);setLang(lang);
-renderAll();loadSettingsUI();
-fetchWeather();
-loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
-showOnboardingIfNeeded();
-if (activeProfile === 'andjela') showGreeting();
-updateMoonPhase();
-updateAnniversaryCount();
-updateCycleCounter(predict().cycles.length);
-lastCycleCount = predict().cycles.length;
-updateLoveCounter();
-updateProfileUI();
-randomThinkingOfYou();
+function logoutAndShowLogin() {
+  isLoggedIn = false;
+  selectedLoginProfile = null;
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('loginPinArea').classList.remove('show');
+  document.getElementById('loginCardAndjela').classList.remove('selected');
+  document.getElementById('loginCardBarry').classList.remove('selected');
+  document.getElementById('loginSwitchHint').textContent = '👈 ' + (lang==='sr'?'Izaberi svoj profil i unesi PIN':lang==='en'?'Choose your profile and enter PIN':'选择你的账号并输入 PIN');
+  document.getElementById('loginPinInput').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+// Override toggleProfile to use login overlay
+var _origToggleProfile = toggleProfile;
+toggleProfile = function() {
+  logoutAndShowLogin();
+};
+
+/* ================================================================
+   INIT — check login state
+   ================================================================ */
+(function initApp() {
+  // Check if previously logged in
+  var savedProfile = localStorage.getItem('cycle-active-profile');
+  if (savedProfile && LOGIN_PINS[savedProfile]) {
+    // Auto-login with saved profile
+    activeProfile = savedProfile;
+    isLoggedIn = true;
+    document.getElementById('loginOverlay').classList.add('hidden');
+    loadPerProfileSettings();
+    state = loadState();
+    lastCycleCount = predict().cycles.length;
+    applyTheme(theme);setLang(lang);
+    renderAll();loadSettingsUI();
+    fetchWeather();
+    loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
+    showOnboardingIfNeeded();
+    if (activeProfile === 'andjela') showGreeting();
+    updateMoonPhase();
+    updateAnniversaryCount();
+    updateCycleCounter(predict().cycles.length);
+    lastCycleCount = predict().cycles.length;
+    updateLoveCounter();
+    updateProfileUI();
+    randomThinkingOfYou();
+  } else {
+    // Show login overlay
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    // Pre-apply theme so login page looks good
+    applyTheme(theme);
+  }
+})();
 </script>
 </body>
 </html>
