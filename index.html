@@ -579,6 +579,46 @@ body {
 .sd-partner-a { font-size:.78rem; color:var(--text); line-height:1.5; }
 .sd-empty { text-align:center; padding:20px; color:var(--text-muted); font-size:.74rem; font-style:italic; }
 
+/* Connection Features */
+.hug-btn { width:100%; padding:16px; border:none; border-radius:var(--radius); background:linear-gradient(135deg,var(--love),#E898A8); color:#fff; font-size:1.2rem; font-weight:700; cursor:pointer; font-family:var(--font); box-shadow:0 4px 20px rgba(196,90,107,.35); transition:all .2s; }
+.hug-btn:active { transform:scale(.92); }
+.hug-received { text-align:center; padding:16px; animation:hugBounce .6s cubic-bezier(.34,1.56,.64,1); }
+@keyframes hugBounce { 0%{transform:scale(.5);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+.hug-icon { font-size:3rem; display:block; }
+.hug-text { font-size:.82rem; color:var(--love); font-weight:600; margin-top:4px; }
+.hug-time { font-size:.62rem; color:var(--text-muted); }
+.gratitude-card { background:linear-gradient(135deg,#FFF8E7,#FFF0F3); border:1px solid var(--gold); border-radius:var(--radius); padding:14px; margin-bottom:10px; }
+[data-theme="dark"] .gratitude-card { background:linear-gradient(135deg,#2A2218,#2A1E22); }
+.gratitude-input-row { display:flex; gap:6px; }
+.gratitude-input-row input { flex:1; border:1px solid var(--border); border-radius:20px; padding:8px 14px; font-size:.74rem; font-family:var(--font); background:var(--card); color:var(--text); }
+.gratitude-input-row button { width:36px; height:36px; border-radius:50%; border:none; background:var(--gold); color:#fff; font-size:1rem; cursor:pointer; flex-shrink:0; }
+.gratitude-item { padding:8px 0; border-bottom:1px solid var(--border); font-size:.76rem; display:flex; gap:8px; align-items:flex-start; }
+.gratitude-item:last-child { border-bottom:none; }
+.gratitude-heart { color:var(--love); flex-shrink:0; }
+.checkin-q { margin-bottom:14px; }
+.checkin-q .cq-label { font-size:.74rem; font-weight:600; color:var(--text); margin-bottom:6px; display:flex; gap:6px; align-items:center; }
+.checkin-q .cq-options { display:flex; gap:6px; flex-wrap:wrap; }
+.cq-opt { padding:8px 16px; border-radius:20px; border:1.5px solid var(--border); font-size:.7rem; cursor:pointer; background:var(--card); color:var(--text-muted); transition:all .15s; font-family:var(--font); }
+.cq-opt.picked { border-color:var(--love); background:var(--rose-light); color:var(--love); font-weight:600; }
+.song-card { text-align:center; padding:16px; }
+.song-card .song-icon { font-size:2.5rem; display:block; margin-bottom:6px; }
+.song-card .song-title { font-size:.85rem; font-weight:700; color:var(--text); }
+.song-card .song-for { font-size:.68rem; color:var(--gold); font-style:italic; }
+.song-card .song-note { font-size:.72rem; color:var(--text-muted); margin-top:4px; line-height:1.5; }
+.rel-tip-card { background:linear-gradient(135deg,var(--lavender-light),var(--rose-light)); border:1px solid var(--gold); border-radius:var(--radius); padding:18px; margin-bottom:12px; text-align:center; transition:all .3s; }
+.rel-tip-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+[data-theme="dark"] .rel-tip-card { background:linear-gradient(135deg,#241D2A,#2A1E22); }
+.rel-tip-icon { font-size:2rem; display:block; margin-bottom:6px; }
+.rel-tip-text { font-size:.82rem; color:var(--text); line-height:1.6; font-style:italic; }
+.symptom-analysis { margin-bottom:14px; }
+.sa-item { background:var(--card); border-radius:var(--radius-sm); padding:14px; margin-bottom:8px; border-left:3px solid var(--teal); box-shadow:var(--shadow-xs); }
+.sa-emoji { font-size:1.3rem; }
+.sa-name { font-weight:700; font-size:.78rem; color:var(--text); }
+.sa-cause { font-size:.7rem; color:var(--text-muted); margin-top:4px; line-height:1.5; }
+.sa-help { font-size:.72rem; color:var(--teal); margin-top:4px; line-height:1.5; font-weight:500; }
+.special-badge { display:inline-block; padding:4px 14px; border-radius:14px; font-size:.64rem; font-weight:700; letter-spacing:.02em; background:linear-gradient(135deg,var(--love),var(--lavender-dark)); color:#fff; margin-top:4px; animation:badgeShine 3s ease-in-out infinite; }
+@keyframes badgeShine { 0%,100%{box-shadow:0 0 0 0 rgba(196,90,107,.3)} 50%{box-shadow:0 0 0 8px rgba(196,90,107,0)} }
+
 /* ================================================================
    LOGIN OVERLAY
    ================================================================ */
@@ -843,9 +883,50 @@ body {
       <div class="garden-msg" id="gardenMsg"></div>
       <div class="garden-streak-hint" id="gardenHint"></div>
     </div>
+    <!-- Relationship Tips (Anđela only) -->
+    <div class="rel-tip-card" id="relTipCard" style="display:none">
+      <span class="rel-tip-icon" id="relTipIcon">💡</span>
+      <div class="rel-tip-text" id="relTipText"></div>
+    </div>
+    <!-- Virtual Hug -->
+    <div class="card" id="hugCard">
+      <h3>🤗 <span id="hug-title">Virtual Hug</span></h3>
+      <div id="hugContent"><button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 <span id="hug-btn-text">Send a Hug</span></button></div>
+    </div>
+    <!-- Gratitude Wall -->
+    <div class="gratitude-card" id="gratitudeCard">
+      <h3 style="font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">💝 <span id="grat-title">Gratitude Wall</span></h3>
+      <div class="gratitude-input-row">
+        <input type="text" id="gratInput" maxlength="100" placeholder="">
+        <button onclick="addGratitude()">💝</button>
+      </div>
+      <div id="gratList" style="margin-top:8px"></div>
+    </div>
+    <!-- Our Song -->
+    <div class="card song-card" id="songCard">
+      <h3>🎵 <span id="song-title">Our Song</span></h3>
+      <div id="songContent"><span class="song-icon">🎶</span><div class="song-note" id="song-note-empty"></div></div>
+    </div>
+    <!-- Weekly Check-in -->
+    <div class="card" id="checkinCard">
+      <h3>🎯 <span id="checkin-title">Weekly Check-in</span></h3>
+      <div id="checkinContent"><div class="song-note" id="checkin-empty"></div></div>
+    </div>
+    <!-- Anđela's special badge -->
+    <div style="text-align:center;padding:8px 0 4px">
+      <span class="special-badge" id="specialBadge" style="display:none">✨ <span id="specialBadgeText">Ti si jedinstvena</span> ✨</span>
+    </div>
   </div>
 
   <div class="panel" id="panel-symptoms">
+    <!-- Barry sees Anđela's symptom analysis -->
+    <div id="barry-symptom-view" style="display:none">
+      <div class="card"><h3>🔍 <span id="bs-title">Anđela's Symptoms Today</span></h3>
+        <div id="barrySymptomAnalysis" class="symptom-analysis"></div>
+      </div>
+    </div>
+    <!-- Anđela's symptom logging -->
+    <div id="andjela-symptom-view">
     <div class="empty-state" id="symptom-empty"><span class="empty-icon">📋</span><span class="empty-text" id="symptom-empty-text"></span></div>
     <div id="symptom-content" style="display:none">
       <div class="card"><h3 id="symptom-date-label"></h3></div>
@@ -853,6 +934,7 @@ body {
       <div class="symptom-note"><textarea id="symptom-notes" placeholder=""></textarea></div>
       <button class="btn btn-primary" id="symptom-save-btn" onclick="saveSymptom()"></button>
     </div>
+    </div><!-- /andjela-symptom-view -->
   </div>
 
   <div class="panel" id="panel-tips"><div id="tips-list"></div></div>
@@ -2070,7 +2152,7 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
+function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();renderRelTips();renderHug();renderGratitude();renderSong();renderCheckin();renderSpecialBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
 function renderAll(){applyAllUI();}
 
 /* ================================================================
@@ -2266,6 +2348,257 @@ function toast(msg){const container=document.getElementById('toastContainer');wh
 /* Swipe to dismiss modal */
 (function(){let startY=0;const overlay=document.getElementById('modal');overlay.addEventListener('touchstart',e=>{if(e.target===overlay||e.target.closest('.modal'))startY=e.touches[0].clientY;},{passive:true});overlay.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientY-startY;if(diff>80&&!overlay.classList.contains('hidden'))closeModal();});})();
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+/* ================================================================
+   SYMPTOM ANALYSIS DATA (Barry's view)
+   ================================================================ */
+const SYMPTOM_HELP = {
+  cramps: { cause:{sr:'Materica se kontrahuje da izbaci sluzokožu — prostaglandini izazivaju bol',zh:'子宫收缩排出内膜——前列腺素引起疼痛',en:'Uterus contracts to shed lining — prostaglandins cause pain'}, help:{sr:'🫂 Termofor na stomak • 🍵 Čaj od đumbira • 💆 Nežna masaža donjeg dela leđa • 🚫 Bez hladnih pića',zh:'🫂 暖水袋敷肚子 • 🍵 红糖姜茶 • 💆 轻揉下背部 • 🚫 别喝冰的',en:'🫂 Heating pad • 🍵 Ginger tea • 💆 Gentle lower back massage • 🚫 No cold drinks'} },
+  headache: { cause:{sr:'Pad estrogena širi krvne sudove u mozgu',zh:'雌激素下降导致脑血管扩张',en:'Estrogen drop dilates brain blood vessels'}, help:{sr:'🤫 Tiha, zamračena soba • 🧊 Hladan oblog na čelo • 💊 Pitaj da li želi lek protiv bolova',zh:'🤫 安静黑暗的房间 • 🧊 凉毛巾敷额头 • 💊 问她需不需要止痛药',en:'🤫 Quiet dark room • 🧊 Cold compress on forehead • 💊 Ask if she needs pain relief'} },
+  fatigue: { cause:{sr:'Telo troši mnogo energije — gvožđe je nisko',zh:'身体消耗大量能量——铁含量低',en:'Body uses lots of energy — iron is low'}, help:{sr:'🛏️ Pusti je da spava • 🧹 Uradi nešto po kući umesto nje • 🍖 Skoro joj hranu bogatu gvožđem',zh:'🛏️ 让她睡 • 🧹 帮她做家务 • 🍖 做含铁丰富的食物',en:'🛏️ Let her sleep • 🧹 Do chores for her • 🍖 Cook iron-rich food for her'} },
+  mood: { cause:{sr:'Hormoni divljaju — serotonin i dopamin su na minimumu',zh:'荷尔蒙剧烈波动——血清素和多巴胺都处于低点',en:'Hormones fluctuating wildly — serotonin and dopamine at lows'}, help:{sr:'👂 Slušaj bez osude • 🤐 Ne govori "smiri se" • 🌸 Donesi joj cveće bez razloga • 🫂 Samo je zagrli',zh:'👂 倾听不评判 • 🤐 别说"冷静点" • 🌸 买花给她 • 🫂 就抱着她',en:'👂 Listen without judging • 🤐 Don\'t say "calm down" • 🌸 Bring her flowers • 🫂 Just hold her'} },
+  flow: { cause:{sr:'Sluzokoža materice se ljušti — normalan proces',zh:'子宫内膜正在脱落——正常过程',en:'Uterine lining is shedding — normal process'}, help:{sr:'🛒 Kupi joj uloške/tampone ako joj treba • 🚫 Bez dizanja teških stvari • 🛏️ Neka se odmara',zh:'🛒 帮她买卫生巾 • 🚫 别让她提重物 • 🛏️ 让她休息',en:'🛒 Buy pads/tampons if she needs • 🚫 No heavy lifting • 🛏️ Let her rest'} },
+  cravings: { cause:{sr:'Nagli pad serotonina — telo traži utehu u hrani',zh:'血清素急剧下降——身体在食物中寻找安慰',en:'Serotonin crash — body seeks comfort in food'}, help:{sr:'🍫 Donesi joj ono što želi bez komentara • 🍕 Naruči njenu omiljenu hranu • 🤐 Ne komentariši njene izbore',zh:'🍫 给她想吃的不要评论 • 🍕 点她最爱吃的 • 🤐 别评论她的食物选择',en:'🍫 Get her what she wants, no comments • 🍕 Order her favorite food • 🤐 Don\'t comment on her choices'} }
+};
+
+// Relationship tips for Anđela
+const REL_TIPS = {
+  sr: [
+    {icon:'💬',text:'Ako ti nešto smeta — reci mu. Barry ne ume da čita misli. Iskren razgovor je temelj.'},
+    {icon:'💝',text:'Kad uradi nešto lepo za tebe — reci mu. Muškarcima treba potvrda isto koliko i ženama.'},
+    {icon:'🫂',text:'Svađate se? Seti se: vi ste tim protiv problema, a ne jedno protiv drugog.'},
+    {icon:'🌸',text:'Tvoja osećanja su važeća. Ne moraš da ih pravdavaš. Samo ih izrazi.'},
+    {icon:'💌',text:'Male stvari su velike. Poruka "mislim na tebe" znači više nego što misliš.'},
+    {icon:'🎯',text:'Reci mu šta ti treba. "Volela bih da me sad saslušaš" je jasnije od ćutanja.'},
+    {icon:'🤗',text:'Fizička bliskost nije samo seks. Držanje za ruke, zagrljaj, dodir — sve to gradi vezu.'},
+    {icon:'🌙',text:'Kad si umorna i emotivna — reci mu to. "Danas mi je težak dan" je dovoljno.'},
+    {icon:'💪',text:'Vi ste različite osobe i to je u redu. Ne morate sve da radite isto.'},
+    {icon:'🔥',text:'Strast se gradi svaki dan — flert, nežne reči, iznenađenja. Ne čekaj "posebne prilike".'}
+  ],
+  zh: [
+    {icon:'💬',text:'如果有什么不满——直接告诉他。Barry 不会读心术。真诚沟通是感情的基础。'},
+    {icon:'💝',text:'他做了什么让你开心的事？告诉他。男生也需要被肯定。'},
+    {icon:'🫂',text:'吵架时记住：你们 vs 问题，而不是你 vs 他。'},
+    {icon:'🌸',text:'你的感受是真实的。不需要为它辩护。只需要表达出来。'},
+    {icon:'💌',text:'小事最重要。"想你了"三个字的力量比你想象的大得多。'},
+    {icon:'🎯',text:'告诉他你需要什么。"我现在想让你听我说"比沉默更有效。'},
+    {icon:'🤗',text:'亲密不只是性。牵手、拥抱、触摸——这些都在建立连接。'},
+    {icon:'🌙',text:'累了或情绪不好的时候——告诉他。"今天好累"就够了。'},
+    {icon:'💪',text:'你们是不同的个体，这完全没问题。不需要一切都一样。'},
+    {icon:'🔥',text:'激情是每天积累的——调情、温柔的话、小惊喜。别等"特别的日子"。'}
+  ],
+  en: [
+    {icon:'💬',text:'If something bothers you — tell him. Barry can\'t read minds. Honest talk is the foundation.'},
+    {icon:'💝',text:'He did something nice? Tell him. Men need affirmation as much as women do.'},
+    {icon:'🫂',text:'In a fight: you are a team against the problem, not against each other.'},
+    {icon:'🌸',text:'Your feelings are valid. You don\'t need to justify them. Just express them.'},
+    {icon:'💌',text:'Small things are big. A "thinking of you" message means more than you think.'},
+    {icon:'🎯',text:'Tell him what you need. "I\'d love for you to just listen right now" works better than silence.'},
+    {icon:'🤗',text:'Physical closeness isn\'t just sex. Holding hands, hugging, touch — it all builds connection.'},
+    {icon:'🌙',text:'When you\'re tired or emotional — just tell him. "Today\'s a hard day" is enough.'},
+    {icon:'💪',text:'You\'re different people and that\'s OK. You don\'t have to do everything the same way.'},
+    {icon:'🔥',text:'Passion builds every day — flirting, sweet words, surprises. Don\'t wait for "special occasions".'}
+  ]
+};
+
+/* ================================================================
+   NEW FEATURES — Hug / Gratitude / Check-in / Song
+   ================================================================ */
+
+// Virtual Hug
+function sendHug() {
+  var hug = { from: activeProfile, time: Date.now() };
+  localStorage.setItem('shared-hug', JSON.stringify(hug));
+  renderHug();
+  toast(activeProfile==='barry' ? '🤗 Poslao si joj zagrljaj!' : '🤗 Poslala si mu zagrljaj!');
+}
+function checkHug() {
+  try {
+    var hug = JSON.parse(localStorage.getItem('shared-hug'));
+    if (!hug) return null;
+    if (Date.now() - hug.time > 86400000) return null; // Expired after 24h
+    if (hug.from === activeProfile) return null; // Don't show your own hug
+    return hug;
+  } catch(e) { return null; }
+}
+function renderHug() {
+  var hug = checkHug();
+  var card = document.getElementById('hugContent');
+  document.getElementById('hug-title').textContent = lang==='sr'?'🤗 Virtuelni zagrljaj':lang==='en'?'🤗 Virtual Hug':'🤗 隔空拥抱';
+  if (hug) {
+    var sender = hug.from === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+    var time = new Date(hug.time);
+    var timeStr = String(time.getHours()).padStart(2,'0') + ':' + String(time.getMinutes()).padStart(2,'0');
+    card.innerHTML = '<div class="hug-received"><span class="hug-icon">🤗</span><div class="hug-text">'+sender+' '+(lang==='sr'?'te je upravo zagrlio/la! 💫':lang==='en'?'just hugged you! 💫':'刚刚抱了你！💫')+'</div><div class="hug-time">'+timeStr+'</div></div>';
+    setTimeout(function(){ localStorage.removeItem('shared-hug'); renderHug(); }, 30000);
+  } else {
+    document.getElementById('hug-btn-text').textContent = lang==='sr'?'Pošalji zagrljaj':lang==='en'?'Send a Hug':'发送拥抱';
+    card.innerHTML = '<button class="hug-btn" onclick="sendHug()">🤗 <span id="hug-btn-text">'+(lang==='sr'?'Pošalji zagrljaj':lang==='en'?'Send a Hug':'发送拥抱')+'</span></button>';
+  }
+}
+
+// Gratitude Wall
+function addGratitude() {
+  var input = document.getElementById('gratInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
+  notes.push({ text: text, from: activeProfile, time: Date.now() });
+  if (notes.length > 20) notes = notes.slice(-20);
+  localStorage.setItem('shared-gratitude', JSON.stringify(notes));
+  input.value = '';
+  renderGratitude();
+}
+function renderGratitude() {
+  document.getElementById('grat-title').textContent = lang==='sr'?'💝 Zid zahvalnosti':lang==='en'?'💝 Gratitude Wall':'💝 感恩便签';
+  document.getElementById('gratInput').placeholder = lang==='sr'?'Hvala ti za...':lang==='en'?'Thank you for...':'谢谢你...';
+  var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
+  var list = document.getElementById('gratList');
+  if (notes.length === 0) { list.innerHTML = ''; return; }
+  list.innerHTML = notes.slice(-5).reverse().map(function(n){
+    var sender = n.from === 'andjela' ? '🌸' : '👦';
+    return '<div class="gratitude-item"><span class="gratitude-heart">'+sender+'</span><span>'+n.text+'</span></div>';
+  }).join('');
+}
+
+// Weekly Check-in
+const CHECKIN_QUESTIONS = {
+  sr: [
+    {q:'Kako se osećaš u vezi ove nedelje?', opts:['😍 Sjajno','😊 Dobro','😐 Ok','😞 Loše']},
+    {q:'Da li smo dovoljno komunicirali?', opts:['💬 Da, odlično','👍 Uglavnom','🤔 Moglo bi bolje','👎 Ne baš']},
+    {q:'Šta bi voleo/la da poboljšamo sledeće nedelje?', opts:['💏 Više zajedničkog vremena','💬 Bolja komunikacija','🔥 Više romantike','🤝 Više podrške']}
+  ],
+  zh: [
+    {q:'这周的感情状态怎么样？', opts:['😍 很棒','😊 不错','😐 一般','😞 不太好']},
+    {q:'我们这周的沟通足够吗？', opts:['💬 很好','👍 还行','🤔 可以更好','👎 不太够']},
+    {q:'下周希望我们哪方面做得更好？', opts:['💏 更多陪伴','💬 更好交流','🔥 更多浪漫','🤝 更多支持']}
+  ],
+  en: [
+    {q:'How do you feel about this week together?', opts:['😍 Amazing','😊 Good','😐 OK','😞 Not great']},
+    {q:'Did we communicate enough?', opts:['💬 Yes, great','👍 Mostly','🤔 Could improve','👎 Not really']},
+    {q:'What would you like more of next week?', opts:['💏 More time together','💬 Better talks','🔥 More romance','🤝 More support']}
+  ]
+};
+function saveCheckinAnswer(qIdx, answer) {
+  var key = 'shared-checkin-' + activeProfile;
+  var answers = JSON.parse(localStorage.getItem(key) || '{}');
+  answers[qIdx] = answer;
+  localStorage.setItem(key, JSON.stringify(answers));
+  renderCheckin();
+}
+function getCheckinAnswers(profile) {
+  return JSON.parse(localStorage.getItem('shared-checkin-' + profile) || '{}');
+}
+function renderCheckin() {
+  document.getElementById('checkin-title').textContent = lang==='sr'?'🎯 Nedeljni pregled':lang==='en'?'🎯 Weekly Check-in':'🎯 每周感情体检';
+  var questions = CHECKIN_QUESTIONS[lang] || CHECKIN_QUESTIONS['sr'];
+  var myAnswers = getCheckinAnswers(activeProfile);
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+  var partnerAnswers = getCheckinAnswers(partnerProfile);
+  var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+
+  var html = questions.map(function(q, i){
+    var myPick = myAnswers[i] || '';
+    var partnerPick = partnerAnswers[i] || '';
+    var optsHtml = q.opts.map(function(o){ return '<span class="cq-opt'+(myPick===o?' picked':'')+'" onclick="saveCheckinAnswer('+i+',\''+o.replace(/'/g,"\\'")+'\')">'+o+'</span>'; }).join('');
+    var partnerHtml = partnerPick ? '<div style="font-size:.62rem;color:var(--gold);margin-top:4px">'+partnerName+': '+partnerPick+'</div>' : '';
+    return '<div class="checkin-q"><div class="cq-label"><span>'+q.q+'</span></div><div class="cq-options">'+optsHtml+'</div>'+partnerHtml+'</div>';
+  }).join('');
+
+  if (Object.keys(myAnswers).length === 0 && Object.keys(partnerAnswers).length === 0) {
+    html += '<div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:8px">'+(lang==='sr'?'Odgovori na pitanja — partner će videti tvoje odgovore ✨':lang==='en'?'Answer the questions — your partner will see your answers ✨':'回答问题——伴侣会看到你的答案 ✨')+'</div>';
+  }
+  document.getElementById('checkinContent').innerHTML = html;
+}
+
+// Our Song
+function saveMySong() {
+  var title = prompt(lang==='sr'?'Naziv pesme koja te podseća na nas:':lang==='en'?'Song that reminds you of us:':'哪首歌让你想起我们：');
+  if (!title) return;
+  var note = prompt(lang==='sr'?'Zašto baš ova pesma? (jedna rečenica):':lang==='en'?'Why this song? (one sentence):':'为什么是这首歌？（一句话）：');
+  var song = { title: title, note: note || '', from: activeProfile, time: Date.now() };
+  localStorage.setItem('shared-song-' + activeProfile, JSON.stringify(song));
+  renderSong();
+}
+function loadSong(profile) {
+  try { return JSON.parse(localStorage.getItem('shared-song-' + profile)); } catch(e) { return null; }
+}
+function renderSong() {
+  document.getElementById('song-title').textContent = lang==='sr'?'🎵 Naša pesma':lang==='en'?'🎵 Our Song':'🎵 我们的歌';
+  var mySong = loadSong(activeProfile);
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+  var partnerSong = loadSong(partnerProfile);
+  var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+  var html = '';
+  if (mySong) {
+    html += '<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">'+(lang==='sr'?'Moja pesma':lang==='en'?'My song':'我的歌')+'</span><div class="song-title">🎶 '+mySong.title+'</div>'+(mySong.note?'<div class="song-note">'+mySong.note+'</div>':'')+'</div>';
+  } else {
+    html += '<button class="btn btn-outline" onclick="saveMySong()" style="font-size:.68rem;margin-bottom:8px">🎵 '+(lang==='sr'?'Postavi moju pesmu':lang==='en'?'Set My Song':'设置我的歌')+'</button>';
+  }
+  if (partnerSong) {
+    html += '<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+partnerName+' '+(lang==='sr'?'pesma':lang==='en'?'song':'的歌')+'</span><div class="song-title">🎶 '+partnerSong.title+'</div>'+(partnerSong.note?'<div class="song-note">'+partnerSong.note+'</div>':'')+'</div>';
+  }
+  document.getElementById('songContent').innerHTML = html || '<span class="song-icon">🎶</span><div class="song-note">'+(lang==='sr'?'Postavite pesme koje vas podsećaju jedno na drugo':lang==='en'?'Set songs that remind you of each other':'设置让你们想到彼此的歌')+'</div>';
+}
+
+// Anđela's relationship tips
+function renderRelTips() {
+  if (activeProfile !== 'andjela') { document.getElementById('relTipCard').style.display = 'none'; return; }
+  var tips = REL_TIPS[lang] || REL_TIPS['sr'];
+  var tip = tips[Math.floor(Math.random() * tips.length)];
+  document.getElementById('relTipIcon').textContent = tip.icon;
+  document.getElementById('relTipText').textContent = tip.text;
+  document.getElementById('relTipCard').style.display = '';
+}
+
+// Barry's symptom analysis
+function renderBarrySymptomView() {
+  var isBarry = activeProfile === 'barry';
+  document.getElementById('barry-symptom-view').style.display = isBarry ? '' : 'none';
+  document.getElementById('andjela-symptom-view').style.display = isBarry ? 'none' : '';
+  if (!isBarry) return;
+  // Read Anđela's symptoms from shared data
+  var sharedSymptoms = null;
+  try { sharedSymptoms = JSON.parse(localStorage.getItem('shared-symptoms') || 'null'); } catch(e) {}
+  document.getElementById('bs-title').textContent = lang==='sr'?'🔍 Anđelini simptomi danas':lang==='en'?'🔍 Anđela\'s Symptoms Today':'🔍 Anđela 的今日症状';
+  var container = document.getElementById('barrySymptomAnalysis');
+  if (!sharedSymptoms || Object.keys(sharedSymptoms).filter(function(k){return k!=='notes'&&sharedSymptoms[k]>0;}).length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:.78rem">'+(lang==='sr'?'Anđela danas nije zabeležila simptome — sve je u redu! 🌸':lang==='en'?'Anđela hasn\'t logged symptoms today — all good! 🌸':'Anđela 今天没有记录症状——一切安好！🌸')+'</div>';
+    return;
+  }
+  var symptomKeys = ['cramps','headache','fatigue','mood','flow','cravings'];
+  var emojis = {cramps:'😣',headache:'🤕',fatigue:'😴',mood:'😊',flow:'💧',cravings:'🍫'};
+  var names = lang==='sr'?{cramps:'Grčevi',headache:'Glavobolja',fatigue:'Umor',mood:'Raspoloženje',flow:'Protok',cravings:'Žudnja'}:lang==='en'?{cramps:'Cramps',headache:'Headache',fatigue:'Fatigue',mood:'Mood',flow:'Flow',cravings:'Cravings'}:{cramps:'痛经',headache:'头痛',fatigue:'疲劳',mood:'情绪',flow:'流量',cravings:'食欲'};
+  var html = '';
+  symptomKeys.forEach(function(key) {
+    if (sharedSymptoms[key] && sharedSymptoms[key] > 0) {
+      var help = SYMPTOM_HELP[key];
+      html += '<div class="sa-item"><span class="sa-emoji">'+emojis[key]+'</span> <span class="sa-name">'+names[key]+' ('+sharedSymptoms[key]+'/3)</span><div class="sa-cause">📖 '+help.cause[lang]||help.cause['sr']+'</div><div class="sa-help">💡 '+(lang==='sr'?'Kako pomoći':lang==='en'?'How to help':'怎么帮她')+': '+help.help[lang]||help.help['sr']+'</div></div>';
+    }
+  });
+  container.innerHTML = html;
+}
+
+// Share Anđela's symptoms for Barry to see
+function updateSharedSymptoms() {
+  if (activeProfile !== 'andjela') return;
+  var key = fmtDate(today());
+  var symptoms = state.symptoms[key];
+  if (symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(symptoms));
+}
+
+// Special badge for Anđela
+function renderSpecialBadge() {
+  var badge = document.getElementById('specialBadge');
+  if (activeProfile !== 'andjela') { badge.style.display = 'none'; return; }
+  badge.style.display = '';
+  var texts = lang==='sr'?['Ti si jedinstvena ✨','Najlepša na svetu 🌸','Barryjeva ljubav 💝','Jedna jedina 💫']:lang==='en'?['You are unique ✨','Most beautiful 🌸','Barry\'s love 💝','One and only 💫']:['独一无二的你 ✨','最美的人 🌸','Barry 的爱 💝','世界上唯一的你 💫'];
+  document.getElementById('specialBadgeText').textContent = texts[Math.floor(Math.random()*texts.length)];
+}
+
+/* Update shared symptoms when Anđela saves */
+var _origSaveSymptom = saveSymptom;
+saveSymptom = function() { _origSaveSymptom(); updateSharedSymptoms(); };
 
 /* ================================================================
    LOGOUT — return to login screen
