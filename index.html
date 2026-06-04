@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Anđelin Ciklus</title>
+<title>🌸 Anđelin Ciklus v3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <style>
 /* ================================================================
@@ -1209,6 +1209,7 @@ function calculateStreak() {
   return streak;
 }
 function renderMoodSection() {
+  console.log('renderMoodSection — lang:', lang, 't(moodTitle):', t('moodTitle'), 't(moodToday):', t('moodToday'));
   var td = fmtDate(today());
   var todayMood = getMood(td);
   document.getElementById('mood-today-label').textContent = t('moodToday');
@@ -1638,6 +1639,7 @@ function verifyLogin() {
     document.getElementById('loginOverlay').classList.add('hidden');
     // Initialize app with logged-in profile
     loadPerProfileSettings();
+    console.log('  after loadPerProfileSettings — lang:', lang, 'theme:', theme);
     state = loadState();
     lastCycleCount = predict().cycles.length;
     applyTheme(theme); setLang(lang);
@@ -2232,6 +2234,11 @@ toggleProfile = function() {
    INIT — check login state
    ================================================================ */
 (function initApp() {
+  console.log('🌸 Anđelin Ciklus v3 — INIT');
+  console.log('  activeProfile:', localStorage.getItem('cycle-active-profile'));
+  console.log('  lang (global):', localStorage.getItem('cycle-lang'));
+  console.log('  lang (barry):', localStorage.getItem('cycle-lang-barry'));
+  console.log('  lang (andjela):', localStorage.getItem('cycle-lang-andjela'));
   // Check if previously logged in
   var savedProfile = localStorage.getItem('cycle-active-profile');
   if (savedProfile && LOGIN_PINS[savedProfile]) {
