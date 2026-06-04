@@ -1755,7 +1755,8 @@ function verifyLogin() {
     applyTheme(theme); setLang(lang);
     renderAll(); loadSettingsUI();
     fetchWeather();
-    loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
+    if (getGitHubToken()) pullAllSharedData();
+    loadCalendarData(function(data){solarTermsCache=(data&&data.solarTerms)||[];localStorage.setItem('cycle-solarterms',JSON.stringify(solarTermsCache));renderCalendar();});
     showOnboardingIfNeeded();
     if (activeProfile === 'andjela') showGreeting();
     updateMoonPhase();
@@ -1829,10 +1830,11 @@ function getSolarTerm(dateKey) {
     solarTermsCache.forEach(function(s) { if (s.date === dateKey) found = s; });
     return found;
   }
-  // async load
+  // async load — will populate cache for next render
   loadCalendarData(function(data) {
     solarTermsCache = data.solarTerms || [];
     localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache));
+    renderCalendar(); // re-render now that we have solar terms
   });
   return null;
 }
@@ -1885,15 +1887,20 @@ function weatherIcon(code) {
 }
 function fetchWeather() {
   var cached=localStorage.getItem('cycle-weather');
-  if(cached){try{var d=JSON.parse(cached);if(Date.now()-d.t<3600000){renderWeather(d);return;}}catch(e){}}
+  // Always show cached weather first (even if old — better than nothing)
+  if(cached){try{var d=JSON.parse(cached);renderWeather(d);}catch(e){}}
+  // Refresh in background (6h cache)
+  if(cached){try{var d2=JSON.parse(cached);if(Date.now()-d2.t<21600000)return;}catch(e){}}
+  var controller=new AbortController();var timeout=setTimeout(function(){controller.abort();},8000);
   try {
-    var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Shanghai').then(function(r){return r.json()}).catch(function(){return null;});
-    var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Europe/Belgrade').then(function(r){return r.json()}).catch(function(){return null;});
+    var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Shanghai',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
+    var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Europe/Belgrade',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
     Promise.all([bj,ki]).then(function(r){
-      if (!r[0] || !r[1]) { document.getElementById('weatherCard').style.display='none'; return; }
+      clearTimeout(timeout);
+      if (!r[0]||!r[1])return;
       var w={bj:r[0].current,ki:r[1].current,t:Date.now()};localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w);
-    }).catch(function(){ document.getElementById('weatherCard').style.display='none'; });
-  } catch(e) { document.getElementById('weatherCard').style.display='none'; }
+    }).catch(function(){});
+  } catch(e) {}
 }
 function renderWeather(w) {
   var card=document.getElementById('weatherCard'); if(!w) return;
@@ -2693,6 +2700,85 @@ var _origSaveSymptom = saveSymptom;
 saveSymptom = function() { _origSaveSymptom(); updateSharedSymptoms(); };
 
 /* ================================================================
+   CROSS-DEVICE SYNC — GitHub shared-state.json
+   ================================================================ */
+const GITHUB_SHARED_FILE = 'shared-state.json';
+
+function collectSharedState() {
+  return {
+    diary: JSON.parse(localStorage.getItem('shared-diary') || '{}'),
+    cycleInfo: JSON.parse(localStorage.getItem('shared-cycle-info') || 'null'),
+    symptoms: JSON.parse(localStorage.getItem('shared-symptoms') || 'null'),
+    gratitude: JSON.parse(localStorage.getItem('shared-gratitude') || '[]'),
+    hug: JSON.parse(localStorage.getItem('shared-hug') || 'null'),
+    songs: { barry: JSON.parse(localStorage.getItem('shared-song-barry')||'null'), andjela: JSON.parse(localStorage.getItem('shared-song-andjela')||'null') },
+    checkins: { barry: JSON.parse(localStorage.getItem('shared-checkin-barry')||'{}'), andjela: JSON.parse(localStorage.getItem('shared-checkin-andjela')||'{}') },
+    updated: Date.now()
+  };
+}
+
+function applySharedState(state) {
+  if (!state) return;
+  if (state.diary) localStorage.setItem('shared-diary', JSON.stringify(state.diary));
+  if (state.cycleInfo) localStorage.setItem('shared-cycle-info', JSON.stringify(state.cycleInfo));
+  if (state.symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(state.symptoms));
+  if (state.gratitude) localStorage.setItem('shared-gratitude', JSON.stringify(state.gratitude));
+  if (state.hug) localStorage.setItem('shared-hug', JSON.stringify(state.hug));
+  if (state.songs) {
+    if (state.songs.barry) localStorage.setItem('shared-song-barry', JSON.stringify(state.songs.barry));
+    if (state.songs.andjela) localStorage.setItem('shared-song-andjela', JSON.stringify(state.songs.andjela));
+  }
+  if (state.checkins) {
+    if (state.checkins.barry) localStorage.setItem('shared-checkin-barry', JSON.stringify(state.checkins.barry));
+    if (state.checkins.andjela) localStorage.setItem('shared-checkin-andjela', JSON.stringify(state.checkins.andjela));
+  }
+}
+
+async function pushAllSharedData() {
+  var token = getGitHubToken();
+  if (!token) return;
+  var state = collectSharedState();
+  var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+  var sha = null;
+  try {
+    var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
+    if (resp.ok) { var d = await resp.json(); sha = d.sha; }
+  } catch(e) {}
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
+  var body = { message: '🔄 Sync shared state', content: content };
+  if (sha) body.sha = sha;
+  try {
+    await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+  } catch(e) {}
+}
+
+async function pullAllSharedData() {
+  var token = getGitHubToken();
+  if (!token) return;
+  var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' };
+  try {
+    var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
+    if (!resp.ok) return;
+    var data = await resp.json();
+    var content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+    applySharedState(content);
+    // Refresh UI
+    renderHug(); renderGratitude(); renderSong(); renderCheckin();
+    if (activeProfile === 'barry') renderBarrySymptomView();
+    if (document.getElementById('panel-diary').classList.contains('active')) renderSharedDiary();
+  } catch(e) {}
+}
+
+// Auto-sync: push on save, pull on load
+var _origSaveState = saveState;
+saveState = function() { _origSaveState(); setTimeout(function(){ pushAllSharedData(); }, 500); };
+var _origSaveSharedDiaryData = saveSharedDiaryData;
+saveSharedDiaryData = function(d) { _origSaveSharedDiaryData(d); setTimeout(function(){ pushAllSharedData(); }, 500); };
+
+// Pull from GitHub every 2 minutes and on tab switch
+setInterval(function(){ if(getGitHubToken())pullAllSharedData(); }, 120000);
+
+/* ================================================================
    LOGOUT — return to login screen
    ================================================================ */
 function logoutAndShowLogin() {
@@ -2735,7 +2821,8 @@ toggleProfile = function() {
     applyTheme(theme);setLang(lang);
     renderAll();loadSettingsUI();
     fetchWeather();
-    loadCalendarData(function(){solarTermsCache=null;getSolarTerm(fmtDate(today()));renderCalendar();});
+    if (getGitHubToken()) pullAllSharedData();
+    loadCalendarData(function(data){solarTermsCache=(data&&data.solarTerms)||[];localStorage.setItem('cycle-solarterms',JSON.stringify(solarTermsCache));renderCalendar();});
     showOnboardingIfNeeded();
     if (activeProfile === 'andjela') showGreeting();
     updateMoonPhase();
