@@ -20,14 +20,14 @@
   --sage: #80B5A0; --sage-light: #E8F4EE;
   --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #F5EEF8;
   --bg: #EDE4DD; --card: rgba(255,251,248,0.94); --text: #2D2A2B; --text-muted: #9C9496;
-  --border: #E8DFD8; --radius: 16px; --radius-sm: 10px;
+  --border: #E8DFD8; --radius: 18px; --radius-sm: 12px;
   --shadow-xs: 0 1px 3px rgba(140,120,110,0.06), 0 1px 2px rgba(140,120,110,0.04);
-  --shadow-sm: 0 2px 8px rgba(140,120,110,0.06), 0 1px 3px rgba(140,120,110,0.04);
-  --shadow-md: 0 4px 14px rgba(140,120,110,0.08), 0 8px 24px rgba(140,120,110,0.05);
-  --shadow-lg: 0 8px 30px rgba(140,120,110,0.10), 0 16px 40px rgba(140,120,110,0.06);
-  --fab-shadow: 0 6px 24px rgba(196,90,107,0.35);
+  --shadow-sm: 0 2px 10px rgba(140,120,110,0.07), 0 1px 4px rgba(140,120,110,0.05);
+  --shadow-md: 0 6px 20px rgba(140,120,110,0.09), 0 10px 30px rgba(140,120,110,0.06);
+  --shadow-lg: 0 12px 36px rgba(140,120,110,0.12), 0 20px 48px rgba(140,120,110,0.07);
+  --fab-shadow: 0 8px 28px rgba(196,90,107,0.38);
   --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-  --blur: blur(16px) saturate(1.08);
+  --blur: blur(20px) saturate(1.1);
 }
 
 [data-theme="dark"] {
@@ -159,12 +159,20 @@ body {
 /* Glass cards */
 .glass, .progress-section, .calendar, .card, .setting-row, .tip-card, .onboarding, .reminder-banner {
   background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
-  border:1px solid rgba(200,180,170,0.12); border-top:1px solid rgba(255,255,255,0.5); border-radius:var(--radius); box-shadow:0 .5px 1px rgba(0,0,0,0.06), var(--shadow-sm);
+  border:1px solid rgba(200,180,170,0.10); border-radius:var(--radius); box-shadow:var(--shadow-sm);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.glass:hover, .progress-section:hover, .calendar:hover, .card:hover, .setting-row:hover, .tip-card:hover {
+  box-shadow:var(--shadow-md); transform:translateY(-2px);
 }
 [data-theme="dark"] .glass, [data-theme="dark"] .progress-section,
 [data-theme="dark"] .calendar, [data-theme="dark"] .card,
 [data-theme="dark"] .setting-row, [data-theme="dark"] .tip-card {
-  border:1px solid rgba(255,255,255,0.04); box-shadow:var(--shadow-sm);
+  border:1px solid rgba(255,255,255,0.03); box-shadow:0 2px 12px rgba(0,0,0,0.2);
+}
+[data-theme="dark"] .glass:hover, [data-theme="dark"] .progress-section:hover,
+[data-theme="dark"] .calendar:hover, [data-theme="dark"] .card:hover {
+  box-shadow:0 8px 28px rgba(0,0,0,0.35);
 }
 
 /* Entrance */
@@ -272,9 +280,9 @@ body {
 .legend .l-heart::before { content:'♥'; background:none; color:var(--love); font-size:.6rem; line-height:1; }
 
 /* Tabs */
-.tabs { display:flex; padding:5px; box-shadow:var(--shadow-sm); margin-bottom:16px; gap:2px; border-radius:var(--radius); background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
-.tab { flex:1; text-align:center; padding:12px 0; font-size:.74rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:12px; transition:all .22s cubic-bezier(.4,0,.2,1); border:none; background:none; font-family:var(--font); }
-.tab.active { background:var(--text); color:var(--bg); box-shadow:var(--shadow-xs); }
+.tabs { display:flex; padding:4px; box-shadow:var(--shadow-sm); margin-bottom:16px; gap:2px; border-radius:var(--radius); background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+.tab { flex:1; text-align:center; padding:10px 0; font-size:.7rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:14px; transition:all .25s cubic-bezier(.4,0,.2,1); border:none; background:none; font-family:var(--font); }
+.tab.active { background:linear-gradient(135deg,var(--love),var(--rose-dark)); color:#fff; box-shadow:0 2px 10px rgba(196,90,107,.25); }
 
 .panel { display:none; }
 .panel.active { display:block; animation:fadeUp .3s ease-out; }
@@ -346,11 +354,13 @@ body {
 .setting-row input[type="number"]:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.15); }
 .setting-row select { padding:7px 12px; border:1px solid var(--border); border-radius:10px; font-size:.8rem; font-family:var(--font); background:var(--card); cursor:pointer; color:var(--text); }
 
-.btn { display:block; width:100%; padding:14px; border:none; border-radius:var(--radius); font-size:.84rem; font-weight:600; cursor:pointer; text-align:center; transition:all .18s; margin-bottom:8px; font-family:var(--font); letter-spacing:.01em; }
-.btn:active { transform:scale(.96); }
-.btn-primary { background:var(--love); color:#fff; box-shadow:0 4px 14px rgba(196,90,107,.3); }
-.btn-primary:active { box-shadow:0 2px 8px rgba(196,90,107,.2); }
-.btn-outline { background:transparent; color:var(--love); border:2px solid var(--love); }
+.btn { display:block; width:100%; padding:14px; border:none; border-radius:var(--radius-sm); font-size:.84rem; font-weight:600; cursor:pointer; text-align:center; transition:all .2s cubic-bezier(.4,0,.2,1); margin-bottom:8px; font-family:var(--font); letter-spacing:.01em; }
+.btn:active { transform:scale(.95); }
+.btn-primary { background:linear-gradient(135deg,var(--love),var(--rose-dark)); color:#fff; box-shadow:0 4px 16px rgba(196,90,107,.32); }
+.btn-primary:hover { box-shadow:0 6px 22px rgba(196,90,107,.4); transform:translateY(-1px); }
+.btn-primary:active { box-shadow:0 2px 8px rgba(196,90,107,.2); transform:scale(.95); }
+.btn-outline { background:transparent; color:var(--love); border:2px solid var(--love); border-radius:var(--radius-sm); }
+.btn-outline:hover { background:var(--rose-light); }
 .btn-danger { background:var(--rose-light); color:var(--rose-dark); }
 .btn-ghost { background:var(--border); color:var(--text-muted); }
 
@@ -583,17 +593,25 @@ body {
 .login-subtitle { font-size:.72rem; color:var(--gold); font-style:italic; margin-bottom:24px; text-align:center; }
 .login-cards { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
 .login-card {
-  background:var(--card); border-radius:20px; padding:24px 20px;
-  text-align:center; cursor:pointer; transition:all .25s;
+  background:var(--card); border-radius:22px; padding:28px 22px;
+  text-align:center; cursor:pointer; transition:all .3s cubic-bezier(.4,0,.2,1);
   box-shadow:var(--shadow-md); border:2px solid transparent;
-  width:140px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  width:150px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
   position:relative; overflow:hidden;
 }
-.login-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
-.login-card.selected { border-color:var(--love); box-shadow:0 0 0 6px rgba(196,90,107,.12), var(--shadow-lg); transform:scale(1.03); }
-.login-card .lc-avatar { font-size:3rem; display:block; margin-bottom:8px; }
-.login-card .lc-name { font-size:.85rem; font-weight:700; color:var(--text); }
-.login-card .lc-hint { font-size:.6rem; color:var(--text-muted); margin-top:4px; }
+.login-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--rose),var(--gold),var(--lavender));
+  opacity:0; transition:opacity .3s;
+}
+.login-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+.login-card:hover::before { opacity:1; }
+.login-card.selected { border-color:var(--love); box-shadow:0 0 0 8px rgba(196,90,107,.10), var(--shadow-lg); transform:scale(1.04); }
+.login-card.selected::before { opacity:1; }
+.login-card .lc-avatar { font-size:3.2rem; display:block; margin-bottom:10px; transition:transform .3s; }
+.login-card:hover .lc-avatar { transform:scale(1.1); }
+.login-card .lc-name { font-size:.9rem; font-weight:700; color:var(--text); }
+.login-card .lc-hint { font-size:.62rem; color:var(--text-muted); margin-top:6px; opacity:.8; }
 .login-pin-area { margin-top:18px; display:none; flex-direction:column; align-items:center; gap:8px; }
 .login-pin-area.show { display:flex; }
 .login-pin-input { width:120px; padding:10px; border:2px solid var(--border); border-radius:14px; font-size:1.2rem; text-align:center; letter-spacing:8px; font-family:var(--font); background:var(--card); color:var(--text); transition:border-color .2s; }
@@ -1070,7 +1088,12 @@ const I18N_EXT = {
   moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
   moodNames: ['Srećno','Voljeno','Frustrirano','Umorno','Tužno','Uzbuđeno','Anksiozno','Meh'],
   sharedDiaryTab: 'Dnevnik',
-  profileSwitch: 'Profil promenjen'
+  profileSwitch: 'Profil promenjen',
+  barryTipsPeriod:[{icon:'🫂',text:'Ona je u bolovima — budi nežan, zagrli je, donesi joj termofor i čaj.'},{icon:'🍫',text:'Ponesi joj čokoladu. Male stvari znače najviše kad je boli.'},{icon:'😤',text:'Ne svađaj se — raspoloženje joj je na minimumu. Slušaj, klimaj, reci "u pravu si".'},{icon:'🛏️',text:'Pusti je da se odmara. Donesi joj ćebe i ostavi na miru ako želi.'},{icon:'💆',text:'Ponudi masažu leđa ili stopala — nežno, njeno telo je sad osetljivo.'}],
+  barryTipsFollicular:[{icon:'🎯',text:'Imaće više energije — isplaniraj izlazak, šetnju, zajedničku aktivnost!'},{icon:'💬',text:'Društvenija je — odlično vreme za dublje razgovore i planove za budućnost.'},{icon:'💪',text:'Pridruži joj se u sportu ili fizičkoj aktivnosti. Zajedno ste jači.'},{icon:'🌸',text:'Kupi joj cveće bez povoda. Primetiće i najmanji znak pažnje.'},{icon:'🎨',text:'Faza kreativnosti — predloži novi hobi ili zajednički projekat.'}],
+  barryTipsOvulation:[{icon:'✨',text:'Danas sija — reci joj koliko je lepa. Budi iskren i detaljan u komplimentima.'},{icon:'💋',text:'Fizička bliskost joj je važna — grli je, ljubi, drži za ruku.'},{icon:'🎉',text:'Vrhunac energije — odličan dan za ples, izlazak, druženje.'},{icon:'🔥',text:'Njen libido je na vrhuncu — budi pažljiv i romantičan večeras.'},{icon:'📸',text:'Fotografiši je danas — blistaće na svakoj slici.'}],
+  barryTipsLuteal:[{icon:'🧘',text:'PMS počinje — ne shvataj ništa lično. Njen mozak je u hormonskom haosu.'},{icon:'🍵',text:'Skuvaj joj čaj od kamilice ili nane. Smiruje nerve i pokazuje da brineš.'},{icon:'🤐',text:'Slušaj više, pričaj manje. Ne rešavaj — samo slušaj.'},{icon:'🍕',text:'Imaće žudnju — naruči njenu omiljenu hranu bez pitanja.'},{icon:'🌙',text:'Pomogni joj da se opusti — topla kupka, sveće, muzika. Zaslužuje mir.'}],
+  barryTipsGeneral:[{icon:'💌',text:'Pošalji joj poruku sad — reci da misliš na nju. Ne treba povod.'},{icon:'💝',text:'Mali znak pažnje danas — njen omiljeni sok, voće, nešto što voli.'},{icon:'📞',text:'Pozovi je — čuj njen glas, pitaj kako je prošao dan.'},{icon:'🌍',text:'Seti se — ti si njen oslonac. Voli te. Ti si dovoljan.'}]
 },
 'zh-CN': {
   profileName: 'Anđela', profileName2: 'Barry',
@@ -1087,7 +1110,12 @@ const I18N_EXT = {
   moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
   moodNames: ['开心','被爱','烦躁','疲惫','难过','兴奋','焦虑','还行'],
   sharedDiaryTab: '日记',
-  profileSwitch: '已切换账号'
+  profileSwitch: '已切换账号',
+  barryTipsPeriod:[{icon:'🫂',text:'她正在经历疼痛——温柔一点，抱抱她，给她暖水袋和热茶。'},{icon:'🍫',text:'带巧克力或她喜欢的零食给她——小事情在经期最重要。'},{icon:'😤',text:'别跟她争论——她情绪很低。倾听、点头、说"你说得对"。'},{icon:'🛏️',text:'让她休息。如果她想睡一整天——给她毯子，让她安静。'},{icon:'💆',text:'给她按摩背或脚——动作轻柔，她的身体现在很敏感。'}],
+  barryTipsFollicular:[{icon:'🎯',text:'她会精力充沛——计划一起出去！散步、新活动、约会。'},{icon:'💬',text:'比平时更善于社交——适合深入交谈和未来规划。'},{icon:'💪',text:'和她一起运动或健身——一起变得更强。'},{icon:'🌸',text:'买花给她——不需要理由。这个阶段她最容易被小细节打动。'},{icon:'🎨',text:'创造力高峰期——提议一个新爱好或项目一起做。'}],
+  barryTipsOvulation:[{icon:'✨',text:'今天她最闪耀——告诉她她有多美。真诚且具体的夸奖。'},{icon:'💋',text:'身体接触对她很重要——拥抱、亲吻、牵手。'},{icon:'🎉',text:'能量巅峰——适合出去玩、跳舞、朋友聚会。'},{icon:'🔥',text:'她最有"性致"——今晚要体贴又浪漫。'},{icon:'📸',text:'今天给她拍照——每张都会发光。'}],
+  barryTipsLuteal:[{icon:'🧘',text:'PMS 开始了——别把她的情绪当回事。她的大脑在荷尔蒙风暴里。'},{icon:'🍵',text:'给她泡杯无咖啡因的花草茶——洋甘菊或薄荷。'},{icon:'🤐',text:'多听少说。别试图"解决问题"——只需倾听就好。'},{icon:'🍕',text:'她会突然想吃东西——不问就点她最爱的外卖。'},{icon:'🌙',text:'帮她放松——热水澡、蜡烛、轻音乐。她值得安宁。'}],
+  barryTipsGeneral:[{icon:'💌',text:'现在就给她发条消息——说你在想她。不需要理由。'},{icon:'💝',text:'今天一件小事——她喜欢的饮料、水果、小东西。'},{icon:'📞',text:'给她打电话——听听她的声音，问问今天过得怎么样。'},{icon:'🌍',text:'记住——你是她的依靠。她爱你。你足够好。'}]
 },
 'en': {
   profileName: 'Anđela', profileName2: 'Barry',
@@ -1104,7 +1132,12 @@ const I18N_EXT = {
   moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
   moodNames: ['Happy','Loved','Frustrated','Tired','Sad','Excited','Anxious','Meh'],
   sharedDiaryTab: 'Diary',
-  profileSwitch: 'Profile switched'
+  profileSwitch: 'Profile switched',
+  barryTipsPeriod:[{icon:'🫂',text:'She is in pain — be gentle, hold her, bring her a heating pad and tea.'},{icon:'🍫',text:'Bring her chocolate or her favorite treat. Little things matter most right now.'},{icon:'😤',text:'Don\'t argue — her mood is at its lowest. Listen, nod, say "you\'re right."'},{icon:'🛏️',text:'Let her rest. If she wants to sleep all day — bring her a blanket and peace.'},{icon:'💆',text:'Offer a back or foot massage — be gentle, her body is sensitive now.'}],
+  barryTipsFollicular:[{icon:'🎯',text:'She has rising energy — plan a date, a walk, a shared activity!'},{icon:'💬',text:'She\'s more social — great time for deep talks and future plans.'},{icon:'💪',text:'Join her for a workout. Stronger together.'},{icon:'🌸',text:'Buy her flowers for no reason. She\'ll notice the smallest gesture now.'},{icon:'🎨',text:'Creative phase — suggest a new hobby or project to do together.'}],
+  barryTipsOvulation:[{icon:'✨',text:'She shines brightest today — tell her how beautiful she is. Be specific.'},{icon:'💋',text:'Physical touch matters to her — hug, kiss, hold hands.'},{icon:'🎉',text:'Peak energy — great day for dancing, going out, social fun.'},{icon:'🔥',text:'Her libido peaks — be attentive and romantic tonight.'},{icon:'📸',text:'Take photos of her today — she will glow in every shot.'}],
+  barryTipsLuteal:[{icon:'🧘',text:'PMS begins — don\'t take anything personally. Her brain is in a hormone storm.'},{icon:'🍵',text:'Make her caffeine-free tea — chamomile or mint. It calms and shows you care.'},{icon:'🤐',text:'Listen more, talk less. Don\'t try to "fix" — just listen.'},{icon:'🍕',text:'She\'ll have cravings — order her favorite food without asking.'},{icon:'🌙',text:'Help her unwind — warm bath, candles, soft music. She deserves peace.'}],
+  barryTipsGeneral:[{icon:'💌',text:'Text her right now — say you\'re thinking of her. No reason needed.'},{icon:'💝',text:'A small gesture today — her favorite drink, fruit, something thoughtful.'},{icon:'📞',text:'Call her — hear her voice, ask how her day went.'},{icon:'🌍',text:'Remember — you are her rock. She loves you. You are enough.'}]
 }};
 
 // Love Notes Pool (60 entries per language)
@@ -1209,7 +1242,6 @@ function calculateStreak() {
   return streak;
 }
 function renderMoodSection() {
-  console.log('renderMoodSection — lang:', lang, 't(moodTitle):', t('moodTitle'), 't(moodToday):', t('moodToday'));
   var td = fmtDate(today());
   var todayMood = getMood(td);
   document.getElementById('mood-today-label').textContent = t('moodToday');
@@ -1636,7 +1668,6 @@ function verifyLogin() {
     document.getElementById('loginOverlay').classList.add('hidden');
     // Initialize app with logged-in profile
     loadPerProfileSettings();
-    console.log('  after loadPerProfileSettings — lang:', lang, 'theme:', theme);
     state = loadState();
     lastCycleCount = predict().cycles.length;
     applyTheme(theme); setLang(lang);
@@ -2039,7 +2070,7 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
+function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
 function renderAll(){applyAllUI();}
 
 /* ================================================================
@@ -2169,7 +2200,43 @@ function quickToggleSymptom(name){if(!selectedDate)return;const key=fmtDate(sele
 function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById('symptom-date-label').textContent=dateKey+' '+t('modal.symptoms');document.getElementById('symptom-empty').style.display='none';document.getElementById('symptom-content').style.display='';const symp=state.symptoms[dateKey]||{};['cramps','mood','flow','headache','fatigue','cravings'].forEach(s=>{const lvl=symp[s]||0;const dots=document.getElementById('dots-'+s);if(!dots)return;dots.querySelectorAll('.dot').forEach((dot,i)=>{dot.className='dot'+(i<lvl?' on':'');});const item=dots.closest('.symptom-item');if(item)item.classList.toggle('selected',lvl>0);});document.getElementById('symptom-notes').value=symp.notes||'';}
 function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
 function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
-function renderTips(){const pred=predict();const td=today();const phase=getPhase(td,pred);let cat='period';if(phase==='period-on'||phase==='period-mid')cat='period';else if(phase==='ovulation'||phase==='fertile')cat='ovulation';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};const tips=t('tips.'+cat);document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
+function getSharedCyclePhase() {
+  try { return JSON.parse(localStorage.getItem('shared-cycle-info')) || null; } catch(e) { return null; }
+}
+function updateSharedCycleInfo() {
+  if (activeProfile !== 'andjela') return;
+  var pred = predict();
+  var phase = getPhase(today(),pred);
+  var cat = 'general';
+  if (phase==='period-on'||phase==='period-mid') cat='period';
+  else if (phase==='ovulation'||phase==='fertile') cat='ovulation';
+  else if (phase==='follicular') cat='follicular';
+  else if (phase==='luteal') cat='luteal';
+  localStorage.setItem('shared-cycle-info', JSON.stringify({phase:cat,nextStart:pred.nextStart?fmtDate(pred.nextStart):null,updated:Date.now()}));
+}
+function renderTips(){
+  var cat='period'; var tips=[];
+  if (activeProfile === 'barry') {
+    // Barry's tips — read shared cycle info from Anđela
+    var shared = getSharedCyclePhase();
+    if (shared && shared.phase) cat = shared.phase;
+    else cat = 'general';
+    var tipKey = 'barryTips' + cat.charAt(0).toUpperCase() + cat.slice(1);
+    tips = t(tipKey) || t('barryTipsGeneral');
+    var phaseNames = {period:lang==='sr'?'Njena menstruacija':lang==='en'?'Her Period':'她的经期',follicular:lang==='sr'?'Njena folikularna':lang==='en'?'Her Follicular':'她的卵泡期',ovulation:lang==='sr'?'Njena ovulacija':lang==='en'?'Her Ovulation':'她的排卵期',luteal:lang==='sr'?'Njena lutealna':lang==='en'?'Her Luteal':'她的黄体期',general:lang==='sr'?'Budi tu za nju':lang==='en'?'Be There For Her':'好好待她'};
+    var title = (lang==='sr'?'💡 Kako postupati prema njoj danas':lang==='en'?'💡 How to treat her today':'💡 今天如何对待她');
+    document.getElementById('tips-list').innerHTML='<div style="text-align:center;padding:8px 0;font-size:.78rem;font-weight:700;color:var(--text)">'+title+'</div><div style="text-align:center;font-size:.68rem;color:var(--gold);margin-bottom:8px">'+phaseNames[cat]+'</div>'+tips.map(function(tip){return '<div class="tip-card" style="border-left:3px solid var(--teal)"><span class="tip-icon">'+tip.icon+'</span><div class="tip-body"><span class="tip-text">'+tip.text+'</span></div></div>';}).join('');
+    return;
+  }
+  // Anđela's tips (original)
+  const pred=predict();const td=today();const phase=getPhase(td,pred);
+  if(phase==='period-on'||phase==='period-mid')cat='period';
+  else if(phase==='ovulation'||phase==='fertile')cat='ovulation';
+  else if(phase==='follicular')cat='follicular';
+  else if(phase==='luteal')cat='luteal';
+  const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};
+  tips=t('tips.'+cat);
+  document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
 function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){localStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');}else{localStorage.removeItem('gh-token');}}
 function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||5;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
@@ -2231,12 +2298,6 @@ toggleProfile = function() {
    INIT — check login state
    ================================================================ */
 (function initApp() {
-  console.log('🌸 Anđelin Ciklus v3 — INIT');
-  console.log('  activeProfile:', localStorage.getItem('cycle-active-profile'));
-  console.log('  lang (global):', localStorage.getItem('cycle-lang'));
-  console.log('  lang (barry):', localStorage.getItem('cycle-lang-barry'));
-  console.log('  lang (andjela):', localStorage.getItem('cycle-lang-andjela'));
-  // Check if previously logged in
   var savedProfile = localStorage.getItem('cycle-active-profile');
   if (savedProfile && LOGIN_PINS[savedProfile]) {
     // Auto-login with saved profile
