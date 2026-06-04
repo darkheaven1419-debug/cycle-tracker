@@ -237,7 +237,7 @@ body {
 [data-theme="dark"] .day:nth-child(7n+6), [data-theme="dark"] .day:nth-child(7n+7) { background:rgba(255,255,255,.02); }
 .day.today { font-weight:700; box-shadow:inset 0 0 0 2px var(--text); background:rgba(45,42,43,0.03); }
 .day.period-on { box-shadow:0 0 0 3px rgba(196,90,107,0.18), 0 2px 8px rgba(196,90,107,0.18); }
-.day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; }
+.day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; overflow:visible !important; }
 .day:active { transform:scale(.93); background:var(--border); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
 .day.today { font-weight:700; box-shadow:inset 0 0 0 1.5px var(--text); }
@@ -1714,7 +1714,7 @@ let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 /* ================================================================
    LOGIN SYSTEM
    ================================================================ */
-const LOGIN_PINS = { andjela: '0919', barry: '0827' };
+const LOGIN_PINS = { andjela: '1909', barry: '0827' };
 let selectedLoginProfile = null;
 let isLoggedIn = false;
 
