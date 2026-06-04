@@ -1,9 +1,16 @@
 {
   "diary": {},
-  "cycleInfo": null,
+  "cycleInfo": {
+    "phase": "follicular",
+    "nextStart": "2026-06-25",
+    "updated": 1780587051751
+  },
   "symptoms": null,
   "gratitude": [],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1780580894427
+  },
   "songs": {
     "barry": null,
     "andjela": null
@@ -12,5 +19,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780575915296
+  "updated": 1780587052247
 }
