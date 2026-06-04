@@ -1574,8 +1574,14 @@ function initSharedDiaryTab() {
 function loadPerProfileSettings() {
   // Default languages: Anđela → Serbian, Barry → Chinese
   var defaultLang = activeProfile === 'barry' ? 'zh-CN' : 'sr';
-  lang = localStorage.getItem(profileKey('cycle-lang')) || localStorage.getItem('cycle-lang') || defaultLang;
-  theme = localStorage.getItem(profileKey('cycle-theme')) || localStorage.getItem('cycle-theme') || 'light';
+  // ONLY use profile-specific key — never fall back to global to avoid cross-contamination
+  var savedLang = localStorage.getItem(profileKey('cycle-lang'));
+  // Migration: if saved lang conflicts with profile default (from buggy old version), reset
+  if (!savedLang || (activeProfile === 'barry' && savedLang === 'sr') || (activeProfile === 'andjela' && savedLang === 'zh-CN')) {
+    savedLang = null;
+  }
+  lang = savedLang || defaultLang;
+  theme = localStorage.getItem(profileKey('cycle-theme')) || 'light';
   annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
   annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 }
