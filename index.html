@@ -1886,9 +1886,14 @@ function weatherIcon(code) {
 function fetchWeather() {
   var cached=localStorage.getItem('cycle-weather');
   if(cached){try{var d=JSON.parse(cached);if(Date.now()-d.t<3600000){renderWeather(d);return;}}catch(e){}}
-  var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Shanghai').then(function(r){return r.json()});
-  var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Europe/Belgrade').then(function(r){return r.json()});
-  Promise.all([bj,ki]).then(function(r){var w={bj:r[0].current,ki:r[1].current,t:Date.now()};localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w)}).catch(function(){});
+  try {
+    var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Shanghai').then(function(r){return r.json()}).catch(function(){return null;});
+    var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Europe/Belgrade').then(function(r){return r.json()}).catch(function(){return null;});
+    Promise.all([bj,ki]).then(function(r){
+      if (!r[0] || !r[1]) { document.getElementById('weatherCard').style.display='none'; return; }
+      var w={bj:r[0].current,ki:r[1].current,t:Date.now()};localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w);
+    }).catch(function(){ document.getElementById('weatherCard').style.display='none'; });
+  } catch(e) { document.getElementById('weatherCard').style.display='none'; }
 }
 function renderWeather(w) {
   var card=document.getElementById('weatherCard'); if(!w) return;
@@ -2283,7 +2288,36 @@ function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById
 function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
 function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
 function getSharedCyclePhase() {
-  try { return JSON.parse(localStorage.getItem('shared-cycle-info')) || null; } catch(e) { return null; }
+  // First try shared key (cross-device sync)
+  var shared = null;
+  try { shared = JSON.parse(localStorage.getItem('shared-cycle-info')); } catch(e) {}
+  if (shared && shared.phase) return shared;
+  // Fallback: read Anđela's cycle data directly from her localStorage profile
+  try {
+    var andjelaData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela'));
+    if (!andjelaData || !andjelaData.records || andjelaData.records.length === 0) return null;
+    var records = andjelaData.records.map(function(r){return new Date(r);}).sort(function(a,b){return a-b;});
+    var lastStart = new Date(records[records.length-1]);
+    var settings = andjelaData.settings || {cycleLength:28,periodLength:7};
+    var cycleLen = settings.cycleLength || 28;
+    var periodLen = settings.periodLength || 7;
+    var nextStart = new Date(lastStart); nextStart.setDate(nextStart.getDate() + cycleLen);
+    var td = today();
+    // Calculate what day of the cycle we're on
+    var dayNum = Math.floor((td - lastStart) / 86400000);
+    var totalCycle = cycleLen;
+    var ovulationDay = new Date(nextStart); ovulationDay.setDate(ovulationDay.getDate() - 14);
+    var phase;
+    if (dayNum >= 0 && dayNum < periodLen) phase = 'period';
+    else if (td >= ovulationDay && td < nextStart) {
+      var daysToOvulation = Math.floor((ovulationDay - lastStart) / 86400000);
+      if (dayNum >= daysToOvulation - 3 && dayNum <= daysToOvulation + 1) phase = 'ovulation';
+      else if (dayNum > daysToOvulation + 1) phase = 'luteal';
+      else phase = 'follicular';
+    } else if (td < ovulationDay) phase = 'follicular';
+    else phase = 'luteal';
+    return {phase:phase, nextStart:fmtDate(nextStart), updated:Date.now()};
+  } catch(e) { return null; }
 }
 function updateSharedCycleInfo() {
   if (activeProfile !== 'andjela') return;
@@ -2609,6 +2643,16 @@ function renderBarrySymptomView() {
   document.getElementById('bs-title').textContent = lang==='sr'?'🔍 Anđelini simptomi danas':lang==='en'?'🔍 Anđela\'s Symptoms Today':'🔍 Anđela 的今日症状';
   var sharedSymptoms = null;
   try { sharedSymptoms = JSON.parse(localStorage.getItem('shared-symptoms') || 'null'); } catch(e) {}
+  // Fallback: read directly from Anđela's profile data
+  if (!sharedSymptoms) {
+    try {
+      var andjelaData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela'));
+      if (andjelaData && andjelaData.symptoms) {
+        var key = fmtDate(today());
+        sharedSymptoms = andjelaData.symptoms[key] || null;
+      }
+    } catch(e) {}
+  }
   if (!sharedSymptoms || Object.keys(sharedSymptoms).filter(function(k){return k!=='notes'&&sharedSymptoms[k]>0;}).length === 0) {
     html += '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:.74rem">'+(lang==='sr'?'Danas nije zabeležila simptome — sve je u redu! 🌸':lang==='en'?'No symptoms logged today — all good! 🌸':'今天没有记录症状——一切安好！🌸')+'</div>';
     container.innerHTML = html;
