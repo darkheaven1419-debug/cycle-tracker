@@ -2022,6 +2022,7 @@ function updateLangUI(){
 }
 
 function applyAllUI(){updateLangUI();renderCalendar();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();}
+function renderAll(){applyAllUI();}
 
 /* ================================================================
    CALENDAR
