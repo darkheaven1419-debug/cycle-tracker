@@ -1746,6 +1746,7 @@ function verifyLogin() {
     // Correct PIN
     activeProfile = selectedLoginProfile;
     localStorage.setItem('cycle-active-profile', activeProfile);
+    localStorage.setItem('cycle-login-day', fmtDate(new Date())); // once-per-day
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
     // Initialize app with logged-in profile
@@ -2809,20 +2810,21 @@ setInterval(function(){ if(getGitHubToken())pullAllSharedData(); }, 120000);
 function logoutAndShowLogin() {
   isLoggedIn = false;
   selectedLoginProfile = null;
-  localStorage.removeItem('cycle-active-profile'); // force PIN every visit
-  var savedProfile = 'andjela'; // default for login screen lang
-  var profileLang = 'sr';
-  lang = profileLang;
+  activeProfile = null;
+  state = { records:[], symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
+  localStorage.removeItem('cycle-active-profile');
+  localStorage.removeItem('cycle-login-day');
+  lang = 'sr';
   document.getElementById('loginOverlay').classList.remove('hidden');
   document.getElementById('loginPinArea').classList.remove('show');
   document.getElementById('loginCardAndjela').classList.remove('selected');
   document.getElementById('loginCardBarry').classList.remove('selected');
-  document.getElementById('loginSwitchHint').textContent = '👈 ' + (lang==='sr'?'Izaberi svoj profil i unesi PIN':lang==='en'?'Choose your profile and enter PIN':'选择你的账号并输入 PIN');
+  document.getElementById('loginSwitchHint').textContent = '👈 Izaberi svoj profil i unesi PIN';
   document.getElementById('loginPinInput').value = '';
   document.getElementById('loginError').textContent = '';
-  document.getElementById('loginPinBtn').textContent = lang==='sr'?'🔓 Prijavi se':lang==='en'?'🔓 Sign in':'🔓 登录';
-  document.getElementById('lc-hint-a').textContent = lang==='sr'?'Dodirni za prijavu':lang==='en'?'Tap to sign in':'点击登录';
-  document.getElementById('lc-hint-b').textContent = lang==='sr'?'Dodirni za prijavu':lang==='en'?'Tap to sign in':'点击登录';
+  document.getElementById('loginPinBtn').textContent = '🔓 Prijavi se';
+  document.getElementById('lc-hint-a').textContent = 'Dodirni za prijavu';
+  document.getElementById('lc-hint-b').textContent = 'Dodirni za prijavu';
 }
 
 // Override toggleProfile to use login overlay
@@ -2832,14 +2834,43 @@ toggleProfile = function() {
 };
 
 /* ================================================================
-   INIT — check login state
+   INIT — once-per-day login
    ================================================================ */
 (function initApp() {
-  // Always require PIN login every visit
-  localStorage.removeItem('cycle-active-profile');
-  document.getElementById('loginOverlay').classList.remove('hidden');
   applyTheme(theme);
   loadCalendarData(function(data){solarTermsCache=(data&&data.solarTerms)||[];localStorage.setItem('cycle-solarterms',JSON.stringify(solarTermsCache));});
+  // Check if already logged in today
+  var loginDay = localStorage.getItem('cycle-login-day');
+  var todayStr = fmtDate(new Date());
+  var savedProfile = localStorage.getItem('cycle-active-profile');
+  if (savedProfile && loginDay === todayStr && LOGIN_PINS[savedProfile]) {
+    // Same day — auto login
+    activeProfile = savedProfile;
+    isLoggedIn = true;
+    document.getElementById('loginOverlay').classList.add('hidden');
+    loadPerProfileSettings();
+    state = loadState();
+    lastCycleCount = predict().cycles.length;
+    applyTheme(theme);setLang(lang);
+    renderAll();loadSettingsUI();
+    fetchWeather();
+    if (getGitHubToken()) pullAllSharedData();
+    loadCalendarData(function(data){solarTermsCache=(data&&data.solarTerms)||[];localStorage.setItem('cycle-solarterms',JSON.stringify(solarTermsCache));renderCalendar();});
+    showOnboardingIfNeeded();
+    if (activeProfile === 'andjela') showGreeting();
+    updateMoonPhase();
+    updateAnniversaryCount();
+    updateCycleCounter(predict().cycles.length);
+    lastCycleCount = predict().cycles.length;
+    updateLoveCounter();
+    updateProfileUI();
+    randomThinkingOfYou();
+    updateMoonPhase();
+  } else {
+    // New day or no saved profile — show login
+    localStorage.removeItem('cycle-active-profile');
+    document.getElementById('loginOverlay').classList.remove('hidden');
+  }
 })();
 </script>
 </body>
