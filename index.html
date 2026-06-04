@@ -2683,86 +2683,84 @@ function renderRelTips() {
 const PHASE_ANALYSIS = {
   period: {
     name:{sr:'Menstruacija',en:'Period','zh-CN':'经期'},
-    physical:{sr:'Materica se kontrahuje, gvožđe opada, energija je niska. Može imati grčeve, glavobolju, umor.',en:'Uterus is contracting, iron drops, energy is low. May have cramps, headache, fatigue.','zh-CN':'子宫在收缩，铁元素下降，精力很低。可能有痛经、头痛、疲劳。'},
-    emotional:{sr:'Oseća se ranjivo, povučeno, možda tužno. Hormoni su na dnu — sve je intenzivnije.',en:'Feels vulnerable, withdrawn, maybe sad. Hormones are at their lowest — everything feels more intense.','zh-CN':'感到脆弱、想独处、可能有点难过。荷尔蒙在最低谷——一切都更强烈。'},
-    support:{sr:'🫂 Nežnost bez očekivanja • 🍵 Topli napici • 🛏️ Pusti je da se odmara • 🤐 Ne pametuj — samo slušaj',en:'🫂 Tenderness without expectations • 🍵 Warm drinks • 🛏️ Let her rest • 🤐 Don\'t lecture — just listen','zh-CN':'🫂 无条件温柔 • 🍵 热饮 • 🛏️ 让她休息 • 🤐 别讲道理——就听着'}
+    days:{sr:'Dan 1-7 ciklusa',en:'Day 1-7 of cycle','zh-CN':'周期第1-7天'},
+    energy:{sr:'⭐ Niska — odmara se',en:'⭐ Low — resting','zh-CN':'⭐ 低——需要休息'},
+    libido:{sr:'🔥 Nizak (moguć blagi porast pred kraj)',en:'🔥 Low (may rise slightly toward end)','zh-CN':'🔥 低（快结束时可能略有回升）'},
+    physical:{sr:'Materica se kontrahuje, gvožđe opada. Može imati: grčeve u stomaku, glavobolju, umor, bol u leđima, nadutost.',en:'Uterus contracting, iron drops. May have: cramps, headache, fatigue, back pain, bloating.','zh-CN':'子宫收缩，铁元素下降。可能有：痛经、头痛、极度疲劳、腰酸、腹胀。'},
+    emotional:{sr:'Oseća se ranjivo, povučeno. Emocije su intenzivne — može plakati bez razloga. Želi sigurnost i nežnost, ne rešenja.',en:'Feels vulnerable, withdrawn. Emotions intense — may cry without reason. Wants safety and tenderness, not solutions.','zh-CN':'感到脆弱、想独处。情绪强烈——可能没有理由就哭。需要安全感，不需要解决方案。'},
+    sex:{sr:'Nizak libido. Ne pritiskaj — nežnost bez očekivanja je ono što joj treba. Ako je raspoložena, budi nežan i pažljiv.',en:'Low libido. Don\'t pressure — tenderness without expectation is what she needs. If she\'s in the mood, be gentle and attentive.','zh-CN':'性欲低。别给她压力——她需要的是无期待的温柔。如果她有兴致，一定要轻柔体贴。'},
+    support:{sr:'🫂 Zagrli je bez razloga • 🍵 Skuvaj topao čaj • 🛏️ Pusti je da spava • 🤐 Ne pametuj — samo slušaj • 🍫 Donesi čokoladu',en:'🫂 Hug her without reason • 🍵 Make warm tea • 🛏️ Let her sleep • 🤐 Don\'t lecture — just listen • 🍫 Bring chocolate','zh-CN':'🫂 无条件抱抱 • 🍵 泡热茶 • 🛏️ 让她睡 • 🤐 别讲道理——就听 • 🍫 带巧克力'},
+    warning:{sr:'Ne govori "nije to ništa" — za nju JESTE. Ne pokreći teške teme. Ne očekuj seks.',en:'Don\'t say "it\'s nothing" — to her, it IS. Don\'t bring up heavy topics. Don\'t expect sex.','zh-CN':'别说"没那么严重"——对她来说就是很严重。别讨论沉重话题。别期待性生活。'}
   },
   follicular: {
     name:{sr:'Folikularna',en:'Follicular','zh-CN':'卵泡期'},
-    physical:{sr:'Estrogen raste — energija se vraća! Koža je bolja, telo se oseća jače.',en:'Estrogen rising — energy returns! Better skin, stronger body.','zh-CN':'雌激素回升——精力回来了！皮肤变好，身体更有力。'},
-    emotional:{sr:'Optimistična, društvena, kreativna. Spremna za nove planove i avanture.',en:'Optimistic, social, creative. Ready for new plans and adventures.','zh-CN':'乐观、爱社交、有创造力。准备好迎接新计划和冒险。'},
-    support:{sr:'💬 Pričajte o planovima • 🎯 Predloži izlazak • 🌸 Kupi cveće — primetiće',en:'💬 Talk about future plans • 🎯 Suggest going out • 🌸 Buy flowers — she\'ll notice','zh-CN':'💬 聊聊未来计划 • 🎯 约她出去 • 🌸 买花——她会注意到的'}
+    days:{sr:'Dan 8-13 ciklusa',en:'Day 8-13 of cycle','zh-CN':'周期第8-13天'},
+    energy:{sr:'⭐⭐⭐⭐ Raste — sve više energije',en:'⭐⭐⭐⭐ Rising — more energy each day','zh-CN':'⭐⭐⭐⭐ 上升中——精力越来越好'},
+    libido:{sr:'🔥🔥 Raste postepeno — počinje da se oseća privlačno',en:'🔥🔥 Rising gradually — starting to feel attractive','zh-CN':'🔥🔥 逐渐上升——开始感觉自己有魅力'},
+    physical:{sr:'Estrogen raste! Koža blista, kosa sjajna, telo se oseća jače. Ovo je faza kad izgleda najbolje — primetićeš.',en:'Estrogen rising! Skin glows, hair shines, body feels stronger. This is when she looks her best — you\'ll notice.','zh-CN':'雌激素上升！皮肤发光、头发亮泽、身体更有力。这是她最好看的阶段——你会注意到的。'},
+    emotional:{sr:'Optimistična, društvena, kreativna. Najbolje vreme za nove planove. Otvorena za razgovor — iskoristi to.',en:'Optimistic, social, creative. Best time for new plans. Open to conversation — use this.','zh-CN':'乐观、爱社交、有创意。最适合制定新计划。愿意聊天——抓住机会。'},
+    sex:{sr:'Libido raste svakim danom. Još nije na vrhuncu, ali je sve otvorenija za flert i dodir. Odlično vreme za predigru i istraživanje.',en:'Libido rising each day. Not at peak yet, but increasingly open to flirtation and touch. Great time for foreplay and exploration.','zh-CN':'性欲每天都在上升。还没到顶峰，但对调情和触碰越来越开放。适合前戏和探索的好时机。'},
+    support:{sr:'💬 Pričaj o planovima za budućnost • 🎯 Predloži izlazak ili putovanje • 🌸 Kupi cveće — primetiće • 💪 Vežbajte zajedno',en:'💬 Talk about future plans • 🎯 Suggest going out or a trip • 🌸 Buy flowers — she\'ll notice • 💪 Exercise together','zh-CN':'💬 聊未来计划 • 🎯 约她出去或旅行 • 🌸 买花——她一定注意到 • 💪 一起运动'},
+    warning:{sr:'Ne propusti ovu fazu — ona se otvara ka tebi. Budi prisutan i angažovan.',en:'Don\'t miss this phase — she\'s opening up to you. Be present and engaged.','zh-CN':'别错过这个阶段——她正在向你敞开心扉。积极参与她的生活。'}
   },
   ovulation: {
     name:{sr:'Ovulacija',en:'Ovulation','zh-CN':'排卵期'},
-    physical:{sr:'Vrhunac energije i plodnosti. Može osetiti blagi bol u karlici. Libido na maksimumu.',en:'Peak energy and fertility. May feel mild pelvic pain. Libido at maximum.','zh-CN':'精力和生育力巅峰。可能有轻微小腹痛。性欲最高。'},
-    emotional:{sr:'Samopouzdana, privlačna, otvorena. Oseća se najbolje u celom ciklusu.',en:'Confident, attractive, open. Feels her best in the whole cycle.','zh-CN':'自信、有魅力、开放。整个周期里状态最好的时候。'},
-    support:{sr:'✨ Daj joj iskrene komplimente • 💋 Budi nežan i romantičan • 🎉 Izvedi je negde',en:'✨ Give genuine compliments • 💋 Be tender and romantic • 🎉 Take her out','zh-CN':'✨ 真诚赞美 • 💋 温柔浪漫 • 🎉 带她出去玩'}
+    days:{sr:'Dan 14-16 ciklusa',en:'Day 14-16 of cycle','zh-CN':'周期第14-16天'},
+    energy:{sr:'⭐⭐⭐⭐⭐ Vrhunac — na maksimumu!',en:'⭐⭐⭐⭐⭐ Peak — at maximum!','zh-CN':'⭐⭐⭐⭐⭐ 巅峰——状态最好！'},
+    libido:{sr:'🔥🔥🔥🔥🔥 VRHUNAC — libido na maksimumu. Ovo su dani kad je najviše zainteresovana za seks.',en:'🔥🔥🔥🔥🔥 PEAK — libido at maximum. These are the days she\'s most interested in sex.','zh-CN':'🔥🔥🔥🔥🔥 最高——性欲达到顶峰。这是她最想要性爱的几天。'},
+    physical:{sr:'Vrhunac energije i plodnosti. Može osetiti blagi bol u karlici (ovulacioni bol). Bistar sekret — znak plodnosti. Grudi mogu biti osetljivije.',en:'Peak energy and fertility. May feel mild pelvic pain. Clear discharge — sign of fertility. Breasts may be more sensitive.','zh-CN':'能量和生育力巅峰。可能有轻微排卵痛。分泌物清亮——生育力标志。乳房可能更敏感。'},
+    emotional:{sr:'Samopouzdana, privlačna, magnetična. Oseća se NAJBOLJE u celom ciklusu. Komplimenti joj sad znače najviše — i veruje im.',en:'Confident, attractive, magnetic. Feels her BEST in the whole cycle. Compliments mean the most now — and she believes them.','zh-CN':'自信、迷人、有魅力。整个周期中状态最好。现在夸她最有效——而且她真的会相信。'},
+    sex:{sr:'Ovo su dani kad je najotvorenija za seks. Njeno telo je bukvalno programirano za intimnost sad. Iniciraj nežno — gotovo sigurno će biti raspoložena. Najbolji dani za začeće.',en:'These are the days she\'s most open to sex. Her body is literally programmed for intimacy now. Initiate gently — she\'s almost certainly in the mood. Best days for conception.','zh-CN':'这是她最愿意做爱的几天。她的身体此时天然地渴望亲密。温柔地主动——她几乎一定会有回应。最容易受孕的日子。'},
+    support:{sr:'✨ Iskreni komplimenti (izgled, miris, energija) • 💋 Budi romantičan i pažljiv • 🎉 Izvedi je — ples, večera, bilo šta • 🔥 Iniciraj intimnost',en:'✨ Genuine compliments (looks, smell, energy) • 💋 Be romantic and attentive • 🎉 Take her out — dancing, dinner, anything • 🔥 Initiate intimacy','zh-CN':'✨ 真诚赞美（外表、气味、能量）• 💋 浪漫体贴 • 🎉 带她出去——跳舞、晚餐 • 🔥 主动亲密'},
+    warning:{sr:'Ovo su njeni NAJBOLJI dani. Ne preskači ih. Ako postoji dan za romantiku — ovo je taj dan.',en:'These are her BEST days. Don\'t skip them. If there\'s a day for romance — this is it.','zh-CN':'这是她最好的日子。别错过。如果要选浪漫的一天——就是这天。'}
   },
   luteal: {
     name:{sr:'Lutealna',en:'Luteal','zh-CN':'黄体期'},
-    physical:{sr:'Progesteron raste — telo zadržava vodu, grudi su osetljive, umor raste pred kraj.',en:'Progesterone rises — water retention, breast tenderness, fatigue builds toward the end.','zh-CN':'孕激素上升——身体水肿、乳房胀痛、越往后越疲劳。'},
-    emotional:{sr:'PMS počinje — raspoloženje varira, razdražljiva je, možda anksiozna. Ne uzimaj ništa lično.',en:'PMS begins — mood swings, irritable, maybe anxious. Don\'t take anything personally.','zh-CN':'PMS 开始——情绪波动、容易烦躁、可能焦虑。别往心里去。'},
-    support:{sr:'🍵 Čaj bez kofeina • 🤐 Slušaj više, pričaj manje • 🍕 Donesi omiljenu hranu • 🌙 Pomozi joj da se opusti',en:'🍵 Caffeine-free tea • 🤐 Listen more, talk less • 🍕 Bring favorite food • 🌙 Help her unwind','zh-CN':'🍵 无咖啡因茶 • 🤐 多听少说 • 🍕 带她爱吃的 • 🌙 帮她放松'}
+    days:{sr:'Dan 17-28 ciklusa',en:'Day 17-28 of cycle','zh-CN':'周期第17-28天'},
+    energy:{sr:'⭐⭐ Prvo ok, pred kraj pada — umor raste',en:'⭐⭐ OK at first, drops toward end — fatigue grows','zh-CN':'⭐⭐ 前期还行，越往后越累——疲劳加重'},
+    libido:{sr:'🔥🔥 Prvo OK, pred kraj opada. Može varirati — dan da, dan ne.',en:'🔥🔥 OK at first, drops toward end. May vary — day yes, day no.','zh-CN':'🔥🔥 前期还行，越往后越低。可能忽高忽低——今天想明天不想。'},
+    physical:{sr:'Progesteron dominira. Telo zadržava vodu — oseća se naduto. Grudi osetljive. Akne moguće. Pred kraj: umor, žudnja za hranom, glavobolje.',en:'Progesterone dominates. Water retention — feels bloated. Breast tenderness. Acne possible. Near the end: fatigue, cravings, headaches.','zh-CN':'孕激素主导。身体水肿——感觉浮肿。乳房胀痛。可能长痘。快结束时：极度疲劳、特别想吃东西、头痛。'},
+    emotional:{sr:'PMS faza: raspoloženje varira. Može biti razdražljiva, anksiozna, plačljiva. Važno: OVO NIJE ONA — ovo su hormoni. Ne uzimaj ništa lično.',en:'PMS phase: mood swings. May be irritable, anxious, tearful. Important: THIS IS NOT HER — this is hormones. Don\'t take anything personally.','zh-CN':'PMS阶段：情绪波动。可能烦躁、焦虑、想哭。重要：这不是真的她——这是荷尔蒙。千万别往心里去。'},
+    sex:{sr:'Libido varira. U prvoj polovini može biti raspoložena. Pred kraj — verovatno neće biti zainteresovana. Ne pritiskaj. Ako kaže ne — to je NE.',en:'Libido varies. First half may be in the mood. Near the end — probably not interested. Don\'t pressure. If she says no — it\'s NO.','zh-CN':'性欲忽高忽低。前半段可能有兴致。快结束时——八成不想。别施压。她说不要就是真的不要。'},
+    support:{sr:'🍵 Čaj bez kofeina • 🤐 Slušaj — ne rešavaj • 🍕 Naruči njenu omiljenu hranu • 🌙 Topla kupka, sveće, muzika • 💆 Ponudi masažu',en:'🍵 Caffeine-free tea • 🤐 Listen — don\'t solve • 🍕 Order her favorite food • 🌙 Warm bath, candles, music • 💆 Offer massage','zh-CN':'🍵 无咖啡因茶 • 🤐 听就好——别解决 • 🍕 点她爱吃的 • 🌙 热水澡、蜡烛、音乐 • 💆 主动给她按摩'},
+    warning:{sr:'Ne svađaj se — ne možeš pobediti protiv hormona. Ne govori "ta ti je opet ono doba". Budi tu, ćuti, zagrli.',en:'Don\'t argue — you can\'t win against hormones. Don\'t say "is it that time again." Be there, be quiet, hug her.','zh-CN':'别吵架——你跟荷尔蒙吵不赢。别说"你是不是又来那个了"。在就好、安静、抱住。'}
   }
 };
 
 function renderBarrySymptomView() {
-  var isBarry = activeProfile === 'barry';
-  document.getElementById('barry-symptom-view').style.display = isBarry ? '' : 'none';
-  document.getElementById('andjela-symptom-view').style.display = isBarry ? 'none' : '';
-  if (!isBarry) return;
+  var isBarry=activeProfile==='barry';
+  document.getElementById('barry-symptom-view').style.display=isBarry?'':'none';
+  document.getElementById('andjela-symptom-view').style.display=isBarry?'none':'';
+  if(!isBarry)return;
+  var container=document.getElementById('barrySymptomAnalysis');
+  var shared=getSharedCyclePhase();
+  var phaseKey=(shared&&shared.phase)?shared.phase:'general';
+  var l=lang||'sr';
+  document.getElementById('bs-title').textContent=l==='sr'?'🔬 Anđela danas — detaljna analiza':l==='en'?'🔬 Anđela Today — Full Analysis':'🔬 Anđela 今日详细分析';
+  if(phaseKey==='general'||!PHASE_ANALYSIS[phaseKey]){container.innerHTML='<div class="card" style="text-align:center;padding:20px"><span style="font-size:3rem">🌸</span><div style="font-size:.78rem;color:var(--text-muted);margin-top:8px">'+(l==='sr'?'Čekam podatke sa Anđelinog telefona...':l==='en'?'Waiting for data from Anđela\'s phone...':'等待 Anđela 手机同步数据...')+'</div></div>';return;}
+  var pa=PHASE_ANALYSIS[phaseKey];
+  var pc={period:'var(--love)',follicular:'var(--sage)',ovulation:'var(--teal)',luteal:'var(--lavender)'};
+  var pe={period:'🩸',follicular:'🌱',ovulation:'✨',luteal:'🌙'};
+  var color=pc[phaseKey]||'var(--love)';
+  var h='';
+  h+='<div class="card" style="border-left:5px solid '+color+';margin-bottom:10px;background:linear-gradient(135deg,var(--rose-light),var(--card));text-align:center;padding:18px">';
+  h+='<div style="font-size:2.5rem;margin-bottom:4px">'+pe[phaseKey]+'</div>';
+  h+='<div style="font-size:.95rem;font-weight:800;color:var(--text)">'+(pa.name[l]||pa.name['sr'])+'</div>';
+  h+='<div style="font-size:.65rem;color:var(--text-muted)">'+(pa.days[l]||pa.days['sr'])+'</div>';
+  if(shared&&shared.nextStart)h+='<div style="font-size:.62rem;color:var(--gold);margin-top:2px">📅 '+(l==='sr'?'Sledeća: '+shared.nextStart:l==='en'?'Next: '+shared.nextStart:'下次: '+shared.nextStart)+'</div>';
+  h+='</div>';
 
-  var container = document.getElementById('barrySymptomAnalysis');
-  var html = '';
+  h+='<div class="card" style="padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-around;text-align:center">';
+  h+='<div><div style="font-size:.62rem;color:var(--text-muted);margin-bottom:2px">⚡ '+(l==='sr'?'Energija':l==='en'?'Energy':'精力')+'</div><div style="font-size:.82rem">'+(pa.energy[l]||pa.energy['sr'])+'</div></div>';
+  h+='<div><div style="font-size:.62rem;color:var(--text-muted);margin-bottom:2px">🔥 '+(l==='sr'?'Libido':l==='en'?'Libido':'性欲')+'</div><div style="font-size:.82rem">'+(pa.libido[l]||pa.libido['sr'])+'</div></div>';
+  h+='</div></div>';
 
-  // CYCLE PHASE CARD — what she's experiencing today
-  var shared = getSharedCyclePhase();
-  var phaseKey = (shared && shared.phase) ? shared.phase : 'general';
-  if (phaseKey !== 'general' && PHASE_ANALYSIS[phaseKey]) {
-    var pa = PHASE_ANALYSIS[phaseKey];
-    var l = lang||'sr';
-    html += '<div class="card" style="border-left:4px solid var(--love);margin-bottom:14px;background:linear-gradient(135deg,var(--rose-light),var(--card))">';
-    html += '<h3 style="font-size:.8rem;margin-bottom:2px">🔬 '+(l==='sr'?'Danas je u fazi':l==='en'?'Today she\'s in':'她今天处于')+': <span style="color:var(--love)">'+(pa.name[l]||pa.name['sr'])+'</span></h3>';
-    html += '<div style="font-size:.62rem;color:var(--gold);margin-bottom:10px">'+(shared.nextStart?(l==='sr'?'Sledeća menstruacija: '+shared.nextStart:l==='en'?'Next period: '+shared.nextStart:'下次经期: '+shared.nextStart):'')+'</div>';
-    html += '<div style="margin-bottom:8px"><span style="font-weight:700;font-size:.7rem">🩺 '+(l==='sr'?'Fizički':l==='en'?'Physical':'身体')+':</span> <span style="font-size:.72rem;color:var(--text-muted)">'+(pa.physical[l]||pa.physical['sr'])+'</span></div>';
-    html += '<div style="margin-bottom:8px"><span style="font-weight:700;font-size:.7rem">💭 '+(l==='sr'?'Emocije':l==='en'?'Emotional':'情绪')+':</span> <span style="font-size:.72rem;color:var(--text-muted)">'+(pa.emotional[l]||pa.emotional['sr'])+'</span></div>';
-    html += '<div style="margin-bottom:4px"><span style="font-weight:700;font-size:.7rem">💡 '+(l==='sr'?'Kako joj pomoći':l==='en'?'How to support':'怎么支持她')+':</span> <span style="font-size:.72rem;color:var(--teal)">'+(pa.support[l]||pa.support['sr'])+'</span></div>';
-    html += '</div>';
-  } else {
-    html += '<div class="card" style="text-align:center;padding:16px;margin-bottom:14px"><span style="font-size:2rem">🌸</span><div style="font-size:.72rem;color:var(--text-muted);margin-top:4px">'+(lang==='sr'?'Anđela još nije ažurirala podatke — sačekaj sinhronizaciju':lang==='en'?'Anđela hasn\'t updated her data yet — wait for sync':'Anđela 还没同步数据——等她更新后这里会显示她的周期阶段')+'</div></div>';
-  }
-
-  // SYMPTOM DETAILS
-  document.getElementById('bs-title').textContent = lang==='sr'?'🔍 Anđelini simptomi danas':lang==='en'?'🔍 Anđela\'s Symptoms Today':'🔍 Anđela 的今日症状';
-  var sharedSymptoms = null;
-  try { sharedSymptoms = JSON.parse(localStorage.getItem('shared-symptoms') || 'null'); } catch(e) {}
-  // Fallback: read directly from Anđela's profile data
-  if (!sharedSymptoms) {
-    try {
-      var andjelaData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela'));
-      if (andjelaData && andjelaData.symptoms) {
-        var key = fmtDate(today());
-        sharedSymptoms = andjelaData.symptoms[key] || null;
-      }
-    } catch(e) {}
-  }
-  if (!sharedSymptoms || Object.keys(sharedSymptoms).filter(function(k){return k!=='notes'&&sharedSymptoms[k]>0;}).length === 0) {
-    html += '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:.74rem">'+(lang==='sr'?'Danas nije zabeležila simptome — sve je u redu! 🌸':lang==='en'?'No symptoms logged today — all good! 🌸':'今天没有记录症状——一切安好！🌸')+'</div>';
-    container.innerHTML = html;
-    return;
-  }
-  var symptomKeys = ['cramps','headache','fatigue','mood','flow','cravings'];
-  var emojis = {cramps:'😣',headache:'🤕',fatigue:'😴',mood:'😊',flow:'💧',cravings:'🍫'};
-  var names = lang==='sr'?{cramps:'Grčevi',headache:'Glavobolja',fatigue:'Umor',mood:'Raspoloženje',flow:'Protok',cravings:'Žudnja'}:lang==='en'?{cramps:'Cramps',headache:'Headache',fatigue:'Fatigue',mood:'Mood',flow:'Flow',cravings:'Cravings'}:{cramps:'痛经',headache:'头痛',fatigue:'疲劳',mood:'情绪',flow:'流量',cravings:'食欲'};
-  symptomKeys.forEach(function(key) {
-    if (sharedSymptoms[key] && sharedSymptoms[key] > 0) {
-      var help = SYMPTOM_HELP[key];
-      var l = lang||'sr';
-      html += '<div class="sa-item"><span class="sa-emoji">'+emojis[key]+'</span> <span class="sa-name">'+names[key]+' ('+sharedSymptoms[key]+'/3)</span><div class="sa-cause">📖 '+(help.cause[l]||help.cause['sr'])+'</div><div class="sa-help">💡 '+(l==='sr'?'Kako pomoći':l==='en'?'How to help':'怎么帮她')+': '+(help.help[l]||help.help['sr'])+'</div></div>';
-    }
-  });
-  container.innerHTML = html;
+  h+='<div class="card" style="padding:14px;margin-bottom:10px"><div style="font-weight:700;font-size:.74rem;margin-bottom:4px">🩺 '+(l==='sr'?'Fizičke promene':l==='en'?'Physical Changes':'身体变化')+'</div><div style="font-size:.72rem;color:var(--text-muted);line-height:1.7">'+(pa.physical[l]||pa.physical['sr'])+'</div></div>';
+  h+='<div class="card" style="padding:14px;margin-bottom:10px"><div style="font-weight:700;font-size:.74rem;margin-bottom:4px">💭 '+(l==='sr'?'Emocionalno stanje':l==='en'?'Emotional State':'情绪状态')+'</div><div style="font-size:.72rem;color:var(--text-muted);line-height:1.7">'+(pa.emotional[l]||pa.emotional['sr'])+'</div></div>';
+  h+='<div class="card" style="padding:14px;margin-bottom:10px;border-left:4px solid var(--love)"><div style="font-weight:700;font-size:.74rem;margin-bottom:4px">🔥 '+(l==='sr'?'Seks i intimnost':l==='en'?'Sex & Intimacy':'性爱与亲密')+'</div><div style="font-size:.72rem;color:var(--text-muted);line-height:1.7">'+(pa.sex[l]||pa.sex['sr'])+'</div></div>';
+  h+='<div class="card" style="padding:14px;margin-bottom:10px;background:linear-gradient(135deg,var(--teal-light),var(--card))"><div style="font-weight:700;font-size:.74rem;margin-bottom:4px">💡 '+(l==='sr'?'Kako da joj pomogneš':l==='en'?'How to Support Her':'怎么帮她')+'</div><div style="font-size:.72rem;color:var(--text);line-height:1.8">'+(pa.support[l]||pa.support['sr'])+'</div></div>';
+  h+='<div class="card" style="padding:12px;margin-bottom:10px;background:var(--rose-light);border:1px solid var(--rose)"><div style="font-weight:700;font-size:.7rem;margin-bottom:2px">⚠️ '+(l==='sr'?'Šta NE raditi':l==='en'?'What NOT to do':'千万别做')+'</div><div style="font-size:.68rem;color:var(--rose-dark);line-height:1.5">'+(pa.warning[l]||pa.warning['sr'])+'</div></div>';
+  container.innerHTML=h;
 }
 
 // Share Anđela's symptoms for Barry to see
