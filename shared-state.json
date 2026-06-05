@@ -18,21 +18,23 @@
     }
   },
   "cycleInfo": {
-    "phase": "follicular",
-    "nextStart": "2026-06-25",
-    "updated": 1780577423725
+    "phase": "general",
+    "nextStart": "2026-07-11",
+    "updated": 1780692380922
   },
   "symptoms": null,
   "gratitude": [],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1780647380603
+  },
   "songs": {
     "barry": null,
     "andjela": null
   },
-  "sleep": null,
   "checkins": {
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780684945063
+  "updated": 1780692381421
 }
