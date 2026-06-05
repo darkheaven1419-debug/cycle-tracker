@@ -1617,19 +1617,19 @@ function importSharedDiary() {
 async function renderSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
   document.getElementById('sharedDiaryDate').textContent = dateKey;
-  document.getElementById('sd-my-title').textContent = lang==='sr'?'✏️ Moj osvrt':lang==='en'?'✏️ My Reflection':'✏️ 我的总结';
+  document.getElementById('sd-my-title').textContent = lang==='sr'?'Moj osvrt':lang==='en'?'My Reflection':'我的总结';
   document.getElementById('sd-my-hint').textContent = lang==='sr'?'Iskreno o danu — što više detalja, to bolje 💫':lang==='en'?'Be honest about your day — the more detail the better 💫':'坦诚地回顾一天——越详细越好 💫';
-  document.getElementById('sd-l-happy').textContent = lang==='sr'?'💝 Šta me je danas obradovalo':lang==='en'?'💝 What made me happy today':'💝 今天让我开心的事';
-  document.getElementById('sd-l-uncomf').textContent = lang==='sr'?'🤔 Šta mi je malo zasmetalo':lang==='en'?'🤔 What felt a little uncomfortable':'🤔 让我有点不舒服的事';
-  document.getElementById('sd-l-thanks').textContent = lang==='sr'?'🙏 Želim da ti se zahvalim za...':lang==='en'?'🙏 I want to thank you for...':'🙏 我想感谢你的...';
-  document.getElementById('sd-l-wish').textContent = lang==='sr'?'💪 Voleo/la bih da zajedno poradimo na...':lang==='en'?'💪 I hope we can work on...':'💪 我希望我们能一起改进的...';
-  document.getElementById('sd-save-text').textContent = lang==='sr'?'💾 Sačuvaj i otključaj partnerov unos':lang==='en'?'💾 Save & Unlock Partner\'s Entry':'💾 保存并解锁伴侣日记';
-  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'✍️ Moraš sačuvati svoj unos pre nego što vidiš partnerov':lang==='en'?'✍️ You must save your entry before seeing your partner\'s':'✍️ 保存自己的日记后才能查看伴侣的哦';
-  document.getElementById('sd-partner-title').textContent = lang==='sr'?'👀 Partnerov osvrt':lang==='en'?'👀 Partner\'s Reflection':'👀 伴侣的总结';
-  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'🌐 Automatska sinhronizacija uključena':lang==='en'?'🌐 Auto-sync enabled':'🌐 自动同步已开启') : (lang==='sr'?'📤 Izvezi svoj unos → pošalji partneru → 📥 Partner uveze → oboje vidite!':lang==='en'?'📤 Export your entry → send to partner → 📥 Partner imports → both can see!':'📤 导出你的日记 → 发给伴侣 → 📥 伴侣导入 → 互相看到！');
-  document.getElementById('sd-export').textContent = lang==='sr'?'📤 Podeli moj unos':lang==='en'?'📤 Share My Entry':'📤 分享我的日记';
-  document.getElementById('sd-import').textContent = lang==='sr'?'📥 Uvezi partnerov':lang==='en'?'📥 Import Partner\'s':'📥 导入伴侣的';
-  document.getElementById('sd-history-title').textContent = lang==='sr'?'📜 Istorija':lang==='en'?'📜 History':'📜 历史记录';
+  document.getElementById('sd-l-happy').textContent = lang==='sr'?'Šta me je danas obradovalo':lang==='en'?'What made me happy today':'今天让我开心的事';
+  document.getElementById('sd-l-uncomf').textContent = lang==='sr'?'Šta mi je malo zasmetalo':lang==='en'?'What felt a little uncomfortable':'让我有点不舒服的事';
+  document.getElementById('sd-l-thanks').textContent = lang==='sr'?'Želim da ti se zahvalim za...':lang==='en'?'I want to thank you for...':'我想感谢你的...';
+  document.getElementById('sd-l-wish').textContent = lang==='sr'?'Voleo/la bih da zajedno poradimo na...':lang==='en'?'I hope we can work on...':'我希望我们能一起改进的...';
+  document.getElementById('sd-save-text').textContent = lang==='sr'?'Sačuvaj i otključaj partnerov unos':lang==='en'?'Save & Unlock Partner\'s Entry':'保存并解锁伴侣日记';
+  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'Moraš sačuvati svoj unos pre nego što vidiš partnerov':lang==='en'?'You must save your entry before seeing your partner\'s':'保存自己的日记后才能查看伴侣的哦';
+  document.getElementById('sd-partner-title').textContent = lang==='sr'?'Partnerov osvrt':lang==='en'?'Partner\'s Reflection':'伴侣的总结';
+  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'Automatska sinhronizacija uključena':lang==='en'?'Auto-sync enabled':'自动同步已开启') : (lang==='sr'?'Izvezi svoj unos → pošalji partneru → Partner uveze → oboje vidite!':lang==='en'?'Export your entry → send to partner → Partner imports → both can see!':'导出你的日记 → 发给伴侣 → 伴侣导入 → 互相看到！');
+  document.getElementById('sd-export').textContent = lang==='sr'?'Podeli moj unos':lang==='en'?'Share My Entry':'分享我的日记';
+  document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi partnerov':lang==='en'?'Import Partner\'s':'导入伴侣的';
+  document.getElementById('sd-history-title').textContent = lang==='sr'?'Istorija':lang==='en'?'History':'历史记录';
 
   // Try pull from GitHub first
   if (getGitHubToken()) await pullPartnerEntry(dateKey);
@@ -1659,7 +1659,7 @@ async function renderSharedDiary() {
         {q:lang==='sr'?'💪 Da poradimo':lang==='en'?'💪 To improve':'💪 希望改进', a:partnerEntry.wish}
       ];
       questions.forEach(function(item) {
-        if (item.a) html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a">'+item.a+'</div></div>';
+        if (item.a) html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a" data-original="'+item.a.replace(/"/g,'&quot;')+'">'+item.a+'</div></div>';
       });
       if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
         html += '<div class="sd-empty">'+(lang==='sr'?'Nema unosa':lang==='en'?'No entry':'没有记录')+'</div>';
@@ -1703,9 +1703,35 @@ function renderSharedDiaryHistory(allData) {
   }).join('');
 }
 
+async function translateText(text, from, to) {
+  if (!text || from===to) return text;
+  try {
+    var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+from+'&tl='+to+'&dt=t&q='+encodeURIComponent(text);
+    var resp=await fetch(url);var data=await resp.json();
+    if(data&&data[0]){return data[0].map(function(s){return s[0];}).join('');}
+  }catch(e){}
+  return text;
+}
+async function autoTranslatePartnerEntry() {
+  var viewerLang=lang==='sr'?'sr':lang==='zh-CN'?'zh-CN':'en';
+  var partnerLang=activeProfile==='andjela'?'zh-CN':'sr'; // Barry→zh, Anđela→sr
+  if(viewerLang===partnerLang)return;
+  var fromCode=partnerLang==='zh-CN'?'zh-CN':'sr';
+  var toCode=viewerLang==='zh-CN'?'zh-CN':'sr';
+  var answers=document.querySelectorAll('.sd-partner-a[data-original]');
+  for(var i=0;i<answers.length;i++){
+    var el=answers[i];var orig=el.getAttribute('data-original');
+    if(!el.getAttribute('data-translated')&&orig){
+      el.setAttribute('data-translated','1');
+      el.style.opacity='0.6';el.textContent='⏳ '+(lang==='sr'?'Prevodim...':lang==='en'?'Translating...':'翻译中...');
+      var translated=await translateText(orig,fromCode,toCode);
+      el.style.opacity='1';el.textContent=translated||orig;
+    }
+  }
+}
 function initSharedDiaryTab() {
   sharedDiaryViewDate = new Date();
-  renderSharedDiary();
+  renderSharedDiary().then(function(){setTimeout(autoTranslatePartnerEntry,400);});
 }
 
 /* ================================================================
