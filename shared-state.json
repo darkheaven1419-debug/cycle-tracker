@@ -18,9 +18,9 @@
     }
   },
   "cycleInfo": {
-    "phase": "general",
-    "nextStart": "2026-07-11",
-    "updated": 1780692380922
+    "phase": "follicular",
+    "nextStart": "2026-06-25",
+    "updated": 1780692382165
   },
   "symptoms": null,
   "gratitude": [],
@@ -36,5 +36,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780692381421
+  "updated": 1780692382660
 }
