@@ -7,10 +7,7 @@
   },
   "symptoms": null,
   "gratitude": [],
-  "hug": {
-    "from": "andjela",
-    "time": 1780600919040
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": null
@@ -19,5 +16,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780601004817
+  "updated": 1780643212312
 }
