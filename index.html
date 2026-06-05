@@ -621,6 +621,7 @@ body {
 .sa-help { font-size:.72rem; color:var(--teal); margin-top:4px; line-height:1.5; font-weight:500; }
 .special-badge { display:inline-block; padding:4px 14px; border-radius:14px; font-size:.64rem; font-weight:700; letter-spacing:.02em; background:linear-gradient(135deg,var(--love),var(--lavender-dark)); color:#fff; margin-top:4px; animation:badgeShine 3s ease-in-out infinite; }
 @keyframes badgeShine { 0%,100%{box-shadow:0 0 0 0 rgba(196,90,107,.3)} 50%{box-shadow:0 0 0 8px rgba(196,90,107,0)} }
+@keyframes dropFall { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(30px)} }
 
 /* ================================================================
    LOGIN OVERLAY
@@ -806,10 +807,6 @@ body {
       <div class="history-dots" id="historyDots"></div>
       <div class="history-label" id="historyLabel" style="font-size:.62rem;color:var(--text-muted);margin-top:6px"></div>
     </div>
-    <div class="card" id="yearOverviewCard">
-      <h3>📅 <span id="year-overview-title"></span> <span id="yearLabel" style="font-weight:400;font-size:.7rem;color:var(--text-muted)"></span></h3>
-      <div class="year-grid" id="yearGrid"></div>
-    </div>
     <div class="card"><h3 id="st-title-pred"></h3>
       <div class="stat-row"><span id="st-l-next"></span><span class="val" id="st-next">--</span></div>
       <div class="stat-row"><span id="st-l-ovu"></span><span class="val" id="st-ovulation">--</span></div>
@@ -837,7 +834,7 @@ body {
     </div>
     <!-- Love days card -->
     <div class="card" id="loveDaysCard" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)">
-      <h3>💕 <span id="love-days-title">Dani zajedno</span></h3>
+      <h3><span id="love-days-title">Dani zajedno</span></h3>
       <div id="love-days-content" style="text-align:center;line-height:2"></div>
     </div>
     <!-- Birthday Countdown -->
@@ -853,7 +850,7 @@ body {
     </div>
     <!-- Mood Check-in + Streak -->
     <div class="card" id="moodCard">
-      <h3>😊 <span id="mood-title">Daily Mood</span></h3>
+      <h3><span id="mood-title">Daily Mood</span></h3>
       <div class="mood-today-label" id="mood-today-label"></div>
       <div class="mood-picker" id="moodPicker"></div>
       <div class="streak-display" id="streakDisplay">
@@ -869,7 +866,7 @@ body {
     </div>
     <!-- One-line Diary -->
     <div class="card" id="diaryCard">
-      <h3>📓 <span id="diary-title">Today's Note</span></h3>
+      <h3><span id="diary-title">Today's Note</span></h3>
       <div class="diary-prompt" id="diaryPrompt"></div>
       <div class="diary-input-row">
         <input type="text" id="diaryInput" maxlength="140" placeholder="...">
@@ -884,7 +881,7 @@ body {
     </div>
     <!-- Virtual Garden -->
     <div class="card garden-card" id="gardenCard">
-      <h3>🌱 <span id="garden-title">Our Garden</span></h3>
+      <h3><span id="garden-title">Our Garden</span></h3>
       <span class="garden-plant" id="gardenPlant">🌰</span>
       <div class="garden-soil"></div>
       <div class="garden-pot"></div>
@@ -901,15 +898,6 @@ body {
       <h3>🤗 <span id="hug-title">Virtual Hug</span></h3>
       <div id="hugContent"><button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 <span id="hug-btn-text">Send a Hug</span></button></div>
     </div>
-    <!-- Gratitude Wall -->
-    <div class="gratitude-card" id="gratitudeCard">
-      <h3 style="font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">💝 <span id="grat-title">Gratitude Wall</span></h3>
-      <div class="gratitude-input-row">
-        <input type="text" id="gratInput" maxlength="100" placeholder="">
-        <button onclick="addGratitude()">💝</button>
-      </div>
-      <div id="gratList" style="margin-top:8px"></div>
-    </div>
     <!-- Our Song -->
     <div class="card song-card" id="songCard">
       <h3>🎵 <span id="song-title">Our Song</span></h3>
@@ -919,6 +907,18 @@ body {
     <div class="card" id="checkinCard">
       <h3>🎯 <span id="checkin-title">Weekly Check-in</span></h3>
       <div id="checkinContent"><div class="song-note" id="checkin-empty"></div></div>
+    </div>
+    <!-- Barry's Sleep Tracker -->
+    <div class="card" id="sleepCard" style="display:none">
+      <h3>😴 <span id="sleep-title">Barry's Sleep</span></h3>
+      <div id="sleepBarryView" style="display:none">
+        <div style="font-size:.68rem;color:var(--text-muted);margin-bottom:8px" id="sleep-hint"></div>
+        <input type="time" id="sleepTime" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:10px;font-size:.8rem;font-family:var(--font);background:var(--card);color:var(--text)">
+        <button class="btn btn-primary" onclick="saveSleep()" style="margin-top:8px;font-size:.72rem">💾 <span id="sleep-save">Save</span></button>
+      </div>
+      <div id="sleepAngieView" style="display:none">
+        <div id="sleepAngieContent"></div>
+      </div>
     </div>
     <!-- Anđela's special badge -->
     <div style="text-align:center;padding:8px 0 4px">
@@ -1344,7 +1344,7 @@ function renderMoodSection() {
     btn.className = 'mood-emoji' + (todayMood === MOOD_KEYS[i] ? ' picked' : '');
     btn.textContent = emoji;
     btn.title = t('moodNames')[i];
-    btn.onclick = function() { setMood(td, MOOD_KEYS[i]); };
+    btn.onclick = function() { setMood(td, MOOD_KEYS[i]); animateWatering(); };
     picker.appendChild(btn);
   });
   // Streak
@@ -1407,8 +1407,8 @@ function renderDiarySection() {
    LOVE NOTE
    ================================================================ */
 function renderLoveNote() {
-  // Only show love note when Anđela is the active profile
-  // (Barry writes the notes for Anđela)
+  if (activeProfile === 'barry') { document.getElementById('loveNoteCard').style.display = 'none'; return; }
+  document.getElementById('loveNoteCard').style.display = '';
   document.getElementById('loveNoteText').textContent = LOVE_NOTES.get();
   document.getElementById('loveNoteSig').textContent = t('loveNoteSig');
   // Random icon
@@ -1443,7 +1443,27 @@ function renderForecast() {
 /* ================================================================
    VIRTUAL GARDEN
    ================================================================ */
+function animateWatering() {
+  var plant = document.getElementById('gardenPlant');
+  if (!plant) return;
+  plant.style.transform = 'scale(1.3) rotate(10deg)';
+  plant.style.transition = 'transform .3s cubic-bezier(.34,1.56,.64,1)';
+  // Show water drops
+  var drops = ['💧','💧','💧'];
+  drops.forEach(function(d,i){
+    setTimeout(function(){
+      var drop = document.createElement('span');
+      drop.textContent = d; drop.style.cssText = 'position:absolute;font-size:.8rem;animation:dropFall 1s ease-in forwards;z-index:10;pointer-events:none;';
+      drop.style.left = (30+Math.random()*40)+'%'; drop.style.top = '-10px';
+      document.getElementById('gardenCard').appendChild(drop);
+      setTimeout(function(){ drop.remove(); }, 1000);
+    }, i*150);
+  });
+  setTimeout(function(){ plant.style.transform = ''; renderGarden(); }, 600);
+}
 function renderGarden() {
+  var plant = document.getElementById('gardenPlant');
+  if (plant) { plant.style.transform = ''; plant.style.transition = 'all .5s cubic-bezier(.34,1.56,.64,1)'; }
   document.getElementById('garden-title').textContent = t('gardenTitle');
   var streak = calculateStreak();
   var plant, msg;
@@ -1754,7 +1774,7 @@ function verifyLogin() {
     // Correct PIN
     activeProfile = selectedLoginProfile;
     localStorage.setItem('cycle-active-profile', activeProfile);
-    localStorage.setItem('cycle-login-day', fmtDate(new Date())); // once-per-day
+    sessionStorage.setItem('cycle-logged-in', '1');
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
     // Initialize app with logged-in profile
@@ -2249,7 +2269,7 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();renderRelTips();renderHug();renderGratitude();renderSong();renderCheckin();renderSpecialBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
+function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderForecast();renderGarden();renderRelTips();renderHug();renderSong();renderCheckin();renderSleepCard();renderSpecialBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
 function renderAll(){applyAllUI();}
 
 /* ================================================================
@@ -2535,10 +2555,14 @@ const REL_TIPS = {
 
 // Virtual Hug
 function sendHug() {
+  var todayKey = fmtDate(new Date());
+  var count = parseInt(sessionStorage.getItem('hug-count-'+todayKey)||'0');
+  if (count >= 2) { toast(lang==='sr'?'Danas si već poslao/la 2 zagrljaja — probaj sutra! 🤗':lang==='en'?'You already sent 2 hugs today — try tomorrow! 🤗':'今天已经抱了2次——明天再来！🤗'); return; }
+  count++; sessionStorage.setItem('hug-count-'+todayKey, count);
   var hug = { from: activeProfile, time: Date.now() };
   localStorage.setItem('shared-hug', JSON.stringify(hug));
   renderHug();
-  toast(activeProfile==='barry' ? '🤗 Poslao si joj zagrljaj!' : '🤗 Poslala si mu zagrljaj!');
+  toast('🤗 ' + (activeProfile==='barry'?(lang==='sr'?'Poslao si joj zagrljaj! ('+count+'/2)':lang==='en'?'Hug sent! ('+count+'/2)':'拥抱已发送！('+count+'/2)'):(lang==='sr'?'Poslala si mu zagrljaj! ('+count+'/2)':lang==='en'?'Hug sent! ('+count+'/2)':'拥抱已发送！('+count+'/2)')));
 }
 function checkHug() {
   try {
@@ -2618,6 +2642,9 @@ function getCheckinAnswers(profile) {
   return JSON.parse(localStorage.getItem('shared-checkin-' + profile) || '{}');
 }
 function renderCheckin() {
+  var dow = new Date().getDay(); // 0=Sun,6=Sat
+  if (dow !== 0 && dow !== 6) { document.getElementById('checkinCard').style.display = 'none'; return; }
+  document.getElementById('checkinCard').style.display = '';
   document.getElementById('checkin-title').textContent = lang==='sr'?'🎯 Nedeljni pregled':lang==='en'?'🎯 Weekly Check-in':'🎯 每周感情体检';
   var questions = CHECKIN_QUESTIONS[lang] || CHECKIN_QUESTIONS['sr'];
   var myAnswers = getCheckinAnswers(activeProfile);
@@ -2772,6 +2799,53 @@ function updateSharedSymptoms() {
 }
 
 // Special badge for Anđela
+// Sleep Tracker
+function saveSleep() {
+  var time = document.getElementById('sleepTime').value;
+  if (!time) return;
+  var entry = { time: time, date: fmtDate(new Date()), saved: Date.now() };
+  localStorage.setItem('barry-sleep', JSON.stringify(entry));
+  pushAllSharedData();
+  renderSleepCard();
+  toast('😴 ' + (lang==='sr'?'Sačuvano!':lang==='en'?'Saved!':'已保存！'));
+}
+function getBarrySleep() {
+  try { return JSON.parse(localStorage.getItem('barry-sleep')); } catch(e) { return null; }
+}
+function renderSleepCard() {
+  var card = document.getElementById('sleepCard');
+  card.style.display = '';
+  document.getElementById('sleep-title').textContent = lang==='sr'?'😴 Spavanje':lang==='en'?'😴 Sleep':'😴 睡眠';
+  if (activeProfile === 'barry') {
+    document.getElementById('sleepBarryView').style.display = '';
+    document.getElementById('sleepAngieView').style.display = 'none';
+    document.getElementById('sleep-hint').textContent = lang==='sr'?'Kad si legao sinoć? Angie vidi tvoje vreme spavanja 😴':lang==='en'?'What time did you sleep last night? Angie sees your sleep time 😴':'昨晚几点睡的？Angie 会看到你的睡眠时间 😴';
+    document.getElementById('sleep-save').textContent = lang==='sr'?'Sačuvaj':lang==='en'?'Save':'保存';
+    var s = getBarrySleep();
+    if (s) document.getElementById('sleepTime').value = s.time;
+  } else {
+    // Angie's view
+    document.getElementById('sleepBarryView').style.display = 'none';
+    document.getElementById('sleepAngieView').style.display = '';
+    var s = getBarrySleep();
+    if (!s) {
+      document.getElementById('sleepAngieContent').innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:.72rem">'+(lang==='sr'?'Barry još nije uneo vreme — podseti ga!':lang==='en'?'Barry hasn\'t logged sleep yet — remind him!':'Barry 还没记录——提醒他！')+'</div>';
+      return;
+    }
+    var timeParts = s.time.split(':');
+    var hour = parseInt(timeParts[0]), min = parseInt(timeParts[1]);
+    var lateMsg = '';
+    if (hour >= 2 || (hour === 1 && min >= 30)) {
+      lateMsg = lang==='sr'
+        ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">Legao je u '+s.time+'! To je PREKASNO!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">Srce mu pati kad spava manje od 6 sati. Dugoročno — rizik od srčanih bolesti raste za 48%. Treba mu 7-8 sati sna. Ti si jedina koja može da ga natera da legne ranije. Reci mu večeras — "Angie, molim te, idi u krevet pre ponoći. Za mene. 💗"</div></div>'
+        : lang==='en'
+        ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">He slept at '+s.time+'! That\'s WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You\'re the only one who can make him sleep earlier. Tell him tonight — "Angie, please go to bed before midnight. For me. 💗"</div></div>'
+        : '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">他 '+s.time+' 才睡！太晚了！</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">睡眠不足6小时，心脏长期受损，心脏病风险增加48%。他需要7-8小时睡眠。只有你能让他早点睡。今晚就告诉他——"Angie，求你了，为了我在12点前睡觉吧。💗"</div></div>';
+    }
+    document.getElementById('sleepAngieContent').innerHTML =
+      '<div style="text-align:center"><span style="font-size:2rem">😴</span><div style="font-size:.78rem;color:var(--text);margin-top:4px">'+(lang==='sr'?'Sinoć je legao u':lang==='en'?'Last night he slept at':'昨晚他')+' <b>'+s.time+'</b></div><div style="font-size:.62rem;color:var(--text-muted)">'+s.date+'</div></div>'+lateMsg;
+  }
+}
 function renderSpecialBadge() {
   var badge = document.getElementById('specialBadge');
   if (activeProfile !== 'andjela') { badge.style.display = 'none'; return; }
@@ -2797,6 +2871,7 @@ function collectSharedState() {
     gratitude: JSON.parse(localStorage.getItem('shared-gratitude') || '[]'),
     hug: JSON.parse(localStorage.getItem('shared-hug') || 'null'),
     songs: { barry: JSON.parse(localStorage.getItem('shared-song-barry')||'null'), andjela: JSON.parse(localStorage.getItem('shared-song-andjela')||'null') },
+    sleep: JSON.parse(localStorage.getItem('barry-sleep')||'null'),
     checkins: { barry: JSON.parse(localStorage.getItem('shared-checkin-barry')||'{}'), andjela: JSON.parse(localStorage.getItem('shared-checkin-andjela')||'{}') },
     updated: Date.now()
   };
@@ -2809,6 +2884,7 @@ function applySharedState(state) {
   if (state.symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(state.symptoms));
   if (state.gratitude) localStorage.setItem('shared-gratitude', JSON.stringify(state.gratitude));
   if (state.hug) localStorage.setItem('shared-hug', JSON.stringify(state.hug));
+  if (state.sleep) localStorage.setItem('barry-sleep', JSON.stringify(state.sleep));
   if (state.songs) {
     if (state.songs.barry) localStorage.setItem('shared-song-barry', JSON.stringify(state.songs.barry));
     if (state.songs.andjela) localStorage.setItem('shared-song-andjela', JSON.stringify(state.songs.andjela));
@@ -2899,10 +2975,9 @@ toggleProfile = function() {
   applyTheme(theme);
   loadCalendarData(function(data){solarTermsCache=(data&&data.solarTerms)||[];localStorage.setItem('cycle-solarterms',JSON.stringify(solarTermsCache));});
   // Check if already logged in today
-  var loginDay = localStorage.getItem('cycle-login-day');
-  var todayStr = fmtDate(new Date());
+  var sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
   var savedProfile = localStorage.getItem('cycle-active-profile');
-  if (savedProfile && loginDay === todayStr && LOGIN_PINS[savedProfile]) {
+  if (savedProfile && sessionLoggedIn === '1' && LOGIN_PINS[savedProfile]) {
     // Same day — auto login
     activeProfile = savedProfile;
     isLoggedIn = true;
