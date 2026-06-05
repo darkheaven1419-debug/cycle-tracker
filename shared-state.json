@@ -23,7 +23,13 @@
     "updated": 1780692382165
   },
   "symptoms": null,
-  "gratitude": [],
+  "gratitude": [
+    {
+      "text": "Hvala ti za svu radost koju si mi pružio danas, drago mi je što smo pričali na video pozivu.",
+      "from": "andjela",
+      "time": 1780692493970
+    }
+  ],
   "hug": {
     "from": "andjela",
     "time": 1780647380603
@@ -36,5 +42,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780692382660
+  "updated": 1780692535695
 }
