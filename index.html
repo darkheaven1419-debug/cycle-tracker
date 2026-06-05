@@ -839,7 +839,7 @@ body {
     </div>
     <!-- Birthday Countdown -->
     <div class="card" id="birthdayCard" style="background:linear-gradient(135deg,#FFF8E7,var(--rose-light));border:1px solid var(--gold)">
-      <h3>🎂 <span id="birthday-title">Rođendani</span></h3>
+      <h3><span id="birthday-title"></span></h3>
       <div id="birthday-content" style="text-align:center;line-height:2"></div>
     </div>
     <!-- Daily Love Note -->
@@ -895,22 +895,22 @@ body {
     </div>
     <!-- Virtual Hug -->
     <div class="card" id="hugCard">
-      <h3>🤗 <span id="hug-title">Virtual Hug</span></h3>
+      <h3><span id="hug-title"></span></h3>
       <div id="hugContent"><button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 <span id="hug-btn-text">Send a Hug</span></button></div>
     </div>
     <!-- Our Song -->
     <div class="card song-card" id="songCard">
-      <h3>🎵 <span id="song-title">Our Song</span></h3>
+      <h3><span id="song-title"></span></h3>
       <div id="songContent"><span class="song-icon">🎶</span><div class="song-note" id="song-note-empty"></div></div>
     </div>
     <!-- Weekly Check-in -->
     <div class="card" id="checkinCard">
-      <h3>🎯 <span id="checkin-title">Weekly Check-in</span></h3>
+      <h3><span id="checkin-title"></span></h3>
       <div id="checkinContent"><div class="song-note" id="checkin-empty"></div></div>
     </div>
     <!-- Barry's Sleep Tracker -->
     <div class="card" id="sleepCard" style="display:none">
-      <h3>😴 <span id="sleep-title">Barry's Sleep</span></h3>
+      <h3><span id="sleep-title"></span></h3>
       <div id="sleepBarryView" style="display:none">
         <div style="font-size:.68rem;color:var(--text-muted);margin-bottom:8px" id="sleep-hint"></div>
         <input type="time" id="sleepTime" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:10px;font-size:.8rem;font-family:var(--font);background:var(--card);color:var(--text)">
@@ -1718,9 +1718,13 @@ function loadPerProfileSettings() {
   // Default languages: Anđela → Serbian, Barry → Chinese
   var defaultLang = activeProfile === 'barry' ? 'zh-CN' : 'sr';
   var savedLang = localStorage.getItem(profileKey('cycle-lang'));
-  // Only use saved lang if it's a valid language code; otherwise use profile default
+  // Cleanse: if saved lang is the WRONG profile's default, reset
+  if (activeProfile === 'barry' && savedLang === 'sr') savedLang = null;
+  if (activeProfile === 'andjela' && savedLang === 'zh-CN') savedLang = null;
   var validLangs = { 'sr':1, 'zh-CN':1, 'en':1 };
   lang = (savedLang && validLangs[savedLang]) ? savedLang : defaultLang;
+  // ALWAYS save the corrected lang
+  if (!savedLang) localStorage.setItem(profileKey('cycle-lang'), lang);
   theme = localStorage.getItem(profileKey('cycle-theme')) || 'light';
   annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
   annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
