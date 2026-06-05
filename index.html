@@ -1348,14 +1348,7 @@ function renderMoodSection() {
     picker.appendChild(btn);
   });
   // Streak
-  var streak = calculateStreak();
-  document.getElementById('streakNum').textContent = streak;
-  document.getElementById('streakLabel').textContent = streak > 0 ? t('streakLabel') : t('streakLabel0');
-  var badge = document.getElementById('streakBadge');
-  if (streak >= 7) { badge.textContent = t('streakBadgeHot'); badge.className = 'streak-badge hot'; }
-  else if (streak >= 3) { badge.textContent = t('streakBadgeWarm'); badge.className = 'streak-badge warm'; }
-  else { badge.textContent = t('streakBadgeCold'); badge.className = 'streak-badge cold'; }
-  document.getElementById('streakDisplay').style.display = '';
+  document.getElementById('streakDisplay').style.display = 'none';
   // Mood history
   document.getElementById('mood-history-label').textContent = t('moodHistoryLabel');
   var hist = document.getElementById('moodHistory');
@@ -1462,26 +1455,25 @@ function animateWatering() {
   setTimeout(function(){ plant.style.transform = ''; renderGarden(); }, 600);
 }
 function renderGarden() {
-  var plant = document.getElementById('gardenPlant');
-  if (plant) { plant.style.transform = ''; plant.style.transition = 'all .5s cubic-bezier(.34,1.56,.64,1)'; }
+  var plantEl = document.getElementById('gardenPlant');
+  if (plantEl) { plantEl.style.transform = ''; plantEl.style.transition = 'all .5s cubic-bezier(.34,1.56,.64,1)'; }
   document.getElementById('garden-title').textContent = t('gardenTitle');
   var streak = calculateStreak();
-  var plant, msg;
-  if (streak === 0) { plant = '🌰'; msg = t('gardenSeed'); }
-  else if (streak <= 2) { plant = '🌱'; msg = t('gardenSprout'); }
-  else if (streak <= 7) { plant = '🌿'; msg = t('gardenGrowing'); }
-  else if (streak <= 14) { plant = '🌷'; msg = t('gardenBudding'); }
-  else { plant = '🌸'; msg = t('gardenBlooming'); }
-  // Cycle phase color for Anđela
+  var p, msg, hint;
+  if (streak === 0) { p = '🌰'; msg = lang==='sr'?'Klikni na emoji iznad da me zaliješ! 💧':lang==='en'?'Tap an emoji above to water me! 💧':'点上面的心情给我浇水！💧'; hint=''; }
+  else if (streak === 1) { p = '🌱'; msg = lang==='sr'?'Prvi dan! Nastavi da me zalivaš svaki dan 🌱':lang==='en'?'First day! Keep watering me daily 🌱':'第一天！每天浇我哦 🌱'; hint=''; }
+  else if (streak <= 3) { p = '🌿'; msg = lang==='sr'?'Rastem! Još malo pa cvetam 🌿':lang==='en'?'Growing! Almost blooming 🌿':'在长大！快要开花了 🌿'; hint=''; }
+  else if (streak <= 7) { p = '🌷'; msg = lang==='sr'?'Pupoljak! Tvoja ljubav me hrani 🌷':lang==='en'?'Budding! Your love feeds me 🌷':'花苞！你的爱在滋养我 🌷'; hint=''; }
+  else { p = '🌸'; msg = lang==='sr'?'Procvetala! Kao i vaša ljubav 🌸':lang==='en'?'Bloomed! Just like your love 🌸':'开花了！就像你们的爱 🌸'; hint=''; }
   if (activeProfile === 'andjela' && streak > 0) {
-    var pred = predict(); var phase = getPhase(today(), pred);
-    if (phase && (phase.startsWith('period'))) plant = '🌹';
-    else if (phase === 'ovulation') plant = '🌻';
-    else if (phase === 'luteal') plant = '🌷';
+    var phase = getPhase(today(), predict());
+    if (phase && phase.startsWith('period')) p = '🌹';
+    else if (phase === 'ovulation') p = '🌻';
+    else if (phase === 'luteal') p = '🌷';
   }
-  document.getElementById('gardenPlant').textContent = plant;
+  document.getElementById('gardenPlant').textContent = p;
   document.getElementById('gardenMsg').textContent = msg;
-  document.getElementById('gardenHint').textContent = streak < 3 ? '💧 ' + t('gardenSeed') : '';
+  document.getElementById('gardenHint').textContent = hint;
 }
 
 /* ================================================================
