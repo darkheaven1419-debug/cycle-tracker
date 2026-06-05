@@ -1,5 +1,15 @@
 {
-  "diary": {},
+  "diary": {
+    "2026-06-04": {
+      "andjela": {
+        "happy": "To što si se puno smejao, volim tvoj osmeh.",
+        "uncomf": "To što si me lagao pre, ali sada si iskren i to je najvažnije.",
+        "thanks": "Želim da ti se zahvalim za to što me činiš beskrajno srećnom.",
+        "wish": "Na većoj međusobnoj iskrenosti i izbegavanju nesporazuma.",
+        "time": 1780651791294
+      }
+    }
+  },
   "cycleInfo": {
     "phase": "follicular",
     "nextStart": "2026-06-25",
@@ -7,7 +17,10 @@
   },
   "symptoms": null,
   "gratitude": [],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1780647380603
+  },
   "songs": {
     "barry": null,
     "andjela": null
@@ -16,5 +29,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780643212312
+  "updated": 1780651794384
 }
