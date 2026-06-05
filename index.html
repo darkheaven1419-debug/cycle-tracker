@@ -228,7 +228,7 @@ body {
 .cal-nav .today-pill { font-size:.7rem; font-weight:700; color:var(--love); padding:6px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:44px; border:none; cursor:pointer; flex-shrink:0; transition:transform .12s; }
 .cal-nav .today-pill:active { transform:scale(.92); }
 
-.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; transition:all .3s; }
+.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; transition:opacity .15s; contain:layout style; will-change:transform; transform:translateZ(0); }
 .calendar:hover { box-shadow:var(--shadow-md); }
 .weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
@@ -2261,7 +2261,6 @@ function updateLangUI(){
   document.getElementById('st-l-count').textContent=ss.count;document.getElementById('st-l-avg').textContent=ss.avg;document.getElementById('st-l-range').textContent=ss.range;document.getElementById('st-l-reg').textContent=ss.reg;
   document.getElementById('st-l-next').textContent=ss.next;document.getElementById('st-l-ovu').textContent=ss.ovulation;document.getElementById('st-l-fert').textContent=ss.fertile;document.getElementById('st-l-conf').textContent=ss.confidence;document.getElementById('st-l-future').textContent=ss.future;
   document.getElementById('historyLabel').textContent=t('historyLabel');
-  document.getElementById('year-overview-title').textContent = t('yearTitle');
   document.getElementById('cc-title').textContent = '💝 ' + t('cycleCounter').replace('{n}', '');
   const md=t('modal');
   document.getElementById('m-l-phase').textContent=md.phase;document.getElementById('m-l-day').textContent=md.day;document.getElementById('m-l-symp').textContent=md.symptoms;
@@ -2359,12 +2358,7 @@ function updateHistoryDots(pred){
   c.innerHTML=recent.map(cy=>{let cls='normal';if(cy<avg-3)cls='short';else if(cy>avg+3)cls='long';return`<span class="history-dot ${cls}" title="${cy}${t('day')}" onclick="toast('${cy}${t('day')}')"></span>`;}).join('');
 }
 
-function updateYearOverview(pred){
-  const grid=document.getElementById('yearGrid'); const yr=viewYear;
-  document.getElementById('yearLabel').textContent = lang==='sr' ? `${yr}.` : lang==='en' ? `${yr}` : `${yr}年`;
-  const byMonth={}; state.records.forEach(r=>{const m=r.getMonth();if(r.getFullYear()===yr){byMonth[m]=(byMonth[m]||0)+1;}});
-  grid.innerHTML=t('months').map((name,i)=>{const count=byMonth[i]||0;let cls='year-cell';if(count===1)cls+=' has-period';else if(count>1)cls+=' has-period multi';return`<div class="${cls}" title="${name}: ${count>0?count+t('day'):'--'}" onclick="goToMonth(${i})">${name}</div>`;}).join('');
-}
+function updateYearOverview(pred){}
 
 function goToMonth(m){viewMonth=m;renderCalendar();}
 function updateReminder(pred){
@@ -2477,8 +2471,9 @@ function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={re
 /* ================================================================
    NAVIGATION
    ================================================================ */
-function changeMonth(d){viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}renderAll();}
-function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();renderAll();}
+var _monthChangeTimer=null;
+function changeMonth(d){if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},200);viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}requestAnimationFrame(function(){renderAll();});}
+function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();requestAnimationFrame(function(){renderAll();});}
 (function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
@@ -2837,10 +2832,10 @@ function renderSleepCard() {
     var lateMsg = '';
     if (hour >= 2 || (hour === 1 && min >= 30)) {
       lateMsg = lang==='sr'
-        ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">Legao je u '+s.time+'! To je PREKASNO!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">Srce mu pati kad spava manje od 6 sati. Dugoročno — rizik od srčanih bolesti raste za 48%. Treba mu 7-8 sati sna. Ti si jedina koja može da ga natera da legne ranije. Reci mu večeras — "Angie, molim te, idi u krevet pre ponoći. Za mene. 💗"</div></div>'
+        ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">Legao je u '+s.time+'! To je PREKASNO!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">Srce mu pati kad spava manje od 6 sati. Dugoročno — rizik od srčanih bolesti raste za 48%. Treba mu 7-8 sati sna. Ti si jedina koja može da ga natera da legne ranije. Reci mu večeras — "Barry, molim te, idi u krevet pre pola 2. Za mene. 💗"</div></div>'
         : lang==='en'
-        ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">He slept at '+s.time+'! That\'s WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You\'re the only one who can make him sleep earlier. Tell him tonight — "Angie, please go to bed before midnight. For me. 💗"</div></div>'
-        : '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">他 '+s.time+' 才睡！太晚了！</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">睡眠不足6小时，心脏长期受损，心脏病风险增加48%。他需要7-8小时睡眠。只有你能让他早点睡。今晚就告诉他——"Angie，求你了，为了我在12点前睡觉吧。💗"</div></div>';
+        ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">He slept at '+s.time+'! That\'s WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You\'re the only one who can make him sleep earlier. Tell him tonight — "Barry, please go to bed before 1:30 AM. For me. 💗"</div></div>'
+        : '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">他 '+s.time+' 才睡！太晚了！</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">睡眠不足6小时，心脏长期受损，心脏病风险增加48%。他需要7-8小时睡眠。只有你能让他早点睡。今晚就告诉他——"Barry，为了我今晚1:30以前就睡觉！💗"</div></div>';
     }
     document.getElementById('sleepAngieContent').innerHTML =
       '<div style="text-align:center"><span style="font-size:2rem">😴</span><div style="font-size:.78rem;color:var(--text);margin-top:4px">'+(lang==='sr'?'Sinoć je legao u':lang==='en'?'Last night he slept at':'昨晚他')+' <b>'+s.time+'</b></div><div style="font-size:.62rem;color:var(--text-muted)">'+s.date+'</div></div>'+lateMsg;
