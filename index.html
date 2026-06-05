@@ -864,6 +864,15 @@ body {
         <div class="mood-history" id="moodHistory"></div>
       </div>
     </div>
+    <!-- Virtual Garden (right after mood!) -->
+    <div class="card garden-card" id="gardenCard">
+      <h3><span id="garden-title"></span></h3>
+      <span class="garden-plant" id="gardenPlant">🌰</span>
+      <div class="garden-soil"></div>
+      <div class="garden-pot"></div>
+      <div class="garden-msg" id="gardenMsg"></div>
+      <div class="garden-streak-hint" id="gardenHint"></div>
+    </div>
     <!-- One-line Diary -->
     <div class="card" id="diaryCard">
       <h3><span id="diary-title">Today's Note</span></h3>
@@ -878,15 +887,6 @@ body {
     <div class="forecast-card" id="forecastCard">
       <span class="fc-icon">🔮</span>
       <span id="forecastText"></span>
-    </div>
-    <!-- Virtual Garden -->
-    <div class="card garden-card" id="gardenCard">
-      <h3><span id="garden-title">Our Garden</span></h3>
-      <span class="garden-plant" id="gardenPlant">🌰</span>
-      <div class="garden-soil"></div>
-      <div class="garden-pot"></div>
-      <div class="garden-msg" id="gardenMsg"></div>
-      <div class="garden-streak-hint" id="gardenHint"></div>
     </div>
     <!-- Relationship Tips (Anđela only) -->
     <div class="rel-tip-card" id="relTipCard" style="display:none">
@@ -1536,10 +1536,15 @@ async function pushSharedDiaryToGitHub(diaryData) {
 }
 
 function sharedDiaryNav(dir) {
-  sharedDiaryViewDate.setDate(sharedDiaryViewDate.getDate() + dir);
-  renderSharedDiary();
+  var panel=document.getElementById('panel-diary');panel.style.opacity='0.4';panel.style.transition='opacity .12s';
+  sharedDiaryViewDate.setDate(sharedDiaryViewDate.getDate()+dir);
+  requestAnimationFrame(function(){renderSharedDiary();requestAnimationFrame(function(){panel.style.opacity='1';});});
 }
-function sharedDiaryGoToday() { sharedDiaryViewDate = new Date(); renderSharedDiary(); }
+function sharedDiaryGoToday() {
+  var panel=document.getElementById('panel-diary');panel.style.opacity='0.4';panel.style.transition='opacity .12s';
+  sharedDiaryViewDate=new Date();
+  requestAnimationFrame(function(){renderSharedDiary();requestAnimationFrame(function(){panel.style.opacity='1';});});
+}
 
 async function saveSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
@@ -2476,8 +2481,8 @@ function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={re
    NAVIGATION
    ================================================================ */
 var _monthChangeTimer=null;
-function changeMonth(d){if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},200);viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}requestAnimationFrame(function(){renderAll();});}
-function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();requestAnimationFrame(function(){renderAll();});}
+function changeMonth(d){if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},250);var cal=document.getElementById('calendarContainer');cal.style.opacity='0.3';cal.style.transition='opacity .1s';viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}requestAnimationFrame(function(){renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());requestAnimationFrame(function(){cal.style.opacity='1';});});}
+function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();var cal=document.getElementById('calendarContainer');cal.style.opacity='0.3';cal.style.transition='opacity .1s';requestAnimationFrame(function(){renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());requestAnimationFrame(function(){cal.style.opacity='1';});});}
 (function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
@@ -2567,8 +2572,9 @@ function checkHug() {
   try {
     var hug = JSON.parse(localStorage.getItem('shared-hug'));
     if (!hug) return null;
-    if (Date.now() - hug.time > 86400000) return null; // Expired after 24h
-    if (hug.from === activeProfile) return null; // Don't show your own hug
+    // Expired after 3 minutes (show briefly, then return to send mode)
+    if (Date.now() - hug.time > 180000) { localStorage.removeItem('shared-hug'); return null; }
+    if (hug.from === activeProfile) return null;
     return hug;
   } catch(e) { return null; }
 }
@@ -2576,15 +2582,15 @@ function renderHug() {
   var hug = checkHug();
   var card = document.getElementById('hugContent');
   document.getElementById('hug-title').textContent = lang==='sr'?'🤗 Virtuelni zagrljaj':lang==='en'?'🤗 Virtual Hug':'🤗 隔空拥抱';
+  var todayKey=fmtDate(new Date()); var count=parseInt(sessionStorage.getItem('hug-count-'+todayKey)||'0'); var remaining=2-count;
   if (hug) {
     var sender = hug.from === 'andjela' ? '🌸 Anđela' : '👦 Barry';
     var time = new Date(hug.time);
     var timeStr = String(time.getHours()).padStart(2,'0') + ':' + String(time.getMinutes()).padStart(2,'0');
-    card.innerHTML = '<div class="hug-received"><span class="hug-icon">🤗</span><div class="hug-text">'+sender+' '+(lang==='sr'?'te je upravo zagrlio/la! 💫':lang==='en'?'just hugged you! 💫':'刚刚抱了你！💫')+'</div><div class="hug-time">'+timeStr+'</div></div>';
-    setTimeout(function(){ localStorage.removeItem('shared-hug'); renderHug(); }, 30000);
+    card.innerHTML = '<div class="hug-received"><span class="hug-icon">🤗</span><div class="hug-text">'+sender+' '+(lang==='sr'?'te je zagrlio/la! 💫':lang==='en'?'hugged you! 💫':'抱了你！💫')+'</div><div class="hug-time">'+timeStr+'</div></div>';
   } else {
-    document.getElementById('hug-btn-text').textContent = lang==='sr'?'Pošalji zagrljaj':lang==='en'?'Send a Hug':'发送拥抱';
-    card.innerHTML = '<button class="hug-btn" onclick="sendHug()">🤗 <span id="hug-btn-text">'+(lang==='sr'?'Pošalji zagrljaj':lang==='en'?'Send a Hug':'发送拥抱')+'</span></button>';
+    var label = (lang==='sr'?'Pošalji zagrljaj':lang==='en'?'Send a Hug':'发送拥抱') + (remaining>0?' ('+remaining+'/'+(lang==='sr'?'2 preostalo':lang==='en'?'2 left':'剩2次')+')':' ('+(lang==='sr'?'iskorišćeno':lang==='en'?'used up':'已用完')+')');
+    card.innerHTML = '<button class="hug-btn" onclick="sendHug()" '+(remaining<=0?'disabled style="opacity:.5"':'')+'>🤗 '+label+'</button>';
   }
 }
 
