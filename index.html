@@ -1706,26 +1706,32 @@ function renderSharedDiaryHistory(allData) {
 async function translateText(text, from, to) {
   if (!text || from===to) return text;
   try {
-    var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+from+'&tl='+to+'&dt=t&q='+encodeURIComponent(text);
+    var sl=from==='zh-CN'?'zh':from==='sr'?'sr':'en';
+    var tl=to==='zh-CN'?'zh':to==='sr'?'sr':'en';
+    var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+sl+'&tl='+tl+'&dt=t&q='+encodeURIComponent(text);
     var resp=await fetch(url);var data=await resp.json();
-    if(data&&data[0]){return data[0].map(function(s){return s[0];}).join('');}
-  }catch(e){}
+    if(data&&data[0]){var result=data[0].map(function(s){return s[0];}).join('');if(result&&result!==text)return result;}
+  }catch(e){console.log('Translate error:',e);}
   return text;
 }
 async function autoTranslatePartnerEntry() {
-  var viewerLang=lang==='sr'?'sr':lang==='zh-CN'?'zh-CN':'en';
-  var partnerLang=activeProfile==='andjela'?'zh-CN':'sr'; // Barry→zh, Anđela→sr
+  var viewerLang=lang||'sr';
+  var partnerLang=activeProfile==='andjela'?'sr':'zh-CN';
   if(viewerLang===partnerLang)return;
   var fromCode=partnerLang==='zh-CN'?'zh-CN':'sr';
   var toCode=viewerLang==='zh-CN'?'zh-CN':'sr';
   var answers=document.querySelectorAll('.sd-partner-a[data-original]');
+  if(answers.length===0)return;
   for(var i=0;i<answers.length;i++){
     var el=answers[i];var orig=el.getAttribute('data-original');
-    if(!el.getAttribute('data-translated')&&orig){
+    if(!el.getAttribute('data-translated')&&orig&&orig.length>5){
       el.setAttribute('data-translated','1');
-      el.style.opacity='0.6';el.textContent='⏳ '+(lang==='sr'?'Prevodim...':lang==='en'?'Translating...':'翻译中...');
+      var before=el.textContent;
+      el.style.opacity='0.5';el.textContent='⏳ '+(lang==='sr'?'Prevodim...':lang==='en'?'Translating...':'翻译中...');
       var translated=await translateText(orig,fromCode,toCode);
-      el.style.opacity='1';el.textContent=translated||orig;
+      if(translated&&translated!==orig&&translated!==before){
+        el.style.opacity='1';el.textContent=translated+' <span style="font-size:.6rem;color:var(--gold)">('+(lang==='sr'?'automatski prevedeno':lang==='en'?'auto-translated':'自动翻译')+')</span>';
+      }else{el.style.opacity='1';el.textContent=orig;}
     }
   }
 }
