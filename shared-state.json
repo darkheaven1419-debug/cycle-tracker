@@ -39,15 +39,22 @@
       "time": 1780692493970
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "barry",
+    "time": 1780718129915
+  },
   "songs": {
     "barry": null,
     "andjela": null
   },
-  "sleep": null,
+  "sleep": {
+    "time": "03:55",
+    "date": "2026-06-06",
+    "saved": 1780718145828
+  },
   "checkins": {
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780718125678
+  "updated": 1780718145828
 }
