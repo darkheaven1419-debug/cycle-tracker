@@ -228,9 +228,11 @@ body {
 .cal-nav .today-pill { font-size:.7rem; font-weight:700; color:var(--love); padding:6px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:44px; border:none; cursor:pointer; flex-shrink:0; transition:transform .12s; }
 .cal-nav .today-pill:active { transform:scale(.92); }
 
-.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s; contain:layout style; will-change:transform; transform:translateZ(0); }
+.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; transition:transform .28s cubic-bezier(.4,0,.2,1),opacity .28s; contain:layout style; will-change:transform; transform:translateZ(0); }
 .calendar.slide-left { transform:translateX(-30px);opacity:0; }
 .calendar.slide-right { transform:translateX(30px);opacity:0; }
+.calendar.pulse-in { animation:calPulse .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes calPulse { 0%{transform:scale(.94);opacity:.4} 100%{transform:scale(1);opacity:1} }
 .calendar:hover { box-shadow:var(--shadow-md); }
 .weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
@@ -1789,76 +1791,31 @@ function doImport(text) {
 // ==============================
 async function renderSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
-  // Labels
-  document.getElementById('sd-my-title').textContent = lang==='sr'?'Moj osvrt':lang==='en'?'My Reflection':'我的总结';
-  document.getElementById('sd-my-hint').textContent = lang==='sr'?'Iskreno o danu — što više detalja, to bolje 💫':lang==='en'?'Be honest about your day — the more detail the better 💫':'坦诚地回顾一天——越详细越好 💫';
-  document.getElementById('sd-l-happy').textContent = lang==='sr'?'Šta me je danas obradovalo':lang==='en'?'What made me happy today':'今天让我开心的事';
-  document.getElementById('sd-l-uncomf').textContent = lang==='sr'?'Šta mi je malo zasmetalo':lang==='en'?'What felt a little uncomfortable':'让我有点不舒服的事';
-  document.getElementById('sd-l-thanks').textContent = lang==='sr'?'Želim da ti se zahvalim za...':lang==='en'?'I want to thank you for...':'我想感谢你的...';
-  document.getElementById('sd-l-wish').textContent = lang==='sr'?'Voleo/la bih da zajedno poradimo na...':lang==='en'?'I hope we can work on...':'我希望我们能一起改进的...';
-  document.getElementById('sd-save-text').textContent = lang==='sr'?'Sačuvaj i pogledaj partnerov':lang==='en'?'Save & View Partner\'s':'保存并查看伴侣的';
-  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'Sačuvaj svoj unos pre nego što vidiš partnerov':lang==='en'?'Save your entry to unlock your partner\'s':'写完才能看伴侣的哦';
-  document.getElementById('sd-partner-title').textContent = lang==='sr'?'Partnerov osvrt':lang==='en'?'Partner\'s Reflection':'伴侣的总结';
-  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'☁️ Automatska sinhronizacija':lang==='en'?'☁️ Auto-sync on':'☁️ 自动同步中') : (lang==='sr'?'📤 Izvezi → pošalji partneru → Partner uveze':lang==='en'?'📤 Export → send → Partner imports':'📤 导出 → 发给伴侣 → 导入');
-  document.getElementById('sd-export').textContent = lang==='sr'?'Podeli':lang==='en'?'Share':'分享';
-  document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi':lang==='en'?'Import':'导入';
-  document.getElementById('sd-history-title').textContent = lang==='sr'?'Vremenska linija':lang==='en'?'Timeline':'时间线';
-  document.getElementById('sd-saved-text').textContent = lang==='sr'?'Sačuvano':'已保存';
-  document.getElementById('partner-locked-text').textContent = lang==='sr'?'Prvo sačuvaj svoj unos da otključaš partnerov 💌':lang==='en'?'Save your entry first to unlock your partner\'s 💌':'先保存你的日记才能解锁伴侣的哦 💌';
-  document.getElementById('sd-sync-icon').textContent = getGitHubToken() ? '☁️' : '';
 
-  // Try pull from GitHub first
-  if (getGitHubToken()) await pullPartnerEntry(dateKey);
-
+  // === PHASE 1: instant sync render from localStorage (no await!) ===
   var allData = loadSharedDiaryData();
   var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   var partnerEntry = allData[dateKey] && allData[dateKey][partnerProfile];
 
-  // Fill my entry fields
+  // Fill my entry fields instantly
   document.getElementById('sd-happy').value = myEntry ? (myEntry.happy || '') : '';
   document.getElementById('sd-uncomf').value = myEntry ? (myEntry.uncomf || '') : '';
   document.getElementById('sd-thanks').value = myEntry ? (myEntry.thanks || '') : '';
   document.getElementById('sd-wish').value = myEntry ? (myEntry.wish || '') : '';
-  // Update char counters
   ['happy','uncomf','thanks','wish'].forEach(function(f) {
     var el = document.getElementById('sdc-'+f); if (el) el.textContent = (document.getElementById('sd-'+f).value || '').length;
   });
 
-  // Partner card — show locked or unlocked
+  // Partner card — render from localStorage instantly
   var lockedEl = document.getElementById('partnerLocked');
   var contentEl = document.getElementById('sharedDiaryPartnerContent');
   var translateBtn = document.getElementById('translateBtnSm');
-
   if (myEntry) {
     lockedEl.style.display = 'none';
     contentEl.style.display = '';
     contentEl.classList.add('partner-card-unlocked');
-    if (partnerEntry) {
-      var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
-      var timeStr = '';
-      if (partnerEntry.time) { var t = new Date(partnerEntry.time); timeStr = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0'); }
-      var html = '<div style="font-size:.62rem;color:var(--gold);margin-bottom:8px">' + partnerName + (timeStr?' · '+timeStr:'') + '</div>';
-      var questions = [
-        {q:lang==='sr'?'💝 Obradovalo':lang==='en'?'💝 Happy':'💝 开心的事', a:partnerEntry.happy},
-        {q:lang==='sr'?'🤔 Zasmetalo':lang==='en'?'🤔 Uncomfortable':'🤔 不舒服的事', a:partnerEntry.uncomf},
-        {q:lang==='sr'?'🙏 Zahvalnost':lang==='en'?'🙏 Thanks':'🙏 感谢', a:partnerEntry.thanks},
-        {q:lang==='sr'?'💪 Da poradimo':lang==='en'?'💪 To improve':'💪 希望改进', a:partnerEntry.wish}
-      ];
-      var origTexts=[];
-      questions.forEach(function(item) {
-        if (item.a) { origTexts.push(item.a); html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a" data-original="'+item.a.replace(/"/g,'&quot;').replace(/'/g,'&#39;')+'" id="sdp-'+origTexts.length+'">'+item.a+'</div></div>'; }
-      });
-      if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
-        html += '<div class="sd-empty">'+(lang==='sr'?'Nema unosa':lang==='en'?'No entry':'没有记录')+'</div>';
-      }
-      contentEl.innerHTML = html;
-      if (origTexts.length > 0) { translateBtn.style.display = ''; translateBtn.textContent = '🌐'; }
-      else { translateBtn.style.display = 'none'; }
-    } else {
-      contentEl.innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.':lang==='en'?'Your partner hasn\'t written their reflection for this day yet — or it hasn\'t synced.':'伴侣还没写这一天的总结——或者还没同步过来。')+'</div></div>';
-      translateBtn.style.display = 'none';
-    }
+    renderPartnerContent(partnerEntry, partnerProfile, contentEl, translateBtn);
   } else {
     lockedEl.style.display = '';
     contentEl.style.display = 'none';
@@ -1866,7 +1823,59 @@ async function renderSharedDiary() {
     translateBtn.style.display = 'none';
   }
 
+  // Timeline history from localStorage
   renderSharedDiaryHistory(allData);
+
+  // === PHASE 2: async pull from GitHub (won't block UI) ===
+  if (getGitHubToken()) {
+    pullPartnerEntry(dateKey).then(function() {
+      // If new data arrived, refresh relevant parts
+      var freshData = loadSharedDiaryData();
+      var freshMy = freshData[dateKey] && freshData[dateKey][activeProfile];
+      var freshPartner = freshData[dateKey] && freshData[dateKey][partnerProfile];
+      // Only update if partner data actually changed
+      if (JSON.stringify(freshPartner) !== JSON.stringify(partnerEntry)) {
+        document.getElementById('sd-happy').value = freshMy ? (freshMy.happy || '') : '';
+        document.getElementById('sd-uncomf').value = freshMy ? (freshMy.uncomf || '') : '';
+        document.getElementById('sd-thanks').value = freshMy ? (freshMy.thanks || '') : '';
+        document.getElementById('sd-wish').value = freshMy ? (freshMy.wish || '') : '';
+        if (freshMy) {
+          lockedEl.style.display = 'none';
+          contentEl.style.display = '';
+          renderPartnerContent(freshPartner, partnerProfile, contentEl, translateBtn);
+        }
+        renderSharedDiaryHistory(freshData);
+      }
+    });
+  }
+}
+
+function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translateBtn) {
+  if (partnerEntry) {
+    var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+    var timeStr = '';
+    if (partnerEntry.time) { var t = new Date(partnerEntry.time); timeStr = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0'); }
+    var html = '<div style="font-size:.62rem;color:var(--gold);margin-bottom:8px">' + partnerName + (timeStr?' · '+timeStr:'') + '</div>';
+    var questions = [
+      {q:lang==='sr'?'💝 Obradovalo':lang==='en'?'💝 Happy':'💝 开心的事', a:partnerEntry.happy},
+      {q:lang==='sr'?'🤔 Zasmetalo':lang==='en'?'🤔 Uncomfortable':'🤔 不舒服的事', a:partnerEntry.uncomf},
+      {q:lang==='sr'?'🙏 Zahvalnost':lang==='en'?'🙏 Thanks':'🙏 感谢', a:partnerEntry.thanks},
+      {q:lang==='sr'?'💪 Da poradimo':lang==='en'?'💪 To improve':'💪 希望改进', a:partnerEntry.wish}
+    ];
+    var origTexts=[];
+    questions.forEach(function(item) {
+      if (item.a) { origTexts.push(item.a); html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a" data-original="'+item.a.replace(/"/g,'&quot;').replace(/'/g,'&#39;')+'" id="sdp-'+origTexts.length+'">'+item.a+'</div></div>'; }
+    });
+    if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
+      html += '<div class="sd-empty">'+(lang==='sr'?'Nema unosa':lang==='en'?'No entry':'没有记录')+'</div>';
+    }
+    contentEl.innerHTML = html;
+    if (origTexts.length > 0) { translateBtn.style.display = ''; translateBtn.textContent = '🌐'; }
+    else { translateBtn.style.display = 'none'; }
+  } else {
+    contentEl.innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.':lang==='en'?'Your partner hasn\'t written their reflection for this day yet — or it hasn\'t synced.':'伴侣还没写这一天的总结——或者还没同步过来。')+'</div></div>';
+    translateBtn.style.display = 'none';
+  }
 }
 
 // ==============================
@@ -1997,8 +2006,28 @@ async function translatePartnerEntries() {
 // ==============================
 // INIT
 // ==============================
+function renderDiaryLabels() {
+  document.getElementById('sd-my-title').textContent = lang==='sr'?'Moj osvrt':lang==='en'?'My Reflection':'我的总结';
+  document.getElementById('sd-my-hint').textContent = lang==='sr'?'Iskreno o danu — što više detalja, to bolje 💫':lang==='en'?'Be honest about your day — the more detail the better 💫':'坦诚地回顾一天——越详细越好 💫';
+  document.getElementById('sd-l-happy').textContent = lang==='sr'?'Šta me je danas obradovalo':lang==='en'?'What made me happy today':'今天让我开心的事';
+  document.getElementById('sd-l-uncomf').textContent = lang==='sr'?'Šta mi je malo zasmetalo':lang==='en'?'What felt a little uncomfortable':'让我有点不舒服的事';
+  document.getElementById('sd-l-thanks').textContent = lang==='sr'?'Želim da ti se zahvalim za...':lang==='en'?'I want to thank you for...':'我想感谢你的...';
+  document.getElementById('sd-l-wish').textContent = lang==='sr'?'Voleo/la bih da zajedno poradimo na...':lang==='en'?'I hope we can work on...':'我希望我们能一起改进的...';
+  document.getElementById('sd-save-text').textContent = lang==='sr'?'Sačuvaj i pogledaj partnerov':lang==='en'?'Save & View Partner\'s':'保存并查看伴侣的';
+  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'Sačuvaj svoj unos pre nego što vidiš partnerov':lang==='en'?'Save your entry to unlock your partner\'s':'写完才能看伴侣的哦';
+  document.getElementById('sd-partner-title').textContent = lang==='sr'?'Partnerov osvrt':lang==='en'?'Partner\'s Reflection':'伴侣的总结';
+  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'☁️ Automatska sinhronizacija':lang==='en'?'☁️ Auto-sync on':'☁️ 自动同步中') : (lang==='sr'?'📤 Izvezi → pošalji partneru → Partner uveze':lang==='en'?'📤 Export → send → Partner imports':'📤 导出 → 发给伴侣 → 导入');
+  document.getElementById('sd-export').textContent = lang==='sr'?'Podeli':lang==='en'?'Share':'分享';
+  document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi':lang==='en'?'Import':'导入';
+  document.getElementById('sd-history-title').textContent = lang==='sr'?'Vremenska linija':lang==='en'?'Timeline':'时间线';
+  document.getElementById('sd-saved-text').textContent = lang==='sr'?'Sačuvano':'已保存';
+  document.getElementById('partner-locked-text').textContent = lang==='sr'?'Prvo sačuvaj svoj unos da otključaš partnerov 💌':lang==='en'?'Save your entry first to unlock your partner\'s 💌':'先保存你的日记才能解锁伴侣的哦 💌';
+  document.getElementById('sd-sync-icon').textContent = getGitHubToken() ? '☁️' : '';
+}
+
 function initSharedDiaryTab() {
   sharedDiaryViewDate = new Date();
+  renderDiaryLabels();
   renderDateStrip();
   renderSharedDiary();
 }
@@ -2768,8 +2797,8 @@ function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={re
    NAVIGATION
    ================================================================ */
 var _monthChangeTimer=null;
-function changeMonth(d){if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},300);var cal=document.getElementById('calendarContainer');cal.classList.add(d>0?'slide-left':'slide-right');viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}setTimeout(function(){requestAnimationFrame(function(){renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());requestAnimationFrame(function(){cal.classList.remove('slide-left','slide-right');});});},200);}
-function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();var cal=document.getElementById('calendarContainer');cal.style.opacity='0.3';cal.style.transition='opacity .1s';requestAnimationFrame(function(){renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());requestAnimationFrame(function(){cal.style.opacity='1';});});}
+function changeMonth(d){if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},300);var cal=document.getElementById('calendarContainer');cal.classList.add(d>0?'slide-left':'slide-right');viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}setTimeout(function(){renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());requestAnimationFrame(function(){cal.classList.remove('slide-left','slide-right');});},280);}
+function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();var cal=document.getElementById('calendarContainer');cal.classList.add('pulse-in');renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());setTimeout(function(){cal.classList.remove('pulse-in');},350);}
 (function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
