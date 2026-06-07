@@ -645,13 +645,33 @@ body {
 .partner-diary-card:hover { box-shadow:var(--shadow-md); }
 
 /* Connection Features */
-.hug-btn { width:100%; padding:16px; border:none; border-radius:var(--radius); background:linear-gradient(135deg,var(--love),#E898A8); color:#fff; font-size:1.2rem; font-weight:700; cursor:pointer; font-family:var(--font); box-shadow:0 4px 20px rgba(196,90,107,.35); transition:all .2s; }
-.hug-btn:active { transform:scale(.92); }
-.hug-received { text-align:center; padding:16px; animation:hugBounce .6s cubic-bezier(.34,1.56,.64,1); }
-@keyframes hugBounce { 0%{transform:scale(.5);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+.hug-card-wrap { position:relative; overflow:hidden; }
+.hug-btn { width:100%; padding:16px; border:none; border-radius:var(--radius); background:linear-gradient(135deg,var(--love),#E898A8); color:#fff; font-size:1.1rem; font-weight:700; cursor:pointer; font-family:var(--font); box-shadow:0 4px 20px rgba(196,90,107,.35); transition:all .3s; position:relative; }
+.hug-btn:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(196,90,107,.45); }
+.hug-btn:active { transform:scale(.94); }
+.hug-btn.sending { animation:hugPulse .6s ease-out; pointer-events:none; }
+@keyframes hugPulse { 0%{transform:scale(1)} 40%{transform:scale(1.08)} 100%{transform:scale(1)} }
+.hug-received { text-align:center; padding:20px 16px; animation:hugBounce .6s cubic-bezier(.34,1.56,.64,1); background:linear-gradient(135deg,var(--rose-light),var(--card)); border-radius:var(--radius); }
+@keyframes hugBounce { 0%{transform:scale(.5);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+.hug-icon-wrap { display:inline-block; animation:hugHeartbeat 1.2s ease-in-out infinite; }
+@keyframes hugHeartbeat { 0%,100%{transform:scale(1)} 15%{transform:scale(1.25)} 30%{transform:scale(1)} 45%{transform:scale(1.18)} 60%{transform:scale(1)} }
 .hug-icon { font-size:3rem; display:block; }
-.hug-text { font-size:.82rem; color:var(--love); font-weight:600; margin-top:4px; }
-.hug-time { font-size:.62rem; color:var(--text-muted); }
+.hug-text { font-size:.84rem; color:var(--love); font-weight:700; margin-top:6px; }
+.hug-time { font-size:.62rem; color:var(--text-muted); margin-top:2px; }
+.hug-back-btn { margin-top:12px; padding:10px 24px; border-radius:24px; border:none; background:var(--love); color:#fff; font-weight:600; font-size:.76rem; cursor:pointer; font-family:var(--font); transition:all .2s; box-shadow:0 2px 10px rgba(196,90,107,.25); }
+.hug-back-btn:active { transform:scale(.92); }
+.hug-back-btn:disabled { opacity:.5; cursor:not-allowed; }
+.hug-dismiss { font-size:.58rem; color:var(--text-muted); cursor:pointer; margin-top:6px; display:inline-block; background:none; border:none; font-family:var(--font); padding:4px 8px; }
+.hug-sent-state { text-align:center; padding:20px 16px; animation:fadeIn .4s; }
+.hug-sent-state .hss-icon { font-size:2rem; display:block; margin-bottom:4px; filter:grayscale(.3); }
+.hug-sent-state .hss-text { font-size:.74rem; color:var(--text-muted); }
+.hug-hearts-row { display:flex; justify-content:center; gap:4px; margin-bottom:10px; }
+.hug-hearts-row .hh-heart { font-size:1rem; transition:all .3s; }
+.hug-hearts-row .hh-heart.used { opacity:.25; filter:grayscale(1); }
+.hug-streak-badge { display:inline-flex; align-items:center; gap:4px; font-size:.64rem; color:var(--gold); font-weight:600; margin-bottom:8px; background:rgba(212,167,106,.1); padding:4px 12px; border-radius:20px; }
+/* Floating hearts animation */
+.floating-heart { position:absolute; pointer-events:none; z-index:10; animation:floatUp 1.2s ease-out forwards; font-size:1.4rem; }
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)} 100%{opacity:0;transform:translateY(-120px) scale(.4) rotate(30deg)} }
 .gratitude-card { background:linear-gradient(135deg,#FFF8E7,#FFF0F3); border:1px solid var(--gold); border-radius:var(--radius); padding:14px; margin-bottom:10px; }
 [data-theme="dark"] .gratitude-card { background:linear-gradient(135deg,#2A2218,#2A1E22); }
 .gratitude-input-row { display:flex; gap:6px; }
@@ -956,7 +976,7 @@ body {
       <div class="rel-tip-text" id="relTipText"></div>
     </div>
     <!-- Virtual Hug -->
-    <div class="card" id="hugCard">
+    <div class="card hug-card-wrap" id="hugCard">
       <h3><span id="hug-title"></span></h3>
       <div id="hugContent"><button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 <span id="hug-btn-text">Send a Hug</span></button></div>
     </div>
@@ -2824,40 +2844,141 @@ const REL_TIPS = {
    NEW FEATURES — Hug / Gratitude / Check-in / Song
    ================================================================ */
 
-// Virtual Hug
-function sendHug() {
+// ================================================================
+// Virtual Hug — redesigned: heartbeat, hug back, streaks, float hearts
+// ================================================================
+const HUG_EXPIRY_MS = 86400000; // 24 hours
+
+// Spawn floating hearts animation
+function spawnFloatingHearts(container) {
+  var hearts = ['💕','💖','💗','💝','✨','💫'];
+  for (var i = 0; i < 8; i++) {
+    (function(idx) {
+      setTimeout(function() {
+        var h = document.createElement('span');
+        h.className = 'floating-heart';
+        h.textContent = hearts[idx % hearts.length];
+        h.style.left = (20 + Math.random() * 60) + '%';
+        h.style.bottom = '20px';
+        container.appendChild(h);
+        setTimeout(function() { if (h.parentNode) h.remove(); }, 1300);
+      }, idx * 80);
+    })(i);
+  }
+}
+
+// Hug streak: count consecutive days with hug exchanged
+function getHugStreak() {
+  var allData = loadSharedDiaryData();
+  var today = new Date(); var streak = 0;
+  for (var i = 0; i < 365; i++) {
+    var d = new Date(today); d.setDate(d.getDate() - i);
+    var key = fmtDate(d); var day = allData[key];
+    // Both partners must have sent a hug
+    if (day && day['barry'] && day['barry'].hug && day['andjela'] && day['andjela'].hug) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+function sendHug(hugBack) {
   var todayKey = fmtDate(new Date());
-  var count = parseInt(sessionStorage.getItem('hug-count-'+todayKey)||'0');
-  if (count >= 2) { toast(lang==='sr'?'Danas si već poslao/la 2 zagrljaja — probaj sutra! 🤗':lang==='en'?'You already sent 2 hugs today — try tomorrow! 🤗':'今天已经抱了2次——明天再来！🤗'); return; }
-  count++; sessionStorage.setItem('hug-count-'+todayKey, count);
+  var count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
+  if (count >= 2) { toast(lang === 'sr' ? 'Već si poslao/la 2 zagrljaja danas — probaj sutra! 🤗' : lang === 'en' ? 'You already sent 2 hugs today — try tomorrow! 🤗' : '今天已经抱了2次——明天再来！🤗'); return; }
+  count++;
+  sessionStorage.setItem('hug-count-' + todayKey, count);
+
   var hug = { from: activeProfile, time: Date.now() };
   localStorage.setItem('shared-hug', JSON.stringify(hug));
+
+  // Also store in shared diary for streak tracking
+  var allData = loadSharedDiaryData();
+  if (!allData[todayKey]) allData[todayKey] = {};
+  if (!allData[todayKey][activeProfile]) allData[todayKey][activeProfile] = {};
+  allData[todayKey][activeProfile].hug = { time: Date.now() };
+  saveSharedDiaryData(allData);
+
+  // Animate
+  var btn = document.getElementById('hugSendBtn');
+  if (btn) { btn.classList.add('sending'); setTimeout(function() { btn.classList.remove('sending'); }, 600); }
+
+  // Floating hearts
+  var card = document.getElementById('hugCard');
+  if (card) spawnFloatingHearts(card);
+
   renderHug();
-  toast('🤗 ' + (activeProfile==='barry'?(lang==='sr'?'Poslao si joj zagrljaj! ('+count+'/2)':lang==='en'?'Hug sent! ('+count+'/2)':'拥抱已发送！('+count+'/2)'):(lang==='sr'?'Poslala si mu zagrljaj! ('+count+'/2)':lang==='en'?'Hug sent! ('+count+'/2)':'拥抱已发送！('+count+'/2)')));
+  var senderLabel = activeProfile === 'barry' ? (lang === 'sr' ? 'Poslao si joj zagrljaj!' : lang === 'en' ? 'Hug sent!' : '拥抱已发送！') : (lang === 'sr' ? 'Poslala si mu zagrljaj!' : lang === 'en' ? 'Hug sent!' : '拥抱已发送！');
+  toast('🤗 ' + senderLabel + ' (' + count + '/2)');
 }
+
 function checkHug() {
   try {
     var hug = JSON.parse(localStorage.getItem('shared-hug'));
     if (!hug) return null;
-    // Expired after 3 minutes (show briefly, then return to send mode)
-    if (Date.now() - hug.time > 180000) { localStorage.removeItem('shared-hug'); return null; }
+    // 24-hour expiry
+    if (Date.now() - hug.time > HUG_EXPIRY_MS) { localStorage.removeItem('shared-hug'); return null; }
     if (hug.from === activeProfile) return null;
     return hug;
-  } catch(e) { return null; }
+  } catch (e) { return null; }
 }
+
+function dismissHug() {
+  localStorage.removeItem('shared-hug');
+  renderHug();
+}
+
 function renderHug() {
   var hug = checkHug();
   var card = document.getElementById('hugContent');
-  document.getElementById('hug-title').textContent = lang==='sr'?'🤗 Virtuelni zagrljaj':lang==='en'?'🤗 Virtual Hug':'🤗 隔空拥抱';
-  var todayKey=fmtDate(new Date()); var count=parseInt(sessionStorage.getItem('hug-count-'+todayKey)||'0'); var remaining=2-count;
+  var title = document.getElementById('hug-title');
+  title.textContent = lang === 'sr' ? '🤗 Virtuelni zagrljaj' : lang === 'en' ? '🤗 Virtual Hug' : '🤗 隔空拥抱';
+  var todayKey = fmtDate(new Date());
+  var count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
+  var remaining = 2 - count;
+  var streak = getHugStreak();
+
   if (hug) {
+    // RECEIVED STATE — beautiful card
     var sender = hug.from === 'andjela' ? '🌸 Anđela' : '👦 Barry';
     var time = new Date(hug.time);
-    var timeStr = String(time.getHours()).padStart(2,'0') + ':' + String(time.getMinutes()).padStart(2,'0');
-    card.innerHTML = '<div class="hug-received"><span class="hug-icon">🤗</span><div class="hug-text">'+sender+' '+(lang==='sr'?'te je zagrlio/la! 💫':lang==='en'?'hugged you! 💫':'抱了你！💫')+'</div><div class="hug-time">'+timeStr+'</div></div>';
+    var timeStr = String(time.getHours()).padStart(2, '0') + ':' + String(time.getMinutes()).padStart(2, '0');
+
+    var html = '<div class="hug-received">';
+    if (streak > 1) html += '<div class="hug-streak-badge">🔥 ' + (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') + '</div>';
+    html += '<span class="hug-icon-wrap"><span class="hug-icon">🤗</span></span>';
+    html += '<div class="hug-text">' + sender + ' ' + (lang === 'sr' ? 'te zagrlio/la! 💫' : lang === 'en' ? 'hugged you! 💫' : '抱了你！💫') + '</div>';
+    html += '<div class="hug-time">' + timeStr + '</div>';
+    html += '<button class="hug-back-btn" onclick="sendHug(true)" id="hugBackBtn">💝 ' + (lang === 'sr' ? 'Uzvrati zagrljaj' : lang === 'en' ? 'Hug back' : '回抱一个') + '</button>';
+    html += '<div><button class="hug-dismiss" onclick="dismissHug()">' + (lang === 'sr' ? '✕ zatvori' : lang === 'en' ? '✕ dismiss' : '✕ 关闭') + '</button></div>';
+    html += '</div>';
+    card.innerHTML = html;
+
+    // Auto-spawn hearts when receiving
+    var hugCard = document.getElementById('hugCard');
+    if (hugCard) spawnFloatingHearts(hugCard);
+  } else if (count > 0) {
+    // SENT STATE — waiting for partner
+    var sentHearts = '';
+    for (var i = 0; i < 2; i++) {
+      sentHearts += '<span class="hh-heart' + (i >= remaining ? ' used' : '') + '">' + (i < count ? '❤️' : '🤍') + '</span>';
+    }
+    var html = '<div class="hug-sent-state">';
+    html += '<div class="hug-hearts-row">' + sentHearts + '</div>';
+    html += '<span class="hss-icon">📬</span>';
+    html += '<div class="hss-text">' + (lang === 'sr' ? 'Zagrljaj poslat! Čekam odgovor... 💌' : lang === 'en' ? 'Hug sent! Waiting for response... 💌' : '拥抱已发送！等待回应... 💌') + '</div>';
+    html += '<button class="hug-back-btn" onclick="sendHug()" style="margin-top:8px">🤗 ' + (lang === 'sr' ? 'Pošalji još jedan (' + remaining + ')' : lang === 'en' ? 'Send another (' + remaining + ')' : '再抱一次 (' + remaining + ')') + '</button>';
+    html += '</div>';
+    card.innerHTML = html;
   } else {
-    var label = (lang==='sr'?'Pošalji zagrljaj':lang==='en'?'Send a Hug':'发送拥抱') + (remaining>0?' ('+remaining+'/'+(lang==='sr'?'2 preostalo':lang==='en'?'2 left':'剩2次')+')':' ('+(lang==='sr'?'iskorišćeno':lang==='en'?'used up':'已用完')+')');
-    card.innerHTML = '<button class="hug-btn" onclick="sendHug()" '+(remaining<=0?'disabled style="opacity:.5"':'')+'>🤗 '+label+'</button>';
+    // SEND STATE — fresh button
+    var label = lang === 'sr' ? 'Pošalji zagrljaj' : lang === 'en' ? 'Send a Hug' : '发送拥抱';
+    var html = '';
+    if (streak > 1) html += '<div style="text-align:center"><div class="hug-streak-badge">🔥 ' + (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') + '</div></div>';
+    html += '<button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 ' + label + '</button>';
+    card.innerHTML = html;
   }
 }
 
