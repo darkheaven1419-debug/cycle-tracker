@@ -45,6 +45,7 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 body {
   font-family: var(--font); background: var(--bg); color: var(--text);
   min-height: 100vh; display:flex; justify-content:center;
@@ -241,8 +242,9 @@ body {
 [data-theme="dark"] .day:nth-child(7n+6), [data-theme="dark"] .day:nth-child(7n+7) { background:rgba(255,255,255,.02); }
 .day.today { font-weight:700; box-shadow:inset 0 0 0 2px var(--text); background:rgba(45,42,43,0.03); }
 .day.period-on { box-shadow:0 0 0 3px rgba(196,90,107,0.18), 0 2px 8px rgba(196,90,107,0.18); }
-.day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .1s, background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; overflow:visible !important; }
-.day:active { transform:scale(.93); background:var(--border); }
+.day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .12s cubic-bezier(.34,1.56,.64,1), background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; overflow:visible !important; }
+.day:hover:not(.other-month):not(.period-on) { background:rgba(196,90,107,.06); transform:scale(1.1); }
+.day:active { transform:scale(.88); background:var(--border); }
 .day.other-month { color:var(--text-muted); opacity:.3; pointer-events:none; }
 .day.today { font-weight:700; box-shadow:inset 0 0 0 1.5px var(--text); }
 .day.period-on { background:var(--love); color:#fff!important; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(196,90,107,.22); }
@@ -292,7 +294,13 @@ body {
 .tab.active { background:linear-gradient(135deg,var(--love),var(--rose-dark)); color:#fff; box-shadow:0 2px 10px rgba(196,90,107,.25); }
 
 .panel { display:none; }
-.panel.active { display:block; animation:fadeUp .3s ease-out; }
+.panel.active { display:block; animation:panelSlideIn .35s cubic-bezier(.22,1,.36,1); }
+.panel.slide-out-left { animation:panelSlideOutLeft .25s cubic-bezier(.4,0,1,1) forwards; }
+.panel.slide-out-right { animation:panelSlideOutRight .25s cubic-bezier(.4,0,1,1) forwards; }
+@keyframes panelSlideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes panelSlideOutLeft { to{opacity:0;transform:translateX(-20px)} }
+@keyframes panelSlideOutRight { to{opacity:0;transform:translateX(20px)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
 .card { padding:18px; margin-bottom:12px; transition:all .3s; }
 .card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
@@ -441,8 +449,10 @@ body {
 .empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
 .empty-icon { font-size:3rem; display:block; margin-bottom:12px; }
 
-.reminder-banner { padding:14px 18px; margin:12px 0; font-size:.76rem; color:var(--rose-dark); text-align:center; display:flex; align-items:center; gap:8px; justify-content:center; }
-.reminder-banner .dismiss { margin-left:auto; cursor:pointer; font-weight:700; opacity:.5; font-size:.9rem; }
+.reminder-banner { padding:14px 18px; margin:12px 0; font-size:.76rem; color:var(--rose-dark); text-align:center; display:flex; align-items:center; gap:8px; justify-content:center; animation:reminderSlide .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes reminderSlide { from{opacity:0;transform:translateY(-24px);max-height:0} to{opacity:1;transform:translateY(0);max-height:80px} }
+.reminder-banner .dismiss { margin-left:auto; cursor:pointer; font-weight:700; opacity:.5; font-size:.9rem; transition:opacity .2s; }
+.reminder-banner .dismiss:hover { opacity:1; }
 .pred-legend { font-size:.62rem; color:var(--text-muted); text-align:center; margin-top:4px; }
 .celebrate { animation:celebrateBounce .5s ease-out; }
 
@@ -459,7 +469,10 @@ body {
   position:relative; margin-right:6px;
 }
 .profile-pill.active-profile { border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.15); }
-.profile-pill .pf-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.85rem; }
+.profile-pill.switching { animation:profilePulse .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes profilePulse { 0%{transform:scale(1)} 40%{transform:scale(.88)} 100%{transform:scale(1)} }
+.profile-pill .pf-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.85rem; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.profile-pill.switching .pf-avatar { transform:rotateY(180deg); }
 .profile-pill .pf-name { font-size:.65rem; font-weight:700; color:var(--text); padding-right:4px; }
 .profile-pill:active { transform:scale(.93); }
 
@@ -1350,6 +1363,9 @@ let activeProfile = localStorage.getItem('cycle-active-profile') || 'andjela';
 function profileKey(base) { return base + '-' + activeProfile; }
 function switchProfile(p) {
   if (p === activeProfile) return;
+  // Animate profile pill
+  var pill = document.getElementById('profilePill');
+  if (pill) { pill.classList.add('switching'); setTimeout(function() { pill.classList.remove('switching'); }, 400); }
   activeProfile = p;
   localStorage.setItem('cycle-active-profile', p);
   state = loadState();
@@ -2414,11 +2430,9 @@ function randomThinkingOfYou() {
    GREETING OVERLAY
    ================================================================ */
 function showGreeting() {
-  // Always Serbian — this is for Anđela, not for Barry
   var overlay = document.getElementById('greetingOverlay');
   if (!overlay) return;
-  var g = I18N['sr'].greeting;
-  if (!g) return;
+  var g = I18N['sr'].greeting; if (!g) return;
   var hour = new Date().getHours();
   var slot;
   if (hour >= 5 && hour < 12) slot = g.morning;
@@ -2429,10 +2443,14 @@ function showGreeting() {
   document.getElementById('greetingName').textContent = slot.name;
   document.getElementById('greetingMsg').textContent = slot.msg;
   document.getElementById('greetingSub').textContent = slot.sub;
-  // Overlay closes on tap — inline onclick handles it
-  overlay.style.display = 'flex';
-  overlay.classList.remove('hidden');
+  overlay.style.display = 'flex'; overlay.classList.remove('hidden');
   spawnFeathers();
+  // Auto-dismiss after 2.8 seconds
+  clearTimeout(window._greetingTimer);
+  window._greetingTimer = setTimeout(function() {
+    overlay.classList.add('hiding');
+    setTimeout(function() { overlay.style.display = 'none'; overlay.classList.add('hidden'); overlay.classList.remove('hiding'); }, 400);
+  }, 2800);
 }
 // Greeting dismissed by inline onclick on the overlay — no JS function needed
 function spawnFeathers() {
@@ -2665,8 +2683,21 @@ function updateProgress(pred){
 }
 
 function updateStats(pred){
-  document.getElementById('st-count').textContent=state.records.length;
-  if(state.records.length>=2){document.getElementById('st-avg').textContent=pred.avgCycle+t('day');document.getElementById('st-range').textContent=`${pred.minCycle} / ${pred.maxCycle}${t('day')}`;var regL=lang==='sr'?{high:'Visoka',medium:'Srednja',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};document.getElementById('st-regularity').innerHTML=`${regL[pred.confidence]} <span class="cycle-badge ${({high:'high',medium:'medium',low:'low'})[pred.confidence]}">±${pred.stdDev}</span>`;}
+  // Animated number helper
+  function animNum(el, target, suffix) {
+    var cur = parseInt(el.textContent) || 0;
+    if (cur === target) { el.textContent = target + (suffix||''); return; }
+    var start = performance.now(); var dur = 500;
+    function step(now) {
+      var p = Math.min((now - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3); // ease-out
+      el.textContent = Math.round(cur + (target - cur) * eased) + (suffix||'');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  animNum(document.getElementById('st-count'), state.records.length, '');
+  if(state.records.length>=2){animNum(document.getElementById('st-avg'), pred.avgCycle, t('day'));document.getElementById('st-range').textContent=pred.minCycle+' / '+pred.maxCycle+t('day');var regL=lang==='sr'?{high:'Visoka',medium:'Srednja',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};document.getElementById('st-regularity').innerHTML=regL[pred.confidence]+' <span class="cycle-badge '+({high:'high',medium:'medium',low:'low'})[pred.confidence]+'">±'+pred.stdDev+'</span>';}
   else{var hint=lang==='sr'?'(treba bar 2 ciklusa)':lang==='en'?'(needs 2+ cycles)':'(需2个周期以上)';document.getElementById('st-avg').textContent=hint;document.getElementById('st-range').textContent=hint;document.getElementById('st-regularity').textContent=hint;}
   document.getElementById('st-next').textContent=pred.nextStart?fmtDate(pred.nextStart):'--';
   document.getElementById('st-ovulation').textContent=pred.ovulation?fmtDate(pred.ovulation):'--';
@@ -2800,7 +2831,28 @@ var _monthChangeTimer=null;
 function changeMonth(d){if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},300);var cal=document.getElementById('calendarContainer');cal.classList.add(d>0?'slide-left':'slide-right');viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}setTimeout(function(){renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());requestAnimationFrame(function(){cal.classList.remove('slide-left','slide-right');});},280);}
 function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();var cal=document.getElementById('calendarContainer');cal.classList.add('pulse-in');renderCalendar();updateProgress(predict());updateStats(predict());updateReminder(predict());setTimeout(function(){cal.classList.remove('pulse-in');},350);}
 (function(){let sx=0;const cal=document.getElementById('calendarContainer');cal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});cal.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientX-sx;if(Math.abs(diff)>60)changeMonth(diff>0?-1:1);});})();
-document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const id=btn.dataset.panel;document.getElementById('panel-'+id).classList.add('active');if(id==='tips')renderTips();if(id==='settings')loadSettingsUI();if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}if(id==='diary'){initSharedDiaryTab();}});});
+var _tabOrder = ['stats','symptoms','tips','diary','settings'];
+var _prevTabIdx = 0;
+document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
+  var id = btn.dataset.panel;
+  var newIdx = _tabOrder.indexOf(id);
+  var dir = newIdx > _prevTabIdx ? 'slide-out-left' : 'slide-out-right';
+  _prevTabIdx = newIdx;
+  // Deactivate old
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  var oldPanel = document.querySelector('.panel.active');
+  if (oldPanel) { oldPanel.classList.add(dir); oldPanel.addEventListener('animationend', function h() { oldPanel.removeEventListener('animationend', h); oldPanel.classList.remove('active', dir); }, {once:true}); }
+  else { document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); }
+  // Activate new
+  var newPanel = document.getElementById('panel-'+id);
+  newPanel.classList.remove('slide-out-left','slide-out-right');
+  newPanel.classList.add('active');
+  if(id==='tips')renderTips();
+  if(id==='settings')loadSettingsUI();
+  if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
+  if(id==='diary'){initSharedDiaryTab();}
+});});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
 document.getElementById('set-theme').addEventListener('change',function(){switchTheme(this.value);});
