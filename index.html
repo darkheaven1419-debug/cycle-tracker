@@ -1720,7 +1720,7 @@ async function translatePartnerEntries() {
   var btn=document.getElementById('translateBtn');
   if(btn){btn.disabled=true;btn.textContent='⏳ '+(lang==='sr'?'Prevodim...':lang==='en'?'Translating...':'翻译中...');}
   var vl=(lang||'sr')==='zh-CN'?'zh-CN':'sr';
-  var pl=activeProfile==='andjela'?'sr':'zh-CN';
+  var pl=activeProfile==='barry'?'sr':'zh-CN';
   if(vl===pl){if(btn){btn.textContent='🌐 '+(lang==='sr'?'Isti jezik':lang==='en'?'Same language':'同一种语言');btn.disabled=false;}return;}
   var els=document.querySelectorAll('[id^="sdp-"]');
   var ok=0;
