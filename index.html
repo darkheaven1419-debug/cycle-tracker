@@ -1737,9 +1737,23 @@ async function pullPartnerEntry(dateKey) {
   var ghData = await fetchSharedDiaryFromGitHub();
   if (!ghData || !ghData.data) return;
   var localData = loadSharedDiaryData(); var updated = false;
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   Object.keys(ghData.data).forEach(function(d) {
-    if (!localData[d] || JSON.stringify(localData[d]) !== JSON.stringify(ghData.data[d])) {
-      localData[d] = ghData.data[d]; updated = true;
+    if (!localData[d]) {
+      // New date entirely — import partner's entry only, leave mine empty
+      localData[d] = {};
+      if (ghData.data[d][partnerProfile]) localData[d][partnerProfile] = ghData.data[d][partnerProfile];
+      updated = true;
+    } else {
+      // Date exists locally: ONLY merge partner's entries, NEVER overwrite mine
+      if (ghData.data[d][partnerProfile]) {
+        var localPartner = localData[d][partnerProfile];
+        var ghPartner = ghData.data[d][partnerProfile];
+        if (!localPartner || (ghPartner.time && (!localPartner.time || ghPartner.time > localPartner.time))) {
+          localData[d][partnerProfile] = ghPartner;
+          updated = true;
+        }
+      }
     }
   });
   if (updated) saveSharedDiaryData(localData);
@@ -1848,22 +1862,33 @@ async function renderSharedDiary() {
   renderSharedDiaryHistory(allData);
 
   // === PHASE 2: async pull from GitHub (won't block UI) ===
+  // IMPORTANT: never overwrite MY form fields — user may be typing
   if (getGitHubToken()) {
     pullPartnerEntry(dateKey).then(function() {
-      // If new data arrived, refresh relevant parts
       var freshData = loadSharedDiaryData();
       var freshMy = freshData[dateKey] && freshData[dateKey][activeProfile];
       var freshPartner = freshData[dateKey] && freshData[dateKey][partnerProfile];
-      // Only update if partner data actually changed
+      // Only update if partner data changed AND I'm not currently typing
       if (JSON.stringify(freshPartner) !== JSON.stringify(partnerEntry)) {
-        document.getElementById('sd-happy').value = freshMy ? (freshMy.happy || '') : '';
-        document.getElementById('sd-uncomf').value = freshMy ? (freshMy.uncomf || '') : '';
-        document.getElementById('sd-thanks').value = freshMy ? (freshMy.thanks || '') : '';
-        document.getElementById('sd-wish').value = freshMy ? (freshMy.wish || '') : '';
+        var activeEl = document.activeElement;
+        var isTyping = activeEl && (activeEl.id === 'sd-happy' || activeEl.id === 'sd-uncomf' || activeEl.id === 'sd-thanks' || activeEl.id === 'sd-wish');
+        if (!isTyping) {
+          // Only update MY fields if I haven't written anything yet (don't overwrite unsaved work)
+          if (!myEntry || !myEntry.time) {
+            document.getElementById('sd-happy').value = freshMy ? (freshMy.happy || '') : '';
+            document.getElementById('sd-uncomf').value = freshMy ? (freshMy.uncomf || '') : '';
+            document.getElementById('sd-thanks').value = freshMy ? (freshMy.thanks || '') : '';
+            document.getElementById('sd-wish').value = freshMy ? (freshMy.wish || '') : '';
+          }
+        }
+        // Always update partner display and lock state
         if (freshMy) {
           lockedEl.style.display = 'none';
           contentEl.style.display = '';
           renderPartnerContent(freshPartner, partnerProfile, contentEl, translateBtn);
+        } else {
+          lockedEl.style.display = '';
+          contentEl.style.display = 'none';
         }
         renderSharedDiaryHistory(freshData);
       }
