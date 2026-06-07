@@ -540,37 +540,90 @@ body {
 .garden-msg { font-size:.7rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
 .garden-streak-hint { font-size:.62rem; color:var(--gold); margin-top:4px; }
 
-/* Shared Diary Tab */
-.partner-diary-card {
-  background:linear-gradient(135deg, var(--rose-light), var(--lavender-light));
-  border:1px solid var(--gold); border-radius:var(--radius);
-  padding:20px; margin-bottom:14px; transition:all .3s;
-}
-[data-theme="dark"] .partner-diary-card { background:linear-gradient(135deg, #2A1E22, #241D2A); }
-.partner-diary-card:hover { box-shadow:var(--shadow-md); }
-.diary-date-nav { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
-.diary-date-nav .dd-date { flex:1; text-align:center; font-weight:700; font-size:.9rem; }
-.diary-date-nav .dd-btn { width:36px; height:36px; border-radius:50%; border:none; background:var(--card); font-size:1rem; cursor:pointer; box-shadow:var(--shadow-xs); display:flex; align-items:center; justify-content:center; color:var(--text); }
-.diary-section-label { font-size:.7rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
-.diary-entry-box { background:var(--card); border-radius:12px; padding:14px; margin-bottom:12px; min-height:60px; }
-.diary-entry-box textarea { width:100%; border:none; background:transparent; font-family:var(--font); font-size:.78rem; color:var(--text); resize:vertical; min-height:50px; line-height:1.6; }
-.diary-entry-box textarea:focus { outline:none; }
-.diary-entry-box .de-author { font-size:.62rem; color:var(--gold); margin-bottom:4px; }
-.diary-entry-box .de-text { font-size:.78rem; color:var(--text); line-height:1.6; }
-.diary-entry-box .de-time { font-size:.6rem; color:var(--text-muted); margin-top:6px; }
-.diary-entry-box.empty { text-align:center; color:var(--text-muted); font-size:.72rem; font-style:italic; padding:20px; }
-.diary-save-btn { display:block; width:100%; padding:10px; border:none; border-radius:12px; background:var(--love); color:#fff; font-weight:600; font-size:.76rem; cursor:pointer; margin-top:6px; font-family:var(--font); transition:transform .15s; }
-.diary-save-btn:active { transform:scale(.95); }
-.diary-save-btn:disabled { opacity:.5; cursor:not-allowed; }
-.diary-sync-status { text-align:center; font-size:.6rem; color:var(--text-muted); margin-top:8px; }
-.diary-sync-status.synced { color:var(--sage); }
-.diary-fb-setup { text-align:center; padding:20px; background:var(--card); border-radius:12px; }
-.diary-fb-setup h4 { font-size:.8rem; margin-bottom:8px; color:var(--text); }
-.diary-fb-setup ol { text-align:left; font-size:.7rem; color:var(--text-muted); line-height:1.8; padding-left:20px; }
-.diary-fb-setup input { width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; font-size:.7rem; margin:4px 0; font-family:var(--font); background:var(--card); color:var(--text); }
+/* ================================================================
+   Shared Diary — redesigned UX
+   ================================================================ */
 
-/* Shared Diary — guided prompts */
-.sd-field { margin-bottom:14px; }
+/* Date Strip */
+.date-strip-wrap { position:relative; margin-bottom:16px; display:flex; align-items:center; }
+.date-strip-wrap::before, .date-strip-wrap::after { content:''; position:absolute; top:0; bottom:0; width:24px; z-index:2; pointer-events:none; transition:opacity .3s; }
+.date-strip-wrap::before { left:0; background:linear-gradient(to right,var(--bg),transparent); }
+.date-strip-wrap::after { right:0; background:linear-gradient(to left,var(--bg),transparent); }
+[data-theme="dark"] .date-strip-wrap::before { background:linear-gradient(to right,var(--bg),transparent); }
+[data-theme="dark"] .date-strip-wrap::after { background:linear-gradient(to left,var(--bg),transparent); }
+.date-strip { display:flex; gap:4px; overflow-x:auto; scroll-behavior:smooth; padding:4px 0; scrollbar-width:none; -ms-overflow-style:none; scroll-snap-type:x mandatory; flex:1; }
+.date-strip::-webkit-scrollbar { display:none; }
+.date-strip-arrow { width:32px; height:32px; border-radius:50%; border:none; background:var(--card); font-size:.8rem; cursor:pointer; flex-shrink:0; color:var(--text); box-shadow:var(--shadow-xs); display:flex; align-items:center; justify-content:center; z-index:3; transition:transform .15s; }
+.date-strip-arrow:active { transform:scale(.85); }
+.date-pill { flex:0 0 auto; min-width:54px; padding:6px 8px; border-radius:14px; text-align:center; cursor:pointer; transition:all .2s; scroll-snap-align:center; position:relative; background:var(--card); box-shadow:var(--shadow-xs); border:2px solid transparent; user-select:none; }
+.date-pill:active { transform:scale(.92); }
+.date-pill .dp-dow { font-size:.58rem; color:var(--text-muted); display:block; line-height:1; margin-bottom:2px; }
+.date-pill .dp-day { font-size:.82rem; font-weight:700; color:var(--text); display:block; line-height:1.1; }
+.date-pill .dp-dot { width:5px; height:5px; border-radius:50%; background:var(--love); display:block; margin:3px auto 0; opacity:0; transition:opacity .2s; }
+.date-pill .dp-dot.has-entry { opacity:1; }
+.date-pill .dp-dot.both-entry { background:var(--gold); }
+.date-pill.today { border-color:var(--gold); background:linear-gradient(135deg,var(--rose-light),var(--gold) 200%); }
+.date-pill.selected { border-color:var(--love); background:var(--rose-light); transform:scale(1.05); }
+[data-theme="dark"] .date-pill.today { background:linear-gradient(135deg,#2A1E22,#3D3020); }
+[data-theme="dark"] .date-pill.selected { background:linear-gradient(135deg,#2A1E22,var(--rose-light)); }
+
+/* Save indicator */
+.sd-saved-badge { display:inline-flex; align-items:center; gap:4px; font-size:.64rem; color:var(--sage); font-weight:600; opacity:0; transform:translateY(-6px); transition:all .35s cubic-bezier(.34,1.56,.64,1); }
+.sd-saved-badge.show { opacity:1; transform:translateY(0); }
+
+/* Partner card — always visible with lock state */
+.partner-card-wrapper { margin-top:14px; }
+.partner-card-locked { text-align:center; padding:32px 20px; background:var(--card); border-radius:var(--radius); border:1.5px dashed var(--border); transition:all .4s; }
+.partner-card-locked .pcl-icon { font-size:2.5rem; display:block; margin-bottom:8px; filter:grayscale(.5); transition:all .5s; }
+.partner-card-locked .pcl-text { font-size:.74rem; color:var(--text-muted); line-height:1.5; }
+.partner-card-locked .pcl-arrow { display:block; margin-top:6px; font-size:1.2rem; animation:bounce-arrow .8s infinite; }
+@keyframes bounce-arrow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+.partner-card-unlocked { animation:cardReveal .5s cubic-bezier(.22,1,.36,1); }
+@keyframes cardReveal { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+/* Timeline History */
+.timeline { position:relative; padding-left:20px; }
+.timeline::before { content:''; position:absolute; left:6px; top:4px; bottom:4px; width:2px; background:linear-gradient(to bottom,var(--love),var(--gold),var(--teal)); border-radius:1px; opacity:.3; }
+.timeline-node { position:relative; padding:10px 14px; margin-bottom:4px; cursor:pointer; border-radius:var(--radius-sm); transition:all .2s; }
+.timeline-node:hover { background:var(--rose-light); }
+.timeline-node::before { content:''; position:absolute; left:-18px; top:16px; width:10px; height:10px; border-radius:50%; border:2px solid var(--card); z-index:1; }
+.timeline-node.dot-both::before { background:var(--gold); box-shadow:0 0 0 3px rgba(212,167,106,.25); }
+.timeline-node.dot-mine::before { background:var(--love); }
+.timeline-node.dot-partner::before { background:var(--teal); }
+.timeline-node .tn-date { font-size:.64rem; color:var(--text-muted); font-weight:600; }
+.timeline-node .tn-authors { font-size:.62rem; margin:2px 0; }
+.timeline-node .tn-preview { font-size:.74rem; color:var(--text); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.timeline-load-more { text-align:center; padding:8px; }
+.timeline-load-more button { background:none; border:1px solid var(--border); border-radius:20px; padding:6px 20px; font-size:.7rem; color:var(--text-muted); cursor:pointer; font-family:var(--font); transition:all .2s; }
+.timeline-load-more button:hover { border-color:var(--love); color:var(--love); }
+
+/* Import modal */
+.import-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:999; display:flex; align-items:center; justify-content:center; animation:fadeIn .2s; backdrop-filter:blur(4px); }
+.import-modal { background:var(--card); border-radius:var(--radius); padding:24px; width:90%; max-width:400px; box-shadow:var(--shadow-lg); }
+.import-modal h4 { font-size:.85rem; margin-bottom:12px; color:var(--text); }
+.import-modal textarea { width:100%; height:100px; border:1px solid var(--border); border-radius:12px; padding:12px; font-size:.72rem; font-family:var(--font); background:var(--bg); color:var(--text); resize:none; }
+.import-modal textarea:focus { outline:none; border-color:var(--love); }
+.import-modal .im-btns { display:flex; gap:8px; margin-top:12px; }
+.import-modal .im-btns button { flex:1; padding:10px; border-radius:10px; border:none; font-size:.74rem; font-weight:600; cursor:pointer; font-family:var(--font); transition:transform .15s; }
+.import-modal .im-btns button:active { transform:scale(.95); }
+.import-modal .im-confirm { background:var(--love); color:#fff; }
+.import-modal .im-cancel { background:var(--border); color:var(--text); }
+
+/* Fade-in animation */
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* Enhanced shared diary form */
+.sd-field-card { background:var(--card); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:10px; border:1px solid var(--border); transition:all .2s; }
+.sd-field-card:focus-within { border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.08); }
+.sd-field-card .sdf-label { font-size:.7rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.sd-field-card .sdf-emoji { font-size:1.1rem; }
+.sd-field-card textarea { width:100%; border:none; background:transparent; font-family:var(--font); font-size:.78rem; color:var(--text); resize:vertical; min-height:40px; line-height:1.6; }
+.sd-field-card textarea:focus { outline:none; }
+.sd-field-card .sdf-count { text-align:right; font-size:.58rem; color:var(--text-muted); opacity:0; transition:opacity .2s; }
+.sd-field-card:focus-within .sdf-count { opacity:1; }
+
+/* Keep old classes for backward compat */
+.sd-field { margin-bottom:10px; }
 .sd-label { font-size:.72rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:4px; margin-bottom:4px; }
 .sd-emoji { font-size:1rem; }
 .sd-input { width:100%; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:.76rem; font-family:var(--font); background:var(--card); color:var(--text); resize:vertical; line-height:1.5; transition:border-color .2s; }
@@ -583,6 +636,13 @@ body {
 .sd-partner-q { font-size:.65rem; color:var(--text-muted); margin-bottom:2px; }
 .sd-partner-a { font-size:.78rem; color:var(--text); line-height:1.5; }
 .sd-empty { text-align:center; padding:20px; color:var(--text-muted); font-size:.74rem; font-style:italic; }
+.partner-diary-card {
+  background:linear-gradient(135deg, var(--rose-light), var(--lavender-light));
+  border:1px solid var(--gold); border-radius:var(--radius);
+  padding:20px; margin-bottom:14px; transition:all .3s;
+}
+[data-theme="dark"] .partner-diary-card { background:linear-gradient(135deg, #2A1E22, #241D2A); }
+.partner-diary-card:hover { box-shadow:var(--shadow-md); }
 
 /* Connection Features */
 .hug-btn { width:100%; padding:16px; border:none; border-radius:var(--radius); background:linear-gradient(135deg,var(--love),#E898A8); color:#fff; font-size:1.2rem; font-weight:700; cursor:pointer; font-family:var(--font); box-shadow:0 4px 20px rgba(196,90,107,.35); transition:all .2s; }
@@ -950,56 +1010,76 @@ body {
   <div class="panel" id="panel-tips"><div id="tips-list"></div></div>
 
   <div class="panel" id="panel-diary">
-    <div class="diary-date-nav">
-      <button class="dd-btn" onclick="sharedDiaryNav(-1)">◂</button>
-      <span class="dd-date" id="sharedDiaryDate"></span>
-      <button class="dd-btn" onclick="sharedDiaryNav(1)">▸</button>
-      <button class="dd-btn" style="font-size:.7rem" onclick="sharedDiaryGoToday()">📍</button>
+    <!-- Date Strip -->
+    <div class="date-strip-wrap">
+      <button class="date-strip-arrow" onclick="scrollDateStrip(-1)" aria-label="Earlier">◂</button>
+      <div class="date-strip" id="dateStrip"></div>
+      <button class="date-strip-arrow" onclick="scrollDateStrip(1)" aria-label="Later">▸</button>
     </div>
 
     <!-- MY ENTRY — guided prompts -->
     <div class="card" id="sharedDiaryMyCard">
-      <h3>✏️ <span id="sd-my-title">My Reflection</span></h3>
-      <div style="font-size:.68rem;color:var(--gold);margin-bottom:10px;font-style:italic" id="sd-my-hint"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">✏️ <span id="sd-my-title">My Reflection</span></h3>
+        <span class="sd-saved-badge" id="sdSavedBadge">✅ <span id="sd-saved-text">已保存</span></span>
+      </div>
+      <div style="font-size:.68rem;color:var(--gold);margin:6px 0 10px;font-style:italic" id="sd-my-hint"></div>
 
-      <div class="sd-field">
-        <label class="sd-label"><span class="sd-emoji">💝</span> <span id="sd-l-happy">What made me happy today</span></label>
-        <textarea class="sd-input" id="sd-happy" rows="2" placeholder="..."></textarea>
+      <div class="sd-field-card">
+        <div class="sdf-label"><span class="sdf-emoji">💝</span> <span id="sd-l-happy">What made me happy today</span></div>
+        <textarea id="sd-happy" rows="1" placeholder="..."></textarea>
+        <div class="sdf-count"><span id="sdc-happy">0</span>/200</div>
       </div>
-      <div class="sd-field">
-        <label class="sd-label"><span class="sd-emoji">🤔</span> <span id="sd-l-uncomf">What felt a little uncomfortable</span></label>
-        <textarea class="sd-input" id="sd-uncomf" rows="2" placeholder="..."></textarea>
+      <div class="sd-field-card">
+        <div class="sdf-label"><span class="sdf-emoji">🤔</span> <span id="sd-l-uncomf">What felt a little uncomfortable</span></div>
+        <textarea id="sd-uncomf" rows="1" placeholder="..."></textarea>
+        <div class="sdf-count"><span id="sdc-uncomf">0</span>/200</div>
       </div>
-      <div class="sd-field">
-        <label class="sd-label"><span class="sd-emoji">🙏</span> <span id="sd-l-thanks">Something I want to thank you for</span></label>
-        <textarea class="sd-input" id="sd-thanks" rows="2" placeholder="..."></textarea>
+      <div class="sd-field-card">
+        <div class="sdf-label"><span class="sdf-emoji">🙏</span> <span id="sd-l-thanks">Something I want to thank you for</span></div>
+        <textarea id="sd-thanks" rows="1" placeholder="..."></textarea>
+        <div class="sdf-count"><span id="sdc-thanks">0</span>/200</div>
       </div>
-      <div class="sd-field">
-        <label class="sd-label"><span class="sd-emoji">💪</span> <span id="sd-l-wish">Something I hope we can improve together</span></label>
-        <textarea class="sd-input" id="sd-wish" rows="2" placeholder="..."></textarea>
+      <div class="sd-field-card">
+        <div class="sdf-label"><span class="sdf-emoji">💪</span> <span id="sd-l-wish">Something I hope we can improve together</span></div>
+        <textarea id="sd-wish" rows="1" placeholder="..."></textarea>
+        <div class="sdf-count"><span id="sdc-wish">0</span>/200</div>
       </div>
 
-      <button class="btn btn-primary" id="sd-save-btn" onclick="saveSharedDiary()" style="margin-top:8px">💾 <span id="sd-save-text">Save & Unlock Partner's Entry</span></button>
-      <div style="text-align:center;font-size:.62rem;color:var(--text-muted);margin-top:4px" id="sd-save-hint">✍️ <span id="sd-gate-hint">写完后才能查看伴侣的日记哦</span></div>
+      <button class="btn btn-primary" id="sd-save-btn" onclick="saveSharedDiary()" style="margin-top:8px;width:100%">💾 <span id="sd-save-text">Save & View Partner's</span></button>
+      <div style="text-align:center;font-size:.6rem;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:4px">
+        <span id="sd-sync-icon"></span><span id="sd-gate-hint">写完才能看伴侣的哦</span>
+      </div>
     </div>
 
-    <!-- PARTNER'S ENTRY — locked until I write -->
-    <div class="card" id="sharedDiaryPartnerCard" style="display:none">
-      <h3>👀 <span id="sd-partner-title">Partner's Reflection</span></h3>
-      <div id="sharedDiaryPartnerContent"></div>
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
-        <span style="font-size:.62rem;color:var(--text-muted)" id="sd-sync-hint"></span>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-outline" onclick="exportSharedDiary()" style="flex:1;font-size:.7rem;margin-bottom:0">📤 <span id="sd-export">Share My Entry</span></button>
-          <button class="btn btn-outline" onclick="importSharedDiary()" style="flex:1;font-size:.7rem;margin-bottom:0">📥 <span id="sd-import">Import Partner's</span></button>
+    <!-- PARTNER'S ENTRY — always visible -->
+    <div class="partner-card-wrapper">
+      <div class="card" id="sharedDiaryPartnerCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h3 style="margin:0">👀 <span id="sd-partner-title">Partner's Reflection</span></h3>
+          <button class="btn btn-outline" onclick="translatePartnerEntries()" style="font-size:.65rem;padding:4px 10px;display:none" id="translateBtnSm">🌐</button>
+        </div>
+        <!-- Locked state -->
+        <div class="partner-card-locked" id="partnerLocked">
+          <span class="pcl-icon">🔒</span>
+          <div class="pcl-text" id="partner-locked-text">先保存你的日记才能解锁伴侣的哦 💌</div>
+          <span class="pcl-arrow">👇</span>
+        </div>
+        <!-- Unlocked content -->
+        <div id="sharedDiaryPartnerContent" style="display:none"></div>
+        <!-- Actions -->
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center">
+          <span style="font-size:.62rem;color:var(--text-muted);flex:1" id="sd-sync-hint"></span>
+          <button class="btn btn-outline" onclick="exportSharedDiary()" style="font-size:.65rem;padding:4px 10px">📤 <span id="sd-export">Share</span></button>
+          <button class="btn btn-outline" onclick="showImportModal()" style="font-size:.65rem;padding:4px 10px">📥 <span id="sd-import">Import</span></button>
         </div>
       </div>
     </div>
 
-    <!-- History -->
+    <!-- Timeline History -->
     <div class="card" style="margin-top:14px">
-      <h3>📜 <span id="sd-history-title">Recent Diary</span></h3>
-      <div id="sharedDiaryHistory"></div>
+      <h3>📜 <span id="sd-history-title">Timeline</span></h3>
+      <div class="timeline" id="sharedDiaryHistory"></div>
     </div>
   </div>
 
@@ -1480,12 +1560,13 @@ function renderGarden() {
 
 /* ================================================================
    SHARED DIARY — localStorage + GitHub API cross-device sync
-   Gate: MUST write own entry before seeing partner's
+   Redesigned: date strip, timeline, locked→unlock animation
    ================================================================ */
 const SD_KEY = 'shared-diary';
 const GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
 const GITHUB_FILE = 'shared-diary.json';
 let sharedDiaryViewDate = new Date();
+const DATE_STRIP_DAYS = 14; // show 14 days in date strip
 
 function getGitHubToken() { return localStorage.getItem('gh-token') || ''; }
 
@@ -1494,7 +1575,7 @@ function loadSharedDiaryData() {
 }
 function saveSharedDiaryData(data) { localStorage.setItem(SD_KEY, JSON.stringify(data)); }
 
-// Fetch shared diary from GitHub (read-only, works without token for public repos)
+// Fetch shared diary from GitHub
 async function fetchSharedDiaryFromGitHub() {
   var token = getGitHubToken();
   var headers = { 'Accept': 'application/vnd.github.v3+json' };
@@ -1511,15 +1592,13 @@ async function fetchSharedDiaryFromGitHub() {
 // Push shared diary to GitHub
 async function pushSharedDiaryToGitHub(diaryData) {
   var token = getGitHubToken();
-  if (!token) return false; // No token = can't write
+  if (!token) return false;
   var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
-  // Get current sha
   var sha = null;
   try {
     var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { headers: headers, cache: 'no-store' });
     if (resp.ok) { var d = await resp.json(); sha = d.sha; }
   } catch(e) {}
-  // Push
   var content = btoa(unescape(encodeURIComponent(JSON.stringify(diaryData, null, 2))));
   var body = { message: '💌 Update shared diary', content: content };
   if (sha) body.sha = sha;
@@ -1529,17 +1608,51 @@ async function pushSharedDiaryToGitHub(diaryData) {
   } catch(e) { return false; }
 }
 
-function sharedDiaryNav(dir) {
-  var panel=document.getElementById('panel-diary');panel.style.opacity='0.4';panel.style.transition='opacity .12s';
-  sharedDiaryViewDate.setDate(sharedDiaryViewDate.getDate()+dir);
-  requestAnimationFrame(function(){renderSharedDiary();requestAnimationFrame(function(){panel.style.opacity='1';});});
-}
-function sharedDiaryGoToday() {
-  var panel=document.getElementById('panel-diary');panel.style.opacity='0.4';panel.style.transition='opacity .12s';
-  sharedDiaryViewDate=new Date();
-  requestAnimationFrame(function(){renderSharedDiary();requestAnimationFrame(function(){panel.style.opacity='1';});});
+// ==============================
+// DATE STRIP
+// ==============================
+function renderDateStrip() {
+  var strip = document.getElementById('dateStrip'); if (!strip) return;
+  var allData = loadSharedDiaryData();
+  var today = new Date(); var selKey = fmtDate(sharedDiaryViewDate);
+  var dowKeys = lang==='sr'?['Ne','Po','Ut','Sr','Če','Pe','Su']:lang==='en'?['Su','Mo','Tu','We','Th','Fr','Sa']:['日','一','二','三','四','五','六'];
+  var html = '';
+  for (var i = -Math.floor(DATE_STRIP_DAYS/2); i < DATE_STRIP_DAYS-Math.floor(DATE_STRIP_DAYS/2); i++) {
+    var d = new Date(today); d.setDate(d.getDate() + i);
+    var key = fmtDate(d); var dow = dowKeys[d.getDay()];
+    var dayData = allData[key]; var both = dayData && dayData['barry'] && dayData['andjela'];
+    var hasEntry = dayData && (dayData['barry'] || dayData['andjela']);
+    var classes = ['date-pill'];
+    if (key === fmtDate(today)) classes.push('today');
+    if (key === selKey) classes.push('selected');
+    html += '<div class="' + classes.join(' ') + '" data-date="' + key + '" onclick="selectDateStrip(\'' + key + '\')">';
+    html += '<span class="dp-dow">' + dow + '</span>';
+    html += '<span class="dp-day">' + d.getDate() + '</span>';
+    html += '<span class="dp-dot' + (hasEntry ? ' has-entry' + (both ? ' both-entry' : '') : '') + '"></span>';
+    html += '</div>';
+  }
+  strip.innerHTML = html;
+  // Scroll to selected date
+  requestAnimationFrame(function() {
+    var sel = strip.querySelector('.selected');
+    if (sel) sel.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+  });
 }
 
+function selectDateStrip(dateKey) {
+  sharedDiaryViewDate = new Date(dateKey + 'T00:00:00');
+  renderDateStrip();
+  renderSharedDiary();
+}
+
+function scrollDateStrip(dir) {
+  var strip = document.getElementById('dateStrip'); if (!strip) return;
+  strip.scrollBy({ left: dir * strip.clientWidth * 0.7, behavior: 'smooth' });
+}
+
+// ==============================
+// SAVE & RENDER
+// ==============================
 async function saveSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
   var happy = document.getElementById('sd-happy').value.trim();
@@ -1547,44 +1660,51 @@ async function saveSharedDiary() {
   var thanks = document.getElementById('sd-thanks').value.trim();
   var wish = document.getElementById('sd-wish').value.trim();
   if (!happy && !uncomf && !thanks && !wish) { toast(lang==='sr'?'Napiši bar nešto...':lang==='en'?'Write at least something...':'至少写点什么吧...'); return; }
+
+  // Disable save button during save
+  var saveBtn = document.getElementById('sd-save-btn');
+  saveBtn.disabled = true; saveBtn.textContent = '⏳ ' + (lang==='sr'?'Čuvanje...':lang==='en'?'Saving...':'保存中...');
+
   var allData = loadSharedDiaryData();
   if (!allData[dateKey]) allData[dateKey] = {};
   allData[dateKey][activeProfile] = { happy:happy, uncomf:uncomf, thanks:thanks, wish:wish, time:Date.now() };
   saveSharedDiaryData(allData);
 
-  // Try push to GitHub for cross-device sync
-  if (getGitHubToken()) {
-    var ok = await pushSharedDiaryToGitHub(allData);
-    if (ok) {
-      toast('💌 ' + (lang==='sr'?'Sačuvano i sinhronizovano! 🌐':lang==='en'?'Saved & synced! 🌐':'已保存并同步！🌐'));
-    } else {
-      toast('💌 ' + (lang==='sr'?'Sačuvano lokalno (greška pri sinhronizaciji)':lang==='en'?'Saved locally (sync error)':'已本地保存（同步失败）'));
-    }
-  } else {
-    toast('💌 ' + (lang==='sr'?'Sačuvano! Dodaj GitHub Token u Podešavanjima za sinhronizaciju.':lang==='en'?'Saved! Add GitHub Token in Settings for sync.':'已保存！在设置中添加 GitHub Token 即可同步。'));
-  }
+  // Push to GitHub
+  if (getGitHubToken()) { await pushSharedDiaryToGitHub(allData); }
 
   // Try pull partner's entry
   await pullPartnerEntry(dateKey);
+
+  // Show saved badge
+  var badge = document.getElementById('sdSavedBadge');
+  badge.classList.add('show');
+  setTimeout(function() { badge.classList.remove('show'); }, 2000);
+
+  saveBtn.disabled = false;
+  saveBtn.innerHTML = '💾 <span id="sd-save-text">' + (lang==='sr'?'Sačuvaj':lang==='en'?'Save':'保存') + '</span>';
+
+  renderDateStrip();
   renderSharedDiary();
+  toast('💌 ✓');
 }
 
 async function pullPartnerEntry(dateKey) {
   if (!getGitHubToken()) return;
   var ghData = await fetchSharedDiaryFromGitHub();
   if (!ghData || !ghData.data) return;
-  // Merge GitHub data into localStorage
-  var localData = loadSharedDiaryData();
-  var updated = false;
+  var localData = loadSharedDiaryData(); var updated = false;
   Object.keys(ghData.data).forEach(function(d) {
     if (!localData[d] || JSON.stringify(localData[d]) !== JSON.stringify(ghData.data[d])) {
-      localData[d] = ghData.data[d];
-      updated = true;
+      localData[d] = ghData.data[d]; updated = true;
     }
   });
   if (updated) saveSharedDiaryData(localData);
 }
 
+// ==============================
+// EXPORT / IMPORT (improved UX)
+// ==============================
 function exportSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
   var allData = loadSharedDiaryData();
@@ -1593,15 +1713,42 @@ function exportSharedDiary() {
   var exportObj = { date:dateKey, author:activeProfile, entry:myEntry };
   var text = JSON.stringify(exportObj);
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function(){ toast('📤 ' + (lang==='sr'?'Kopirano! Pošalji partneru.':lang==='en'?'Copied! Send to your partner.':'已复制！发给伴侣吧。')); });
+    navigator.clipboard.writeText(text).then(function() {
+      toast('📤 ' + (lang==='sr'?'Kopirano! Pošalji partneru 💌':lang==='en'?'Copied! Send to partner 💌':'已复制！发给伴侣吧 💌'));
+    });
   } else {
-    prompt(lang==='sr'?'Kopiraj i pošalji partneru:':lang==='en'?'Copy and send to partner:':'复制并发送给伴侣：', text);
+    // Fallback: show text in a small modal-like prompt
+    var ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('📤 ' + (lang==='sr'?'Kopirano!':lang==='en'?'Copied!':'已复制！')); } catch(e) { prompt(lang==='sr'?'Kopiraj i pošalji partneru:':lang==='en'?'Copy and send to partner:':'复制发给伴侣：', text); }
+    document.body.removeChild(ta);
   }
 }
 
-function importSharedDiary() {
-  var text = prompt(lang==='sr'?'Zalepi partnerov tekst ovde:':lang==='en'?'Paste partner\'s text here:':'请粘贴伴侣分享的文本：');
-  if (!text) return;
+function showImportModal() {
+  // Remove existing modal if any
+  var existing = document.querySelector('.import-modal-overlay');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div'); overlay.className = 'import-modal-overlay';
+  overlay.innerHTML = '<div class="import-modal"><h4>' + (lang==='sr'?'📥 Zalepi partnerov tekst':lang==='en'?'📥 Paste partner\'s text':'📥 粘贴伴侣分享的内容') + '</h4><textarea id="importTextarea" placeholder="' + (lang==='sr'?'Zalepi JSON tekst ovde...':'粘贴 JSON 文本...') + '"></textarea><div class="im-btns"><button class="im-cancel" id="imCancel">' + (lang==='sr'?'Odustani':'取消') + '</button><button class="im-confirm" id="imConfirm">' + (lang==='sr'?'Uvezi':'导入') + '</button></div></div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('imCancel').addEventListener('click', function() { overlay.remove(); });
+  document.getElementById('imConfirm').addEventListener('click', function() {
+    var text = document.getElementById('importTextarea').value.trim();
+    if (!text) { overlay.remove(); return; }
+    doImport(text); overlay.remove();
+  });
+  // Auto-paste from clipboard
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(function(t) {
+      try { JSON.parse(t); document.getElementById('importTextarea').value = t; } catch(e) {}
+    }).catch(function() {});
+  }
+  document.getElementById('importTextarea').focus();
+}
+
+function doImport(text) {
   try {
     var imported = JSON.parse(text);
     if (!imported.date || !imported.author || !imported.entry) throw new Error();
@@ -1610,28 +1757,35 @@ function importSharedDiary() {
     allData[imported.date][imported.author] = imported.entry;
     saveSharedDiaryData(allData);
     if (imported.date === fmtDate(sharedDiaryViewDate)) renderSharedDiary();
-    toast('📥 ' + (lang==='sr'?'Uvezeno!':lang==='en'?'Imported!':'已导入！'));
+    renderDateStrip();
+    toast('📥 ' + (lang==='sr'?'Uvezeno! 💌':lang==='en'?'Imported! 💌':'已导入！💌'));
   } catch(e) {
-    toast(lang==='sr'?'Neispravan format':lang==='en'?'Invalid format':'格式不对哦');
+    toast(lang==='sr'?'Neispravan format 😢':lang==='en'?'Invalid format 😢':'格式不对哦 😢');
   }
 }
 
+// ==============================
+// RENDER SHARED DIARY
+// ==============================
 async function renderSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
-  document.getElementById('sharedDiaryDate').textContent = dateKey;
+  // Labels
   document.getElementById('sd-my-title').textContent = lang==='sr'?'Moj osvrt':lang==='en'?'My Reflection':'我的总结';
   document.getElementById('sd-my-hint').textContent = lang==='sr'?'Iskreno o danu — što više detalja, to bolje 💫':lang==='en'?'Be honest about your day — the more detail the better 💫':'坦诚地回顾一天——越详细越好 💫';
   document.getElementById('sd-l-happy').textContent = lang==='sr'?'Šta me je danas obradovalo':lang==='en'?'What made me happy today':'今天让我开心的事';
   document.getElementById('sd-l-uncomf').textContent = lang==='sr'?'Šta mi je malo zasmetalo':lang==='en'?'What felt a little uncomfortable':'让我有点不舒服的事';
   document.getElementById('sd-l-thanks').textContent = lang==='sr'?'Želim da ti se zahvalim za...':lang==='en'?'I want to thank you for...':'我想感谢你的...';
   document.getElementById('sd-l-wish').textContent = lang==='sr'?'Voleo/la bih da zajedno poradimo na...':lang==='en'?'I hope we can work on...':'我希望我们能一起改进的...';
-  document.getElementById('sd-save-text').textContent = lang==='sr'?'Sačuvaj i otključaj partnerov unos':lang==='en'?'Save & Unlock Partner\'s Entry':'保存并解锁伴侣日记';
-  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'Moraš sačuvati svoj unos pre nego što vidiš partnerov':lang==='en'?'You must save your entry before seeing your partner\'s':'保存自己的日记后才能查看伴侣的哦';
+  document.getElementById('sd-save-text').textContent = lang==='sr'?'Sačuvaj i pogledaj partnerov':lang==='en'?'Save & View Partner\'s':'保存并查看伴侣的';
+  document.getElementById('sd-gate-hint').textContent = lang==='sr'?'Sačuvaj svoj unos pre nego što vidiš partnerov':lang==='en'?'Save your entry to unlock your partner\'s':'写完才能看伴侣的哦';
   document.getElementById('sd-partner-title').textContent = lang==='sr'?'Partnerov osvrt':lang==='en'?'Partner\'s Reflection':'伴侣的总结';
-  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'Automatska sinhronizacija uključena':lang==='en'?'Auto-sync enabled':'自动同步已开启') : (lang==='sr'?'Izvezi svoj unos → pošalji partneru → Partner uveze → oboje vidite!':lang==='en'?'Export your entry → send to partner → Partner imports → both can see!':'导出你的日记 → 发给伴侣 → 伴侣导入 → 互相看到！');
-  document.getElementById('sd-export').textContent = lang==='sr'?'Podeli moj unos':lang==='en'?'Share My Entry':'分享我的日记';
-  document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi partnerov':lang==='en'?'Import Partner\'s':'导入伴侣的';
-  document.getElementById('sd-history-title').textContent = lang==='sr'?'Istorija':lang==='en'?'History':'历史记录';
+  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'☁️ Automatska sinhronizacija':lang==='en'?'☁️ Auto-sync on':'☁️ 自动同步中') : (lang==='sr'?'📤 Izvezi → pošalji partneru → Partner uveze':lang==='en'?'📤 Export → send → Partner imports':'📤 导出 → 发给伴侣 → 导入');
+  document.getElementById('sd-export').textContent = lang==='sr'?'Podeli':lang==='en'?'Share':'分享';
+  document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi':lang==='en'?'Import':'导入';
+  document.getElementById('sd-history-title').textContent = lang==='sr'?'Vremenska linija':lang==='en'?'Timeline':'时间线';
+  document.getElementById('sd-saved-text').textContent = lang==='sr'?'Sačuvano':'已保存';
+  document.getElementById('partner-locked-text').textContent = lang==='sr'?'Prvo sačuvaj svoj unos da otključaš partnerov 💌':lang==='en'?'Save your entry first to unlock your partner\'s 💌':'先保存你的日记才能解锁伴侣的哦 💌';
+  document.getElementById('sd-sync-icon').textContent = getGitHubToken() ? '☁️' : '';
 
   // Try pull from GitHub first
   if (getGitHubToken()) await pullPartnerEntry(dateKey);
@@ -1641,14 +1795,25 @@ async function renderSharedDiary() {
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   var partnerEntry = allData[dateKey] && allData[dateKey][partnerProfile];
 
+  // Fill my entry fields
   document.getElementById('sd-happy').value = myEntry ? (myEntry.happy || '') : '';
   document.getElementById('sd-uncomf').value = myEntry ? (myEntry.uncomf || '') : '';
   document.getElementById('sd-thanks').value = myEntry ? (myEntry.thanks || '') : '';
   document.getElementById('sd-wish').value = myEntry ? (myEntry.wish || '') : '';
+  // Update char counters
+  ['happy','uncomf','thanks','wish'].forEach(function(f) {
+    var el = document.getElementById('sdc-'+f); if (el) el.textContent = (document.getElementById('sd-'+f).value || '').length;
+  });
 
-  var partnerCard = document.getElementById('sharedDiaryPartnerCard');
+  // Partner card — show locked or unlocked
+  var lockedEl = document.getElementById('partnerLocked');
+  var contentEl = document.getElementById('sharedDiaryPartnerContent');
+  var translateBtn = document.getElementById('translateBtnSm');
+
   if (myEntry) {
-    partnerCard.style.display = '';
+    lockedEl.style.display = 'none';
+    contentEl.style.display = '';
+    contentEl.classList.add('partner-card-unlocked');
     if (partnerEntry) {
       var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
       var timeStr = '';
@@ -1664,64 +1829,123 @@ async function renderSharedDiary() {
       questions.forEach(function(item) {
         if (item.a) { origTexts.push(item.a); html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a" data-original="'+item.a.replace(/"/g,'&quot;').replace(/'/g,'&#39;')+'" id="sdp-'+origTexts.length+'">'+item.a+'</div></div>'; }
       });
-      if(origTexts.length>0)html+='<button class="btn btn-outline" onclick="translatePartnerEntries()" style="margin-top:12px;font-size:.74rem;padding:12px;width:100%;font-weight:700" id="translateBtn">🌐 '+(lang==='sr'?'Prevedi na moj jezik':lang==='en'?'Translate to my language':'翻译成我的语言')+'</button>';
       if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
         html += '<div class="sd-empty">'+(lang==='sr'?'Nema unosa':lang==='en'?'No entry':'没有记录')+'</div>';
       }
-      document.getElementById('sharedDiaryPartnerContent').innerHTML = html;
+      contentEl.innerHTML = html;
+      if (origTexts.length > 0) { translateBtn.style.display = ''; translateBtn.textContent = '🌐'; }
+      else { translateBtn.style.display = 'none'; }
     } else {
-      document.getElementById('sharedDiaryPartnerContent').innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.':lang==='en'?'Your partner hasn\'t written their reflection for this day yet — or it hasn\'t synced.':'伴侣还没写这一天的总结——或者还没同步过来。')+'</div></div>';
+      contentEl.innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">'+(lang==='sr'?'Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.':lang==='en'?'Your partner hasn\'t written their reflection for this day yet — or it hasn\'t synced.':'伴侣还没写这一天的总结——或者还没同步过来。')+'</div></div>';
+      translateBtn.style.display = 'none';
     }
   } else {
-    partnerCard.style.display = 'none';
+    lockedEl.style.display = '';
+    contentEl.style.display = 'none';
+    contentEl.classList.remove('partner-card-unlocked');
+    translateBtn.style.display = 'none';
   }
 
   renderSharedDiaryHistory(allData);
 }
 
+// ==============================
+// TIMELINE HISTORY
+// ==============================
 function renderSharedDiaryHistory(allData) {
   var items = [];
   Object.keys(allData).forEach(function(date) {
     var day = allData[date];
-    var barry = day['barry'];
-    var andjela = day['andjela'];
+    var barry = day['barry']; var andjela = day['andjela'];
     if (barry || andjela) items.push({date:date, barry:barry, andjela:andjela});
   });
   items.sort(function(a,b) { return b.date.localeCompare(a.date); });
   var hist = document.getElementById('sharedDiaryHistory');
+  if (!hist) return;
   if (items.length === 0) {
-    hist.innerHTML = '<div class="sd-empty">'+(lang==='sr'?'Još nema unosa — započnite danas! 💌':lang==='en'?'No entries yet — start today! 💌':'还没有日记——今天就开始吧！💌')+'</div>';
+    hist.innerHTML = '<div class="sd-empty" style="padding-left:20px">'+(lang==='sr'?'Još nema unosa — započnite danas! 💌':lang==='en'?'No entries yet — start today! 💌':'还没有日记——今天就开始吧！💌')+'</div>';
     return;
   }
-  hist.innerHTML = items.slice(0,14).map(function(item) {
-    var parts = [];
-    if (item.andjela) {
-      var preview = (item.andjela.happy||item.andjela.thanks||item.andjela.uncomf||item.andjela.wish||'').substring(0,60);
-      parts.push('<div style="margin-bottom:4px"><span style="font-size:.62rem;color:var(--love)">🌸 Anđela:</span> <span style="font-size:.74rem;color:var(--text)">'+preview+(preview.length>=60?'...':'')+'</span></div>');
-    }
-    if (item.barry) {
-      var preview = (item.barry.happy||item.barry.thanks||item.barry.uncomf||item.barry.wish||'').substring(0,60);
-      parts.push('<div><span style="font-size:.62rem;color:var(--teal)">👦 Barry:</span> <span style="font-size:.74rem;color:var(--text)">'+preview+(preview.length>=60?'...':'')+'</span></div>');
-    }
-    return '<div class="card" style="padding:12px;margin-bottom:6px"><div style="font-size:.68rem;font-weight:700;color:var(--text-muted);margin-bottom:4px">📅 '+item.date+'</div>'+parts.join('')+'</div>';
-  }).join('');
+
+  var showCount = 10;
+  var hasMore = items.length > showCount;
+
+  function buildTimeline(list) {
+    return list.map(function(item) {
+      var both = item.barry && item.andjela;
+      var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
+      var preview = '';
+      var authors = [];
+      if (item.andjela) { authors.push('🌸 Anđela'); preview = preview || item.andjela.happy || item.andjela.thanks || item.andjela.uncomf || item.andjela.wish || ''; }
+      if (item.barry) { authors.push('👦 Barry'); preview = preview || item.barry.happy || item.barry.thanks || item.barry.uncomf || item.barry.wish || ''; }
+      preview = preview.substring(0, 80);
+      return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
+        + '<div class="tn-date">📅 ' + item.date + '</div>'
+        + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
+        + '<div class="tn-preview">' + preview + (preview.length >= 80 ? '...' : '') + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  hist.innerHTML = '<div class="timeline-inner">' + buildTimeline(items.slice(0, showCount)) + '</div>'
+    + (hasMore ? '<div class="timeline-load-more"><button onclick="expandTimeline()" id="timelineExpandBtn">'
+    + (lang==='sr'?'📅 Prikaži još ' + (items.length - showCount) + ' unosa':lang==='en'?'📅 Show ' + (items.length - showCount) + ' more entries':'📅 展开剩余 ' + (items.length - showCount) + ' 条')
+    + '</button></div>' : '');
 }
 
+function jumpToDiaryDate(dateKey) {
+  sharedDiaryViewDate = new Date(dateKey + 'T00:00:00');
+  renderDateStrip();
+  renderSharedDiary();
+  // Scroll to top of diary panel
+  document.getElementById('panel-diary').scrollIntoView({ behavior:'smooth' });
+}
+
+window._allTimelineItems = null;
+function expandTimeline() {
+  var allData = loadSharedDiaryData();
+  var items = [];
+  Object.keys(allData).forEach(function(date) {
+    var day = allData[date];
+    if (day['barry'] || day['andjela']) items.push({date:date, barry:day['barry'], andjela:day['andjela']});
+  });
+  items.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  var hist = document.getElementById('sharedDiaryHistory');
+  hist.innerHTML = '<div class="timeline-inner">'
+    + items.map(function(item) {
+      var both = item.barry && item.andjela;
+      var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
+      var preview = '';
+      var authors = [];
+      if (item.andjela) { authors.push('🌸 Anđela'); preview = preview || item.andjela.happy || item.andjela.thanks || item.andjela.uncomf || item.andjela.wish || ''; }
+      if (item.barry) { authors.push('👦 Barry'); preview = preview || item.barry.happy || item.barry.thanks || item.barry.uncomf || item.barry.wish || ''; }
+      preview = preview.substring(0, 80);
+      return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
+        + '<div class="tn-date">📅 ' + item.date + '</div>'
+        + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
+        + '<div class="tn-preview">' + preview + (preview.length >= 80 ? '...' : '') + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+// ==============================
+// TRANSLATION
+// ==============================
 async function translateText(text, from, to) {
   if(!text||from===to||text.length<2)return text;
   var pair=from+'|'+to;
-  // Try MyMemory API first (more reliable in China)
   try{var r1=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+pair);var d1=await r1.json();if(d1.responseData&&d1.responseData.translatedText&&d1.responseData.translatedText!==text)return d1.responseData.translatedText;}catch(e){}
-  // Fallback: Google Translate
   try{var r2=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl='+from+'&tl='+to+'&dt=t&q='+encodeURIComponent(text));var d2=await r2.json();if(d2&&d2[0]){var t=d2[0].map(function(s){return s[0];}).join('');if(t&&t!==text)return t;}}catch(e){}
   return text;
 }
 async function translatePartnerEntries() {
-  var btn=document.getElementById('translateBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ '+(lang==='sr'?'Prevodim...':lang==='en'?'Translating...':'翻译中...');}
+  var btns = document.querySelectorAll('#translateBtnSm, #translateBtnSm');
+  var btn = document.getElementById('translateBtnSm');
+  if(btn){btn.disabled=true;btn.textContent='⏳';}
   var vl=(lang||'sr')==='zh-CN'?'zh-CN':'sr';
   var pl=activeProfile==='barry'?'sr':'zh-CN';
-  if(vl===pl){if(btn){btn.textContent='🌐 '+(lang==='sr'?'Isti jezik':lang==='en'?'Same language':'同一种语言');btn.disabled=false;}return;}
+  if(vl===pl){if(btn){btn.textContent='🌐';btn.disabled=false;}return;}
   var els=document.querySelectorAll('[id^="sdp-"]');
   var ok=0;
   for(var i=0;i<els.length;i++){
@@ -1732,12 +1956,30 @@ async function translatePartnerEntries() {
     }
   }
   if(btn){
-    if(ok>0){btn.textContent='✅ '+(lang==='sr'?'Prevedeno '+ok+' stavki':lang==='en'?'Translated '+ok+' items':'已翻译 '+ok+' 条');btn.style.borderColor='var(--teal)';btn.style.color='var(--teal)';}
-    else{btn.textContent='⚠️ '+(lang==='sr'?'Prevod nije uspeo':lang==='en'?'Translation failed':'翻译失败，请重试');btn.style.borderColor='#E53935';btn.style.color='#E53935';btn.disabled=false;}
+    if(ok>0){btn.textContent='✅';btn.style.borderColor='var(--teal)';btn.style.color='var(--teal)';}
+    else{btn.textContent='⚠️';btn.style.borderColor='#E53935';btn.style.color='#E53935';btn.disabled=false;}
   }
 }
+
+// ==============================
+// CHARACTER COUNTERS
+// ==============================
+['happy','uncomf','thanks','wish'].forEach(function(f) {
+  var ta = document.getElementById('sd-'+f);
+  if (ta) {
+    ta.addEventListener('input', function() {
+      var count = document.getElementById('sdc-'+f);
+      if (count) count.textContent = ta.value.length;
+    });
+  }
+});
+
+// ==============================
+// INIT
+// ==============================
 function initSharedDiaryTab() {
   sharedDiaryViewDate = new Date();
+  renderDateStrip();
   renderSharedDiary();
 }
 
