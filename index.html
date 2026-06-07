@@ -492,7 +492,8 @@ body {
 @keyframes loveGlow { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.15);opacity:1} }
 .love-note-icon { font-size:2rem; display:block; margin-bottom:6px; animation:loveFloat 3s ease-in-out infinite; }
 @keyframes loveFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-.love-note-text { font-size:.82rem; color:var(--text); line-height:1.6; font-style:italic; }
+.love-note-text { font-size:.82rem; color:var(--text); line-height:1.6; font-style:italic; transition:opacity .3s; }
+.love-note-text.changing { opacity:0; }
 .love-note-signature { font-size:.68rem; color:var(--gold); margin-top:8px; }
 [data-theme="dark"] .love-note-card { background:linear-gradient(135deg, #2A1E22, #2A221E); }
 
@@ -1522,9 +1523,13 @@ function renderDiarySection() {
 function renderLoveNote() {
   if (activeProfile === 'barry') { document.getElementById('loveNoteCard').style.display = 'none'; return; }
   document.getElementById('loveNoteCard').style.display = '';
-  document.getElementById('loveNoteText').textContent = LOVE_NOTES.get();
+  var el = document.getElementById('loveNoteText');
+  var newText = LOVE_NOTES.get();
+  if (el.textContent !== newText) {
+    el.classList.add('changing');
+    setTimeout(function() { el.textContent = newText; el.classList.remove('changing'); }, 300);
+  }
   document.getElementById('loveNoteSig').textContent = t('loveNoteSig');
-  // Random icon
   var icons = ['💌','💝','💗','💕','💖','🕊️','✨','🌷'];
   document.getElementById('loveNoteIcon').textContent = icons[Math.floor(Math.random() * icons.length)];
 }
@@ -3142,12 +3147,13 @@ function renderCheckin() {
 
 // Our Song
 function saveMySong() {
-  var title = prompt(lang==='sr'?'Naziv pesme koja te podseća na nas:':lang==='en'?'Song that reminds you of us:':'哪首歌让你想起我们：');
-  if (!title) return;
-  var note = prompt(lang==='sr'?'Zašto baš ova pesma? (jedna rečenica):':lang==='en'?'Why this song? (one sentence):':'为什么是这首歌？（一句话）：');
+  var title = document.getElementById('songInputTitle').value.trim();
+  if (!title) { toast(lang==='sr'?'Unesi naziv pesme 🎵':lang==='en'?'Enter a song title 🎵':'请输入歌名 🎵'); return; }
+  var note = document.getElementById('songInputNote').value.trim();
   var song = { title: title, note: note || '', from: activeProfile, time: Date.now() };
   localStorage.setItem('shared-song-' + activeProfile, JSON.stringify(song));
   renderSong();
+  toast('🎵 ' + (lang==='sr'?'Pesma sačuvana!':lang==='en'?'Song saved!':'歌曲已保存！'));
 }
 function loadSong(profile) {
   try { return JSON.parse(localStorage.getItem('shared-song-' + profile)); } catch(e) { return null; }
@@ -3162,7 +3168,7 @@ function renderSong() {
   if (mySong) {
     html += '<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">'+(lang==='sr'?'Moja pesma':lang==='en'?'My song':'我的歌')+'</span><div class="song-title">🎶 '+mySong.title+'</div>'+(mySong.note?'<div class="song-note">'+mySong.note+'</div>':'')+'</div>';
   } else {
-    html += '<button class="btn btn-outline" onclick="saveMySong()" style="font-size:.68rem;margin-bottom:8px">🎵 '+(lang==='sr'?'Postavi moju pesmu':lang==='en'?'Set My Song':'设置我的歌')+'</button>';
+    html += '<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="'+(lang==='sr'?'Naziv pesme...':lang==='en'?'Song title...':'歌名...')+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="'+(lang==='sr'?'Zašto baš ova pesma?':lang==='en'?'Why this song?':'为什么是这首歌？')+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 '+(lang==='sr'?'Sačuvaj':lang==='en'?'Save':'保存')+'</button></div>';
   }
   if (partnerSong) {
     html += '<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+partnerName+' '+(lang==='sr'?'pesma':lang==='en'?'song':'的歌')+'</span><div class="song-title">🎶 '+partnerSong.title+'</div>'+(partnerSong.note?'<div class="song-note">'+partnerSong.note+'</div>':'')+'</div>';
