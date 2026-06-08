@@ -1529,7 +1529,30 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
-function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderTea();renderForecast();renderGarden();renderRelTips();renderHug();renderSong();renderCheckin();renderSleepCard();renderSpecialBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
+function renderSolarTermBadge() {
+  var badge = document.getElementById('solarTermBadge');
+  if (!badge) return;
+  var todayKey = fmtDate(today());
+  var term = getSolarTerm(todayKey);
+  if (term) {
+    var cnName = term.name['zh-CN'] || term.name['zh'] || '';
+    var srName = term.name['sr'] || '';
+    badge.textContent = '🌿 ' + cnName + ' · ' + srName;
+    badge.style.display = '';
+  } else {
+    var nearest = null, minDist = 30;
+    SOLAR_TERMS_INLINE.forEach(function(s) {
+      var dist = Math.abs(daysDiff(today(), new Date(s.date+'T00:00:00')));
+      if (dist < minDist) { minDist = dist; nearest = s; }
+    });
+    if (nearest && minDist <= 7) {
+      var cnName = nearest.name['zh-CN'] || nearest.name['zh'] || '';
+      badge.textContent = '🌿 ' + cnName + ' ' + (lang==='sr'?'za '+minDist+' dana':lang==='en'?'in '+minDist+' days':minDist+'天后');
+      badge.style.display = '';
+    } else { badge.style.display = 'none'; }
+  }
+}
+function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderTea();renderForecast();renderGarden();renderRelTips();renderHug();renderSong();renderCheckin();renderSleepCard();renderSpecialBadge();renderSolarTermBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
 function renderAll(){applyAllUI();}
 
 /* ================================================================
