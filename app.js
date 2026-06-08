@@ -1032,7 +1032,7 @@ function t(key, fallback) {
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
-function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); }
+function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; }
 function switchTheme(th) { applyTheme(th); }
 
 /* ================================================================
@@ -1445,7 +1445,8 @@ function checkCycleCelebration() {
   }
 }
 function updateCycleCounter(n) {
-  const card = document.getElementById('cycleCounterCard');
+  var card = document.getElementById('cycleCounterCard');
+  if (!card) return;
   if (n > 0) { card.style.display = ''; document.getElementById('cc-count').textContent = n; document.getElementById('cc-subtitle').textContent = t('cycleCounterSub'); }
   else card.style.display = 'none';
 }
@@ -1644,10 +1645,13 @@ function renderCalendar(){
   var seasonEmoji = {0:'❄️',1:'❄️',2:'🌸',3:'🌸',4:'🌸',5:'☀️',6:'☀️',7:'☀️',8:'🍂',9:'🍂',10:'🍂',11:'❄️'};
   var seasonLabel = lang==='sr'?{0:'Zima',1:'Zima',2:'Proleće',3:'Proleće',4:'Proleće',5:'Leto',6:'Leto',7:'Leto',8:'Jesen',9:'Jesen',10:'Jesen',11:'Zima'}:lang==='en'?{0:'Winter',1:'Winter',2:'Spring',3:'Spring',4:'Spring',5:'Summer',6:'Summer',7:'Summer',8:'Autumn',9:'Autumn',10:'Autumn',11:'Winter'}:{0:'冬',1:'冬',2:'春',3:'春',4:'春',5:'夏',6:'夏',7:'夏',8:'秋',9:'秋',10:'秋',11:'冬'};
   var ml = document.getElementById('monthLabel');
-  if (ml&&!ml.querySelector('.season-tag')) {
+  if (ml) {
+    // Remove existing season tag and re-add with updated month
+    var existingTag = ml.querySelector('.season-tag');
+    if (existingTag) existingTag.remove();
     ml.innerHTML = ml.textContent + ' <span class="season-tag" style="font-size:.6rem;opacity:.5">'+seasonEmoji[viewMonth]+' '+seasonLabel[viewMonth]+'</span>';
   }
-  updateProgress(pred); updateStats(pred); updateHistoryDots(pred); updateYearOverview(pred); updateReminder(pred);
+  updateProgress(pred); updateStats(pred); updateHistoryDots(pred); updateReminder(pred);
 }
 
 function updateProgress(pred){
@@ -1703,8 +1707,6 @@ function updateHistoryDots(pred){
   const recent=pred.cycles.slice(-12),avg=pred.avgCycle;
   c.innerHTML=recent.map(cy=>{let cls='normal';if(cy<avg-3)cls='short';else if(cy>avg+3)cls='long';return`<span class="history-dot ${cls}" title="${cy}${t('day')}" onclick="toast('${cy}${t('day')}')"></span>`;}).join('');
 }
-
-function updateYearOverview(pred){}
 
 function goToMonth(m){viewMonth=m;renderCalendar();}
 function updateReminder(pred){
@@ -1825,9 +1827,9 @@ function renderTips(){
   document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
 function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){localStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');}else{localStorage.removeItem('gh-token');}}
 function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-override').checked=state.settings.manualOverride;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();}
-function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||5;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
+function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||7;state.settings.manualOverride=document.getElementById('set-override').checked;saveState();renderAll();toast(t('toast.saved'));}
 function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${activeProfile}-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
-function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(){try{const d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error();state.records=d.records.map(r=>new Date(r));state.symptoms=d.symptoms||{};state.moods=d.moods||{};state.diaries=d.diaries||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false,...d.settings};saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
+function importData(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error('Invalid format');state.records=d.records.map(function(r){var dt=new Date(r);return isNaN(dt.getTime())?null:dt;}).filter(Boolean);if(state.records.length===0&&d.records.length>0)throw new Error('No valid dates');state.symptoms=d.symptoms||{};state.moods=d.moods||{};state.diaries=d.diaries||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false};if(d.settings){Object.keys(d.settings).forEach(function(k){state.settings[k]=d.settings[k];});}saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
 function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},moods:{},diaries:{},settings:{cycleLength:28,periodLength:7,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
 
 /* ================================================================
