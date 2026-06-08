@@ -828,7 +828,6 @@ async function translateText(text, from, to) {
   return text;
 }
 async function translatePartnerEntries() {
-  var btns = document.querySelectorAll('#translateBtnSm');
   var btn = document.getElementById('translateBtnSm');
   if(btn){btn.disabled=true;btn.textContent='⏳';}
   var vl=(lang||'sr')==='zh-CN'?'zh-CN':'sr';
