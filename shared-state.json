@@ -52,6 +52,13 @@
         "wish": "让对方变得更有安全感",
         "time": 1780900845052
       }
+    },
+    "2026-06-08": {
+      "barry": {
+        "hug": {
+          "time": 1780904469033
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -67,7 +74,10 @@
       "time": 1780692493970
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "barry",
+    "time": 1780904469033
+  },
   "songs": {
     "barry": null,
     "andjela": null
@@ -81,5 +91,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780904466463
+  "updated": 1780904469533
 }
