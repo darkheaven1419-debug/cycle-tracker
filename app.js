@@ -1493,7 +1493,7 @@ function updateLangUI(){
   document.getElementById('set-language').value=lang;
   document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);});
   const wd=t('weekdays');
-  document.getElementById('weekdaysRow').innerHTML=wd.map((d,i)=>`<span${i>=5?' style="color:var(--rose);opacity:.6"':''}>${d}</span>`).join('');
+  document.getElementById('weekdaysRow').innerHTML='<span></span>'+wd.map(function(d,i){return'<span'+(i>=5?' style="color:var(--rose);opacity:.6"':'')+'>'+d+'</span>';}).join('');
   const lg=t('legend');
   document.getElementById('legend').innerHTML=`<span class="l-period">${lg[0]}</span><span class="l-fertile">${lg[1]}</span><span class="l-follicular">${lg[2]}</span><span class="l-luteal">${lg[3]}</span><span style="font-weight:700;font-size:.66rem;">▣ ${lg[4]}</span>`;
   if (annDateMet || annDateLove) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
@@ -1542,10 +1542,33 @@ function renderCalendar(){
   const gridStart=addDays(first,-dow); const grid=document.getElementById('daysGrid'); grid.innerHTML='';
   const recordedStarts=new Set(state.records.map(fmtDate));
   var plEl=document.getElementById('predLegend'); if(pred.futurePeriods.length>0){plEl.style.display='';plEl.textContent=lang==='sr'?'※ Prozirni datumi su predviđanja':lang==='en'?'※ Faded dates are future predictions':'※ 半透明标记为未来周期预测';} else plEl.style.display='none';
+  // Build shared diary index for dot indicators
+  var sharedDiaryIdx = {};
+  try { var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); Object.keys(sd).forEach(function(k){ if(sd[k]&&(sd[k].barry||sd[k].andjela)) sharedDiaryIdx[k]=true; }); } catch(e) {}
   for(let i=0;i<42;i++){
+    // Insert week number at start of each row (every 7th position)
+    var colPos = i + Math.floor(i / 7); // actual grid position including week columns
+    if (i % 7 === 0) {
+      var wkCell = document.createElement('div'); wkCell.className = 'week-num';
+      var wkDate = addDays(gridStart, i);
+      // ISO week number approximation
+      var jan1 = new Date(wkDate.getFullYear(), 0, 1);
+      var wkNum = Math.ceil((((wkDate - jan1) / 86400000) + jan1.getDay() + 1) / 7);
+      wkCell.textContent = wkNum; wkCell.setAttribute('aria-hidden', 'true');
+      grid.appendChild(wkCell);
+    }
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
     const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
-    const key=fmtDate(d); const hasSymptom=state.symptoms[key]&&Object.entries(state.symptoms[key]).some(([k,v])=>k!=='notes'&&v>0);
+    const key=fmtDate(d);
+    // Symptom check
+    var symptoms=state.symptoms[key];
+    var hasSymptom=symptoms&&Object.entries(symptoms).some(function(kv){return kv[0]!=='notes'&&kv[1]>0;});
+    // Cycle day number for Anđela's active cycle
+    var cycleDay='';
+    if (activeProfile==='andjela'&&pred.lastStart){
+      var cd=daysDiff(d0(pred.lastStart),d0(d));
+      if (cd>=0&&cd<pred.cycleLen) cycleDay=String(cd+1);
+    }
     const annType = isAnniversary(d);
     const el=document.createElement('div'); el.className='day';
     if(!inMonth) el.classList.add('other-month');
@@ -1554,8 +1577,34 @@ function renderCalendar(){
     if(phase==='period-on'&&recordedStarts.has(key)) el.classList.add('recorded');
     if(annType>0) el.classList.add('anniversary');
     if(getBirthday(d)) el.classList.add('birthday');
-    el.textContent=d.getDate(); el.setAttribute('role','button'); el.setAttribute('aria-label',fmtDate(d));
-    if(hasSymptom&&!phase){const dot=document.createElement('span');dot.className='mini-dot pink';el.appendChild(dot);}
+    // Date number
+    var daySpan=document.createElement('span'); daySpan.className='day-num'; daySpan.textContent=d.getDate();
+    el.appendChild(daySpan);
+    // Cycle day badge
+    if (cycleDay&&inMonth&&!phase) {
+      var cdSpan=document.createElement('span'); cdSpan.className='day-cycle-num'; cdSpan.textContent=cycleDay;
+      el.appendChild(cdSpan);
+    }
+    el.setAttribute('role','button'); el.setAttribute('aria-label',fmtDate(d));
+    // Symptom emoji icons on cell
+    if (hasSymptom&&!phase&&symptoms){
+      var miniDiv=document.createElement('div'); miniDiv.className='day-symptoms';
+      ['cramps','mood','flow','headache','fatigue','cravings'].forEach(function(sym){
+        if (symptoms[sym]&&symptoms[sym]>0) {
+          var symEl=document.createElement('span'); symEl.className='day-sym-icon';
+          symEl.textContent={cramps:'😣',mood:'😊',flow:'💧',headache:'🤕',fatigue:'😴',cravings:'🍫'}[sym];
+          symEl.title=sym; miniDiv.appendChild(symEl);
+        }
+      });
+      if (miniDiv.children.length>0) el.appendChild(miniDiv);
+    }
+    // Diary entry dot
+    if (sharedDiaryIdx[key]) {
+      var diaryDot=document.createElement('span'); diaryDot.className='mini-dot gold';
+      diaryDot.style.cssText='position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
+      el.appendChild(diaryDot);
+    }
+    // Anniversary dot
     if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
     // Solar term dot
     var solarTerm = getSolarTerm(key);
@@ -1563,7 +1612,7 @@ function renderCalendar(){
       var sdot = document.createElement('span');
       sdot.className = 'mini-dot';
       sdot.style.cssText = 'background:#4CAF50;position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%';
-      if (phase) sdot.style.bottom = '1px'; // keep visible even on phase-colored cells
+      if (phase) sdot.style.bottom = '1px';
       el.appendChild(sdot);
     }
     // Holiday dots
@@ -1573,8 +1622,30 @@ function renderCalendar(){
       dot.className='holiday-'+h.country;
       el.appendChild(dot);
     });
-    if(inMonth) el.addEventListener('click',()=>openModal(d,pred));
+    // Double-tap detection for quick period mark
+    var tapTimer = null;
+    if(inMonth) {
+      el.addEventListener('click',function(e){
+        if (tapTimer) {
+          // Double tap — quick toggle period
+          clearTimeout(tapTimer); tapTimer = null;
+          var idx = state.records.findIndex(function(r){return sameDay(r,d);});
+          if (idx >= 0) { state.records.splice(idx,1); toast('🚫 '+t('toast.unmarked')); }
+          else { state.records.push(new Date(d)); state.records.sort(function(a,b){return a-b;}); el.classList.add('celebrate'); setTimeout(function(){el.classList.remove('celebrate');},500); toast('🩸 '+t('toast.marked')); checkCycleCelebration(); }
+          saveState(); renderAll(); updateFab();
+        } else {
+          tapTimer = setTimeout(function(){ tapTimer = null; openModal(d,pred); }, 280);
+        }
+      });
+    }
     grid.appendChild(el);
+  }
+  // Month season subtitle
+  var seasonEmoji = {0:'❄️',1:'❄️',2:'🌸',3:'🌸',4:'🌸',5:'☀️',6:'☀️',7:'☀️',8:'🍂',9:'🍂',10:'🍂',11:'❄️'};
+  var seasonLabel = lang==='sr'?{0:'Zima',1:'Zima',2:'Proleće',3:'Proleće',4:'Proleće',5:'Leto',6:'Leto',7:'Leto',8:'Jesen',9:'Jesen',10:'Jesen',11:'Zima'}:lang==='en'?{0:'Winter',1:'Winter',2:'Spring',3:'Spring',4:'Spring',5:'Summer',6:'Summer',7:'Summer',8:'Autumn',9:'Autumn',10:'Autumn',11:'Winter'}:{0:'冬',1:'冬',2:'春',3:'春',4:'春',5:'夏',6:'夏',7:'夏',8:'秋',9:'秋',10:'秋',11:'冬'};
+  var ml = document.getElementById('monthLabel');
+  if (ml&&!ml.querySelector('.season-tag')) {
+    ml.innerHTML = ml.textContent + ' <span class="season-tag" style="font-size:.6rem;opacity:.5">'+seasonEmoji[viewMonth]+' '+seasonLabel[viewMonth]+'</span>';
   }
   updateProgress(pred); updateStats(pred); updateHistoryDots(pred); updateYearOverview(pred); updateReminder(pred);
 }
@@ -1644,14 +1715,29 @@ function updateReminder(pred){
   else if(pred.nextStart){var remain=daysDiff(td,pred.nextStart);if(remain>0&&remain<=3) msg=r.beforePeriod.replace('{days}',remain);}
   if(msg){banner.style.display='flex';banner.innerHTML=msg+' <span class="dismiss" onclick="this.parentElement.style.display=\'none\'">✕</span>';}else{banner.style.display='none';}
 }
-function updateFab(){const fab=document.getElementById('fabBtn');if(state.records.length===0){fab.classList.add('hidden');}else{fab.classList.remove('hidden');}}
+function updateFab(){
+  var fab=document.getElementById('fabBtn');
+  var fabIcon=document.getElementById('fab-icon');
+  if(state.records.length===0){fab.classList.add('hidden');}
+  else {
+    fab.classList.remove('hidden');
+    // Show current cycle day on FAB
+    var pred=predict();
+    if (pred.lastStart && activeProfile==='andjela') {
+      var cd=daysDiff(d0(pred.lastStart),today())+1;
+      if (cd>0&&cd<=pred.cycleLen) {
+        fabIcon.textContent=cd; fab.style.fontSize='1rem'; fab.style.fontWeight='800';
+      } else { fabIcon.textContent='🩸'; fab.style.fontSize='1.5rem'; fab.style.fontWeight='normal'; }
+    } else { fabIcon.textContent='🩸'; fab.style.fontSize='1.5rem'; fab.style.fontWeight='normal'; }
+  }
+}
 
-document.getElementById('fabBtn').addEventListener('click',()=>{
-  const td=today(); const isMarked=state.records.some(r=>sameDay(r,td));
+document.getElementById('fabBtn').addEventListener('click',function(){
+  var td=today(); var isMarked=state.records.some(function(r){return sameDay(r,td);});
   if(isMarked){toast(fmtDate(td)+(lang==='sr'?' - već označeno':lang==='en'?' - already marked':' - 已标记过'));return;}
-  state.records.push(new Date(td)); state.records.sort((a,b)=>a-b); saveState(); renderAll(); updateFab();
+  state.records.push(new Date(td)); state.records.sort(function(a,b){return a-b;}); saveState(); renderAll(); updateFab();
   toast(t('toast.marked')); checkCycleCelebration();
-  const fab=document.getElementById('fabBtn'); fab.classList.add('celebrate'); setTimeout(()=>fab.classList.remove('celebrate'),500);
+  var fab=document.getElementById('fabBtn'); fab.classList.add('celebrate'); setTimeout(function(){fab.classList.remove('celebrate');},500);
 });
 
 /* ================================================================

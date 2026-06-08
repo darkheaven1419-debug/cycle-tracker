@@ -230,11 +230,13 @@ body {
 .calendar.pulse-in { animation:calPulse .35s cubic-bezier(.34,1.56,.64,1); }
 @keyframes calPulse { 0%{transform:scale(.94);opacity:.4} 100%{transform:scale(1);opacity:1} }
 .calendar:hover { box-shadow:var(--shadow-md); }
-.weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
-.weekdays span:nth-child(6), .weekdays span:nth-child(7) { color:var(--rose); opacity:.6; }
-.days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-.day:nth-child(7n+6), .day:nth-child(7n+7) { background:rgba(212,122,138,0.04); }
-[data-theme="dark"] .day:nth-child(7n+6), [data-theme="dark"] .day:nth-child(7n+7) { background:rgba(255,255,255,.02); }
+.weekdays { display:grid; grid-template-columns:28px repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
+.weekdays span:nth-child(7), .weekdays span:nth-child(8) { color:var(--rose); opacity:.6; }
+.days { display:grid; grid-template-columns:28px repeat(7,1fr); gap:3px; }
+/* Week number */
+.week-num { display:flex; align-items:center; justify-content:center; font-size:.52rem; color:var(--text-muted); opacity:.4; font-weight:500; font-feature-settings:"tnum"; }
+.day:nth-child(8n+7), .day:nth-child(8n+8) { background:rgba(212,122,138,0.04); }
+[data-theme="dark"] .day:nth-child(8n+7), [data-theme="dark"] .day:nth-child(8n+8) { background:rgba(255,255,255,.02); }
 .day.today { font-weight:700; box-shadow:inset 0 0 0 2px var(--text); background:rgba(45,42,43,0.03); }
 .day.period-on { box-shadow:0 0 0 3px rgba(196,90,107,0.18), 0 2px 8px rgba(196,90,107,0.18); }
 .day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:.8rem; font-weight:450; cursor:pointer; position:relative; transition:transform .12s cubic-bezier(.34,1.56,.64,1), background .2s, box-shadow .2s; color:var(--text); font-variant-numeric:tabular-nums; min-width:32px; min-height:32px; overflow:visible !important; }
@@ -265,6 +267,13 @@ body {
 .day .mini-dot.gold { background:var(--gold); }
 .day .holiday-cn { position:absolute; bottom:2px; left:3px; width:4px; height:4px; border-radius:50%; background:#E53935; }
 .day .holiday-rs { position:absolute; bottom:2px; right:3px; width:4px; height:4px; border-radius:50%; background:#0C4076; }
+/* Calendar day internals */
+.day-num { position:relative; z-index:1; }
+.day-cycle-num { position:absolute; top:1px; right:3px; font-size:.48rem; font-weight:700; color:var(--text-muted); opacity:.55; z-index:1; pointer-events:none; }
+.day-symptoms { position:absolute; bottom:1px; left:50%; transform:translateX(-50%); display:flex; gap:1px; z-index:1; pointer-events:none; }
+.day-sym-icon { font-size:.45rem; line-height:1; }
+.day[class*="period"] .day-sym-icon, .day.ovulation .day-sym-icon { filter:brightness(10); }
+.day.today .day-cycle-num { color:var(--text); opacity:.8; }
 /* Flag fallback for systems without emoji flags */
 .flag-badge { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; font-size:9px; font-weight:700; color:#fff; vertical-align:middle; margin-right:2px; }
 .flag-badge.cn { background:linear-gradient(135deg,#DE2910,#FF4500); }
@@ -298,8 +307,9 @@ body {
 @keyframes panelSlideOutRight { to{opacity:0;transform:translateX(20px)} }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-.card { padding:18px; margin-bottom:12px; transition:all .3s; }
-.card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.card { padding:18px; margin-bottom:12px; transition:all .3s cubic-bezier(.4,0,.2,1); }
+.card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); border-color:rgba(200,180,170,.18); }
+.card:active { transform:scale(.985); transition:transform .1s; }
 .card h3 { font-size:.75rem; color:var(--text-muted); font-weight:600; margin-bottom:14px; text-transform:uppercase; letter-spacing:.04em; }
 .stat-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:.84rem; }
 .stat-row:last-child { border-bottom:none; }
@@ -768,6 +778,14 @@ body {
 .login-card.shake { animation:shake .5s ease; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
 .login-switch-hint { font-size:.62rem; color:var(--text-muted); margin-top:20px; text-align:center; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+/* Modal scrollbar */
+.modal::-webkit-scrollbar { width:3px; }
 
 /* GitHub token settings */
 .token-row { display:none; }
