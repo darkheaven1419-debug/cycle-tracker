@@ -339,7 +339,10 @@ function renderLoveNote() {
     el.classList.add('changing');
     setTimeout(function() { el.textContent = newText; el.classList.remove('changing'); }, 300);
   }
-  document.getElementById('loveNoteSig').textContent = t('loveNoteSig');
+  // Chinese poetic touch — Anđela gets both cultures
+  var chinesePoems = ['但愿人长久，千里共婵娟 🌙','执子之手，与子偕老 💕','天涯若比邻 🌍','心有灵犀一点通 ✨','千里姻缘一线牵 💝','海内存知己，天涯若比邻 🌊'];
+  var poem = chinesePoems[Math.floor(Math.random() * chinesePoems.length)];
+  document.getElementById('loveNoteSig').textContent = t('loveNoteSig') + '  ·  ' + poem;
   var icons = ['💌','💝','💗','💕','💖','🕊️','✨','🌷'];
   document.getElementById('loveNoteIcon').textContent = icons[Math.floor(Math.random() * icons.length)];
 }
