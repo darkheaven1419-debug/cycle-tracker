@@ -823,34 +823,5 @@ body {
 .token-row { display:none; }
 .token-row.show { display:flex; flex-direction:column; gap:6px; }
 .token-row input { width:100%; padding:8px; border:1px solid var(--border); border-radius:10px; font-size:.72rem; font-family:var(--font); background:var(--card); color:var(--text); }
-
-/* ================================================================
-   BOTTOM NAVIGATION — mobile-only
-   ================================================================ */
-.bottom-nav {
-  position:fixed; bottom:0; left:0; right:0; z-index:60;
-  display:flex; justify-content:space-around; align-items:center;
-  background:var(--card); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
-  border-top:1px solid var(--border);
-  padding:6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-  box-shadow:0 -2px 16px rgba(140,120,110,.08);
-}
-.bn-item {
-  display:flex; flex-direction:column; align-items:center; gap:2px;
-  background:none; border:none; cursor:pointer;
-  padding:6px 8px; border-radius:14px; min-width:52px;
-  transition:all .2s; font-family:var(--font); color:var(--text-muted);
-}
-.bn-item:active { transform:scale(.9); background:var(--border); }
-.bn-item.active { color:var(--love); }
-.bn-item.active .bn-label { font-weight:700; }
-.bn-icon { font-size:1.2rem; line-height:1; }
-.bn-label { font-size:.56rem; font-weight:500; line-height:1; }
-
 /* Prevent pull-to-refresh on calendar swipe */
 .calendar { overscroll-behavior:contain; }
-
-/* Add bottom-padding for mobile bottom nav */
-@media (max-width: 768px) {
-  .app { padding-bottom:100px; }
-}

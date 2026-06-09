@@ -389,7 +389,6 @@
     </div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-cycle"></span><span class="setting-hint" id="set-h-cycle"></span></div><input type="number" id="set-cycle" min="20" max="60" value="28"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-period"></span><span class="setting-hint" id="set-h-period"></span></div><input type="number" id="set-period" min="2" max="10" value="7"></div>
-    <div class="setting-row"><div><span class="setting-label" id="set-l-override"></span><span class="setting-hint" id="set-h-override"></span></div><input type="checkbox" id="set-override" style="width:18px;height:18px;cursor:pointer"></div>
     <div class="setting-row token-row show" id="tokenSettingRow">
       <div><span class="setting-label">🔑 GitHub Token</span><span class="setting-hint" id="set-h-token">Za sinhronizaciju dnevnika na oba telefona</span></div>
       <input type="password" id="set-gh-token" placeholder="ghp_..." style="width:100%;font-size:.7rem;padding:8px" onchange="saveGitHubToken()">
@@ -410,26 +409,6 @@
   <span id="fab-icon">🩸</span>
   <span class="fab-label" id="fab-label"></span>
 </button>
-
-<!-- Bottom Navigation — mobile-first -->
-<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
-  <button class="bn-item active" data-nav="stats" onclick="switchToTab('stats')" aria-label="Statistics">
-    <span class="bn-icon">📊</span>
-    <span class="bn-label" id="bn-label-stats">Stats</span>
-  </button>
-  <button class="bn-item" data-nav="symptoms" onclick="switchToTab('symptoms')" aria-label="Symptoms">
-    <span class="bn-icon">📝</span>
-    <span class="bn-label" id="bn-label-symptoms">Symptoms</span>
-  </button>
-  <button class="bn-item" data-nav="diary" onclick="switchToTab('diary')" aria-label="Diary">
-    <span class="bn-icon">💌</span>
-    <span class="bn-label" id="bn-label-diary">Diary</span>
-  </button>
-  <button class="bn-item" data-nav="settings" onclick="switchToTab('settings')" aria-label="Settings">
-    <span class="bn-icon">⚙</span>
-    <span class="bn-label" id="bn-label-settings">Settings</span>
-  </button>
-</nav>
 
 <div class="modal-overlay hidden" id="modal" role="dialog" aria-modal="true" aria-label="Detalji datuma">
   <div class="modal">
