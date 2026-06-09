@@ -1,8 +1,8 @@
 // Service Worker — Anđelin Ciklus
 // Cache-First for static assets, Network-First for HTML
 
-const CACHE_STATIC = 'ciklus-static-v1';
-const CACHE_PAGES = 'ciklus-pages-v1';
+const CACHE_STATIC = 'ciklus-static-v3';
+const CACHE_PAGES = 'ciklus-pages-v3';
 
 const STATIC_ASSETS = [
   './',
@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_PAGES).then((cache) => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match('/index.html'))
+        .catch(function() { return caches.match('./index.html'); })
     );
     return;
   }

@@ -999,8 +999,13 @@ function verifyLogin() {
 
 function bootApp() {
   // Register service worker for PWA offline support
+  // Force-refresh service worker — unregister old ones first
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(function(){});
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      regs.forEach(function(reg) { reg.unregister(); });
+    }).then(function() {
+      navigator.serviceWorker.register('sw.js?v=3').catch(function(){});
+    });
   }
   loadPerProfileSettings();
   state = loadState();
