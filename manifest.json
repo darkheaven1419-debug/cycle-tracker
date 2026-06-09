@@ -2,7 +2,7 @@
   "name": "Anđelin Ciklus",
   "short_name": "Ciklus",
   "description": "Personal cycle tracker & cross-cultural love diary",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#EDE4DD",
