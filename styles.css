@@ -748,12 +748,12 @@ body {
 .login-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
 .login-title { font-size:1.2rem; font-weight:700; color:var(--text); margin-bottom:6px; text-align:center; }
 .login-subtitle { font-size:.72rem; color:var(--gold); font-style:italic; margin-bottom:24px; text-align:center; }
-.login-cards { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+.login-cards { display:flex; gap:12px; justify-content:center; }
 .login-card {
-  background:var(--card); border-radius:22px; padding:28px 22px;
+  background:var(--card); border-radius:22px; padding:24px 10px;
   text-align:center; cursor:pointer; transition:all .3s cubic-bezier(.4,0,.2,1);
   box-shadow:var(--shadow-md); border:2px solid transparent;
-  width:150px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  flex:1; max-width:160px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
   position:relative; overflow:hidden;
 }
 .login-card::before {
