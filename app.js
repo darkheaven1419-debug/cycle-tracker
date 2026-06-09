@@ -1000,7 +1000,7 @@ function verifyLogin() {
 function bootApp() {
   // Register service worker for PWA offline support
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
+    navigator.serviceWorker.register('sw.js').catch(function(){});
   }
   loadPerProfileSettings();
   state = loadState();
