@@ -5,17 +5,23 @@ const CACHE_STATIC = 'ciklus-static-v1';
 const CACHE_PAGES = 'ciklus-pages-v1';
 
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/calendar-data.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './calendar-data.js',
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_STATIC).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_STATIC).then(function(cache) {
+      return Promise.allSettled(
+        STATIC_ASSETS.map(function(url) {
+          return cache.add(url).catch(function() { /* skip 404s */ });
+        })
+      );
+    })
   );
   self.skipWaiting();
 });
