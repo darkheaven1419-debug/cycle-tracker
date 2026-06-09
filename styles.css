@@ -223,13 +223,13 @@ body {
 .cal-nav .today-pill { font-size:.7rem; font-weight:700; color:var(--love); padding:6px 16px; border-radius:20px; background:var(--rose-light); min-width:44px; min-height:44px; border:none; cursor:pointer; flex-shrink:0; transition:transform .12s; }
 .cal-nav .today-pill:active { transform:scale(.92); }
 
-.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; }
-.calendar.slide-left { animation:calSlideLeft .25s ease-out; }
-.calendar.slide-right { animation:calSlideRight .25s ease-out; }
-@keyframes calSlideLeft { from{opacity:.3;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
-@keyframes calSlideRight { from{opacity:.3;transform:translateX(12px)} to{opacity:1;transform:translateX(0)} }
-.calendar.pulse-in { animation:calPulse .4s cubic-bezier(.34,1.56,.64,1); }
-@keyframes calPulse { 0%{transform:scale(.96);opacity:.5} 100%{transform:scale(1);opacity:1} }
+.calendar { padding:10px 8px 8px; margin-bottom:8px; touch-action:pan-y; user-select:none; will-change:transform,opacity; }
+.calendar.slide-left { animation:calSlideLeft .42s cubic-bezier(.22,.61,.36,1); }
+.calendar.slide-right { animation:calSlideRight .42s cubic-bezier(.22,.61,.36,1); }
+@keyframes calSlideLeft { from{opacity:0;transform:translateX(-18px) scale(.97)} to{opacity:1;transform:translateX(0) scale(1)} }
+@keyframes calSlideRight { from{opacity:0;transform:translateX(18px) scale(.97)} to{opacity:1;transform:translateX(0) scale(1)} }
+.calendar.pulse-in { animation:calPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes calPulse { 0%{transform:scale(.94);opacity:.4} 100%{transform:scale(1);opacity:1} }
 .calendar:hover { box-shadow:var(--shadow-md); }
 .weekdays { display:grid; grid-template-columns:28px repeat(7,1fr); text-align:center; font-size:.68rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; }
 .weekdays span:nth-child(7), .weekdays span:nth-child(8) { color:var(--rose); opacity:.6; }
@@ -763,7 +763,7 @@ body {
 }
 .login-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
 .login-card:hover::before { opacity:1; }
-.login-card.selected { border-color:var(--love); box-shadow:0 0 0 8px rgba(196,90,107,.10), var(--shadow-lg); transform:scale(1.04); }
+.login-card.selected { border-color:var(--love); box-shadow:0 0 0 4px rgba(196,90,107,.18), 0 0 20px rgba(196,90,107,.15); }
 .login-card.selected::before { opacity:1; }
 .login-card .lc-avatar { font-size:3.2rem; display:block; margin-bottom:10px; transition:transform .3s; }
 .login-card:hover .lc-avatar { transform:scale(1.1); }
