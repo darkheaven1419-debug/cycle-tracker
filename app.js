@@ -527,12 +527,13 @@ async function saveSharedDiary() {
   var existingHug = allData[dateKey][activeProfile] && allData[dateKey][activeProfile].hug;
   allData[dateKey][activeProfile] = { happy:happy, uncomf:uncomf, thanks:thanks, wish:wish, time:Date.now() };
   if (existingHug) allData[dateKey][activeProfile].hug = existingHug;
+  // Save locally first
   saveSharedDiaryData(allData);
 
-  // Push to GitHub
-  if (getGitHubToken()) { await pushSharedDiaryToGitHub(allData); }
+  // Push to GitHub immediately (unified channel: shared-state.json)
+  pushAllSharedData();
 
-  // Try pull partner's entry
+  // Try pull partner's entry — with retry for slow network
   await pullPartnerEntry(dateKey);
 
   // Show saved badge
@@ -548,31 +549,17 @@ async function saveSharedDiary() {
   toast('💌 ✓');
 }
 
+// Pull partner entries from unified shared-state.json (not old shared-diary.json)
 async function pullPartnerEntry(dateKey) {
   if (!getGitHubToken()) return;
-  var ghData = await fetchSharedDiaryFromGitHub();
-  if (!ghData || !ghData.data) return;
-  var localData = loadSharedDiaryData(); var updated = false;
+  // Use unified pullAllSharedData — applies shared-state.json to localStorage
+  // then re-render; avoids dual-format sync drift
+  await pullAllSharedData();
+  var localData = loadSharedDiaryData();
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
-  Object.keys(ghData.data).forEach(function(d) {
-    if (!localData[d]) {
-      // New date entirely — import partner's entry only, leave mine empty
-      localData[d] = {};
-      if (ghData.data[d][partnerProfile]) localData[d][partnerProfile] = ghData.data[d][partnerProfile];
-      updated = true;
-    } else {
-      // Date exists locally: ONLY merge partner's entries, NEVER overwrite mine
-      if (ghData.data[d][partnerProfile]) {
-        var localPartner = localData[d][partnerProfile];
-        var ghPartner = ghData.data[d][partnerProfile];
-        if (!localPartner || (ghPartner.time && (!localPartner.time || ghPartner.time > localPartner.time))) {
-          localData[d][partnerProfile] = ghPartner;
-          updated = true;
-        }
-      }
-    }
-  });
-  if (updated) saveSharedDiaryData(localData);
+  // If partner hasn't written for this date, show hint
+  var entry = localData[dateKey] && localData[dateKey][partnerProfile];
+  return entry || null;
 }
 
 // ==============================
@@ -880,7 +867,16 @@ function renderDiaryLabels() {
   document.getElementById('sd-save-text').textContent = lang==='sr'?'Sačuvaj i pogledaj partnerov':lang==='en'?'Save & View Partner\'s':'保存并查看伴侣的';
   document.getElementById('sd-gate-hint').textContent = lang==='sr'?'Sačuvaj svoj unos pre nego što vidiš partnerov':lang==='en'?'Save your entry to unlock your partner\'s':'写完才能看伴侣的哦';
   document.getElementById('sd-partner-title').textContent = lang==='sr'?'Partnerov osvrt':lang==='en'?'Partner\'s Reflection':'伴侣的总结';
-  document.getElementById('sd-sync-hint').textContent = getGitHubToken() ? (lang==='sr'?'☁️ Automatska sinhronizacija':lang==='en'?'☁️ Auto-sync on':'☁️ 自动同步中') : (lang==='sr'?'📤 Izvezi → pošalji partneru → Partner uveze':lang==='en'?'📤 Export → send → Partner imports':'📤 导出 → 发给伴侣 → 导入');
+  // Update sync hint with last-sync time if available
+  var syncHint = getGitHubToken() ? (lang==='sr'?'☁️ Automatska sinhronizacija':lang==='en'?'☁️ Auto-sync on':'☁️ 自动同步中') : (lang==='sr'?'📤 Izvezi → pošalji partneru → Partner uveze':lang==='en'?'📤 Export → send → Partner imports':'📤 导出 → 发给伴侣 → 导入');
+  var lastSync = localStorage.getItem('shared-last-sync');
+  if (lastSync && getGitHubToken()) {
+    var ago = Math.floor((Date.now() - parseInt(lastSync)) / 60000);
+    if (ago < 1) syncHint += ' · ' + (lang==='sr'?'malopre':lang==='en'?'just now':'刚刚');
+    else if (ago < 60) syncHint += ' · ' + ago + 'min ' + (lang==='sr'?'pre':lang==='en'?'ago':'前');
+    else syncHint += ' · ' + Math.floor(ago/60) + 'h ' + (lang==='sr'?'pre':lang==='en'?'ago':'前');
+  }
+  document.getElementById('sd-sync-hint').textContent = syncHint;
   document.getElementById('sd-export').textContent = lang==='sr'?'Podeli':lang==='en'?'Share':'分享';
   document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi':lang==='en'?'Import':'导入';
   document.getElementById('sd-history-title').textContent = lang==='sr'?'Vremenska linija':lang==='en'?'Timeline':'时间线';
@@ -1002,6 +998,10 @@ function verifyLogin() {
 }
 
 function bootApp() {
+  // Register service worker for PWA offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  }
   loadPerProfileSettings();
   state = loadState();
   lastCycleCount = predict().cycles.length;
@@ -1885,7 +1885,23 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   if(id==='settings')loadSettingsUI();
   if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
   if(id==='diary'){initSharedDiaryTab();}
+  // Sync bottom nav
+  syncBottomNav(id);
 });});
+
+// Bottom nav sync — called by both tab clicks and bottom nav buttons
+function switchToTab(id) {
+  var tab = document.querySelector('.tab[data-panel="'+id+'"]');
+  if (tab) tab.click();
+}
+function syncBottomNav(panelId) {
+  var nav = document.getElementById('bottomNav');
+  if (!nav) return;
+  var items = nav.querySelectorAll('.bn-item');
+  items.forEach(function(item) {
+    item.classList.toggle('active', item.dataset.nav === panelId);
+  });
+}
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
 document.getElementById('set-theme').addEventListener('change',function(){switchTheme(this.value);});
@@ -2403,7 +2419,8 @@ function applySharedState(state) {
   }
 }
 
-async function pushAllSharedData() {
+async function pushAllSharedData(retryCount) {
+  retryCount = retryCount || 0;
   var token = getGitHubToken();
   if (!token) return;
   var state = collectSharedState();
@@ -2412,13 +2429,21 @@ async function pushAllSharedData() {
   try {
     var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
     if (resp.ok) { var d = await resp.json(); sha = d.sha; }
-  } catch(e) {}
+  } catch(e) { if (retryCount < 2) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } return; }
   var content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
   var body = { message: '🔄 Sync shared state', content: content };
   if (sha) body.sha = sha;
   try {
-    await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
-  } catch(e) {}
+    var putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+    if (putResp.ok) {
+      localStorage.setItem('shared-last-sync', Date.now());
+    } else if (retryCount < 2) {
+      // SHA conflict — pull latest and retry
+      await pullAllSharedData();
+      // Re-collect state with merged data and retry
+      setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000);
+    }
+  } catch(e) { if (retryCount < 2) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } }
 }
 
 async function pullAllSharedData() {
@@ -2430,22 +2455,27 @@ async function pullAllSharedData() {
     if (!resp.ok) return;
     var data = await resp.json();
     var content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+    // Only apply if remote data is newer than local
+    var localState = collectSharedState();
+    if (content.updated && localState.updated && content.updated <= localState.updated) return;
     applySharedState(content);
-    // Refresh UI
+    localStorage.setItem('shared-last-sync', Date.now());
+    // Refresh all shared UI — not just diary panel
     renderHug(); renderGratitude(); renderSong(); renderCheckin();
     if (activeProfile === 'barry') renderBarrySymptomView();
-    if (document.getElementById('panel-diary').classList.contains('active')) renderSharedDiary();
-  } catch(e) {}
+    renderSharedDiary();               // Always refresh diary data
+    renderDateStrip();                 // Refresh date strip dots
+  } catch(e) { /* network error — will retry on next interval */ }
 }
 
-// Auto-sync: push on save, pull on load
+// Auto-sync: push on save, pull periodically
 var _origSaveState = saveState;
-saveState = function() { _origSaveState(); setTimeout(function(){ pushAllSharedData(); }, 500); };
+saveState = function() { _origSaveState(); pushAllSharedData(); };
 var _origSaveSharedDiaryData = saveSharedDiaryData;
-saveSharedDiaryData = function(d) { _origSaveSharedDiaryData(d); setTimeout(function(){ pushAllSharedData(); }, 500); };
+saveSharedDiaryData = function(d) { _origSaveSharedDiaryData(d); pushAllSharedData(); };
 
-// Pull from GitHub every 2 minutes and on tab switch
-setInterval(function(){ if(getGitHubToken())pullAllSharedData(); }, 300000);
+// Pull from GitHub every 2 minutes for real-time cross-device sync
+setInterval(function(){ if(getGitHubToken())pullAllSharedData(); }, 120000);
 
 /* ================================================================
    LOGOUT — return to login screen

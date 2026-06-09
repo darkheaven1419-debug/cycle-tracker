@@ -11,10 +11,12 @@
 
 ## 文件结构
 ```
-index.html       ← HTML 结构 (~430 行)
-styles.css       ← 全部 CSS (~770 行, Design Tokens + 动画 + 组件)
-app.js           ← 全部 JS (~2400 行, i18n + 日历 + 日记 + API)
-calendar-data.js ← 节日/节气文化数据 (516 行)
+index.html       ← HTML 结构 (~436 行, 含底部导航)
+styles.css       ← 全部 CSS (~818 行, Design Tokens + 动画 + 组件 + 移动优化)
+app.js           ← 全部 JS (~2389 行, i18n + 日历 + 日记 + API + SW注册)
+calendar-data.js ← 节日/节气文化数据 (465 行)
+manifest.json    ← PWA manifest (v5 新增)
+sw.js            ← Service Worker 离线缓存 (v5 新增)
 index.html.bak   ← 优化前备份
 ```
 

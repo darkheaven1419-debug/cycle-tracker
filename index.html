@@ -2,13 +2,23 @@
 <html lang="sr" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<!-- Preconnect for faster font delivery -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="styles.css">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🌸 Anđelin Ciklus v4</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#EDE4DD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ciklus">
+<title>🌸 Anđelin Ciklus v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 </head>
 <body>
@@ -402,10 +412,30 @@
   </div>
 </div>
 
-<button class="fab hidden" id="fabBtn" title="Quick add">
+<button class="fab hidden" id="fabBtn" title="Quick add" aria-label="Quick add period">
   <span id="fab-icon">🩸</span>
   <span class="fab-label" id="fab-label"></span>
 </button>
+
+<!-- Bottom Navigation — mobile-first -->
+<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
+  <button class="bn-item active" data-nav="stats" onclick="switchToTab('stats')" aria-label="Statistics">
+    <span class="bn-icon">📊</span>
+    <span class="bn-label" id="bn-label-stats">Stats</span>
+  </button>
+  <button class="bn-item" data-nav="symptoms" onclick="switchToTab('symptoms')" aria-label="Symptoms">
+    <span class="bn-icon">📝</span>
+    <span class="bn-label" id="bn-label-symptoms">Symptoms</span>
+  </button>
+  <button class="bn-item" data-nav="diary" onclick="switchToTab('diary')" aria-label="Diary">
+    <span class="bn-icon">💌</span>
+    <span class="bn-label" id="bn-label-diary">Diary</span>
+  </button>
+  <button class="bn-item" data-nav="settings" onclick="switchToTab('settings')" aria-label="Settings">
+    <span class="bn-icon">⚙</span>
+    <span class="bn-label" id="bn-label-settings">Settings</span>
+  </button>
+</nav>
 
 <div class="modal-overlay hidden" id="modal" role="dialog" aria-modal="true" aria-label="Detalji datuma">
   <div class="modal">
