@@ -60,18 +60,24 @@
         }
       }
     },
-    "2026-06-09": {
+    "2026-06-11": {
       "barry": {
         "hug": {
-          "time": 1780990159273
+          "time": 1781188527791
         }
       }
     }
   },
   "cycleInfo": {
-    "phase": "follicular",
-    "nextStart": "2026-06-25",
-    "updated": 1780692382165
+    "records": [
+      "2026-05-28"
+    ],
+    "periodEnds": {},
+    "settings": {
+      "cycleLength": 28,
+      "periodLength": 7,
+      "manualOverride": false
+    }
   },
   "symptoms": null,
   "gratitude": [
@@ -83,7 +89,7 @@
   ],
   "hug": {
     "from": "barry",
-    "time": 1780990159273
+    "time": 1781188527791
   },
   "songs": {
     "barry": null,
@@ -91,12 +97,12 @@
   },
   "sleep": {
     "time": "05:06",
-    "date": "2026-06-09",
-    "saved": 1780990163570
+    "date": "2026-06-08",
+    "saved": 1780905011348
   },
   "checkins": {
     "barry": {},
     "andjela": {}
   },
-  "updated": 1780990163570
+  "updated": 1781188527791
 }
