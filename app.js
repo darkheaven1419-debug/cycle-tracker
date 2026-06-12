@@ -2010,7 +2010,7 @@ function importData(e){var file=e.target.files[0];if(!file)return;var reader=new
 function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},moods:{},diaries:{},settings:{cycleLength:28,periodLength:7,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
 
 /* ================================================================
-   NAVIGATION — clean, instant render + micro-animation
+   NAVIGATION
    ================================================================ */
 function changeMonth(d) {
   viewMonth += d;
@@ -2018,24 +2018,17 @@ function changeMonth(d) {
   if (viewMonth > 11) { viewMonth = 0; viewYear++; }
 
   var grid = document.getElementById('daysGrid');
-
-  // 1. Render new calendar content
-  renderCalendar();
-
-  // 2. Set initial offset (no transition yet — instant)
-  grid.style.transition = 'none';
-  grid.style.transform = d > 0 ? 'translateX(32px)' : 'translateX(-32px)';
+  // Fade out old content
+  grid.style.transition = 'opacity 0.08s ease-out';
   grid.style.opacity = '0';
 
-  // 3. Force browser to paint the offset frame
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      // 4. Animate to final position
-      grid.style.transition = 'transform .2s cubic-bezier(.22,.61,.36,1), opacity .15s ease-out';
-      grid.style.transform = 'translateX(0)';
-      grid.style.opacity = '1';
-    });
-  });
+  setTimeout(function() {
+    // Render new month
+    renderCalendar();
+    // Fade in new content
+    grid.style.transition = 'opacity 0.15s ease-out';
+    grid.style.opacity = '1';
+  }, 80);
 }
 
 // Touch swipe
@@ -2056,14 +2049,13 @@ function changeMonth(d) {
   grid.addEventListener('touchend', function() {
     if (!active) return; active = false;
     var dx = parseFloat(grid.style.transform.replace('translateX(','').replace('px)','')) || 0;
-    grid.style.transition = 'transform .18s ease-out, opacity .18s ease-out';
+    grid.style.transition = 'transform .15s ease-out, opacity .15s ease-out';
     if (Math.abs(dx) > 60) {
       var dir = dx > 0 ? -1 : 1;
-      grid.style.transform = 'translateX(' + (dir * 120) + 'px)'; grid.style.opacity = '0';
-      setTimeout(function() { grid.style.transition = 'none'; grid.style.transform = ''; grid.style.opacity = ''; changeMonth(dir); }, 180);
+      grid.style.transform = 'translateX(' + (dir * 100) + 'px)'; grid.style.opacity = '0';
+      setTimeout(function() { grid.style.transition = 'none'; grid.style.transform = ''; grid.style.opacity = ''; changeMonth(dir); }, 150);
     } else {
       grid.style.transform = ''; grid.style.opacity = '';
-      setTimeout(function() { grid.style.transition = ''; }, 180);
     }
   });
 })();
@@ -2071,18 +2063,14 @@ function changeMonth(d) {
 function goToday() {
   viewYear = today().getFullYear();
   viewMonth = today().getMonth();
-  renderCalendar();
   var grid = document.getElementById('daysGrid');
-  grid.style.transition = 'none';
-  grid.style.transform = 'scale(.94)';
-  grid.style.opacity = '.5';
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      grid.style.transition = 'transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease-out';
-      grid.style.transform = 'scale(1)';
-      grid.style.opacity = '1';
-    });
-  });
+  grid.style.transition = 'opacity 0.08s ease-out';
+  grid.style.opacity = '0';
+  setTimeout(function() {
+    renderCalendar();
+    grid.style.transition = 'opacity 0.2s ease-out';
+    grid.style.opacity = '1';
+  }, 80);
 }
 var _tabOrder = ['stats','symptoms','tips','diary','settings'];
 var _prevTabIdx = 0;
