@@ -276,11 +276,6 @@ function calculateStreak() {
     if (state.moods[key]) { streak++; d.setDate(d.getDate() - 1); }
     else break;
   }
-  // Also count today if not yet checked but yesterday was
-  if (streak === 0) {
-    var yest = new Date(td); yest.setDate(yest.getDate() - 1);
-    if (state.moods[fmtDate(yest)]) streak = 0; // broken
-  }
   return streak;
 }
 function renderMoodSection() {
@@ -344,7 +339,7 @@ function renderDiarySection() {
   hist.innerHTML = entries.slice().reverse().map(function(e) {
     var t = new Date(e.time);
     var timeStr = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
-    return '<div class="diary-history-item"><span class="diary-history-date">' + timeStr + '</span><span class="diary-history-text">' + e.text + '</span></div>';
+    return '<div class="diary-history-item"><span class="diary-history-date">' + timeStr + '</span><span class="diary-history-text">' + esc(e.text) + '</span></div>';
   }).join('');
 }
 
@@ -1028,13 +1023,8 @@ function verifyLogin() {
 
 function bootApp() {
   // Register service worker for PWA offline support
-  // Force-refresh service worker — unregister old ones first
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(regs) {
-      regs.forEach(function(reg) { reg.unregister(); });
-    }).then(function() {
-      navigator.serviceWorker.register('sw.js?v=4').catch(function(){});
-    });
+    navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
   state = loadState();
@@ -1080,6 +1070,24 @@ function bootApp() {
   updateLoveCounter();
   updateProfileUI();
   randomThinkingOfYou();
+
+  // Modal keyboard trap: Escape closes, Tab traps focus
+  var modalKeydown = function(e) {
+    if (e.key === 'Escape') { closeModal(); return; }
+    if (e.key === 'Tab') {
+      var modal = document.getElementById('modal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      var focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+  };
+  document.addEventListener('keydown', modalKeydown);
 }
 
 // Profile-aware overrides happen in loadPerProfileSettings() below
@@ -1660,6 +1668,9 @@ function renderAll(){applyAllUI();}
 /* ================================================================
    CALENDAR
    ================================================================ */
+const SEASON_EMOJI = {0:'❄️',1:'❄️',2:'🌸',3:'🌸',4:'🌸',5:'☀️',6:'☀️',7:'☀️',8:'🍂',9:'🍂',10:'🍂',11:'❄️'};
+var SEASON_LABEL = {'sr':{0:'Zima',1:'Zima',2:'Proleće',3:'Proleće',4:'Proleće',5:'Leto',6:'Leto',7:'Leto',8:'Jesen',9:'Jesen',10:'Jesen',11:'Zima'},'en':{0:'Winter',1:'Winter',2:'Spring',3:'Spring',4:'Spring',5:'Summer',6:'Summer',7:'Summer',8:'Autumn',9:'Autumn',10:'Autumn',11:'Winter'},'zh-CN':{0:'冬',1:'冬',2:'春',3:'春',4:'春',5:'夏',6:'夏',7:'夏',8:'秋',9:'秋',10:'秋',11:'冬'}};
+function getSeasonLabel(month){return SEASON_LABEL[lang]?SEASON_LABEL[lang][month]:SEASON_LABEL['sr'][month];}
 function renderCalendar(){
   const pred=predict(); const td=today();
   document.getElementById('monthLabel').textContent = lang==='sr' ? `${t('months')[viewMonth]} ${viewYear}.` : lang==='en' ? `${t('months')[viewMonth]} ${viewYear}` : `${viewYear}年${viewMonth+1}月`;
@@ -1698,10 +1709,17 @@ function renderCalendar(){
     const el=document.createElement('div'); el.className='day';
     if(!inMonth) el.classList.add('other-month');
     if(isToday) el.classList.add('today');
+    if(isToday) el.setAttribute('aria-current','date');
     if(phase) el.classList.add(phase);
     if(phase==='period-on'&&recordedStarts.has(key)) el.classList.add('recorded');
     if(annType>0) el.classList.add('anniversary');
     if(getBirthday(d)) el.classList.add('birthday');
+    if(inMonth) {
+      el.setAttribute('tabindex','0');
+      el.addEventListener('keydown',function(e){
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}
+      });
+    }
     // Date number
     var daySpan=document.createElement('span'); daySpan.className='day-num'; daySpan.textContent=d.getDate();
     el.appendChild(daySpan);
@@ -1772,14 +1790,12 @@ function renderCalendar(){
     grid.appendChild(el);
   }
   // Month season subtitle
-  var seasonEmoji = {0:'❄️',1:'❄️',2:'🌸',3:'🌸',4:'🌸',5:'☀️',6:'☀️',7:'☀️',8:'🍂',9:'🍂',10:'🍂',11:'❄️'};
-  var seasonLabel = lang==='sr'?{0:'Zima',1:'Zima',2:'Proleće',3:'Proleće',4:'Proleće',5:'Leto',6:'Leto',7:'Leto',8:'Jesen',9:'Jesen',10:'Jesen',11:'Zima'}:lang==='en'?{0:'Winter',1:'Winter',2:'Spring',3:'Spring',4:'Spring',5:'Summer',6:'Summer',7:'Summer',8:'Autumn',9:'Autumn',10:'Autumn',11:'Winter'}:{0:'冬',1:'冬',2:'春',3:'春',4:'春',5:'夏',6:'夏',7:'夏',8:'秋',9:'秋',10:'秋',11:'冬'};
   var ml = document.getElementById('monthLabel');
   if (ml) {
     // Remove existing season tag and re-add with updated month
     var existingTag = ml.querySelector('.season-tag');
     if (existingTag) existingTag.remove();
-    ml.innerHTML = ml.textContent + ' <span class="season-tag" style="font-size:.6rem;opacity:.5">'+seasonEmoji[viewMonth]+' '+seasonLabel[viewMonth]+'</span>';
+    ml.innerHTML = ml.textContent + ' <span class="season-tag" style="font-size:.6rem;opacity:.5">'+SEASON_EMOJI[viewMonth]+' '+getSeasonLabel(viewMonth)+'</span>';
   }
   updateProgress(pred); updateStats(pred); updateHistoryDots(pred); updateReminder(pred);
 }
@@ -1801,6 +1817,10 @@ function updateProgress(pred){
     else{numEl.style.color='var(--text-muted)';}
     subEl.textContent=remain>=0?t('daysUntil').replace('{n}',remain):`${t('expected')} ${fmtDate(pred.nextStart)}`;}
   fillEl.style.width=pct+'%';
+  fillEl.setAttribute('role','progressbar');
+  fillEl.setAttribute('aria-valuenow',Math.round(pct));
+  fillEl.setAttribute('aria-valuemin','0');
+  fillEl.setAttribute('aria-valuemax','100');
   if(bCls==='period'||bCls==='late') fillEl.style.background='var(--love)';else if(bCls==='follicular') fillEl.style.background='var(--sage)';else if(bCls==='ovulation'||bCls==='fertile') fillEl.style.background='var(--teal)';else if(bCls==='luteal') fillEl.style.background='var(--lavender)';
   badgeEl.textContent=label;badgeEl.className='phase-badge '+bCls;
 }
@@ -1889,8 +1909,8 @@ document.getElementById('fabBtn').addEventListener('click',function(){
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'});var daysOff=HOLIDAY_DAYS[key];var daysOffHtml='';if(daysOff){var cnOff=daysOff.zh||daysOff.cn||'';var rsOff=daysOff.sr||daysOff.rs||'';if(cnOff)daysOffHtml+='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🇨🇳 '+cnOff+'</div>';if(rsOff)daysOffHtml+='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🇷🇸 '+rsOff+'</div>';}var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;var daysOff=HOLIDAY_DAYS[key];var offHtml='';if(daysOff&&h.country==='cn'){var off=daysOff.zh||daysOff.cn||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}if(daysOff&&h.country==='rs'){var off=daysOff.sr||daysOff.rs||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'+offHtml;});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}document.getElementById('modal').classList.remove('hidden');}
-function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;}
+function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'});var daysOff=HOLIDAY_DAYS[key];var daysOffHtml='';if(daysOff){var cnOff=daysOff.zh||daysOff.cn||'';var rsOff=daysOff.sr||daysOff.rs||'';if(cnOff)daysOffHtml+='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🇨🇳 '+cnOff+'</div>';if(rsOff)daysOffHtml+='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🇷🇸 '+rsOff+'</div>';}var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;var daysOff=HOLIDAY_DAYS[key];var offHtml='';if(daysOff&&h.country==='cn'){var off=daysOff.zh||daysOff.cn||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}if(daysOff&&h.country==='rs'){var off=daysOff.sr||daysOff.rs||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'+offHtml;});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}window._lastFocusedBeforeModal=document.activeElement;document.getElementById('modal').classList.remove('hidden');document.getElementById('modal-title').focus();}
+function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;if(window._lastFocusedBeforeModal){window._lastFocusedBeforeModal.focus();}}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
 function togglePeriodRecord(){if(!selectedDate)return;var sd=fmtDate(selectedDate);

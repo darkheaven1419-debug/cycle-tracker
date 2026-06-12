@@ -26,11 +26,17 @@ self.addEventListener('install', function(event) {
   self.skipWaiting();
 });
 
+var KNOWN_CACHES = ['ciklus-static-v4', 'ciklus-pages-v4'];
+
 self.addEventListener('activate', function(event) {
-  // Wipe ALL old caches so stale CSS/JS never served
+  // Only delete known old caches; preserve any others
   event.waitUntil(
     caches.keys().then(function(keys) {
-      return Promise.all(keys.map(function(key) { return caches.delete(key); }));
+      return Promise.all(
+        keys
+          .filter(function(key) { return KNOWN_CACHES.indexOf(key) === -1; })
+          .map(function(key) { return caches.delete(key); })
+      );
     }).then(function() {
       return self.clients.claim();
     })
@@ -41,8 +47,9 @@ self.addEventListener('fetch', function(event) {
   var request = event.request;
   var url = new URL(request.url);
 
-  // Google Fonts — pass through
+  // Google Fonts — pass through normally
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(fetch(event.request));
     return;
   }
 

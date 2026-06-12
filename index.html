@@ -6,10 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=10">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<link rel="stylesheet" href="styles.css?v=11">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
@@ -50,9 +47,8 @@
 <!-- Floating Stars -->
 <div class="floating-stars">
   <span class="star">✦</span><span class="star bright">✦</span><span class="star">✦</span>
-  <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
-  <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
-  <span class="star bright">✦</span><span class="star">✦</span><span class="star">✦</span>
+  <span class="star bright">✦</span><span class="star">✦</span><span class="star bright">✦</span>
+  <span class="star">✦</span><span class="star bright">✦</span>
 </div>
 
 <!-- Greeting Overlay — tap anywhere to close -->
@@ -67,6 +63,8 @@
   </div>
 </div>
 
+<main>
+<header role="banner">
 <div class="app">
   <div class="header">
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
@@ -78,9 +76,9 @@
       <div class="moon-phase" id="moonPhase" title="月相"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
       <div class="lang-switch" id="langSwitch">
-        <button class="lang-btn" data-lang="zh-CN">中</button>
-        <button class="lang-btn" data-lang="sr">SR</button>
-        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh-CN" aria-label="中文">中</button>
+        <button class="lang-btn" data-lang="sr" aria-label="Srpski">SR</button>
+        <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
       </div>
     </div>
     <div class="header-row2">
@@ -144,15 +142,15 @@
   <div class="legend" id="legend"></div>
   <div class="pred-legend" id="predLegend" style="display:none">※ 半透明标记为未来2-3周期的预测</div>
 
-  <div class="tabs">
-    <button class="tab active" data-panel="stats">📊 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="symptoms">📝 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="tips">💡 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="diary">💌 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="settings">⚙ <span class="tb-label"></span></button>
-  </div>
+  <nav><div class="tabs" role="tablist">
+    <button class="tab active" data-panel="stats" role="tab" id="tab-stats" aria-selected="true">📊 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false">📝 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false">💡 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false">💌 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false">⚙ <span class="tb-label"></span></button>
+  </div></nav>
 
-  <div class="panel active" id="panel-stats">
+  <div class="panel active" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
     <div class="card"><h3 id="st-title-cycle"></h3>
       <div class="stat-row"><span id="st-l-count"></span><span class="val" id="st-count">0</span></div>
       <div class="stat-row"><span id="st-l-avg"></span><span class="val" id="st-avg">--</span></div>
@@ -279,7 +277,7 @@
     </div>
   </div>
 
-  <div class="panel" id="panel-symptoms">
+  <div class="panel" id="panel-symptoms" role="tabpanel" aria-labelledby="tab-symptoms">
     <!-- Barry sees Anđela's symptom analysis -->
     <div id="barry-symptom-view" style="display:none">
       <div class="card"><h3>🔍 <span id="bs-title">Anđela's Symptoms Today</span></h3>
@@ -298,9 +296,9 @@
     </div><!-- /andjela-symptom-view -->
   </div>
 
-  <div class="panel" id="panel-tips"><div id="tips-list"></div></div>
+  <div class="panel" id="panel-tips" role="tabpanel" aria-labelledby="tab-tips"><div id="tips-list"></div></div>
 
-  <div class="panel" id="panel-diary">
+  <div class="panel" id="panel-diary" role="tabpanel" aria-labelledby="tab-diary">
     <!-- Date Strip -->
     <div class="date-strip-wrap">
       <button class="date-strip-arrow" onclick="scrollDateStrip(-1)" aria-label="Earlier">◂</button>
@@ -374,7 +372,7 @@
     </div>
   </div>
 
-  <div class="panel" id="panel-settings">
+  <div class="panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings">
     <!-- Dual Anniversary -->
     <div class="card" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold);margin-bottom:14px">
       <h3>💕 <span id="anniversary-title">Datumi koji znače</span></h3>
@@ -415,6 +413,8 @@
     </div>
   </div>
 </div>
+</header>
+</main>
 
 <button class="fab hidden" id="fabBtn" title="Quick add" aria-label="Quick add period">
   <span id="fab-icon">🩸</span>
@@ -441,8 +441,8 @@
   </div>
 </div>
 
-<div id="toastContainer"></div>
-<script src="app.js?v=10"></script>
+<div id="toastContainer" aria-live="polite"></div>
+<script src="app.js?v=11" defer></script>
 </body>
 </html>
 
