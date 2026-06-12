@@ -1688,7 +1688,7 @@ function renderCalendar(){
   const pred=predict(); const td=today();
   document.getElementById('monthLabel').textContent = lang==='sr' ? `${t('months')[viewMonth]} ${viewYear}.` : lang==='en' ? `${t('months')[viewMonth]} ${viewYear}` : `${viewYear}年${viewMonth+1}月`;
   const first=new Date(viewYear,viewMonth,1); let dow=first.getDay(); dow=dow===0?6:dow-1;
-  const gridStart=addDays(first,-dow); const grid=document.getElementById('daysGrid'); grid.innerHTML='';
+  const gridStart=addDays(first,-dow); const grid=document.getElementById('daysGrid'); var frag=document.createDocumentFragment();
   const recordedStarts=new Set(state.records.map(fmtDate));
   var plEl=document.getElementById('predLegend'); if(pred.futurePeriods.length>0){plEl.style.display='';plEl.textContent=lang==='sr'?'※ Prozirni datumi su predviđanja':lang==='en'?'※ Faded dates are future predictions':'※ 半透明标记为未来周期预测';} else plEl.style.display='none';
   // Build shared diary index for dot indicators
@@ -1704,7 +1704,7 @@ function renderCalendar(){
       var jan1 = new Date(wkDate.getFullYear(), 0, 1);
       var wkNum = Math.ceil((((wkDate - jan1) / 86400000) + jan1.getDay() + 1) / 7);
       wkCell.textContent = wkNum; wkCell.setAttribute('aria-hidden', 'true');
-      grid.appendChild(wkCell);
+      frag.appendChild(wkCell);
     }
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
     const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
@@ -1800,8 +1800,11 @@ function renderCalendar(){
         }
       });
     }
-    grid.appendChild(el);
+    frag.appendChild(el);
   }
+  // Batch-replace grid content in single DOM operation
+  grid.innerHTML = '';
+  grid.appendChild(frag);
   // Month season subtitle
   var ml = document.getElementById('monthLabel');
   if (ml) {
