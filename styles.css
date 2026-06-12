@@ -1,35 +1,45 @@
 ﻿/* ================================================================
-   DESIGN TOKENS — Barry ♥ Anđela
+   DESIGN TOKENS — Airbnb Rausch × Anđelin Ciklus
+   Inspired by Airbnb DESIGN.md (github.com/VoltAgent/awesome-design-md)
    ================================================================ */
 :root {
-  --rose: #D47A8A; --rose-dark: #B85C6E; --rose-light: #FDF0F3; --rose-mist: #F5E0E6;
-  --love: #C45A6B; --lipa: #7A9E7E; --dust: #E8D5C4; --gold: #D4A76A;
-  --teal: #5E9BAA; --teal-light: #E6F2F5;
-  --sage: #80B5A0; --sage-light: #E8F4EE;
+  /* Brand — Airbnb Rausch as the single voltage of passion */
+  --primary: #FF385C; --primary-hover: #E00B41; --primary-light: #FFD1DA;
+  --rose: #FF385C; --rose-dark: #E00B41; --rose-light: #FFF0F3; --rose-mist: #FFE0E6;
+  --love: #FF385C; --lipa: #7A9E7E; --dust: #F2F2F2; --gold: #C49A5E;
+  --teal: #5E9BAA; --teal-light: #E6F2F5; --teal-dark: #3D6B55;
+  --sage: #80B5A0; --sage-light: #E8F4EE; --sage-dark: #3D6B55;
   --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #F5EEF8;
-  --bg: #EDE4DD; --card: rgba(255,251,248,0.94); --text: #2D2A2B; --text-muted: #9C9496;
-  --border: #E8DFD8; --radius: 18px; --radius-sm: 12px;
-  --shadow-xs: 0 1px 3px rgba(140,120,110,0.06), 0 1px 2px rgba(140,120,110,0.04);
-  --shadow-sm: 0 2px 10px rgba(140,120,110,0.07), 0 1px 4px rgba(140,120,110,0.05);
-  --shadow-md: 0 6px 20px rgba(140,120,110,0.09), 0 10px 30px rgba(140,120,110,0.06);
-  --shadow-lg: 0 12px 36px rgba(140,120,110,0.12), 0 20px 48px rgba(140,120,110,0.07);
-  --fab-shadow: 0 8px 28px rgba(196,90,107,0.38);
+  /* Surfaces — Airbnb white canvas */
+  --bg: #FFFFFF; --card: #FFFFFF; --text: #222222; --text-muted: #6A6A6A;
+  --border: #DDDDDD; --border-soft: #EBEBEB;
+  /* Spacing & shape — 4px base, soft corners */
+  --radius: 14px; --radius-sm: 8px; --radius-lg: 20px; --radius-full: 9999px;
+  /* Elevation — single shadow tier (Airbnb philosophy) */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-sm: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.06) 0 4px 8px;
+  --shadow-md: rgba(0,0,0,0.04) 0 0 0 1px, rgba(0,0,0,0.06) 0 4px 10px, rgba(0,0,0,0.08) 0 6px 14px;
+  --shadow-lg: rgba(0,0,0,0.06) 0 0 0 1px, rgba(0,0,0,0.08) 0 8px 20px, rgba(0,0,0,0.10) 0 12px 28px;
+  --fab-shadow: 0 6px 20px rgba(255,56,92,0.32);
   --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-  --blur: blur(20px) saturate(1.1);
+  --blur: blur(16px) saturate(1.1);
 }
 
 [data-theme="dark"] {
-  --rose: #E898A8; --rose-dark: #D47A8A; --rose-light: #2A1E22; --rose-mist: #35242A;
-  --love: #D47A8A; --lipa: #8FC7B0; --dust: #3D3430; --gold: #C49A5E;
+  --primary: #FF5A7A; --primary-hover: #FF385C; --primary-light: #3D1A22;
+  --rose: #FF5A7A; --rose-dark: #FF385C; --rose-light: #2A1A1E; --rose-mist: #352428;
+  --love: #FF5A7A; --lipa: #8FC7B0; --dust: #2F2B2C; --gold: #C49A5E;
   --teal: #7ABCCB; --teal-light: #14282E;
   --sage: #8FC7B0; --sage-light: #14281E;
   --lavender: #D4B8E0; --lavender-dark: #A888BB; --lavender-light: #241D2A;
-  --bg: #19161A; --card: rgba(35,31,34,0.78); --text: #E6DDDE; --text-muted: #8F8386;
-  --border: #2F292B;
-  --shadow-xs: 0 1px 3px rgba(0,0,0,0.2); --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.3); --shadow-lg: 0 16px 40px rgba(0,0,0,0.35);
-  --fab-shadow: 0 6px 24px rgba(212,122,138,0.3);
-  --blur: blur(20px) saturate(1.2);
+  --bg: #19161A; --card: #231F22; --text: #E6DDDE; --text-muted: #8F8386;
+  --border: #2F292B; --border-soft: #262224;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-sm: rgba(0,0,0,0.15) 0 0 0 1px, rgba(0,0,0,0.20) 0 2px 6px, rgba(0,0,0,0.25) 0 4px 8px;
+  --shadow-md: rgba(0,0,0,0.20) 0 0 0 1px, rgba(0,0,0,0.25) 0 4px 10px, rgba(0,0,0,0.30) 0 6px 14px;
+  --shadow-lg: rgba(0,0,0,0.25) 0 0 0 1px, rgba(0,0,0,0.30) 0 8px 20px, rgba(0,0,0,0.35) 0 12px 28px;
+  --fab-shadow: 0 6px 20px rgba(255,90,122,0.28);
+  --blur: blur(16px) saturate(1.2);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -41,42 +51,12 @@ html { scroll-behavior:smooth; }
 body {
   font-family: var(--font); background: var(--bg); color: var(--text);
   min-height: 100vh; display:flex; justify-content:center;
-  -webkit-tap-highlight-color: transparent; transition: background .4s, color .4s;
+  -webkit-tap-highlight-color: transparent; transition: background .3s, color .3s;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-  background-color: #EDE4DD;
-  background-image:
-    radial-gradient(ellipse 85% 55% at 25% 10%, rgba(160,130,110,0.10) 0%, transparent 70%),
-    radial-gradient(ellipse 75% 60% at 75% 85%, rgba(140,110,95,0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(120,100,85,0.05) 0%, transparent 80%);
-  background-attachment: fixed;
 }
-[data-theme="dark"] body {
-  background-color: #0D0A0F;
-  background-image:
-    radial-gradient(ellipse 70% 45% at 15% 5%, rgba(200,140,120,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 40% at 85% 80%, rgba(180,100,80,0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 35% at 45% 50%, rgba(160,90,110,0.10) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 30% at 50% 100%, rgba(120,80,100,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 25% at 5% 95%, rgba(200,160,130,0.06) 0%, transparent 50%);
-  background-attachment: fixed;
-}
+[data-theme="dark"] body { background: var(--bg); }
 
 .app { width:100%; max-width:420px; padding:12px 16px 120px; position:relative; }
-.app::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
-  background:
-    radial-gradient(ellipse 25% 18% at 15% 25%, rgba(120,100,90,0.07) 0%, transparent 65%),
-    radial-gradient(ellipse 20% 15% at 60% 40%, rgba(130,110,100,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 20% at 85% 70%, rgba(110,95,85,0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 15% 12% at 40% 85%, rgba(140,120,110,0.03) 0%, transparent 50%);
-}
-[data-theme="dark"] .app::before {
-  background:
-    radial-gradient(ellipse 25% 18% at 15% 25%, rgba(180,160,150,0.05) 0%, transparent 65%),
-    radial-gradient(ellipse 20% 15% at 60% 40%, rgba(160,140,130,0.03) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 20% at 85% 70%, rgba(150,130,120,0.03) 0%, transparent 55%),
-    radial-gradient(ellipse 15% 12% at 40% 85%, rgba(170,150,140,0.02) 0%, transparent 50%);
-}
 
 /* ---- Floating Stars (Anđela = Angel) ---- */
 .floating-stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
