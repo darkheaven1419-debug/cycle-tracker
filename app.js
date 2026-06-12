@@ -2257,6 +2257,7 @@ function renderHug() {
   var hug = checkHug();
   var card = document.getElementById('hugContent');
   var title = document.getElementById('hug-title');
+  if (!title) return;
   title.textContent = lang === 'sr' ? '🤗 Virtuelni zagrljaj' : lang === 'en' ? '🤗 Virtual Hug' : '🤗 隔空拥抱';
   var todayKey = fmtDate(new Date());
   var count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
@@ -2402,7 +2403,8 @@ function loadSong(profile) {
   try { return JSON.parse(localStorage.getItem('shared-song-' + profile)); } catch(e) { return null; }
 }
 function renderSong() {
-  document.getElementById('song-title').textContent = lang==='sr'?'🎵 Naša pesma':lang==='en'?'🎵 Our Song':'🎵 我们的歌';
+  var st = document.getElementById('song-title'); if (!st) return;
+  st.textContent = lang==='sr'?'🎵 Naša pesma':lang==='en'?'🎵 Our Song':'🎵 我们的歌';
   var mySong = loadSong(activeProfile);
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   var partnerSong = loadSong(partnerProfile);
