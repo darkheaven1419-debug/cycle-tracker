@@ -2319,10 +2319,13 @@ function addGratitude() {
   pushAllSharedData();
 }
 function renderGratitude() {
-  document.getElementById('grat-title').textContent = lang==='sr'?'💝 Zid zahvalnosti':lang==='en'?'💝 Gratitude Wall':'💝 感恩便签';
-  document.getElementById('gratInput').placeholder = lang==='sr'?'Hvala ti za...':lang==='en'?'Thank you for...':'谢谢你...';
-  var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
+  var title = document.getElementById('grat-title');
+  var input = document.getElementById('gratInput');
   var list = document.getElementById('gratList');
+  if (!title || !input || !list) return;
+  title.textContent = lang==='sr'?'💝 Zid zahvalnosti':lang==='en'?'💝 Gratitude Wall':'💝 感恩便签';
+  input.placeholder = lang==='sr'?'Hvala ti za...':lang==='en'?'Thank you for...':'谢谢你...';
+  var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
   if (notes.length === 0) { list.innerHTML = ''; return; }
   list.innerHTML = notes.slice(-5).reverse().map(function(n){
     var sender = n.from === 'andjela' ? '🌸' : '👦';
