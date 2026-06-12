@@ -1,10 +1,31 @@
 {
   "diary": {
-    "2026-06-13": {
-      "barry": {
+    "2026-06-10": {
+      "andjela": {
+        "happy": "Danas me je obradovalo što si me malo učio kineski i volela bih da me učiš još više (bez smejanja) kako bih mogla da lepo pričam kada dođem da te posetim.",
+        "uncomf": "Hmmmmm, iskreno, danas nije ništa, bio je vrlo lep dan, volela bih da smo mogli da pričamo duže na video pozivu...",
+        "thanks": "Želim da ti se zahvalim što si uz mene svakog dana u svakom trenutku i što me uvek nasmeješ.",
+        "wish": "Hmmmmm, danas sam vrlo zadovoljna, tako da danas ništa neću reći... 😁",
+        "time": 1781129119609,
         "hug": {
-          "time": 1781283887753
+          "time": 1781128557976
         }
+      }
+    },
+    "2026-06-12": {
+      "andjela": {
+        "hug": {
+          "time": 1781217030757
+        }
+      }
+    },
+    "2026-06-11": {
+      "andjela": {
+        "happy": "Obradovalo me je to što sam saznala nešto novo o tebi danas 😏😁",
+        "uncomf": "Malo mi je zasmetalo to što sam se osetila kao da misliš da su druge devojke bolje od mene, ali vidim da zapravo nije tako.",
+        "thanks": "Želim da ti se zahvalim na tome što si uvek nežan prema meni.",
+        "wish": "Hmmmm, možda da više učimo zajedno...",
+        "time": 1781219798328
       }
     }
   },
@@ -20,29 +41,24 @@
     }
   },
   "symptoms": null,
-  "gratitude": [
-    {
-      "text": "Hvala ti za svu radost koju si mi pružio danas, drago mi je što smo pričali na video pozivu.",
-      "from": "andjela",
-      "time": 1780692493970
-    }
-  ],
+  "gratitude": [],
   "hug": {
-    "from": "barry",
-    "time": 1781283887753
+    "from": "andjela",
+    "time": 1781217030757
   },
   "songs": {
     "barry": null,
-    "andjela": null
+    "andjela": {
+      "title": "Kaliopi i Željko Samardžić - Znam",
+      "note": "Nadam se da će ovo biti naša pesma zbog lepog teksta na srpskom jeziku.",
+      "from": "andjela",
+      "time": 1781128667300
+    }
   },
-  "sleep": {
-    "time": "05:06",
-    "date": "2026-06-08",
-    "saved": 1780905011348
-  },
+  "sleep": null,
   "checkins": {
     "barry": {},
     "andjela": {}
   },
-  "updated": 1781283887754
+  "updated": 1781300722818
 }
