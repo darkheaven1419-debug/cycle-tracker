@@ -250,7 +250,20 @@ function loadState() {
   } catch(e) {}
   return { records:activeProfile==='andjela'?[new Date(2026,4,28)]:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
 }
-function saveState() { localStorage.setItem(profileKey(STORAGE_KEY_BASE), JSON.stringify({ records:state.records.map(fmtDate), periodEnds:state.periodEnds||{}, symptoms:state.symptoms, moods:state.moods, diaries:state.diaries, settings:state.settings, _migrated:true })); }
+// Debounced saveState — prevents excessive localStorage writes during rapid clicks
+var _saveTimer = null, _pushTimer = null;
+function saveState() {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(function() {
+    localStorage.setItem(profileKey(STORAGE_KEY_BASE), JSON.stringify({ records:state.records.map(fmtDate), periodEnds:state.periodEnds||{}, symptoms:state.symptoms, moods:state.moods, diaries:state.diaries, settings:state.settings, _migrated:true }));
+    // Sync shared cycle data for bidirectional calendar
+    var pd = JSON.parse(localStorage.getItem(profileKey(STORAGE_KEY_BASE)) || 'null');
+    if (pd && pd.records && pd.records.length > 0) { localStorage.setItem('shared-cycle-data', JSON.stringify(pd)); }
+    clearTimeout(_pushTimer);
+    _pushTimer = setTimeout(function() { pushAllSharedData(); }, 1500);
+  }, 200);
+}
+function saveStateNow() { clearTimeout(_saveTimer); clearTimeout(_pushTimer); localStorage.setItem(profileKey(STORAGE_KEY_BASE), JSON.stringify({ records:state.records.map(fmtDate), periodEnds:state.periodEnds||{}, symptoms:state.symptoms, moods:state.moods, diaries:state.diaries, settings:state.settings, _migrated:true })); pushAllSharedData(); }
 let state = loadState();
 
 /* ================================================================
@@ -2759,19 +2772,8 @@ function updateSyncStatusBadge() {
   }
 }
 
-// Auto-sync: push on save, pull periodically
-// Also keep shared-cycle-data updated whenever profile state is saved
-var _origSaveState = saveState;
-saveState = function() {
-  _origSaveState();
-  // Update shared-cycle-data so calendar changes sync bidirectionally
-  var key = profileKey(STORAGE_KEY_BASE);
-  var profileData = JSON.parse(localStorage.getItem(key) || 'null');
-  if (profileData && profileData.records && profileData.records.length > 0) {
-    localStorage.setItem('shared-cycle-data', JSON.stringify(profileData));
-  }
-  pushAllSharedData();
-};
+// Auto-sync: push on save (now debounced inside saveState), pull periodically
+// Keep shared-cycle-data updated for bidirectional calendar sync
 var _origSaveSharedDiaryData = saveSharedDiaryData;
 saveSharedDiaryData = function(d) { _origSaveSharedDiaryData(d); pushAllSharedData(); };
 
