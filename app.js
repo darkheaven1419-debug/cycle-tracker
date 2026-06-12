@@ -180,7 +180,28 @@ function switchProfile(p) {
   activeProfile = p;
   localStorage.setItem('cycle-active-profile', p);
   state = loadState();
+  // Immediately sync calendar from shared cycle data for both profiles
+  try {
+    var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+    if (sd && sd.records) {
+      state.records = sd.records.map(function(r) { return new Date(r); });
+      state.periodEnds = sd.periodEnds || {};
+      state.symptoms = sd.symptoms || {};
+      state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
+    }
+  } catch(e) {}
   lastCycleCount = predict().cycles.length;
+
+  // Pull latest shared data from GitHub when switching profiles
+  if (getGitHubToken()) {
+    pullAllSharedData().then(function() {
+      if (p === 'barry') { renderCalendar(); renderBarrySymptomView(); renderTips(); }
+      renderHug(); renderGratitude(); renderSong(); renderCheckin();
+      renderSharedDiary(); renderDateStrip();
+      updateSyncStatusBadge();
+    });
+  }
+
   updateProfileUI();
   renderAll();
   loadSettingsUI();
@@ -414,6 +435,12 @@ function renderGarden() {
   document.getElementById('gardenHint').textContent = hint;
 }
 
+// HTML escape — prevents XSS in user-generated content
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 /* ================================================================
    SHARED DIARY — localStorage + GitHub API cross-device sync
    Redesigned: date strip, timeline, locked→unlock animation
@@ -530,10 +557,12 @@ async function saveSharedDiary() {
   // Save locally first
   saveSharedDiaryData(allData);
 
-  // Push to GitHub immediately (unified channel: shared-state.json)
-  pushAllSharedData();
+  // Push to GitHub FIRST (MUST await — otherwise pull below can
+  // complete before push and overwrite this save with stale remote data)
+  await pushAllSharedData();
 
   // Try pull partner's entry — with retry for slow network
+  // (now safe: push completed, remote includes our just-saved entry)
   await pullPartnerEntry(dateKey);
 
   // Show saved badge
@@ -645,7 +674,7 @@ async function renderSharedDiary() {
     var el = document.getElementById('sdc-'+f); if (el) el.textContent = (document.getElementById('sd-'+f).value || '').length;
   });
 
-  // Partner card — render from localStorage instantly
+  // Partner card — locked until you save your own entry first (by design)
   var lockedEl = document.getElementById('partnerLocked');
   var contentEl = document.getElementById('sharedDiaryPartnerContent');
   var translateBtn = document.getElementById('translateBtnSm');
@@ -713,7 +742,7 @@ function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translate
     ];
     var origTexts=[];
     questions.forEach(function(item) {
-      if (item.a) { origTexts.push(item.a); html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a" data-original="'+item.a.replace(/"/g,'&quot;').replace(/'/g,'&#39;')+'" id="sdp-'+origTexts.length+'">'+item.a+'</div></div>'; }
+      if (item.a) { origTexts.push(item.a); html += '<div class="sd-partner-field"><div class="sd-partner-q">'+item.q+'</div><div class="sd-partner-a" data-original="'+esc(item.a)+'" id="sdp-'+origTexts.length+'">'+esc(item.a)+'</div></div>'; }
     });
     if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
       html += '<div class="sd-empty">'+(lang==='sr'?'Nema unosa':lang==='en'?'No entry':'没有记录')+'</div>';
@@ -756,7 +785,7 @@ function renderSharedDiaryHistory(allData) {
       var authors = [];
       if (item.andjela) { authors.push('🌸 Anđela'); preview = preview || item.andjela.happy || item.andjela.thanks || item.andjela.uncomf || item.andjela.wish || ''; }
       if (item.barry) { authors.push('👦 Barry'); preview = preview || item.barry.happy || item.barry.thanks || item.barry.uncomf || item.barry.wish || ''; }
-      preview = preview.substring(0, 80);
+      preview = esc(preview.substring(0, 80));
       return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
         + '<div class="tn-date">📅 ' + item.date + '</div>'
         + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
@@ -797,7 +826,7 @@ function expandTimeline() {
       var authors = [];
       if (item.andjela) { authors.push('🌸 Anđela'); preview = preview || item.andjela.happy || item.andjela.thanks || item.andjela.uncomf || item.andjela.wish || ''; }
       if (item.barry) { authors.push('👦 Barry'); preview = preview || item.barry.happy || item.barry.thanks || item.barry.uncomf || item.barry.wish || ''; }
-      preview = preview.substring(0, 80);
+      preview = esc(preview.substring(0, 80));
       return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
         + '<div class="tn-date">📅 ' + item.date + '</div>'
         + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
@@ -1004,16 +1033,43 @@ function bootApp() {
     navigator.serviceWorker.getRegistrations().then(function(regs) {
       regs.forEach(function(reg) { reg.unregister(); });
     }).then(function() {
-      navigator.serviceWorker.register('sw.js?v=3').catch(function(){});
+      navigator.serviceWorker.register('sw.js?v=4').catch(function(){});
     });
   }
   loadPerProfileSettings();
   state = loadState();
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang);
+
+  // === Pull shared data from GitHub for ALL profiles ===
+  // Every device pulls independently; token must be set on each device
+  if (getGitHubToken()) {
+    pullAllSharedData().then(function() {
+      // Apply shared cycle data to current state for both profiles
+      try {
+        var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+        if (sd && sd.records) {
+          state.records = sd.records.map(function(r) { return new Date(r); });
+          state.periodEnds = sd.periodEnds || {};
+          state.symptoms = sd.symptoms || {};
+          state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
+        }
+      } catch(e) {}
+      if (activeProfile === 'barry') {
+        renderCalendar();
+        renderBarrySymptomView();
+        renderTips();
+      }
+      // Refresh all shared UI with synced data
+      renderHug(); renderGratitude(); renderSong(); renderCheckin();
+      renderSharedDiary(); renderDateStrip();
+      updateProfileUI();
+      updateSyncStatusBadge();
+    });
+  }
+
   renderAll(); loadSettingsUI();
   fetchWeather();
-  if (getGitHubToken()) pullAllSharedData();
   loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
   showOnboardingIfNeeded();
   if (activeProfile === 'andjela') showGreeting();
@@ -1040,7 +1096,6 @@ function t(key, fallback) {
   return val;
 }
 function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; }
-function switchTheme(th) { applyTheme(th); }
 
 /* ================================================================
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
@@ -1100,18 +1155,22 @@ const SOLAR_TERMS_INLINE = [
 ];
 
 function getSolarTerm(dateKey) {
-  var found = null;
-  // Check inline data first (guaranteed basic info: date + name)
-  SOLAR_TERMS_INLINE.forEach(function(s) { if (s.date === dateKey) found = s; });
-  // Also check cached/fetched data for richer info (stories)
-  if (!solarTermsCache) {
+  // Check cached rich data first (has stories from calendar-data.json)
+  if (!solarTermsCache || solarTermsCache.length === 0) {
     var cached = localStorage.getItem('cycle-solarterms');
     if (cached) { try { solarTermsCache = JSON.parse(cached); } catch(e) {} }
   }
-  if (solarTermsCache) {
-    solarTermsCache.forEach(function(s) { if (s.date === dateKey) { found = s; } });
+  // Use rich cache if available
+  if (solarTermsCache && solarTermsCache.length > 0) {
+    for (var i = 0; i < solarTermsCache.length; i++) {
+      if (solarTermsCache[i].date === dateKey) return solarTermsCache[i];
+    }
   }
-  return found;
+  // Fallback to inline data (basic: date + name only)
+  for (var j = 0; j < SOLAR_TERMS_INLINE.length; j++) {
+    if (SOLAR_TERMS_INLINE[j].date === dateKey) return SOLAR_TERMS_INLINE[j];
+  }
+  return null;
 }
 
 /* ================================================================
@@ -1224,8 +1283,9 @@ function fetchWeather() {
     var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Europe/Belgrade',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
     Promise.all([bj,ki]).then(function(r){
       clearTimeout(timeout);
-      if (!r[0]||!r[1])return;
-      var w={bj:r[0].current,ki:r[1].current,t:Date.now()};localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w);
+      if (!r[0] && !r[1]) return;  // both failed
+      var w={bj:r[0]?r[0].current:null,ki:r[1]?r[1].current:null,t:Date.now()};
+      localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w);
     }).catch(function(){});
   } catch(e) {}
 }
@@ -1551,6 +1611,20 @@ function updateLangUI(){
   document.getElementById('fab-label').textContent=t('fabLabel');
 }
 
+// Lazy-load rich solar term data from calendar-data.json if not cached yet
+function ensureSolarTermData() {
+  if (solarTermsCache && solarTermsCache.length > 0) return;
+  var cached = localStorage.getItem('cycle-solarterms');
+  if (cached) { try { solarTermsCache = JSON.parse(cached); if (solarTermsCache.length > 0) return; } catch(e) {} }
+  // Load from calendar-data.json
+  fetch('calendar-data.json').then(function(r){return r.json()}).then(function(d){
+    if (d && d.solarTerms) {
+      solarTermsCache = d.solarTerms;
+      localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache));
+    }
+  }).catch(function(){});
+}
+
 function renderSolarTermBadge() {
   var badge = document.getElementById('solarTermBadge');
   if (!badge) return;
@@ -1562,10 +1636,13 @@ function renderSolarTermBadge() {
     badge.textContent = '🌿 ' + cnName + ' · ' + srName;
     badge.style.display = '';
   } else {
+    // Only show upcoming (future) solar terms within 7 days, not past ones
     var nearest = null, minDist = 30;
+    var td = today();
     SOLAR_TERMS_INLINE.forEach(function(s) {
-      var dist = Math.abs(daysDiff(today(), new Date(s.date+'T00:00:00')));
-      if (dist < minDist) { minDist = dist; nearest = s; }
+      var termDate = new Date(s.date + 'T00:00:00');
+      var dist = daysDiff(td, termDate);  // positive = future, negative = past
+      if (dist >= 0 && dist < minDist) { minDist = dist; nearest = s; }
     });
     if (nearest && minDist <= 7) {
       var cnName = nearest.name['zh-CN'] || nearest.name['zh'] || '';
@@ -1651,14 +1728,20 @@ function renderCalendar(){
     }
     // Anniversary dot
     if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
-    // Solar term dot
+    // Solar term label on calendar cell
     var solarTerm = getSolarTerm(key);
-    if (solarTerm) {
-      var sdot = document.createElement('span');
-      sdot.className = 'mini-dot';
-      sdot.style.cssText = 'background:#4CAF50;position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%';
-      if (phase) sdot.style.bottom = '1px';
-      el.appendChild(sdot);
+    if (solarTerm && inMonth) {
+      var stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
+      var stLabel = document.createElement('span');
+      stLabel.className = 'solar-term-label';
+      stLabel.textContent = stName;
+      el.appendChild(stLabel);
+      el.classList.add('solar-term-day');
+      // Single tap opens modal (same as other days) — modal shows solar term + holiday
+      if (!solarTerm.story) {
+        // Ensure rich data is loaded for the modal
+        ensureSolarTermData();
+      }
     }
     // Holiday dots
     var holidays=getHoliday(key);
@@ -1849,24 +1932,29 @@ function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById
 function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
 function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll();}
 function getSharedCyclePhase() {
-  // First try shared key (cross-device sync)
+  // First try shared-cycle-info (old summary format: {phase, nextStart})
   var shared = null;
   try { shared = JSON.parse(localStorage.getItem('shared-cycle-info')); } catch(e) {}
   if (shared && shared.phase) return shared;
-  // Fallback: read Anđela's cycle data directly from her localStorage profile
+  // Calculate phase from synced shared cycle data (new neutral key)
+  var cycleData = null;
+  try { cycleData = JSON.parse(localStorage.getItem('shared-cycle-data')); } catch(e) {}
+  if (!cycleData) {
+    try { cycleData = JSON.parse(localStorage.getItem('shared-andjela-cycle-data')); } catch(e) {}
+  }
+  if (!cycleData) {
+    try { cycleData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela')); } catch(e) {}
+  }
+  if (!cycleData || !cycleData.records || cycleData.records.length === 0) return null;
   try {
-    var andjelaData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela'));
-    if (!andjelaData || !andjelaData.records || andjelaData.records.length === 0) return null;
-    var records = andjelaData.records.map(function(r){return new Date(r);}).sort(function(a,b){return a-b;});
+    var records = cycleData.records.map(function(r){return new Date(r);}).sort(function(a,b){return a-b;});
     var lastStart = new Date(records[records.length-1]);
-    var settings = andjelaData.settings || {cycleLength:28,periodLength:7};
+    var settings = cycleData.settings || {cycleLength:28,periodLength:7};
     var cycleLen = settings.cycleLength || 28;
     var periodLen = settings.periodLength || 7;
     var nextStart = new Date(lastStart); nextStart.setDate(nextStart.getDate() + cycleLen);
     var td = today();
-    // Calculate what day of the cycle we're on
     var dayNum = Math.floor((td - lastStart) / 86400000);
-    var totalCycle = cycleLen;
     var ovulationDay = new Date(nextStart); ovulationDay.setDate(ovulationDay.getDate() - 14);
     var phase;
     if (dayNum >= 0 && dayNum < periodLen) phase = 'period';
@@ -1914,43 +2002,88 @@ function renderTips(){
   const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};
   tips=t('tips.'+cat);
   document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
-function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){localStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');}else{localStorage.removeItem('gh-token');}}
-function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();}
+function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){localStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');pullAllSharedData().then(function(){updateSyncStatusBadge();renderAll();});}else{localStorage.removeItem('gh-token');updateSyncStatusBadge();}}
+function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();updateSyncStatusBadge();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||7;saveState();renderAll();toast(t('toast.saved'));}
 function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${activeProfile}-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
 function importData(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error('Invalid format');state.records=d.records.map(function(r){var dt=new Date(r);return isNaN(dt.getTime())?null:dt;}).filter(Boolean);if(state.records.length===0&&d.records.length>0)throw new Error('No valid dates');state.symptoms=d.symptoms||{};state.moods=d.moods||{};state.diaries=d.diaries||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false};if(d.settings){Object.keys(d.settings).forEach(function(k){state.settings[k]=d.settings[k];});}saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
 function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},moods:{},diaries:{},settings:{cycleLength:28,periodLength:7,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
 
 /* ================================================================
-   NAVIGATION
+   NAVIGATION — clean, instant render + micro-animation
    ================================================================ */
-var _monthChangeTimer=null, _calSwipeX=0, _calSwipeY=0, _calSwiping=false, _calLocked=false;
-function changeMonth(d,snap){
-  if(_monthChangeTimer)return;_monthChangeTimer=setTimeout(function(){_monthChangeTimer=null;},350);
-  var cal=document.getElementById('calendarContainer');
-  viewMonth+=d;if(viewMonth<0){viewMonth=11;viewYear--;}if(viewMonth>11){viewMonth=0;viewYear++;}
-  if(!snap){cal.classList.add(d>0?'slide-left':'slide-right');setTimeout(function(){renderCalendar();requestAnimationFrame(function(){cal.classList.remove('slide-left','slide-right');});},280);}
-  else{renderCalendar();}
-}
-(function initCalSwipe(){
-  var cal=document.getElementById('calendarContainer');
-  cal.addEventListener('touchstart',function(e){if(_calSwiping)return;_calSwipeX=e.touches[0].clientX;_calSwipeY=e.touches[0].clientY;_calLocked=false;},{passive:true});
-  cal.addEventListener('touchmove',function(e){
-    if(_calLocked)return;var dx=e.touches[0].clientX-_calSwipeX,dy=e.touches[0].clientY-_calSwipeY;
-    if(!_calSwiping&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)){_calSwiping=true;cal.style.transition='none';}
-    if(!_calSwiping&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>10){_calLocked=true;cal.style.transform='';return;}
-    if(!_calSwiping)return;e.preventDefault();cal.style.transform='translateX('+dx+'px)';
-  },{passive:false});
-  cal.addEventListener('touchend',function(){
-    if(!_calSwiping){_calLocked=false;return;}_calSwiping=false;
-    var dx=parseFloat(cal.style.transform.replace('translateX(','').replace('px)',''))||0;
-    cal.style.transition='transform .3s cubic-bezier(.22,.61,.36,1)';
-    if(Math.abs(dx)>50){var dir=dx>0?-1:1;cal.style.transform='translateX('+(dir*cal.offsetWidth)+'px)';cal.style.opacity='0';setTimeout(function(){cal.style.transition='none';cal.style.transform='';cal.style.opacity='';changeMonth(dir,true);},300);}
-    else{cal.style.transform='translateX(0)';setTimeout(function(){cal.style.transition='';},300);}
+function changeMonth(d) {
+  viewMonth += d;
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+
+  var grid = document.getElementById('daysGrid');
+
+  // 1. Render new calendar content
+  renderCalendar();
+
+  // 2. Set initial offset (no transition yet — instant)
+  grid.style.transition = 'none';
+  grid.style.transform = d > 0 ? 'translateX(32px)' : 'translateX(-32px)';
+  grid.style.opacity = '0';
+
+  // 3. Force browser to paint the offset frame
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      // 4. Animate to final position
+      grid.style.transition = 'transform .2s cubic-bezier(.22,.61,.36,1), opacity .15s ease-out';
+      grid.style.transform = 'translateX(0)';
+      grid.style.opacity = '1';
+    });
   });
-  cal.addEventListener('touchcancel',function(){_calSwiping=false;cal.style.transition='transform .3s ease-out';cal.style.transform='translateX(0)';setTimeout(function(){cal.style.transition='';},300);});
+}
+
+// Touch swipe
+(function() {
+  var grid = document.getElementById('daysGrid');
+  var sx = 0, active = false;
+  grid.addEventListener('touchstart', function(e) {
+    if (active) return;
+    sx = e.touches[0].clientX;
+  }, {passive: true});
+  grid.addEventListener('touchmove', function(e) {
+    var dx = e.touches[0].clientX - sx;
+    if (!active && Math.abs(dx) > 10) { active = true; grid.style.transition = 'none'; }
+    if (!active) return;
+    grid.style.transform = 'translateX(' + dx + 'px)';
+    grid.style.opacity = Math.max(0, 1 - Math.abs(dx) / 150);
+  }, {passive: false});
+  grid.addEventListener('touchend', function() {
+    if (!active) return; active = false;
+    var dx = parseFloat(grid.style.transform.replace('translateX(','').replace('px)','')) || 0;
+    grid.style.transition = 'transform .18s ease-out, opacity .18s ease-out';
+    if (Math.abs(dx) > 60) {
+      var dir = dx > 0 ? -1 : 1;
+      grid.style.transform = 'translateX(' + (dir * 120) + 'px)'; grid.style.opacity = '0';
+      setTimeout(function() { grid.style.transition = 'none'; grid.style.transform = ''; grid.style.opacity = ''; changeMonth(dir); }, 180);
+    } else {
+      grid.style.transform = ''; grid.style.opacity = '';
+      setTimeout(function() { grid.style.transition = ''; }, 180);
+    }
+  });
 })();
-function goToday(){const tt=today();viewYear=tt.getFullYear();viewMonth=tt.getMonth();var cal=document.getElementById('calendarContainer');cal.classList.add('pulse-in');renderCalendar();setTimeout(function(){cal.classList.remove('pulse-in');},350);}
+
+function goToday() {
+  viewYear = today().getFullYear();
+  viewMonth = today().getMonth();
+  renderCalendar();
+  var grid = document.getElementById('daysGrid');
+  grid.style.transition = 'none';
+  grid.style.transform = 'scale(.94)';
+  grid.style.opacity = '.5';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      grid.style.transition = 'transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease-out';
+      grid.style.transform = 'scale(1)';
+      grid.style.opacity = '1';
+    });
+  });
+}
 var _tabOrder = ['stats','symptoms','tips','diary','settings'];
 var _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
@@ -1983,7 +2116,7 @@ document.getElementById('set-theme').addEventListener('change',function(){switch
 function dismissOnboarding(){document.getElementById('onboardingBanner').style.display='none';localStorage.setItem('cycle-ob-dismissed','1');}
 function showOnboardingIfNeeded(){if(activeProfile==='andjela'&&state.records.length===0&&!localStorage.getItem('cycle-ob-dismissed')){document.getElementById('onboardingBanner').style.display='flex';document.getElementById('ob-text').textContent=t('onboarding');}}
 
-function toast(msg){const container=document.getElementById('toastContainer');while(container.children.length>=3){container.firstChild.remove();}const el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);setTimeout(()=>{el.classList.add('out');},2800);setTimeout(()=>{if(el.parentNode)el.remove();},3300);}
+function toast(msg){var container=document.getElementById('toastContainer');if(!container)return;while(container.children.length>=3){container.firstChild.remove();}var el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);setTimeout(function(){el.classList.add('out');},2800);setTimeout(function(){if(el.parentNode)el.remove();},3300);}
 
 /* Swipe to dismiss modal */
 (function(){let startY=0;const overlay=document.getElementById('modal');overlay.addEventListener('touchstart',e=>{if(e.target===overlay||e.target.closest('.modal'))startY=e.touches[0].clientY;},{passive:true});overlay.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientY-startY;if(diff>80&&!overlay.classList.contains('hidden'))closeModal();});})();
@@ -2194,6 +2327,7 @@ function addGratitude() {
   localStorage.setItem('shared-gratitude', JSON.stringify(notes));
   input.value = '';
   renderGratitude();
+  pushAllSharedData();
 }
 function renderGratitude() {
   document.getElementById('grat-title').textContent = lang==='sr'?'💝 Zid zahvalnosti':lang==='en'?'💝 Gratitude Wall':'💝 感恩便签';
@@ -2203,7 +2337,7 @@ function renderGratitude() {
   if (notes.length === 0) { list.innerHTML = ''; return; }
   list.innerHTML = notes.slice(-5).reverse().map(function(n){
     var sender = n.from === 'andjela' ? '🌸' : '👦';
-    return '<div class="gratitude-item"><span class="gratitude-heart">'+sender+'</span><span>'+n.text+'</span></div>';
+    return '<div class="gratitude-item"><span class="gratitude-heart">'+sender+'</span><span>'+esc(n.text)+'</span></div>';
   }).join('');
 }
 
@@ -2231,6 +2365,7 @@ function saveCheckinAnswer(qIdx, answer) {
   answers[qIdx] = answer;
   localStorage.setItem(key, JSON.stringify(answers));
   renderCheckin();
+  pushAllSharedData();
 }
 function getCheckinAnswers(profile) {
   return JSON.parse(localStorage.getItem('shared-checkin-' + profile) || '{}');
@@ -2268,6 +2403,7 @@ function saveMySong() {
   var song = { title: title, note: note || '', from: activeProfile, time: Date.now() };
   localStorage.setItem('shared-song-' + activeProfile, JSON.stringify(song));
   renderSong();
+  pushAllSharedData();
   toast('🎵 ' + (lang==='sr'?'Pesma sačuvana!':lang==='en'?'Song saved!':'歌曲已保存！'));
 }
 function loadSong(profile) {
@@ -2459,19 +2595,13 @@ saveSymptom = function() { _origSaveSymptom(); updateSharedSymptoms(); };
 const GITHUB_SHARED_FILE = 'shared-state.json';
 
 function collectSharedState() {
-  // Include Anđela's cycle data for Barry to see
-  var cycleData=null;
-  if(activeProfile==='andjela'){
-    cycleData={
-      records:state.records.map(fmtDate),
-      periodEnds:state.periodEnds||{},
-      settings:state.settings
-    };
-  }else{
-    // Barry keeps the last known cycle data
-    cycleData=JSON.parse(localStorage.getItem('shared-cycle-info')||'null');
+  // Use neutral shared-cycle-data so BOTH partners can set period dates
+  // and changes sync bidirectionally via GitHub
+  var cycleData = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+  // If empty, fall back to Anđela's local profile data
+  if (!cycleData || !cycleData.records) {
+    cycleData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela') || 'null');
   }
-  localStorage.setItem('shared-cycle-info',JSON.stringify(cycleData));
   return {
     diary: JSON.parse(localStorage.getItem('shared-diary') || '{}'),
     cycleInfo: cycleData,
@@ -2485,21 +2615,35 @@ function collectSharedState() {
   };
 }
 
-function applySharedState(state) {
-  if (!state) return;
-  if (state.diary) localStorage.setItem('shared-diary', JSON.stringify(state.diary));
-  if (state.cycleInfo) localStorage.setItem('shared-cycle-info', JSON.stringify(state.cycleInfo));
-  if (state.symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(state.symptoms));
-  if (state.gratitude) localStorage.setItem('shared-gratitude', JSON.stringify(state.gratitude));
-  if (state.hug) localStorage.setItem('shared-hug', JSON.stringify(state.hug));
-  if (state.sleep) localStorage.setItem('barry-sleep', JSON.stringify(state.sleep));
-  if (state.songs) {
-    if (state.songs.barry) localStorage.setItem('shared-song-barry', JSON.stringify(state.songs.barry));
-    if (state.songs.andjela) localStorage.setItem('shared-song-andjela', JSON.stringify(state.songs.andjela));
+function applySharedState(shared) {
+  if (!shared) return;
+  if (shared.diary) localStorage.setItem('shared-diary', JSON.stringify(shared.diary));
+  if (shared.cycleInfo) {
+    // Store in neutral shared key so BOTH partners can read/write period data
+    localStorage.setItem('shared-cycle-data', JSON.stringify(shared.cycleInfo));
+    // Also update Anđela's profile data for backward compat
+    if (shared.cycleInfo.records && shared.cycleInfo.records.length > 0) {
+      localStorage.setItem('cycle-data-v6-andjela', JSON.stringify(shared.cycleInfo));
+    }
+    // Apply to current state so calendar shows synced data immediately
+    if (shared.cycleInfo.records) {
+      state.records = shared.cycleInfo.records.map(function(r) { return new Date(r); });
+      state.periodEnds = shared.cycleInfo.periodEnds || {};
+      state.symptoms = shared.cycleInfo.symptoms || {};
+      state.settings = shared.cycleInfo.settings || { cycleLength: 28, periodLength: 7 };
+    }
   }
-  if (state.checkins) {
-    if (state.checkins.barry) localStorage.setItem('shared-checkin-barry', JSON.stringify(state.checkins.barry));
-    if (state.checkins.andjela) localStorage.setItem('shared-checkin-andjela', JSON.stringify(state.checkins.andjela));
+  if (shared.symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(shared.symptoms));
+  if (shared.gratitude) localStorage.setItem('shared-gratitude', JSON.stringify(shared.gratitude));
+  if (shared.hug) localStorage.setItem('shared-hug', JSON.stringify(shared.hug));
+  if (shared.sleep) localStorage.setItem('barry-sleep', JSON.stringify(shared.sleep));
+  if (shared.songs) {
+    if (shared.songs.barry) localStorage.setItem('shared-song-barry', JSON.stringify(shared.songs.barry));
+    if (shared.songs.andjela) localStorage.setItem('shared-song-andjela', JSON.stringify(shared.songs.andjela));
+  }
+  if (shared.checkins) {
+    if (shared.checkins.barry) localStorage.setItem('shared-checkin-barry', JSON.stringify(shared.checkins.barry));
+    if (shared.checkins.andjela) localStorage.setItem('shared-checkin-andjela', JSON.stringify(shared.checkins.andjela));
   }
 }
 
@@ -2539,32 +2683,74 @@ async function pullAllSharedData() {
     if (!resp.ok) return;
     var data = await resp.json();
     var content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-    // Only apply if remote data is newer than local
-    var localState = collectSharedState();
-    if (content.updated && localState.updated && content.updated <= localState.updated) return;
+    // Only apply if remote data is newer than our last sync timestamp
+    var lastSync = parseInt(localStorage.getItem('shared-last-sync') || '0');
+    if (content.updated && content.updated <= lastSync) return;
     applySharedState(content);
     localStorage.setItem('shared-last-sync', Date.now());
     // Refresh all shared UI — not just diary panel
     renderHug(); renderGratitude(); renderSong(); renderCheckin();
-    if (activeProfile === 'barry') renderBarrySymptomView();
+    if (activeProfile === 'barry') {
+      renderBarrySymptomView();
+      renderCalendar();  // Sync Anđela's calendar to Barry's view
+      renderTips();      // Refresh tips based on synced cycle phase
+    }
     renderSharedDiary();               // Always refresh diary data
     renderDateStrip();                 // Refresh date strip dots
-  } catch(e) { /* network error — will retry on next interval */ }
+    updateSyncStatusBadge();
+  } catch(e) { updateSyncStatusBadge(); /* network error — will retry on next interval */ }
+}
+
+// Sync status badge — shows in Settings and diary panel
+function updateSyncStatusBadge() {
+  var hasToken = !!getGitHubToken();
+  var lastSync = localStorage.getItem('shared-last-sync');
+  var badge = document.getElementById('syncStatusBadge');
+  if (!badge) return;
+  if (!hasToken) {
+    badge.textContent = '⚪ ' + (lang==='sr'?'Nije podešeno':lang==='en'?'Not configured':'未设置');
+    badge.style.color = 'var(--text-muted)';
+    return;
+  }
+  if (lastSync) {
+    var sec = Math.floor((Date.now() - parseInt(lastSync)) / 1000);
+    var ago;
+    if (sec < 30) ago = lang==='sr'?'upravo':lang==='en'?'just now':'刚刚';
+    else if (sec < 120) ago = lang==='sr'?'pre 1 min':lang==='en'?'1 min ago':'1分钟前';
+    else if (sec < 3600) ago = (lang==='sr'?'pre ':'') + Math.floor(sec/60) + (lang==='sr'?' min':lang==='en'?' min ago':'分钟前');
+    else ago = (lang==='sr'?'pre ':'') + Math.floor(sec/3600) + (lang==='sr'?' h':lang==='en'?' h ago':'小时前');
+    badge.textContent = '🟢 ' + (lang==='sr'?'Sinhronizovano ':'Synced ') + ago;
+    badge.style.color = 'var(--sage)';
+  } else {
+    badge.textContent = '🟡 ' + (lang==='sr'?'Čeka se sinhronizacija...':lang==='en'?'Waiting for sync...':'等待同步...');
+    badge.style.color = 'var(--gold)';
+  }
 }
 
 // Auto-sync: push on save, pull periodically
+// Also keep shared-cycle-data updated whenever profile state is saved
 var _origSaveState = saveState;
-saveState = function() { _origSaveState(); pushAllSharedData(); };
+saveState = function() {
+  _origSaveState();
+  // Update shared-cycle-data so calendar changes sync bidirectionally
+  var key = profileKey(STORAGE_KEY_BASE);
+  var profileData = JSON.parse(localStorage.getItem(key) || 'null');
+  if (profileData && profileData.records && profileData.records.length > 0) {
+    localStorage.setItem('shared-cycle-data', JSON.stringify(profileData));
+  }
+  pushAllSharedData();
+};
 var _origSaveSharedDiaryData = saveSharedDiaryData;
 saveSharedDiaryData = function(d) { _origSaveSharedDiaryData(d); pushAllSharedData(); };
 
 // Pull from GitHub every 2 minutes for real-time cross-device sync
-setInterval(function(){ if(getGitHubToken())pullAllSharedData(); }, 120000);
+var _syncInterval = setInterval(function(){ if(getGitHubToken())pullAllSharedData(); }, 120000);
 
 /* ================================================================
    LOGOUT — return to login screen
    ================================================================ */
 function logoutAndShowLogin() {
+  if (_syncInterval) { clearInterval(_syncInterval); _syncInterval = null; }
   isLoggedIn = false;
   selectedLoginProfile = null;
   activeProfile = null;

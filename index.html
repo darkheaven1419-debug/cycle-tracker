@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=5">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -40,7 +40,7 @@
     </div>
   </div>
   <div class="login-pin-area" id="loginPinArea">
-    <input type="password" inputmode="numeric" maxlength="4" class="login-pin-input" id="loginPinInput" placeholder="····" onkeydown="if(event.key==='Enter')verifyLogin()">
+    <input type="password" inputmode="numeric" maxlength="4" class="login-pin-input" id="loginPinInput" placeholder="····" aria-label="Unesi PIN" onkeydown="if(event.key==='Enter')verifyLogin()">
     <button class="login-pin-btn" onclick="verifyLogin()" id="loginPinBtn">🔓 Prijavi se</button>
     <div class="login-error" id="loginError"></div>
   </div>
@@ -392,6 +392,7 @@
     <div class="setting-row token-row show" id="tokenSettingRow">
       <div><span class="setting-label">🔑 GitHub Token</span><span class="setting-hint" id="set-h-token">Za sinhronizaciju dnevnika na oba telefona</span></div>
       <input type="password" id="set-gh-token" placeholder="ghp_..." style="width:100%;font-size:.7rem;padding:8px" onchange="saveGitHubToken()">
+      <div id="syncStatusBadge" style="font-size:.65rem;margin-top:6px;font-weight:600"></div>
     </div>
     <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()"></button>
     <button class="btn btn-outline" id="export-btn" onclick="exportData()"></button>
@@ -431,7 +432,7 @@
 </div>
 
 <div id="toastContainer"></div>
-<script src="app.js"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
 

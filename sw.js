@@ -1,8 +1,8 @@
 // Service Worker — Anđelin Ciklus
 // Cache-First for static assets, Network-First for HTML
 
-const CACHE_STATIC = 'ciklus-static-v3';
-const CACHE_PAGES = 'ciklus-pages-v3';
+const CACHE_STATIC = 'ciklus-static-v4';
+const CACHE_PAGES = 'ciklus-pages-v4';
 
 const STATIC_ASSETS = [
   './',
@@ -13,12 +13,12 @@ const STATIC_ASSETS = [
   './manifest.json'
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_STATIC).then(function(cache) {
       return Promise.allSettled(
         STATIC_ASSETS.map(function(url) {
-          return cache.add(url).catch(function() { /* skip 404s */ });
+          return cache.add(url).catch(function() {});
         })
       );
     })
@@ -26,62 +26,42 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', function(event) {
+  // Wipe ALL old caches so stale CSS/JS never served
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_STATIC && key !== CACHE_PAGES)
-          .map((key) => caches.delete(key))
-      )
-    )
+    caches.keys().then(function(keys) {
+      return Promise.all(keys.map(function(key) { return caches.delete(key); }));
+    }).then(function() {
+      return self.clients.claim();
+    })
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+self.addEventListener('fetch', function(event) {
+  var request = event.request;
+  var url = new URL(request.url);
 
-  // Google Fonts — stale-while-revalidate
+  // Google Fonts — pass through
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    return;
+  }
+
+  // CSS / JS / HTML — network first, cache fallback for offline
+  if (request.destination === 'style' || request.destination === 'script' || request.mode === 'navigate') {
     event.respondWith(
-      caches.match(request).then((cached) => {
-        const fetchPromise = fetch(request).then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_STATIC).then((cache) => cache.put(request, clone));
-          return response;
-        });
-        return cached || fetchPromise;
+      fetch(request).then(function(response) {
+        var clone = response.clone();
+        caches.open(CACHE_STATIC).then(function(cache) { cache.put(request, clone); });
+        return response;
+      }).catch(function() {
+        return caches.match(request);
       })
     );
     return;
   }
 
-  // CSS / JS — cache first
-  if (request.destination === 'style' || request.destination === 'script') {
-    event.respondWith(
-      caches.match(request).then((cached) => cached || fetch(request))
-    );
-    return;
-  }
-
-  // Navigation — network first with offline fallback
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_PAGES).then((cache) => cache.put(request, clone));
-          return response;
-        })
-        .catch(function() { return caches.match('./index.html'); })
-    );
-    return;
-  }
-
-  // Everything else — network with cache fallback
+  // Everything else
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    fetch(request).catch(function() { return caches.match(request); })
   );
 });
