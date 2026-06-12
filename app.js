@@ -1292,17 +1292,20 @@ function fetchWeather() {
 function renderWeather(w) {
   var card=document.getElementById('weatherCard'); if(!w) return;
   card.style.display='';
-  document.getElementById('weatherBj').innerHTML='<div style="font-size:.65rem;color:var(--text-muted)">🏙 北京·朝阳</div><div style="font-size:1.5rem;font-weight:700">'+Math.round(w.bj.temperature_2m)+'°</div><div style="font-size:1.2rem">'+weatherIcon(w.bj.weather_code)+'</div><div style="font-size:.6rem;color:var(--text-muted)">湿度 '+w.bj.relative_humidity_2m+'%</div>';
-  document.getElementById('weatherKi').innerHTML='<div style="font-size:.65rem;color:var(--text-muted)">🏡 Kikinda</div><div style="font-size:1.5rem;font-weight:700">'+Math.round(w.ki.temperature_2m)+'°</div><div style="font-size:1.2rem">'+weatherIcon(w.ki.weather_code)+'</div><div style="font-size:.6rem;color:var(--text-muted)">Vlažnost '+w.ki.relative_humidity_2m+'%</div>';
-  // Bridge Poetry — same sky, two cities, one love 🌍
+  var bjLabel = lang==='sr'?'🏙 Peking·Čaojang':lang==='en'?'🏙 Beijing·Chaoyang':'🏙 北京·朝阳';
+  var kiLabel = lang==='sr'?'🏡 Kikinda':lang==='en'?'🏡 Kikinda':'🏡 Kikinda';
+  var humLabel = lang==='sr'?'Vlažnost':lang==='en'?'Humidity':'湿度';
+  document.getElementById('weatherBj').innerHTML='<div style="font-size:.65rem;color:var(--text-muted)">'+bjLabel+'</div><div style="font-size:1.5rem;font-weight:700">'+Math.round(w.bj.temperature_2m)+'°</div><div style="font-size:1.2rem">'+weatherIcon(w.bj.weather_code)+'</div><div style="font-size:.6rem;color:var(--text-muted)">'+humLabel+' '+w.bj.relative_humidity_2m+'%</div>';
+  document.getElementById('weatherKi').innerHTML='<div style="font-size:.65rem;color:var(--text-muted)">'+kiLabel+'</div><div style="font-size:1.5rem;font-weight:700">'+Math.round(w.ki.temperature_2m)+'°</div><div style="font-size:1.2rem">'+weatherIcon(w.ki.weather_code)+'</div><div style="font-size:.6rem;color:var(--text-muted)">'+humLabel+' '+w.ki.relative_humidity_2m+'%</div>';
+  // Bridge Poetry — i18n-aware
   var poems = [], bjc = w.bj.weather_code, kic = w.ki.weather_code;
   var sameWeather = (bjc <= 3 && kic <= 3) || (bjc >= 45 && kic >= 45) || (bjc >= 71 && kic >= 71);
-  if (sameWeather && bjc <= 3) poems.push({sr:'Sunce sija i u Pekingu i u Kikindi ☀️ — isto sunce greje oba naša srca.',barry:lang==='sr'?'Barry kaže: Kad pogledaš u sunce, seti se — ja gledam u isto to sunce ovde u Pekingu. 7.000 kilometara, jedno sunce. ♥':lang==='en'?'Barry says: When you look at the sun, remember — I\'m looking at the same sun in Beijing. 7,000 km, one sun. ♥':'Barry说：当你看着太阳，记住——我在北京也看着同一轮太阳。7000公里，同一个太阳。♥'});
-  else if (sameWeather && kic >= 45 && kic <= 67) poems.push({sr:'Kiša pada i na Vojvodinu i na Peking 🌧️ — iste kapi, dva različita sveta.',barry:lang==='sr'?'Barry kaže: Dok kiša pada po tvojoj Vojvodini, ja slušam kišu u Pekingu i mislim na tebe. Kiša spaja sve. 🌧️♥':lang==='en'?'Barry says: While rain falls on your Vojvodina, I listen to the rain in Beijing and think of you. Rain connects everything. 🌧️♥':'Barry说：雨落在你的Vojvodina，我在北京听着雨声想你。雨水连接一切。🌧️♥'});
-  else poems.push({sr:'Različito nebo, isto srce 🌍 — od Pekinga do Kikinde, od Dunava do Jangcea.',barry:lang==='sr'?'Barry kaže: Dunav teče kroz tvoj grad, Jangce kroz moj. Dve reke, jedna ljubav koja teče između nas. ♥':lang==='en'?'Barry says: The Danube flows through your town, the Yangtze through mine. Two rivers, one love flowing between us. ♥':'Barry说：多瑙河流过你的城市，长江流过我的。两条河流，一份在我们之间流淌的爱。♥'});
-  poems.push({sr:'Sa Dunava na Jangce — ljubav teče kao reka 🌊',barry:lang==='sr'?'Od ravnice do Pekinga, od šljivovice do čaja — naša priča je most između dva sveta.':lang==='en'?'From plains to Beijing, from rakija to tea — our story bridges two worlds.':'从平原到北京，从李子酒到茶——我们的故事连接两个世界。'});
+  if (sameWeather && bjc <= 3) poems.push({txt:lang==='sr'?'Sunce sija i u Pekingu i u Kikindi ☀️ — isto sunce greje oba naša srca.':lang==='en'?'The sun shines on both Beijing and Kikinda ☀️ — the same sun warms both our hearts.':'北京和Kikinda阳光普照 ☀️ — 同一个太阳温暖我们的心。',barry:lang==='sr'?'Barry kaže: Kad pogledaš u sunce, seti se — ja gledam u isto to sunce ovde u Pekingu. 7.000 kilometara, jedno sunce. ♥':lang==='en'?'Barry says: When you look at the sun, remember — I\'m looking at the same sun in Beijing. 7,000 km, one sun. ♥':'Barry说：当你看着太阳，记住——我在北京也看着同一轮太阳。7000公里，同一个太阳。♥'});
+  else if (sameWeather && kic >= 45 && kic <= 67) poems.push({txt:lang==='sr'?'Kiša pada i na Vojvodinu i na Peking 🌧️ — iste kapi, dva različita sveta.':lang==='en'?'Rain falls on both Vojvodina and Beijing 🌧️ — same drops, two different worlds.':'雨水落在Vojvodina和北京 🌧️ — 同样的雨滴，两个不同的世界。',barry:lang==='sr'?'Barry kaže: Dok kiša pada po tvojoj Vojvodini, ja slušam kišu u Pekingu i mislim na tebe. Kiša spaja sve. 🌧️♥':lang==='en'?'Barry says: While rain falls on your Vojvodina, I listen to the rain in Beijing and think of you. Rain connects everything. 🌧️♥':'Barry说：雨落在你的Vojvodina，我在北京听着雨声想你。雨水连接一切。🌧️♥'});
+  else poems.push({txt:lang==='sr'?'Različito nebo, isto srce 🌍 — od Pekinga do Kikinde, od Dunava do Jangcea.':lang==='en'?'Different skies, one heart 🌍 — from Beijing to Kikinda, from Danube to Yangtze.':'不同的天空，同一颗心 🌍 — 从北京到Kikinda，从多瑙河到长江。',barry:lang==='sr'?'Barry kaže: Dunav teče kroz tvoj grad, Jangce kroz moj. Dve reke, jedna ljubav koja teče između nas. ♥':lang==='en'?'Barry says: The Danube flows through your town, the Yangtze through mine. Two rivers, one love flowing between us. ♥':'Barry说：多瑙河流过你的城市，长江流过我的。两条河流，一份在我们之间流淌的爱。♥'});
+  poems.push({txt:lang==='sr'?'Sa Dunava na Jangce — ljubav teče kao reka 🌊':lang==='en'?'From Danube to Yangtze — love flows like a river 🌊':'从多瑙河到长江 — 爱如河流 🌊',barry:lang==='sr'?'Od ravnice do Pekinga, od šljivovice do čaja — naša priča je most između dva sveta.':lang==='en'?'From plains to Beijing, from rakija to tea — our story bridges two worlds.':'从平原到北京，从李子酒到茶——我们的故事连接两个世界。'});
   var poem = poems[Math.floor(Math.random() * poems.length)];
-  document.getElementById('weatherLove').innerHTML='<div style="font-style:italic;margin-bottom:4px">"'+poem.sr+'"</div><div style="font-size:.62rem;opacity:.82;line-height:1.5">'+poem.barry+'</div>';
+  document.getElementById('weatherLove').innerHTML='<div style="font-style:italic;margin-bottom:4px">"'+poem.txt+'"</div><div style="font-size:.62rem;opacity:.82;line-height:1.5">'+poem.barry+'</div>';
   document.getElementById('weatherLove').style.display='';
   // Update bridge text dynamically
   var bridge = document.getElementById('weatherBridge');
@@ -1651,7 +1654,7 @@ function renderSolarTermBadge() {
     } else { badge.style.display = 'none'; }
   }
 }
-function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderTea();renderForecast();renderGarden();renderRelTips();renderHug();renderSong();renderCheckin();renderSleepCard();renderSpecialBadge();renderSolarTermBadge();if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
+function applyAllUI(){updateLangUI();renderCalendar();updateSharedCycleInfo();updateSharedSymptoms();renderMoodSection();renderDiarySection();renderLoveNote();renderTea();renderForecast();renderGarden();renderRelTips();renderHug();renderSong();renderCheckin();renderSleepCard();renderSpecialBadge();renderSolarTermBadge();renderGratitude();var wc=localStorage.getItem('cycle-weather');if(wc){try{renderWeather(JSON.parse(wc));}catch(e){}}if(activeProfile==='barry')renderBarrySymptomView();if(symptomDate)renderSymptomPanel(symptomDate);if(document.getElementById('panel-tips').classList.contains('active'))renderTips();updateFab();updateLoveCounter();updateProfileUI();renderBirthdayCard();}
 function renderAll(){applyAllUI();}
 
 /* ================================================================
@@ -2315,7 +2318,7 @@ function addGratitude() {
   notes.push({ text: text, from: activeProfile, time: Date.now() });
   if (notes.length > 20) notes = notes.slice(-20);
   localStorage.setItem('shared-gratitude', JSON.stringify(notes));
-  input.value = '';
+  _gratNotes = null; input.value = '';
   renderGratitude();
   pushAllSharedData();
 }
@@ -2328,10 +2331,25 @@ function renderGratitude() {
   input.placeholder = lang==='sr'?'Hvala ti za...':lang==='en'?'Thank you for...':'谢谢你...';
   var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
   if (notes.length === 0) { list.innerHTML = ''; return; }
-  list.innerHTML = notes.slice(-5).reverse().map(function(n){
+  list.innerHTML = notes.slice(-5).reverse().map(function(n, i){
     var sender = n.from === 'andjela' ? '🌸' : '👦';
-    return '<div class="gratitude-item"><span class="gratitude-heart">'+sender+'</span><span>'+esc(n.text)+'</span></div>';
+    var partnerLang = n.from === 'andjela' ? 'sr' : (lang === 'sr' ? 'zh-CN' : 'sr');
+    var needTrans = n.from !== (activeProfile === 'andjela' ? 'andjela' : 'barry');
+    var btnHtml = needTrans ? ' <button onclick="translateGrat('+i+')" style="font-size:.55rem;padding:1px 6px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer" title="'+partnerLang+'">🌐</button>' : '';
+    return '<div class="gratitude-item"><span class="gratitude-heart">'+sender+'</span><span id="grat-txt-'+i+'">'+esc(n.text)+'</span>'+btnHtml+'</div>';
   }).join('');
+}
+var _gratNotes = null;
+function translateGrat(idx) {
+  if (!_gratNotes) _gratNotes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
+  var n = _gratNotes[idx]; if (!n) return;
+  var fromLang = n.from === 'andjela' ? 'sr' : (lang === 'sr' ? 'zh-CN' : 'sr');
+  var toLang = lang === 'sr' ? 'sr' : (lang === 'zh-CN' ? 'zh-CN' : 'en');
+  if (fromLang === toLang) return;
+  translateText(n.text, fromLang, toLang).then(function(translated) {
+    var el = document.getElementById('grat-txt-' + idx);
+    if (el) el.textContent = translated;
+  });
 }
 
 // Weekly Check-in
