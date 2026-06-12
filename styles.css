@@ -1,45 +1,41 @@
 ﻿/* ================================================================
-   DESIGN TOKENS — Warm Blush × Starbucks Cream
-   Inspired by Starbucks DESIGN.md (awesome-design-md) adapted for romance
+   DESIGN TOKENS — Rose Petal × Warm Clay
+   Warm rose-beige canvas, rich rose accents, chocolate text
    ================================================================ */
 :root {
-  /* Brand — romantic rose palette */
-  --primary: #c95a6d; --primary-hover: #a84355; --primary-light: #fce4e8;
-  --rose: #c95a6d; --rose-dark: #a84355; --rose-light: #fdf0f3; --rose-mist: #fce8ec;
-  --love: #c95a6d; --lipa: #6b9e7a; --dust: #e8ccc2; --gold: #d4a86a;
-  --teal: #6b9e7a; --teal-light: #e0efe5; --teal-dark: #4a7a5a;
-  --sage: #8fba9e; --sage-light: #e6f2ea; --sage-dark: #5a8a6a;
-  --lavender: #b8a9c9; --lavender-dark: #8a7aa8; --lavender-light: #f2eef8;
-  /* Surfaces — warm cream canvas (Starbucks philosophy) */
-  --bg: #faf5f0; --card: #ffffff; --text: rgba(50,35,35,0.90); --text-muted: rgba(50,35,35,0.55);
-  --border: #ece2da; --border-soft: #e8ddd4;
-  /* Shape */
-  --radius: 16px; --radius-sm: 12px; --radius-lg: 20px; --radius-full: 9999px;
-  /* Elevation — warm brown shadows */
-  --shadow-xs: 0 0 0.5px rgba(80,50,50,0.08);
-  --shadow-sm: 0 0 0.5px rgba(80,50,50,0.10), 0 1px 1px rgba(80,50,50,0.18);
-  --shadow-md: 0 1px 3px rgba(80,50,50,0.08), 0 2px 2px rgba(80,50,50,0.06), 0 0 2px rgba(80,50,50,0.07);
-  --shadow-lg: 0 0 6px rgba(80,50,50,0.20), 0 8px 12px rgba(80,50,50,0.12);
-  --fab-shadow: 0 6px 20px rgba(201,90,109,0.30);
+  --primary: #c45a6b; --primary-hover: #a34455; --primary-light: #f2d5db;
+  --rose: #c45a6b; --rose-dark: #a34455; --rose-light: #fdf0f3; --rose-mist: #f5e0e6;
+  --love: #c45a6b; --lipa: #7a9e7e; --dust: #d4bfb5; --gold: #c49a5e;
+  --teal: #5e8b7a; --teal-light: #e0efe8; --teal-dark: #3d6b55;
+  --sage: #80a590; --sage-light: #e4f0ea; --sage-dark: #5a8068;
+  --lavender: #b8a0c8; --lavender-dark: #9078a8; --lavender-light: #efe8f5;
+  --bg: #ede0da; --card: #faf3ef; --text: #3d2828; --text-muted: #8a7a78;
+  --border: #dccfc8; --border-soft: #e5dad4;
+  --radius: 16px; --radius-sm: 10px; --radius-lg: 22px; --radius-full: 9999px;
+  --shadow-xs: 0 0 0.5px rgba(80,40,40,0.06);
+  --shadow-sm: 0 0 0.5px rgba(80,40,40,0.10), 0 1px 2px rgba(80,40,40,0.12);
+  --shadow-md: 0 2px 8px rgba(80,40,40,0.08), 0 4px 16px rgba(80,40,40,0.05);
+  --shadow-lg: 0 4px 16px rgba(80,40,40,0.12), 0 8px 32px rgba(80,40,40,0.06);
+  --fab-shadow: 0 6px 22px rgba(196,90,107,0.28);
   --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-  --blur: blur(12px) saturate(1.05);
+  --blur: blur(14px) saturate(1.05);
 }
 
 [data-theme="dark"] {
-  --primary: #d4788a; --primary-hover: #c95a6d; --primary-light: #3d2028;
-  --rose: #d4788a; --rose-dark: #c95a6d; --rose-light: #2d1c20; --rose-mist: #352428;
-  --love: #d4788a; --lipa: #8fc7b0; --dust: #3d3430; --gold: #c49a5e;
-  --teal: #8fc7b0; --teal-light: #1a2822;
-  --sage: #8fc7b0; --sage-light: #1a2822;
-  --lavender: #d4b8e0; --lavender-dark: #a888bb; --lavender-light: #241d2a;
-  --bg: #1a1618; --card: #241f22; --text: rgba(250,240,235,0.88); --text-muted: rgba(250,240,235,0.50);
-  --border: #332d30; --border-soft: #2a2428;
-  --shadow-xs: 0 0 0.5px rgba(0,0,0,0.4);
-  --shadow-sm: 0 0 0.5px rgba(0,0,0,0.5), 0 1px 1px rgba(0,0,0,0.4);
-  --shadow-md: 0 1px 3px rgba(0,0,0,0.3), 0 2px 2px rgba(0,0,0,0.25), 0 0 2px rgba(0,0,0,0.3);
-  --shadow-lg: 0 0 6px rgba(0,0,0,0.45), 0 8px 12px rgba(0,0,0,0.35);
-  --fab-shadow: 0 6px 20px rgba(212,120,138,0.28);
-  --blur: blur(12px) saturate(1.1);
+  --primary: #d47888; --primary-hover: #c45a6b; --primary-light: #352028;
+  --rose: #d47888; --rose-dark: #c45a6b; --rose-light: #2a1c20; --rose-mist: #302228;
+  --love: #d47888; --lipa: #8fc7b0; --dust: #3d302c; --gold: #c49a5e;
+  --teal: #7ab5a0; --teal-light: #182822;
+  --sage: #8fc7b0; --sage-light: #182820;
+  --lavender: #c8a8d8; --lavender-dark: #a080b8; --lavender-light: #261e2a;
+  --bg: #1a1516; --card: #241e20; --text: #e8dcd8; --text-muted: #8a807e;
+  --border: #30282a; --border-soft: #282022;
+  --shadow-xs: 0 0 0.5px rgba(0,0,0,0.35);
+  --shadow-sm: 0 0 0.5px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.30);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.20);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.40), 0 16px 40px rgba(0,0,0,0.25);
+  --fab-shadow: 0 6px 22px rgba(212,120,136,0.26);
+  --blur: blur(14px) saturate(1.1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
