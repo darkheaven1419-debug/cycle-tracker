@@ -247,6 +247,15 @@
       <h3><span id="song-title"></span></h3>
       <div id="songContent"><span class="song-icon">🎶</span><div class="song-note" id="song-note-empty"></div></div>
     </div>
+    <!-- Gratitude Wall -->
+    <div class="card" id="gratCard">
+      <h3><span id="grat-title">💝 Gratitude Wall</span></h3>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <input id="gratInput" placeholder="Hvala ti za..." style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:.7rem;font-family:var(--font);background:var(--card);color:var(--text)">
+        <button onclick="addGratitude()" style="padding:8px 14px;border:none;border-radius:10px;background:var(--love);color:#fff;font-size:.7rem;font-weight:600;cursor:pointer;white-space:nowrap">💝 +</button>
+      </div>
+      <div id="gratList"></div>
+    </div>
     <!-- Weekly Check-in -->
     <div class="card" id="checkinCard">
       <h3><span id="checkin-title"></span></h3>
