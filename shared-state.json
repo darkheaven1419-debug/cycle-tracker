@@ -59,6 +59,11 @@
         "hug": {
           "time": 1781326740634
         }
+      },
+      "andjela": {
+        "hug": {
+          "time": 1781385973442
+        }
       }
     }
   },
@@ -93,8 +98,8 @@
   "symptoms": null,
   "gratitude": [],
   "hug": {
-    "from": "barry",
-    "time": 1781326740634
+    "from": "andjela",
+    "time": 1781385973442
   },
   "songs": {
     "barry": null,
@@ -114,5 +119,5 @@
     },
     "andjela": {}
   },
-  "updated": 1781385968669
+  "updated": 1781385973443
 }
