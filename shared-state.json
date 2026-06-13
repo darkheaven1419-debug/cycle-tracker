@@ -103,7 +103,13 @@
     "_migrated": true
   },
   "symptoms": null,
-  "gratitude": [],
+  "gratitude": [
+    {
+      "text": "Hvala ti što me trpiš...",
+      "from": "andjela",
+      "time": 1781386076437
+    }
+  ],
   "hug": {
     "from": "andjela",
     "time": 1781385973442
@@ -126,5 +132,5 @@
     },
     "andjela": {}
   },
-  "updated": 1781386060077
+  "updated": 1781386076438
 }
