@@ -31,6 +31,13 @@
         "thanks": "Želim da ti se zahvalim na tome što si uvek nežan prema meni.",
         "wish": "Hmmmm, možda da više učimo zajedno...",
         "time": 1781219798328
+      },
+      "barry": {
+        "happy": "你为了我破例给我展示了你的乳房，她们真的很美，我希望以后能多看看她们",
+        "uncomf": "暂无",
+        "thanks": "愿意为了我破例，证明我很特别",
+        "wish": "更加信任彼此",
+        "time": 1781326401229
       }
     }
   },
@@ -65,5 +72,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1781300947510
+  "updated": 1781326401231
 }
