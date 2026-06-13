@@ -53,6 +53,13 @@
         "wish": "更加信任彼此",
         "time": 1781326401229
       }
+    },
+    "2026-06-13": {
+      "barry": {
+        "hug": {
+          "time": 1781326740634
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -78,8 +85,8 @@
   "symptoms": null,
   "gratitude": [],
   "hug": {
-    "from": "andjela",
-    "time": 1781300729015
+    "from": "barry",
+    "time": 1781326740634
   },
   "songs": {
     "barry": null,
@@ -95,5 +102,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1781326738151
+  "updated": 1781326740635
 }
