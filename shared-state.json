@@ -61,6 +61,11 @@
         }
       },
       "andjela": {
+        "happy": "Obradovalo me je to što si nosio narukvicu, puno mi pisao, pričao da mnom kada mi je bilo teško i poslao mi video kako stavljaš kacigu.",
+        "uncomf": "To što mi tražiš da ti pošaljem neke slike, a svesna sam da sam ružna.",
+        "thanks": "Za to što si uvek uz mene.",
+        "wish": "Ne znam, u meni je problem.",
+        "time": 1781386330875,
         "hug": {
           "time": 1781385973442
         }
@@ -136,5 +141,5 @@
       "2": "💬 Bolja komunikacija"
     }
   },
-  "updated": 1781386103612
+  "updated": 1781386330876
 }
