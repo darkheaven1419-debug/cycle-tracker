@@ -87,7 +87,14 @@
         "time": 1781385966966
       }
     },
-    "diaries": {},
+    "diaries": {
+      "2026-06-13": [
+        {
+          "text": "Što si mi poslao video sebe kada stavljaš kacigu, to znači da ti je važno to što brinem za tebe.",
+          "time": 1781386058372
+        }
+      ]
+    },
     "settings": {
       "cycleLength": 28,
       "periodLength": 7,
@@ -119,5 +126,5 @@
     },
     "andjela": {}
   },
-  "updated": 1781385973443
+  "updated": 1781386060077
 }
