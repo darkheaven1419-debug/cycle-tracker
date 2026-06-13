@@ -60,11 +60,20 @@
       "2026-05-28"
     ],
     "periodEnds": {},
+    "symptoms": {},
+    "moods": {
+      "2026-06-13": {
+        "mood": "happy",
+        "time": 1781326736449
+      }
+    },
+    "diaries": {},
     "settings": {
       "cycleLength": 28,
       "periodLength": 7,
       "manualOverride": false
-    }
+    },
+    "_migrated": true
   },
   "symptoms": null,
   "gratitude": [],
@@ -86,5 +95,5 @@
     "barry": {},
     "andjela": {}
   },
-  "updated": 1781326646210
+  "updated": 1781326738151
 }
