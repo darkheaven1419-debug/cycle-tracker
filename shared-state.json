@@ -56,6 +56,11 @@
     },
     "2026-06-13": {
       "barry": {
+        "happy": "You shared your experiences with me when you went out and had fun",
+        "uncomf": "我不知道你为什么会总是对自己缺乏自信",
+        "thanks": "愿意和我分享日常",
+        "wish": "对自己更有自信",
+        "time": 1781446826782,
         "hug": {
           "time": 1781326740634
         }
@@ -141,5 +146,5 @@
       "2": "💬 Bolja komunikacija"
     }
   },
-  "updated": 1781386334290
+  "updated": 1781446826782
 }
