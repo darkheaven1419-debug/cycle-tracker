@@ -880,12 +880,53 @@ function expandTimeline() {
 // ==============================
 // TRANSLATION
 // ==============================
+// Translation cache — avoids re-fetching identical text (session only)
+var _transCache = {};
+
 async function translateText(text, from, to) {
   if(!text||from===to||text.length<2)return text;
-  var pair=from+'|'+to;
-  try{var r1=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+pair);var d1=await r1.json();if(d1.responseData&&d1.responseData.translatedText&&d1.responseData.translatedText!==text)return d1.responseData.translatedText;}catch(e){}
-  try{var r2=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl='+from+'&tl='+to+'&dt=t&q='+encodeURIComponent(text));var d2=await r2.json();if(d2&&d2[0]){var t=d2[0].map(function(s){return s[0];}).join('');if(t&&t!==text)return t;}}catch(e){}
-  return text;
+  var cacheKey = from + '|' + to + '|' + text;
+  if (_transCache[cacheKey]) return _transCache[cacheKey];
+
+  var result = null;
+
+  // 1) Google Translate (newer endpoint, best quality for zh↔sr)
+  try {
+    var r1 = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl='+from+'&tl='+to+'&dt=t&q='+encodeURIComponent(text));
+    var d1 = await r1.json();
+    if (d1 && d1[0]) {
+      var t = d1[0].map(function(s){return s[0];}).join('');
+      if (t && t !== text) result = t;
+    }
+  } catch(e) {}
+
+  // 2) MyMemory (free, no key needed, good fallback)
+  if (!result) {
+    try {
+      var pair = from + '|' + to;
+      var r2 = await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+pair);
+      var d2 = await r2.json();
+      if (d2.responseData && d2.responseData.translatedText && d2.responseData.translatedText !== text) {
+        result = d2.responseData.translatedText;
+      }
+    } catch(e) {}
+  }
+
+  // 3) LibreTranslate (public instance, free/open-source, good for European langs)
+  if (!result) {
+    try {
+      var r3 = await fetch('https://translate.argosopentech.com/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: text, source: from, target: to, format: 'text' })
+      });
+      var d3 = await r3.json();
+      if (d3.translatedText && d3.translatedText !== text) result = d3.translatedText;
+    } catch(e) {}
+  }
+
+  if (result) { _transCache[cacheKey] = result; return result; }
+  return text; // all APIs failed — return original
 }
 async function translatePartnerEntries() {
   var btn = document.getElementById('translateBtnSm');
@@ -2151,6 +2192,32 @@ function goToday() {
 /* ================================================================
    CULTURE & CHINESE LEARNING MODULE — za Anđelu
    ================================================================ */
+
+// UI text mapping: auto-switches based on activeProfile (Barry→zh, Angie→sr)
+var CL = {
+  barry: {
+    checklistTitle:'每日进度', dayPrefix:'第', daySuffix:'天',
+    partnerProgress:'伴侣进度', commentBoard:'留言板',
+    streakLabel:'天连续', streakDay:'天',
+    sendBtn:'发送', placeholder:'写留言... 💌',
+    noComments:'暂无留言，来写第一条！', loading:'加载中...',
+    notStarted:'还没有开始学习', willCome:'会来的！',
+    completed:'已完成', lessons:'课', lastLesson:'最近',
+    todayBadge:'今日推荐', globalBoard:'留言板'
+  },
+  andjela: {
+    checklistTitle:'Dnevni napredak', dayPrefix:'Dan', daySuffix:'',
+    partnerProgress:'Napredak', commentBoard:'Tabla za poruke',
+    streakLabel:'dana zaredom', streakDay:'dan',
+    sendBtn:'Pošalji', placeholder:'Napiši poruku... 💌',
+    noComments:'Još nema poruka. Budi prvi!', loading:'Učitavanje...',
+    notStarted:'još nije započela učenje', willCome:'Doći će uskoro!',
+    completed:'završeno', lessons:'lekcija', lastLesson:'Poslednja',
+    todayBadge:'Daily', globalBoard:'Tabla'
+  }
+};
+function cl(key) { var p = CL[activeProfile] || CL.andjela; return p[key] || (CL.andjela[key] || key); }
+
 const CULTURE_KNOWLEDGE = [
   {id:1,zh:'春节',sr:'Kineska Nova Godina',icon:'🧧',desc:'Najvažniji praznik u Kini. Porodice se okupljaju na velikoj večeri (年夜饭), deca dobijaju crvene koverte (红包) sa novcem, a vatromet tera zle duhove. Svaka godina ima svoju životinju po kineskom zodijaku.',tags:['praznik','porodica','tradicija']},
   {id:2,zh:'微信支付',sr:'WeChat plaćanje',icon:'📱',desc:'U Kini se skoro sve plaća telefonom — WeChat Pay ili Alipay. Gotovina se retko koristi. Kad dođeš u Kinu, instaliraj WeChat i poveži karticu — moći ćeš da platiš sve: od pijace do voza.',tags:['svakodnevno','tehnologija','praktično']},
@@ -2252,6 +2319,11 @@ function getTodaysCultureIndex() {
 function initCultureTab() {
   _cultureCardIdx = getTodaysCultureIndex();
   _lessonDayIdx = 0;
+  // Update dynamic UI text based on active profile
+  var ctEl = document.getElementById('checklist-title');
+  if (ctEl) ctEl.textContent = cl('checklistTitle');
+  var cbEl = document.getElementById('comment-board-label');
+  if (cbEl) cbEl.textContent = cl('commentBoard');
   // Load saved progress
   var saved = localStorage.getItem('culture-lesson-progress');
   if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
@@ -2276,6 +2348,9 @@ function renderCultureCard() {
   var isToday = _cultureCardIdx === getTodaysCultureIndex();
   var card = document.getElementById('cultureMainCard');
   if (isToday) card.classList.add('culture-today'); else card.classList.remove('culture-today');
+  // Update dynamic badge text
+  var badge = document.getElementById('cultureTodayBadge');
+  if (badge) badge.textContent = cl('todayBadge');
 }
 
 function prevCultureCard() { _cultureCardIdx = (_cultureCardIdx - 1 + CULTURE_KNOWLEDGE.length) % CULTURE_KNOWLEDGE.length; renderCultureCard(); }
@@ -2284,9 +2359,9 @@ function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderC
 
 function renderDailyLesson() {
   var l = DAILY_LESSONS[_lessonDayIdx];
-  document.getElementById('llcDayBadge').textContent = 'Dan ' + l.day;
+  document.getElementById('llcDayBadge').textContent = cl('dayPrefix') + ' ' + l.day + (cl('daySuffix') ? ' ' + cl('daySuffix') : '');
   document.getElementById('llcTopic').textContent = l.icon + ' ' + l.topic;
-  document.getElementById('lessonNavInfo').textContent = 'Dan ' + l.day + ' / ' + DAILY_LESSONS.length;
+  document.getElementById('lessonNavInfo').textContent = cl('dayPrefix') + ' ' + l.day + ' / ' + DAILY_LESSONS.length;
   var wordsHtml = '';
   l.words.forEach(function(w){
     wordsHtml += '<div class="llc-word-row"><span class="llc-zh">'+w.zh+'</span><span class="llc-py">'+w.py+'</span><span class="llc-sr">'+w.sr+'</span></div>';
@@ -2366,7 +2441,7 @@ function renderChecklist() {
     var commentCount = comments.filter(function(c){ return c.lessonDay === l.day; }).length;
     itemsHtml += '<div class="checklist-item'+(done?' done':'')+(current?' current':'')+'" onclick="toggleLessonDay('+l.day+')">';
     itemsHtml += '<span class="checklist-check">'+(done?'✅':'☐')+'</span>';
-    itemsHtml += '<span class="checklist-label">Dan '+l.day+': '+l.topic+'</span>';
+    itemsHtml += '<span class="checklist-label">'+cl('dayPrefix')+' '+l.day+': '+l.topic+'</span>';
     if (commentCount > 0) itemsHtml += '<span class="checklist-comment-badge" onclick="event.stopPropagation();showLessonComments('+l.day+')" title="Komentari">💬'+commentCount+'</span>';
     itemsHtml += '</div>';
   }
@@ -2384,20 +2459,20 @@ function renderPartnerProgress() {
   var pp = getPartnerProgress();
   var partnerName = getPartnerProfile() === 'andjela' ? '🌸 Anđela' : '👦 Barry';
   if (!pp || !pp.completed || pp.completed.length === 0) {
-    panel.innerHTML = '<div class="pp-empty">' + partnerName + ' još nije započela učenje. Doći će uskoro! 💫</div>';
+    panel.innerHTML = '<div class="pp-empty">' + partnerName + ' ' + cl('notStarted') + '. ' + cl('willCome') + ' 💫</div>';
     return;
   }
   var pct = Math.round(pp.completed.length / DAILY_LESSONS.length * 100);
   var lastLesson = pp.lastLessonDay !== undefined ? DAILY_LESSONS[pp.lastLessonDay] : null;
-  var html = '<div class="pp-header">📊 Napredak: <strong>' + partnerName + '</strong></div>';
+  var html = '<div class="pp-header">📊 ' + cl('partnerProgress') + ': <strong>' + partnerName + '</strong></div>';
   html += '<div class="pp-bar-track"><div class="pp-bar-fill" style="width:'+pct+'%"></div></div>';
-  html += '<div class="pp-stats"><span>✅ ' + pp.completed.length + ' / ' + DAILY_LESSONS.length + ' lekcija</span><span>' + pct + '% završeno</span></div>';
-  if (lastLesson) html += '<div class="pp-last">📖 Poslednja: Dan ' + lastLesson.day + ' — ' + lastLesson.topic + '</div>';
+  html += '<div class="pp-stats"><span>✅ ' + pp.completed.length + ' / ' + DAILY_LESSONS.length + ' ' + cl('lessons') + '</span><span>' + pct + '% ' + cl('completed') + '</span></div>';
+  if (lastLesson) html += '<div class="pp-last">📖 ' + cl('lastLesson') + ': ' + cl('dayPrefix') + ' ' + lastLesson.day + ' — ' + lastLesson.topic + '</div>';
   // Mark which lessons partner completed
   html += '<div class="pp-lessons">';
   DAILY_LESSONS.forEach(function(l){
     var pDone = pp.completed.indexOf(l.day) >= 0;
-    html += '<span class="pp-dot'+(pDone?' done':'')+'" title="Dan '+l.day+': '+l.topic+'">'+(pDone?'✅':'○')+'</span>';
+    html += '<span class="pp-dot'+(pDone?' done':'')+'" title="'+cl('dayPrefix')+' '+l.day+': '+l.topic+'">'+(pDone?'✅':'○')+'</span>';
   });
   html += '</div>';
   panel.innerHTML = html;
@@ -2409,7 +2484,7 @@ var _commentLessonDay = 0; // 0 = global board, >0 = specific lesson
 function showLessonComments(lessonDay) {
   _commentLessonDay = lessonDay;
   var l = DAILY_LESSONS.find(function(d){ return d.day === lessonDay; });
-  var title = l ? ('💬 Dan ' + l.day + ': ' + l.topic) : '💬 Komentari';
+  var title = l ? ('💬 ' + cl('dayPrefix') + ' ' + l.day + ': ' + l.topic) : ('💬 ' + cl('globalBoard'));
   showCommentModal(title);
 }
 
@@ -2426,8 +2501,8 @@ function showCommentModal(title) {
   overlay.innerHTML = '<div class="comment-modal">'
     + '<div class="cm-header"><span class="cm-title">' + title + '</span><button class="cm-close" onclick="closeCommentModal()">✕</button></div>'
     + '<div class="cm-list" id="cmList"></div>'
-    + '<div class="cm-input-row"><textarea id="cmInput" placeholder="Napiši poruku... 💌" rows="2"></textarea>'
-    + '<button class="btn btn-primary" onclick="saveComment()" style="font-size:.7rem;padding:8px 14px">📨 Pošalji</button></div>'
+    + '<div class="cm-input-row"><textarea id="cmInput" placeholder="' + cl('placeholder') + '" rows="2"></textarea>'
+    + '<button class="btn btn-primary" onclick="saveComment()" style="font-size:.7rem;padding:8px 14px">📨 ' + cl('sendBtn') + '</button></div>'
     + '</div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e) { if (e.target === overlay) closeCommentModal(); });
@@ -2468,7 +2543,7 @@ function renderCommentList() {
     : comments.filter(function(c){ return c.lessonDay === _commentLessonDay; });
   filtered.sort(function(a,b){ return a.time - b.time; });
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="cm-empty">Još nema poruka. Budi prvi! 💌</div>';
+    list.innerHTML = '<div class="cm-empty">' + cl('noComments') + ' 💌</div>';
     return;
   }
   var html = '';

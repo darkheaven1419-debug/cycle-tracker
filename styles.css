@@ -817,12 +817,12 @@ body {
 .culture-main-card.culture-today {
   border-color:var(--love); box-shadow:0 0 0 2px rgba(196,90,107,.15), 0 4px 20px rgba(196,90,107,.08);
 }
-.culture-main-card::before {
-  content:'Daily'; position:absolute; top:10px; right:-28px;
+.culture-today-badge {
+  position:absolute; top:10px; right:-28px; pointer-events:none;
   background:var(--gold); color:#fff; font-size:.55rem; font-weight:700;
   padding:2px 30px; transform:rotate(45deg); opacity:0; transition:opacity .3s;
 }
-.culture-main-card.culture-today::before { opacity:1; }
+.culture-main-card.culture-today .culture-today-badge { opacity:1; }
 .culture-card-emoji { font-size:3rem; display:block; text-align:center; margin-bottom:10px; }
 .culture-card-zh { font-size:1.3rem; font-weight:800; color:var(--love); text-align:center; margin-bottom:4px; }
 .culture-card-sr { font-size:.85rem; font-weight:700; color:var(--text); text-align:center; margin-bottom:12px; }
