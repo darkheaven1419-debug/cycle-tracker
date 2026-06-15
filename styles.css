@@ -974,3 +974,31 @@ body {
 
 /* ===== MOBILE (<=600px) ===== */
 @media(max-width:600px){.culture-card-emoji{font-size:2.2rem}.culture-card-zh{font-size:1.1rem}.culture-card-desc{font-size:.7rem;line-height:1.5}.lr-labels{font-size:.45rem}.lr-step{width:28px;height:28px;font-size:.7rem}.lr-connector{flex:0 0 12px}.llc-word-row{font-size:.7rem;flex-wrap:wrap}.llc-zh{min-width:55px;font-size:.78rem}.llc-py{min-width:80px;font-size:.62rem}.checklist-item{font-size:.68rem;padding:8px 6px}.checklist-check{font-size:1rem;min-width:24px}.checklist-comment-badge{font-size:.7rem;padding:2px 6px}.comment-modal{width:95%;max-width:95%;max-height:85vh}.cm-input-row{gap:4px}.cm-input-row textarea{font-size:.68rem}.cm-text{font-size:.68rem}.pts-badge{font-size:1.1rem}.pp-dot{font-size:.5rem}}
+
+/* DASHBOARD */
+.dash-welcome{font-size:.85rem;color:var(--text);text-align:center;padding:16px 8px 8px}
+.dash-card{margin-bottom:10px;padding:14px 16px}
+.dash-card h4{font-size:.75rem;margin-bottom:8px;color:var(--text)}
+.dash-bar{height:6px;background:var(--border-soft);border-radius:6px;margin-bottom:6px;overflow:hidden}
+.dash-bar-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--teal));border-radius:6px;transition:width .5s ease}
+.dash-row{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-muted);margin-bottom:4px}
+.dash-unread{font-size:.72rem;color:var(--love);font-weight:600;margin-bottom:8px;padding:8px;background:var(--rose-light);border-radius:10px}
+.dash-links{display:flex;gap:8px;flex-wrap:wrap}
+.dash-link-btn{flex:1;min-width:80px;padding:10px 8px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-size:.68rem;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;touch-action:manipulation}
+.dash-link-btn:hover{border-color:var(--love);color:var(--love)}
+.dash-link-btn:active{transform:scale(.95)}
+.dash-quote{background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)}
+
+/* FESTIVAL DECORATIONS */
+.festival-decorations{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+.festival-deco{position:absolute;top:-40px;animation:decoFall 6s ease-in-out infinite;opacity:.35}
+@keyframes decoFall{0%{transform:translateY(-40px) rotate(0deg);opacity:.4}80%{opacity:.2}100%{transform:translateY(105vh) rotate(360deg);opacity:0}}
+
+/* FESTIVAL THEME CLASSES */
+body.festival-spring{--love:#d32f2f;--rose:#d32f2f;--rose-dark:#b71c1c;--gold:#ff6f00}
+body.festival-midautumn{--gold:#f39c12;--love:#e67e22;--rose:#f39c12}
+body.festival-valentine{--love:#ff69b4;--rose:#ff69b4;--rose-light:#fff0f5;--gold:#ff1493}
+body.festival-newyear{--gold:#ffd700;--love:#c0c0c0}
+body.festival-sava{--love:#0C4076;--rose:#C62828;--gold:#FFFFFF;--rose-light:#e8eaf6}
+
+@media(max-width:600px){.dash-link-btn{font-size:.62rem;padding:8px 4px}.dash-card{padding:10px 12px}}

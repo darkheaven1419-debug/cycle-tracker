@@ -6,7 +6,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
   weekdays:['Pon','Uto','Sre','Čet','Pet','Sub','Ned'],
   months:['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'],
-  today:'Danas', tabs:['Statistika','Simptomi','Saveti','Dnevnik','Kultura','Podeš.'],
+  today:'Danas', tabs:['Početna','Statistika','Simptomi','Saveti','Dnevnik','Kultura','Podeš.'],
   legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas','Ljubav'],
   progressLabels:['Menstr.','Folikul.','Ovulacija','Lutealna'],
   phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
@@ -34,7 +34,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'暗色模式', themeHint:'切换深色/浅色主题',
   weekdays:['一','二','三','四','五','六','日'],
   months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-  today:'今天', tabs:['统计','症状','贴士','日记','文化','设置'],
+  today:'今天', tabs:['主页','统计','症状','贴士','日记','文化','设置'],
   legend:['经期','排卵/易孕','卵泡期','黄体期','今天','♥纪念日'],
   progressLabels:['经期','卵泡期','排卵','黄体期'],
   phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
@@ -62,7 +62,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Dark Mode', themeHint:'Switch theme',
   weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
   months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  today:'Today', tabs:['Stats','Symptoms','Tips','Diary','Culture','Settings'],
+  today:'Today', tabs:['Home','Stats','Symptoms','Tips','Diary','Culture','Settings'],
   legend:['Period','Ovul./Fertile','Follicular','Luteal','Today','♥ Love'],
   progressLabels:['Period','Follicular','Ovulation','Luteal'],
   phases:{'period-on':'Period Start','period-mid':'Period','period-pred-first':'Predicted Start','period-pred':'Predicted','period-future-first':'Future Pred.','period-future':'Future Pred.','ovulation':'Ovulation','fertile':'Fertile','luteal':'Luteal','follicular':'Follicular'},
@@ -926,7 +926,8 @@ async function translateText(text, from, to) {
   }
 
   if (result) { _transCache[cacheKey] = result; return result; }
-  return text; // all APIs failed — return original
+  console.log('[Translate] All APIs failed for: ' + text.substring(0,30) + '...');
+  return null; // signal failure to caller
 }
 async function translatePartnerEntries() {
   var btn = document.getElementById('translateBtnSm');
@@ -940,12 +941,12 @@ async function translatePartnerEntries() {
     var el=els[i];var orig=el.getAttribute('data-original');
     if(orig&&orig.length>2){
       var result=await translateText(orig,pl,vl);
-      if(result&&result!==orig){el.textContent=result;el.style.color='var(--teal)';el.style.fontWeight='500';ok++;}
+      if(result===null){el.textContent=orig+' ['+(lang==='sr'?'prevod nije uspeo':lang==='en'?'translation failed':'翻译失败')+']';el.style.color='var(--text-muted)';} else if(result&&result!==orig){el.textContent=result;el.style.color='var(--teal)';el.style.fontWeight='500';ok++;}
     }
   }
   if(btn){
     if(ok>0){btn.textContent='✅';btn.style.borderColor='var(--teal)';btn.style.color='var(--teal)';}
-    else{btn.textContent='⚠️';btn.style.borderColor='#E53935';btn.style.color='#E53935';btn.disabled=false;}
+    else{btn.textContent='⚠️';btn.style.borderColor='#E53935';btn.style.color='#E53935';btn.disabled=false;setTimeout(function(){if(btn){btn.textContent='🌐';btn.style.borderColor='';btn.style.color='';btn.disabled=false;}},3000);}
   }
 }
 
@@ -1108,6 +1109,17 @@ function verifyLogin() {
   }
 }
 
+// ===== FESTIVAL THEME =====
+function getFestivalTheme(){var t=new Date();var k=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');var L={2025:{s:'2025-01-29',m:'2025-10-06'},2026:{s:'2026-02-17',m:'2026-09-25'},2027:{s:'2027-02-06',m:'2027-10-14'},2028:{s:'2028-01-26',m:'2028-10-03'},2029:{s:'2029-02-13',m:'2029-09-28'}};var ld=L[t.getFullYear()];if(ld){var ss=new Date(ld.s+'T00:00:00');var se=new Date(ss);se.setDate(se.getDate()+3);if(t>=ss&&t<=se)return'festival-spring';if(k===ld.m)return'festival-midautumn';}var mmdd=String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');if(mmdd==='01-27')return'festival-sava';if(mmdd==='02-14')return'festival-valentine';if(mmdd==='01-01')return'festival-newyear';return'';}
+function applyFestivalTheme(){var cls=getFestivalTheme();document.body.classList.forEach(function(c){if(c.startsWith('festival-'))document.body.classList.remove(c);});if(cls)document.body.classList.add(cls);var old=document.getElementById('festivalDecorations');if(old)old.remove();var icons=null,count=0;if(cls==='festival-spring'){icons=['🏮','🧧','🎆','🧨'];count=12;}else if(cls==='festival-midautumn'){icons=['🌕','🐰','🥮','🏮'];count=10;}else if(cls==='festival-valentine'){icons=['💕','💖','💗','🌸','❤️'];count=15;}else if(cls==='festival-newyear'){icons=['🎆','✨','🎉','🌟'];count=12;}else if(cls==='festival-sava'){icons=['📚','✝️','🇷🇸','🕊️'];count=8;}if(!icons)return;var c=document.createElement('div');c.className='festival-decorations';c.id='festivalDecorations';for(var i=0;i<count;i++){var d=document.createElement('span');d.className='festival-deco';d.textContent=icons[i%icons.length];d.style.left=(2+Math.random()*94)+'%';d.style.fontSize=(0.8+Math.random()*1.8)+'rem';d.style.animationDelay=(Math.random()*6)+'s';d.style.animationDuration=(4+Math.random()*8)+'s';c.appendChild(d);}document.body.appendChild(c);}
+
+// ===== DASHBOARD =====
+var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',learningSummary:'学习进度',completedLabel:'已完成',totalLabel:'总课程',streakLabel:'连续学习',daysUnit:'天',pointsLabel:'总积分',unreadMessages:'你有 {n} 条新留言',noUnread:'没有新留言',goDiary:'📝 写日记',goLearn:'📚 今日课程',goCalendar:'📅 查看日历',quoteTitle:'每日一句'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',learningSummary:'Pregled napretka',completedLabel:'Završeno',totalLabel:'ukupno lekcija',streakLabel:'Niz učenja',daysUnit:'dana',pointsLabel:'Ukupno poena',unreadMessages:'Imaš {n} novih poruka',noUnread:'Nema novih poruka',goDiary:'📝 Dnevnik',goLearn:'📚 Današnja lekcija',goCalendar:'📅 Kalendar',quoteTitle:'Današnja misao'}};
+function dl(key){var p=DASH_I18N[activeProfile]||DASH_I18N.andjela;return p[key]||(DASH_I18N.andjela[key]||key);}
+function initDashboard(){if(getGitHubToken()){pullAllSharedData().then(function(){renderDashboard();});}else{renderDashboard();}}
+function renderDashboard(){var panel=document.getElementById('panel-dashboard');if(!panel)return;var pp=getPartnerProgress();var myName=activeProfile==='andjela'?'🌸 Anđela':'👦 Barry';var cc=(pp&&pp.completed)?pp.completed.length:0;var tl=DAILY_LESSONS.length;var pct=tl>0?Math.round(cc/tl*100):0;var s=getStreak();var dp=getPoints('andjela');var mb=getUnlockedBadges('andjela');var uc=getUnreadCommentCount();var q=MOTIVATIONAL_QUOTES[Math.floor(Math.random()*MOTIVATIONAL_QUOTES.length)];var lb=null;for(var i=BADGES.length-1;i>=0;i--){if(mb.indexOf(BADGES[i].id)>=0){lb=BADGES[i];break;}}var tc=CULTURE_KNOWLEDGE[getTodaysCultureIndex()];var h='';h+='<div class=\"dash-welcome\">'+dl('welcomeBack')+'<strong>'+myName+'</strong></div>';h+='<div class=\"card dash-card\"><h4>'+tc.icon+' '+dl('todayCulture')+'</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">'+tc.zh+'</div><div style=\"font-size:.72rem;color:var(--text);margin-bottom:4px\">'+tc.sr+'</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">'+tc.desc.substring(0,120)+'...</div></div>';h+='<div class=\"card dash-card\"><h4>📊 '+dl('learningSummary')+'</h4><div class=\"dash-bar\"><div class=\"dash-bar-fill\" style=\"width:'+pct+'%\"></div></div><div class=\"dash-row\"><span>✅ '+dl('completedLabel')+': '+cc+'/'+tl+'</span><span>'+pct+'%</span></div><div class=\"dash-row\"><span>🔥 '+dl('streakLabel')+': '+s+' '+dl('daysUnit')+'</span><span>⭐ '+dl('pointsLabel')+': '+dp+'</span></div>'+((lb)?'<div style=\"margin-top:4px;font-size:.72rem\">'+lb.icon+' '+cl(lb.nameKey)+'</div>':'')+'</div>';h+='<div class=\"card dash-card\">'+((uc>0)?'<div class=\"dash-unread\" onclick=\"showGlobalComments()\" style=\"cursor:pointer\">🔴 '+dl('unreadMessages').replace('{n}',uc)+' 💌</div>':'<div style=\"font-size:.7rem;color:var(--text-muted);margin-bottom:8px\">✅ '+dl('noUnread')+'</div>');h+='<div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\\'diary\\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\\'culture\\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\\'stats\\')\">'+dl('goCalendar')+'</button></div></div>';h+='<div class=\"card dash-card dash-quote\"><div style=\"font-size:.62rem;color:var(--gold);margin-bottom:4px\">💭 '+dl('quoteTitle')+'</div><div style=\"font-size:.78rem;color:var(--love);font-style:italic\">'+q.zh+'</div><div style=\"font-size:.65rem;color:var(--text-muted)\">'+q.sr+'</div></div>';panel.innerHTML=h;}
+function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+tabId+'\"]');if(btn)btn.click();}
+
 function bootApp() {
   // Register service worker for PWA offline support
   if ('serviceWorker' in navigator) {
@@ -1116,7 +1128,7 @@ function bootApp() {
   loadPerProfileSettings();
   state = loadState();
   lastCycleCount = predict().cycles.length;
-  applyTheme(theme); setLang(lang);
+  applyTheme(theme); setLang(lang); applyFestivalTheme();
 
   // === Pull shared data from GitHub for ALL profiles ===
   // Every device pulls independently; token must be set on each device
@@ -2337,6 +2349,7 @@ function stopVoiceRecording(){ if(_mediaRecorder&&_mediaRecorder.state==='record
 function playVoiceRecording(){ if(!_audioBlob)return; var audio=new Audio(URL.createObjectURL(_audioBlob));audio.play(); }
 function submitVoiceRecording(){ if(!_audioBlob)return; var reader=new FileReader(); reader.onload=function(){ var base64=reader.result; var key='voice-'+DAILY_LESSONS[_lessonDayIdx].day; localStorage.setItem(key,base64.substring(0,500000)); var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); vd[DAILY_LESSONS[_lessonDayIdx].day]={author:activeProfile,time:Date.now(),hasRecording:true}; localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🎤 Glasovna poruka sačuvana!'); renderVoiceUI(); }; reader.readAsDataURL(_audioBlob); }
 function hasVoiceRecording(lessonDay){ return !!localStorage.getItem('voice-'+lessonDay); }
+function cleanVoiceGistData(){ var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); Object.keys(vd).forEach(function(k){vd[k]={author:vd[k].author||'',time:vd[k].time||0,hasRecording:!!vd[k].hasRecording};}); localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🧹 Voice metadata cleaned!'); }
 function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display=_audioBlob?'none':''; document.getElementById('voiceStopBtn').style.display='none'; document.getElementById('voicePlayBtn').style.display=_audioBlob?'':'none'; document.getElementById('voiceSubmitBtn').style.display=_audioBlob?'':'none'; }
 
 const CULTURE_KNOWLEDGE = [
@@ -2746,7 +2759,7 @@ function renderCommentList() {
    END CULTURE MODULE
    ================================================================ */
 
-var _tabOrder = ['stats','symptoms','tips','diary','culture','settings'];
+var _tabOrder = ['dashboard','stats','symptoms','tips','diary','culture','settings'];
 var _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
   var id = btn.dataset.panel;
@@ -2766,6 +2779,7 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   if(id==='tips')renderTips();
   if(id==='settings')loadSettingsUI();
   if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
+  if(id==='dashboard'){initDashboard();}
   if(id==='diary'){initSharedDiaryTab();}
   if(id==='culture'){initCultureTab();}
 });});

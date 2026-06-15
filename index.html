@@ -144,7 +144,8 @@
   <div class="pred-legend" id="predLegend" style="display:none">※ 半透明标记为未来2-3周期的预测</div>
 
   <nav><div class="tabs" role="tablist">
-    <button class="tab active" data-panel="stats" role="tab" id="tab-stats" aria-selected="true">📊 <span class="tb-label"></span></button>
+    <button class="tab active" data-panel="dashboard" role="tab" id="tab-dashboard" aria-selected="true">🏠 <span class="tb-label" id="tb-dashboard">Početna</span></button>
+    <button class="tab" data-panel="stats" role="tab" id="tab-stats" aria-selected="false">📊 <span class="tb-label"></span></button>
     <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false">📝 <span class="tb-label"></span></button>
     <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false">💡 <span class="tb-label"></span></button>
     <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false">💌 <span class="tb-label"></span></button>
@@ -152,7 +153,15 @@
     <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false">⚙ <span class="tb-label"></span></button>
   </div></nav>
 
-  <div class="panel active" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
+  <div class="panel active" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+    <div class="dash-welcome" style="font-size:.85rem;color:var(--text);text-align:center;padding:16px">Dobrodošla nazad, <strong>🌸 Anđela</strong></div>
+    <div class="card dash-card"><h4>🏮 Današnje kulturno znanje</h4><div style="font-size:.85rem;font-weight:700;color:var(--love)">Učitavanje...</div></div>
+    <div class="card dash-card"><h4>📊 Pregled napretka</h4><div class="dash-bar"><div class="dash-bar-fill" style="width:0%"></div></div></div>
+    <div class="card dash-card"><h4>📝 Brzi pristup</h4><div class="dash-links"><button class="dash-link-btn">📝 Dnevnik</button><button class="dash-link-btn">📚 Lekcija</button><button class="dash-link-btn">📅 Kalendar</button></div></div>
+    <div class="card dash-card dash-quote"><div style="font-size:.78rem;color:var(--love);font-style:italic">Učitavanje...</div></div>
+  </div>
+
+  <div class="panel" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
     <div class="card"><h3 id="st-title-cycle"></h3>
       <div class="stat-row"><span id="st-l-count"></span><span class="val" id="st-count">0</span></div>
       <div class="stat-row"><span id="st-l-avg"></span><span class="val" id="st-avg">--</span></div>
