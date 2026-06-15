@@ -1258,6 +1258,9 @@ async function bootApp() {
   lastCycleCount = predict().cycles.length;
   updateLoveCounter();
   updateProfileUI();
+  // Show/hide symptoms tab based on activeProfile (Barry only)
+  var symTab = document.getElementById('tab-symptoms');
+  if (symTab) symTab.style.display = activeProfile === 'barry' ? '' : 'none';
   randomThinkingOfYou();
 
   // Modal keyboard trap: Escape closes, Tab traps focus
@@ -2811,7 +2814,7 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   newPanel.classList.add('active');
   if(id==='tips')renderTips();
   if(id==='settings')loadSettingsUI();
-  if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
+  if(id==='symptoms'){if(activeProfile!=='barry'){switchToTab('dashboard');return;}if(getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
   if(id==='dashboard'){initDashboard();}
   if(id==='diary'){initSharedDiaryTab();}
   if(id==='culture'){initCultureTab();}
