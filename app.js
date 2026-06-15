@@ -1190,24 +1190,33 @@ var _dataLoadPromise = null;
 
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
+  var DEBUG = (new URLSearchParams(location.search)).get('debug') === 'true';
+  if (DEBUG) { _debugLog = []; _debugLog.push('[loadDataFiles] Starting...'); }
+
+  function fetchWithTimeout(url, ms) {
+    return new Promise(function(resolve, reject) {
+      var timer = setTimeout(function() { reject(new Error('Timeout: ' + url)); }, ms);
+      fetch(url).then(function(r) { clearTimeout(timer); resolve(r); }).catch(function(e) { clearTimeout(timer); reject(e); });
+    });
+  }
+
   _dataLoadPromise = Promise.all([
-    fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; }),
-    fetch('data/lessons.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load lessons.json', e); return []; }),
-    fetch('data/quotes.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load quotes.json', e); return []; })
+    fetchWithTimeout('data/culture.json', 5000).then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ if(DEBUG)_debugLog.push('[culture.json] '+e.message); console.error('Failed culture.json', e.message); return []; }),
+    fetchWithTimeout('data/lessons.json', 5000).then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ if(DEBUG)_debugLog.push('[lessons.json] '+e.message); console.error('Failed lessons.json', e.message); return []; }),
+    fetchWithTimeout('data/quotes.json', 5000).then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ if(DEBUG)_debugLog.push('[quotes.json] '+e.message); console.error('Failed quotes.json', e.message); return []; })
   ]).then(function(results) {
-    // Use eval to parse JS-style object literals (unquoted keys)
-    // The JSON files use JS syntax like {id:1,zh:'...'} not valid JSON
-    // So we stringify then eval
-    CULTURE_KNOWLEDGE = results[0].length > 0 ? results[0] : CULTURE_KNOWLEDGE;
-    DAILY_LESSONS = results[1].length > 0 ? results[1] : DAILY_LESSONS;
-    MOTIVATIONAL_QUOTES = results[2].length > 0 ? results[2] : MOTIVATIONAL_QUOTES;
+    if (results[0].length > 0) CULTURE_KNOWLEDGE = results[0];
+    if (results[1].length > 0) DAILY_LESSONS = results[1];
+    if (results[2].length > 0) MOTIVATIONAL_QUOTES = results[2];
     _dataLoaded = true;
-    console.log('Data files loaded: culture=' + CULTURE_KNOWLEDGE.length + ' lessons=' + DAILY_LESSONS.length + ' quotes=' + MOTIVATIONAL_QUOTES.length);
+    if(DEBUG)_debugLog.push('[loadDataFiles] OK: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length+' quotes='+MOTIVATIONAL_QUOTES.length);
   }).catch(function(e) {
-    console.error('Data loading failed, using fallbacks', e);
+    if(DEBUG)_debugLog.push('[loadDataFiles] Fatal: '+e.message);
     _dataLoaded = true;
   });
   return _dataLoadPromise;
+}
+var _debugLog = null;
 }
 
 async function bootApp() {
@@ -1216,8 +1225,21 @@ async function bootApp() {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
-  // Load JSON data files before any rendering
-  await loadDataFiles();
+  // Load JSON data files with 8s timeout fallback
+  var loadTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('loadDataFiles timeout')); }, 8000); });
+  try {
+    await Promise.race([loadDataFiles(), loadTimeout]);
+  } catch(e) {
+    console.error('bootApp: data loading timed out, using fallbacks', e.message);
+    var errEl = document.getElementById('loaderError');
+    var msgEl = document.getElementById('loaderErrorMsg');
+    var iconEl = document.getElementById('loaderIcon');
+    var txtEl = document.getElementById('loaderText');
+    if (errEl) errEl.style.display = '';
+    if (msgEl) msgEl.textContent = (lang==='sr'?'⏰ Učitavanje predugo traje':'⏰ 加载超时') + ' — ' + (lang==='sr'?'koristim lokalne podatke':'使用本地数据');
+    if (iconEl) iconEl.textContent = '⚠️';
+    if (txtEl) txtEl.textContent = (lang==='sr'?'Dodirni 🔄 da pokušaš ponovo':'点击 🔄 重试');
+  }
   state = loadState();
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
@@ -1387,16 +1409,54 @@ const BIRTHDAYS = { barry: { month:8, day:19, name:{sr:'Barryjev rođendan',en:'
 const LOVE_START = new Date(2026,4,7); // May 7, 2026 — monthly anniversary
 const FIRST_MEET_DATE = '2026-12-19';    // First in-person meeting
 
+var MONTHLY_ANNIVERSARY_MESSAGES = [
+  {zh:'还记得我们刚在一起的那天吗？心跳加速的感觉还在。💓',sr:'Sećaš li se dana kad smo počeli? Osećaj ubrzanog srca je još uvek tu. 💓'},
+  {zh:'两个月了，你依然让我心动。',sr:'Dva meseca, i dalje mi srce brže kuca zbog tebe.'},
+  {zh:'三个月，越来越爱你。每一个7号都让我想起那个美好的开始。',sr:'Tri meseca, sve te više volim. Svaki sedmi dan me podseti na naš prelepi početak.'},
+  {zh:'四个月快乐！你是我每天醒来最想见到的人。',sr:'Četiri meseca! Ti si prva osoba koju poželim da vidim kad se probudim.'},
+  {zh:'五个月啦！从北京到Kikinda，7000公里挡不住我的心。',sr:'Pet meseci! Od Pekinga do Kikinde, 7.000 km ne može zaustaviti moje srce.'},
+  {zh:'半年了！和你在一起的每一天都像礼物。🎁',sr:'Pola godine! Svaki dan sa tobom je kao poklon. 🎁'},
+  {zh:'七个月，每个月的今天都是我最期待的日子。',sr:'Sedam meseci, svaki današnji dan je dan koji najviše iščekujem.'},
+  {zh:'八个月了，爱越来越深。谢谢你一直在。',sr:'Osam meseci, ljubav je sve dublja. Hvala ti što si uvek tu.'},
+  {zh:'九个月！你让我的世界变得完整。🌍',sr:'Devet meseci! Ti si upotpunila moj svet. 🌍'},
+  {zh:'十个月快乐！每一天都是新的冒险。',sr:'Deset meseci! Svaki dan je nova avantura sa tobom.'},
+  {zh:'十一个月了，马上就是一周年！时间过得好快。',sr:'Jedanaest meseci, uskoro godišnjica! Vreme tako brzo leti sa tobom.'},
+  {zh:'一周年快乐！你是我的全世界。🥂❤️',sr:'Srećna nam godišnjica! Ti si moj ceo svet. 🥂❤️'},
+  {zh:'第{}个月纪念日！我们的故事还在继续，一章比一章美。',sr:'{} meseci zajedno! Naša priča se nastavlja, svako poglavlje sve lepše.'},
+  {zh:'{}个月啦！每一个7号都是属于我们的节日。',sr:'{} meseci! Svaki sedmi je naš praznik.'},
+  {zh:'第{}个月！时间证明了一切——我们是对的。',sr:'{} meseci! Vreme je dokazalo da smo u pravu.'},
+  {zh:'{}个月快乐！你是我生命中最美的意外。✨',sr:'{} meseci! Ti si najlepše iznenađenje u mom životu. ✨'}
+];
+
 function getSpecialDate(d) {
   var m = d.getMonth(), day = d.getDate(), y = d.getFullYear();
   var key = fmtDate(d);
-  // 1) Monthly anniversary: every 7th
+  var today = new Date(); today.setHours(0,0,0,0);
+
+  // 1) Monthly anniversary: every 7th (from May 7, 2026)
   if (day === 7) {
     var months = (y - LOVE_START.getFullYear()) * 12 + (m - LOVE_START.getMonth());
     if (d < LOVE_START) months = 0;
-    return { type:'monthly', icon:'💕', title_zh:'我们的纪念日', title_sr:'Naš dan sećanja',
-      desc_zh:'我们在一起的第 '+months+' 个月纪念日！感谢你让每个月的今天都变得特别。💕',
-      desc_sr:months+'. mesec našeg puta zajedno! Hvala ti što svaki današnji dan činiš posebnim. 💕' };
+    // Check if today IS the actual anniversary day (same month+year)
+    var isToday = d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === 7;
+    var msg = null;
+    if (months > 0 && months <= MONTHLY_ANNIVERSARY_MESSAGES.length) {
+      msg = MONTHLY_ANNIVERSARY_MESSAGES[months - 1];
+    } else if (months > MONTHLY_ANNIVERSARY_MESSAGES.length) {
+      // Use template: replace {} with month number
+      var tpl = MONTHLY_ANNIVERSARY_MESSAGES[MONTHLY_ANNIVERSARY_MESSAGES.length - 1];
+      msg = { zh: tpl.zh.replace('{}', months), sr: tpl.sr.replace('{}', months) };
+    }
+    if (isToday && msg) {
+      return { type:'monthly', icon:'💕', title_zh:'我们的纪念日', title_sr:'Naš dan sećanja', desc_zh:msg.zh, desc_sr:msg.sr };
+    } else if (isToday) {
+      return { type:'monthly', icon:'💕', title_zh:'我们的纪念日', title_sr:'Naš dan sećanja',
+        desc_zh:'我们在一起的第 '+months+' 个月纪念日！💕', desc_sr:months+'. mesec našeg puta zajedno! 💕' };
+    } else {
+      // Future or past 7th — show preview hint
+      return { type:'monthly', icon:'💕', title_zh:'每月纪念日', title_sr:'Mesečni dan sećanja',
+        desc_zh:'等到 '+months+' 个月纪念日那天再来看看吧！💕', desc_sr:'Sačekaj '+months+'. mesec godišnjice! 💕' };
+    }
   }
   // 2) First meeting: Dec 19
   if (key === FIRST_MEET_DATE) {
@@ -1511,7 +1571,7 @@ function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES
 function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
 function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+(lang==='sr'?'Već si kliknuo/la danas!':'今天已经点过了！'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+(lang==='sr'?'Dan '+sc.count+' zajedničkog sunca!':'共同仰望太阳的第'+sc.count+'天！'));}
 function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+(activeProfile==='barry'?'共同仰望太阳的第 ':'')+c+(activeProfile==='barry'?' 天 ❤️':' dan zajedničkog sunca ❤️');}else{el.innerHTML='❤️ '+(activeProfile==='barry'?'点击此处开始计数':'Klikni ovde da započneš brojanje');}}
-function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=(activeProfile==='barry'?'时差 ':'razlika ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
+function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=(activeProfile==='barry'?'时差 ':'Vremenska razlika ')+diff+' h';}}setInterval(updateWeatherTimes,60000);
 
 function weatherIcon(code) {
   if(code<=3) return '☀️'; if(code<=48) return '⛅'; if(code<=57) return '🌧️';

@@ -19,8 +19,12 @@
 
 <!-- App Loader — hidden after bootApp completes -->
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
-  <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite">🌸</span>
-  <span style="font-size:.75rem;color:var(--text-muted,#8a7a78);font-family:sans-serif">Učitavanje...</span>
+  <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite" id="loaderIcon">🌸</span>
+  <span style="font-size:.75rem;color:var(--text-muted,#8a7a78);font-family:sans-serif" id="loaderText">Učitavanje...</span>
+  <div id="loaderError" style="display:none;text-align:center;max-width:280px">
+    <div style="font-size:.7rem;color:#E53935;margin-bottom:8px" id="loaderErrorMsg"></div>
+    <button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.7rem;font-weight:700;cursor:pointer">🔄 Pokušaj ponovo</button>
+  </div>
 </div>
 
 <!-- Offline Banner -->
