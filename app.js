@@ -1182,12 +1182,41 @@ function initDashboard(){if(getGitHubToken()){pullAllSharedData().then(function(
 function renderDashboard(){var panel=document.getElementById('panel-dashboard');if(!panel)return;var pp=getPartnerProgress();var myName=activeProfile==='andjela'?'🌸 Anđela':'👦 Barry';var cc=(pp&&pp.completed)?pp.completed.length:0;var tl=DAILY_LESSONS.length;var pct=tl>0?Math.round(cc/tl*100):0;var s=getStreak();var dp=getPoints('andjela');var mb=getUnlockedBadges('andjela');var uc=getUnreadCommentCount();var q=MOTIVATIONAL_QUOTES[Math.floor(Math.random()*MOTIVATIONAL_QUOTES.length)];var lb=null;for(var i=BADGES.length-1;i>=0;i--){if(mb.indexOf(BADGES[i].id)>=0){lb=BADGES[i];break;}}var tc=CULTURE_KNOWLEDGE[getTodaysCultureIndex()];var h='';h+='<div class=\"dash-welcome\">'+dl('welcomeBack')+'<strong>'+myName+'</strong></div>';h+='<div class=\"card dash-card\"><h4>'+tc.icon+' '+dl('todayCulture')+'</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">'+tc.zh+'</div><div style=\"font-size:.72rem;color:var(--text);margin-bottom:4px\">'+tc.sr+'</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">'+tc.desc.substring(0,120)+'...</div></div>';h+='<div class=\"card dash-card\"><h4>📊 '+dl('learningSummary')+'</h4><div class=\"dash-bar\"><div class=\"dash-bar-fill\" style=\"width:'+pct+'%\"></div></div><div class=\"dash-row\"><span>✅ '+dl('completedLabel')+': '+cc+'/'+tl+'</span><span>'+pct+'%</span></div><div class=\"dash-row\"><span>🔥 '+dl('streakLabel')+': '+s+' '+dl('daysUnit')+'</span><span>⭐ '+dl('pointsLabel')+': '+dp+'</span></div>'+((lb)?'<div style=\"margin-top:4px;font-size:.72rem\">'+lb.icon+' '+cl(lb.nameKey)+'</div>':'')+'</div>';h+='<div class=\"card dash-card\">'+((uc>0)?'<div class=\"dash-unread\" onclick=\"showGlobalComments()\" style=\"cursor:pointer\">🔴 '+dl('unreadMessages').replace('{n}',uc)+' 💌</div>':'<div style=\"font-size:.7rem;color:var(--text-muted);margin-bottom:8px\">✅ '+dl('noUnread')+'</div>');h+='<div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\\'diary\\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\\'culture\\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\\'stats\\')\">'+dl('goCalendar')+'</button></div></div>';h+='<div class=\"card dash-card dash-quote\"><div style=\"font-size:.62rem;color:var(--gold);margin-bottom:4px\">💭 '+dl('quoteTitle')+'</div><div style=\"font-size:.78rem;color:var(--love);font-style:italic\">'+q.zh+'</div><div style=\"font-size:.65rem;color:var(--text-muted)\">'+q.sr+'</div></div>';panel.innerHTML=h;}
 function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+tabId+'\"]');if(btn)btn.click();}
 
-function bootApp() {
+
+// ===== DATA LOADER: fetch JSON files =====
+var _dataLoaded = false;
+var _dataLoadPromise = null;
+
+function loadDataFiles() {
+  if (_dataLoadPromise) return _dataLoadPromise;
+  _dataLoadPromise = Promise.all([
+    fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; }),
+    fetch('data/lessons.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load lessons.json', e); return []; }),
+    fetch('data/quotes.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load quotes.json', e); return []; })
+  ]).then(function(results) {
+    // Use eval to parse JS-style object literals (unquoted keys)
+    // The JSON files use JS syntax like {id:1,zh:'...'} not valid JSON
+    // So we stringify then eval
+    CULTURE_KNOWLEDGE = results[0].length > 0 ? results[0] : CULTURE_KNOWLEDGE;
+    DAILY_LESSONS = results[1].length > 0 ? results[1] : DAILY_LESSONS;
+    MOTIVATIONAL_QUOTES = results[2].length > 0 ? results[2] : MOTIVATIONAL_QUOTES;
+    _dataLoaded = true;
+    console.log('Data files loaded: culture=' + CULTURE_KNOWLEDGE.length + ' lessons=' + DAILY_LESSONS.length + ' quotes=' + MOTIVATIONAL_QUOTES.length);
+  }).catch(function(e) {
+    console.error('Data loading failed, using fallbacks', e);
+    _dataLoaded = true;
+  });
+  return _dataLoadPromise;
+}
+
+async function bootApp() {
   // Register service worker for PWA offline support
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
+  // Load JSON data files before any rendering
+  await loadDataFiles();
   state = loadState();
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
@@ -2363,15 +2392,7 @@ function getUnreadCommentCount() { var lastRead=getLastReadTime(); var comments=
 function updateUnreadBadge() { var badge=document.getElementById('unreadBadge'); if(!badge)return; var count=getUnreadCommentCount(); if(count>0){badge.textContent=count;badge.style.display='';}else{badge.style.display='none';} }
 
 // ===== SHARE IMAGE =====
-var MOTIVATIONAL_QUOTES = [
-  {zh:'千里之行，始于足下。',sr:'Put od hiljadu milja počinje jednim korakom.'},
-  {zh:'学而时习之，不亦乐乎。',sr:'Učiti i ponavljati — nije li to radost?'},
-  {zh:'只要功夫深，铁杵磨成针。',sr:'Upornošću se i gvozdeni tučak pretvori u iglu.'},
-  {zh:'每天进步一点点。',sr:'Svaki dan po malo napreduj.'},
-  {zh:'世上无难事，只怕有心人。',sr:'Ništa nije teško onome ko ima volju.'},
-  {zh:'好好学习，天天向上。',sr:'Dobro uči, svaki dan napreduj.'},
-  {zh:'不怕慢，就怕站。',sr:'Ne boj se sporosti, boj se stajanja.'}
-];
+var MOTIVATIONAL_QUOTES = [];
 function generateShareImage() {
   var card=document.getElementById('shareCard'); if(!card){renderPointsPanel();card=document.getElementById('shareCard');}
   var pp=getPartnerProgress(); var myPoints=getPoints(activeProfile); var myBadges=getUnlockedBadges(activeProfile);
@@ -2418,96 +2439,9 @@ function hasVoiceRecording(lessonDay){ return !!localStorage.getItem('voice-'+le
 function cleanVoiceGistData(){ var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); Object.keys(vd).forEach(function(k){vd[k]={author:vd[k].author||'',time:vd[k].time||0,hasRecording:!!vd[k].hasRecording};}); localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🧹 Voice metadata cleaned!'); }
 function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display=_audioBlob?'none':''; document.getElementById('voiceStopBtn').style.display='none'; document.getElementById('voicePlayBtn').style.display=_audioBlob?'':'none'; document.getElementById('voiceSubmitBtn').style.display=_audioBlob?'':'none'; }
 
-const CULTURE_KNOWLEDGE = [
-  {id:1,zh:'春节',sr:'Kineska Nova Godina',icon:'🧧',desc:'Najvažniji praznik u Kini. Porodice se okupljaju na velikoj večeri (年夜饭), deca dobijaju crvene koverte (红包) sa novcem, a vatromet tera zle duhove. Svaka godina ima svoju životinju po kineskom zodijaku.',tags:['praznik','porodica','tradicija']},
-  {id:2,zh:'微信支付',sr:'WeChat plaćanje',icon:'📱',desc:'U Kini se skoro sve plaća telefonom — WeChat Pay ili Alipay. Gotovina se retko koristi. Kad dođeš u Kinu, instaliraj WeChat i poveži karticu — moći ćeš da platiš sve: od pijace do voza.',tags:['svakodnevno','tehnologija','praktično']},
-  {id:3,zh:'餐桌礼仪',sr:'Ponašanje za stolom',icon:'🥢',desc:'Kinezi vole da dele hranu — jela se stavljaju na sredinu stola i svi uzimaju. Ne zabodi štapiće uspravno u pirinač (podseća na tamjan na sahrani). Kad nazdravljaš, kucni čašom malo niže od starije osobe — znak poštovanja.',tags:['hrana','bonton','svakodnevno']},
-  {id:4,zh:'称呼方式',sr:'Obraćanje ljudima',icon:'👋',desc:'Kinezi retko koriste imena direktno. Starije osobe se oslovljavaju sa 阿姨(tetka) ili 叔叔(čika), mlađe sa 小姐姐(starija sestra) ili 小哥哥(stariji brat). U prodavnici ćeš čuti 美女(lepotice)!',tags:['jezik','bonton','svakodnevno']},
-  {id:5,zh:'外卖与快递',sr:'Dostava hrane i paketa',icon:'🛵',desc:'U Kini možeš naručiti bukvalno SVE preko aplikacije: hranu (美团, 饿了么), namirnice, lekove, pa čak i nekog da ti sredi stan. Dostava je neverovatno brza — često stiže za 30 minuta.',tags:['svakodnevno','praktično','tehnologija']},
-  {id:6,zh:'红包文化',sr:'Kultura crvenih koverti',icon:'🧧',desc:'Crvena koverta (红包) se poklanja za Novu Godinu, venčanja i rođendane. Crvena boja donosi sreću. Nikad ne poklanjaj praznu kovertu, i uvek je primi sa obe ruke. Digitalne crvene koverte preko WeChata su takođe veoma popularne.',tags:['tradicija','praznik','pokloni']},
-  {id:7,zh:'家庭观念',sr:'Porodične vrednosti',icon:'👨‍👩‍👧‍👦',desc:'Porodica je centar kineskog društva. Deca često žive sa roditeljima i kad odrastu. Stariji se poštuju — njihovo mišljenje je veoma važno. Koncept 孝顺 (sinovljeva pobožnost) znači brigu o roditeljima u starosti.',tags:['porodica','tradicija','vrednosti']},
-  {id:8,zh:'茶文化',sr:'Kultura čaja',icon:'🍵',desc:'Čaj je srce kineske kulture. Postoji šest vrsta: zeleni, crni, beli, oolong, žuti i puer. Najpoznatiji je zeleni čaj 龙井 (Longjing). Kad ti neko sipa čaj, kucni prstima po stolu da kažeš hvala — to se zove 叩指礼.',tags:['piće','tradicija','svakodnevno']},
-  {id:9,zh:'吉祥话',sr:'Srećne fraze',icon:'🍀',desc:'Kinezi vole da izgovaraju srećne fraze: 恭喜发财 (da se obogatiš), 万事如意 (da ti sve ide po volji), 身体健康 (da si zdrav). Za Novu Godinu se obavezno kaže 新年快乐! Broj 8 je srećan, broj 4 se izbegava (zvuči kao reč za smrt).',tags:['jezik','tradicija','praznik']},
-  {id:10,zh:'七夕节',sr:'Kineski Dan zaljubljenih',icon:'💕',desc:'Slavi se 7. dana 7. meseca po lunarnom kalendaru. Legenda kaže da pastir i tkalja (牛郎织女) mogu da se sretnu samo te noći, preko mosta od svraka. Danas parovi idu na romantične večere i razmenjuju poklone.',tags:['praznik','ljubav','legenda']},
-  {id:11,zh:'汉字之美',sr:'Lepota kineskih znakova',icon:'🖌️',desc:'Kineski znakovi (汉字) su nastali iz slika — npr. 山 izgleda kao planina, 水 kao voda. Postoji preko 50.000 znakova, ali za svakodnevni život dovoljno je oko 2.000-3.000. Kaligrafija (书法) je visoka umetnost.',tags:['jezik','umetnost','istorija']},
-  {id:12,zh:'尊师重道',sr:'Poštovanje učitelja',icon:'📚',desc:'U Kini su učitelji veoma poštovani. Postoji izreka: 一日为师，终身为父 (učitelj na jedan dan, otac za ceo život). Učenici se obraćaju nastavnicima sa 老师 (laoši) i nikad ih ne oslovljavaju samo po imenu.',tags:['obrazovanje','tradicija','vrednosti']},
-  {id:13,zh:'中国新年习俗',sr:'Novogodišnji običaji',icon:'🏮',desc:'Pre Nove Godine se čisti cela kuća (da se otera loša sreća), lepe se crveni ukrasi, a na vrata se kače dvostrani natpisi (对联). Deca ostaju budna do ponoći (守岁) da čuvaju godinu. Sutradan se oblači nova crvena odeća.',tags:['praznik','tradicija','porodica']},
-  {id:14,zh:'中秋节',sr:'Festival sredine jeseni',icon:'🥮',desc:'Drugi najvažniji praznik posle Nove Godine. Jede se 月饼 (mesečev kolač) i posmatra pun mesec. Simbolizuje porodično okupljanje — mesec je pun, porodica je na okupu. Pesnik Li Bai je napisao: 举头望明月，低头思故乡 (Podignem glavu ka mesecu, spustim je misleći na dom).',tags:['praznik','porodica','hrana']}
-];
+var CULTURE_KNOWLEDGE = [];
 
-const DAILY_LESSONS = [
-  {day:1,topic:'Osnovni pozdravi',icon:'👋',tip:'Kinezi se retko rukuju sa strancima — blagi naklon ili osmeh su sasvim dovoljni.',words:[
-    {zh:'你好',py:'nǐ hǎo',sr:'Zdravo / Ćao'},{zh:'早上好',py:'zǎo shang hǎo',sr:'Dobro jutro'},
-    {zh:'晚上好',py:'wǎn shang hǎo',sr:'Dobro veče'},{zh:'再见',py:'zài jiàn',sr:'Doviđenja'},
-    {zh:'谢谢',py:'xiè xie',sr:'Hvala'}
-  ]},
-  {day:2,topic:'Brojevi 1-10',icon:'🔢',tip:'Kinezi često broje na prste — ali drugačije nego mi! Pogledaj online kako Kinezi pokazuju brojeve 1-10 jednom rukom.',words:[
-    {zh:'一',py:'yī',sr:'1'},{zh:'二',py:'èr',sr:'2'},{zh:'三',py:'sān',sr:'3'},
-    {zh:'四',py:'sì',sr:'4'},{zh:'五',py:'wǔ',sr:'5'},{zh:'六',py:'liù',sr:'6'},
-    {zh:'七',py:'qī',sr:'7'},{zh:'八',py:'bā',sr:'8'},{zh:'九',py:'jiǔ',sr:'9'},{zh:'十',py:'shí',sr:'10'}
-  ]},
-  {day:3,topic:'Porodica',icon:'👨‍👩‍👧‍👦',tip:'U kineskom, postoji posebna reč za starijeg i mlađeg brata/sestru. Porodica je veoma važna!',words:[
-    {zh:'妈妈',py:'mā ma',sr:'Mama'},{zh:'爸爸',py:'bà ba',sr:'Tata'},
-    {zh:'哥哥',py:'gē ge',sr:'Stariji brat'},{zh:'姐姐',py:'jiě jie',sr:'Starija sestra'},
-    {zh:'弟弟',py:'dì di',sr:'Mlađi brat'},{zh:'妹妹',py:'mèi mei',sr:'Mlađa sestra'}
-  ]},
-  {day:4,topic:'Ja i ti',icon:'💁',tip:'Kinezi koriste 您 (nín) za starije osobe — to je učtiva verzija od 你 (nǐ).',words:[
-    {zh:'我',py:'wǒ',sr:'Ja'},{zh:'你',py:'nǐ',sr:'Ti'},
-    {zh:'他',py:'tā',sr:'On'},{zh:'她',py:'tā',sr:'Ona'},
-    {zh:'好',py:'hǎo',sr:'Dobar / Dobro'},{zh:'爱',py:'ài',sr:'Ljubav / Voleti'}
-  ]},
-  {day:5,topic:'Hrana i piće',icon:'🍜',tip:'Kad jedeš sa Kinezima, reci 好吃 (hǎo chī — ukusno!) — to ih uvek obraduje.',words:[
-    {zh:'水',py:'shuǐ',sr:'Voda'},{zh:'茶',py:'chá',sr:'Čaj'},
-    {zh:'饭',py:'fàn',sr:'Pirinač / Obrok'},{zh:'面',py:'miàn',sr:'Rezanci'},
-    {zh:'好吃',py:'hǎo chī',sr:'Ukusno!'},{zh:'买单',py:'mǎi dān',sr:'Račun, molim'}
-  ]},
-  {day:6,topic:'Pitanja',icon:'❓',tip:'Reč 吗 (ma) na kraju rečenice pretvara izjavu u pitanje — najlakši način da pitaš!',words:[
-    {zh:'什么',py:'shén me',sr:'Šta?'},{zh:'哪里',py:'nǎ lǐ',sr:'Gde?'},
-    {zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'你好吗',py:'nǐ hǎo ma',sr:'Kako si?'},
-    {zh:'可以吗',py:'kě yǐ ma',sr:'Može li?'},{zh:'明白吗',py:'míng bai ma',sr:'Razumeš li?'}
-  ]},
-  {day:7,topic:'Ime i predstavljanje',icon:'🙋',tip:'Kinezi kažu prezime pa ime. Npr. 张梓桐 (Zhang Zitong) — Zhang je prezime, Zitong je ime.',words:[
-    {zh:'我叫...',py:'wǒ jiào...',sr:'Zovem se...'},{zh:'你叫什么名字',py:'nǐ jiào shén me míng zi',sr:'Kako se zoveš?'},
-    {zh:'我是塞尔维亚人',py:'wǒ shì sài ěr wéi yà rén',sr:'Ja sam Srpkinja'},
-    {zh:'很高兴认识你',py:'hěn gāo xìng rèn shi nǐ',sr:'Drago mi je da smo se upoznali'},
-    {zh:'朋友',py:'péng you',sr:'Prijatelj'},{zh:'男朋友',py:'nán péng you',sr:'Dečko / Momak'}
-  ]},
-  {day:8,topic:'U restoranu',icon:'🍽️',tip:'U kineskom restoranu, konobar se zove: 服务员 (fú wù yuán). Podigni ruku i reci to — doći će!',words:[
-    {zh:'我要这个',py:'wǒ yào zhè ge',sr:'Želim ovo'},{zh:'不要辣',py:'bú yào là',sr:'Bez ljutog'},
-    {zh:'服务员',py:'fú wù yuán',sr:'Konobar!'},{zh:'筷子',py:'kuài zi',sr:'Štapići'},
-    {zh:'打包',py:'dǎ bāo',sr:'Za poneti'},{zh:'好吃极了',py:'hǎo chī jí le',sr:'Prefino je!'}
-  ]},
-  {day:9,topic:'Boje',icon:'🌈',tip:'Crvena (红色) je najsrećnija boja u Kini. Bela (白色) se nosi na sahranama — ne poklanjaj belo cveće.',words:[
-    {zh:'红色',py:'hóng sè',sr:'Crvena'},{zh:'蓝色',py:'lán sè',sr:'Plava'},
-    {zh:'绿色',py:'lǜ sè',sr:'Zelena'},{zh:'黄色',py:'huáng sè',sr:'Žuta'},
-    {zh:'黑色',py:'hēi sè',sr:'Crna'},{zh:'白色',py:'bái sè',sr:'Bela'}
-  ]},
-  {day:10,topic:'Vreme',icon:'⏰',tip:'Kinezi čitaju vreme ovako: 3:15 = 三点十五分 (sān diǎn shí wǔ fēn) — tri sata petnaest minuta.',words:[
-    {zh:'今天',py:'jīn tiān',sr:'Danas'},{zh:'明天',py:'míng tiān',sr:'Sutra'},
-    {zh:'昨天',py:'zuó tiān',sr:'Juče'},{zh:'现在',py:'xiàn zài',sr:'Sada'},
-    {zh:'几点',py:'jǐ diǎn',sr:'Koliko sati?'},{zh:'等一下',py:'děng yí xià',sr:'Sačekaj malo'}
-  ]},
-  {day:11,topic:'Prevoz',icon:'🚇',tip:'U Kini možeš platiti metro direktno telefonom — skeniraj QR kod na ulazu. Ne treba ti karta!',words:[
-    {zh:'地铁',py:'dì tiě',sr:'Metro'},{zh:'出租车',py:'chū zū chē',sr:'Taksi'},
-    {zh:'公共汽车',py:'gōng gòng qì chē',sr:'Autobus'},{zh:'火车',py:'huǒ chē',sr:'Voz'},
-    {zh:'飞机',py:'fēi jī',sr:'Avion'},{zh:'去哪里',py:'qù nǎ lǐ',sr:'Gde ideš?'}
-  ]},
-  {day:12,topic:'Kupovina',icon:'🛍️',tip:'Na pijaci se možeš cenjkati! Reci 太贵了 (tài guì le — preskupo!) i prodavac će ti spustiti cenu.',words:[
-    {zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'太贵了',py:'tài guì le',sr:'Preskupo!'},
-    {zh:'便宜一点',py:'pián yi yì diǎn',sr:'Malo jeftinije'},{zh:'我要买',py:'wǒ yào mǎi',sr:'Kupiću'},
-    {zh:'这个',py:'zhè ge',sr:'Ovo'},{zh:'那个',py:'nà ge',sr:'Ono'}
-  ]},
-  {day:13,topic:'Emocije',icon:'😊',tip:'Kinezi ne pokazuju uvek emocije direktno — ali reči su pune topline kad ih znaš. 我爱你 znači "volim te".',words:[
-    {zh:'开心',py:'kāi xīn',sr:'Srećan'},{zh:'难过',py:'nán guò',sr:'Tužan'},
-    {zh:'生气',py:'shēng qì',sr:'Ljut'},{zh:'累',py:'lèi',sr:'Umoran'},
-    {zh:'想你',py:'xiǎng nǐ',sr:'Nedostaješ mi'},{zh:'我爱你',py:'wǒ ài nǐ',sr:'Volim te'}
-  ]},
-  {day:14,topic:'Hitne fraze',icon:'🆘',tip:'Sačuvaj ove fraze u telefonu — mogu ti zatrebati! 救命 (jiù mìng) znači "Upomoć!"',words:[
-    {zh:'救命',py:'jiù mìng',sr:'Upomoć!'},{zh:'我不舒服',py:'wǒ bù shū fu',sr:'Nije mi dobro'},
-    {zh:'医院',py:'yī yuàn',sr:'Bolnica'},{zh:'帮助',py:'bāng zhù',sr:'Pomoć'},
-    {zh:'手机',py:'shǒu jī',sr:'Telefon'},{zh:'充电器',py:'chōng diàn qì',sr:'Punjač'}
-  ]}
-];
+var DAILY_LESSONS = [];
 
 var _cultureCardIdx = 0;
 var _lessonDayIdx = 0;
