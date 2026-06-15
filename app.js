@@ -1191,29 +1191,46 @@ var _dataLoadPromise = null;
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
   var DEBUG = (new URLSearchParams(location.search)).get('debug') === 'true';
-  if (DEBUG) { _debugLog = []; _debugLog.push('[loadDataFiles] Starting...'); }
+  if (DEBUG) { _debugLog = []; _debugLog.push('[loadDataFiles] Merged fetch'); }
+  var txtEl = document.getElementById('loaderText');
 
-  function fetchWithTimeout(url, ms) {
-    return new Promise(function(resolve, reject) {
-      var timer = setTimeout(function() { reject(new Error('Timeout: ' + url)); }, ms);
-      fetch(url).then(function(r) { clearTimeout(timer); resolve(r); }).catch(function(e) { clearTimeout(timer); reject(e); });
+  _dataLoadPromise = new Promise(function(resolve) {
+    var timer = setTimeout(function() {
+      if (txtEl) txtEl.textContent = '⏰ ' + (lang==='sr'?'Učitavanje...':'加载超时，使用缓存...');
+      resolve(); // resolve anyway — don't block bootApp
+    }, 3000);
+
+    // Try merged data.json first (single HTTP request)
+    fetch('data/data.json').then(function(r) { return r.text(); }).then(function(t) {
+      clearTimeout(timer);
+      try {
+        var all = (new Function('return ' + t))();
+        if (all.culture && all.culture.length > 0) CULTURE_KNOWLEDGE = all.culture;
+        if (all.lessons && all.lessons.length > 0) DAILY_LESSONS = all.lessons;
+        if (all.quotes && all.quotes.length > 0) MOTIVATIONAL_QUOTES = all.quotes;
+        if (DEBUG) _debugLog.push('[data.json] OK: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length);
+      } catch(e) {
+        // Fallback: try individual files
+        if (DEBUG) _debugLog.push('[data.json] Parse failed, trying individual files');
+        return Promise.all([
+          fetch('data/culture.json').then(function(r2){ return r2.text(); }).then(function(t2){ return (new Function('return ' + t2))(); }),
+          fetch('data/lessons.json').then(function(r2){ return r2.text(); }).then(function(t2){ return (new Function('return ' + t2))(); }),
+          fetch('data/quotes.json').then(function(r2){ return r2.text(); }).then(function(t2){ return (new Function('return ' + t2))(); })
+        ]).then(function(r) {
+          if (r[0] && r[0].length > 0) CULTURE_KNOWLEDGE = r[0];
+          if (r[1] && r[1].length > 0) DAILY_LESSONS = r[1];
+          if (r[2] && r[2].length > 0) MOTIVATIONAL_QUOTES = r[2];
+        });
+      }
+      _dataLoaded = true;
+      resolve();
+    }).catch(function() {
+      clearTimeout(timer);
+      _dataLoaded = true;
+      resolve(); // don't block — use empty arrays
     });
-  }
-
-  _dataLoadPromise = Promise.all([
-    fetchWithTimeout('data/culture.json', 5000).then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ if(DEBUG)_debugLog.push('[culture.json] '+e.message); console.error('Failed culture.json', e.message); return []; }),
-    fetchWithTimeout('data/lessons.json', 5000).then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ if(DEBUG)_debugLog.push('[lessons.json] '+e.message); console.error('Failed lessons.json', e.message); return []; }),
-    fetchWithTimeout('data/quotes.json', 5000).then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ if(DEBUG)_debugLog.push('[quotes.json] '+e.message); console.error('Failed quotes.json', e.message); return []; })
-  ]).then(function(results) {
-    if (results[0].length > 0) CULTURE_KNOWLEDGE = results[0];
-    if (results[1].length > 0) DAILY_LESSONS = results[1];
-    if (results[2].length > 0) MOTIVATIONAL_QUOTES = results[2];
-    _dataLoaded = true;
-    if(DEBUG)_debugLog.push('[loadDataFiles] OK: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length+' quotes='+MOTIVATIONAL_QUOTES.length);
-  }).catch(function(e) {
-    if(DEBUG)_debugLog.push('[loadDataFiles] Fatal: '+e.message);
-    _dataLoaded = true;
   });
+
   return _dataLoadPromise;
 }
 var _debugLog = null;
@@ -1224,8 +1241,9 @@ async function bootApp() {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
-  // Load JSON data files with 8s timeout fallback
-  var loadTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('loadDataFiles timeout')); }, 8000); });
+  // Load data with 3s timeout (single merged file is fast)
+  var txtEl = document.getElementById('loaderText'); if (txtEl) txtEl.textContent = (lang==='sr'?'📚 Učitavanje kulture...':'📚 加载文化知识...');
+  var loadTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('loadDataFiles timeout')); }, 3000); });
   try {
     await Promise.race([loadDataFiles(), loadTimeout]);
   } catch(e) {
@@ -1253,6 +1271,7 @@ async function bootApp() {
 
   // === Pull shared data from GitHub in BACKGROUND (non-blocking) ===
   if (getGitHubToken()) {
+    if (txtEl) txtEl.textContent = (lang==='sr'?'☁️ Sinhronizacija...':'☁️ 同步云端数据...');
     pullAllSharedData().then(function() {
       try {
         var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
