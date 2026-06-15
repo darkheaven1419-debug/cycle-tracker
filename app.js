@@ -1188,90 +1188,105 @@ function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+
 var _dataLoaded = false;
 var _dataLoadPromise = null;
 
-function loadDataFiles() {
-  if (_dataLoadPromise) return _dataLoadPromise;
+var _debugLog = null;
+
+// ===== DATA CACHE: localStorage-backed instant load =====
+var DATA_CACHE_KEY = 'app-data-cache-v1';
+function getCachedData() {
+  try { return JSON.parse(localStorage.getItem(DATA_CACHE_KEY)); } catch(e) { return null; }
+}
+function setCachedData(data) {
+  try { localStorage.setItem(DATA_CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+// Try load from cache immediately (sync, no wait)
+(function() {
+  var cached = getCachedData();
+  if (cached && cached.culture) {
+    CULTURE_KNOWLEDGE = cached.culture;
+    DAILY_LESSONS = cached.lessons || [];
+    MOTIVATIONAL_QUOTES = cached.quotes || [];
+    _dataLoaded = true;
+  }
+})();
+
+function loadDataFiles(retryCount) {
+  retryCount = retryCount || 0;
+  if (_dataLoadPromise && retryCount === 0) return _dataLoadPromise;
   var DEBUG = (new URLSearchParams(location.search)).get('debug') === 'true';
-  if (DEBUG) { _debugLog = []; _debugLog.push('[loadDataFiles] Merged fetch'); }
-  var txtEl = document.getElementById('loaderText');
 
   _dataLoadPromise = new Promise(function(resolve) {
+    var done = false;
     var timer = setTimeout(function() {
-      if (txtEl) txtEl.textContent = '⏰ ' + (lang==='sr'?'Učitavanje...':'加载超时，使用缓存...');
-      resolve(); // resolve anyway — don't block bootApp
-    }, 3000);
+      if (!done) { done = true; resolve(); }
+    }, retryCount === 0 ? 1500 : 2000);
 
-    // Try merged data.json first (single HTTP request)
     fetch('data/data.json').then(function(r) { return r.text(); }).then(function(t) {
-      clearTimeout(timer);
+      if (done) return;
+      clearTimeout(timer); done = true;
       try {
         var all = (new Function('return ' + t))();
         if (all.culture && all.culture.length > 0) CULTURE_KNOWLEDGE = all.culture;
         if (all.lessons && all.lessons.length > 0) DAILY_LESSONS = all.lessons;
         if (all.quotes && all.quotes.length > 0) MOTIVATIONAL_QUOTES = all.quotes;
-        if (DEBUG) _debugLog.push('[data.json] OK: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length);
+        // Save to cache for next visit
+        setCachedData({ culture: CULTURE_KNOWLEDGE, lessons: DAILY_LESSONS, quotes: MOTIVATIONAL_QUOTES, updated: Date.now() });
+        _dataLoaded = true;
+        if (DEBUG) _debugLog.push('[data] OK: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length);
       } catch(e) {
-        // Fallback: try individual files
-        if (DEBUG) _debugLog.push('[data.json] Parse failed, trying individual files');
-        return Promise.all([
-          fetch('data/culture.json').then(function(r2){ return r2.text(); }).then(function(t2){ return (new Function('return ' + t2))(); }),
-          fetch('data/lessons.json').then(function(r2){ return r2.text(); }).then(function(t2){ return (new Function('return ' + t2))(); }),
-          fetch('data/quotes.json').then(function(r2){ return r2.text(); }).then(function(t2){ return (new Function('return ' + t2))(); })
-        ]).then(function(r) {
-          if (r[0] && r[0].length > 0) CULTURE_KNOWLEDGE = r[0];
-          if (r[1] && r[1].length > 0) DAILY_LESSONS = r[1];
-          if (r[2] && r[2].length > 0) MOTIVATIONAL_QUOTES = r[2];
-        });
+        if (DEBUG) _debugLog.push('[data] Parse error: '+e.message);
       }
-      _dataLoaded = true;
       resolve();
-    }).catch(function() {
-      clearTimeout(timer);
-      _dataLoaded = true;
-      resolve(); // don't block — use empty arrays
+    }).catch(function(e) {
+      if (done) return;
+      if (DEBUG) _debugLog.push('[data] Fetch failed (retry '+retryCount+'): '+e.message);
+      // Retry up to 3 times with 1s backoff
+      if (retryCount < 3) {
+        clearTimeout(timer); done = true;
+        setTimeout(function() { _dataLoadPromise = null; loadDataFiles(retryCount + 1).then(resolve); }, 1000);
+      } else {
+        clearTimeout(timer); done = true;
+        _dataLoaded = true;
+        resolve();
+      }
     });
   });
 
   return _dataLoadPromise;
 }
-var _debugLog = null;
 
 async function bootApp() {
-  // Register service worker for PWA offline support
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
-  // Load data with 3s timeout (single merged file is fast)
-  var txtEl = document.getElementById('loaderText'); if (txtEl) txtEl.textContent = (lang==='sr'?'📚 Učitavanje kulture...':'📚 加载文化知识...');
-  var loadTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('loadDataFiles timeout')); }, 3000); });
-  try {
-    await Promise.race([loadDataFiles(), loadTimeout]);
-  } catch(e) {
-    console.error('bootApp: data loading timed out, using fallbacks', e.message);
-    var errEl = document.getElementById('loaderError');
-    var msgEl = document.getElementById('loaderErrorMsg');
-    var iconEl = document.getElementById('loaderIcon');
-    var txtEl = document.getElementById('loaderText');
-    if (errEl) errEl.style.display = '';
-    if (msgEl) msgEl.textContent = (lang==='sr'?'⏰ Učitavanje predugo traje':'⏰ 加载超时') + ' — ' + (lang==='sr'?'koristim lokalne podatke':'使用本地数据');
-    if (iconEl) iconEl.textContent = '⚠️';
-    if (txtEl) txtEl.textContent = (lang==='sr'?'Dodirni 🔄 da pokušaš ponovo':'点击 🔄 重试');
+
+  // Hide loader immediately if we have cached data
+  if (_dataLoaded && CULTURE_KNOWLEDGE.length > 0) {
+    var loader = document.getElementById('appLoader');
+    if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .2s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 250); }
   }
+
+  // Start background data refresh (non-blocking — renders from cache first)
+  loadDataFiles().then(function() {
+    // If data was just loaded (not from cache), hide loader
+    var loader2 = document.getElementById('appLoader');
+    if (loader2 && loader2.style.opacity !== '0') {
+      loader2.style.opacity = '0'; loader2.style.transition = 'opacity .2s';
+      setTimeout(function(){ if (loader2.parentNode) loader2.remove(); }, 250);
+    }
+  });
   state = loadState();
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
 
-  // === Render basic UI immediately (data files are ready) ===
+  // === Render UI from cached data immediately ===
   updateProfileUI();
   renderAll(); loadSettingsUI();
   initDashboard();
-  // Hide loader NOW — basic UI is ready, shared data loads in background
-  var loader = document.getElementById('appLoader');
-  if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .3s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 350); }
 
-  // === Pull shared data from GitHub in BACKGROUND (non-blocking) ===
+  // === Pull shared data from GitHub in BACKGROUND ===
   if (getGitHubToken()) {
-    if (txtEl) txtEl.textContent = (lang==='sr'?'☁️ Sinhronizacija...':'☁️ 同步云端数据...');
     pullAllSharedData().then(function() {
       try {
         var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
