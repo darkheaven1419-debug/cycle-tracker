@@ -16,5 +16,9 @@
     }
   ],
   "lang": "sr",
-  "categories": ["health", "lifestyle"]
+  "categories": ["health", "lifestyle", "education"],
+  "shortcuts": [
+    {"name": "Dnevnik", "short_name": "Dnevnik", "description": "Piši dnevnik", "url": "./?tab=diary"},
+    {"name": "Kultura", "short_name": "Kultura", "description": "Uči kineski", "url": "./?tab=culture"}
+  ]
 }

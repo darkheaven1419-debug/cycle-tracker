@@ -17,6 +17,15 @@
 </head>
 <body>
 
+<!-- Offline Banner -->
+<div class="offline-banner" id="offlineBanner">⚠️ <span id="offline-text">Offline — neke funkcije možda ne rade</span></div>
+
+<!-- PWA Install Banner -->
+<div class="pwa-banner" id="pwaBanner">
+  <span>📲</span><span id="pwa-text">Instaliraj na telefon — koristi kao aplikaciju</span>
+  <span class="pwa-close" onclick="this.parentElement.remove()">✕</span>
+</div>
+
 <!-- ================================================================
    LOGIN OVERLAY — Two profile cards + PIN
    ================================================================ -->
@@ -513,6 +522,8 @@
     <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()"></button>
     <button class="btn btn-outline" id="export-btn" onclick="exportData()"></button>
     <button class="btn btn-outline" id="import-btn" onclick="document.getElementById('importFile').click()"></button>
+    <button class="btn btn-outline" onclick="exportAllData()" style="margin-top:8px">📦 <span id="export-all-label">Izvezi sve podatke</span></button>
+    <button class="btn btn-outline" onclick="importAllData()" style="margin-top:4px;color:var(--rose);border-color:var(--rose)">📥 <span id="import-all-label">Vrati iz backup-a</span></button>
     <button class="btn btn-outline" id="clear-diary-btn" onclick="clearAllDiaries()" style="color:var(--rose);border-color:var(--rose)">🗑️ Obriši sve dnevnike</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     <button class="btn btn-danger" id="clear-btn" onclick="clearAllData()"></button>

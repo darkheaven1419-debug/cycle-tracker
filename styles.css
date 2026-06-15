@@ -1002,3 +1002,29 @@ body.festival-newyear{--gold:#ffd700;--love:#c0c0c0}
 body.festival-sava{--love:#0C4076;--rose:#C62828;--gold:#FFFFFF;--rose-light:#e8eaf6}
 
 @media(max-width:600px){.dash-link-btn{font-size:.62rem;padding:8px 4px}.dash-card{padding:10px 12px}}
+
+/* OFFLINE BANNER */
+.offline-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:#E53935;color:#fff;text-align:center;padding:6px;font-size:.65rem;font-weight:600;display:none}
+.offline-banner.show{display:block}
+
+/* SKELETON SCREEN */
+.skeleton{background:linear-gradient(90deg,var(--border-soft) 25%,var(--bg) 50%,var(--border-soft) 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{height:80px;margin-bottom:10px;border-radius:12px}
+.skel-title{height:16px;width:60%;margin-bottom:8px}
+.skel-text{height:12px;width:90%;margin-bottom:6px}
+.skel-text.short{width:40%}
+
+/* SEASONAL DECORATIONS */
+.seasonal-deco{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden}
+.seasonal-deco span{position:absolute;animation:seasonFloat 8s ease-in-out infinite;opacity:.2}
+@keyframes seasonFloat{0%{transform:translateY(-30px) rotate(0)}100%{transform:translateY(105vh) rotate(360deg)}}
+
+/* PWA INSTALL BANNER */
+.pwa-banner{position:fixed;bottom:70px;left:10px;right:10px;z-index:500;background:var(--card);border:1px solid var(--gold);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow-lg);display:none;align-items:center;gap:10px;font-size:.7rem}
+.pwa-banner.show{display:flex}
+.pwa-banner .pwa-close{position:absolute;top:4px;right:8px;font-size:1rem;cursor:pointer;color:var(--text-muted)}
+
+body.festival-orthodoxmas{--love:#FFFFFF;--rose:#FFD700;--rose-light:#fff8e1;--gold:#FFD700}
+body.festival-easter{--love:#FF69B4;--rose:#90EE90;--rose-light:#f0fff0;--gold:#FFD700}
+body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:#FFD700}
