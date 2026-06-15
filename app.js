@@ -2258,6 +2258,10 @@ function initCultureTab() {
   renderCultureCard();
   renderDailyLesson();
   renderChecklist();
+  // Pull latest shared data for partner progress & comments
+  if (getGitHubToken()) {
+    pullAllSharedData().then(function() { renderChecklist(); });
+  }
 }
 
 function renderCultureCard() {
@@ -2306,32 +2310,180 @@ function getCompletedDays() {
   try { var p = JSON.parse(saved); return p.completed || []; } catch(e) { return []; }
 }
 
+// ===== SHARED LEARNING HELPERS =====
+function saveLearningProgress() {
+  var completed = getCompletedDays();
+  // Save to local
+  var saved = localStorage.getItem('culture-lesson-progress');
+  var p = saved ? JSON.parse(saved) : {};
+  p.completed = completed; p.updated = Date.now();
+  localStorage.setItem('culture-lesson-progress', JSON.stringify(p));
+  // Save to shared for partner to see
+  var sp = JSON.parse(localStorage.getItem('shared-learning-progress') || '{}');
+  if (!sp[activeProfile]) sp[activeProfile] = {};
+  sp[activeProfile].completed = completed;
+  sp[activeProfile].lastLessonDay = _lessonDayIdx;
+  sp[activeProfile].updated = Date.now();
+  localStorage.setItem('shared-learning-progress', JSON.stringify(sp));
+  // Push to GitHub
+  pushAllSharedData();
+}
+
+function getPartnerProfile() { return activeProfile === 'andjela' ? 'barry' : 'andjela'; }
+
+function getPartnerProgress() {
+  var sp = JSON.parse(localStorage.getItem('shared-learning-progress') || '{}');
+  return sp[getPartnerProfile()] || null;
+}
+
+function getSharedComments() {
+  return JSON.parse(localStorage.getItem('shared-learning-comments') || '[]');
+}
+
+function saveSharedComments(comments) {
+  localStorage.setItem('shared-learning-comments', JSON.stringify(comments));
+  pushAllSharedData();
+}
+
+// ===== CHECKLIST =====
 function toggleLessonDay(dayNum) {
   var completed = getCompletedDays();
   var idx = completed.indexOf(dayNum);
   if (idx >= 0) completed.splice(idx, 1); else completed.push(dayNum);
-  var saved = localStorage.getItem('culture-lesson-progress');
-  var p = saved ? JSON.parse(saved) : {};
-  p.completed = completed;
-  localStorage.setItem('culture-lesson-progress', JSON.stringify(p));
+  saveLearningProgress();
   renderChecklist();
 }
 
 function renderChecklist() {
   var completed = getCompletedDays();
+  var comments = getSharedComments();
   var itemsHtml = '';
   for (var i = 0; i < DAILY_LESSONS.length; i++) {
     var l = DAILY_LESSONS[i];
     var done = completed.indexOf(l.day) >= 0;
     var current = l.day === DAILY_LESSONS[_lessonDayIdx].day;
+    // Count comments for this lesson day
+    var commentCount = comments.filter(function(c){ return c.lessonDay === l.day; }).length;
     itemsHtml += '<div class="checklist-item'+(done?' done':'')+(current?' current':'')+'" onclick="toggleLessonDay('+l.day+')">';
     itemsHtml += '<span class="checklist-check">'+(done?'✅':'☐')+'</span>';
     itemsHtml += '<span class="checklist-label">Dan '+l.day+': '+l.topic+'</span>';
+    if (commentCount > 0) itemsHtml += '<span class="checklist-comment-badge" onclick="event.stopPropagation();showLessonComments('+l.day+')" title="Komentari">💬'+commentCount+'</span>';
     itemsHtml += '</div>';
   }
   document.getElementById('checklistItems').innerHTML = itemsHtml;
   document.getElementById('streakCount').textContent = completed.length;
   document.getElementById('streakLabel').textContent = completed.length === 1 ? 'dan' : 'dana';
+  // Render partner progress
+  renderPartnerProgress();
+}
+
+// ===== PARTNER PROGRESS PANEL =====
+function renderPartnerProgress() {
+  var panel = document.getElementById('partnerProgressPanel');
+  if (!panel) return;
+  var pp = getPartnerProgress();
+  var partnerName = getPartnerProfile() === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+  if (!pp || !pp.completed || pp.completed.length === 0) {
+    panel.innerHTML = '<div class="pp-empty">' + partnerName + ' još nije započela učenje. Doći će uskoro! 💫</div>';
+    return;
+  }
+  var pct = Math.round(pp.completed.length / DAILY_LESSONS.length * 100);
+  var lastLesson = pp.lastLessonDay !== undefined ? DAILY_LESSONS[pp.lastLessonDay] : null;
+  var html = '<div class="pp-header">📊 Napredak: <strong>' + partnerName + '</strong></div>';
+  html += '<div class="pp-bar-track"><div class="pp-bar-fill" style="width:'+pct+'%"></div></div>';
+  html += '<div class="pp-stats"><span>✅ ' + pp.completed.length + ' / ' + DAILY_LESSONS.length + ' lekcija</span><span>' + pct + '% završeno</span></div>';
+  if (lastLesson) html += '<div class="pp-last">📖 Poslednja: Dan ' + lastLesson.day + ' — ' + lastLesson.topic + '</div>';
+  // Mark which lessons partner completed
+  html += '<div class="pp-lessons">';
+  DAILY_LESSONS.forEach(function(l){
+    var pDone = pp.completed.indexOf(l.day) >= 0;
+    html += '<span class="pp-dot'+(pDone?' done':'')+'" title="Dan '+l.day+': '+l.topic+'">'+(pDone?'✅':'○')+'</span>';
+  });
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+// ===== COMMENTS SYSTEM =====
+var _commentLessonDay = 0; // 0 = global board, >0 = specific lesson
+
+function showLessonComments(lessonDay) {
+  _commentLessonDay = lessonDay;
+  var l = DAILY_LESSONS.find(function(d){ return d.day === lessonDay; });
+  var title = l ? ('💬 Dan ' + l.day + ': ' + l.topic) : '💬 Komentari';
+  showCommentModal(title);
+}
+
+function showGlobalComments() {
+  _commentLessonDay = 0;
+  showCommentModal('💌 Tabla za poruke');
+}
+
+function showCommentModal(title) {
+  // Remove existing modal
+  var existing = document.querySelector('.comment-modal-overlay');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div'); overlay.className = 'comment-modal-overlay';
+  overlay.innerHTML = '<div class="comment-modal">'
+    + '<div class="cm-header"><span class="cm-title">' + title + '</span><button class="cm-close" onclick="closeCommentModal()">✕</button></div>'
+    + '<div class="cm-list" id="cmList"></div>'
+    + '<div class="cm-input-row"><textarea id="cmInput" placeholder="Napiši poruku... 💌" rows="2"></textarea>'
+    + '<button class="btn btn-primary" onclick="saveComment()" style="font-size:.7rem;padding:8px 14px">📨 Pošalji</button></div>'
+    + '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeCommentModal(); });
+  renderCommentList();
+  setTimeout(function(){ var ta = document.getElementById('cmInput'); if (ta) ta.focus(); }, 200);
+}
+
+function closeCommentModal() {
+  var overlay = document.querySelector('.comment-modal-overlay');
+  if (overlay) overlay.remove();
+  renderChecklist(); // refresh comment counts
+}
+
+function saveComment() {
+  var input = document.getElementById('cmInput');
+  if (!input) return;
+  var text = input.value.trim();
+  if (!text) return;
+  var comments = getSharedComments();
+  comments.push({
+    id: 'cm' + Date.now(),
+    lessonDay: _commentLessonDay,
+    author: activeProfile,
+    content: text,
+    time: Date.now()
+  });
+  saveSharedComments(comments);
+  input.value = '';
+  renderCommentList();
+}
+
+function renderCommentList() {
+  var list = document.getElementById('cmList');
+  if (!list) return;
+  var comments = getSharedComments();
+  var filtered = _commentLessonDay === 0
+    ? comments // global board: show all
+    : comments.filter(function(c){ return c.lessonDay === _commentLessonDay; });
+  filtered.sort(function(a,b){ return a.time - b.time; });
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="cm-empty">Još nema poruka. Budi prvi! 💌</div>';
+    return;
+  }
+  var html = '';
+  filtered.forEach(function(c){
+    var isMe = c.author === activeProfile;
+    var authorName = c.author === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+    var dateStr = new Date(c.time).toLocaleDateString('sr-Latn', {day:'numeric',month:'short'});
+    var timeStr = new Date(c.time).toLocaleTimeString('sr-Latn', {hour:'2-digit',minute:'2-digit'});
+    html += '<div class="cm-msg'+(isMe?' cm-mine':'')+'">'
+      + '<div class="cm-meta"><span class="cm-author">'+authorName+'</span><span class="cm-time">'+dateStr+' '+timeStr+'</span></div>'
+      + '<div class="cm-text">'+esc(c.content)+'</div>'
+      + '</div>';
+  });
+  list.innerHTML = html;
+  list.scrollTop = list.scrollHeight;
 }
 
 // Update roadmap based on completed count
@@ -2340,13 +2492,10 @@ function renderChecklist() {
   renderChecklist = function() {
     origRenderChecklist();
     var completed = getCompletedDays();
-    var total = DAILY_LESSONS.length;
-    var pct = Math.min(100, Math.round(completed.length / total * 100));
     var steps = document.querySelectorAll('.lr-step');
-    var stepIdx = Math.min(4, Math.floor(completed.length / Math.ceil(total / 5)));
+    var stepIdx = Math.min(4, Math.floor(completed.length / Math.ceil(DAILY_LESSONS.length / 5)));
     steps.forEach(function(s,i){ s.classList.toggle('done', i <= stepIdx); });
     document.querySelectorAll('.lr-connector').forEach(function(c,i){ c.classList.toggle('done', i < stepIdx); });
-    // Update streak
     var streakEl = document.getElementById('checklistStreak');
     if (streakEl) streakEl.style.display = completed.length > 0 ? '' : 'none';
   };

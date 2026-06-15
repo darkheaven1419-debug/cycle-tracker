@@ -429,6 +429,11 @@
         <button class="culture-nav-btn" onclick="nextLesson()">▸</button>
       </div>
 
+      <!-- Partner Progress Panel -->
+      <div class="partner-progress-panel" id="partnerProgressPanel">
+        <div class="pp-empty">Učitavanje...</div>
+      </div>
+
       <!-- Progress Checklist -->
       <div class="learning-checklist" id="learningChecklist">
         <h4 style="font-size:.72rem;margin-bottom:8px;color:var(--text)">✅ <span id="checklist-title">Dnevni napredak</span></h4>
@@ -437,6 +442,9 @@
           🔥 <span id="streakCount">0</span> <span id="streakLabel">dana zaredom</span>
         </div>
       </div>
+
+      <!-- Global Comment Board button -->
+      <button class="btn btn-outline" onclick="showGlobalComments()" style="width:100%;margin-top:10px;font-size:.72rem">💌 <span id="comment-board-label">Tabla za poruke</span></button>
     </div>
   </div>
 
