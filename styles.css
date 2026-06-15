@@ -950,3 +950,27 @@ body {
 .cm-input-row { display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--border-soft); align-items:flex-end; }
 .cm-input-row textarea { flex:1; border:1px solid var(--border); border-radius:12px; padding:8px 10px; font-size:.72rem; font-family:var(--font); background:var(--bg); color:var(--text); resize:none; }
 .cm-input-row textarea:focus { outline:none; border-color:var(--love); }
+
+
+/* ===== POINTS and BADGES ===== */
+.points-panel{background:linear-gradient(135deg,var(--rose-light),var(--dust));border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;border:1px solid var(--gold)}
+.pts-header{font-size:.7rem;color:var(--text);margin-bottom:6px}
+.pts-badges{display:flex;gap:8px;margin-bottom:6px}
+.pts-badge{font-size:1.3rem;transition:all .3s}
+.pts-badge.locked{opacity:.25;filter:grayscale(1)}
+.pts-badge.earned{opacity:1;filter:none;animation:badgePop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.3)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.pts-next{font-size:.62rem;color:var(--text-muted);margin-bottom:4px}
+.pts-progress-bar{height:5px;background:var(--border-soft);border-radius:5px;overflow:hidden}
+.pts-progress-fill{height:100%;background:var(--love);border-radius:5px;transition:width .5s ease}
+
+/* ===== UNREAD BADGE ===== */
+.unread-badge{position:absolute;top:-6px;right:-6px;background:#E53935;color:#fff;font-size:.55rem;font-weight:700;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:10px;padding:0 5px;animation:badgePulse 2s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* ===== POINTS TOAST ===== */
+.points-toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--love);color:#fff;font-size:.75rem;font-weight:700;padding:8px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:500}
+.points-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== MOBILE (<=600px) ===== */
+@media(max-width:600px){.culture-card-emoji{font-size:2.2rem}.culture-card-zh{font-size:1.1rem}.culture-card-desc{font-size:.7rem;line-height:1.5}.lr-labels{font-size:.45rem}.lr-step{width:28px;height:28px;font-size:.7rem}.lr-connector{flex:0 0 12px}.llc-word-row{font-size:.7rem;flex-wrap:wrap}.llc-zh{min-width:55px;font-size:.78rem}.llc-py{min-width:80px;font-size:.62rem}.checklist-item{font-size:.68rem;padding:8px 6px}.checklist-check{font-size:1rem;min-width:24px}.checklist-comment-badge{font-size:.7rem;padding:2px 6px}.comment-modal{width:95%;max-width:95%;max-height:85vh}.cm-input-row{gap:4px}.cm-input-row textarea{font-size:.68rem}.cm-text{font-size:.68rem}.pts-badge{font-size:1.1rem}.pp-dot{font-size:.5rem}}

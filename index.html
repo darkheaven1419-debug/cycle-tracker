@@ -13,6 +13,7 @@
 <meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
 <title>🌸 Anđelin Ciklus v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
 </head>
 <body>
 
@@ -423,6 +424,19 @@
         <div class="llc-tip" id="llcTip"></div>
       </div>
 
+      <!-- Voice Challenge -->
+      <div class="voice-challenge" id="voiceChallenge" style="margin-bottom:10px;padding:10px 12px;background:var(--sage-light);border-radius:var(--radius-sm);border:1px solid var(--border-soft)">
+        <div style="font-size:.7rem;font-weight:700;color:var(--text);margin-bottom:6px">🎤 <span id="voice-challenge-title">Današnji izazov</span></div>
+        <div id="voiceChallengeSentence" style="font-size:.72rem;color:var(--text);margin-bottom:4px"></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <button class="culture-nav-btn" id="voiceStartBtn" onclick="startVoiceRecording()" title="Snimi" style="font-size:1.2rem">🎤</button>
+          <button class="culture-nav-btn" id="voiceStopBtn" onclick="stopVoiceRecording()" title="Zaustavi" style="display:none;font-size:1rem">⏹</button>
+          <button class="culture-nav-btn" id="voicePlayBtn" onclick="playVoiceRecording()" title="Pusti" style="display:none;font-size:1rem">▶</button>
+          <button class="culture-nav-btn" id="voiceSubmitBtn" onclick="submitVoiceRecording()" title="Pošalji" style="display:none;font-size:1rem">📨</button>
+          <span id="voiceStatus" style="font-size:.62rem;color:var(--text-muted);font-style:italic"></span>
+        </div>
+      </div>
+
       <!-- Lesson navigation -->
       <div class="learning-lesson-nav">
         <button class="culture-nav-btn" onclick="prevLesson()">◂</button>
@@ -435,6 +449,12 @@
         <div class="pp-empty">Učitavanje...</div>
       </div>
 
+      <!-- Points & Badges Panel -->
+      <div class="points-panel" id="pointsPanel">
+        <div class="pts-header">⭐ Poeni: <strong>0</strong></div>
+        <div class="pts-badges"><span class="pts-badge locked">🎖️</span><span class="pts-badge locked">🏅</span><span class="pts-badge locked">🎓</span></div>
+      </div>
+
       <!-- Progress Checklist -->
       <div class="learning-checklist" id="learningChecklist">
         <h4 style="font-size:.72rem;margin-bottom:8px;color:var(--text)">✅ <span id="checklist-title">Dnevni napredak</span></h4>
@@ -445,7 +465,10 @@
       </div>
 
       <!-- Global Comment Board button -->
-      <button class="btn btn-outline" onclick="showGlobalComments()" style="width:100%;margin-top:10px;font-size:.72rem">💌 <span id="comment-board-label">Tabla za poruke</span></button>
+      <button class="btn btn-outline" onclick="showGlobalComments()" style="width:100%;margin-top:10px;font-size:.72rem;position:relative">💌 <span id="comment-board-label">Tabla za poruke</span><span id="unreadBadge" class="unread-badge" style="display:none">0</span></button>
+
+      <!-- Points Toast -->
+      <div id="pointsToast" class="points-toast"><span id="pointsToastMsg">+10</span></div>
     </div>
   </div>
 

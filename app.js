@@ -2203,7 +2203,17 @@ var CL = {
     noComments:'暂无留言，来写第一条！', loading:'加载中...',
     notStarted:'还没有开始学习', willCome:'会来的！',
     completed:'已完成', lessons:'课', lastLesson:'最近',
-    todayBadge:'今日推荐', globalBoard:'留言板'
+    todayBadge:'今日推荐', globalBoard:'留言板',
+    points:'积分', badgeTitle:'徽章', badgeNewStar:'汉语新星',
+    badgeCulture:'文化大使', badgeMaster:'中国通',
+    nextBadge:'下一个徽章', shareBtn:'分享我的进步',
+    voiceBtn:'🎤 录音', voiceRetry:'重录', voicePlay:'播放',
+    voiceSubmit:'发送', voiceListening:'听自己的声音...',
+    unreadBadge:'条新消息', pointsEarned:'+{n} 分！',
+    shareTitle:'我的中文学习进度', challengeTitle:'今日挑战',
+    recording:'录音中...', recordHint:'点击 🎤 开始录音',
+    congratsTitle:'🎉 恭喜！', congratsMsg:'你解锁了新徽章：',
+    noMic:'麦克风不可用', imageReady:'图片已下载！'
   },
   andjela: {
     checklistTitle:'Dnevni napredak', dayPrefix:'Dan', daySuffix:'',
@@ -2213,10 +2223,121 @@ var CL = {
     noComments:'Još nema poruka. Budi prvi!', loading:'Učitavanje...',
     notStarted:'još nije započela učenje', willCome:'Doći će uskoro!',
     completed:'završeno', lessons:'lekcija', lastLesson:'Poslednja',
-    todayBadge:'Daily', globalBoard:'Tabla'
+    todayBadge:'Daily', globalBoard:'Tabla',
+    points:'Poeni', badgeTitle:'Značke', badgeNewStar:'Kineska zvezda',
+    badgeCulture:'Ambasador kulture', badgeMaster:'Majstor kineskog',
+    nextBadge:'Sledeća značka', shareBtn:'Podeli moj napredak',
+    voiceBtn:'🎤 Snimi glas', voiceRetry:'Ponovo', voicePlay:'Pusti',
+    voiceSubmit:'Pošalji', voiceListening:'Slušaj svoj glas...',
+    unreadBadge:'nepročitanih', pointsEarned:'+{n} poena!',
+    shareTitle:'Moj napredak u kineskom', challengeTitle:'Današnji izazov',
+    recording:'Snimanje...', recordHint:'Dodirni 🎤 da snimiš',
+    congratsTitle:'🎉 Čestitamo!', congratsMsg:'Otključila si značku:',
+    noMic:'Mikrofon nije dostupan', imageReady:'Slika preuzeta!'
   }
 };
 function cl(key) { var p = CL[activeProfile] || CL.andjela; return p[key] || (CL.andjela[key] || key); }
+
+// ===== POINTS & BADGES =====
+var BADGES = [
+  { id:'newstar', nameKey:'badgeNewStar', icon:'🎖️', points:50 },
+  { id:'culture',  nameKey:'badgeCulture',  icon:'🏅', points:100 },
+  { id:'master',   nameKey:'badgeMaster',   icon:'🎓', points:200 }
+];
+function getPointsData() { try { return JSON.parse(localStorage.getItem('shared-learning-points')||'{}'); } catch(e) { return {}; } }
+function savePointsData(d) { localStorage.setItem('shared-learning-points',JSON.stringify(d)); pushAllSharedData(); }
+function getPoints(profile) { var pd=getPointsData(); return (pd[profile]&&pd[profile].total)||0; }
+function getUnlockedBadges(profile) { var pd=getPointsData(); return (pd[profile]&&pd[profile].badges)||[]; }
+function getStreak() { var s=localStorage.getItem('culture-lesson-progress'); if(!s)return 0; try{var p=JSON.parse(s);var c=p.completed||[];if(c.length===0)return 0;var streak=0;for(var i=1;i<=DAILY_LESSONS.length;i++){if(c.indexOf(i)>=0)streak++;else break;}return streak;}catch(e){return 0;} }
+
+function addPoints(profile, amount, reason) {
+  var pd=getPointsData(); if(!pd[profile]) pd[profile]={total:0,history:[],badges:[]};
+  pd[profile].total=(pd[profile].total||0)+amount;
+  pd[profile].history=pd[profile].history||[];
+  pd[profile].history.push({amount:amount,reason:reason,time:Date.now()});
+  if(pd[profile].history.length>50) pd[profile].history=pd[profile].history.slice(-50);
+  savePointsData(pd);
+  var unlocked=getUnlockedBadges(profile);
+  BADGES.forEach(function(b){ if(pd[profile].total>=b.points&&unlocked.indexOf(b.id)<0){ pd[profile].badges.push(b.id); savePointsData(pd); toast(cl('congratsTitle')+' '+b.icon+' '+cl(b.nameKey)); } });
+  renderPointsPanel();
+  return pd[profile].total;
+}
+
+function renderPointsPanel() {
+  var panel=document.getElementById('pointsPanel'); if(!panel)return;
+  var pp=getPartnerProgress(); var partnerPoints=getPoints(getPartnerProfile());
+  var myPoints=getPoints(activeProfile); var myBadges=getUnlockedBadges(activeProfile);
+  var displayPoints=activeProfile==='andjela'?myPoints:partnerPoints;
+  var displayBadges=activeProfile==='andjela'?myBadges:getUnlockedBadges(getPartnerProfile());
+  var streak=getStreak();
+  var html='<div class="pts-header">⭐ '+cl('points')+': <strong>'+displayPoints+'</strong>';
+  if(streak>=3) html+=' · 🔥'+streak+cl('streakDay');
+  html+='</div><div class="pts-badges">';
+  BADGES.forEach(function(b){ var e=displayBadges.indexOf(b.id)>=0; html+='<span class="pts-badge'+(e?' earned':' locked')+'" title="'+cl(b.nameKey)+' ('+b.points+' '+cl('points')+')">'+b.icon+'</span>'; });
+  html+='</div>';
+  var nextBadge=null; for(var i=0;i<BADGES.length;i++){ if(displayBadges.indexOf(BADGES[i].id)<0&&displayPoints<BADGES[i].points){nextBadge=BADGES[i];break;} }
+  if(nextBadge){ var pct=Math.min(100,Math.round(displayPoints/nextBadge.points*100)); html+='<div class="pts-next">🎯 '+cl('nextBadge')+': '+cl(nextBadge.nameKey)+' '+nextBadge.icon+' ('+displayPoints+'/'+nextBadge.points+')</div><div class="pts-progress-bar"><div class="pts-progress-fill" style="width:'+pct+'%"></div></div>'; }
+  html+='<button class="btn btn-outline pts-share-btn" onclick="generateShareImage()" style="width:100%;margin-top:8px;font-size:.68rem">📸 '+cl('shareBtn')+'</button>';
+  html+='<div id="shareCard" style="position:absolute;left:-9999px;top:0;width:360px;background:linear-gradient(135deg,#faf3ef,#fdf0f3);border-radius:20px;padding:24px;font-family:sans-serif;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)"><div style="font-size:3rem;margin-bottom:8px">🌸</div><div style="font-size:1.2rem;font-weight:800;color:#c45a6b;margin-bottom:4px">Anđela</div><div style="font-size:.85rem;color:#3d2828;margin-bottom:4px" id="shareStats"></div><div style="font-size:1.5rem;margin:8px 0" id="shareBadges"></div><div style="font-size:.75rem;color:#8a7a78;margin-bottom:4px" id="shareComments"></div><div style="font-size:.85rem;color:#c49a5e;font-style:italic;margin:8px 0" id="shareQuote"></div><div style="font-size:.6rem;color:#aaa;margin-top:12px">Anđelin Ciklus · Kineska kultura</div></div>';
+  panel.innerHTML=html;
+}
+
+// ===== UNREAD COMMENTS =====
+function getLastReadTime() { var v=localStorage.getItem(profileKey('last-read-comment-time')); return v?parseInt(v):0; }
+function setLastReadTime() { localStorage.setItem(profileKey('last-read-comment-time'),Date.now()); updateUnreadBadge(); }
+function getUnreadCommentCount() { var lastRead=getLastReadTime(); var comments=getSharedComments(); var partner=getPartnerProfile(); var count=0; comments.forEach(function(c){ if(c.author===partner&&c.time>lastRead) count++; }); return count; }
+function updateUnreadBadge() { var badge=document.getElementById('unreadBadge'); if(!badge)return; var count=getUnreadCommentCount(); if(count>0){badge.textContent=count;badge.style.display='';}else{badge.style.display='none';} }
+
+// ===== SHARE IMAGE =====
+var MOTIVATIONAL_QUOTES = [
+  {zh:'千里之行，始于足下。',sr:'Put od hiljadu milja počinje jednim korakom.'},
+  {zh:'学而时习之，不亦乐乎。',sr:'Učiti i ponavljati — nije li to radost?'},
+  {zh:'只要功夫深，铁杵磨成针。',sr:'Upornošću se i gvozdeni tučak pretvori u iglu.'},
+  {zh:'每天进步一点点。',sr:'Svaki dan po malo napreduj.'},
+  {zh:'世上无难事，只怕有心人。',sr:'Ništa nije teško onome ko ima volju.'},
+  {zh:'好好学习，天天向上。',sr:'Dobro uči, svaki dan napreduj.'},
+  {zh:'不怕慢，就怕站。',sr:'Ne boj se sporosti, boj se stajanja.'}
+];
+function generateShareImage() {
+  var card=document.getElementById('shareCard'); if(!card){renderPointsPanel();card=document.getElementById('shareCard');}
+  var pp=getPartnerProgress(); var myPoints=getPoints(activeProfile); var myBadges=getUnlockedBadges(activeProfile);
+  var comments=getSharedComments(); var pc=comments.filter(function(c){return c.author===getPartnerProfile();});
+  var quote=MOTIVATIONAL_QUOTES[Math.floor(Math.random()*MOTIVATIONAL_QUOTES.length)];
+  var completedCount=(pp&&pp.completed)?pp.completed.length:0;
+  document.getElementById('shareStats').textContent=cl('completed')+': '+completedCount+'/'+DAILY_LESSONS.length+' · ⭐'+myPoints;
+  var bh=''; BADGES.forEach(function(b){ if(myBadges.indexOf(b.id)>=0) bh+=b.icon; });
+  document.getElementById('shareBadges').textContent=bh||'🌱';
+  document.getElementById('shareComments').textContent='💌 '+pc.length+' poruka od Barry-ja';
+  document.getElementById('shareQuote').innerHTML='「'+quote.zh+'」<br><span style="font-size:.7rem">'+quote.sr+'</span>';
+  if(typeof html2canvas!=='undefined'){
+    card.style.left='10px';card.style.top='10px';card.style.zIndex='9999';card.style.position='fixed';
+    html2canvas(card,{scale:2,backgroundColor:null}).then(function(canvas){
+      card.style.left='-9999px';card.style.top='0';card.style.position='absolute';
+      var link=document.createElement('a');link.download='kineski-napredak.png';link.href=canvas.toDataURL('image/png');link.click();
+      toast('📸 '+cl('imageReady'));
+    }).catch(function(){card.style.left='-9999px';card.style.position='absolute';});
+  }else{
+    var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    script.onload=function(){generateShareImage();};document.head.appendChild(script);
+    toast('⏳ '+cl('loading'));
+  }
+}
+
+// ===== VOICE CHALLENGE =====
+(function(){
+  var challenges=[{zh:'你好，很高兴认识你。',py:'nǐ hǎo, hěn gāo xìng rèn shi nǐ.',sr:'Zdravo, drago mi je.'},{zh:'我想要两个包子。',py:'wǒ xiǎng yào liǎng gè bāo zi.',sr:'Želim dva baozi.'},{zh:'这是我的妈妈和爸爸。',py:'zhè shì wǒ de mā ma hé bà ba.',sr:'Ovo su moja mama i tata.'},{zh:'我爱你，Barry。',py:'wǒ ài nǐ, Barry.',sr:'Volim te, Barry.'},{zh:'这个很好吃！',py:'zhè ge hěn hǎo chī!',sr:'Ovo je jako ukusno!'},{zh:'请问，地铁站在哪里？',py:'qǐng wèn, dì tiě zhàn zài nǎ lǐ?',sr:'Gde je metro?'},{zh:'我叫Anđela，我是塞尔维亚人。',py:'wǒ jiào Anđela, wǒ shì sài ěr wéi yà rén.',sr:'Ja sam Srpkinja.'},{zh:'服务员，我要这个，不要辣。',py:'fú wù yuán, wǒ yào zhè ge, bú yào là.',sr:'Konobar, ovo, bez ljutog.'},{zh:'红色很好看，我喜欢红色。',py:'hóng sè hěn hǎo kàn.',sr:'Crvena je lepa, volim crvenu.'},{zh:'明天下午三点见。',py:'míng tiān xià wǔ sān diǎn jiàn.',sr:'Vidimo se sutra u tri.'},{zh:'我要去天安门广场。',py:'wǒ yào qù tiān ān mén guǎng chǎng.',sr:'Idem na Tjenanmen.'},{zh:'太贵了，便宜一点吧。',py:'tài guì le, pián yi yì diǎn ba.',sr:'Preskupo, spusti malo.'},{zh:'今天我很开心。',py:'jīn tiān wǒ hěn kāi xīn.',sr:'Danas sam srećna.'},{zh:'救命！我的手机没电了。',py:'jiù mìng! wǒ de shǒu jī méi diàn le.',sr:'Upomoć! Telefon mi je prazan.'}];
+  DAILY_LESSONS.forEach(function(l,i){ if(challenges[i]) l.challenge=challenges[i]; });
+})();
+var _mediaRecorder=null; var _audioChunks=[]; var _audioBlob=null;
+async function startVoiceRecording(){
+  _audioChunks=[]; _audioBlob=null;
+  try{var stream=await navigator.mediaDevices.getUserMedia({audio:true}); _mediaRecorder=new MediaRecorder(stream,{mimeType:'audio/webm;codecs=opus'}); _mediaRecorder.ondataavailable=function(e){if(e.data.size>0)_audioChunks.push(e.data);}; _mediaRecorder.onstop=function(){_audioBlob=new Blob(_audioChunks,{type:'audio/webm'});renderVoiceUI();}; _mediaRecorder.start(); document.getElementById('voiceStatus').textContent='🔴 '+cl('recording'); document.getElementById('voiceStatus').style.color='#E53935'; document.getElementById('voiceStartBtn').style.display='none'; document.getElementById('voiceStopBtn').style.display=''; setTimeout(function(){if(_mediaRecorder&&_mediaRecorder.state==='recording')stopVoiceRecording();},30000);}catch(e){document.getElementById('voiceStatus').textContent='⚠️ '+cl('noMic');}
+}
+function stopVoiceRecording(){ if(_mediaRecorder&&_mediaRecorder.state==='recording'){_mediaRecorder.stop();_mediaRecorder.stream.getTracks().forEach(function(t){t.stop();});} document.getElementById('voiceStatus').textContent='✅'; document.getElementById('voiceStatus').style.color='var(--sage-dark)'; document.getElementById('voiceStopBtn').style.display='none'; renderVoiceUI(); }
+function playVoiceRecording(){ if(!_audioBlob)return; var audio=new Audio(URL.createObjectURL(_audioBlob));audio.play(); }
+function submitVoiceRecording(){ if(!_audioBlob)return; var reader=new FileReader(); reader.onload=function(){ var base64=reader.result; var key='voice-'+DAILY_LESSONS[_lessonDayIdx].day; localStorage.setItem(key,base64.substring(0,500000)); var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); vd[DAILY_LESSONS[_lessonDayIdx].day]={author:activeProfile,time:Date.now(),hasRecording:true}; localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🎤 Glasovna poruka sačuvana!'); renderVoiceUI(); }; reader.readAsDataURL(_audioBlob); }
+function hasVoiceRecording(lessonDay){ return !!localStorage.getItem('voice-'+lessonDay); }
+function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display=_audioBlob?'none':''; document.getElementById('voiceStopBtn').style.display='none'; document.getElementById('voicePlayBtn').style.display=_audioBlob?'':'none'; document.getElementById('voiceSubmitBtn').style.display=_audioBlob?'':'none'; }
 
 const CULTURE_KNOWLEDGE = [
   {id:1,zh:'春节',sr:'Kineska Nova Godina',icon:'🧧',desc:'Najvažniji praznik u Kini. Porodice se okupljaju na velikoj večeri (年夜饭), deca dobijaju crvene koverte (红包) sa novcem, a vatromet tera zle duhove. Svaka godina ima svoju životinju po kineskom zodijaku.',tags:['praznik','porodica','tradicija']},
@@ -2330,9 +2451,11 @@ function initCultureTab() {
   renderCultureCard();
   renderDailyLesson();
   renderChecklist();
+  // Update unread badge
+  updateUnreadBadge();
   // Pull latest shared data for partner progress & comments
   if (getGitHubToken()) {
-    pullAllSharedData().then(function() { renderChecklist(); });
+    pullAllSharedData().then(function() { renderChecklist(); updateUnreadBadge(); });
   }
 }
 
@@ -2368,6 +2491,25 @@ function renderDailyLesson() {
   });
   document.getElementById('llcWords').innerHTML = wordsHtml;
   document.getElementById('llcTip').innerHTML = '<span class="llc-tip-icon">💡</span> ' + l.tip;
+  // Voice challenge sentence
+  var vcTitle = document.getElementById('voice-challenge-title');
+  if (vcTitle) vcTitle.textContent = '🎤 ' + cl('challengeTitle');
+  if (l.challenge) {
+    var vcEl = document.getElementById('voiceChallengeSentence');
+    if (vcEl) vcEl.innerHTML = '<span style="color:var(--love);font-weight:700">'+l.challenge.zh+'</span> <span style="color:var(--text-muted);font-size:.62rem">'+l.challenge.py+'</span><br><span style="color:var(--text)">'+l.challenge.sr+'</span>';
+    document.getElementById('voiceChallenge').style.display = '';
+    document.getElementById('voiceStatus').textContent = '';
+    document.getElementById('voiceStatus').style.color = '';
+    _audioBlob = null; renderVoiceUI();
+    // Check if already recorded for this lesson
+    var hasRec = hasVoiceRecording(l.day);
+    if (hasRec) {
+      document.getElementById('voiceStatus').textContent = '✅ ' + cl('voiceListening');
+      document.getElementById('voiceStatus').style.color = 'var(--sage-dark)';
+    }
+  } else {
+    document.getElementById('voiceChallenge').style.display = 'none';
+  }
   // Mark current lesson as last viewed
   var saved = localStorage.getItem('culture-lesson-progress');
   var p = saved ? JSON.parse(saved) : {};
@@ -2424,9 +2566,22 @@ function saveSharedComments(comments) {
 function toggleLessonDay(dayNum) {
   var completed = getCompletedDays();
   var idx = completed.indexOf(dayNum);
-  if (idx >= 0) completed.splice(idx, 1); else completed.push(dayNum);
+  var isCompleting = idx < 0;
+  if (isCompleting) completed.push(dayNum); else completed.splice(idx, 1);
   saveLearningProgress();
   renderChecklist();
+  // Points: +10 for completing a lesson (only once per lesson)
+  if (isCompleting && activeProfile === 'andjela') {
+    addPoints('andjela', 10, 'lesson-'+dayNum);
+    // Check 7-day streak bonus
+    var streak = getStreak();
+    if (streak >= 7) {
+      var pd = getPointsData();
+      var history = (pd.andjela && pd.andjela.history) || [];
+      var alreadyGotStreak = history.some(function(h) { return h.reason === 'streak-7'; });
+      if (!alreadyGotStreak) addPoints('andjela', 30, 'streak-7');
+    }
+  }
 }
 
 function renderChecklist() {
@@ -2448,8 +2603,9 @@ function renderChecklist() {
   document.getElementById('checklistItems').innerHTML = itemsHtml;
   document.getElementById('streakCount').textContent = completed.length;
   document.getElementById('streakLabel').textContent = completed.length === 1 ? 'dan' : 'dana';
-  // Render partner progress
+  // Render partner progress + points panel
   renderPartnerProgress();
+  renderPointsPanel();
 }
 
 // ===== PARTNER PROGRESS PANEL =====
@@ -2507,6 +2663,7 @@ function showCommentModal(title) {
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e) { if (e.target === overlay) closeCommentModal(); });
   renderCommentList();
+  setLastReadTime(); // mark comments as read
   setTimeout(function(){ var ta = document.getElementById('cmInput'); if (ta) ta.focus(); }, 200);
 }
 
@@ -2532,6 +2689,15 @@ function saveComment() {
   saveSharedComments(comments);
   input.value = '';
   renderCommentList();
+  // Points: +2 for receiver (max 10/day)
+  var receiver = getPartnerProfile();
+  var todayPoints = 0;
+  var pd = getPointsData();
+  if (pd[receiver] && pd[receiver].history) {
+    var today = new Date(); today.setHours(0,0,0,0);
+    pd[receiver].history.forEach(function(h) { if (h.reason === 'comment' && new Date(h.time) >= today) todayPoints += h.amount; });
+  }
+  if (todayPoints < 10) addPoints(receiver, 2, 'comment');
 }
 
 function renderCommentList() {
@@ -3128,6 +3294,10 @@ function collectSharedState() {
     songs: { barry: JSON.parse(localStorage.getItem('shared-song-barry')||'null'), andjela: JSON.parse(localStorage.getItem('shared-song-andjela')||'null') },
     sleep: JSON.parse(localStorage.getItem('barry-sleep')||'null'),
     checkins: { barry: JSON.parse(localStorage.getItem('shared-checkin-barry')||'{}'), andjela: JSON.parse(localStorage.getItem('shared-checkin-andjela')||'{}') },
+    learningProgress: JSON.parse(localStorage.getItem('shared-learning-progress') || '{}'),
+    learningComments: JSON.parse(localStorage.getItem('shared-learning-comments') || '[]'),
+    learningPoints: JSON.parse(localStorage.getItem('shared-learning-points') || '{}'),
+    voiceData: JSON.parse(localStorage.getItem('shared-voice-data') || '{}'),
     updated: Date.now()
   };
 }
@@ -3162,6 +3332,10 @@ function applySharedState(shared) {
     if (shared.checkins.barry) localStorage.setItem('shared-checkin-barry', JSON.stringify(shared.checkins.barry));
     if (shared.checkins.andjela) localStorage.setItem('shared-checkin-andjela', JSON.stringify(shared.checkins.andjela));
   }
+  if (shared.learningProgress) localStorage.setItem('shared-learning-progress', JSON.stringify(shared.learningProgress));
+  if (shared.learningComments) localStorage.setItem('shared-learning-comments', JSON.stringify(shared.learningComments));
+  if (shared.learningPoints) localStorage.setItem('shared-learning-points', JSON.stringify(shared.learningPoints));
+  if (shared.voiceData) localStorage.setItem('shared-voice-data', JSON.stringify(shared.voiceData));
 }
 
 async function pushAllSharedData(retryCount) {
