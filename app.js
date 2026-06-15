@@ -1222,33 +1222,39 @@ async function bootApp() {
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
 
-  // === Pull shared data from GitHub for ALL profiles ===
-  if (getGitHubToken()) {
-    await pullAllSharedData();
-    // Apply shared cycle data to current state for both profiles
-    try {
-      var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
-      if (sd && sd.records) {
-        state.records = sd.records.map(function(r) { return new Date(r); });
-        state.periodEnds = sd.periodEnds || {};
-        state.symptoms = sd.symptoms || {};
-        state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
-      }
-    } catch(e) {}
-    if (activeProfile === 'barry') {
-      renderCalendar();
-      renderBarrySymptomView();
-      renderTips();
-    }
-    renderHug(); renderGratitude(); renderSong(); renderCheckin();
-    renderSharedDiary(); renderDateStrip();
-    updateSyncStatusBadge();
-  }
-
+  // === Render basic UI immediately (data files are ready) ===
   updateProfileUI();
   renderAll(); loadSettingsUI();
-  // Initialize dashboard NOW (data files + shared data are ready)
   initDashboard();
+  // Hide loader NOW — basic UI is ready, shared data loads in background
+  var loader = document.getElementById('appLoader');
+  if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .3s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 350); }
+
+  // === Pull shared data from GitHub in BACKGROUND (non-blocking) ===
+  if (getGitHubToken()) {
+    pullAllSharedData().then(function() {
+      try {
+        var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+        if (sd && sd.records) {
+          state.records = sd.records.map(function(r) { return new Date(r); });
+          state.periodEnds = sd.periodEnds || {};
+          state.symptoms = sd.symptoms || {};
+          state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
+        }
+      } catch(e) {}
+      if (activeProfile === 'barry') {
+        renderCalendar();
+        renderBarrySymptomView();
+        renderTips();
+      }
+      renderHug(); renderGratitude(); renderSong(); renderCheckin();
+      renderSharedDiary(); renderDateStrip();
+      renderDashboard(); // Refresh dashboard with synced data
+      updateSyncStatusBadge();
+      updateCycleCounter(predict().cycles.length);
+    });
+  }
+
   fetchWeather();
   loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
   showOnboardingIfNeeded();
@@ -1281,9 +1287,6 @@ async function bootApp() {
     }
   };
   document.addEventListener('keydown', modalKeydown);
-  // Hide app loader — initialization complete
-  var loader = document.getElementById('appLoader');
-  if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .3s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 350); }
 }
 
 // Profile-aware overrides happen in loadPerProfileSettings() below
