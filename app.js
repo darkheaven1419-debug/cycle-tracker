@@ -2393,6 +2393,8 @@ function updateUnreadBadge() { var badge=document.getElementById('unreadBadge');
 
 // ===== SHARE IMAGE =====
 var MOTIVATIONAL_QUOTES = [];
+var CULTURE_KNOWLEDGE = [];
+var DAILY_LESSONS = [];
 function generateShareImage() {
   var card=document.getElementById('shareCard'); if(!card){renderPointsPanel();card=document.getElementById('shareCard');}
   var pp=getPartnerProgress(); var myPoints=getPoints(activeProfile); var myBadges=getUnlockedBadges(activeProfile);
@@ -2438,10 +2440,6 @@ function submitVoiceRecording(){ if(!_audioBlob)return; var reader=new FileReade
 function hasVoiceRecording(lessonDay){ return !!localStorage.getItem('voice-'+lessonDay); }
 function cleanVoiceGistData(){ var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); Object.keys(vd).forEach(function(k){vd[k]={author:vd[k].author||'',time:vd[k].time||0,hasRecording:!!vd[k].hasRecording};}); localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🧹 Voice metadata cleaned!'); }
 function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display=_audioBlob?'none':''; document.getElementById('voiceStopBtn').style.display='none'; document.getElementById('voicePlayBtn').style.display=_audioBlob?'':'none'; document.getElementById('voiceSubmitBtn').style.display=_audioBlob?'':'none'; }
-
-var CULTURE_KNOWLEDGE = [];
-
-var DAILY_LESSONS = [];
 
 var _cultureCardIdx = 0;
 var _lessonDayIdx = 0;
