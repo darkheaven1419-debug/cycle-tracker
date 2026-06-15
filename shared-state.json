@@ -110,31 +110,20 @@
     "periodEnds": {},
     "symptoms": {},
     "moods": {
-      "2026-06-10": {
-        "mood": "tired",
-        "time": 1781128550420
-      },
-      "2026-06-12": {
+      "2026-06-04": {
         "mood": "loved",
-        "time": 1781300722816
+        "time": 1780566994689
       },
-      "2026-06-13": {
-        "mood": "tired",
-        "time": 1781385966966
+      "2026-06-06": {
+        "mood": "happy",
+        "time": 1780684505870
       },
-      "2026-06-14": {
-        "mood": "anxious",
-        "time": 1781472227887
+      "2026-06-15": {
+        "mood": "happy",
+        "time": 1781513886376
       }
     },
-    "diaries": {
-      "2026-06-13": [
-        {
-          "text": "Što si mi poslao video sebe kada stavljaš kacigu, to znači da ti je važno to što brinem za tebe.",
-          "time": 1781386058372
-        }
-      ]
-    },
+    "diaries": {},
     "settings": {
       "cycleLength": 28,
       "periodLength": 7,
@@ -180,5 +169,5 @@
       "2": "💬 Bolja komunikacija"
     }
   },
-  "updated": 1781512149963
+  "updated": 1781513888076
 }
