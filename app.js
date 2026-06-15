@@ -664,6 +664,17 @@ function doImport(text) {
 // ==============================
 // RENDER SHARED DIARY
 // ==============================
+
+// INVARIANT: Viewing a partner's diary for any date requires the current user
+// to have saved their OWN entry for THAT SPECIFIC date first. Each day's
+// permission is independent — writing today's diary does NOT retroactively
+// unlock past days. There is no "date < today" bypass. The lock is permanent
+// for any date where the user never wrote their own entry.
+function canViewPartnerDiaryEntry(dateKey) {
+  var allData = loadSharedDiaryData();
+  return !!(allData[dateKey] && allData[dateKey][activeProfile]);
+}
+
 async function renderSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
 
@@ -683,6 +694,7 @@ async function renderSharedDiary() {
   });
 
   // Partner card — locked until you save your own entry first (by design)
+  // Uses the invariant: each day's permission is tied to that specific day.
   var lockedEl = document.getElementById('partnerLocked');
   var contentEl = document.getElementById('sharedDiaryPartnerContent');
   var translateBtn = document.getElementById('translateBtnSm');
@@ -692,6 +704,7 @@ async function renderSharedDiary() {
     contentEl.classList.add('partner-card-unlocked');
     renderPartnerContent(partnerEntry, partnerProfile, contentEl, translateBtn);
   } else {
+    // Lock stays permanently for this date — user never wrote their entry
     lockedEl.style.display = '';
     contentEl.style.display = 'none';
     contentEl.classList.remove('partner-card-unlocked');
@@ -721,7 +734,7 @@ async function renderSharedDiary() {
             document.getElementById('sd-wish').value = freshMy ? (freshMy.wish || '') : '';
           }
         }
-        // Always update partner display and lock state
+        // Always update partner display and lock state - same invariant: user must have own entry for THIS date
         if (freshMy) {
           lockedEl.style.display = 'none';
           contentEl.style.display = '';
@@ -789,15 +802,26 @@ function renderSharedDiaryHistory(allData) {
     return list.map(function(item) {
       var both = item.barry && item.andjela;
       var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
-      var preview = '';
       var authors = [];
-      if (item.andjela) { authors.push('🌸 Anđela'); preview = preview || item.andjela.happy || item.andjela.thanks || item.andjela.uncomf || item.andjela.wish || ''; }
-      if (item.barry) { authors.push('👦 Barry'); preview = preview || item.barry.happy || item.barry.thanks || item.barry.uncomf || item.barry.wish || ''; }
-      preview = esc(preview.substring(0, 80));
+      if (item.andjela) { authors.push('🌸 Anđela'); }
+      if (item.barry) { authors.push('👦 Barry'); }
+      // PREVIEW: only use current user's OWN content — never leak partner's
+      // diary for dates where the user hasn't written their own entry.
+      // Invariant: each day's view permission is tied to that specific day.
+      var myEntry = item[activeProfile];
+      var preview = myEntry ? (myEntry.happy || myEntry.thanks || myEntry.uncomf || myEntry.wish || '') : '';
+      var locked = !myEntry && (item['barry'] || item['andjela']);
+      var previewHtml = '';
+      if (locked) {
+        previewHtml = '<span class="tn-locked">🔒 ' + (lang==='sr'?'Zaključano':lang==='en'?'Locked':'已锁定') + '</span>';
+      } else if (preview) {
+        preview = esc(preview.substring(0, 80));
+        previewHtml = preview + (preview.length >= 80 ? '...' : '');
+      }
       return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
         + '<div class="tn-date">📅 ' + item.date + '</div>'
         + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
-        + '<div class="tn-preview">' + preview + (preview.length >= 80 ? '...' : '') + '</div>'
+        + '<div class="tn-preview">' + previewHtml + '</div>'
         + '</div>';
     }).join('');
   }
@@ -830,15 +854,24 @@ function expandTimeline() {
     + items.map(function(item) {
       var both = item.barry && item.andjela;
       var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
-      var preview = '';
       var authors = [];
-      if (item.andjela) { authors.push('🌸 Anđela'); preview = preview || item.andjela.happy || item.andjela.thanks || item.andjela.uncomf || item.andjela.wish || ''; }
-      if (item.barry) { authors.push('👦 Barry'); preview = preview || item.barry.happy || item.barry.thanks || item.barry.uncomf || item.barry.wish || ''; }
-      preview = esc(preview.substring(0, 80));
+      if (item.andjela) { authors.push('🌸 Anđela'); }
+      if (item.barry) { authors.push('👦 Barry'); }
+      // PREVIEW: only use current user's OWN content — never leak partner's
+      var myEntry = item[activeProfile];
+      var preview = myEntry ? (myEntry.happy || myEntry.thanks || myEntry.uncomf || myEntry.wish || '') : '';
+      var locked = !myEntry && (item['barry'] || item['andjela']);
+      var previewHtml = '';
+      if (locked) {
+        previewHtml = '<span class="tn-locked">🔒 ' + (lang==='sr'?'Zaključano':lang==='en'?'Locked':'已锁定') + '</span>';
+      } else if (preview) {
+        preview = esc(preview.substring(0, 80));
+        previewHtml = preview + (preview.length >= 80 ? '...' : '');
+      }
       return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
         + '<div class="tn-date">📅 ' + item.date + '</div>'
         + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
-        + '<div class="tn-preview">' + preview + (preview.length >= 80 ? '...' : '') + '</div>'
+        + '<div class="tn-preview">' + previewHtml + '</div>'
         + '</div>';
     }).join('')
     + '</div>';
@@ -1122,25 +1155,25 @@ function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); documen
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
    ================================================================ */
 const HOLIDAYS = [
-  {d:'2026-01-01',name:{sr:'Nova Godina (Kina)',zh:'元旦',en:'New Year'},country:'cn',desc:{sr:'Nov početak, vreme kada zajedno sanjamo o lepšoj godini.',zh:'新的一年，和身边的人一起许下美好的愿望。',en:'A fresh start, dreaming together of a kinder year ahead.'}},
-  {d:'2026-02-16',name:{sr:'Kineska Nova Godina (veče)',zh:'除夕',en:'CNY Eve'},country:'cn',desc:{sr:'Porodična večera koja spaja generacije, uz vatromet.',zh:'全家围坐吃年夜饭，在爆竹声中送走旧岁。',en:'Generations gather for the reunion feast, bidding farewell to the old year.'}},
-  {d:'2026-02-17',name:{sr:'Kineska Nova Godina',zh:'春节',en:'Chinese New Year'},country:'cn',desc:{sr:'Prvi dan proleća donosi radost i crvene koverte pune ljubavi.',zh:'新春第一天，红包和祝福让整个月都暖暖的。',en:'The first day of spring brings red envelopes and warm wishes all month.'}},
-  {d:'2026-03-03',name:{sr:'Festival lampiona',zh:'元宵节',en:'Lantern Festival'},country:'cn',desc:{sr:'Slatke pirinčane knedle i lampioni — noć puna svetlosti.',zh:'吃一碗软糯的汤圆，看花灯照亮夜空。',en:'Sweet rice balls and lanterns that turn the night into a sea of light.'}},
-  {d:'2026-04-05',name:{sr:'Čingming festival',zh:'清明节',en:'Qingming'},country:'cn',desc:{sr:'Dan kada se sećamo onih koji su otišli, dok priroda budi novi život.',zh:'在春天的细雨中，轻轻想起那些远去的亲人。',en:'A quiet spring day to remember those we have loved and lost.'}},
-  {d:'2026-05-01',name:{sr:'Praznik rada (Kina)',zh:'劳动节',en:'Labour Day'},country:'cn',desc:{sr:'Dan odmora za sve koji svojim radom čine svet boljim.',zh:'停下忙碌的脚步，对自己说一声辛苦了。',en:'A day of rest for every hand that helps the world go round.'}},
-  {d:'2026-06-19',name:{sr:'Festival zmajevih čamaca',zh:'端午节',en:'Dragon Boat'},country:'cn',desc:{sr:'Miris zongija i ritam zmajevih čamaca — sećanje na pesnika Qu Yuana.',zh:'粽叶飘香，龙舟竞渡，纪念一位心怀家国的诗人。',en:'Fragrant zongzi and racing dragon boats, remembering a poet who loved his people.'}},
-  {d:'2026-08-19',name:{sr:'Kineski Dan zaljubljenih',zh:'七夕',en:'Qixi Festival'},country:'cn',desc:{sr:'Zvezdana noć ljubavi — kad se dvoje sastaje na Nebeskom mostu.',zh:'七夕之夜，愿天下有情人终成眷属。',en:'A starry night of love — two hearts meet across the Milky Way.'}},
-  {d:'2026-09-25',name:{sr:'Festival sredine jeseni',zh:'中秋节',en:'Mid-Autumn'},country:'cn',desc:{sr:'Pun mesec, porodica na okupu i miris mesečevog kolača.',zh:'月圆人团圆，月饼的甜香就是家的味道。',en:'Full moon, family gathered, and the sweet taste of mooncakes — home at its warmest.'}},
-  {d:'2026-10-01',name:{sr:'Nacionalni dan Kine',zh:'国庆节',en:'National Day'},country:'cn',desc:{sr:'Zlatna nedelja slave i ponosa — Kina u najlepšim bojama.',zh:'黄金周里红旗飘扬，举国同庆这属于每一个人的节日。',en:'A golden week of national pride, when the land dresses in its finest colors.'}},
-  {d:'2026-01-01',name:{sr:'Nova Godina',zh:'新年',en:'New Year'},country:'rs',desc:{sr:'Uz vatromet, rakiju i tople zagrljaje — nova godina stiže.',zh:'在烟花和家人的拥抱中，迎接全新的一年。',en:'With fireworks, rakija, and warm embraces — a fresh year begins.'}},
-  {d:'2026-01-07',name:{sr:'Božić',zh:'东正教圣诞节',en:'Orthodox Christmas'},country:'rs',desc:{sr:'Mir Božiji, Hristos se rodi — uz badnjak, česnicu i toplinu doma.',zh:'在橡木火光和祝福面包的香气中，感受家的温暖。',en:'Christ is born — the oak log burns, the bread is broken, and home feels holy.'}},
-  {d:'2026-01-27',name:{sr:'Sveti Sava',zh:'圣萨瓦日',en:'St. Sava Day'},country:'rs',desc:{sr:'Dan prosvetitelja — praznik dece, učitelja i znanja.',zh:'纪念塞尔维亚最伟大的教育家的日子，属于孩子们和老师的温暖节日。',en:'A day for teachers and children, honoring Serbia\'s patron saint of learning.'}},
-  {d:'2026-02-15',name:{sr:'Dan državnosti',zh:'塞尔维亚国庆日',en:'Statehood Day'},country:'rs',desc:{sr:'Dan ponosa — sećanje na ustanke koji su utrli put slobodi.',zh:'一个骄傲的日子——纪念为自由开辟道路的先辈们。',en:'A day of pride — remembering the uprisings that paved the way to freedom.'}},
-  {d:'2026-04-12',name:{sr:'Vaskrs',zh:'东正教复活节',en:'Orthodox Easter'},country:'rs',desc:{sr:'Hristos vaskrse — kucamo se farbanim jajima, slavimo pobedu života.',zh:'主复活了——碰响彩蛋，庆祝生命的胜利和春天的重生。',en:'Christ is risen — painted eggs are tapped, celebrating life\'s triumph over death.'}},
-  {d:'2026-05-01',name:{sr:'Praznik rada',zh:'劳动节',en:'Labour Day'},country:'rs',desc:{sr:'Majski uranak, izleti u prirodu — dan odmora za sve vredne ruke.',zh:'五一去郊游，在自然中放松，犒劳辛勤的自己。',en:'May Day picnics in nature — a well-earned rest for every hard-working soul.'}},
-  {d:'2026-05-09',name:{sr:'Dan pobede',zh:'胜利日',en:'Victory Day'},country:'rs',desc:{sr:'Sa cvećem i tihim ponosom, sećamo se heroja koji su doneli mir.',zh:'带着鲜花和安静的骄傲，铭记那些带来和平的英雄。',en:'With flowers and quiet pride, we remember the heroes who brought peace.'}},
-  {d:'2026-06-28',name:{sr:'Vidovdan',zh:'维多夫丹',en:'St. Vitus Day'},country:'rs',desc:{sr:'Dan sećanja i duboke tišine — kad smo kao narod sabrani u veri.',zh:'一个沉思和纪念的日子，塞尔维亚民族信仰与记忆交汇的时刻。',en:'A day of remembrance and quiet reflection, when a nation gathers in its memory.'}},
-  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs',desc:{sr:'Cvet nade na reveru — dan kada se sećamo cene mira.',zh:'胸前别一朵象征希望的鲜花，铭记和平的代价。',en:'A flower of hope on the lapel, remembering the cost of peace.'}}
+  {d:'2026-01-01',name:{sr:'Nova Godina (Kina)',zh:'元旦',en:'New Year'},country:'cn',icon:'🎉',desc:{sr:'Nov početak, vreme kada zajedno sanjamo o lepšoj godini.',zh:'新的一年，和身边的人一起许下美好的愿望。',en:'A fresh start, dreaming together of a kinder year ahead.'}},
+  {d:'2026-02-16',name:{sr:'Kineska Nova Godina (veče)',zh:'除夕',en:'CNY Eve'},country:'cn',icon:'🏮',desc:{sr:'Porodična večera koja spaja generacije, uz vatromet.',zh:'全家围坐吃年夜饭，在爆竹声中送走旧岁。',en:'Generations gather for the reunion feast, bidding farewell to the old year.'}},
+  {d:'2026-02-17',name:{sr:'Kineska Nova Godina',zh:'春节',en:'Chinese New Year'},country:'cn',icon:'🧧',desc:{sr:'Prvi dan proleća donosi radost i crvene koverte pune ljubavi.',zh:'新春第一天，红包和祝福让整个月都暖暖的。',en:'The first day of spring brings red envelopes and warm wishes all month.'}},
+  {d:'2026-03-03',name:{sr:'Festival lampiona',zh:'元宵节',en:'Lantern Festival'},country:'cn',icon:'🏮',desc:{sr:'Slatke pirinčane knedle i lampioni — noć puna svetlosti.',zh:'吃一碗软糯的汤圆，看花灯照亮夜空。',en:'Sweet rice balls and lanterns that turn the night into a sea of light.'}},
+  {d:'2026-04-05',name:{sr:'Čingming festival',zh:'清明节',en:'Qingming'},country:'cn',icon:'🌿',desc:{sr:'Dan kada se sećamo onih koji su otišli, dok priroda budi novi život.',zh:'在春天的细雨中，轻轻想起那些远去的亲人。',en:'A quiet spring day to remember those we have loved and lost.'}},
+  {d:'2026-05-01',name:{sr:'Praznik rada (Kina)',zh:'劳动节',en:'Labour Day'},country:'cn',icon:'🌿',desc:{sr:'Dan odmora za sve koji svojim radom čine svet boljim.',zh:'停下忙碌的脚步，对自己说一声辛苦了。',en:'A day of rest for every hand that helps the world go round.'}},
+  {d:'2026-06-19',name:{sr:'Festival zmajevih čamaca',zh:'端午节',en:'Dragon Boat'},country:'cn',icon:'🎋',desc:{sr:'Miris zongija i ritam zmajevih čamaca — sećanje na pesnika Qu Yuana.',zh:'粽叶飘香，龙舟竞渡，纪念一位心怀家国的诗人。',en:'Fragrant zongzi and racing dragon boats, remembering a poet who loved his people.'}},
+  {d:'2026-08-19',name:{sr:'Kineski Dan zaljubljenih',zh:'七夕',en:'Qixi Festival'},country:'cn',icon:'💫',desc:{sr:'Zvezdana noć ljubavi — kad se dvoje sastaje na Nebeskom mostu.',zh:'七夕之夜，愿天下有情人终成眷属。',en:'A starry night of love — two hearts meet across the Milky Way.'}},
+  {d:'2026-09-25',name:{sr:'Festival sredine jeseni',zh:'中秋节',en:'Mid-Autumn'},country:'cn',icon:'🥮',desc:{sr:'Pun mesec, porodica na okupu i miris mesečevog kolača.',zh:'月圆人团圆，月饼的甜香就是家的味道。',en:'Full moon, family gathered, and the sweet taste of mooncakes — home at its warmest.'}},
+  {d:'2026-10-01',name:{sr:'Nacionalni dan Kine',zh:'国庆节',en:'National Day'},country:'cn',icon:'🇨🇳',desc:{sr:'Zlatna nedelja slave i ponosa — Kina u najlepšim bojama.',zh:'黄金周里红旗飘扬，举国同庆这属于每一个人的节日。',en:'A golden week of national pride, when the land dresses in its finest colors.'}},
+  {d:'2026-01-01',name:{sr:'Nova Godina',zh:'新年',en:'New Year'},country:'rs',icon:'🎆',desc:{sr:'Uz vatromet, rakiju i tople zagrljaje — nova godina stiže.',zh:'在烟花和家人的拥抱中，迎接全新的一年。',en:'With fireworks, rakija, and warm embraces — a fresh year begins.'}},
+  {d:'2026-01-07',name:{sr:'Božić',zh:'东正教圣诞节',en:'Orthodox Christmas'},country:'rs',icon:'🎄',desc:{sr:'Mir Božiji, Hristos se rodi — uz badnjak, česnicu i toplinu doma.',zh:'在橡木火光和祝福面包的香气中，感受家的温暖。',en:'Christ is born — the oak log burns, the bread is broken, and home feels holy.'}},
+  {d:'2026-01-27',name:{sr:'Sveti Sava',zh:'圣萨瓦日',en:'St. Sava Day'},country:'rs',icon:'📚',desc:{sr:'Dan prosvetitelja — praznik dece, učitelja i znanja.',zh:'纪念塞尔维亚最伟大的教育家的日子，属于孩子们和老师的温暖节日。',en:'A day for teachers and children, honoring Serbia\'s patron saint of learning.'}},
+  {d:'2026-02-15',name:{sr:'Dan državnosti',zh:'塞尔维亚国庆日',en:'Statehood Day'},country:'rs',icon:'🇷🇸',desc:{sr:'Dan ponosa — sećanje na ustanke koji su utrli put slobodi.',zh:'一个骄傲的日子——纪念为自由开辟道路的先辈们。',en:'A day of pride — remembering the uprisings that paved the way to freedom.'}},
+  {d:'2026-04-12',name:{sr:'Vaskrs',zh:'东正教复活节',en:'Orthodox Easter'},country:'rs',icon:'🥚',desc:{sr:'Hristos vaskrse — kucamo se farbanim jajima, slavimo pobedu života.',zh:'主复活了——碰响彩蛋，庆祝生命的胜利和春天的重生。',en:'Christ is risen — painted eggs are tapped, celebrating life\'s triumph over death.'}},
+  {d:'2026-05-01',name:{sr:'Praznik rada',zh:'劳动节',en:'Labour Day'},country:'rs',icon:'🌿',desc:{sr:'Majski uranak, izleti u prirodu — dan odmora za sve vredne ruke.',zh:'五一去郊游，在自然中放松，犒劳辛勤的自己。',en:'May Day picnics in nature — a well-earned rest for every hard-working soul.'}},
+  {d:'2026-05-09',name:{sr:'Dan pobede',zh:'胜利日',en:'Victory Day'},country:'rs',icon:'🕊️',desc:{sr:'Sa cvećem i tihim ponosom, sećamo se heroja koji su doneli mir.',zh:'带着鲜花和安静的骄傲，铭记那些带来和平的英雄。',en:'With flowers and quiet pride, we remember the heroes who brought peace.'}},
+  {d:'2026-06-28',name:{sr:'Vidovdan',zh:'维多夫丹',en:'St. Vitus Day'},country:'rs',icon:'🏛️',desc:{sr:'Dan sećanja i duboke tišine — kad smo kao narod sabrani u veri.',zh:'一个沉思和纪念的日子，塞尔维亚民族信仰与记忆交汇的时刻。',en:'A day of remembrance and quiet reflection, when a nation gathers in its memory.'}},
+  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs',icon:'🌸',desc:{sr:'Cvet nade na reveru — dan kada se sećamo cene mira.',zh:'胸前别一朵象征希望的鲜花，铭记和平的代价。',en:'A flower of hope on the lapel, remembering the cost of peace.'}}
 ];
 
 function getHoliday(dateKey) {
@@ -1769,6 +1802,7 @@ function renderCalendar(){
       var stLabel = document.createElement('span');
       stLabel.className = 'solar-term-label';
       stLabel.textContent = stName;
+      stLabel.title = stName; // hover shows full name for long solar terms
       el.appendChild(stLabel);
       el.classList.add('solar-term-day');
       // Single tap opens modal (same as other days) — modal shows solar term + holiday
@@ -1777,12 +1811,14 @@ function renderCalendar(){
         ensureSolarTermData();
       }
     }
-    // Holiday dots
+    // Holiday emoji icons — show before solar term for proper layering
     var holidays=getHoliday(key);
     holidays.forEach(function(h){
-      var dot=document.createElement('span');
-      dot.className='holiday-'+h.country;
-      el.appendChild(dot);
+      var icon=document.createElement('span');
+      icon.className='holiday-icon holiday-'+h.country;
+      icon.textContent = h.icon || (h.country==='cn'?'🎉':'🇷🇸');
+      icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
+      el.appendChild(icon);
     });
     // Double-tap detection for quick period mark
     var tapTimer = null;

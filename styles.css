@@ -236,8 +236,10 @@ body {
 .day .mini-dot { position:absolute; bottom:3px; width:5px; height:5px; border-radius:50%; }
 .day .mini-dot.pink { background:var(--rose); }
 .day .mini-dot.gold { background:var(--gold); }
-.day .holiday-cn { position:absolute; bottom:2px; left:3px; width:4px; height:4px; border-radius:50%; background:#E53935; }
-.day .holiday-rs { position:absolute; bottom:2px; right:3px; width:4px; height:4px; border-radius:50%; background:#0C4076; }
+/* Holiday emoji icons — visible and meaningful, replaces old 4px dots */
+.day .holiday-icon { position:absolute; top:0; font-size:.52rem; line-height:1; pointer-events:none; z-index:1; text-shadow:0 1px 1px rgba(0,0,0,.08); }
+.day .holiday-cn { right:1px; }
+.day .holiday-rs { left:1px; }
 /* Calendar day internals */
 .day-num { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
 .day-cycle-num { position:absolute; top:1px; right:3px; font-size:.48rem; font-weight:700; color:var(--text-muted); opacity:.55; z-index:1; pointer-events:none; }
@@ -256,7 +258,7 @@ body {
 .holiday-detail.open { display:block; }
 
 /* Solar term calendar label */
-.solar-term-label { position:absolute; bottom:1px; left:50%; transform:translateX(-50%); font-size:.45rem; font-weight:600; color:var(--sage); white-space:nowrap; pointer-events:none; letter-spacing:-.02em; opacity:.85; text-shadow:0 1px 0 var(--bg); z-index:1; }
+.solar-term-label { position:absolute; bottom:1px; left:50%; transform:translateX(-50%); font-size:.45rem; font-weight:600; color:var(--sage); white-space:nowrap; pointer-events:none; letter-spacing:-.02em; opacity:.85; text-shadow:0 1px 0 var(--bg); z-index:1; max-width:calc(100% - 6px); overflow:hidden; text-overflow:ellipsis; }
 .solar-term-day { background:linear-gradient(180deg, rgba(129,178,107,.08) 0%, rgba(129,178,107,.03) 100%); }
 .solar-term-day:hover { background:rgba(129,178,107,.15) !important; }
 
@@ -720,11 +722,18 @@ body {
 .login-cards { display:flex; gap:12px; justify-content:center; }
 .login-card {
   background:var(--card); border-radius:22px; padding:24px 10px;
-  text-align:center; cursor:pointer; transition:all .3s cubic-bezier(.4,0,.2,1);
+  text-align:center; cursor:pointer;
+  /* Only transition intentional properties — never use "all" here.
+     The .selected class changes box-shadow dramatically (4px spread),
+     and transition:all would animate border-color shifts causing a
+     perceived size-jump on click. */
+  transition:transform .3s cubic-bezier(.4,0,.2,1),
+             box-shadow .3s cubic-bezier(.4,0,.2,1);
   box-shadow:var(--shadow-md); border:2px solid transparent;
   flex:1; max-width:160px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
   position:relative; overflow:hidden; touch-action:manipulation;
 }
+.login-card:active { transform:scale(.97); }
 .login-card::before {
   content:''; position:absolute; top:0; left:0; right:0; height:3px;
   background:linear-gradient(90deg,var(--rose),var(--gold),var(--lavender));
