@@ -147,6 +147,7 @@
     <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false">📝 <span class="tb-label"></span></button>
     <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false">💡 <span class="tb-label"></span></button>
     <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false">💌 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="culture" role="tab" id="tab-culture" aria-selected="false">🏯 <span class="tb-label" id="tb-culture">Kultura</span></button>
     <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false">⚙ <span class="tb-label"></span></button>
   </div></nav>
 
@@ -369,6 +370,73 @@
     <div class="card" style="margin-top:14px">
       <h3>📜 <span id="sd-history-title">Timeline</span></h3>
       <div class="timeline" id="sharedDiaryHistory"></div>
+    </div>
+  </div>
+
+  <!-- ===== CULTURE & CHINESE LEARNING PANEL ===== -->
+  <div class="panel" id="panel-culture" role="tabpanel" aria-labelledby="tab-culture">
+    <!-- Section 1: Culture Knowledge Card -->
+    <div class="card culture-main-card" id="cultureMainCard">
+      <div class="culture-card-inner">
+        <span class="culture-card-emoji" id="cultureEmoji">🏮</span>
+        <div class="culture-card-zh" id="cultureTitleZh"></div>
+        <div class="culture-card-sr" id="cultureTitleSr"></div>
+        <p class="culture-card-desc" id="cultureDesc"></p>
+        <div class="culture-card-tags" id="cultureTags"></div>
+      </div>
+      <div class="culture-card-nav">
+        <button class="culture-nav-btn" onclick="prevCultureCard()" title="Prethodna">◂</button>
+        <span class="culture-nav-info" id="cultureNavInfo">1 / 12</span>
+        <button class="culture-nav-btn" onclick="nextCultureCard()" title="Sledeća">▸</button>
+        <button class="culture-nav-btn" onclick="goToTodayCulture()" title="Današnja" style="font-size:.75rem">📅</button>
+      </div>
+    </div>
+
+    <!-- Section 2: Chinese Learning -->
+    <div class="card learning-main-card" id="learningMainCard">
+      <h3 style="margin-bottom:12px">📚 <span id="learn-title">Učenje kineskog</span></h3>
+
+      <!-- Roadmap -->
+      <div class="learning-roadmap" id="learningRoadmap">
+        <span class="lr-step done" data-step="1" title="Pinjin">🔤</span>
+        <span class="lr-connector done"></span>
+        <span class="lr-step" data-step="2" title="200 rečenica">💬</span>
+        <span class="lr-connector"></span>
+        <span class="lr-step" data-step="3" title="300 znakova">🀄</span>
+        <span class="lr-connector"></span>
+        <span class="lr-step" data-step="4" title="Rečenice">📖</span>
+        <span class="lr-connector"></span>
+        <span class="lr-step" data-step="5" title="Čitanje">📰</span>
+      </div>
+      <div class="lr-labels">
+        <span>Pinjin</span><span>Rečenice</span><span>Znakovi</span><span>Kontekst</span><span>Čitanje</span>
+      </div>
+
+      <!-- Daily Lesson -->
+      <div class="learning-lesson-card" id="learningLessonCard">
+        <div class="llc-header">
+          <span class="llc-day-badge" id="llcDayBadge">Dan 1</span>
+          <span class="llc-topic" id="llcTopic"></span>
+        </div>
+        <div class="llc-words" id="llcWords"></div>
+        <div class="llc-tip" id="llcTip"></div>
+      </div>
+
+      <!-- Lesson navigation -->
+      <div class="learning-lesson-nav">
+        <button class="culture-nav-btn" onclick="prevLesson()">◂</button>
+        <span id="lessonNavInfo">Dan 1 / 14</span>
+        <button class="culture-nav-btn" onclick="nextLesson()">▸</button>
+      </div>
+
+      <!-- Progress Checklist -->
+      <div class="learning-checklist" id="learningChecklist">
+        <h4 style="font-size:.72rem;margin-bottom:8px;color:var(--text)">✅ <span id="checklist-title">Dnevni napredak</span></h4>
+        <div id="checklistItems"></div>
+        <div class="checklist-streak" id="checklistStreak">
+          🔥 <span id="streakCount">0</span> <span id="streakLabel">dana zaredom</span>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -6,7 +6,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
   weekdays:['Pon','Uto','Sre','Čet','Pet','Sub','Ned'],
   months:['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'],
-  today:'Danas', tabs:['Statistika','Simptomi','Saveti','Dnevnik','Podeš.'],
+  today:'Danas', tabs:['Statistika','Simptomi','Saveti','Dnevnik','Kultura','Podeš.'],
   legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas','Ljubav'],
   progressLabels:['Menstr.','Folikul.','Ovulacija','Lutealna'],
   phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
@@ -34,7 +34,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'暗色模式', themeHint:'切换深色/浅色主题',
   weekdays:['一','二','三','四','五','六','日'],
   months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-  today:'今天', tabs:['统计','症状','贴士','日记','设置'],
+  today:'今天', tabs:['统计','症状','贴士','日记','文化','设置'],
   legend:['经期','排卵/易孕','卵泡期','黄体期','今天','♥纪念日'],
   progressLabels:['经期','卵泡期','排卵','黄体期'],
   phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
@@ -62,7 +62,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Dark Mode', themeHint:'Switch theme',
   weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
   months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  today:'Today', tabs:['Stats','Symptoms','Tips','Diary','Settings'],
+  today:'Today', tabs:['Stats','Symptoms','Tips','Diary','Culture','Settings'],
   legend:['Period','Ovul./Fertile','Follicular','Luteal','Today','♥ Love'],
   progressLabels:['Period','Follicular','Ovulation','Luteal'],
   phases:{'period-on':'Period Start','period-mid':'Period','period-pred-first':'Predicted Start','period-pred':'Predicted','period-future-first':'Future Pred.','period-future':'Future Pred.','ovulation':'Ovulation','fertile':'Fertile','luteal':'Luteal','follicular':'Follicular'},
@@ -2148,7 +2148,215 @@ function goToday() {
     grid.style.opacity = '1';
   }, 80);
 }
-var _tabOrder = ['stats','symptoms','tips','diary','settings'];
+/* ================================================================
+   CULTURE & CHINESE LEARNING MODULE — za Anđelu
+   ================================================================ */
+const CULTURE_KNOWLEDGE = [
+  {id:1,zh:'春节',sr:'Kineska Nova Godina',icon:'🧧',desc:'Najvažniji praznik u Kini. Porodice se okupljaju na velikoj večeri (年夜饭), deca dobijaju crvene koverte (红包) sa novcem, a vatromet tera zle duhove. Svaka godina ima svoju životinju po kineskom zodijaku.',tags:['praznik','porodica','tradicija']},
+  {id:2,zh:'微信支付',sr:'WeChat plaćanje',icon:'📱',desc:'U Kini se skoro sve plaća telefonom — WeChat Pay ili Alipay. Gotovina se retko koristi. Kad dođeš u Kinu, instaliraj WeChat i poveži karticu — moći ćeš da platiš sve: od pijace do voza.',tags:['svakodnevno','tehnologija','praktično']},
+  {id:3,zh:'餐桌礼仪',sr:'Ponašanje za stolom',icon:'🥢',desc:'Kinezi vole da dele hranu — jela se stavljaju na sredinu stola i svi uzimaju. Ne zabodi štapiće uspravno u pirinač (podseća na tamjan na sahrani). Kad nazdravljaš, kucni čašom malo niže od starije osobe — znak poštovanja.',tags:['hrana','bonton','svakodnevno']},
+  {id:4,zh:'称呼方式',sr:'Obraćanje ljudima',icon:'👋',desc:'Kinezi retko koriste imena direktno. Starije osobe se oslovljavaju sa 阿姨(tetka) ili 叔叔(čika), mlađe sa 小姐姐(starija sestra) ili 小哥哥(stariji brat). U prodavnici ćeš čuti 美女(lepotice)!',tags:['jezik','bonton','svakodnevno']},
+  {id:5,zh:'外卖与快递',sr:'Dostava hrane i paketa',icon:'🛵',desc:'U Kini možeš naručiti bukvalno SVE preko aplikacije: hranu (美团, 饿了么), namirnice, lekove, pa čak i nekog da ti sredi stan. Dostava je neverovatno brza — često stiže za 30 minuta.',tags:['svakodnevno','praktično','tehnologija']},
+  {id:6,zh:'红包文化',sr:'Kultura crvenih koverti',icon:'🧧',desc:'Crvena koverta (红包) se poklanja za Novu Godinu, venčanja i rođendane. Crvena boja donosi sreću. Nikad ne poklanjaj praznu kovertu, i uvek je primi sa obe ruke. Digitalne crvene koverte preko WeChata su takođe veoma popularne.',tags:['tradicija','praznik','pokloni']},
+  {id:7,zh:'家庭观念',sr:'Porodične vrednosti',icon:'👨‍👩‍👧‍👦',desc:'Porodica je centar kineskog društva. Deca često žive sa roditeljima i kad odrastu. Stariji se poštuju — njihovo mišljenje je veoma važno. Koncept 孝顺 (sinovljeva pobožnost) znači brigu o roditeljima u starosti.',tags:['porodica','tradicija','vrednosti']},
+  {id:8,zh:'茶文化',sr:'Kultura čaja',icon:'🍵',desc:'Čaj je srce kineske kulture. Postoji šest vrsta: zeleni, crni, beli, oolong, žuti i puer. Najpoznatiji je zeleni čaj 龙井 (Longjing). Kad ti neko sipa čaj, kucni prstima po stolu da kažeš hvala — to se zove 叩指礼.',tags:['piće','tradicija','svakodnevno']},
+  {id:9,zh:'吉祥话',sr:'Srećne fraze',icon:'🍀',desc:'Kinezi vole da izgovaraju srećne fraze: 恭喜发财 (da se obogatiš), 万事如意 (da ti sve ide po volji), 身体健康 (da si zdrav). Za Novu Godinu se obavezno kaže 新年快乐! Broj 8 je srećan, broj 4 se izbegava (zvuči kao reč za smrt).',tags:['jezik','tradicija','praznik']},
+  {id:10,zh:'七夕节',sr:'Kineski Dan zaljubljenih',icon:'💕',desc:'Slavi se 7. dana 7. meseca po lunarnom kalendaru. Legenda kaže da pastir i tkalja (牛郎织女) mogu da se sretnu samo te noći, preko mosta od svraka. Danas parovi idu na romantične večere i razmenjuju poklone.',tags:['praznik','ljubav','legenda']},
+  {id:11,zh:'汉字之美',sr:'Lepota kineskih znakova',icon:'🖌️',desc:'Kineski znakovi (汉字) su nastali iz slika — npr. 山 izgleda kao planina, 水 kao voda. Postoji preko 50.000 znakova, ali za svakodnevni život dovoljno je oko 2.000-3.000. Kaligrafija (书法) je visoka umetnost.',tags:['jezik','umetnost','istorija']},
+  {id:12,zh:'尊师重道',sr:'Poštovanje učitelja',icon:'📚',desc:'U Kini su učitelji veoma poštovani. Postoji izreka: 一日为师，终身为父 (učitelj na jedan dan, otac za ceo život). Učenici se obraćaju nastavnicima sa 老师 (laoši) i nikad ih ne oslovljavaju samo po imenu.',tags:['obrazovanje','tradicija','vrednosti']},
+  {id:13,zh:'中国新年习俗',sr:'Novogodišnji običaji',icon:'🏮',desc:'Pre Nove Godine se čisti cela kuća (da se otera loša sreća), lepe se crveni ukrasi, a na vrata se kače dvostrani natpisi (对联). Deca ostaju budna do ponoći (守岁) da čuvaju godinu. Sutradan se oblači nova crvena odeća.',tags:['praznik','tradicija','porodica']},
+  {id:14,zh:'中秋节',sr:'Festival sredine jeseni',icon:'🥮',desc:'Drugi najvažniji praznik posle Nove Godine. Jede se 月饼 (mesečev kolač) i posmatra pun mesec. Simbolizuje porodično okupljanje — mesec je pun, porodica je na okupu. Pesnik Li Bai je napisao: 举头望明月，低头思故乡 (Podignem glavu ka mesecu, spustim je misleći na dom).',tags:['praznik','porodica','hrana']}
+];
+
+const DAILY_LESSONS = [
+  {day:1,topic:'Osnovni pozdravi',icon:'👋',tip:'Kinezi se retko rukuju sa strancima — blagi naklon ili osmeh su sasvim dovoljni.',words:[
+    {zh:'你好',py:'nǐ hǎo',sr:'Zdravo / Ćao'},{zh:'早上好',py:'zǎo shang hǎo',sr:'Dobro jutro'},
+    {zh:'晚上好',py:'wǎn shang hǎo',sr:'Dobro veče'},{zh:'再见',py:'zài jiàn',sr:'Doviđenja'},
+    {zh:'谢谢',py:'xiè xie',sr:'Hvala'}
+  ]},
+  {day:2,topic:'Brojevi 1-10',icon:'🔢',tip:'Kinezi često broje na prste — ali drugačije nego mi! Pogledaj online kako Kinezi pokazuju brojeve 1-10 jednom rukom.',words:[
+    {zh:'一',py:'yī',sr:'1'},{zh:'二',py:'èr',sr:'2'},{zh:'三',py:'sān',sr:'3'},
+    {zh:'四',py:'sì',sr:'4'},{zh:'五',py:'wǔ',sr:'5'},{zh:'六',py:'liù',sr:'6'},
+    {zh:'七',py:'qī',sr:'7'},{zh:'八',py:'bā',sr:'8'},{zh:'九',py:'jiǔ',sr:'9'},{zh:'十',py:'shí',sr:'10'}
+  ]},
+  {day:3,topic:'Porodica',icon:'👨‍👩‍👧‍👦',tip:'U kineskom, postoji posebna reč za starijeg i mlađeg brata/sestru. Porodica je veoma važna!',words:[
+    {zh:'妈妈',py:'mā ma',sr:'Mama'},{zh:'爸爸',py:'bà ba',sr:'Tata'},
+    {zh:'哥哥',py:'gē ge',sr:'Stariji brat'},{zh:'姐姐',py:'jiě jie',sr:'Starija sestra'},
+    {zh:'弟弟',py:'dì di',sr:'Mlađi brat'},{zh:'妹妹',py:'mèi mei',sr:'Mlađa sestra'}
+  ]},
+  {day:4,topic:'Ja i ti',icon:'💁',tip:'Kinezi koriste 您 (nín) za starije osobe — to je učtiva verzija od 你 (nǐ).',words:[
+    {zh:'我',py:'wǒ',sr:'Ja'},{zh:'你',py:'nǐ',sr:'Ti'},
+    {zh:'他',py:'tā',sr:'On'},{zh:'她',py:'tā',sr:'Ona'},
+    {zh:'好',py:'hǎo',sr:'Dobar / Dobro'},{zh:'爱',py:'ài',sr:'Ljubav / Voleti'}
+  ]},
+  {day:5,topic:'Hrana i piće',icon:'🍜',tip:'Kad jedeš sa Kinezima, reci 好吃 (hǎo chī — ukusno!) — to ih uvek obraduje.',words:[
+    {zh:'水',py:'shuǐ',sr:'Voda'},{zh:'茶',py:'chá',sr:'Čaj'},
+    {zh:'饭',py:'fàn',sr:'Pirinač / Obrok'},{zh:'面',py:'miàn',sr:'Rezanci'},
+    {zh:'好吃',py:'hǎo chī',sr:'Ukusno!'},{zh:'买单',py:'mǎi dān',sr:'Račun, molim'}
+  ]},
+  {day:6,topic:'Pitanja',icon:'❓',tip:'Reč 吗 (ma) na kraju rečenice pretvara izjavu u pitanje — najlakši način da pitaš!',words:[
+    {zh:'什么',py:'shén me',sr:'Šta?'},{zh:'哪里',py:'nǎ lǐ',sr:'Gde?'},
+    {zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'你好吗',py:'nǐ hǎo ma',sr:'Kako si?'},
+    {zh:'可以吗',py:'kě yǐ ma',sr:'Može li?'},{zh:'明白吗',py:'míng bai ma',sr:'Razumeš li?'}
+  ]},
+  {day:7,topic:'Ime i predstavljanje',icon:'🙋',tip:'Kinezi kažu prezime pa ime. Npr. 张梓桐 (Zhang Zitong) — Zhang je prezime, Zitong je ime.',words:[
+    {zh:'我叫...',py:'wǒ jiào...',sr:'Zovem se...'},{zh:'你叫什么名字',py:'nǐ jiào shén me míng zi',sr:'Kako se zoveš?'},
+    {zh:'我是塞尔维亚人',py:'wǒ shì sài ěr wéi yà rén',sr:'Ja sam Srpkinja'},
+    {zh:'很高兴认识你',py:'hěn gāo xìng rèn shi nǐ',sr:'Drago mi je da smo se upoznali'},
+    {zh:'朋友',py:'péng you',sr:'Prijatelj'},{zh:'男朋友',py:'nán péng you',sr:'Dečko / Momak'}
+  ]},
+  {day:8,topic:'U restoranu',icon:'🍽️',tip:'U kineskom restoranu, konobar se zove: 服务员 (fú wù yuán). Podigni ruku i reci to — doći će!',words:[
+    {zh:'我要这个',py:'wǒ yào zhè ge',sr:'Želim ovo'},{zh:'不要辣',py:'bú yào là',sr:'Bez ljutog'},
+    {zh:'服务员',py:'fú wù yuán',sr:'Konobar!'},{zh:'筷子',py:'kuài zi',sr:'Štapići'},
+    {zh:'打包',py:'dǎ bāo',sr:'Za poneti'},{zh:'好吃极了',py:'hǎo chī jí le',sr:'Prefino je!'}
+  ]},
+  {day:9,topic:'Boje',icon:'🌈',tip:'Crvena (红色) je najsrećnija boja u Kini. Bela (白色) se nosi na sahranama — ne poklanjaj belo cveće.',words:[
+    {zh:'红色',py:'hóng sè',sr:'Crvena'},{zh:'蓝色',py:'lán sè',sr:'Plava'},
+    {zh:'绿色',py:'lǜ sè',sr:'Zelena'},{zh:'黄色',py:'huáng sè',sr:'Žuta'},
+    {zh:'黑色',py:'hēi sè',sr:'Crna'},{zh:'白色',py:'bái sè',sr:'Bela'}
+  ]},
+  {day:10,topic:'Vreme',icon:'⏰',tip:'Kinezi čitaju vreme ovako: 3:15 = 三点十五分 (sān diǎn shí wǔ fēn) — tri sata petnaest minuta.',words:[
+    {zh:'今天',py:'jīn tiān',sr:'Danas'},{zh:'明天',py:'míng tiān',sr:'Sutra'},
+    {zh:'昨天',py:'zuó tiān',sr:'Juče'},{zh:'现在',py:'xiàn zài',sr:'Sada'},
+    {zh:'几点',py:'jǐ diǎn',sr:'Koliko sati?'},{zh:'等一下',py:'děng yí xià',sr:'Sačekaj malo'}
+  ]},
+  {day:11,topic:'Prevoz',icon:'🚇',tip:'U Kini možeš platiti metro direktno telefonom — skeniraj QR kod na ulazu. Ne treba ti karta!',words:[
+    {zh:'地铁',py:'dì tiě',sr:'Metro'},{zh:'出租车',py:'chū zū chē',sr:'Taksi'},
+    {zh:'公共汽车',py:'gōng gòng qì chē',sr:'Autobus'},{zh:'火车',py:'huǒ chē',sr:'Voz'},
+    {zh:'飞机',py:'fēi jī',sr:'Avion'},{zh:'去哪里',py:'qù nǎ lǐ',sr:'Gde ideš?'}
+  ]},
+  {day:12,topic:'Kupovina',icon:'🛍️',tip:'Na pijaci se možeš cenjkati! Reci 太贵了 (tài guì le — preskupo!) i prodavac će ti spustiti cenu.',words:[
+    {zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'太贵了',py:'tài guì le',sr:'Preskupo!'},
+    {zh:'便宜一点',py:'pián yi yì diǎn',sr:'Malo jeftinije'},{zh:'我要买',py:'wǒ yào mǎi',sr:'Kupiću'},
+    {zh:'这个',py:'zhè ge',sr:'Ovo'},{zh:'那个',py:'nà ge',sr:'Ono'}
+  ]},
+  {day:13,topic:'Emocije',icon:'😊',tip:'Kinezi ne pokazuju uvek emocije direktno — ali reči su pune topline kad ih znaš. 我爱你 znači "volim te".',words:[
+    {zh:'开心',py:'kāi xīn',sr:'Srećan'},{zh:'难过',py:'nán guò',sr:'Tužan'},
+    {zh:'生气',py:'shēng qì',sr:'Ljut'},{zh:'累',py:'lèi',sr:'Umoran'},
+    {zh:'想你',py:'xiǎng nǐ',sr:'Nedostaješ mi'},{zh:'我爱你',py:'wǒ ài nǐ',sr:'Volim te'}
+  ]},
+  {day:14,topic:'Hitne fraze',icon:'🆘',tip:'Sačuvaj ove fraze u telefonu — mogu ti zatrebati! 救命 (jiù mìng) znači "Upomoć!"',words:[
+    {zh:'救命',py:'jiù mìng',sr:'Upomoć!'},{zh:'我不舒服',py:'wǒ bù shū fu',sr:'Nije mi dobro'},
+    {zh:'医院',py:'yī yuàn',sr:'Bolnica'},{zh:'帮助',py:'bāng zhù',sr:'Pomoć'},
+    {zh:'手机',py:'shǒu jī',sr:'Telefon'},{zh:'充电器',py:'chōng diàn qì',sr:'Punjač'}
+  ]}
+];
+
+var _cultureCardIdx = 0;
+var _lessonDayIdx = 0;
+
+function getTodaysCultureIndex() {
+  var now = new Date(); return (now.getFullYear()*10000 + (now.getMonth()+1)*100 + now.getDate()) % CULTURE_KNOWLEDGE.length;
+}
+
+function initCultureTab() {
+  _cultureCardIdx = getTodaysCultureIndex();
+  _lessonDayIdx = 0;
+  // Load saved progress
+  var saved = localStorage.getItem('culture-lesson-progress');
+  if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
+  renderCultureCard();
+  renderDailyLesson();
+  renderChecklist();
+}
+
+function renderCultureCard() {
+  var k = CULTURE_KNOWLEDGE[_cultureCardIdx];
+  document.getElementById('cultureEmoji').textContent = k.icon;
+  document.getElementById('cultureTitleZh').textContent = k.zh;
+  document.getElementById('cultureTitleSr').textContent = k.sr;
+  document.getElementById('cultureDesc').textContent = k.desc;
+  var tagsHtml = ''; k.tags.forEach(function(t){ tagsHtml += '<span class="culture-tag">'+t+'</span>'; });
+  document.getElementById('cultureTags').innerHTML = tagsHtml;
+  document.getElementById('cultureNavInfo').textContent = (_cultureCardIdx+1) + ' / ' + CULTURE_KNOWLEDGE.length;
+  var isToday = _cultureCardIdx === getTodaysCultureIndex();
+  var card = document.getElementById('cultureMainCard');
+  if (isToday) card.classList.add('culture-today'); else card.classList.remove('culture-today');
+}
+
+function prevCultureCard() { _cultureCardIdx = (_cultureCardIdx - 1 + CULTURE_KNOWLEDGE.length) % CULTURE_KNOWLEDGE.length; renderCultureCard(); }
+function nextCultureCard() { _cultureCardIdx = (_cultureCardIdx + 1) % CULTURE_KNOWLEDGE.length; renderCultureCard(); }
+function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderCultureCard(); }
+
+function renderDailyLesson() {
+  var l = DAILY_LESSONS[_lessonDayIdx];
+  document.getElementById('llcDayBadge').textContent = 'Dan ' + l.day;
+  document.getElementById('llcTopic').textContent = l.icon + ' ' + l.topic;
+  document.getElementById('lessonNavInfo').textContent = 'Dan ' + l.day + ' / ' + DAILY_LESSONS.length;
+  var wordsHtml = '';
+  l.words.forEach(function(w){
+    wordsHtml += '<div class="llc-word-row"><span class="llc-zh">'+w.zh+'</span><span class="llc-py">'+w.py+'</span><span class="llc-sr">'+w.sr+'</span></div>';
+  });
+  document.getElementById('llcWords').innerHTML = wordsHtml;
+  document.getElementById('llcTip').innerHTML = '<span class="llc-tip-icon">💡</span> ' + l.tip;
+  // Mark current lesson as last viewed
+  var saved = localStorage.getItem('culture-lesson-progress');
+  var p = saved ? JSON.parse(saved) : {};
+  p.lastLessonDay = _lessonDayIdx;
+  localStorage.setItem('culture-lesson-progress', JSON.stringify(p));
+  renderChecklist();
+}
+
+function prevLesson() { _lessonDayIdx = Math.max(0, _lessonDayIdx - 1); renderDailyLesson(); }
+function nextLesson() { _lessonDayIdx = Math.min(DAILY_LESSONS.length - 1, _lessonDayIdx + 1); renderDailyLesson(); }
+
+function getCompletedDays() {
+  var saved = localStorage.getItem('culture-lesson-progress');
+  if (!saved) return [];
+  try { var p = JSON.parse(saved); return p.completed || []; } catch(e) { return []; }
+}
+
+function toggleLessonDay(dayNum) {
+  var completed = getCompletedDays();
+  var idx = completed.indexOf(dayNum);
+  if (idx >= 0) completed.splice(idx, 1); else completed.push(dayNum);
+  var saved = localStorage.getItem('culture-lesson-progress');
+  var p = saved ? JSON.parse(saved) : {};
+  p.completed = completed;
+  localStorage.setItem('culture-lesson-progress', JSON.stringify(p));
+  renderChecklist();
+}
+
+function renderChecklist() {
+  var completed = getCompletedDays();
+  var itemsHtml = '';
+  for (var i = 0; i < DAILY_LESSONS.length; i++) {
+    var l = DAILY_LESSONS[i];
+    var done = completed.indexOf(l.day) >= 0;
+    var current = l.day === DAILY_LESSONS[_lessonDayIdx].day;
+    itemsHtml += '<div class="checklist-item'+(done?' done':'')+(current?' current':'')+'" onclick="toggleLessonDay('+l.day+')">';
+    itemsHtml += '<span class="checklist-check">'+(done?'✅':'☐')+'</span>';
+    itemsHtml += '<span class="checklist-label">Dan '+l.day+': '+l.topic+'</span>';
+    itemsHtml += '</div>';
+  }
+  document.getElementById('checklistItems').innerHTML = itemsHtml;
+  document.getElementById('streakCount').textContent = completed.length;
+  document.getElementById('streakLabel').textContent = completed.length === 1 ? 'dan' : 'dana';
+}
+
+// Update roadmap based on completed count
+(function(){
+  var origRenderChecklist = renderChecklist;
+  renderChecklist = function() {
+    origRenderChecklist();
+    var completed = getCompletedDays();
+    var total = DAILY_LESSONS.length;
+    var pct = Math.min(100, Math.round(completed.length / total * 100));
+    var steps = document.querySelectorAll('.lr-step');
+    var stepIdx = Math.min(4, Math.floor(completed.length / Math.ceil(total / 5)));
+    steps.forEach(function(s,i){ s.classList.toggle('done', i <= stepIdx); });
+    document.querySelectorAll('.lr-connector').forEach(function(c,i){ c.classList.toggle('done', i < stepIdx); });
+    // Update streak
+    var streakEl = document.getElementById('checklistStreak');
+    if (streakEl) streakEl.style.display = completed.length > 0 ? '' : 'none';
+  };
+})();
+
+/* ================================================================
+   END CULTURE MODULE
+   ================================================================ */
+
+var _tabOrder = ['stats','symptoms','tips','diary','culture','settings'];
 var _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
   var id = btn.dataset.panel;
@@ -2169,6 +2377,7 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   if(id==='settings')loadSettingsUI();
   if(id==='symptoms'){if(activeProfile==='barry'&&getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
   if(id==='diary'){initSharedDiaryTab();}
+  if(id==='culture'){initCultureTab();}
 });});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
