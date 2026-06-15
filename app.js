@@ -1,12 +1,25 @@
 ﻿/* ================================================================
    EARLY INIT: error capture + polyfills + debug
    ================================================================ */
+console.log('=== app.js top level ===');
+var _bootStarted = false;
+
 window.onerror = function(msg, url, line, col, error) {
+  console.error('JS Error line '+line+':', msg, error);
   var errDiv = document.getElementById('jsErrorPanel');
   if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'jsErrorPanel'; errDiv.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#fff3f3;color:#c00;padding:8px;font-size:11px;max-height:120px;overflow-y:auto;font-family:monospace;border-top:2px solid red'; document.body.appendChild(errDiv); }
   errDiv.innerHTML += '<div><b>JS Error line '+line+':</b> '+msg+'</div>';
   if (error && error.stack) errDiv.innerHTML += '<div style="font-size:9px;color:#666">'+error.stack.split('\\n').slice(0,3).join('<br>')+'</div>';
 };
+
+// Global unhandled promise rejection handler
+window.addEventListener('unhandledrejection', function(event) {
+  console.error('[BOOT] Unhandled Promise Rejection:', event.reason);
+  var errDiv = document.getElementById('jsErrorPanel');
+  if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'jsErrorPanel'; errDiv.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#fff3f3;color:#c00;padding:8px;font-size:11px;max-height:120px;overflow-y:auto;font-family:monospace;border-top:2px solid red'; document.body.appendChild(errDiv); }
+  errDiv.innerHTML += '<div><b>Unhandled Rejection:</b> '+(event.reason&&event.reason.message?event.reason.message:String(event.reason))+'</div>';
+});
+
 // Polyfill URLSearchParams for old WebViews
 if (typeof URLSearchParams === 'undefined') {
   window.URLSearchParams = function(search) {
@@ -1302,6 +1315,9 @@ function loadDataFiles(retryCount) {
 function logStep(s) { if (DEBUG) { _debugLog.push('[BOOT] '+s); console.log('[BOOT] '+s); } }
 
 async function bootApp() {
+  console.log('[BOOT] bootApp function invoked');
+  if (_bootStarted) { console.log('[BOOT] already started, returning'); return; }
+  _bootStarted = true;
   logStep('bootApp started. SAFE='+SAFE+' cached='+(_dataLoaded && CULTURE_KNOWLEDGE.length > 0));
 
   // === SETUP: always run ===
@@ -3761,13 +3777,20 @@ toggleProfile = function() {
   var savedProfile = localStorage.getItem('cycle-active-profile');
   if (savedProfile && sessionLoggedIn === '1' && LOGIN_PINS[savedProfile]) {
     // Same day — auto login
+    console.log('[BOOT] Auto-login as '+savedProfile);
     activeProfile = savedProfile;
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
-    bootApp();
+    try {
+      bootApp().catch(function(e) { console.error('[BOOT] bootApp promise rejected', e); });
+    } catch(e) { console.error('[BOOT] bootApp sync error', e); }
   } else {
     // New day or no saved profile — show login
+    console.log('[BOOT] No auto-login, showing PIN screen');
     localStorage.removeItem('cycle-active-profile');
     document.getElementById('loginOverlay').classList.remove('hidden');
   }
 })();
+
+// Make bootApp globally callable (for safe mode fallback)
+window.bootApp = bootApp;
