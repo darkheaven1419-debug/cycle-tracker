@@ -17,6 +17,12 @@
 </head>
 <body>
 
+<!-- App Loader — hidden after bootApp completes -->
+<div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite">🌸</span>
+  <span style="font-size:.75rem;color:var(--text-muted,#8a7a78);font-family:sans-serif">Učitavanje...</span>
+</div>
+
 <!-- Offline Banner -->
 <div class="offline-banner" id="offlineBanner">⚠️ <span id="offline-text">Offline — neke funkcije možda ne rade</span></div>
 

@@ -1281,6 +1281,9 @@ async function bootApp() {
     }
   };
   document.addEventListener('keydown', modalKeydown);
+  // Hide app loader — initialization complete
+  var loader = document.getElementById('appLoader');
+  if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .3s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 350); }
 }
 
 // Profile-aware overrides happen in loadPerProfileSettings() below

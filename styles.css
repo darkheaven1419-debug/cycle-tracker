@@ -1028,4 +1028,4 @@ body.festival-sava{--love:#0C4076;--rose:#C62828;--gold:#FFFFFF;--rose-light:#e8
 body.festival-orthodoxmas{--love:#FFFFFF;--rose:#FFD700;--rose-light:#fff8e1;--gold:#FFD700}
 body.festival-easter{--love:#FF69B4;--rose:#90EE90;--rose-light:#f0fff0;--gold:#FFD700}
 body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:#FFD700}
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.6}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.6}}@keyframes loaderPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.2);opacity:1}}
