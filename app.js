@@ -1299,115 +1299,117 @@ function loadDataFiles(retryCount) {
   return _dataLoadPromise;
 }
 
-async function bootApp() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
-  }
+function logStep(s) { if (DEBUG) { _debugLog.push('[BOOT] '+s); console.log('[BOOT] '+s); } }
 
-  // === FORCE KILL LOADER after 4 seconds (phone fallback) ===
+async function bootApp() {
+  logStep('bootApp started. SAFE='+SAFE+' cached='+(_dataLoaded && CULTURE_KNOWLEDGE.length > 0));
+
+  // === SETUP: always run ===
+  try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=11').catch(function(){}); } catch(e) {}
+  try { loadPerProfileSettings(); logStep('loadPerProfileSettings done'); } catch(e) { logStep('loadPerProfileSettings FAILED: '+e.message); }
+
+  // === FORCE KILL: 3.5s timer ALWAYS hides loader ===
   var _loaderKilled = false;
-  var _loaderForceTimer = setTimeout(function() {
+  function forceShowUI(msg) {
+    if (_loaderKilled) return;
     _loaderKilled = true;
-    var ldr = document.getElementById('appLoader');
-    if (ldr && ldr.style.opacity !== '0') {
-      ldr.style.background = '#faf3ef';
-      document.getElementById('loaderIcon').textContent = '⚠️';
-      document.getElementById('loaderText').textContent = (lang==='sr'?'Mreža spora — koristim keš':'网络慢 — 使用缓存');
-      document.getElementById('loaderError').style.display = '';
-      document.getElementById('loaderErrorMsg').textContent = (lang==='sr'?'Dodirni ispod da nastaviš':'点击下方继续');
-      // Add tap-to-continue on the loader itself
-      ldr.style.cursor = 'pointer';
-      ldr.onclick = function() { ldr.style.opacity = '0'; ldr.style.transition = 'opacity .2s'; setTimeout(function(){ if (ldr.parentNode) ldr.remove(); }, 250); };
-    }
-  }, 4000);
+    logStep('FORCE SHOW UI: '+msg);
+    try {
+      var ldr = document.getElementById('appLoader');
+      if (ldr) { ldr.style.display = 'none'; if (ldr.parentNode) ldr.parentNode.removeChild(ldr); }
+    } catch(e) {}
+    try { updateProfileUI(); renderAll(); initDashboard(); } catch(e) {}
+  }
+  var _forceTimer = setTimeout(function() { forceShowUI('3.5s timeout'); }, 3500);
 
   function hideLoader() {
     if (_loaderKilled) return;
-    clearTimeout(_loaderForceTimer);
-    var ldr = document.getElementById('appLoader');
-    if (ldr) { ldr.style.opacity = '0'; ldr.style.transition = 'opacity .2s'; setTimeout(function(){ if (ldr.parentNode) ldr.remove(); }, 250); }
+    _loaderKilled = true;
+    clearTimeout(_forceTimer);
+    logStep('hideLoader called');
+    try {
+      var ldr = document.getElementById('appLoader');
+      if (ldr) { ldr.style.display = 'none'; if (ldr.parentNode) ldr.parentNode.removeChild(ldr); }
+    } catch(e) {}
   }
 
-  loadPerProfileSettings();
-
-  // === SAFE MODE: skip heavy features ===
+  // === SAFE MODE: immediate fallback ===
   if (SAFE) {
-    document.getElementById('loaderText').textContent = '🛡️ Safe Mode — osnovni prikaz';
-    if (DEBUG) _debugLog.push('SAFE mode: skipping heavy features');
+    logStep('SAFE mode: setting fallback data and hiding loader');
+    document.getElementById('loaderText').textContent = '🛡️ Safe Mode';
+    // Ensure minimal data
+    if (CULTURE_KNOWLEDGE.length === 0) CULTURE_KNOWLEDGE = [{id:1,zh:'安全模式',sr:'Safe Mode',icon:'🛡️',desc:'Dobrodošli u safe mode. Mrežne funkcije su onemogućene.',desc_sr:'Dobrodošli u safe mode.',tags:['safe']}];
+    if (DAILY_LESSONS.length === 0) DAILY_LESSONS = [{day:1,topic:'Safe Mode',icon:'🛡️',tip:'Osnovni prikaz',words:[]}];
+    if (MOTIVATIONAL_QUOTES.length === 0) MOTIVATIONAL_QUOTES = [{zh:'安全模式已启动',sr:'Safe Mode aktivan'}];
+    _dataLoaded = true;
+    try { state = loadState(); } catch(e) { state = { records:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7}, _migrated:true }; }
+    try { applyTheme(theme); setLang(lang); } catch(e) {}
+    try { updateProfileUI(); renderAll(); loadSettingsUI(); initDashboard(); } catch(e) {}
+    hideLoader();
+    return; // SAFE mode done — no network activity below
   }
 
-  // Hide loader immediately if we have cached data
+  // === NORMAL MODE ===
+  // Load cached data first for instant render
+  logStep('cached data: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length);
   if (_dataLoaded && CULTURE_KNOWLEDGE.length > 0) {
     hideLoader();
+    logStep('loader hidden (cached data available)');
   }
 
-  // Start background data refresh (skip network in SAFE mode)
+  // Background data refresh with guaranteed resolve
+  logStep('starting loadDataFiles...');
+  loadDataFiles().then(function() {
+    logStep('loadDataFiles completed');
+    hideLoader();
+  }).catch(function(e) {
+    logStep('loadDataFiles FAILED: '+e.message);
+    hideLoader(); // hide loader even on failure
+  });
+
+  // These must never throw
+  try { state = loadState(); logStep('loadState done'); } catch(e) { logStep('loadState FAILED: '+e.message); state = { records:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7}, _migrated:true }; }
+  try { lastCycleCount = predict().cycles.length; } catch(e) { lastCycleCount = 0; }
+  try { applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner(); logStep('theme+festival done'); } catch(e) { logStep('theme FAILED: '+e.message); }
+
+  // Render UI
+  try { updateProfileUI(); } catch(e) { logStep('updateProfileUI FAILED: '+e.message); }
+  try { renderAll(); logStep('renderAll done'); } catch(e) { logStep('renderAll FAILED: '+e.message); }
+  try { loadSettingsUI(); } catch(e) {}
+  try { initDashboard(); logStep('initDashboard done'); } catch(e) { logStep('initDashboard FAILED: '+e.message); }
+
+  // === Pull shared data (background, non-blocking) ===
+  try {
+    if (getGitHubToken() && !SAFE) {
+      logStep('pulling shared data...');
+      pullAllSharedData().then(function() {
+        logStep('shared data pulled OK');
+        try {
+          var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+          if (sd && sd.records) { state.records = sd.records.map(function(r) { return new Date(r); }); state.periodEnds = sd.periodEnds || {}; state.symptoms = sd.symptoms || {}; state.settings = sd.settings || { cycleLength: 28, periodLength: 7 }; }
+        } catch(e) {}
+        try { if (activeProfile === 'barry') { renderCalendar(); renderBarrySymptomView(); renderTips(); } } catch(e) {}
+        try { renderHug(); renderGratitude(); renderSong(); renderCheckin(); renderSharedDiary(); renderDateStrip(); renderDashboard(); updateSyncStatusBadge(); } catch(e) {}
+        try { updateCycleCounter(predict().cycles.length); } catch(e) {}
+      }).catch(function(e) { logStep('shared data pull FAILED: '+e.message); });
+    }
+  } catch(e) { logStep('shared data setup FAILED: '+e.message); }
+
+  // Weather + calendar (background)
   if (!SAFE) {
-    loadDataFiles().then(function() {
-      if (!_dataLoaded || CULTURE_KNOWLEDGE.length === 0) { }
-      hideLoader();
-    });
-  } else {
-    // SAFE mode: hide loader immediately
-    setTimeout(hideLoader, 500);
+    try { fetchWeather(); logStep('fetchWeather started'); } catch(e) { logStep('fetchWeather FAILED: '+e.message); }
+    try { loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; try { localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); } catch(e2) {} }); } catch(e) { logStep('loadCalendarData FAILED: '+e.message); }
   }
-  state = loadState();
-  lastCycleCount = predict().cycles.length;
-  applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
-
-  // === Render UI from cached data immediately ===
-  updateProfileUI();
-  renderAll(); loadSettingsUI();
-  initDashboard();
-
-  // === Pull shared data from GitHub (skip in SAFE mode) ===
-  if (getGitHubToken() && !SAFE) {
-    // GitHub API timeout detection (3s)
-    var ghTimeout = new Promise(function(resolve) { setTimeout(function() { resolve('timeout'); }, 3000); });
-    Promise.race([pullAllSharedData(), ghTimeout]).then(function(result) {
-      if (result === 'timeout') {
-        console.warn('[GitHub] API timeout — telefon možda blokira GitHub');
-        var toastMsg = (lang==='sr'?'☁️ Sinhronizacija nije uspela — mreža blokira GitHub':'☁️ 同步失败 — 网络可能限制了 GitHub');
-        if (typeof toast === 'function') toast(toastMsg);
-      }
-      try {
-        var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
-        if (sd && sd.records) {
-          state.records = sd.records.map(function(r) { return new Date(r); });
-          state.periodEnds = sd.periodEnds || {};
-          state.symptoms = sd.symptoms || {};
-          state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
-        }
-      } catch(e) {}
-      if (activeProfile === 'barry') {
-        renderCalendar();
-        renderBarrySymptomView();
-        renderTips();
-      }
-      renderHug(); renderGratitude(); renderSong(); renderCheckin();
-      renderSharedDiary(); renderDateStrip();
-      renderDashboard(); // Refresh dashboard with synced data
-      updateSyncStatusBadge();
-      updateCycleCounter(predict().cycles.length);
-    });
-  }
-
-  if (!SAFE) {
-    fetchWeather();
-    loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
-  }
-  showOnboardingIfNeeded();
-  if (activeProfile === 'andjela') showGreeting();
-  updateMoonPhase();
-  updateAnniversaryCount();
-  updateCycleCounter(predict().cycles.length);
-  lastCycleCount = predict().cycles.length;
-  updateLoveCounter();
-  updateProfileUI();
-  // Show/hide symptoms tab based on activeProfile (Barry only)
-  var symTab = document.getElementById('tab-symptoms');
-  if (symTab) symTab.style.display = activeProfile === 'barry' ? '' : 'none';
-  randomThinkingOfYou();
+  try { showOnboardingIfNeeded(); } catch(e) {}
+  try { if (activeProfile === 'andjela') showGreeting(); } catch(e) {}
+  try { updateMoonPhase(); } catch(e) {}
+  try { updateAnniversaryCount(); } catch(e) {}
+  try { updateCycleCounter(predict().cycles.length); lastCycleCount = predict().cycles.length; } catch(e) {}
+  try { updateLoveCounter(); } catch(e) {}
+  try { updateProfileUI(); } catch(e) {}
+  try { var symTab = document.getElementById('tab-symptoms'); if (symTab) symTab.style.display = activeProfile === 'barry' ? '' : 'none'; } catch(e) {}
+  try { randomThinkingOfYou(); } catch(e) {}
+  logStep('bootApp finished successfully');
 
   // Modal keyboard trap: Escape closes, Tab traps focus
   var modalKeydown = function(e) {
