@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<!-- App Loader — hidden after bootApp completes -->
+<!-- App Loader — 4s forced timeout on phone -->
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
   <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite" id="loaderIcon">🌸</span>
   <span style="font-size:.75rem;color:var(--text-muted,#8a7a78);font-family:sans-serif" id="loaderText">Učitavanje...</span>
@@ -25,7 +25,13 @@
     <div style="font-size:.7rem;color:#E53935;margin-bottom:8px" id="loaderErrorMsg"></div>
     <button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.7rem;font-weight:700;cursor:pointer">🔄 Pokušaj ponovo</button>
   </div>
+  <!-- Triple-tap debug panel -->
+  <div id="loaderDebug" style="display:none;text-align:left;max-width:300px;max-height:200px;overflow-y:auto;background:rgba(0,0,0,.05);border-radius:8px;padding:8px;font-size:.55rem;font-family:monospace;color:var(--text-muted);margin-top:8px"></div>
 </div>
+<script>
+// Triple-tap loader to show debug log
+(function(){var t=0,el=document.getElementById('appLoader');el.addEventListener('click',function(){t++;if(t>=3){t=0;var d=document.getElementById('loaderDebug');if(d){d.style.display=d.style.display==='none'?'':'none';if(_debugLog)d.textContent=_debugLog.join('\\n');if(!_debugLog||_debugLog.length===0)d.textContent='No debug log yet. Add ?debug=true to URL for verbose logging.';}}});setTimeout(function(){t=0},800);})();
+</script>
 
 <!-- Offline Banner -->
 <div class="offline-banner" id="offlineBanner">⚠️ <span id="offline-text">Offline — neke funkcije možda ne rade</span></div>

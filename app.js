@@ -1,4 +1,23 @@
 ﻿/* ================================================================
+   EARLY INIT: reset + debug
+   ================================================================ */
+(function() {
+  var qs = new URLSearchParams(location.search);
+  // ?reset=true — clear all caches and reload
+  if (qs.get('reset') === 'true') {
+    var keys = Object.keys(localStorage);
+    for (var i = 0; i < keys.length; i++) {
+      if (keys[i].indexOf('app-data-cache') >= 0 || keys[i].indexOf('shared-') >= 0 || keys[i].indexOf('culture-') >= 0)
+        localStorage.removeItem(keys[i]);
+    }
+    sessionStorage.clear();
+    var cleanUrl = location.href.split('?')[0];
+    location.replace(cleanUrl);
+    return;
+  }
+})();
+
+/* ================================================================
    i18n — Full 3-language data (sr as default for Anđela)
    ================================================================ */
 const I18N = {
@@ -1259,22 +1278,44 @@ async function bootApp() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
+
+  // === FORCE KILL LOADER after 4 seconds (phone fallback) ===
+  var _loaderKilled = false;
+  var _loaderForceTimer = setTimeout(function() {
+    _loaderKilled = true;
+    var ldr = document.getElementById('appLoader');
+    if (ldr && ldr.style.opacity !== '0') {
+      ldr.style.background = '#faf3ef';
+      document.getElementById('loaderIcon').textContent = '⚠️';
+      document.getElementById('loaderText').textContent = (lang==='sr'?'Mreža spora — koristim keš':'网络慢 — 使用缓存');
+      document.getElementById('loaderError').style.display = '';
+      document.getElementById('loaderErrorMsg').textContent = (lang==='sr'?'Dodirni ispod da nastaviš':'点击下方继续');
+      // Add tap-to-continue on the loader itself
+      ldr.style.cursor = 'pointer';
+      ldr.onclick = function() { ldr.style.opacity = '0'; ldr.style.transition = 'opacity .2s'; setTimeout(function(){ if (ldr.parentNode) ldr.remove(); }, 250); };
+    }
+  }, 4000);
+
+  function hideLoader() {
+    if (_loaderKilled) return;
+    clearTimeout(_loaderForceTimer);
+    var ldr = document.getElementById('appLoader');
+    if (ldr) { ldr.style.opacity = '0'; ldr.style.transition = 'opacity .2s'; setTimeout(function(){ if (ldr.parentNode) ldr.remove(); }, 250); }
+  }
+
   loadPerProfileSettings();
 
   // Hide loader immediately if we have cached data
   if (_dataLoaded && CULTURE_KNOWLEDGE.length > 0) {
-    var loader = document.getElementById('appLoader');
-    if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .2s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 250); }
+    hideLoader();
   }
 
-  // Start background data refresh (non-blocking — renders from cache first)
+  // Start background data refresh (non-blocking)
   loadDataFiles().then(function() {
-    // If data was just loaded (not from cache), hide loader
-    var loader2 = document.getElementById('appLoader');
-    if (loader2 && loader2.style.opacity !== '0') {
-      loader2.style.opacity = '0'; loader2.style.transition = 'opacity .2s';
-      setTimeout(function(){ if (loader2.parentNode) loader2.remove(); }, 250);
+    if (!_dataLoaded || CULTURE_KNOWLEDGE.length === 0) {
+      // Still no data after fetch — force hide
     }
+    hideLoader();
   });
   state = loadState();
   lastCycleCount = predict().cycles.length;
@@ -1287,7 +1328,14 @@ async function bootApp() {
 
   // === Pull shared data from GitHub in BACKGROUND ===
   if (getGitHubToken()) {
-    pullAllSharedData().then(function() {
+    // GitHub API timeout detection (3s)
+    var ghTimeout = new Promise(function(resolve) { setTimeout(function() { resolve('timeout'); }, 3000); });
+    Promise.race([pullAllSharedData(), ghTimeout]).then(function(result) {
+      if (result === 'timeout') {
+        console.warn('[GitHub] API timeout — telefon možda blokira GitHub');
+        var toastMsg = (lang==='sr'?'☁️ Sinhronizacija nije uspela — mreža blokira GitHub':'☁️ 同步失败 — 网络可能限制了 GitHub');
+        if (typeof toast === 'function') toast(toastMsg);
+      }
       try {
         var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
         if (sd && sd.records) {
