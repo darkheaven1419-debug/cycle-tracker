@@ -104,12 +104,23 @@
 
   <!-- Weather -->
   <div class="card" id="weatherCard" style="display:none;padding:14px 16px;margin-bottom:12px;text-align:center">
+    <!-- Time Row -->
+    <div class="weather-times" id="weatherTimes" style="display:flex;justify-content:space-around;font-size:.58rem;color:var(--text-muted);margin-bottom:10px;gap:8px">
+      <span>🕐 <span id="timeBj">--:--</span></span>
+      <span id="timeDiff" style="color:var(--gold);font-weight:600"></span>
+      <span>🕐 <span id="timeKi">--:--</span></span>
+    </div>
+    <div class="weather-night-hint" id="weatherNightHint" style="display:none;font-size:.58rem;color:var(--lavender-dark);font-style:italic;margin-bottom:8px"></div>
     <div style="display:flex;justify-content:space-around;align-items:center">
       <div id="weatherBj" style="text-align:center;flex:1"></div>
       <div id="weatherBridge" style="font-size:.65rem;color:var(--gold);font-style:italic;line-height:1.5;padding:0 8px;text-align:center">🌉  Dunav → Jangce<br>Kikinda ↔ Peking<br>7.000 km · ♥</div>
       <div id="weatherKi" style="text-align:center;flex:1"></div>
     </div>
     <div id="weatherLove" style="font-size:.68rem;color:var(--love);margin-top:8px;font-style:italic"></div>
+    <!-- Sun Counter -->
+    <div id="sunCounter" style="font-size:.62rem;color:var(--gold);margin-top:8px;font-weight:600;cursor:pointer" onclick="clickSunCounter()" title="Klikni da povećaš"></div>
+    <!-- Daily Love Message -->
+    <div id="dailyLoveMsg" style="font-size:.68rem;color:var(--rose);margin-top:6px;font-style:italic;line-height:1.5"></div>
   </div>
 
   <div class="progress-section" id="progressSection">

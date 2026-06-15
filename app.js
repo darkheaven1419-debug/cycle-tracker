@@ -1119,6 +1119,7 @@ function exportAllData() {
     learningComments: JSON.parse(localStorage.getItem('shared-learning-comments') || '[]'),
     learningPoints: JSON.parse(localStorage.getItem('shared-learning-points') || '{}'),
     voiceData: JSON.parse(localStorage.getItem('shared-voice-data') || '{}'),
+    sunCounter: JSON.parse(localStorage.getItem('shared-sun-counter') || '{}'),
     settings: {
       activeProfile: activeProfile,
       lang: lang,
@@ -1467,6 +1468,13 @@ const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
 /* ================================================================
    WEATHER — Beijing ↔ Kikinda
    ================================================================ */
+var DAILY_LOVE_MESSAGES=[{zh:'不管多远，我的心和你在一起。',sr:'Bez obzira na udaljenost, moje srce je s tobom.'},{zh:'7000公里，但思念没有距离。',sr:'7.000 kilometara, ali čežnja nema udaljenost.'},{zh:'你是我早上醒来的第一个念头。',sr:'Ti si moja prva misao kad se probudim.'},{zh:'同一个太阳，同一份爱。',sr:'Jedno sunce, jedna ljubav.'},{zh:'每次抬头看天空，我知道你也在这片天空下。',sr:'Svaki put kad pogledam u nebo, znam da si i ti pod istim nebom.'},{zh:'从北京到贝尔格莱德，我的心跳只为你。',sr:'Od Pekinga do Beograda, moje srce kuca samo za tebe.'},{zh:'你是我跨越山海的理由。',sr:'Ti si razlog zbog kog prelazim planine i mora.'},{zh:'爱不是距离除以时间，爱是心与心的零距离。',sr:'Ljubav nije udaljenost podeljena vremenom, ljubav je nulta udaljenost izmedju srca.'},{zh:'有人问我想去哪里，我说：去有你的地方。',sr:'Pitaju me gde zelim da idem, ja kazem: tamo gde si ti.'},{zh:'世界上最美的距离，是你和我之间的距离。',sr:'Najlepsa udaljenost na svetu je ona izmedju tebe i mene.'},{zh:'今天也想你，比昨天多一点，比明天少一点。',sr:'I danas mislim na tebe, malo vise nego juce, malo manje nego sutra.'},{zh:'你是我此生最美的风景。',sr:'Ti si najlepsi prizor u mom zivotu.'}];
+function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES.length;return DAILY_LOVE_MESSAGES[idx];}
+function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
+function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+(lang==='sr'?'Već si kliknuo/la danas!':'今天已经点过了！'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+(lang==='sr'?'Dan '+sc.count+' zajedničkog sunca!':'共同仰望太阳的第'+sc.count+'天！'));}
+function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+(activeProfile==='barry'?'共同仰望太阳的第 ':'')+c+(activeProfile==='barry'?' 天 ❤️':' dan zajedničkog sunca ❤️');}else{el.innerHTML='❤️ '+(activeProfile==='barry'?'点击此处开始计数':'Klikni ovde da započneš brojanje');}}
+function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=(activeProfile==='barry'?'时差 ':'razlika ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
+
 function weatherIcon(code) {
   if(code<=3) return '☀️'; if(code<=48) return '⛅'; if(code<=57) return '🌧️';
   if(code<=67) return '🌨️'; if(code<=77) return '🌫️'; if(code<=86) return '❄️'; return '⛈️';
@@ -1479,12 +1487,14 @@ function fetchWeather() {
   if(cached){try{var d2=JSON.parse(cached);if(Date.now()-d2.t<21600000)return;}catch(e){}}
   var controller=new AbortController();var timeout=setTimeout(function(){controller.abort();},8000);
   try {
-    var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Shanghai',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
-    var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Europe/Belgrade',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
+    var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&daily=sunrise,sunset&timezone=Asia/Shanghai',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
+    var ki=fetch('https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&daily=sunrise,sunset&timezone=Europe/Belgrade',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
     Promise.all([bj,ki]).then(function(r){
       clearTimeout(timeout);
       if (!r[0] && !r[1]) return;  // both failed
-      var w={bj:r[0]?r[0].current:null,ki:r[1]?r[1].current:null,t:Date.now()};
+      var bjD=r[0]?r[0].current:null;if(bjD&&r[0].daily){bjD.sunrise=r[0].daily.sunrise[0];bjD.sunset=r[0].daily.sunset[0];}
+      var kiD=r[1]?r[1].current:null;if(kiD&&r[1].daily){kiD.sunrise=r[1].daily.sunrise[0];kiD.sunset=r[1].daily.sunset[0];}
+      var w={bj:bjD,ki:kiD,t:Date.now()};
       localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w);
     }).catch(function(){});
   } catch(e) {}
@@ -1507,6 +1517,10 @@ function renderWeather(w) {
   var poem = poems[Math.floor(Math.random() * poems.length)];
   document.getElementById('weatherLove').innerHTML='<div style="font-style:italic;margin-bottom:4px">"'+poem.txt+'"</div><div style="font-size:.62rem;opacity:.82;line-height:1.5">'+poem.barry+'</div>';
   document.getElementById('weatherLove').style.display='';
+  updateWeatherTimes();
+  var lm=getTodaysLoveMessage();var lmEl=document.getElementById('dailyLoveMsg');if(lmEl)lmEl.textContent='💌 '+(activeProfile==='barry'?lm.zh:lm.sr);
+  renderSunCounter();
+  var nh=document.getElementById('weatherNightHint');if(nh){var kiH=new Date().toLocaleString('en-US',{timeZone:'Europe/Belgrade',hour:'numeric',hour12:false});if(parseInt(kiH)>=22||parseInt(kiH)<=5){nh.style.display='';nh.textContent=activeProfile==='barry'?'🌙 Kikinda现在是深夜，Angie该休息了':'🌙 Kod tebe je kasno - vreme za spavanje, Anđela 🛏️';}else{nh.style.display='none';}}
   // Update bridge text dynamically
   var bridge = document.getElementById('weatherBridge');
   if (bridge) {
@@ -3348,6 +3362,7 @@ function collectSharedState() {
     learningComments: JSON.parse(localStorage.getItem('shared-learning-comments') || '[]'),
     learningPoints: JSON.parse(localStorage.getItem('shared-learning-points') || '{}'),
     voiceData: JSON.parse(localStorage.getItem('shared-voice-data') || '{}'),
+    sunCounter: JSON.parse(localStorage.getItem('shared-sun-counter') || '{}'),
     updated: Date.now()
   };
 }
@@ -3386,6 +3401,7 @@ function applySharedState(shared) {
   if (shared.learningComments) localStorage.setItem('shared-learning-comments', JSON.stringify(shared.learningComments));
   if (shared.learningPoints) localStorage.setItem('shared-learning-points', JSON.stringify(shared.learningPoints));
   if (shared.voiceData) localStorage.setItem('shared-voice-data', JSON.stringify(shared.voiceData));
+  if (shared.sunCounter) localStorage.setItem('shared-sun-counter', JSON.stringify(shared.sunCounter));
 }
 
 async function pushAllSharedData(retryCount) {
