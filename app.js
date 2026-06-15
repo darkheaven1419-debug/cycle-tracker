@@ -926,8 +926,7 @@ async function translateText(text, from, to) {
   }
 
   if (result) { _transCache[cacheKey] = result; return result; }
-  console.log('[Translate] All APIs failed for: ' + text.substring(0,30) + '...');
-  return null; // signal failure to caller
+  return null; // all translation APIs exhausted
 }
 async function translatePartnerEntries() {
   var btn = document.getElementById('translateBtnSm');
@@ -2406,7 +2405,11 @@ function generateShareImage() {
 var _mediaRecorder=null; var _audioChunks=[]; var _audioBlob=null;
 async function startVoiceRecording(){
   _audioChunks=[]; _audioBlob=null;
-  try{var stream=await navigator.mediaDevices.getUserMedia({audio:true}); _mediaRecorder=new MediaRecorder(stream,{mimeType:'audio/webm;codecs=opus'}); _mediaRecorder.ondataavailable=function(e){if(e.data.size>0)_audioChunks.push(e.data);}; _mediaRecorder.onstop=function(){_audioBlob=new Blob(_audioChunks,{type:'audio/webm'});renderVoiceUI();}; _mediaRecorder.start(); document.getElementById('voiceStatus').textContent='🔴 '+cl('recording'); document.getElementById('voiceStatus').style.color='#E53935'; document.getElementById('voiceStartBtn').style.display='none'; document.getElementById('voiceStopBtn').style.display=''; setTimeout(function(){if(_mediaRecorder&&_mediaRecorder.state==='recording')stopVoiceRecording();},30000);}catch(e){document.getElementById('voiceStatus').textContent='⚠️ '+cl('noMic');}
+  try{var stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  // iOS Safari compatibility: try multiple mime types
+  var mimeType='audio/webm;codecs=opus';
+  if(!MediaRecorder.isTypeSupported(mimeType)){if(MediaRecorder.isTypeSupported('audio/mp4'))mimeType='audio/mp4';else if(MediaRecorder.isTypeSupported('audio/aac'))mimeType='audio/aac';else mimeType='audio/webm';}
+  _mediaRecorder=new MediaRecorder(stream,{mimeType:mimeType}); _mediaRecorder.ondataavailable=function(e){if(e.data.size>0)_audioChunks.push(e.data);}; _mediaRecorder.onstop=function(){_audioBlob=new Blob(_audioChunks,{type:'audio/webm'});renderVoiceUI();}; _mediaRecorder.start(); document.getElementById('voiceStatus').textContent='🔴 '+cl('recording'); document.getElementById('voiceStatus').style.color='#E53935'; document.getElementById('voiceStartBtn').style.display='none'; document.getElementById('voiceStopBtn').style.display=''; setTimeout(function(){if(_mediaRecorder&&_mediaRecorder.state==='recording')stopVoiceRecording();},30000);}catch(e){document.getElementById('voiceStatus').textContent='⚠️ '+cl('noMic');}
 }
 function stopVoiceRecording(){ if(_mediaRecorder&&_mediaRecorder.state==='recording'){_mediaRecorder.stop();_mediaRecorder.stream.getTracks().forEach(function(t){t.stop();});} document.getElementById('voiceStatus').textContent='✅'; document.getElementById('voiceStatus').style.color='var(--sage-dark)'; document.getElementById('voiceStopBtn').style.display='none'; renderVoiceUI(); }
 function playVoiceRecording(){ if(!_audioBlob)return; var audio=new Audio(URL.createObjectURL(_audioBlob));audio.play(); }
