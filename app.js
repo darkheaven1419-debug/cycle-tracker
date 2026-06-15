@@ -1,4 +1,30 @@
 ﻿/* ================================================================
+   EMERGENCY ESCAPE: runs before ANYTHING else
+   ================================================================ */
+(function() {
+  var qs = window.location.search;
+  var loader = document.getElementById('appLoader');
+
+  // ?force=1 — show emergency page immediately
+  if (qs.indexOf('force=1') >= 0 || qs.indexOf('force') >= 0) {
+    if (loader) loader.style.display = 'none';
+    document.body.innerHTML = '<div style="padding:20px;font-family:sans-serif;text-align:center;margin-top:40px"><h1>🔧 Emergency OK</h1><p style="color:green;font-weight:700">JavaScript is working!</p><p style="font-size:12px;color:#666">UA: '+navigator.userAgent.substring(0,60)+'</p><div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;align-items:center"><button onclick="location.replace(location.pathname+\\'?safe=1\\')" style="padding:12px 24px;background:#ff9800;color:#fff;border:none;border-radius:8px;font-size:16px;width:200px">🛡️ Enter Safe Mode</button><button onclick="location.replace(location.pathname+\\'?debug=true&safe=1\\')" style="padding:12px 24px;background:#2196F3;color:#fff;border:none;border-radius:8px;font-size:16px;width:200px">🐛 Safe+Debug</button><button onclick="location.replace(location.pathname+\\'?reset=true\\')" style="padding:12px 24px;background:#f44336;color:#fff;border:none;border-radius:8px;font-size:16px;width:200px">🗑️ Clear Cache</button><button onclick="location.replace(location.pathname)" style="padding:12px 24px;background:#4CAF50;color:#fff;border:none;border-radius:8px;font-size:16px;width:200px">🏠 Normal</button></div></div>';
+    throw new Error('Force mode — stopping normal init');
+  }
+
+  // ?safe=1 — SYNCHRONOUS safe mode (no awaits, no fetch, no DOMContentLoaded)
+  if (qs.indexOf('safe=1') >= 0) {
+    if (loader) loader.style.display = 'none';
+    // Simple inline UI
+    var main = document.querySelector('.app') || document.body;
+    if (main) {
+      main.innerHTML = '<div style="padding:20px;font-family:sans-serif"><div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.1);margin-bottom:12px"><h2>🛡️ Safe Mode</h2><p style="color:#666;font-size:14px">Mrežne funkcije onemogućene. Osnovni prikaz.</p></div><div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.1);margin-bottom:12px" id="safeDash"><h3>📊 Status</h3><p style="color:green">Safe mode aktiviran.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="location.reload()" style="padding:10px 16px;background:#4CAF50;color:#fff;border:none;border-radius:8px">🔄 Reload</button><button onclick="location.replace(location.pathname+\\'?force=1\\')" style="padding:10px 16px;background:#2196F3;color:#fff;border:none;border-radius:8px">🔧 Emergency</button></div></div>';
+    }
+    throw new Error('Safe mode — stopping normal init');
+  }
+})();
+
+/* ================================================================
    EARLY INIT: error capture + polyfills + debug
    ================================================================ */
 console.log('=== app.js top level ===');
@@ -3776,16 +3802,17 @@ toggleProfile = function() {
   var sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
   var savedProfile = localStorage.getItem('cycle-active-profile');
   if (savedProfile && sessionLoggedIn === '1' && LOGIN_PINS[savedProfile]) {
-    // Same day — auto login
     console.log('[BOOT] Auto-login as '+savedProfile);
     activeProfile = savedProfile;
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
-    try {
-      bootApp().catch(function(e) { console.error('[BOOT] bootApp promise rejected', e); });
-    } catch(e) { console.error('[BOOT] bootApp sync error', e); }
+    // Use setTimeout to avoid blocking the event loop
+    setTimeout(function() {
+      try {
+        bootApp().catch(function(e) { console.error('[BOOT] bootApp promise rejected', e); });
+      } catch(e) { console.error('[BOOT] bootApp sync error', e); }
+    }, 10);
   } else {
-    // New day or no saved profile — show login
     console.log('[BOOT] No auto-login, showing PIN screen');
     localStorage.removeItem('cycle-active-profile');
     document.getElementById('loginOverlay').classList.remove('hidden');
