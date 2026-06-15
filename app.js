@@ -1217,7 +1217,6 @@ function loadDataFiles() {
   return _dataLoadPromise;
 }
 var _debugLog = null;
-}
 
 async function bootApp() {
   // Register service worker for PWA offline support
