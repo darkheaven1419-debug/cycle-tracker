@@ -1,20 +1,47 @@
 ﻿/* ================================================================
-   EARLY INIT: reset + debug
+   EARLY INIT: error capture + polyfills + debug
+   ================================================================ */
+window.onerror = function(msg, url, line, col, error) {
+  var errDiv = document.getElementById('jsErrorPanel');
+  if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'jsErrorPanel'; errDiv.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#fff3f3;color:#c00;padding:8px;font-size:11px;max-height:120px;overflow-y:auto;font-family:monospace;border-top:2px solid red'; document.body.appendChild(errDiv); }
+  errDiv.innerHTML += '<div><b>JS Error line '+line+':</b> '+msg+'</div>';
+  if (error && error.stack) errDiv.innerHTML += '<div style="font-size:9px;color:#666">'+error.stack.split('\\n').slice(0,3).join('<br>')+'</div>';
+};
+// Polyfill URLSearchParams for old WebViews
+if (typeof URLSearchParams === 'undefined') {
+  window.URLSearchParams = function(search) {
+    this._params = {}; var s = search || location.search;
+    if (s.indexOf('?') === 0) s = s.slice(1);
+    s.split('&').forEach(function(p) { var parts = p.split('='); if (parts[0]) this._params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || ''); }.bind(this));
+    this.get = function(k) { return this._params[k] || null; };
+  };
+}
+// Early debug log
+var _debugLog = [];
+var DEBUG = (function() {
+  try { return (new URLSearchParams(location.search)).get('debug') === 'true'; } catch(e) { return false; }
+})();
+var SAFE = (function() {
+  try { return (new URLSearchParams(location.search)).get('safe') === '1'; } catch(e) { return false; }
+})();
+if (DEBUG) { _debugLog.push('app.js loaded. DEBUG=true SAFE='+SAFE+' UA='+navigator.userAgent.substring(0,80)); }
+
+/* ================================================================
+   RESET handler
    ================================================================ */
 (function() {
-  var qs = new URLSearchParams(location.search);
-  // ?reset=true — clear all caches and reload
-  if (qs.get('reset') === 'true') {
-    var keys = Object.keys(localStorage);
-    for (var i = 0; i < keys.length; i++) {
-      if (keys[i].indexOf('app-data-cache') >= 0 || keys[i].indexOf('shared-') >= 0 || keys[i].indexOf('culture-') >= 0)
-        localStorage.removeItem(keys[i]);
+  try {
+    var qs = new URLSearchParams(location.search);
+    if (qs.get('reset') === 'true') {
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf('app-data-cache') >= 0 || keys[i].indexOf('shared-') >= 0 || keys[i].indexOf('culture-') >= 0)
+          localStorage.removeItem(keys[i]);
+      }
+      sessionStorage.clear();
+      location.replace(location.href.split('?')[0]);
     }
-    sessionStorage.clear();
-    var cleanUrl = location.href.split('?')[0];
-    location.replace(cleanUrl);
-    return;
-  }
+  } catch(e) {}
 })();
 
 /* ================================================================
@@ -1207,8 +1234,6 @@ function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+
 var _dataLoaded = false;
 var _dataLoadPromise = null;
 
-var _debugLog = null;
-
 // ===== DATA CACHE: localStorage-backed instant load =====
 var DATA_CACHE_KEY = 'app-data-cache-v1';
 function getCachedData() {
@@ -1305,18 +1330,27 @@ async function bootApp() {
 
   loadPerProfileSettings();
 
+  // === SAFE MODE: skip heavy features ===
+  if (SAFE) {
+    document.getElementById('loaderText').textContent = '🛡️ Safe Mode — osnovni prikaz';
+    if (DEBUG) _debugLog.push('SAFE mode: skipping heavy features');
+  }
+
   // Hide loader immediately if we have cached data
   if (_dataLoaded && CULTURE_KNOWLEDGE.length > 0) {
     hideLoader();
   }
 
-  // Start background data refresh (non-blocking)
-  loadDataFiles().then(function() {
-    if (!_dataLoaded || CULTURE_KNOWLEDGE.length === 0) {
-      // Still no data after fetch — force hide
-    }
-    hideLoader();
-  });
+  // Start background data refresh (skip network in SAFE mode)
+  if (!SAFE) {
+    loadDataFiles().then(function() {
+      if (!_dataLoaded || CULTURE_KNOWLEDGE.length === 0) { }
+      hideLoader();
+    });
+  } else {
+    // SAFE mode: hide loader immediately
+    setTimeout(hideLoader, 500);
+  }
   state = loadState();
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
@@ -1326,8 +1360,8 @@ async function bootApp() {
   renderAll(); loadSettingsUI();
   initDashboard();
 
-  // === Pull shared data from GitHub in BACKGROUND ===
-  if (getGitHubToken()) {
+  // === Pull shared data from GitHub (skip in SAFE mode) ===
+  if (getGitHubToken() && !SAFE) {
     // GitHub API timeout detection (3s)
     var ghTimeout = new Promise(function(resolve) { setTimeout(function() { resolve('timeout'); }, 3000); });
     Promise.race([pullAllSharedData(), ghTimeout]).then(function(result) {
@@ -1358,8 +1392,10 @@ async function bootApp() {
     });
   }
 
-  fetchWeather();
-  loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
+  if (!SAFE) {
+    fetchWeather();
+    loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
+  }
   showOnboardingIfNeeded();
   if (activeProfile === 'andjela') showGreeting();
   updateMoonPhase();

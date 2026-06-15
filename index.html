@@ -17,20 +17,39 @@
 </head>
 <body>
 
+<!-- INLINE DIAGNOSTIC: runs before app.js to verify JS engine -->
+<script>
+  window.__diag = { start: Date.now(), steps: [] };
+  window.__diag.steps.push('inline-js-started');
+  try {
+    // Test basic features
+    window.__diag.supports = {
+      fetch: typeof fetch !== 'undefined',
+      promise: typeof Promise !== 'undefined',
+      localStorage: !!window.localStorage,
+      const: (function() { try { eval('const _x=1'); return true; } catch(e) { return false; } })()
+    };
+  } catch(e) { window.__diag.steps.push('feature-test-failed:' + e.message); }
+</script>
+
 <!-- App Loader — 4s forced timeout on phone -->
-<div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+<div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px">
   <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite" id="loaderIcon">🌸</span>
-  <span style="font-size:.75rem;color:var(--text-muted,#8a7a78);font-family:sans-serif" id="loaderText">Učitavanje...</span>
+  <span style="font-size:.7rem;color:var(--text-muted,#8a7a78);font-family:sans-serif" id="loaderText">Učitavanje...</span>
+  <div id="loaderDiag" style="font-size:.5rem;color:#aaa;font-family:monospace;text-align:center;max-width:260px;line-height:1.4"></div>
   <div id="loaderError" style="display:none;text-align:center;max-width:280px">
-    <div style="font-size:.7rem;color:#E53935;margin-bottom:8px" id="loaderErrorMsg"></div>
+    <div style="font-size:.65rem;color:#E53935;margin-bottom:6px" id="loaderErrorMsg"></div>
     <button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.7rem;font-weight:700;cursor:pointer">🔄 Pokušaj ponovo</button>
+    <button onclick="location.href=location.pathname+'?safe=1'" style="padding:6px 16px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-size:.6rem;margin-top:6px;cursor:pointer">🛡️ Safe Mode</button>
   </div>
-  <!-- Triple-tap debug panel -->
-  <div id="loaderDebug" style="display:none;text-align:left;max-width:300px;max-height:200px;overflow-y:auto;background:rgba(0,0,0,.05);border-radius:8px;padding:8px;font-size:.55rem;font-family:monospace;color:var(--text-muted);margin-top:8px"></div>
+  <!-- Debug panel -->
+  <div id="loaderDebug" style="display:none;text-align:left;max-width:300px;max-height:180px;overflow-y:auto;background:rgba(0,0,0,.05);border-radius:8px;padding:8px;font-size:.5rem;font-family:monospace;color:var(--text-muted);margin-top:4px"></div>
 </div>
 <script>
-// Triple-tap loader to show debug log
-(function(){var t=0,el=document.getElementById('appLoader');el.addEventListener('click',function(){t++;if(t>=3){t=0;var d=document.getElementById('loaderDebug');if(d){d.style.display=d.style.display==='none'?'':'none';if(_debugLog)d.textContent=_debugLog.join('\\n');if(!_debugLog||_debugLog.length===0)d.textContent='No debug log yet. Add ?debug=true to URL for verbose logging.';}}});setTimeout(function(){t=0},800);})();
+// Triple-tap = show debug
+(function(){var c=0,el=document.getElementById('appLoader');el.addEventListener('click',function(){c++;if(c>=3){c=0;var d=document.getElementById('loaderDebug');if(d){d.style.display=d.style.display==='none'?'':'none';var lines=[];if(window.__diag){lines.push('Started:'+(Date.now()-window.__diag.start)+'ms');lines.push('Steps:'+window.__diag.steps.join(', '));if(window.__diag.supports)lines.push('Fetch:'+window.__diag.supports.fetch+' Promise:'+window.__diag.supports.promise+' LS:'+window.__diag.supports.localStorage+' const:'+window.__diag.supports.const);}if(window._debugLog&&window._debugLog.length>0)lines=lines.concat(window._debugLog);if(lines.length===0)lines.push('No debug data. JS may have crashed early.');d.textContent=lines.join('\\n');}}});setTimeout(function(){c=0},800);})();
+// Show diag info in loader after 1s
+setTimeout(function(){var diag=document.getElementById('loaderDiag');if(diag&&window.__diag){var ua=navigator.userAgent;diag.textContent='JS OK · '+(window.__diag.supports&&window.__diag.supports.fetch?'':'⚠no-fetch ')+'UA:'+ua.substring(ua.length-30);}},1000);
 </script>
 
 <!-- Offline Banner -->
