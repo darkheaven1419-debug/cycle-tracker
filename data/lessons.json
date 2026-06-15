@@ -1,73 +1,32 @@
 [
-  {day:1,topic:'Osnovni pozdravi',icon:'👋',tip:'Kinezi se retko rukuju sa strancima — blagi naklon ili osmeh su sasvim dovoljni.',words:[
-    {zh:'你好',py:'nǐ hǎo',sr:'Zdravo / Ćao'},{zh:'早上好',py:'zǎo shang hǎo',sr:'Dobro jutro'},
-    {zh:'晚上好',py:'wǎn shang hǎo',sr:'Dobro veče'},{zh:'再见',py:'zài jiàn',sr:'Doviđenja'},
-    {zh:'谢谢',py:'xiè xie',sr:'Hvala'}
-  ]},
-  {day:2,topic:'Brojevi 1-10',icon:'🔢',tip:'Kinezi često broje na prste — ali drugačije nego mi! Pogledaj online kako Kinezi pokazuju brojeve 1-10 jednom rukom.',words:[
-    {zh:'一',py:'yī',sr:'1'},{zh:'二',py:'èr',sr:'2'},{zh:'三',py:'sān',sr:'3'},
-    {zh:'四',py:'sì',sr:'4'},{zh:'五',py:'wǔ',sr:'5'},{zh:'六',py:'liù',sr:'6'},
-    {zh:'七',py:'qī',sr:'7'},{zh:'八',py:'bā',sr:'8'},{zh:'九',py:'jiǔ',sr:'9'},{zh:'十',py:'shí',sr:'10'}
-  ]},
-  {day:3,topic:'Porodica',icon:'👨‍👩‍👧‍👦',tip:'U kineskom, postoji posebna reč za starijeg i mlađeg brata/sestru. Porodica je veoma važna!',words:[
-    {zh:'妈妈',py:'mā ma',sr:'Mama'},{zh:'爸爸',py:'bà ba',sr:'Tata'},
-    {zh:'哥哥',py:'gē ge',sr:'Stariji brat'},{zh:'姐姐',py:'jiě jie',sr:'Starija sestra'},
-    {zh:'弟弟',py:'dì di',sr:'Mlađi brat'},{zh:'妹妹',py:'mèi mei',sr:'Mlađa sestra'}
-  ]},
-  {day:4,topic:'Ja i ti',icon:'💁',tip:'Kinezi koriste 您 (nín) za starije osobe — to je učtiva verzija od 你 (nǐ).',words:[
-    {zh:'我',py:'wǒ',sr:'Ja'},{zh:'你',py:'nǐ',sr:'Ti'},
-    {zh:'他',py:'tā',sr:'On'},{zh:'她',py:'tā',sr:'Ona'},
-    {zh:'好',py:'hǎo',sr:'Dobar / Dobro'},{zh:'爱',py:'ài',sr:'Ljubav / Voleti'}
-  ]},
-  {day:5,topic:'Hrana i piće',icon:'🍜',tip:'Kad jedeš sa Kinezima, reci 好吃 (hǎo chī — ukusno!) — to ih uvek obraduje.',words:[
-    {zh:'水',py:'shuǐ',sr:'Voda'},{zh:'茶',py:'chá',sr:'Čaj'},
-    {zh:'饭',py:'fàn',sr:'Pirinač / Obrok'},{zh:'面',py:'miàn',sr:'Rezanci'},
-    {zh:'好吃',py:'hǎo chī',sr:'Ukusno!'},{zh:'买单',py:'mǎi dān',sr:'Račun, molim'}
-  ]},
-  {day:6,topic:'Pitanja',icon:'❓',tip:'Reč 吗 (ma) na kraju rečenice pretvara izjavu u pitanje — najlakši način da pitaš!',words:[
-    {zh:'什么',py:'shén me',sr:'Šta?'},{zh:'哪里',py:'nǎ lǐ',sr:'Gde?'},
-    {zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'你好吗',py:'nǐ hǎo ma',sr:'Kako si?'},
-    {zh:'可以吗',py:'kě yǐ ma',sr:'Može li?'},{zh:'明白吗',py:'míng bai ma',sr:'Razumeš li?'}
-  ]},
-  {day:7,topic:'Ime i predstavljanje',icon:'🙋',tip:'Kinezi kažu prezime pa ime. Npr. 张梓桐 (Zhang Zitong) — Zhang je prezime, Zitong je ime.',words:[
-    {zh:'我叫...',py:'wǒ jiào...',sr:'Zovem se...'},{zh:'你叫什么名字',py:'nǐ jiào shén me míng zi',sr:'Kako se zoveš?'},
-    {zh:'我是塞尔维亚人',py:'wǒ shì sài ěr wéi yà rén',sr:'Ja sam Srpkinja'},
-    {zh:'很高兴认识你',py:'hěn gāo xìng rèn shi nǐ',sr:'Drago mi je da smo se upoznali'},
-    {zh:'朋友',py:'péng you',sr:'Prijatelj'},{zh:'男朋友',py:'nán péng you',sr:'Dečko / Momak'}
-  ]},
-  {day:8,topic:'U restoranu',icon:'🍽️',tip:'U kineskom restoranu, konobar se zove: 服务员 (fú wù yuán). Podigni ruku i reci to — doći će!',words:[
-    {zh:'我要这个',py:'wǒ yào zhè ge',sr:'Želim ovo'},{zh:'不要辣',py:'bú yào là',sr:'Bez ljutog'},
-    {zh:'服务员',py:'fú wù yuán',sr:'Konobar!'},{zh:'筷子',py:'kuài zi',sr:'Štapići'},
-    {zh:'打包',py:'dǎ bāo',sr:'Za poneti'},{zh:'好吃极了',py:'hǎo chī jí le',sr:'Prefino je!'}
-  ]},
-  {day:9,topic:'Boje',icon:'🌈',tip:'Crvena (红色) je najsrećnija boja u Kini. Bela (白色) se nosi na sahranama — ne poklanjaj belo cveće.',words:[
-    {zh:'红色',py:'hóng sè',sr:'Crvena'},{zh:'蓝色',py:'lán sè',sr:'Plava'},
-    {zh:'绿色',py:'lǜ sè',sr:'Zelena'},{zh:'黄色',py:'huáng sè',sr:'Žuta'},
-    {zh:'黑色',py:'hēi sè',sr:'Crna'},{zh:'白色',py:'bái sè',sr:'Bela'}
-  ]},
-  {day:10,topic:'Vreme',icon:'⏰',tip:'Kinezi čitaju vreme ovako: 3:15 = 三点十五分 (sān diǎn shí wǔ fēn) — tri sata petnaest minuta.',words:[
-    {zh:'今天',py:'jīn tiān',sr:'Danas'},{zh:'明天',py:'míng tiān',sr:'Sutra'},
-    {zh:'昨天',py:'zuó tiān',sr:'Juče'},{zh:'现在',py:'xiàn zài',sr:'Sada'},
-    {zh:'几点',py:'jǐ diǎn',sr:'Koliko sati?'},{zh:'等一下',py:'děng yí xià',sr:'Sačekaj malo'}
-  ]},
-  {day:11,topic:'Prevoz',icon:'🚇',tip:'U Kini možeš platiti metro direktno telefonom — skeniraj QR kod na ulazu. Ne treba ti karta!',words:[
-    {zh:'地铁',py:'dì tiě',sr:'Metro'},{zh:'出租车',py:'chū zū chē',sr:'Taksi'},
-    {zh:'公共汽车',py:'gōng gòng qì chē',sr:'Autobus'},{zh:'火车',py:'huǒ chē',sr:'Voz'},
-    {zh:'飞机',py:'fēi jī',sr:'Avion'},{zh:'去哪里',py:'qù nǎ lǐ',sr:'Gde ideš?'}
-  ]},
-  {day:12,topic:'Kupovina',icon:'🛍️',tip:'Na pijaci se možeš cenjkati! Reci 太贵了 (tài guì le — preskupo!) i prodavac će ti spustiti cenu.',words:[
-    {zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'太贵了',py:'tài guì le',sr:'Preskupo!'},
-    {zh:'便宜一点',py:'pián yi yì diǎn',sr:'Malo jeftinije'},{zh:'我要买',py:'wǒ yào mǎi',sr:'Kupiću'},
-    {zh:'这个',py:'zhè ge',sr:'Ovo'},{zh:'那个',py:'nà ge',sr:'Ono'}
-  ]},
-  {day:13,topic:'Emocije',icon:'😊',tip:'Kinezi ne pokazuju uvek emocije direktno — ali reči su pune topline kad ih znaš. 我爱你 znači "volim te".',words:[
-    {zh:'开心',py:'kāi xīn',sr:'Srećan'},{zh:'难过',py:'nán guò',sr:'Tužan'},
-    {zh:'生气',py:'shēng qì',sr:'Ljut'},{zh:'累',py:'lèi',sr:'Umoran'},
-    {zh:'想你',py:'xiǎng nǐ',sr:'Nedostaješ mi'},{zh:'我爱你',py:'wǒ ài nǐ',sr:'Volim te'}
-  ]},
-  {day:14,topic:'Hitne fraze',icon:'🆘',tip:'Sačuvaj ove fraze u telefonu — mogu ti zatrebati! 救命 (jiù mìng) znači "Upomoć!"',words:[
-    {zh:'救命',py:'jiù mìng',sr:'Upomoć!'},{zh:'我不舒服',py:'wǒ bù shū fu',sr:'Nije mi dobro'},
-    {zh:'医院',py:'yī yuàn',sr:'Bolnica'},{zh:'帮助',py:'bāng zhù',sr:'Pomoć'},
-    {zh:'手机',py:'shǒu jī',sr:'Telefon'},{zh:'充电器',py:'chōng diàn qì',sr:'Punjač'}
-  ]}
-];
+  {day:1,topic:'Osnovni pozdravi',icon:'👋',tip:'Kinezi se retko rukuju sa strancima — blagi naklon ili osmeh su sasvim dovoljni.',words:[{zh:'你好',py:'nǐ hǎo',sr:'Zdravo / Ćao'},{zh:'早上好',py:'zǎo shang hǎo',sr:'Dobro jutro'},{zh:'晚上好',py:'wǎn shang hǎo',sr:'Dobro veče'},{zh:'再见',py:'zài jiàn',sr:'Doviđenja'},{zh:'谢谢',py:'xiè xie',sr:'Hvala'}]},
+  {day:2,topic:'Brojevi 1-10',icon:'🔢',tip:'Kinezi često broje na prste — ali drugačije nego mi!',words:[{zh:'一',py:'yī',sr:'1'},{zh:'二',py:'èr',sr:'2'},{zh:'三',py:'sān',sr:'3'},{zh:'四',py:'sì',sr:'4'},{zh:'五',py:'wǔ',sr:'5'},{zh:'六',py:'liù',sr:'6'},{zh:'七',py:'qī',sr:'7'},{zh:'八',py:'bā',sr:'8'},{zh:'九',py:'jiǔ',sr:'9'},{zh:'十',py:'shí',sr:'10'}]},
+  {day:3,topic:'Porodica',icon:'👨‍👩‍👧‍👦',tip:'U kineskom, postoji posebna reč za starijeg i mlađeg brata/sestru.',words:[{zh:'妈妈',py:'mā ma',sr:'Mama'},{zh:'爸爸',py:'bà ba',sr:'Tata'},{zh:'哥哥',py:'gē ge',sr:'Stariji brat'},{zh:'姐姐',py:'jiě jie',sr:'Starija sestra'},{zh:'弟弟',py:'dì di',sr:'Mlađi brat'},{zh:'妹妹',py:'mèi mei',sr:'Mlađa sestra'}]},
+  {day:4,topic:'Ja i ti',icon:'💁',tip:'Kinezi koriste 您 (nín) za starije osobe — to je učtiva verzija od 你 (nǐ).',words:[{zh:'我',py:'wǒ',sr:'Ja'},{zh:'你',py:'nǐ',sr:'Ti'},{zh:'他',py:'tā',sr:'On'},{zh:'她',py:'tā',sr:'Ona'},{zh:'好',py:'hǎo',sr:'Dobar / Dobro'},{zh:'爱',py:'ài',sr:'Ljubav / Voleti'}]},
+  {day:5,topic:'Hrana i piće',icon:'🍜',tip:'Kad jedeš sa Kinezima, reci 好吃 (hǎo chī — ukusno!) — to ih uvek obraduje.',words:[{zh:'水',py:'shuǐ',sr:'Voda'},{zh:'茶',py:'chá',sr:'Čaj'},{zh:'饭',py:'fàn',sr:'Pirinač / Obrok'},{zh:'面',py:'miàn',sr:'Rezanci'},{zh:'好吃',py:'hǎo chī',sr:'Ukusno!'},{zh:'买单',py:'mǎi dān',sr:'Račun, molim'}]},
+  {day:6,topic:'Pitanja',icon:'❓',tip:'Reč 吗 (ma) na kraju rečenice pretvara izjavu u pitanje — najlakši način da pitaš!',words:[{zh:'什么',py:'shén me',sr:'Šta?'},{zh:'哪里',py:'nǎ lǐ',sr:'Gde?'},{zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'你好吗',py:'nǐ hǎo ma',sr:'Kako si?'},{zh:'可以吗',py:'kě yǐ ma',sr:'Može li?'},{zh:'明白吗',py:'míng bai ma',sr:'Razumeš li?'}]},
+  {day:7,topic:'Ime i predstavljanje',icon:'🙋',tip:'Kinezi kažu prezime pa ime. Npr. 张梓桐 — Zhang je prezime, Zitong je ime.',words:[{zh:'我叫...',py:'wǒ jiào...',sr:'Zovem se...'},{zh:'你叫什么名字',py:'nǐ jiào shén me míng zi',sr:'Kako se zoveš?'},{zh:'我是塞尔维亚人',py:'wǒ shì sài ěr wéi yà rén',sr:'Ja sam Srpkinja'},{zh:'很高兴认识你',py:'hěn gāo xìng rèn shi nǐ',sr:'Drago mi je'},{zh:'朋友',py:'péng you',sr:'Prijatelj'},{zh:'男朋友',py:'nán péng you',sr:'Dečko / Momak'}]},
+  {day:8,topic:'U restoranu',icon:'🍽️',tip:'U kineskom restoranu, konobar se zove: 服务员 (fú wù yuán). Podigni ruku i reci to!',words:[{zh:'我要这个',py:'wǒ yào zhè ge',sr:'Želim ovo'},{zh:'不要辣',py:'bú yào là',sr:'Bez ljutog'},{zh:'服务员',py:'fú wù yuán',sr:'Konobar!'},{zh:'筷子',py:'kuài zi',sr:'Štapići'},{zh:'打包',py:'dǎ bāo',sr:'Za poneti'},{zh:'好吃极了',py:'hǎo chī jí le',sr:'Prefino je!'}]},
+  {day:9,topic:'Boje',icon:'🌈',tip:'Crvena (红色) je najsrećnija boja u Kini. Bela (白色) se nosi na sahranama.',words:[{zh:'红色',py:'hóng sè',sr:'Crvena'},{zh:'蓝色',py:'lán sè',sr:'Plava'},{zh:'绿色',py:'lǜ sè',sr:'Zelena'},{zh:'黄色',py:'huáng sè',sr:'Žuta'},{zh:'黑色',py:'hēi sè',sr:'Crna'},{zh:'白色',py:'bái sè',sr:'Bela'}]},
+  {day:10,topic:'Vreme',icon:'⏰',tip:'Kinezi čitaju vreme: 3:15 = 三点十五分 (sān diǎn shí wǔ fēn) — tri sata petnaest minuta.',words:[{zh:'今天',py:'jīn tiān',sr:'Danas'},{zh:'明天',py:'míng tiān',sr:'Sutra'},{zh:'昨天',py:'zuó tiān',sr:'Juče'},{zh:'现在',py:'xiàn zài',sr:'Sada'},{zh:'几点',py:'jǐ diǎn',sr:'Koliko sati?'},{zh:'等一下',py:'děng yí xià',sr:'Sačekaj malo'}]},
+  {day:11,topic:'Prevoz',icon:'🚇',tip:'U Kini možeš platiti metro direktno telefonom — skeniraj QR kod na ulazu. Ne treba ti karta!',words:[{zh:'地铁',py:'dì tiě',sr:'Metro'},{zh:'出租车',py:'chū zū chē',sr:'Taksi'},{zh:'公共汽车',py:'gōng gòng qì chē',sr:'Autobus'},{zh:'火车',py:'huǒ chē',sr:'Voz'},{zh:'飞机',py:'fēi jī',sr:'Avion'},{zh:'去哪里',py:'qù nǎ lǐ',sr:'Gde ideš?'}]},
+  {day:12,topic:'Kupovina',icon:'🛍️',tip:'Na pijaci se možeš cenjkati! Reci 太贵了 (tài guì le — preskupo!) i prodavac će ti spustiti cenu.',words:[{zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'太贵了',py:'tài guì le',sr:'Preskupo!'},{zh:'便宜一点',py:'pián yi yì diǎn',sr:'Malo jeftinije'},{zh:'我要买',py:'wǒ yào mǎi',sr:'Kupiću'},{zh:'这个',py:'zhè ge',sr:'Ovo'},{zh:'那个',py:'nà ge',sr:'Ono'}]},
+  {day:13,topic:'Emocije',icon:'😊',tip:'Kinezi ne pokazuju uvek emocije direktno — ali reči su pune topline kad ih znaš.',words:[{zh:'开心',py:'kāi xīn',sr:'Srećan'},{zh:'难过',py:'nán guò',sr:'Tužan'},{zh:'生气',py:'shēng qì',sr:'Ljut'},{zh:'累',py:'lèi',sr:'Umoran'},{zh:'想你',py:'xiǎng nǐ',sr:'Nedostaješ mi'},{zh:'我爱你',py:'wǒ ài nǐ',sr:'Volim te'}]},
+  {day:14,topic:'Hitne fraze',icon:'🆘',tip:'Sačuvaj ove fraze u telefonu — mogu ti zatrebati! 救命 (jiù mìng) znači Upomoć!',words:[{zh:'救命',py:'jiù mìng',sr:'Upomoć!'},{zh:'我不舒服',py:'wǒ bù shū fu',sr:'Nije mi dobro'},{zh:'医院',py:'yī yuàn',sr:'Bolnica'},{zh:'帮助',py:'bāng zhù',sr:'Pomoć'},{zh:'手机',py:'shǒu jī',sr:'Telefon'},{zh:'充电器',py:'chōng diàn qì',sr:'Punjač'}]},
+  {day:15,topic:'Datum i vreme',icon:'📅',tip:'Kinezi čitaju datum: godina-mesec-dan. 2026年6月15日 = 15. jun 2026.',words:[{zh:'今天几号',py:'jīn tiān jǐ hào',sr:'Koji je danas datum?'},{zh:'星期一',py:'xīng qī yī',sr:'Ponedeljak'},{zh:'星期天',py:'xīng qī tiān',sr:'Nedelja'},{zh:'生日',py:'shēng rì',sr:'Rođendan'},{zh:'节日',py:'jié rì',sr:'Praznik'}]},
+  {day:16,topic:'Vreme',icon:'🌤️',tip:'Kinezi često pitaju za vreme pre nego što izađu — to je uobičajeni small talk.',words:[{zh:'今天天气怎么样',py:'jīn tiān tiān qì zěn me yàng',sr:'Kakvo je vreme danas?'},{zh:'下雨',py:'xià yǔ',sr:'Pada kiša'},{zh:'很热',py:'hěn rè',sr:'Jako je vruće'},{zh:'很冷',py:'hěn lěng',sr:'Jako je hladno'},{zh:'春天',py:'chūn tiān',sr:'Proleće'}]},
+  {day:17,topic:'Hobiji',icon:'🎨',tip:'Kinezi vole da pitaju šta voliš da radiš u slobodno vreme — to je deo upoznavanja.',words:[{zh:'你喜欢做什么',py:'nǐ xǐ huān zuò shén me',sr:'Šta voliš da radiš?'},{zh:'看书',py:'kàn shū',sr:'Čitati knjige'},{zh:'听音乐',py:'tīng yīn yuè',sr:'Slušati muziku'},{zh:'运动',py:'yùn dòng',sr:'Vežbati / Sport'},{zh:'旅行',py:'lǚ xíng',sr:'Putovati'}]},
+  {day:18,topic:'Prevoz',icon:'🚌',tip:'U Kini kažeš taksisti adresu na kineskom ili pokažeš na telefonu — aplikacija Didi je kineski Uber.',words:[{zh:'怎么去',py:'zěn me qù',sr:'Kako da odem do...'},{zh:'左转',py:'zuǒ zhuǎn',sr:'Skreni levo'},{zh:'右转',py:'yòu zhuǎn',sr:'Skreni desno'},{zh:'一直走',py:'yī zhí zǒu',sr:'Pravo'},{zh:'停在这里',py:'tíng zài zhè lǐ',sr:'Stani ovde'}]},
+  {day:19,topic:'Naručivanje hrane',icon:'📋',tip:'U restoranu sve češće skeniraš QR kod i naručuješ preko WeChata — meni je digitalan!',words:[{zh:'有菜单吗',py:'yǒu cài dān ma',sr:'Imate meni?'},{zh:'特色菜',py:'tè sè cài',sr:'Specijalitet kuće'},{zh:'少放盐',py:'shǎo fàng yán',sr:'Manje soli'},{zh:'再来一碗',py:'zài lái yī wǎn',sr:'Još jednu činiju'},{zh:'打包带走',py:'dǎ bāo dài zǒu',sr:'Zamotajte za poneti'}]},
+  {day:20,topic:'Kupovina i cenkanje',icon:'💰',tip:'Na pijaci se cenjkaj! Strategija: ponudi 60% tražene cene, nađite se na 80%.',words:[{zh:'多少钱',py:'duō shao qián',sr:'Koliko košta?'},{zh:'能不能便宜',py:'néng bù néng pián yi',sr:'Može li jeftinije?'},{zh:'我买了',py:'wǒ mǎi le',sr:'Kupiću'},{zh:'刷卡可以吗',py:'shuā kǎ kě yǐ ma',sr:'Može kartica?'},{zh:'有发票吗',py:'yǒu fā piào ma',sr:'Imate račun?'}]},
+  {day:21,topic:'Pitanje za put',icon:'🗺️',tip:'Pitaj policajca (警察) — u Kini su ljubazni. Kaži: 请问... (Izvinite...).',words:[{zh:'怎么走',py:'zěn me zǒu',sr:'Kako da dođem do...'},{zh:'远不远',py:'yuǎn bù yuǎn',sr:'Da li je daleko?'},{zh:'附近',py:'fù jìn',sr:'U blizini'},{zh:'地图',py:'dì tú',sr:'Mapa'},{zh:'我迷路了',py:'wǒ mí lù le',sr:'Izgubio/la sam se'}]},
+  {day:22,topic:'Telefonski razgovor',icon:'📞',tip:'Na telefonu se Kinezi javljaju sa 喂 (wéi — halo?). To je standardni pozdrav!',words:[{zh:'喂，你好',py:'wéi, nǐ hǎo',sr:'Halo, zdravo'},{zh:'请等一下',py:'qǐng děng yī xià',sr:'Sačekajte molim'},{zh:'我打错了',py:'wǒ dǎ cuò le',sr:'Pogrešio/la sam broj'},{zh:'听不见',py:'tīng bù jiàn',sr:'Ne čujem vas'},{zh:'发短信',py:'fā duǎn xìn',sr:'Pošalji poruku'}]},
+  {day:23,topic:'Poziv u goste',icon:'🏠',tip:'Kad te Kinez pozove kući, ponesi mali poklon. Izuj cipele na ulazu.',words:[{zh:'欢迎来我家',py:'huān yíng lái wǒ jiā',sr:'Dobrodošli u moj dom'},{zh:'请坐',py:'qǐng zuò',sr:'Sedite, molim'},{zh:'喝茶',py:'hē chá',sr:'Popijte čaj'},{zh:'别客气',py:'bié kè qi',sr:'Ne ustručavaj se'},{zh:'下次再来',py:'xià cì zài lái',sr:'Dođite opet'}]},
+  {day:24,topic:'Kod lekara',icon:'🩺',tip:'U kineskim bolnicama prvo platiš pa se lečiš. Uvek nosi pasoš.',words:[{zh:'我生病了',py:'wǒ shēng bìng le',sr:'Bolestan/na sam'},{zh:'头疼',py:'tóu téng',sr:'Boli me glava'},{zh:'发烧',py:'fā shāo',sr:'Imam temperaturu'},{zh:'医院在哪里',py:'yī yuàn zài nǎ lǐ',sr:'Gde je bolnica?'},{zh:'我需要药',py:'wǒ xū yào yào',sr:'Treba mi lek'}]},
+  {day:25,topic:'Hvala i izvinjenje',icon:'🙏',tip:'Kinezi ne govore hvala među bliskim prijateljima — sa strancima, obavezno!',words:[{zh:'非常感谢',py:'fēi cháng gǎn xiè',sr:'Mnogo hvala'},{zh:'不好意思',py:'bù hǎo yì si',sr:'Izvinite'},{zh:'没关系',py:'méi guān xi',sr:'Nema problema'},{zh:'辛苦了',py:'xīn kǔ le',sr:'Hvala na trudu'},{zh:'你真好',py:'nǐ zhēn hǎo',sr:'Baš si dobar/dobra'}]},
+  {day:26,topic:'Zanimanja',icon:'👔',tip:'Kad pitaš Kineza čime se bavi, reci 你做什么工作. Nastavnici su veoma poštovani.',words:[{zh:'老师',py:'lǎo shī',sr:'Nastavnik'},{zh:'医生',py:'yī shēng',sr:'Lekar'},{zh:'工程师',py:'gōng chéng shī',sr:'Inženjer'},{zh:'学生',py:'xué shēng',sr:'Student'},{zh:'艺术家',py:'yì shù jiā',sr:'Umetnik'}]},
+  {day:27,topic:'Pohvale',icon:'🌟',tip:'Kinezi su skromni — kad ih pohvališ, često kažu 哪里哪里 (gde, gde?), poričući pohvalu.',words:[{zh:'你真漂亮',py:'nǐ zhēn piào liang',sr:'Baš si lepa'},{zh:'你做得很好',py:'nǐ zuò de hěn hǎo',sr:'Dobro si to uradio/la'},{zh:'太厉害了',py:'tài lì hài le',sr:'Super! Odlično!'},{zh:'我喜欢你的衣服',py:'wǒ xǐ huān nǐ de yī fu',sr:'Sviđa mi se tvoja odeća'}]},
+  {day:28,topic:'Države i jezici',icon:'🌍',tip:'Kad kažeš 塞尔维亚 (Srbija), verovatno će te pitati gde je to!',words:[{zh:'中国',py:'zhōng guó',sr:'Kina'},{zh:'塞尔维亚',py:'sài ěr wéi yà',sr:'Srbija'},{zh:'中文',py:'zhōng wén',sr:'Kineski jezik'},{zh:'英语',py:'yīng yǔ',sr:'Engleski'},{zh:'我不会说中文',py:'wǒ bù huì shuō zhōng wén',sr:'Ne govorim kineski'}]},
+  {day:29,topic:'Vanredne situacije',icon:'🆘',tip:'Hitni brojevi: 110 (policija), 120 (hitna), 119 (vatrogasci). Sačuvaj!',words:[{zh:'报警',py:'bào jǐng',sr:'Zovi policiju'},{zh:'我丢了护照',py:'wǒ diū le hù zhào',sr:'Izgubio/la sam pasoš'},{zh:'大使馆',py:'dà shǐ guǎn',sr:'Ambasada'},{zh:'我需要翻译',py:'wǒ xū yào fān yì',sr:'Treba mi prevodilac'},{zh:'能帮我吗',py:'néng bāng wǒ ma',sr:'Možete li mi pomoći?'}]},
+  {day:30,topic:'Oproštaj i želje',icon:'💝',tip:'Kinezi retko kažu 我爱你 direktno — ljubav se pokazuje delima. Za Anđelu: 你是我生命中最美的风景.',words:[{zh:'你是我的一切',py:'nǐ shì wǒ de yī qiè',sr:'Ti si mi sve'},{zh:'我很想你',py:'wǒ hěn xiǎng nǐ',sr:'Mnogo mi nedostaješ'},{zh:'永远在一起',py:'yǒng yuǎn zài yī qǐ',sr:'Zauvek zajedno'},{zh:'你是最棒的',py:'nǐ shì zuì bàng de',sr:'Ti si najbolji/a'},{zh:'谢谢你爱我',py:'xiè xiè nǐ ài wǒ',sr:'Hvala ti što me voliš'}]}
+]

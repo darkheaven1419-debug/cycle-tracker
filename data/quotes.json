@@ -5,5 +5,13 @@
   {zh:'每天进步一点点。',sr:'Svaki dan po malo napreduj.'},
   {zh:'世上无难事，只怕有心人。',sr:'Ništa nije teško onome ko ima volju.'},
   {zh:'好好学习，天天向上。',sr:'Dobro uči, svaki dan napreduj.'},
-  {zh:'不怕慢，就怕站。',sr:'Ne boj se sporosti, boj se stajanja.'}
-];
+  {zh:'不怕慢，就怕站。',sr:'Ne boj se sporosti, boj se stajanja.'},
+  {zh:'学无止境，气有浩然。',sr:'Učenje nema granica, duh nema kraja.'},
+  {zh:'三人行，必有我师。',sr:'Ako troje hodaju, bar jedan mi može biti učitelj.'},
+  {zh:'有志者事竟成。',sr:'Gde ima volje, ima i načina.'},
+  {zh:'爱不是彼此凝视，而是一起朝同一个方向看。',sr:'Ljubav nije gledanje jedno u drugo, već gledanje u istom pravcu.'},
+  {zh:'海内存知己，天涯若比邻。',sr:'Pravi prijatelj je blizu srcu, makar bio na drugom kraju sveta.'},
+  {zh:'十年树木，百年树人。',sr:'Za drvo treba deset godina, za čoveka sto.'},
+  {zh:'读万卷书，行万里路。',sr:'Pročitaj deset hiljada knjiga, prepešači deset hiljada milja.'},
+  {zh:'授人以鱼，不如授人以渔。',sr:'Bolje je naučiti nekoga da peca, nego mu dati ribu.'}
+]
