@@ -1222,33 +1222,32 @@ async function bootApp() {
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
 
   // === Pull shared data from GitHub for ALL profiles ===
-  // Every device pulls independently; token must be set on each device
   if (getGitHubToken()) {
-    pullAllSharedData().then(function() {
-      // Apply shared cycle data to current state for both profiles
-      try {
-        var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
-        if (sd && sd.records) {
-          state.records = sd.records.map(function(r) { return new Date(r); });
-          state.periodEnds = sd.periodEnds || {};
-          state.symptoms = sd.symptoms || {};
-          state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
-        }
-      } catch(e) {}
-      if (activeProfile === 'barry') {
-        renderCalendar();
-        renderBarrySymptomView();
-        renderTips();
+    await pullAllSharedData();
+    // Apply shared cycle data to current state for both profiles
+    try {
+      var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+      if (sd && sd.records) {
+        state.records = sd.records.map(function(r) { return new Date(r); });
+        state.periodEnds = sd.periodEnds || {};
+        state.symptoms = sd.symptoms || {};
+        state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
       }
-      // Refresh all shared UI with synced data
-      renderHug(); renderGratitude(); renderSong(); renderCheckin();
-      renderSharedDiary(); renderDateStrip();
-      updateProfileUI();
-      updateSyncStatusBadge();
-    });
+    } catch(e) {}
+    if (activeProfile === 'barry') {
+      renderCalendar();
+      renderBarrySymptomView();
+      renderTips();
+    }
+    renderHug(); renderGratitude(); renderSong(); renderCheckin();
+    renderSharedDiary(); renderDateStrip();
+    updateSyncStatusBadge();
   }
 
+  updateProfileUI();
   renderAll(); loadSettingsUI();
+  // Initialize dashboard NOW (data files + shared data are ready)
+  initDashboard();
   fetchWeather();
   loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
   showOnboardingIfNeeded();
