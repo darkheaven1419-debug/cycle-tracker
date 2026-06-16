@@ -1218,17 +1218,14 @@ function loadDataFiles() {
 }
 
 async function bootApp() {
-  console.log('BOOTAPP START');
   // Hide loader IMMEDIATELY
   var loader = document.getElementById('appLoader');
-  console.log('bootApp loader:', !!loader);
-  if (loader) { loader.style.display = 'none'; if (loader.parentNode) loader.parentNode.removeChild(loader); console.log('loader removed'); }
+  if (loader) { loader.style.display = 'none'; if (loader.parentNode) loader.parentNode.removeChild(loader); }
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
-  console.log('bootApp step1: profile loaded, lang='+lang);
 
   // Load data in background (do NOT await — never block the UI)
   loadDataFiles().catch(function(e) { console.error('loadDataFiles failed', e); });
@@ -1265,7 +1262,7 @@ async function bootApp() {
       renderDashboard(); // Refresh dashboard with synced data
       updateSyncStatusBadge();
       updateCycleCounter(predict().cycles.length);
-    }).catch(function(e) { console.log('Shared data render skipped'); });
+    }).catch(function(e) {});
   }
 
   fetchWeather();
