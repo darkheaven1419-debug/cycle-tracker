@@ -1520,7 +1520,7 @@ var DAILY_LOVE_MESSAGES=[{zh:'不管多远，我的心和你在一起。',sr:'Be
 function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES.length;return DAILY_LOVE_MESSAGES[idx];}
 function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
 function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+(lang==='sr'?'Već si kliknuo/la danas!':'今天已经点过了！'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+(lang==='sr'?'Dan '+sc.count+' zajedničkog sunca!':'共同仰望太阳的第'+sc.count+'天！'));}
-function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+(activeProfile==='barry'?'共同仰望太阳的第 ':'')+c+(activeProfile==='barry'?' 天 ❤️':' dan zajedničkog sunca ❤️');}else{el.innerHTML='❤️ '+(activeProfile==='barry'?'点击此处开始计数':'Klikni ovde da započneš brojanje');}}
+function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;var zh=(lang||'').indexOf('zh')===0;if(c>0){el.innerHTML='☀️ '+(zh?'共同仰望太阳的第 ':'')+c+(zh?' 天 ❤️':' dan zajedničkog sunca ❤️');}else{el.innerHTML='❤️ '+(zh?'点击此处开始计数':'Klikni ovde da započneš brojanje');}}
 function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=(activeProfile==='barry'?'时差 ':'razlika ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
 
 function weatherIcon(code) {
@@ -1566,7 +1566,7 @@ function renderWeather(w) {
   document.getElementById('weatherLove').innerHTML='<div style="font-style:italic;margin-bottom:4px">"'+poem.txt+'"</div><div style="font-size:.62rem;opacity:.82;line-height:1.5">'+poem.barry+'</div>';
   document.getElementById('weatherLove').style.display='';
   updateWeatherTimes();
-  var lm=getTodaysLoveMessage();var lmEl=document.getElementById('dailyLoveMsg');if(lmEl)lmEl.textContent='💌 '+(activeProfile==='barry'?lm.zh:lm.sr);
+  var lm=getTodaysLoveMessage();var lmEl=document.getElementById('dailyLoveMsg');if(lmEl)lmEl.textContent='💌 '+((lang||'').indexOf('zh')===0?lm.zh:lm.sr);
   renderSunCounter();
   var nh=document.getElementById('weatherNightHint');if(nh){var kiH=new Date().toLocaleString('en-US',{timeZone:'Europe/Belgrade',hour:'numeric',hour12:false});if(parseInt(kiH)>=22||parseInt(kiH)<=5){nh.style.display='';nh.textContent=activeProfile==='barry'?'🌙 Kikinda现在是深夜，Angie该休息了':'🌙 Kod tebe je kasno - vreme za spavanje, Anđela 🛏️';}else{nh.style.display='none';}}
   // Update bridge text dynamically
@@ -2538,7 +2538,7 @@ function nextStudySession() {
   if (_currentStudySession < maxUnlocked) { _currentStudySession++; renderStudySession(); }
 }
 function renderStudySession() {
-  var isBarry = activeProfile === 'barry';
+  var zh = (lang || '').indexOf('zh') === 0;
   var el = function(id) { return document.getElementById(id); };
   var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
   var isLocked = _currentStudySession > maxUnlocked;
@@ -2547,15 +2547,15 @@ function renderStudySession() {
   var pct = Math.round(_studySessionCount / DAILY_LESSONS.length * 100);
   if (el('study-progress-bar')) el('study-progress-bar').style.width = pct + '%';
   if (el('study-progress-pct')) el('study-progress-pct').textContent = pct + '%';
-  if (el('study-progress-label')) el('study-progress-label').textContent = (isBarry?'已完成 ':'Završeno ')+_studySessionCount+'/'+DAILY_LESSONS.length;
+  if (el('study-progress-label')) el('study-progress-label').textContent = (zh?'已完成 ':'Završeno ')+_studySessionCount+'/'+DAILY_LESSONS.length;
   if (el('studyProgress')) el('studyProgress').textContent = _currentStudySession + ' / ' + DAILY_LESSONS.length;
 
   if (isLocked) {
     // Locked session — show lock message
     if (el('studyIcon')) el('studyIcon').textContent = '🔒';
-    if (el('studyTopic')) el('studyTopic').textContent = (isBarry?'未解锁':'Zaključano');
+    if (el('studyTopic')) el('studyTopic').textContent = (zh?'未解锁':'Zaključano');
     if (el('studySubtitle')) el('studySubtitle').textContent = '';
-    if (el('studyVocab')) el('studyVocab').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted)">'+(isBarry?'请先完成前面的课程,再解锁这一课 📖':'Prvo završi prethodne lekcije 📖')+'</div>';
+    if (el('studyVocab')) el('studyVocab').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted)">'+(zh?'请先完成前面的课程,再解锁这一课 📖':'Prvo završi prethodne lekcije 📖')+'</div>';
     if (el('studySentences')) el('studySentences').innerHTML = '';
     if (el('studyTip')) el('studyTip').textContent = '';
     var btn = el('studyStartBtn'); if (btn) { btn.textContent = '🔒'; btn.disabled = true; }
@@ -2564,25 +2564,25 @@ function renderStudySession() {
 
   var s = DAILY_LESSONS[_currentStudySession - 1]; if (!s) return;
   if (el('studyIcon')) el('studyIcon').textContent = s.icon || '📖';
-  if (el('studyTopic')) el('studyTopic').textContent = (isBarry?'第':'')+_currentStudySession+(isBarry?'次学习':'')+'：'+s.topic;
-  if (el('studySubtitle')) el('studySubtitle').textContent = (isBarry?'重点词汇':'📖 Ključne reči');
+  if (el('studyTopic')) el('studyTopic').textContent = (zh?'第':'')+_currentStudySession+(zh?'次学习':'')+'：'+s.topic;
+  if (el('studySubtitle')) el('studySubtitle').textContent = (zh?'重点词汇':'📖 Ključne reči');
   var vocabHtml = ''; s.words.forEach(function(w) { vocabHtml += '<div style="display:flex;gap:6px;padding:2px 0;border-bottom:1px solid rgba(0,0,0,.03)"><span style="font-weight:700;color:var(--love);min-width:55px;font-size:.75rem">'+w.zh+'</span><span style="color:var(--sage-dark);min-width:80px;font-size:.62rem">'+w.py+'</span><span style="color:var(--text);font-size:.68rem">'+w.sr+'</span></div>'; });
   if (el('studyVocab')) el('studyVocab').innerHTML = vocabHtml;
   var sentHtml = '';
-  if (s.challenge) { sentHtml = '<div style="font-size:.75rem;font-weight:700;color:var(--love)">💬 '+(isBarry?'例句':'Primer')+': '+s.challenge.zh+'</div><div style="font-size:.62rem;color:var(--sage-dark)">'+s.challenge.py+'</div><div style="font-size:.68rem;color:var(--text)">'+s.challenge.sr+'</div>'; }
-  if (el('studySentences')) el('studySentences').innerHTML = sentHtml || ('<div style="color:var(--text-muted);font-style:italic">'+(isBarry?'用本课词汇造一个句子吧!':'Napravi rečenicu sa rečima iz lekcije!')+'</div>');
+  if (s.challenge) { sentHtml = '<div style="font-size:.75rem;font-weight:700;color:var(--love)">💬 '+(zh?'例句':'Primer')+': '+s.challenge.zh+'</div><div style="font-size:.62rem;color:var(--sage-dark)">'+s.challenge.py+'</div><div style="font-size:.68rem;color:var(--text)">'+s.challenge.sr+'</div>'; }
+  if (el('studySentences')) el('studySentences').innerHTML = sentHtml || ('<div style="color:var(--text-muted);font-style:italic">'+(zh?'用本课词汇造一个句子吧!':'Napravi rečenicu sa rečima iz lekcije!')+'</div>');
   if (el('studyTip')) el('studyTip').textContent = '💡 ' + s.tip;
   var isNextNew = _currentStudySession > _studySessionCount;
   var btn = el('studyStartBtn');
   if (btn) {
-    if (_studySessionCount >= DAILY_LESSONS.length) { btn.textContent = '🎉 ' + (isBarry ? '全部完成!' : 'Sve završeno!'); btn.disabled = true; }
-    else { btn.textContent = isNextNew ? (isBarry ? '✅ 完成本次学习' : '✅ Završi lekciju') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
+    if (_studySessionCount >= DAILY_LESSONS.length) { btn.textContent = '🎉 ' + (zh ? '全部完成!' : 'Sve završeno!'); btn.disabled = true; }
+    else { btn.textContent = isNextNew ? (zh ? '✅ 完成本次学习' : '✅ Završi lekciju') : '✅ ' + (zh ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
   }
   var enc = el('studyEncouragement');
   if (enc && activeProfile === 'barry') {
     var pp = getPartnerProgress(); var done = (pp && pp.completed) ? pp.completed.length : 0;
     enc.style.display = done > 0 ? '' : 'none';
-    enc.innerHTML = '🌸 Angie: ' + (isBarry?'已完成 ':'završila ') + done + '/' + DAILY_LESSONS.length + ' <button onclick=\"showGlobalComments()\" style=\"font-size:.6rem;padding:2px 8px;border:1px solid var(--love);border-radius:10px;background:transparent;color:var(--love);cursor:pointer\">💬</button>';
+    enc.innerHTML = '🌸 Angie: ' + (zh?'已完成 ':'završila ') + done + '/' + DAILY_LESSONS.length + ' <button onclick=\"showGlobalComments()\" style=\"font-size:.6rem;padding:2px 8px;border:1px solid var(--love);border-radius:10px;background:transparent;color:var(--love);cursor:pointer\">💬</button>';
   }
 }
 // ===== SUB-TAB SWITCHING =====
@@ -2624,7 +2624,7 @@ function initCultureTab() {
   if (cbEl) cbEl.textContent = cl('commentBoard');
   // Update tab label
   var tbCulture = document.getElementById('tb-culture');
-  if (tbCulture) tbCulture.textContent = activeProfile === 'barry' ? '中华' : 'Kina';
+  if (tbCulture) tbCulture.textContent = (lang||'').indexOf('zh')===0 ? '中华' : 'Kina';
   // Update sub-tab labels
   switchCultureSubtab(_cultureSubtab);
   // Load saved progress
@@ -2682,7 +2682,8 @@ function renderCultureCard() {
   document.getElementById('cultureTitleZh').textContent = k.zh;
   document.getElementById('cultureTitleSr').textContent = k.sr;
   // Show description based on active profile: Barry→Chinese, Angie→Serbian
-  var isChinese = lang === 'zh-CN' || activeProfile === 'barry';
+  // Use lang variable only (language button) — NOT activeProfile
+  var isChinese = (lang || '').indexOf('zh') === 0;
   var descText = isChinese ? (CULTURE_DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
   document.getElementById('cultureDesc').textContent = descText;
   // Also toggle title visibility based on language
