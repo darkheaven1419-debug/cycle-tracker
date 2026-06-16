@@ -1,4 +1,11 @@
-﻿/* ================================================================
+﻿console.log('APP JS LOADED v17');
+try {
+  var _ldr = document.getElementById('appLoader');
+  console.log('loader found:', !!_ldr, _ldr ? 'display:'+_ldr.style.display : 'null');
+  if (_ldr) { _ldr.style.display = 'none'; console.log('loader hidden by top-level script'); }
+} catch(e) { console.error('top-level error:', e); }
+
+/* ================================================================
    i18n — Full 3-language data (sr as default for Anđela)
    ================================================================ */
 const I18N = {
@@ -1211,14 +1218,17 @@ function loadDataFiles() {
 }
 
 async function bootApp() {
-  // Hide loader IMMEDIATELY — login screen must be visible
+  console.log('BOOTAPP START');
+  // Hide loader IMMEDIATELY
   var loader = document.getElementById('appLoader');
-  if (loader) { loader.style.display = 'none'; if (loader.parentNode) loader.parentNode.removeChild(loader); }
+  console.log('bootApp loader:', !!loader);
+  if (loader) { loader.style.display = 'none'; if (loader.parentNode) loader.parentNode.removeChild(loader); console.log('loader removed'); }
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
+  console.log('bootApp step1: profile loaded, lang='+lang);
 
   // Load data in background (do NOT await — never block the UI)
   loadDataFiles().catch(function(e) { console.error('loadDataFiles failed', e); });
@@ -3583,15 +3593,19 @@ toggleProfile = function() {
   // Check if already logged in today
   var sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
   var savedProfile = localStorage.getItem('cycle-active-profile');
+  console.log('INIT: session=' + !!sessionLoggedIn + ' saved=' + savedProfile);
   if (savedProfile && sessionLoggedIn === '1' && LOGIN_PINS[savedProfile]) {
-    // Same day — auto login
+    console.log('INIT: auto-login as ' + savedProfile);
     activeProfile = savedProfile;
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
-    bootApp();
+    bootApp().catch(function(e) { console.error('bootApp rejected:', e); });
+    console.log('INIT: bootApp called');
   } else {
-    // New day or no saved profile — show login
+    console.log('INIT: showing login screen (no saved session)');
     localStorage.removeItem('cycle-active-profile');
     document.getElementById('loginOverlay').classList.remove('hidden');
+    console.log('INIT: login overlay visible');
   }
+  console.log('INIT COMPLETE');
 })();
