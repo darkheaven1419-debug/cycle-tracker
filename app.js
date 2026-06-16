@@ -2519,8 +2519,8 @@ function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display
 
 var _cultureCardIdx = 0;
 // ===== STUDY SESSION (progressive, session-based) =====
-var _studySessionCount = parseInt(localStorage.getItem('studySessionCount') || '0');
-var _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
+var _studySessionCount = parseInt(localStorage.getItem('studySessionCount') || '0') || 0;
+var _currentStudySession = 1; // will be corrected in renderStudySession after data loads
 function startStudySession() {
   // Only complete if viewing the NEXT uncompleted session
   if (_currentStudySession > _studySessionCount && _currentStudySession <= DAILY_LESSONS.length) {
@@ -2538,7 +2538,11 @@ function nextStudySession() {
   if (_currentStudySession < maxUnlocked) { _currentStudySession++; renderStudySession(); }
 }
 function renderStudySession() {
-  if (DAILY_LESSONS.length === 0) return; // data not loaded yet
+  if (DAILY_LESSONS.length === 0) return;
+  // Recompute — DAILY_LESSONS was empty at script init time
+  if (_currentStudySession < 1 || _currentStudySession > DAILY_LESSONS.length) {
+    _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length) || 1;
+  }
   var zh = (lang || '').indexOf('zh') === 0;
   var el = function(id) { return document.getElementById(id); };
   var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
