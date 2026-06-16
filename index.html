@@ -2,34 +2,56 @@
 <html lang="sr" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<!-- Preconnect for faster font delivery -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=12">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css?v=13">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
 <title>🌸 Anđelin Ciklus v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+
+<!-- POLYFILLS: Promise + fetch + URLSearchParams for old WebViews -->
+<script>
+if(typeof Promise==='undefined'){window.Promise=function(e){var n=[],t=[],o=!1,r=!1;this.then=function(e,n){var t=new Promise(function(){});return n=n||function(e){throw e},this._then=[e||function(e){return e},n,t],o?this._resolve():n.length||this._reject(),t},this["catch"]=function(e){return this.then(null,e)};var i=this;function u(e,n){setTimeout(function(){e(n)},0)}i._resolve=function(e){if(!o){o=!0;try{i._value=e,i._then&&i._then[0].call(null,e)}catch(e){i._reject(e)}}},i._reject=function(e){if(!r){r=!0;try{i._error=e,i._then&&i._then[1].call(null,e)}catch(e){}}};try{e.call(null,i._resolve,i._reject)}catch(e){i._reject(e)}};Promise.resolve=function(e){return new Promise(function(n){n(e)})};Promise.reject=function(e){return new Promise(function(n,t){t(e)})};Promise.all=function(e){return new Promise(function(n,t){var o=[],r=0;e.forEach(function(e,i){e.then(function(e){o[i]=e;r++;if(r===e.length)n(o)},t)})})};Promise.race=function(e){return new Promise(function(n,t){e.forEach(function(e){e.then(n,t)})})}}
+if(typeof fetch==='undefined'){window.fetch=function(url,opts){opts=opts||{};return new Promise(function(resolve,reject){var x=new XMLHttpRequest;x.open(opts.method||'GET',url);for(var h in(opts.headers||{}))x.setRequestHeader(h,opts.headers[h]);x.onload=function(){resolve({ok:x.status>=200&&x.status<300,status:x.status,text:function(){return Promise.resolve(x.responseText)},json:function(){return Promise.resolve(JSON.parse(x.responseText))}})};x.onerror=function(){reject(new Error('fetch failed'))};x.send(opts.body||null)})}}
+if(typeof URLSearchParams==='undefined'){window.URLSearchParams=function(s){this._p={};s=(s||location.search);if(s.indexOf('?')===0)s=s.slice(1);s.split('&').forEach(function(p){var a=p.split('=');if(a[0])this._p[decodeURIComponent(a[0])]=decodeURIComponent(a[1]||'')}.bind(this));this.get=function(k){return this._p[k]||null}}}
+if(!Array.prototype.includes)Array.prototype.includes=function(e){return this.indexOf(e)>=0};
+if(!String.prototype.startsWith)String.prototype.startsWith=function(e){return this.indexOf(e)===0};
+</script>
+
+<!-- AUTO-SAFE-MODE + 4s FORCE DOWNGRADE -->
+<script>
+(function(){
+  var ua = (navigator.userAgent||'').toLowerCase();
+  var badUA = ua.indexOf('vivobrowser')>=0 || ua.indexOf('ucbrowser')>=0 || ua.indexOf('baiduboxapp')>=0 || ua.indexOf('miuibrowser')>=0;
+  var oldAndroid = ua.indexOf('android 5')>=0 || ua.indexOf('android 6')>=0 || ua.indexOf('android 7.0')>=0;
+  var qs = location.search;
+  if (qs.indexOf('normal=1')>=0 || qs.indexOf('force=1')>=0) return; // user override
+  if ((badUA||oldAndroid) && qs.indexOf('safe=1')<0) {
+    location.replace(location.pathname+'?safe=1&auto=1'); return;
+  }
+  // 4s FORCE DOWNGRADE: always active as safety net
+  setTimeout(function(){
+    var ldr=document.getElementById('appLoader');
+    if(ldr&&ldr.style.display!=='none'){
+      ldr.style.display='none';
+      var app=document.querySelector('.app')||document.body;
+      app.innerHTML='<div style="padding:20px;font-family:sans-serif;text-align:center;margin-top:30px"><h2>🌸 Anđelin Ciklus</h2><div style="background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.08)"><p style="color:#e67e22;font-weight:700">⚠️ Mreža spora — offline režim</p><p style="font-size:13px;color:#666">Osnovne funkcije. Podaci lokalno.</p></div><div style="display:flex;flex-direction:column;gap:8px;align-items:center"><button onclick="location.replace(location.pathname+\'?safe=1\')" style="padding:12px 24px;background:#2196F3;color:#fff;border:none;border-radius:8px;width:200px;font-size:16px">🛡️ Safe Mode</button><button onclick="location.replace(location.pathname+\'?force=1\')" style="padding:12px 24px;background:#ff9800;color:#fff;border:none;border-radius:8px;width:200px;font-size:16px">🔧 Emergency</button><button onclick="location.reload()" style="padding:12px 24px;background:#4CAF50;color:#fff;border:none;border-radius:8px;width:200px;font-size:16px">🔄 Retry</button></div></div>';
+    }
+  }, 4000);
+})();
+</script>
+
 <script src="libs/html2canvas.min.js" defer></script>
 </head>
 <body>
 
-<!-- INLINE DIAGNOSTIC: runs before app.js to verify JS engine -->
 <script>
-  window.__diag = { start: Date.now(), steps: [] };
-  window.__diag.steps.push('inline-js-started');
-  try {
-    // Test basic features
-    window.__diag.supports = {
-      fetch: typeof fetch !== 'undefined',
-      promise: typeof Promise !== 'undefined',
-      localStorage: !!window.localStorage,
-      const: (function() { try { eval('const _x=1'); return true; } catch(e) { return false; } })()
-    };
-  } catch(e) { window.__diag.steps.push('feature-test-failed:' + e.message); }
+  window.__diag = { start: Date.now(), steps: ['polyfills-loaded'] };
+  window.__diag.supports = { fetch:typeof fetch!=='undefined', promise:typeof Promise!=='undefined', localStorage:!!window.localStorage };
 </script>
 
 <!-- App Loader — 4s forced timeout on phone -->
