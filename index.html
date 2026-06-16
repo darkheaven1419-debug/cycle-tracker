@@ -456,7 +456,19 @@
         <div id="lrDetailGoal" style="font-size:.62rem;color:var(--text-muted);margin-top:4px;font-style:italic"></div>
       </div>
 
-      <!-- Daily Lesson -->
+      <!-- Study Panel (session-based progressive learning) -->
+      <div class="study-panel" id="studyPanel" style="background:var(--rose-light);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--border-soft)">
+        <div class="study-header" style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem" id="studyIcon">📖</span><span style="font-weight:700;font-size:.82rem" id="studyTopic">Učitavanje...</span><span style="margin-left:auto;font-size:.62rem;color:var(--text-muted)" id="studyProgress"></span></div>
+        <div class="study-content" id="studyContent" style="font-size:.72rem;line-height:1.6"></div>
+        <div class="study-practice" id="studyPractice" style="font-size:.68rem;color:var(--sage-dark);margin-top:10px;font-style:italic"></div>
+        <div class="study-nav" style="display:flex;gap:8px;margin-top:12px;align-items:center;justify-content:center">
+          <button onclick="prevStudySession()" style="padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;font-size:.7rem">◂</button>
+          <button id="studyStartBtn" onclick="startStudySession()" style="padding:8px 20px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.72rem;font-weight:700;cursor:pointer">📖 Počni</button>
+          <button onclick="nextStudySession()" style="padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;font-size:.7rem">▸</button>
+        </div>
+      </div>
+
+      <!-- Daily Lesson (original) -->
       <div class="learning-lesson-card" id="learningLessonCard">
         <div class="llc-header">
           <span class="llc-day-badge" id="llcDayBadge">Dan 1</span>
@@ -587,7 +599,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=20" defer></script>
+<script src="app.js?v=21" defer></script>
 </body>
 </html>
 

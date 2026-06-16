@@ -2503,6 +2503,7 @@ function generateShareImage() {
   var challenges=[{zh:'你好，很高兴认识你。',py:'nǐ hǎo, hěn gāo xìng rèn shi nǐ.',sr:'Zdravo, drago mi je.'},{zh:'我想要两个包子。',py:'wǒ xiǎng yào liǎng gè bāo zi.',sr:'Želim dva baozi.'},{zh:'这是我的妈妈和爸爸。',py:'zhè shì wǒ de mā ma hé bà ba.',sr:'Ovo su moja mama i tata.'},{zh:'我爱你，Barry。',py:'wǒ ài nǐ, Barry.',sr:'Volim te, Barry.'},{zh:'这个很好吃！',py:'zhè ge hěn hǎo chī!',sr:'Ovo je jako ukusno!'},{zh:'请问，地铁站在哪里？',py:'qǐng wèn, dì tiě zhàn zài nǎ lǐ?',sr:'Gde je metro?'},{zh:'我叫Anđela，我是塞尔维亚人。',py:'wǒ jiào Anđela, wǒ shì sài ěr wéi yà rén.',sr:'Ja sam Srpkinja.'},{zh:'服务员，我要这个，不要辣。',py:'fú wù yuán, wǒ yào zhè ge, bú yào là.',sr:'Konobar, ovo, bez ljutog.'},{zh:'红色很好看，我喜欢红色。',py:'hóng sè hěn hǎo kàn.',sr:'Crvena je lepa, volim crvenu.'},{zh:'明天下午三点见。',py:'míng tiān xià wǔ sān diǎn jiàn.',sr:'Vidimo se sutra u tri.'},{zh:'我要去天安门广场。',py:'wǒ yào qù tiān ān mén guǎng chǎng.',sr:'Idem na Tjenanmen.'},{zh:'太贵了，便宜一点吧。',py:'tài guì le, pián yi yì diǎn ba.',sr:'Preskupo, spusti malo.'},{zh:'今天我很开心。',py:'jīn tiān wǒ hěn kāi xīn.',sr:'Danas sam srećna.'},{zh:'救命！我的手机没电了。',py:'jiù mìng! wǒ de shǒu jī méi diàn le.',sr:'Upomoć! Telefon mi je prazan.'}];
   DAILY_LESSONS.forEach(function(l,i){ if(challenges[i]) l.challenge=challenges[i]; });
 })();
+// STUDY_PLAN and helper functions defined above in code block
 var _mediaRecorder=null; var _audioChunks=[]; var _audioBlob=null;
 async function startVoiceRecording(){
   _audioChunks=[]; _audioBlob=null;
@@ -2520,6 +2521,31 @@ function cleanVoiceGistData(){ var vd=JSON.parse(localStorage.getItem('shared-vo
 function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display=_audioBlob?'none':''; document.getElementById('voiceStopBtn').style.display='none'; document.getElementById('voicePlayBtn').style.display=_audioBlob?'':'none'; document.getElementById('voiceSubmitBtn').style.display=_audioBlob?'':'none'; }
 
 var _cultureCardIdx = 0;
+// ===== STUDY SESSION (progressive, session-based) =====
+var _studySessionCount = parseInt(localStorage.getItem('studySessionCount') || '0');
+var _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
+function startStudySession() {
+  if (_currentStudySession <= _studySessionCount) { _studySessionCount++; _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length); }
+  else { _studySessionCount = Math.max(_studySessionCount, _currentStudySession); }
+  localStorage.setItem('studySessionCount', String(_studySessionCount));
+  if (activeProfile === 'andjela' && typeof addPoints === 'function') addPoints('andjela', 10, 'study');
+  renderStudySession();
+}
+function prevStudySession() { _currentStudySession = Math.max(1, _currentStudySession - 1); renderStudySession(); }
+function nextStudySession() { _currentStudySession = Math.min(DAILY_LESSONS.length, _currentStudySession + 1); renderStudySession(); }
+function renderStudySession() {
+  var s = DAILY_LESSONS[_currentStudySession - 1]; if (!s) return;
+  var isBarry = activeProfile === 'barry';
+  document.getElementById('studyIcon').textContent = s.icon || '📖';
+  document.getElementById('studyTopic').textContent = s.topic;
+  document.getElementById('studyProgress').textContent = (isBarry ? '第 ' : '') + _currentStudySession + ' / ' + DAILY_LESSONS.length;
+  var contentHtml = ''; s.words.forEach(function(w) { contentHtml += '<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.04)"><span style="font-weight:700;color:var(--love);min-width:60px">' + w.zh + '</span><span style="color:var(--sage-dark);font-style:italic;min-width:90px;font-size:.65rem">' + w.py + '</span><span style="color:var(--text)">' + w.sr + '</span></div>'; });
+  document.getElementById('studyContent').innerHTML = contentHtml;
+  document.getElementById('studyPractice').textContent = '💡 ' + s.tip;
+  var isNextNew = _currentStudySession > _studySessionCount;
+  var btn = document.getElementById('studyStartBtn');
+  if (btn) { btn.textContent = isNextNew ? (isBarry ? '📖 开始学习' : '📖 Počni') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew && _currentStudySession >= DAILY_LESSONS.length; }
+}
 var _lessonDayIdx = 0;
 
 function getTodaysCultureIndex() {
@@ -2541,6 +2567,7 @@ function initCultureTab() {
   if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
   renderCultureCard();
   renderDailyLesson();
+  renderStudySession();
   renderChecklist();
   // Update unread badge
   updateUnreadBadge();
