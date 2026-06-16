@@ -2534,6 +2534,8 @@ function initCultureTab() {
   if (ctEl) ctEl.textContent = cl('checklistTitle');
   var cbEl = document.getElementById('comment-board-label');
   if (cbEl) cbEl.textContent = cl('commentBoard');
+  var lrGuide = document.getElementById('lrGuide');
+  if (lrGuide) lrGuide.textContent = activeProfile === 'barry' ? '💡 点击每个阶段了解学习内容' : '💡 Klikni na svaku fazu za detalje učenja';
   // Load saved progress
   var saved = localStorage.getItem('culture-lesson-progress');
   if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
@@ -3499,6 +3501,7 @@ function applySharedState(shared) {
 
 async function pushAllSharedData(retryCount) {
   retryCount = retryCount || 0;
+  var MAX_RETRIES = 3;
   var token = getGitHubToken();
   if (!token) return;
   var state = collectSharedState();
@@ -3507,7 +3510,7 @@ async function pushAllSharedData(retryCount) {
   try {
     var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
     if (resp.ok) { var d = await resp.json(); sha = d.sha; }
-  } catch(e) { if (retryCount < 2) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } return; }
+  } catch(e) { if (retryCount < MAX_RETRIES) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } return; }
   var content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
   var body = { message: '🔄 Sync shared state', content: content };
   if (sha) body.sha = sha;
@@ -3515,13 +3518,21 @@ async function pushAllSharedData(retryCount) {
     var putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
     if (putResp.ok) {
       localStorage.setItem('shared-last-sync', Date.now());
-    } else if (retryCount < 2) {
-      // SHA conflict — pull latest and retry
+    } else if (putResp.status === 409 || putResp.status === 422) {
+      // SHA conflict — pull latest, merge, retry
+      console.warn('[Sync] 409 Conflict — pulling latest and merging');
       await pullAllSharedData();
-      // Re-collect state with merged data and retry
-      setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000);
+      if (retryCount < MAX_RETRIES) {
+        // Re-collect state (now includes remote data from pullAllSharedData)
+        setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 1500);
+      } else {
+        console.error('[Sync] Failed after ' + MAX_RETRIES + ' retries — giving up');
+        if (typeof toast === 'function') toast((lang==='sr'?'⚠️ Sinhronizacija nije uspela — pokušaj ponovo':'⚠️ 同步失败，请稍后重试'));
+      }
+    } else {
+      console.error('[Sync] Unexpected response:', putResp.status, putResp.statusText);
     }
-  } catch(e) { if (retryCount < 2) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } }
+  } catch(e) { if (retryCount < MAX_RETRIES) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } else { console.error('[Sync] Network error after retries:', e.message); } }
 }
 
 async function pullAllSharedData() {
