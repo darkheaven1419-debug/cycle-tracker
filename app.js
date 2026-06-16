@@ -2545,6 +2545,13 @@ function renderStudySession() {
   var isNextNew = _currentStudySession > _studySessionCount;
   var btn = document.getElementById('studyStartBtn');
   if (btn) { btn.textContent = isNextNew ? (isBarry ? '📖 开始学习' : '📖 Počni') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew && _currentStudySession >= DAILY_LESSONS.length; }
+  // Partner encouragement (Barry sees Angie's progress)
+  var enc = document.getElementById('studyEncouragement');
+  if (enc && activeProfile === 'barry') {
+    var pp = getPartnerProgress(); var done = (pp && pp.completed) ? pp.completed.length : 0;
+    enc.style.display = done > 0 ? '' : 'none';
+    enc.innerHTML = '🌸 Angie: ' + (isBarry ? '已完成 ' : 'zavrsila ') + done + '/' + DAILY_LESSONS.length + ' <button onclick=\"showGlobalComments()\" style=\"font-size:.6rem;padding:2px 8px;border:1px solid var(--love);border-radius:10px;background:transparent;color:var(--love);cursor:pointer\">💬</button>';
+  }
 }
 var _lessonDayIdx = 0;
 
@@ -2634,44 +2641,7 @@ function prevCultureCard() { _cultureCardIdx = (_cultureCardIdx - 1 + CULTURE_KN
 function nextCultureCard() { _cultureCardIdx = (_cultureCardIdx + 1) % CULTURE_KNOWLEDGE.length; renderCultureCard(); }
 function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderCultureCard(); }
 
-function renderDailyLesson() {
-  var l = DAILY_LESSONS[_lessonDayIdx];
-  document.getElementById('llcDayBadge').textContent = cl('dayPrefix') + ' ' + l.day + (cl('daySuffix') ? ' ' + cl('daySuffix') : '');
-  document.getElementById('llcTopic').textContent = l.icon + ' ' + l.topic;
-  document.getElementById('lessonNavInfo').textContent = cl('dayPrefix') + ' ' + l.day + ' / ' + DAILY_LESSONS.length;
-  var wordsHtml = '';
-  l.words.forEach(function(w){
-    wordsHtml += '<div class="llc-word-row"><span class="llc-zh">'+w.zh+'</span><span class="llc-py">'+w.py+'</span><span class="llc-sr">'+w.sr+'</span></div>';
-  });
-  document.getElementById('llcWords').innerHTML = wordsHtml;
-  document.getElementById('llcTip').innerHTML = '<span class="llc-tip-icon">💡</span> ' + l.tip;
-  // Voice challenge sentence
-  var vcTitle = document.getElementById('voice-challenge-title');
-  if (vcTitle) vcTitle.textContent = '🎤 ' + cl('challengeTitle');
-  if (l.challenge) {
-    var vcEl = document.getElementById('voiceChallengeSentence');
-    if (vcEl) vcEl.innerHTML = '<span style="color:var(--love);font-weight:700">'+l.challenge.zh+'</span> <span style="color:var(--text-muted);font-size:.62rem">'+l.challenge.py+'</span><br><span style="color:var(--text)">'+l.challenge.sr+'</span>';
-    document.getElementById('voiceChallenge').style.display = '';
-    document.getElementById('voiceStatus').textContent = '';
-    document.getElementById('voiceStatus').style.color = '';
-    _audioBlob = null; renderVoiceUI();
-    // Check if already recorded for this lesson
-    var hasRec = hasVoiceRecording(l.day);
-    if (hasRec) {
-      document.getElementById('voiceStatus').textContent = '✅ ' + cl('voiceListening');
-      document.getElementById('voiceStatus').style.color = 'var(--sage-dark)';
-    }
-  } else {
-    document.getElementById('voiceChallenge').style.display = 'none';
-  }
-  // Mark current lesson as last viewed
-  var saved = localStorage.getItem('culture-lesson-progress');
-  var p = saved ? JSON.parse(saved) : {};
-  p.lastLessonDay = _lessonDayIdx;
-  localStorage.setItem('culture-lesson-progress', JSON.stringify(p));
-  renderChecklist();
-}
-
+function renderDailyLesson() { renderChecklist(); }
 function prevLesson() { _lessonDayIdx = Math.max(0, _lessonDayIdx - 1); renderDailyLesson(); }
 function nextLesson() { _lessonDayIdx = Math.min(DAILY_LESSONS.length - 1, _lessonDayIdx + 1); renderDailyLesson(); }
 

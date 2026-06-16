@@ -433,49 +433,22 @@
     <div class="card learning-main-card" id="learningMainCard">
       <h3 style="margin-bottom:12px">📚 <span id="learn-title">Učenje kineskog</span></h3>
 
-      <!-- Roadmap guide -->
-      <div id="lrGuide" style="font-size:.58rem;color:var(--text-muted);text-align:center;margin-bottom:8px;font-style:italic">💡 Klikni na svaku fazu za detalje učenja</div>
-      <!-- Roadmap -->
-      <div class="learning-roadmap" id="learningRoadmap">
-        <span class="lr-step done" data-step="1" title="Pinjin">🔤</span>
-        <span class="lr-connector done"></span>
-        <span class="lr-step" data-step="2" title="200 rečenica">💬</span>
-        <span class="lr-connector"></span>
-        <span class="lr-step" data-step="3" title="300 znakova">🀄</span>
-        <span class="lr-connector"></span>
-        <span class="lr-step" data-step="4" title="Rečenice">📖</span>
-        <span class="lr-connector"></span>
-        <span class="lr-step" data-step="5" title="Čitanje">📰</span>
-      </div>
-      <div class="lr-labels">
-        <span>Pinjin</span><span>Rečenice</span><span>Znakovi</span><span>Kontekst</span><span>Čitanje</span>
-      </div>
-      <div class="lr-detail" id="lrDetail" style="display:none;margin-top:10px;padding:10px 12px;background:var(--rose-light);border-radius:10px;font-size:.68rem;line-height:1.5">
-        <div id="lrDetailTitle" style="font-weight:700;color:var(--love);margin-bottom:4px"></div>
-        <div id="lrDetailDesc"></div>
-        <div id="lrDetailGoal" style="font-size:.62rem;color:var(--text-muted);margin-top:4px;font-style:italic"></div>
-      </div>
-
-      <!-- Study Panel (session-based progressive learning) -->
-      <div class="study-panel" id="studyPanel" style="background:var(--rose-light);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--border-soft)">
-        <div class="study-header" style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:1.5rem" id="studyIcon">📖</span><span style="font-weight:700;font-size:.82rem" id="studyTopic">Učitavanje...</span><span style="margin-left:auto;font-size:.62rem;color:var(--text-muted)" id="studyProgress"></span></div>
-        <div class="study-content" id="studyContent" style="font-size:.72rem;line-height:1.6"></div>
-        <div class="study-practice" id="studyPractice" style="font-size:.68rem;color:var(--sage-dark);margin-top:10px;font-style:italic"></div>
-        <div class="study-nav" style="display:flex;gap:8px;margin-top:12px;align-items:center;justify-content:center">
-          <button onclick="prevStudySession()" style="padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;font-size:.7rem">◂</button>
-          <button id="studyStartBtn" onclick="startStudySession()" style="padding:8px 20px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.72rem;font-weight:700;cursor:pointer">📖 Počni</button>
-          <button onclick="nextStudySession()" style="padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;font-size:.7rem">▸</button>
+      <!-- Study Session Card -->
+      <div style="background:var(--rose-light);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--border-soft)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:1.4rem" id="studyIcon">📖</span>
+          <span style="font-weight:700;font-size:.82rem" id="studyTopic"></span>
+          <span style="margin-left:auto;font-size:.6rem;color:var(--text-muted)" id="studyProgress"></span>
         </div>
-      </div>
-
-      <!-- Daily Lesson (original) -->
-      <div class="learning-lesson-card" id="learningLessonCard">
-        <div class="llc-header">
-          <span class="llc-day-badge" id="llcDayBadge">Dan 1</span>
-          <span class="llc-topic" id="llcTopic"></span>
+        <div class="study-content" id="studyContent" style="font-size:.72rem;line-height:1.6;margin-bottom:8px"></div>
+        <div id="studyPractice" style="font-size:.65rem;color:var(--sage-dark);margin-bottom:10px;font-style:italic"></div>
+        <div style="display:flex;gap:6px;align-items:center;justify-content:center">
+          <button onclick="prevStudySession()" style="padding:6px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);cursor:pointer;font-size:.65rem">◂</button>
+          <button id="studyStartBtn" onclick="startStudySession()" style="padding:8px 18px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.7rem;font-weight:700;cursor:pointer">📖 Počni</button>
+          <button onclick="nextStudySession()" style="padding:6px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);cursor:pointer;font-size:.65rem">▸</button>
         </div>
-        <div class="llc-words" id="llcWords"></div>
-        <div class="llc-tip" id="llcTip"></div>
+        <!-- Partner encouragement -->
+        <div id="studyEncouragement" style="margin-top:10px;padding:8px 10px;background:var(--card);border-radius:10px;font-size:.65rem;color:var(--love);display:none"></div>
       </div>
 
       <!-- Voice Challenge -->
@@ -491,37 +464,19 @@
         </div>
       </div>
 
-      <!-- Lesson navigation -->
-      <div class="learning-lesson-nav">
-        <button class="culture-nav-btn" onclick="prevLesson()">◂</button>
-        <span id="lessonNavInfo">Dan 1 / 14</span>
-        <button class="culture-nav-btn" onclick="nextLesson()">▸</button>
-      </div>
+      <!-- Partner Progress + Points -->
+      <div class="partner-progress-panel" id="partnerProgressPanel"><div class="pp-empty">Učitavanje...</div></div>
+      <div class="points-panel" id="pointsPanel"><div class="pts-header">⭐ Poeni: <strong>0</strong></div></div>
 
-      <!-- Partner Progress Panel -->
-      <div class="partner-progress-panel" id="partnerProgressPanel">
-        <div class="pp-empty">Učitavanje...</div>
-      </div>
+      <!-- Checklist (collapsible) -->
+      <details style="font-size:.68rem;color:var(--text-muted);margin-top:8px">
+        <summary id="checklist-toggle" style="cursor:pointer;padding:6px 0">📋 Istorija učenja</summary>
+        <div id="checklistItems" style="max-height:200px;overflow-y:auto;margin-top:4px"></div>
+        <div class="checklist-streak" id="checklistStreak" style="text-align:center;font-size:.7rem;margin-top:6px">🔥 <span id="streakCount">0</span> <span id="streakLabel">dana</span></div>
+      </details>
 
-      <!-- Points & Badges Panel -->
-      <div class="points-panel" id="pointsPanel">
-        <div class="pts-header">⭐ Poeni: <strong>0</strong></div>
-        <div class="pts-badges"><span class="pts-badge locked">🎖️</span><span class="pts-badge locked">🏅</span><span class="pts-badge locked">🎓</span></div>
-      </div>
-
-      <!-- Progress Checklist -->
-      <div class="learning-checklist" id="learningChecklist">
-        <h4 style="font-size:.72rem;margin-bottom:8px;color:var(--text)">✅ <span id="checklist-title">Dnevni napredak</span></h4>
-        <div id="checklistItems"></div>
-        <div class="checklist-streak" id="checklistStreak">
-          🔥 <span id="streakCount">0</span> <span id="streakLabel">dana zaredom</span>
-        </div>
-      </div>
-
-      <!-- Global Comment Board button -->
-      <button class="btn btn-outline" onclick="showGlobalComments()" style="width:100%;margin-top:10px;font-size:.72rem;position:relative">💌 <span id="comment-board-label">Tabla za poruke</span><span id="unreadBadge" class="unread-badge" style="display:none">0</span></button>
-
-      <!-- Points Toast -->
+      <!-- Messages -->
+      <button class="btn btn-outline" onclick="showGlobalComments()" style="width:100%;margin-top:8px;font-size:.7rem;position:relative">💌 <span id="comment-board-label">Tabla za poruke</span><span id="unreadBadge" class="unread-badge" style="display:none">0</span></button>
       <div id="pointsToast" class="points-toast"><span id="pointsToastMsg">+10</span></div>
     </div>
   </div>
@@ -599,7 +554,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=21" defer></script>
+<script src="app.js?v=22" defer></script>
 </body>
 </html>
 
