@@ -104,6 +104,11 @@
     },
     "2026-06-16": {
       "andjela": {
+        "happy": "To što si dodao sve ove novitete na naš sajt. To me mnogo raduje i jako sam zahvalna na tome.",
+        "uncomf": "To što mi deluje kao da me izbegavaš i to što mi se smeješ kada se trudim da učim. I to što si rekao da ti se gadim.",
+        "thanks": "Za sav trud koji ulažeš da",
+        "wish": "",
+        "time": 1781636165526,
         "hug": {
           "time": 1781635686400
         }
@@ -202,5 +207,5 @@
     }
   },
   "sunCounter": {},
-  "updated": 1781635714381
+  "updated": 1781636165527
 }
