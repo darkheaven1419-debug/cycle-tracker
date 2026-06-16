@@ -2535,38 +2535,52 @@ function startStudySession() {
   renderStudySession();
 }
 function prevStudySession() { _currentStudySession = Math.max(1, _currentStudySession - 1); renderStudySession(); }
-function nextStudySession() { _currentStudySession = Math.min(DAILY_LESSONS.length, _currentStudySession + 1); renderStudySession(); }
+function nextStudySession() {
+  // Only advance if next session is unlocked (completed count + 1)
+  var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
+  if (_currentStudySession < maxUnlocked) { _currentStudySession++; renderStudySession(); }
+}
 function renderStudySession() {
-  var s = DAILY_LESSONS[_currentStudySession - 1]; if (!s) return;
   var isBarry = activeProfile === 'barry';
   var el = function(id) { return document.getElementById(id); };
-  if (el('studyIcon')) el('studyIcon').textContent = s.icon || '📖';
-  if (el('studyTopic')) el('studyTopic').textContent = (isBarry?'第':'')+_currentStudySession+(isBarry?'次学习':'')+'：'+s.topic;
-  if (el('studyProgress')) el('studyProgress').textContent = _currentStudySession + ' / ' + DAILY_LESSONS.length;
-  // Subtitle
-  if (el('studySubtitle')) el('studySubtitle').textContent = (isBarry?'重点词汇':'📖 Ključne reči');
-  // Vocab
-  var vocabHtml = ''; s.words.forEach(function(w) { vocabHtml += '<div style="display:flex;gap:6px;padding:2px 0;border-bottom:1px solid rgba(0,0,0,.03)"><span style="font-weight:700;color:var(--love);min-width:55px;font-size:.75rem">'+w.zh+'</span><span style="color:var(--sage-dark);min-width:80px;font-size:.62rem">'+w.py+'</span><span style="color:var(--text);font-size:.68rem">'+w.sr+'</span></div>'; });
-  if (el('studyVocab')) el('studyVocab').innerHTML = vocabHtml;
-  // Sentences (use challenge data)
-  var sentHtml = '';
-  if (s.challenge) { sentHtml = '<div style="font-size:.75rem;font-weight:700;color:var(--love)">💬 '+(isBarry?'例句':'Primer')+': '+s.challenge.zh+'</div><div style="font-size:.62rem;color:var(--sage-dark)">'+s.challenge.py+'</div><div style="font-size:.68rem;color:var(--text)">'+s.challenge.sr+'</div>'; }
-  if (el('studySentences')) el('studySentences').innerHTML = sentHtml || ('<div style="color:var(--text-muted)">'+(isBarry?'暂无例句':'Nema primera')+'</div>');
-  // Tip
-  if (el('studyTip')) el('studyTip').textContent = '💡 ' + s.tip;
-  // Progress bar
+  var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
+  var isLocked = _currentStudySession > maxUnlocked;
+
+  // Progress bar (always show based on completed count)
   var pct = Math.round(_studySessionCount / DAILY_LESSONS.length * 100);
   if (el('study-progress-bar')) el('study-progress-bar').style.width = pct + '%';
   if (el('study-progress-pct')) el('study-progress-pct').textContent = pct + '%';
   if (el('study-progress-label')) el('study-progress-label').textContent = (isBarry?'已完成 ':'Završeno ')+_studySessionCount+'/'+DAILY_LESSONS.length;
-  // Button
+  if (el('studyProgress')) el('studyProgress').textContent = _currentStudySession + ' / ' + DAILY_LESSONS.length;
+
+  if (isLocked) {
+    // Locked session — show lock message
+    if (el('studyIcon')) el('studyIcon').textContent = '🔒';
+    if (el('studyTopic')) el('studyTopic').textContent = (isBarry?'未解锁':'Zaključano');
+    if (el('studySubtitle')) el('studySubtitle').textContent = '';
+    if (el('studyVocab')) el('studyVocab').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted)">'+(isBarry?'请先完成前面的课程,再解锁这一课 📖':'Prvo završi prethodne lekcije 📖')+'</div>';
+    if (el('studySentences')) el('studySentences').innerHTML = '';
+    if (el('studyTip')) el('studyTip').textContent = '';
+    var btn = el('studyStartBtn'); if (btn) { btn.textContent = '🔒'; btn.disabled = true; }
+    return;
+  }
+
+  var s = DAILY_LESSONS[_currentStudySession - 1]; if (!s) return;
+  if (el('studyIcon')) el('studyIcon').textContent = s.icon || '📖';
+  if (el('studyTopic')) el('studyTopic').textContent = (isBarry?'第':'')+_currentStudySession+(isBarry?'次学习':'')+'：'+s.topic;
+  if (el('studySubtitle')) el('studySubtitle').textContent = (isBarry?'重点词汇':'📖 Ključne reči');
+  var vocabHtml = ''; s.words.forEach(function(w) { vocabHtml += '<div style="display:flex;gap:6px;padding:2px 0;border-bottom:1px solid rgba(0,0,0,.03)"><span style="font-weight:700;color:var(--love);min-width:55px;font-size:.75rem">'+w.zh+'</span><span style="color:var(--sage-dark);min-width:80px;font-size:.62rem">'+w.py+'</span><span style="color:var(--text);font-size:.68rem">'+w.sr+'</span></div>'; });
+  if (el('studyVocab')) el('studyVocab').innerHTML = vocabHtml;
+  var sentHtml = '';
+  if (s.challenge) { sentHtml = '<div style="font-size:.75rem;font-weight:700;color:var(--love)">💬 '+(isBarry?'例句':'Primer')+': '+s.challenge.zh+'</div><div style="font-size:.62rem;color:var(--sage-dark)">'+s.challenge.py+'</div><div style="font-size:.68rem;color:var(--text)">'+s.challenge.sr+'</div>'; }
+  if (el('studySentences')) el('studySentences').innerHTML = sentHtml || ('<div style="color:var(--text-muted);font-style:italic">'+(isBarry?'用本课词汇造一个句子吧!':'Napravi rečenicu sa rečima iz lekcije!')+'</div>');
+  if (el('studyTip')) el('studyTip').textContent = '💡 ' + s.tip;
   var isNextNew = _currentStudySession > _studySessionCount;
   var btn = el('studyStartBtn');
   if (btn) {
     if (_studySessionCount >= DAILY_LESSONS.length) { btn.textContent = '🎉 ' + (isBarry ? '全部完成!' : 'Sve završeno!'); btn.disabled = true; }
     else { btn.textContent = isNextNew ? (isBarry ? '✅ 完成本次学习' : '✅ Završi lekciju') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
   }
-  // Partner encouragement
   var enc = el('studyEncouragement');
   if (enc && activeProfile === 'barry') {
     var pp = getPartnerProgress(); var done = (pp && pp.completed) ? pp.completed.length : 0;
