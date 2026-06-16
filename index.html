@@ -46,6 +46,22 @@ if(!String.prototype.startsWith)String.prototype.startsWith=function(e){return t
 </script>
 
 <script src="libs/html2canvas.min.js" defer></script>
+
+<!-- DUAL-TRACK: both scripts load; modern browsers run app.js, old browsers run app-es5.js too (no-op if app.js loaded) -->
+<script src="app.js?v=13"></script>
+<script src="app-es5.js"></script>
+
+<!-- ES5 minimal styles -->
+<style>
+  .c{background:#faf3ef;border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(80,40,40,.06)}
+  .c h3{font-size:.85rem;margin-bottom:8px}
+  .tx{width:100%;padding:8px 10px;border:1.5px solid #e5dad4;border-radius:10px;font-size:.78rem;background:#fff;color:#3d2828;margin-bottom:8px}
+  .bt{padding:10px 18px;border:none;border-radius:20px;background:#c45a6b;color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;margin-bottom:4px}
+  .hi{font-size:.72rem;padding:6px 0;border-bottom:1px solid #f0e8e2}
+  .em{font-size:.72rem;color:#8a7a78;text-align:center;padding:12px;font-style:italic}
+  .lk{font-size:.7rem;color:#c45a6b;text-decoration:none;padding:6px 12px;background:#fdf0f3;border-radius:10px;display:inline-block;margin:3px}
+</style>
+
 </head>
 <body>
 
