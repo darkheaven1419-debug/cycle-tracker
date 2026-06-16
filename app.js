@@ -1,74 +1,4 @@
 ﻿/* ================================================================
-   EMERGENCY ESCAPE: runs before ANYTHING else
-   ================================================================ */
-(function() {
-  var qs = window.location.search;
-  var loader = document.getElementById('appLoader');
-
-  // ?force=1 and ?safe=1 are handled by HTML inline scripts (index.html <head>)
-  // No action needed here — those run before app.js loads
-})();
-
-/* ================================================================
-   EARLY INIT: error capture + polyfills + debug
-   ================================================================ */
-console.log('=== app.js top level ===');
-var _bootStarted = false;
-
-window.onerror = function(msg, url, line, col, error) {
-  console.error('JS Error line '+line+':', msg, error);
-  var errDiv = document.getElementById('jsErrorPanel');
-  if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'jsErrorPanel'; errDiv.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#fff3f3;color:#c00;padding:8px;font-size:11px;max-height:120px;overflow-y:auto;font-family:monospace;border-top:2px solid red'; document.body.appendChild(errDiv); }
-  errDiv.innerHTML += '<div><b>JS Error line '+line+':</b> '+msg+'</div>';
-  if (error && error.stack) errDiv.innerHTML += '<div style="font-size:9px;color:#666">'+error.stack.split('\\n').slice(0,3).join('<br>')+'</div>';
-};
-
-// Global unhandled promise rejection handler
-window.addEventListener('unhandledrejection', function(event) {
-  console.error('[BOOT] Unhandled Promise Rejection:', event.reason);
-  var errDiv = document.getElementById('jsErrorPanel');
-  if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'jsErrorPanel'; errDiv.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#fff3f3;color:#c00;padding:8px;font-size:11px;max-height:120px;overflow-y:auto;font-family:monospace;border-top:2px solid red'; document.body.appendChild(errDiv); }
-  errDiv.innerHTML += '<div><b>Unhandled Rejection:</b> '+(event.reason&&event.reason.message?event.reason.message:String(event.reason))+'</div>';
-});
-
-// Polyfill URLSearchParams for old WebViews
-if (typeof URLSearchParams === 'undefined') {
-  window.URLSearchParams = function(search) {
-    this._params = {}; var s = search || location.search;
-    if (s.indexOf('?') === 0) s = s.slice(1);
-    s.split('&').forEach(function(p) { var parts = p.split('='); if (parts[0]) this._params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || ''); }.bind(this));
-    this.get = function(k) { return this._params[k] || null; };
-  };
-}
-// Early debug log
-var _debugLog = [];
-var DEBUG = (function() {
-  try { return (new URLSearchParams(location.search)).get('debug') === 'true'; } catch(e) { return false; }
-})();
-var SAFE = (function() {
-  try { return (new URLSearchParams(location.search)).get('safe') === '1'; } catch(e) { return false; }
-})();
-if (DEBUG) { _debugLog.push('app.js loaded. DEBUG=true SAFE='+SAFE+' UA='+navigator.userAgent.substring(0,80)); }
-
-/* ================================================================
-   RESET handler
-   ================================================================ */
-(function() {
-  try {
-    var qs = new URLSearchParams(location.search);
-    if (qs.get('reset') === 'true') {
-      var keys = Object.keys(localStorage);
-      for (var i = 0; i < keys.length; i++) {
-        if (keys[i].indexOf('app-data-cache') >= 0 || keys[i].indexOf('shared-') >= 0 || keys[i].indexOf('culture-') >= 0)
-          localStorage.removeItem(keys[i]);
-      }
-      sessionStorage.clear();
-      location.replace(location.href.split('?')[0]);
-    }
-  } catch(e) {}
-})();
-
-/* ================================================================
    i18n — Full 3-language data (sr as default for Anđela)
    ================================================================ */
 const I18N = {
@@ -1258,185 +1188,87 @@ function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+
 var _dataLoaded = false;
 var _dataLoadPromise = null;
 
-// ===== DATA CACHE: localStorage-backed instant load =====
-var DATA_CACHE_KEY = 'app-data-cache-v1';
-function getCachedData() {
-  try { return JSON.parse(localStorage.getItem(DATA_CACHE_KEY)); } catch(e) { return null; }
-}
-function setCachedData(data) {
-  try { localStorage.setItem(DATA_CACHE_KEY, JSON.stringify(data)); } catch(e) {}
-}
-
-// Try load from cache immediately (sync, no wait)
-(function() {
-  var cached = getCachedData();
-  if (cached && cached.culture) {
-    CULTURE_KNOWLEDGE = cached.culture;
-    DAILY_LESSONS = cached.lessons || [];
-    MOTIVATIONAL_QUOTES = cached.quotes || [];
+function loadDataFiles() {
+  if (_dataLoadPromise) return _dataLoadPromise;
+  _dataLoadPromise = Promise.all([
+    fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; }),
+    fetch('data/lessons.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load lessons.json', e); return []; }),
+    fetch('data/quotes.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load quotes.json', e); return []; })
+  ]).then(function(results) {
+    // Use eval to parse JS-style object literals (unquoted keys)
+    // The JSON files use JS syntax like {id:1,zh:'...'} not valid JSON
+    // So we stringify then eval
+    CULTURE_KNOWLEDGE = results[0].length > 0 ? results[0] : CULTURE_KNOWLEDGE;
+    DAILY_LESSONS = results[1].length > 0 ? results[1] : DAILY_LESSONS;
+    MOTIVATIONAL_QUOTES = results[2].length > 0 ? results[2] : MOTIVATIONAL_QUOTES;
     _dataLoaded = true;
-  }
-})();
-
-function loadDataFiles(retryCount) {
-  retryCount = retryCount || 0;
-  if (_dataLoadPromise && retryCount === 0) return _dataLoadPromise;
-  var DEBUG = (new URLSearchParams(location.search)).get('debug') === 'true';
-
-  _dataLoadPromise = new Promise(function(resolve) {
-    var done = false;
-    var timer = setTimeout(function() {
-      if (!done) { done = true; resolve(); }
-    }, retryCount === 0 ? 1500 : 2000);
-
-    fetch('data/data.json').then(function(r) { return r.text(); }).then(function(t) {
-      if (done) return;
-      clearTimeout(timer); done = true;
-      try {
-        var all = (new Function('return ' + t))();
-        if (all.culture && all.culture.length > 0) CULTURE_KNOWLEDGE = all.culture;
-        if (all.lessons && all.lessons.length > 0) DAILY_LESSONS = all.lessons;
-        if (all.quotes && all.quotes.length > 0) MOTIVATIONAL_QUOTES = all.quotes;
-        // Save to cache for next visit
-        setCachedData({ culture: CULTURE_KNOWLEDGE, lessons: DAILY_LESSONS, quotes: MOTIVATIONAL_QUOTES, updated: Date.now() });
-        _dataLoaded = true;
-        if (DEBUG) _debugLog.push('[data] OK: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length);
-      } catch(e) {
-        if (DEBUG) _debugLog.push('[data] Parse error: '+e.message);
-      }
-      resolve();
-    }).catch(function(e) {
-      if (done) return;
-      if (DEBUG) _debugLog.push('[data] Fetch failed (retry '+retryCount+'): '+e.message);
-      // Retry up to 3 times with 1s backoff
-      if (retryCount < 3) {
-        clearTimeout(timer); done = true;
-        setTimeout(function() { _dataLoadPromise = null; loadDataFiles(retryCount + 1).then(resolve); }, 1000);
-      } else {
-        clearTimeout(timer); done = true;
-        _dataLoaded = true;
-        resolve();
-      }
-    });
+    console.log('Data files loaded: culture=' + CULTURE_KNOWLEDGE.length + ' lessons=' + DAILY_LESSONS.length + ' quotes=' + MOTIVATIONAL_QUOTES.length);
+  }).catch(function(e) {
+    console.error('Data loading failed, using fallbacks', e);
+    _dataLoaded = true;
   });
-
   return _dataLoadPromise;
 }
 
-function logStep(s) { if (DEBUG) { _debugLog.push('[BOOT] '+s); console.log('[BOOT] '+s); } }
-
 async function bootApp() {
-  console.log('[BOOT] bootApp function invoked');
-  if (_bootStarted) { console.log('[BOOT] already started, returning'); return; }
-  _bootStarted = true;
-  logStep('bootApp started. SAFE='+SAFE+' cached='+(_dataLoaded && CULTURE_KNOWLEDGE.length > 0));
-
-  // === SETUP: always run ===
-  try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=11').catch(function(){}); } catch(e) {}
-  try { loadPerProfileSettings(); logStep('loadPerProfileSettings done'); } catch(e) { logStep('loadPerProfileSettings FAILED: '+e.message); }
-
-  // === FORCE KILL: 3.5s timer ALWAYS hides loader ===
-  var _loaderKilled = false;
-  function forceShowUI(msg) {
-    if (_loaderKilled) return;
-    _loaderKilled = true;
-    logStep('FORCE SHOW UI: '+msg);
-    try {
-      var ldr = document.getElementById('appLoader');
-      if (ldr) { ldr.style.display = 'none'; if (ldr.parentNode) ldr.parentNode.removeChild(ldr); }
-    } catch(e) {}
-    try { updateProfileUI(); renderAll(); initDashboard(); } catch(e) {}
+  // Register service worker for PWA offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
-  var _forceTimer = setTimeout(function() { forceShowUI('3.5s timeout'); }, 3500);
+  loadPerProfileSettings();
+  // Load JSON data files before any rendering
+  await loadDataFiles();
+  state = loadState();
+  lastCycleCount = predict().cycles.length;
+  applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
 
-  function hideLoader() {
-    if (_loaderKilled) return;
-    _loaderKilled = true;
-    clearTimeout(_forceTimer);
-    logStep('hideLoader called');
-    try {
-      var ldr = document.getElementById('appLoader');
-      if (ldr) { ldr.style.display = 'none'; if (ldr.parentNode) ldr.parentNode.removeChild(ldr); }
-    } catch(e) {}
-  }
+  // === Render basic UI immediately (data files are ready) ===
+  updateProfileUI();
+  renderAll(); loadSettingsUI();
+  initDashboard();
+  // Hide loader NOW — basic UI is ready, shared data loads in background
+  var loader = document.getElementById('appLoader');
+  if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .3s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 350); }
 
-  // === SAFE MODE: immediate fallback ===
-  if (SAFE) {
-    logStep('SAFE mode: setting fallback data and hiding loader');
-    document.getElementById('loaderText').textContent = '🛡️ Safe Mode';
-    // Ensure minimal data
-    if (CULTURE_KNOWLEDGE.length === 0) CULTURE_KNOWLEDGE = [{id:1,zh:'安全模式',sr:'Safe Mode',icon:'🛡️',desc:'Dobrodošli u safe mode. Mrežne funkcije su onemogućene.',desc_sr:'Dobrodošli u safe mode.',tags:['safe']}];
-    if (DAILY_LESSONS.length === 0) DAILY_LESSONS = [{day:1,topic:'Safe Mode',icon:'🛡️',tip:'Osnovni prikaz',words:[]}];
-    if (MOTIVATIONAL_QUOTES.length === 0) MOTIVATIONAL_QUOTES = [{zh:'安全模式已启动',sr:'Safe Mode aktivan'}];
-    _dataLoaded = true;
-    try { state = loadState(); } catch(e) { state = { records:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7}, _migrated:true }; }
-    try { applyTheme(theme); setLang(lang); } catch(e) {}
-    try { updateProfileUI(); renderAll(); loadSettingsUI(); initDashboard(); } catch(e) {}
-    hideLoader();
-    return; // SAFE mode done — no network activity below
+  // === Pull shared data from GitHub in BACKGROUND (non-blocking) ===
+  if (getGitHubToken()) {
+    pullAllSharedData().then(function() {
+      try {
+        var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+        if (sd && sd.records) {
+          state.records = sd.records.map(function(r) { return new Date(r); });
+          state.periodEnds = sd.periodEnds || {};
+          state.symptoms = sd.symptoms || {};
+          state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
+        }
+      } catch(e) {}
+      if (activeProfile === 'barry') {
+        renderCalendar();
+        renderBarrySymptomView();
+        renderTips();
+      }
+      renderHug(); renderGratitude(); renderSong(); renderCheckin();
+      renderSharedDiary(); renderDateStrip();
+      renderDashboard(); // Refresh dashboard with synced data
+      updateSyncStatusBadge();
+      updateCycleCounter(predict().cycles.length);
+    });
   }
 
-  // === NORMAL MODE ===
-  // Load cached data first for instant render
-  logStep('cached data: culture='+CULTURE_KNOWLEDGE.length+' lessons='+DAILY_LESSONS.length);
-  if (_dataLoaded && CULTURE_KNOWLEDGE.length > 0) {
-    hideLoader();
-    logStep('loader hidden (cached data available)');
-  }
-
-  // Background data refresh with guaranteed resolve
-  logStep('starting loadDataFiles...');
-  loadDataFiles().then(function() {
-    logStep('loadDataFiles completed');
-    hideLoader();
-  }).catch(function(e) {
-    logStep('loadDataFiles FAILED: '+e.message);
-    hideLoader(); // hide loader even on failure
-  });
-
-  // These must never throw
-  try { state = loadState(); logStep('loadState done'); } catch(e) { logStep('loadState FAILED: '+e.message); state = { records:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7}, _migrated:true }; }
-  try { lastCycleCount = predict().cycles.length; } catch(e) { lastCycleCount = 0; }
-  try { applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner(); logStep('theme+festival done'); } catch(e) { logStep('theme FAILED: '+e.message); }
-
-  // Render UI
-  try { updateProfileUI(); } catch(e) { logStep('updateProfileUI FAILED: '+e.message); }
-  try { renderAll(); logStep('renderAll done'); } catch(e) { logStep('renderAll FAILED: '+e.message); }
-  try { loadSettingsUI(); } catch(e) {}
-  try { initDashboard(); logStep('initDashboard done'); } catch(e) { logStep('initDashboard FAILED: '+e.message); }
-
-  // === Pull shared data (background, non-blocking) ===
-  try {
-    if (getGitHubToken() && !SAFE) {
-      logStep('pulling shared data...');
-      pullAllSharedData().then(function() {
-        logStep('shared data pulled OK');
-        try {
-          var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
-          if (sd && sd.records) { state.records = sd.records.map(function(r) { return new Date(r); }); state.periodEnds = sd.periodEnds || {}; state.symptoms = sd.symptoms || {}; state.settings = sd.settings || { cycleLength: 28, periodLength: 7 }; }
-        } catch(e) {}
-        try { if (activeProfile === 'barry') { renderCalendar(); renderBarrySymptomView(); renderTips(); } } catch(e) {}
-        try { renderHug(); renderGratitude(); renderSong(); renderCheckin(); renderSharedDiary(); renderDateStrip(); renderDashboard(); updateSyncStatusBadge(); } catch(e) {}
-        try { updateCycleCounter(predict().cycles.length); } catch(e) {}
-      }).catch(function(e) { logStep('shared data pull FAILED: '+e.message); });
-    }
-  } catch(e) { logStep('shared data setup FAILED: '+e.message); }
-
-  // Weather + calendar (background)
-  if (!SAFE) {
-    try { fetchWeather(); logStep('fetchWeather started'); } catch(e) { logStep('fetchWeather FAILED: '+e.message); }
-    try { loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; try { localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); } catch(e2) {} }); } catch(e) { logStep('loadCalendarData FAILED: '+e.message); }
-  }
-  try { showOnboardingIfNeeded(); } catch(e) {}
-  try { if (activeProfile === 'andjela') showGreeting(); } catch(e) {}
-  try { updateMoonPhase(); } catch(e) {}
-  try { updateAnniversaryCount(); } catch(e) {}
-  try { updateCycleCounter(predict().cycles.length); lastCycleCount = predict().cycles.length; } catch(e) {}
-  try { updateLoveCounter(); } catch(e) {}
-  try { updateProfileUI(); } catch(e) {}
-  try { var symTab = document.getElementById('tab-symptoms'); if (symTab) symTab.style.display = activeProfile === 'barry' ? '' : 'none'; } catch(e) {}
-  try { randomThinkingOfYou(); } catch(e) {}
-  logStep('bootApp finished successfully');
+  fetchWeather();
+  loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
+  showOnboardingIfNeeded();
+  if (activeProfile === 'andjela') showGreeting();
+  updateMoonPhase();
+  updateAnniversaryCount();
+  updateCycleCounter(predict().cycles.length);
+  lastCycleCount = predict().cycles.length;
+  updateLoveCounter();
+  updateProfileUI();
+  // Show/hide symptoms tab based on activeProfile (Barry only)
+  var symTab = document.getElementById('tab-symptoms');
+  if (symTab) symTab.style.display = activeProfile === 'barry' ? '' : 'none';
+  randomThinkingOfYou();
 
   // Modal keyboard trap: Escape closes, Tab traps focus
   var modalKeydown = function(e) {
@@ -1555,54 +1387,16 @@ const BIRTHDAYS = { barry: { month:8, day:19, name:{sr:'Barryjev rođendan',en:'
 const LOVE_START = new Date(2026,4,7); // May 7, 2026 — monthly anniversary
 const FIRST_MEET_DATE = '2026-12-19';    // First in-person meeting
 
-var MONTHLY_ANNIVERSARY_MESSAGES = [
-  {zh:'还记得我们刚在一起的那天吗？心跳加速的感觉还在。💓',sr:'Sećaš li se dana kad smo počeli? Osećaj ubrzanog srca je još uvek tu. 💓'},
-  {zh:'两个月了，你依然让我心动。',sr:'Dva meseca, i dalje mi srce brže kuca zbog tebe.'},
-  {zh:'三个月，越来越爱你。每一个7号都让我想起那个美好的开始。',sr:'Tri meseca, sve te više volim. Svaki sedmi dan me podseti na naš prelepi početak.'},
-  {zh:'四个月快乐！你是我每天醒来最想见到的人。',sr:'Četiri meseca! Ti si prva osoba koju poželim da vidim kad se probudim.'},
-  {zh:'五个月啦！从北京到Kikinda，7000公里挡不住我的心。',sr:'Pet meseci! Od Pekinga do Kikinde, 7.000 km ne može zaustaviti moje srce.'},
-  {zh:'半年了！和你在一起的每一天都像礼物。🎁',sr:'Pola godine! Svaki dan sa tobom je kao poklon. 🎁'},
-  {zh:'七个月，每个月的今天都是我最期待的日子。',sr:'Sedam meseci, svaki današnji dan je dan koji najviše iščekujem.'},
-  {zh:'八个月了，爱越来越深。谢谢你一直在。',sr:'Osam meseci, ljubav je sve dublja. Hvala ti što si uvek tu.'},
-  {zh:'九个月！你让我的世界变得完整。🌍',sr:'Devet meseci! Ti si upotpunila moj svet. 🌍'},
-  {zh:'十个月快乐！每一天都是新的冒险。',sr:'Deset meseci! Svaki dan je nova avantura sa tobom.'},
-  {zh:'十一个月了，马上就是一周年！时间过得好快。',sr:'Jedanaest meseci, uskoro godišnjica! Vreme tako brzo leti sa tobom.'},
-  {zh:'一周年快乐！你是我的全世界。🥂❤️',sr:'Srećna nam godišnjica! Ti si moj ceo svet. 🥂❤️'},
-  {zh:'第{}个月纪念日！我们的故事还在继续，一章比一章美。',sr:'{} meseci zajedno! Naša priča se nastavlja, svako poglavlje sve lepše.'},
-  {zh:'{}个月啦！每一个7号都是属于我们的节日。',sr:'{} meseci! Svaki sedmi je naš praznik.'},
-  {zh:'第{}个月！时间证明了一切——我们是对的。',sr:'{} meseci! Vreme je dokazalo da smo u pravu.'},
-  {zh:'{}个月快乐！你是我生命中最美的意外。✨',sr:'{} meseci! Ti si najlepše iznenađenje u mom životu. ✨'}
-];
-
 function getSpecialDate(d) {
   var m = d.getMonth(), day = d.getDate(), y = d.getFullYear();
   var key = fmtDate(d);
-  var today = new Date(); today.setHours(0,0,0,0);
-
-  // 1) Monthly anniversary: every 7th (from May 7, 2026)
+  // 1) Monthly anniversary: every 7th
   if (day === 7) {
     var months = (y - LOVE_START.getFullYear()) * 12 + (m - LOVE_START.getMonth());
     if (d < LOVE_START) months = 0;
-    // Check if today IS the actual anniversary day (same month+year)
-    var isToday = d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === 7;
-    var msg = null;
-    if (months > 0 && months <= MONTHLY_ANNIVERSARY_MESSAGES.length) {
-      msg = MONTHLY_ANNIVERSARY_MESSAGES[months - 1];
-    } else if (months > MONTHLY_ANNIVERSARY_MESSAGES.length) {
-      // Use template: replace {} with month number
-      var tpl = MONTHLY_ANNIVERSARY_MESSAGES[MONTHLY_ANNIVERSARY_MESSAGES.length - 1];
-      msg = { zh: tpl.zh.replace('{}', months), sr: tpl.sr.replace('{}', months) };
-    }
-    if (isToday && msg) {
-      return { type:'monthly', icon:'💕', title_zh:'我们的纪念日', title_sr:'Naš dan sećanja', desc_zh:msg.zh, desc_sr:msg.sr };
-    } else if (isToday) {
-      return { type:'monthly', icon:'💕', title_zh:'我们的纪念日', title_sr:'Naš dan sećanja',
-        desc_zh:'我们在一起的第 '+months+' 个月纪念日！💕', desc_sr:months+'. mesec našeg puta zajedno! 💕' };
-    } else {
-      // Future or past 7th — show preview hint
-      return { type:'monthly', icon:'💕', title_zh:'每月纪念日', title_sr:'Mesečni dan sećanja',
-        desc_zh:'等到 '+months+' 个月纪念日那天再来看看吧！💕', desc_sr:'Sačekaj '+months+'. mesec godišnjice! 💕' };
-    }
+    return { type:'monthly', icon:'💕', title_zh:'我们的纪念日', title_sr:'Naš dan sećanja',
+      desc_zh:'我们在一起的第 '+months+' 个月纪念日！感谢你让每个月的今天都变得特别。💕',
+      desc_sr:months+'. mesec našeg puta zajedno! Hvala ti što svaki današnji dan činiš posebnim. 💕' };
   }
   // 2) First meeting: Dec 19
   if (key === FIRST_MEET_DATE) {
@@ -1717,7 +1511,7 @@ function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES
 function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
 function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+(lang==='sr'?'Već si kliknuo/la danas!':'今天已经点过了！'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+(lang==='sr'?'Dan '+sc.count+' zajedničkog sunca!':'共同仰望太阳的第'+sc.count+'天！'));}
 function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+(activeProfile==='barry'?'共同仰望太阳的第 ':'')+c+(activeProfile==='barry'?' 天 ❤️':' dan zajedničkog sunca ❤️');}else{el.innerHTML='❤️ '+(activeProfile==='barry'?'点击此处开始计数':'Klikni ovde da započneš brojanje');}}
-function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=(activeProfile==='barry'?'时差 ':'Vremenska razlika ')+diff+' h';}}setInterval(updateWeatherTimes,60000);
+function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=(activeProfile==='barry'?'时差 ':'razlika ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
 
 function weatherIcon(code) {
   if(code<=3) return '☀️'; if(code<=48) return '⛅'; if(code<=57) return '🌧️';
@@ -3787,22 +3581,14 @@ toggleProfile = function() {
   var sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
   var savedProfile = localStorage.getItem('cycle-active-profile');
   if (savedProfile && sessionLoggedIn === '1' && LOGIN_PINS[savedProfile]) {
-    console.log('[BOOT] Auto-login as '+savedProfile);
+    // Same day — auto login
     activeProfile = savedProfile;
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
-    // Use setTimeout to avoid blocking the event loop
-    setTimeout(function() {
-      try {
-        bootApp().catch(function(e) { console.error('[BOOT] bootApp promise rejected', e); });
-      } catch(e) { console.error('[BOOT] bootApp sync error', e); }
-    }, 10);
+    bootApp();
   } else {
-    console.log('[BOOT] No auto-login, showing PIN screen');
+    // New day or no saved profile — show login
     localStorage.removeItem('cycle-active-profile');
     document.getElementById('loginOverlay').classList.remove('hidden');
   }
 })();
-
-// Make bootApp globally callable (for safe mode fallback)
-window.bootApp = bootApp;

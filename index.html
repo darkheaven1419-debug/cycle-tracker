@@ -2,96 +2,26 @@
 <html lang="sr" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<!-- Preconnect for faster font delivery -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<link rel="stylesheet" href="styles.css?v=15">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="styles.css?v=16">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
 <title>🌸 Anđelin Ciklus v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
-
-<!-- POLYFILLS: Promise + fetch + URLSearchParams for old WebViews -->
-<script>
-if(typeof Promise==='undefined'){window.Promise=function(e){var n=[],t=[],o=!1,r=!1;this.then=function(e,n){var t=new Promise(function(){});return n=n||function(e){throw e},this._then=[e||function(e){return e},n,t],o?this._resolve():n.length||this._reject(),t},this["catch"]=function(e){return this.then(null,e)};var i=this;function u(e,n){setTimeout(function(){e(n)},0)}i._resolve=function(e){if(!o){o=!0;try{i._value=e,i._then&&i._then[0].call(null,e)}catch(e){i._reject(e)}}},i._reject=function(e){if(!r){r=!0;try{i._error=e,i._then&&i._then[1].call(null,e)}catch(e){}}};try{e.call(null,i._resolve,i._reject)}catch(e){i._reject(e)}};Promise.resolve=function(e){return new Promise(function(n){n(e)})};Promise.reject=function(e){return new Promise(function(n,t){t(e)})};Promise.all=function(e){return new Promise(function(n,t){var o=[],r=0;e.forEach(function(e,i){e.then(function(e){o[i]=e;r++;if(r===e.length)n(o)},t)})})};Promise.race=function(e){return new Promise(function(n,t){e.forEach(function(e){e.then(n,t)})})}}
-if(typeof fetch==='undefined'){window.fetch=function(url,opts){opts=opts||{};return new Promise(function(resolve,reject){var x=new XMLHttpRequest;x.open(opts.method||'GET',url);for(var h in(opts.headers||{}))x.setRequestHeader(h,opts.headers[h]);x.onload=function(){resolve({ok:x.status>=200&&x.status<300,status:x.status,text:function(){return Promise.resolve(x.responseText)},json:function(){return Promise.resolve(JSON.parse(x.responseText))}})};x.onerror=function(){reject(new Error('fetch failed'))};x.send(opts.body||null)})}}
-if(typeof URLSearchParams==='undefined'){window.URLSearchParams=function(s){this._p={};s=(s||location.search);if(s.indexOf('?')===0)s=s.slice(1);s.split('&').forEach(function(p){var a=p.split('=');if(a[0])this._p[decodeURIComponent(a[0])]=decodeURIComponent(a[1]||'')}.bind(this));this.get=function(k){return this._p[k]||null}}}
-if(!Array.prototype.includes)Array.prototype.includes=function(e){return this.indexOf(e)>=0};
-if(!String.prototype.startsWith)String.prototype.startsWith=function(e){return this.indexOf(e)===0};
-</script>
-
-<!-- AUTO-SAFE-MODE + 4s FORCE DOWNGRADE -->
-<script>
-(function(){
-  var ua = (navigator.userAgent||'').toLowerCase();
-  var badUA = ua.indexOf('vivobrowser')>=0 || ua.indexOf('ucbrowser')>=0 || ua.indexOf('baiduboxapp')>=0 || ua.indexOf('miuibrowser')>=0;
-  var oldAndroid = ua.indexOf('android 5')>=0 || ua.indexOf('android 6')>=0 || ua.indexOf('android 7.0')>=0;
-  var qs = location.search;
-  if (qs.indexOf('normal=1')>=0 || qs.indexOf('force=1')>=0) return; // user override
-  if ((badUA||oldAndroid) && qs.indexOf('safe=1')<0) {
-    location.replace(location.pathname+'?safe=1&auto=1'); return;
-  }
-  // 4s FORCE DOWNGRADE: always active as safety net
-  setTimeout(function(){
-    var ldr=document.getElementById('appLoader');
-    if(ldr&&ldr.style.display!=='none'){
-      ldr.style.display='none';
-      var app=document.querySelector('.app')||document.body;
-      app.innerHTML='<div style="padding:20px;font-family:sans-serif;text-align:center;margin-top:30px"><h2>🌸 Anđelin Ciklus</h2><div style="background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.08)"><p style="color:#e67e22;font-weight:700">⚠️ Mreža spora — offline režim</p><p style="font-size:13px;color:#666">Osnovne funkcije. Podaci lokalno.</p></div><div style="display:flex;flex-direction:column;gap:8px;align-items:center"><button onclick="location.replace(location.pathname+\'?safe=1\')" style="padding:12px 24px;background:#2196F3;color:#fff;border:none;border-radius:8px;width:200px;font-size:16px">🛡️ Safe Mode</button><button onclick="location.replace(location.pathname+\'?force=1\')" style="padding:12px 24px;background:#ff9800;color:#fff;border:none;border-radius:8px;width:200px;font-size:16px">🔧 Emergency</button><button onclick="location.reload()" style="padding:12px 24px;background:#4CAF50;color:#fff;border:none;border-radius:8px;width:200px;font-size:16px">🔄 Retry</button></div></div>';
-    }
-  }, 4000);
-})();
-</script>
-
 <script src="libs/html2canvas.min.js" defer></script>
-
-<!-- DUAL-TRACK: both scripts load; modern browsers run app.js, old browsers run app-es5.js too (no-op if app.js loaded) -->
-<script src="app.js?v=15"></script>
-<script src="app-es5.js?v=3"></script>
-
-<!-- ES5 minimal styles -->
-<style>
-  .c{background:#faf3ef;border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(80,40,40,.06)}
-  .c h3{font-size:.85rem;margin-bottom:8px}
-  .tx{width:100%;padding:8px 10px;border:1.5px solid #e5dad4;border-radius:10px;font-size:.78rem;background:#fff;color:#3d2828;margin-bottom:8px}
-  .bt{padding:10px 18px;border:none;border-radius:20px;background:#c45a6b;color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;margin-bottom:4px}
-  .hi{font-size:.72rem;padding:6px 0;border-bottom:1px solid #f0e8e2}
-  .em{font-size:.72rem;color:#8a7a78;text-align:center;padding:12px;font-style:italic}
-  .lk{font-size:.7rem;color:#c45a6b;text-decoration:none;padding:6px 12px;background:#fdf0f3;border-radius:10px;display:inline-block;margin:3px}
-</style>
-
 </head>
 <body>
 
-<script>
-  window.__diag = { start: Date.now(), steps: ['polyfills-loaded'] };
-  window.__diag.supports = { fetch:typeof fetch!=='undefined', promise:typeof Promise!=='undefined', localStorage:!!window.localStorage };
-</script>
-
-<!-- App Loader — 4s forced timeout on phone -->
-<div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px">
-  <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite" id="loaderIcon">🌸</span>
-  <span style="font-size:.7rem;color:var(--text-muted,#8a7a78);font-family:sans-serif" id="loaderText">Učitavanje...</span>
-  <div id="loaderDiag" style="font-size:.5rem;color:#aaa;font-family:monospace;text-align:center;max-width:260px;line-height:1.4"></div>
-  <div id="loaderError" style="text-align:center;max-width:280px">
-    <div style="font-size:.65rem;color:#E53935;margin-bottom:6px;display:none" id="loaderErrorMsg"></div>
-    <button onclick="location.reload()" style="display:none;padding:8px 20px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.7rem;font-weight:700;cursor:pointer" id="loaderRetryBtn">🔄 Pokušaj ponovo</button>
-    <button onclick="location.replace(location.pathname+'?safe=1')" style="padding:6px 16px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-size:.6rem;margin-top:6px;cursor:pointer;opacity:.7">🛡️ Safe Mode</button>
-  </div>
-  <script>setTimeout(function(){var b=document.getElementById('loaderRetryBtn');if(b)b.style.display='';var m=document.getElementById('loaderErrorMsg');if(m)m.style.display='';m.textContent='Traje duže od 2s...';},2000);</script>
-  <!-- Debug panel -->
-  <div id="loaderDebug" style="display:none;text-align:left;max-width:300px;max-height:180px;overflow-y:auto;background:rgba(0,0,0,.05);border-radius:8px;padding:8px;font-size:.5rem;font-family:monospace;color:var(--text-muted);margin-top:4px"></div>
+<!-- App Loader — hidden after bootApp completes -->
+<div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:var(--bg,#ede0da);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <span style="font-size:3rem;animation:loaderPulse 1.2s ease-in-out infinite">🌸</span>
+  <span style="font-size:.75rem;color:var(--text-muted,#8a7a78);font-family:sans-serif">Učitavanje...</span>
 </div>
-<script>
-// Triple-tap = show debug
-(function(){var c=0,el=document.getElementById('appLoader');el.addEventListener('click',function(){c++;if(c>=3){c=0;var d=document.getElementById('loaderDebug');if(d){d.style.display=d.style.display==='none'?'':'none';var lines=[];if(window.__diag){lines.push('Started:'+(Date.now()-window.__diag.start)+'ms');lines.push('Steps:'+window.__diag.steps.join(', '));if(window.__diag.supports)lines.push('Fetch:'+window.__diag.supports.fetch+' Promise:'+window.__diag.supports.promise+' LS:'+window.__diag.supports.localStorage+' const:'+window.__diag.supports.const);}if(window._debugLog&&window._debugLog.length>0)lines=lines.concat(window._debugLog);if(lines.length===0)lines.push('No debug data. JS may have crashed early.');d.textContent=lines.join('\\n');}}});setTimeout(function(){c=0},800);})();
-// Show diag info in loader after 1s
-setTimeout(function(){var diag=document.getElementById('loaderDiag');if(diag&&window.__diag){var ua=navigator.userAgent;diag.textContent='JS OK · '+(window.__diag.supports&&window.__diag.supports.fetch?'':'⚠no-fetch ')+'UA:'+ua.substring(ua.length-30);}},1000);
-</script>
 
 <!-- Offline Banner -->
 <div class="offline-banner" id="offlineBanner">⚠️ <span id="offline-text">Offline — neke funkcije možda ne rade</span></div>
@@ -650,7 +580,7 @@ setTimeout(function(){var diag=document.getElementById('loaderDiag');if(diag&&wi
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=12" defer></script>
+<script src="app.js?v=16" defer></script>
 </body>
 </html>
 
