@@ -100,6 +100,13 @@
         "hug": {
           "time": 1781512149962
         }
+      },
+      "andjela": {
+        "happy": "",
+        "uncomf": "Žao mi je što juče nisam mogla da popunim dnevnik zbog problema sa sajtom.",
+        "thanks": "",
+        "wish": "",
+        "time": 1781636295600
       }
     },
     "2026-06-16": {
@@ -207,5 +214,5 @@
     }
   },
   "sunCounter": {},
-  "updated": 1781636231454
+  "updated": 1781636295604
 }
