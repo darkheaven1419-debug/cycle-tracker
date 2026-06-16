@@ -175,7 +175,7 @@
     <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false">📝 <span class="tb-label"></span></button>
     <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false">💡 <span class="tb-label"></span></button>
     <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false">💌 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="culture" role="tab" id="tab-culture" aria-selected="false">🏯 <span class="tb-label" id="tb-culture">Kultura</span></button>
+    <button class="tab" data-panel="culture" role="tab" id="tab-culture" aria-selected="false">🇨🇳 <span class="tb-label" id="tb-culture">Kina</span></button>
     <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false">⚙ <span class="tb-label"></span></button>
   </div></nav>
 
@@ -411,7 +411,8 @@
 
   <!-- ===== CULTURE & CHINESE LEARNING PANEL ===== -->
   <div class="panel" id="panel-culture" role="tabpanel" aria-labelledby="tab-culture">
-    <!-- Section 1: Culture Knowledge Card -->
+    <!-- Section 1: Chinese Culture -->
+    <div class="section-label" style="font-size:.72rem;font-weight:700;color:var(--love);margin-bottom:8px;padding:4px 0"><span id="culture-section-title">📚 Kineska kultura</span></div>
     <div class="card culture-main-card" id="cultureMainCard">
       <div class="culture-card-inner">
         <span class="culture-card-emoji" id="cultureEmoji">🏮</span>
@@ -430,7 +431,9 @@
     </div>
 
     <!-- Section 2: Chinese Learning -->
-    <div class="card learning-main-card" id="learningMainCard">
+    <div class="section-divider" style="border-top:2px solid var(--border-soft);margin:14px 0 10px"></div>
+    <div class="section-label" style="font-size:.72rem;font-weight:700;color:var(--sage-dark);margin-bottom:8px;padding:4px 0"><span id="learn-section-title">📖 Učenje kineskog</span></div>
+    <div class="card learning-main-card" id="learningMainCard" style="background:var(--sage-light);border-color:var(--sage)">
       <h3 style="margin-bottom:12px">📚 <span id="learn-title">Učenje kineskog</span></h3>
 
       <!-- Study Session Card -->
@@ -554,7 +557,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=23" defer></script>
+<script src="app.js?v=24" defer></script>
 </body>
 </html>
 

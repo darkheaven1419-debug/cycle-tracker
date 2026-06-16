@@ -13,7 +13,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
   weekdays:['Pon','Uto','Sre','Čet','Pet','Sub','Ned'],
   months:['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'],
-  today:'Danas', tabs:['Početna','Statistika','Simptomi','Saveti','Dnevnik','Kultura','Podeš.'],
+  today:'Danas', tabs:['Početna','Statistika','Simptomi','Saveti','Dnevnik','Kina','Podeš.'],
   legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas','Ljubav'],
   progressLabels:['Menstr.','Folikul.','Ovulacija','Lutealna'],
   phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
@@ -41,7 +41,7 @@ const I18N = {
   appTitle:'Anđelin Ciklus', theme:'暗色模式', themeHint:'切换深色/浅色主题',
   weekdays:['一','二','三','四','五','六','日'],
   months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-  today:'今天', tabs:['主页','统计','症状','贴士','日记','文化','设置'],
+  today:'今天', tabs:['主页','统计','症状','贴士','日记','中华','设置'],
   legend:['经期','排卵/易孕','卵泡期','黄体期','今天','♥纪念日'],
   progressLabels:['经期','卵泡期','排卵','黄体期'],
   phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
@@ -2573,8 +2573,15 @@ function initCultureTab() {
   if (ctEl) ctEl.textContent = cl('checklistTitle');
   var cbEl = document.getElementById('comment-board-label');
   if (cbEl) cbEl.textContent = cl('commentBoard');
-  var lrGuide = document.getElementById('lrGuide');
-  if (lrGuide) lrGuide.textContent = activeProfile === 'barry' ? '💡 点击每个阶段了解学习内容' : '💡 Klikni na svaku fazu za detalje učenja';
+  // Update tab label
+  var tbCulture = document.getElementById('tb-culture');
+  if (tbCulture) tbCulture.textContent = activeProfile === 'barry' ? '中华' : 'Kina';
+  // Section titles
+  var csTitle = document.getElementById('culture-section-title');
+  if (csTitle) csTitle.innerHTML = activeProfile === 'barry' ? '📚 中国文化' : '📚 Kineska kultura';
+  var lsTitle = document.getElementById('learn-section-title');
+  if (lsTitle) lsTitle.innerHTML = activeProfile === 'barry' ? '📖 学中文' : '📖 Učenje kineskog';
+  // Remove the old lrGuide (roadmap is gone)
   // Load saved progress
   var saved = localStorage.getItem('culture-lesson-progress');
   if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
