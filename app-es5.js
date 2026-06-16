@@ -1,6 +1,9 @@
-/* app-es5.js — ES5 fallback for old browsers (VivoBrowser, UC, Android 5-7)
-   Pure ES5: no const/let, no =>, no ``, no class
-   Core: login + diary + messages */
+/* app-es5.js — ES5 fallback for old browsers only.
+   If const is supported, this is a modern browser — exit immediately (app.js handles it). */
+if (typeof window.__appES5Skip === 'undefined') {
+  try { eval('const _test_es6 = 1'); window.__appES5Skip = true; } catch(e) { window.__appES5Skip = false; }
+}
+if (window.__appES5Skip) { /* modern browser — app.js already loaded, nothing to do */ } else {
 (function() {
   'use strict';
   var PIN = { barry: '0827', andjela: '1909' };
@@ -107,3 +110,4 @@
     showApp();
   }
 })();
+} // end of if(!window.__appES5Skip)
