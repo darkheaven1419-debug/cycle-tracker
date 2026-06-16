@@ -2525,10 +2525,13 @@ var _cultureCardIdx = 0;
 var _studySessionCount = parseInt(localStorage.getItem('studySessionCount') || '0');
 var _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
 function startStudySession() {
-  if (_currentStudySession <= _studySessionCount) { _studySessionCount++; _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length); }
-  else { _studySessionCount = Math.max(_studySessionCount, _currentStudySession); }
-  localStorage.setItem('studySessionCount', String(_studySessionCount));
-  if (activeProfile === 'andjela' && typeof addPoints === 'function') addPoints('andjela', 10, 'study');
+  // Only complete if viewing the NEXT uncompleted session
+  if (_currentStudySession > _studySessionCount && _currentStudySession <= DAILY_LESSONS.length) {
+    _studySessionCount = _currentStudySession;
+    _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
+    localStorage.setItem('studySessionCount', String(_studySessionCount));
+    if (activeProfile === 'andjela' && typeof addPoints === 'function') addPoints('andjela', 10, 'study');
+  }
   renderStudySession();
 }
 function prevStudySession() { _currentStudySession = Math.max(1, _currentStudySession - 1); renderStudySession(); }
@@ -2544,7 +2547,10 @@ function renderStudySession() {
   document.getElementById('studyPractice').textContent = '💡 ' + s.tip;
   var isNextNew = _currentStudySession > _studySessionCount;
   var btn = document.getElementById('studyStartBtn');
-  if (btn) { btn.textContent = isNextNew ? (isBarry ? '📖 开始学习' : '📖 Počni') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew && _currentStudySession >= DAILY_LESSONS.length; }
+  if (btn) {
+    if (_studySessionCount >= DAILY_LESSONS.length) { btn.textContent = '🎉 ' + (isBarry ? '全部完成!' : 'Sve završeno!'); btn.disabled = true; }
+    else { btn.textContent = isNextNew ? (isBarry ? '📖 开始学习' : '📖 Počni') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
+  }
   // Partner encouragement (Barry sees Angie's progress)
   var enc = document.getElementById('studyEncouragement');
   if (enc && activeProfile === 'barry') {
@@ -2624,8 +2630,14 @@ function renderCultureCard() {
   document.getElementById('cultureTitleZh').textContent = k.zh;
   document.getElementById('cultureTitleSr').textContent = k.sr;
   // Show description based on active profile: Barry→Chinese, Angie→Serbian
-  var descText = activeProfile === 'barry' ? (CULTURE_DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
+  var isChinese = lang === 'zh-CN' || activeProfile === 'barry';
+  var descText = isChinese ? (CULTURE_DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
   document.getElementById('cultureDesc').textContent = descText;
+  // Also toggle title visibility based on language
+  var titleZh = document.getElementById('cultureTitleZh');
+  var titleSr = document.getElementById('cultureTitleSr');
+  if (titleZh) titleZh.style.display = isChinese ? '' : 'none';
+  if (titleSr) titleSr.style.display = isChinese ? 'none' : '';
   var tagsHtml = ''; k.tags.forEach(function(t){ tagsHtml += '<span class="culture-tag">'+t+'</span>'; });
   document.getElementById('cultureTags').innerHTML = tagsHtml;
   document.getElementById('cultureNavInfo').textContent = (_cultureCardIdx+1) + ' / ' + CULTURE_KNOWLEDGE.length;
