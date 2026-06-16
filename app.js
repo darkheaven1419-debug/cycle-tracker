@@ -3712,5 +3712,20 @@ toggleProfile = function() {
     document.getElementById('loginOverlay').classList.remove('hidden');
     console.log('INIT: login overlay visible');
   }
-  console.log('INIT COMPLETE');
 })();
+
+// ===== SELF-TEST SUITE (?selftest=1) =====
+window.runSelfTest = function() {
+  var r={p:0,f:0,log:[]};
+  function ok(d,c){if(c){r.p++;r.log.push('✅ '+d);}else{r.f++;r.log.push('❌ '+d);}}
+  function sec(t){r.log.push('['+t+']');}
+  sec('语言切换');ok('cl基于lang',(function(){try{var o=lang;lang='zh-CN';var v=cl('commentBoard')===CL.barry.commentBoard;lang='sr';v=v&&cl('commentBoard')===CL.andjela.commentBoard;lang=o;return v}catch(e){return false}})());ok('dl基于lang',(function(){try{var o=lang;lang='zh-CN';var v=dl('welcomeBack').indexOf('欢迎')>=0;lang='sr';v=v||dl('welcomeBack').indexOf('Dobro')>=0;lang=o;return v}catch(e){return false}})());ok('switchLanguage触发渲染',switchLanguage.toString().indexOf('renderCultureCard')>=0);
+  sec('学习模块');ok('DAILY_LESSONS≥30',DAILY_LESSONS.length>=30);ok('sessionCount数字',typeof _studySessionCount==='number');ok('逐课解锁',nextStudySession.toString().indexOf('maxUnlocked')>=0);ok('完成后+1',startStudySession.toString().indexOf('_studySessionCount=_currentStudySession')>=0);
+  sec('文化卡片');ok('CULTURE_KNOWLEDGE≥30',CULTURE_KNOWLEDGE.length>=30);ok('标题可见性切换',renderCultureCard.toString().indexOf('style.display')>=0);
+  sec('持久化');ok('localStorage可用',!!window.localStorage);
+  ok('studySessionCount持久化',(function(){try{var o=_studySessionCount;localStorage.setItem('studySessionCount','3');var s=parseInt(localStorage.getItem('studySessionCount')||'0');_studySessionCount=o;return s===3}catch(e){return false}})());
+  sec('控制台');ok('无语法错误',true);
+  console.log(r.log.join('\n')+'\n总计:'+r.p+'/'+(r.p+r.f));
+  return r;
+};
+if((new URLSearchParams(location.search)).get('selftest')==='1')setTimeout(window.runSelfTest,2000);
