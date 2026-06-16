@@ -1036,3 +1036,4 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
 .day.monthly-anni{background:linear-gradient(135deg,var(--rose-light),var(--dust))!important}
 
 
+.lr-step.active-step{transform:scale(1.15);box-shadow:0 0 0 4px rgba(196,90,107,.2);border-color:var(--love)!important}

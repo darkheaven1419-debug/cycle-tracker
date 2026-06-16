@@ -2852,6 +2852,37 @@ function renderCommentList() {
   list.scrollTop = list.scrollHeight;
 }
 
+// ===== ROADMAP INTERACTION =====
+var ROADMAP_DETAILS = [
+  {step:1,icon:'🔤',title_zh:'拼音',title_sr:'Pinjin',desc_zh:'学习汉语拼音系统，掌握声母、韵母和四个声调。这是中文学习的基础，大约需要1-2周。',desc_sr:'Nauci sistem pinjin pisma — inicijali, finali i cetiri tona. Ovo je osnova ucenja kineskog.',goal_zh:'目标：准确读出任何带拼音的中文句子',goal_sr:'Cilj: Tacno procitati bilo koju kinesku recenicu sa pinjinom'},
+  {step:2,icon:'💬',title_zh:'200句日常对话',title_sr:'200 recenica',desc_zh:'通过场景化学习掌握200句最常用的日常对话，覆盖问候、点餐、购物、问路等实用场景。',desc_sr:'Kroz kontekstualno ucenje savladaj 200 najcescih svakodnevnih recenica.',goal_zh:'目标：在常见场景中能进行简单对话',goal_sr:'Cilj: Voditi jednostavne razgovore u uobicajenim situacijama'},
+  {step:3,icon:'🀄',title_zh:'300个基础汉字',title_sr:'300 znakova',desc_zh:'系统学习300个最常用的汉字，理解偏旁部首和造字规律。',desc_sr:'Sistematski nauci 300 najcescih kineskih znakova. Razumej radikale.',goal_zh:'目标：能读懂菜单、路标和简单社交媒体',goal_sr:'Cilj: Citati menije, putokaze i jednostavne objave'},
+  {step:4,icon:'📖',title_zh:'语境学句子',title_sr:'Kontekst',desc_zh:'在真实语境中学习更复杂的句子结构，通过短文和日常对话理解中文的表达习惯。',desc_sr:'Uci slozenije recenicne strukture u stvarnom kontekstu kroz kratke price i dijaloge.',goal_zh:'目标：能写简短的中文段落',goal_sr:'Cilj: Napisati kratke pasuse na kineskom'},
+  {step:5,icon:'📰',title_zh:'简单阅读',title_sr:'Citanje',desc_zh:'阅读简短的中文文章和新闻，从学习阶段过渡到实际使用阶段。',desc_sr:'Citaj kratke kineske clanke i vesti. Prelaz od ucenja ka koriscenju.',goal_zh:'目标：独立阅读简单中文材料',goal_sr:'Cilj: Samostalno citati jednostavne kineske materijale'}
+];
+
+function showRoadmapDetail(stepNum) {
+  var d = ROADMAP_DETAILS[stepNum - 1]; if (!d) return;
+  var panel = document.getElementById('lrDetail'); if (!panel) return;
+  var isOpen = panel.getAttribute('data-step') === String(stepNum);
+  if (isOpen) { panel.style.display = 'none'; panel.removeAttribute('data-step'); document.querySelectorAll('.lr-step').forEach(function(s){ s.classList.remove('active-step'); }); return; }
+  panel.style.display = ''; panel.setAttribute('data-step', String(stepNum));
+  document.getElementById('lrDetailTitle').textContent = d.icon + ' ' + (activeProfile === 'barry' ? d.title_zh : d.title_sr);
+  document.getElementById('lrDetailDesc').textContent = activeProfile === 'barry' ? d.desc_zh : d.desc_sr;
+  document.getElementById('lrDetailGoal').textContent = '🎯 ' + (activeProfile === 'barry' ? d.goal_zh : d.goal_sr);
+  document.querySelectorAll('.lr-step').forEach(function(s){ s.classList.toggle('active-step', parseInt(s.getAttribute('data-step')) === stepNum); });
+}
+
+(function() {
+  function attach() {
+    document.querySelectorAll('.lr-step').forEach(function(s) {
+      s.style.cursor = 'pointer';
+      s.addEventListener('click', function() { showRoadmapDetail(parseInt(this.getAttribute('data-step'))); });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach); else attach();
+})();
+
 // Update roadmap based on completed count
 (function(){
   var origRenderChecklist = renderChecklist;
