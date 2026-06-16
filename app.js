@@ -1185,7 +1185,7 @@ function setupPWABanner(){var banner=document.getElementById('pwaBanner');if(!ba
 
 // ===== DASHBOARD =====
 var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',learningSummary:'学习进度',completedLabel:'已完成',totalLabel:'总课程',streakLabel:'连续学习',daysUnit:'天',pointsLabel:'总积分',unreadMessages:'你有 {n} 条新留言',noUnread:'没有新留言',goDiary:'📝 写日记',goLearn:'📚 今日课程',goCalendar:'📅 查看日历',quoteTitle:'每日一句'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',learningSummary:'Pregled napretka',completedLabel:'Završeno',totalLabel:'ukupno lekcija',streakLabel:'Niz učenja',daysUnit:'dana',pointsLabel:'Ukupno poena',unreadMessages:'Imaš {n} novih poruka',noUnread:'Nema novih poruka',goDiary:'📝 Dnevnik',goLearn:'📚 Današnja lekcija',goCalendar:'📅 Kalendar',quoteTitle:'Današnja misao'}};
-function dl(key){var p=DASH_I18N[activeProfile]||DASH_I18N.andjela;return p[key]||(DASH_I18N.andjela[key]||key);}
+function dl(key){var profile=(lang||'').indexOf('zh')===0?'barry':'andjela';var p=DASH_I18N[profile]||DASH_I18N.andjela;return p[key]||(DASH_I18N.andjela[key]||key);}
 function initDashboard(){if(getGitHubToken()){pullAllSharedData().then(function(){renderDashboard();});}else{renderDashboard();}}
 function renderDashboard(){var panel=document.getElementById('panel-dashboard');if(!panel)return;var pp=getPartnerProgress();var myName=activeProfile==='andjela'?'🌸 Anđela':'👦 Barry';var cc=(pp&&pp.completed)?pp.completed.length:0;var tl=DAILY_LESSONS.length;var pct=tl>0?Math.round(cc/tl*100):0;var s=getStreak();var dp=getPoints('andjela');var mb=getUnlockedBadges('andjela');var uc=getUnreadCommentCount();var q=MOTIVATIONAL_QUOTES[Math.floor(Math.random()*MOTIVATIONAL_QUOTES.length)];var lb=null;for(var i=BADGES.length-1;i>=0;i--){if(mb.indexOf(BADGES[i].id)>=0){lb=BADGES[i];break;}}var tc=CULTURE_KNOWLEDGE[getTodaysCultureIndex()];var h='';h+='<div class=\"dash-welcome\">'+dl('welcomeBack')+'<strong>'+myName+'</strong></div>';h+='<div class=\"card dash-card\"><h4>'+tc.icon+' '+dl('todayCulture')+'</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">'+tc.zh+'</div><div style=\"font-size:.72rem;color:var(--text);margin-bottom:4px\">'+tc.sr+'</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">'+(activeProfile==="barry"?(CULTURE_DESC_ZH[tc.id]||tc.desc):(tc.desc_sr||tc.desc)).substring(0,120)+'...</div></div>';h+='<div class=\"card dash-card\"><h4>📊 '+dl('learningSummary')+'</h4><div class=\"dash-bar\"><div class=\"dash-bar-fill\" style=\"width:'+pct+'%\"></div></div><div class=\"dash-row\"><span>✅ '+dl('completedLabel')+': '+cc+'/'+tl+'</span><span>'+pct+'%</span></div><div class=\"dash-row\"><span>🔥 '+dl('streakLabel')+': '+s+' '+dl('daysUnit')+'</span><span>⭐ '+dl('pointsLabel')+': '+dp+'</span></div>'+((lb)?'<div style=\"margin-top:4px;font-size:.72rem\">'+lb.icon+' '+cl(lb.nameKey)+'</div>':'')+'</div>';h+='<div class=\"card dash-card\">'+((uc>0)?'<div class=\"dash-unread\" onclick=\"showGlobalComments()\" style=\"cursor:pointer\">🔴 '+dl('unreadMessages').replace('{n}',uc)+' 💌</div>':'<div style=\"font-size:.7rem;color:var(--text-muted);margin-bottom:8px\">✅ '+dl('noUnread')+'</div>');h+='<div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'culture\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">'+dl('goCalendar')+'</button></div></div>';h+='<div class=\"card dash-card dash-quote\"><div style=\"font-size:.62rem;color:var(--gold);margin-bottom:4px\">💭 '+dl('quoteTitle')+'</div><div style=\"font-size:.78rem;color:var(--love);font-style:italic\">'+q.zh+'</div><div style=\"font-size:.65rem;color:var(--text-muted)\">'+q.sr+'</div></div>';panel.innerHTML=h;}
 function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+tabId+'\"]');if(btn)btn.click();}
@@ -2414,7 +2414,7 @@ var CL = {
     noMic:'Mikrofon nije dostupan', imageReady:'Slika preuzeta!'
   }
 };
-function cl(key) { var p = CL[activeProfile] || CL.andjela; return p[key] || (CL.andjela[key] || key); }
+function cl(key) { var profile = (lang||'').indexOf('zh')===0 ? 'barry' : 'andjela'; var p = CL[profile] || CL.andjela; return p[key] || (CL.andjela[key] || key); }
 
 // ===== POINTS & BADGES =====
 var BADGES = [
@@ -2538,6 +2538,7 @@ function nextStudySession() {
   if (_currentStudySession < maxUnlocked) { _currentStudySession++; renderStudySession(); }
 }
 function renderStudySession() {
+  if (DAILY_LESSONS.length === 0) return; // data not loaded yet
   var zh = (lang || '').indexOf('zh') === 0;
   var el = function(id) { return document.getElementById(id); };
   var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
@@ -2589,7 +2590,7 @@ function renderStudySession() {
 var _cultureSubtab = 'culture'; // 'culture' or 'learn'
 function switchCultureSubtab(tab) {
   _cultureSubtab = tab;
-  var isBarry = activeProfile === 'barry';
+  var zh = (lang || '').indexOf('zh') === 0;
   // Update button styles
   var btnC = document.getElementById('subtab-culture');
   var btnL = document.getElementById('subtab-learn');
@@ -2598,8 +2599,8 @@ function switchCultureSubtab(tab) {
     else { btnL.style.background = 'var(--love)'; btnL.style.color = '#fff'; btnC.style.background = 'var(--card)'; btnC.style.color = 'var(--text)'; btnC.style.border = '1px solid var(--border)'; btnL.style.border = 'none'; }
   }
   // Update button labels
-  if (btnC) btnC.textContent = (tab === 'culture' ? '📚 ' : '') + (isBarry ? '中华文化' : 'Kineska kultura');
-  if (btnL) btnL.textContent = (tab === 'learn' ? '📖 ' : '') + (isBarry ? '学习' : 'Učenje');
+  if (btnC) btnC.textContent = (tab === 'culture' ? '📚 ' : '') + (zh ? '中华文化' : 'Kineska kultura');
+  if (btnL) btnL.textContent = (tab === 'learn' ? '📖 ' : '') + (zh ? '学习' : 'Učenje');
   // Show/hide panels
   var cp = document.getElementById('subpanel-culture');
   var lp = document.getElementById('subpanel-learn');
