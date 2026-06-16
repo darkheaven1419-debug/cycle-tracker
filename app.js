@@ -1211,28 +1211,31 @@ function loadDataFiles() {
 }
 
 async function bootApp() {
-  // Register service worker for PWA offline support
+  // Hide loader IMMEDIATELY — login screen must be visible
+  var loader = document.getElementById('appLoader');
+  if (loader) { loader.style.display = 'none'; if (loader.parentNode) loader.parentNode.removeChild(loader); }
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
   }
   loadPerProfileSettings();
-  // Load JSON data files before any rendering
-  await loadDataFiles();
+
+  // Load data in background (do NOT await — never block the UI)
+  loadDataFiles().catch(function(e) { console.error('loadDataFiles failed', e); });
+
   state = loadState();
   lastCycleCount = predict().cycles.length;
   applyTheme(theme); setLang(lang); applyFestivalTheme(); applySeasonalDecor(); setupOfflineDetection(); setupPWABanner();
 
-  // === Render basic UI immediately (data files are ready) ===
+  // Render UI immediately with whatever data is available
   updateProfileUI();
   renderAll(); loadSettingsUI();
   initDashboard();
-  // Hide loader NOW — basic UI is ready, shared data loads in background
-  var loader = document.getElementById('appLoader');
-  if (loader) { loader.style.opacity = '0'; loader.style.transition = 'opacity .3s'; setTimeout(function(){ if (loader.parentNode) loader.remove(); }, 350); }
 
-  // === Pull shared data from GitHub in BACKGROUND (non-blocking) ===
+  // Pull shared data in background (2s timeout, non-blocking)
   if (getGitHubToken()) {
-    pullAllSharedData().then(function() {
+    var ghTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('GitHub timeout')); }, 2000); });
+    Promise.race([pullAllSharedData(), ghTimeout]).catch(function(e) { console.log('Shared data pull skipped:', e.message); }).then(function() {
       try {
         var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
         if (sd && sd.records) {
@@ -1252,7 +1255,7 @@ async function bootApp() {
       renderDashboard(); // Refresh dashboard with synced data
       updateSyncStatusBadge();
       updateCycleCounter(predict().cycles.length);
-    });
+    }).catch(function(e) { console.log('Shared data render skipped'); });
   }
 
   fetchWeather();
