@@ -411,65 +411,63 @@
 
   <!-- ===== CULTURE & CHINESE LEARNING PANEL ===== -->
   <div class="panel" id="panel-culture" role="tabpanel" aria-labelledby="tab-culture">
-    <!-- Section 1: Chinese Culture -->
-    <div class="section-label" style="font-size:.72rem;font-weight:700;color:var(--love);margin-bottom:8px;padding:4px 0"><span id="culture-section-title">📚 Kineska kultura</span></div>
-    <div class="card culture-main-card" id="cultureMainCard">
-      <div class="culture-card-inner">
-        <span class="culture-card-emoji" id="cultureEmoji">🏮</span>
-        <div class="culture-card-zh" id="cultureTitleZh"></div>
-        <div class="culture-card-sr" id="cultureTitleSr"></div>
-        <p class="culture-card-desc" id="cultureDesc"></p>
-        <div class="culture-card-tags" id="cultureTags"></div>
-      </div>
-      <span class="culture-today-badge" id="cultureTodayBadge">Daily</span>
-      <div class="culture-card-nav">
-        <button class="culture-nav-btn" onclick="prevCultureCard()" title="Prethodna">◂</button>
-        <span class="culture-nav-info" id="cultureNavInfo">1 / 12</span>
-        <button class="culture-nav-btn" onclick="nextCultureCard()" title="Sledeća">▸</button>
-        <button class="culture-nav-btn" onclick="goToTodayCulture()" title="Današnja" style="font-size:.75rem">📅</button>
-      </div>
+    <!-- Sub-tabs -->
+    <div class="culture-subtabs" style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="culture-subtab active" id="subtab-culture" onclick="switchCultureSubtab('culture')" style="flex:1;padding:8px;border:none;border-radius:12px;font-size:.7rem;font-weight:700;cursor:pointer;background:var(--love);color:#fff">📚 Kineska kultura</button>
+      <button class="culture-subtab" id="subtab-learn" onclick="switchCultureSubtab('learn')" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:12px;font-size:.7rem;font-weight:700;cursor:pointer;background:var(--card);color:var(--text)">📖 Učenje</button>
     </div>
 
-    <!-- Section 2: Chinese Learning -->
-    <div class="section-divider" style="border-top:2px solid var(--border-soft);margin:14px 0 10px"></div>
-    <div class="section-label" style="font-size:.72rem;font-weight:700;color:var(--sage-dark);margin-bottom:8px;padding:4px 0"><span id="learn-section-title">📖 Učenje kineskog</span></div>
-    <div class="card learning-main-card" id="learningMainCard" style="background:var(--sage-light);border-color:var(--sage)">
-      <h3 style="margin-bottom:12px">📚 <span id="learn-title">Učenje kineskog</span></h3>
-
-      <!-- Study Session Card -->
-      <div style="background:var(--rose-light);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--border-soft)">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <span style="font-size:1.4rem" id="studyIcon">📖</span>
-          <span style="font-weight:700;font-size:.82rem" id="studyTopic"></span>
-          <span style="margin-left:auto;font-size:.6rem;color:var(--text-muted)" id="studyProgress"></span>
+    <!-- SUB-PANEL: Culture -->
+    <div id="subpanel-culture">
+      <div class="card culture-main-card" id="cultureMainCard">
+        <div class="culture-card-inner">
+          <span class="culture-card-emoji" id="cultureEmoji">🏮</span>
+          <div class="culture-card-zh" id="cultureTitleZh"></div>
+          <div class="culture-card-sr" id="cultureTitleSr"></div>
+          <p class="culture-card-desc" id="cultureDesc"></p>
+          <div class="culture-card-tags" id="cultureTags"></div>
         </div>
-        <div class="study-content" id="studyContent" style="font-size:.72rem;line-height:1.6;margin-bottom:8px"></div>
-        <div id="studyPractice" style="font-size:.65rem;color:var(--sage-dark);margin-bottom:10px;font-style:italic"></div>
-        <div style="display:flex;gap:6px;align-items:center;justify-content:center">
+        <span class="culture-today-badge" id="cultureTodayBadge">Daily</span>
+        <div class="culture-card-nav">
+          <button class="culture-nav-btn" onclick="prevCultureCard()">◂</button>
+          <span class="culture-nav-info" id="cultureNavInfo">1/30</span>
+          <button class="culture-nav-btn" onclick="nextCultureCard()">▸</button>
+          <button class="culture-nav-btn" onclick="goToTodayCulture()" style="font-size:.75rem">📅</button>
+        </div>
+      </div>
+      <!-- Category culture list -->
+      <div id="cultureCategories" style="margin-top:8px"></div>
+    </div>
+
+    <!-- SUB-PANEL: Learn -->
+    <div id="subpanel-learn" style="display:none">
+      <!-- Progress bar -->
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--text-muted);margin-bottom:3px"><span id="study-progress-label">Napredak</span><span id="study-progress-pct">0%</span></div>
+        <div style="height:6px;background:var(--border-soft);border-radius:6px;overflow:hidden"><div id="study-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--sage),var(--teal));border-radius:6px;width:0%;transition:width .4s"></div></div>
+      </div>
+      <!-- Study card -->
+      <div style="background:var(--card);border-radius:14px;padding:16px;margin-bottom:8px;border:1px solid var(--border-soft)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:1.3rem" id="studyIcon">📖</span><span style="font-weight:700;font-size:.8rem" id="studyTopic"></span><span style="margin-left:auto;font-size:.6rem;color:var(--text-muted)" id="studyProgress"></span></div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--love);margin-bottom:6px" id="studySubtitle"></div>
+        <div id="studyVocab" style="font-size:.7rem;line-height:1.6;margin-bottom:6px"></div>
+        <div id="studySentences" style="font-size:.7rem;line-height:1.6;margin-bottom:6px;padding:6px 8px;background:var(--rose-light);border-radius:8px"></div>
+        <div id="studyTip" style="font-size:.63rem;color:var(--sage-dark);font-style:italic"></div>
+        <div style="display:flex;gap:6px;align-items:center;justify-content:center;margin-top:10px">
           <button onclick="prevStudySession()" style="padding:6px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);cursor:pointer;font-size:.65rem">◂</button>
           <button id="studyStartBtn" onclick="startStudySession()" style="padding:8px 18px;border:none;border-radius:20px;background:var(--love);color:#fff;font-size:.7rem;font-weight:700;cursor:pointer">📖 Počni</button>
           <button onclick="nextStudySession()" style="padding:6px 12px;border:1px solid var(--border);border-radius:16px;background:var(--card);cursor:pointer;font-size:.65rem">▸</button>
         </div>
-        <!-- Partner encouragement -->
-        <div id="studyEncouragement" style="margin-top:10px;padding:8px 10px;background:var(--card);border-radius:10px;font-size:.65rem;color:var(--love);display:none"></div>
+        <div id="studyEncouragement" style="margin-top:8px;padding:6px 10px;background:var(--rose-light);border-radius:10px;font-size:.63rem;color:var(--love);display:none"></div>
       </div>
-
-      <!-- Voice Challenge -->
-      <div class="voice-challenge" id="voiceChallenge" style="margin-bottom:10px;padding:10px 12px;background:var(--sage-light);border-radius:var(--radius-sm);border:1px solid var(--border-soft)">
-        <div style="font-size:.7rem;font-weight:700;color:var(--text);margin-bottom:6px">🎤 <span id="voice-challenge-title">Današnji izazov</span></div>
-        <div id="voiceChallengeSentence" style="font-size:.72rem;color:var(--text);margin-bottom:4px"></div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <button class="culture-nav-btn" id="voiceStartBtn" onclick="startVoiceRecording()" title="Snimi" style="font-size:1.2rem">🎤</button>
-          <button class="culture-nav-btn" id="voiceStopBtn" onclick="stopVoiceRecording()" title="Zaustavi" style="display:none;font-size:1rem">⏹</button>
-          <button class="culture-nav-btn" id="voicePlayBtn" onclick="playVoiceRecording()" title="Pusti" style="display:none;font-size:1rem">▶</button>
-          <button class="culture-nav-btn" id="voiceSubmitBtn" onclick="submitVoiceRecording()" title="Pošalji" style="display:none;font-size:1rem">📨</button>
-          <span id="voiceStatus" style="font-size:.62rem;color:var(--text-muted);font-style:italic"></span>
-        </div>
+      <!-- Voice + Points -->
+      <div class="voice-challenge" id="voiceChallenge" style="display:none;margin-bottom:10px;padding:10px 12px;background:var(--sage-light);border-radius:10px;border:1px solid var(--border-soft)">
+        <div style="font-size:.68rem;font-weight:700;margin-bottom:4px">🎤 <span id="voice-challenge-title">Izazov</span></div>
+        <div id="voiceChallengeSentence" style="font-size:.7rem;margin-bottom:4px"></div>
+        <div style="display:flex;gap:6px;align-items:center"><button class="culture-nav-btn" id="voiceStartBtn" onclick="startVoiceRecording()" style="font-size:1.1rem">🎤</button><button class="culture-nav-btn" id="voiceStopBtn" onclick="stopVoiceRecording()" style="display:none">⏹</button><button class="culture-nav-btn" id="voicePlayBtn" onclick="playVoiceRecording()" style="display:none">▶</button><button class="culture-nav-btn" id="voiceSubmitBtn" onclick="submitVoiceRecording()" style="display:none">📨</button><span id="voiceStatus" style="font-size:.6rem;color:var(--text-muted)"></span></div>
       </div>
-
-      <!-- Partner Progress + Points -->
-      <div class="partner-progress-panel" id="partnerProgressPanel"><div class="pp-empty">Učitavanje...</div></div>
       <div class="points-panel" id="pointsPanel"><div class="pts-header">⭐ Poeni: <strong>0</strong></div></div>
+      <div class="partner-progress-panel" id="partnerProgressPanel"><div class="pp-empty">Učitavanje...</div></div>
 
       <!-- Checklist (collapsible) -->
       <details style="font-size:.68rem;color:var(--text-muted);margin-top:8px">
@@ -557,7 +555,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=24" defer></script>
+<script src="app.js?v=25" defer></script>
 </body>
 </html>
 

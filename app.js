@@ -2539,26 +2539,64 @@ function nextStudySession() { _currentStudySession = Math.min(DAILY_LESSONS.leng
 function renderStudySession() {
   var s = DAILY_LESSONS[_currentStudySession - 1]; if (!s) return;
   var isBarry = activeProfile === 'barry';
-  document.getElementById('studyIcon').textContent = s.icon || '📖';
-  document.getElementById('studyTopic').textContent = s.topic;
-  document.getElementById('studyProgress').textContent = (isBarry ? '第 ' : '') + _currentStudySession + ' / ' + DAILY_LESSONS.length;
-  var contentHtml = ''; s.words.forEach(function(w) { contentHtml += '<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.04)"><span style="font-weight:700;color:var(--love);min-width:60px">' + w.zh + '</span><span style="color:var(--sage-dark);font-style:italic;min-width:90px;font-size:.65rem">' + w.py + '</span><span style="color:var(--text)">' + w.sr + '</span></div>'; });
-  document.getElementById('studyContent').innerHTML = contentHtml;
-  document.getElementById('studyPractice').textContent = '💡 ' + s.tip;
+  var el = function(id) { return document.getElementById(id); };
+  if (el('studyIcon')) el('studyIcon').textContent = s.icon || '📖';
+  if (el('studyTopic')) el('studyTopic').textContent = (isBarry?'第':'')+_currentStudySession+(isBarry?'次学习':'')+'：'+s.topic;
+  if (el('studyProgress')) el('studyProgress').textContent = _currentStudySession + ' / ' + DAILY_LESSONS.length;
+  // Subtitle
+  if (el('studySubtitle')) el('studySubtitle').textContent = (isBarry?'重点词汇':'📖 Ključne reči');
+  // Vocab
+  var vocabHtml = ''; s.words.forEach(function(w) { vocabHtml += '<div style="display:flex;gap:6px;padding:2px 0;border-bottom:1px solid rgba(0,0,0,.03)"><span style="font-weight:700;color:var(--love);min-width:55px;font-size:.75rem">'+w.zh+'</span><span style="color:var(--sage-dark);min-width:80px;font-size:.62rem">'+w.py+'</span><span style="color:var(--text);font-size:.68rem">'+w.sr+'</span></div>'; });
+  if (el('studyVocab')) el('studyVocab').innerHTML = vocabHtml;
+  // Sentences (use challenge data)
+  var sentHtml = '';
+  if (s.challenge) { sentHtml = '<div style="font-size:.75rem;font-weight:700;color:var(--love)">💬 '+(isBarry?'例句':'Primer')+': '+s.challenge.zh+'</div><div style="font-size:.62rem;color:var(--sage-dark)">'+s.challenge.py+'</div><div style="font-size:.68rem;color:var(--text)">'+s.challenge.sr+'</div>'; }
+  if (el('studySentences')) el('studySentences').innerHTML = sentHtml || ('<div style="color:var(--text-muted)">'+(isBarry?'暂无例句':'Nema primera')+'</div>');
+  // Tip
+  if (el('studyTip')) el('studyTip').textContent = '💡 ' + s.tip;
+  // Progress bar
+  var pct = Math.round(_studySessionCount / DAILY_LESSONS.length * 100);
+  if (el('study-progress-bar')) el('study-progress-bar').style.width = pct + '%';
+  if (el('study-progress-pct')) el('study-progress-pct').textContent = pct + '%';
+  if (el('study-progress-label')) el('study-progress-label').textContent = (isBarry?'已完成 ':'Završeno ')+_studySessionCount+'/'+DAILY_LESSONS.length;
+  // Button
   var isNextNew = _currentStudySession > _studySessionCount;
-  var btn = document.getElementById('studyStartBtn');
+  var btn = el('studyStartBtn');
   if (btn) {
     if (_studySessionCount >= DAILY_LESSONS.length) { btn.textContent = '🎉 ' + (isBarry ? '全部完成!' : 'Sve završeno!'); btn.disabled = true; }
-    else { btn.textContent = isNextNew ? (isBarry ? '📖 开始学习' : '📖 Počni') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
+    else { btn.textContent = isNextNew ? (isBarry ? '✅ 完成本次学习' : '✅ Završi lekciju') : '✅ ' + (isBarry ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
   }
-  // Partner encouragement (Barry sees Angie's progress)
-  var enc = document.getElementById('studyEncouragement');
+  // Partner encouragement
+  var enc = el('studyEncouragement');
   if (enc && activeProfile === 'barry') {
     var pp = getPartnerProgress(); var done = (pp && pp.completed) ? pp.completed.length : 0;
     enc.style.display = done > 0 ? '' : 'none';
-    enc.innerHTML = '🌸 Angie: ' + (isBarry ? '已完成 ' : 'zavrsila ') + done + '/' + DAILY_LESSONS.length + ' <button onclick=\"showGlobalComments()\" style=\"font-size:.6rem;padding:2px 8px;border:1px solid var(--love);border-radius:10px;background:transparent;color:var(--love);cursor:pointer\">💬</button>';
+    enc.innerHTML = '🌸 Angie: ' + (isBarry?'已完成 ':'završila ') + done + '/' + DAILY_LESSONS.length + ' <button onclick=\"showGlobalComments()\" style=\"font-size:.6rem;padding:2px 8px;border:1px solid var(--love);border-radius:10px;background:transparent;color:var(--love);cursor:pointer\">💬</button>';
   }
 }
+// ===== SUB-TAB SWITCHING =====
+var _cultureSubtab = 'culture'; // 'culture' or 'learn'
+function switchCultureSubtab(tab) {
+  _cultureSubtab = tab;
+  var isBarry = activeProfile === 'barry';
+  // Update button styles
+  var btnC = document.getElementById('subtab-culture');
+  var btnL = document.getElementById('subtab-learn');
+  if (btnC && btnL) {
+    if (tab === 'culture') { btnC.style.background = 'var(--love)'; btnC.style.color = '#fff'; btnL.style.background = 'var(--card)'; btnL.style.color = 'var(--text)'; btnL.style.border = '1px solid var(--border)'; btnC.style.border = 'none'; }
+    else { btnL.style.background = 'var(--love)'; btnL.style.color = '#fff'; btnC.style.background = 'var(--card)'; btnC.style.color = 'var(--text)'; btnC.style.border = '1px solid var(--border)'; btnL.style.border = 'none'; }
+  }
+  // Update button labels
+  if (btnC) btnC.textContent = (tab === 'culture' ? '📚 ' : '') + (isBarry ? '中华文化' : 'Kineska kultura');
+  if (btnL) btnL.textContent = (tab === 'learn' ? '📖 ' : '') + (isBarry ? '学习' : 'Učenje');
+  // Show/hide panels
+  var cp = document.getElementById('subpanel-culture');
+  var lp = document.getElementById('subpanel-learn');
+  if (cp) cp.style.display = tab === 'culture' ? '' : 'none';
+  if (lp) lp.style.display = tab === 'learn' ? '' : 'none';
+  if (tab === 'learn') renderStudySession();
+}
+
 var _lessonDayIdx = 0;
 
 function getTodaysCultureIndex() {
@@ -2576,12 +2614,8 @@ function initCultureTab() {
   // Update tab label
   var tbCulture = document.getElementById('tb-culture');
   if (tbCulture) tbCulture.textContent = activeProfile === 'barry' ? '中华' : 'Kina';
-  // Section titles
-  var csTitle = document.getElementById('culture-section-title');
-  if (csTitle) csTitle.innerHTML = activeProfile === 'barry' ? '📚 中国文化' : '📚 Kineska kultura';
-  var lsTitle = document.getElementById('learn-section-title');
-  if (lsTitle) lsTitle.innerHTML = activeProfile === 'barry' ? '📖 学中文' : '📖 Učenje kineskog';
-  // Remove the old lrGuide (roadmap is gone)
+  // Update sub-tab labels
+  switchCultureSubtab(_cultureSubtab);
   // Load saved progress
   var saved = localStorage.getItem('culture-lesson-progress');
   if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
