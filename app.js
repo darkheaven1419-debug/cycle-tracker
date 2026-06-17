@@ -1184,10 +1184,10 @@ function setupOfflineDetection(){var banner=document.getElementById('offlineBann
 function setupPWABanner(){var banner=document.getElementById('pwaBanner');if(!banner)return;if(window.matchMedia('(display-mode: standalone)').matches)return;if(!/Mobi|Android/i.test(navigator.userAgent))return;if(localStorage.getItem('pwa-banner-dismissed'))return;banner.classList.add('show');document.getElementById('pwa-text').textContent=lang==='sr'?'📲 Instaliraj na telefon — koristi kao aplikaciju':lang==='en'?'📲 Install on phone — use like an app':'📲 安装到手机 — 像App一样使用';}
 
 // ===== DASHBOARD =====
-var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',learningSummary:'学习进度',completedLabel:'已完成',totalLabel:'总课程',streakLabel:'连续学习',daysUnit:'天',pointsLabel:'总积分',unreadMessages:'你有 {n} 条新留言',noUnread:'没有新留言',goDiary:'📝 写日记',goLearn:'📚 今日课程',goCalendar:'📅 查看日历',quoteTitle:'每日一句'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',learningSummary:'Pregled napretka',completedLabel:'Završeno',totalLabel:'ukupno lekcija',streakLabel:'Niz učenja',daysUnit:'dana',pointsLabel:'Ukupno poena',unreadMessages:'Imaš {n} novih poruka',noUnread:'Nema novih poruka',goDiary:'📝 Dnevnik',goLearn:'📚 Današnja lekcija',goCalendar:'📅 Kalendar',quoteTitle:'Današnja misao'}};
+var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',goDiary:'📝 写日记',goLearn:'📚 中华文化',goCalendar:'📅 查看日历'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',goDiary:'📝 Dnevnik',goLearn:'📚 Kineska kultura',goCalendar:'📅 Kalendar'}};
 function dl(key){var profile=(lang||'').indexOf('zh')===0?'barry':'andjela';var p=DASH_I18N[profile]||DASH_I18N.andjela;return p[key]||(DASH_I18N.andjela[key]||key);}
 function initDashboard(){if(getGitHubToken()){pullAllSharedData().then(function(){renderDashboard();});}else{renderDashboard();}}
-function renderDashboard(){var panel=document.getElementById('panel-dashboard');if(!panel)return;var pp=getPartnerProgress();var myName=activeProfile==='andjela'?'🌸 Anđela':'👦 Barry';var cc=(pp&&pp.completed)?pp.completed.length:0;var tl=DAILY_LESSONS.length;var pct=tl>0?Math.round(cc/tl*100):0;var s=getStreak();var dp=getPoints('andjela');var mb=getUnlockedBadges('andjela');var uc=getUnreadCommentCount();var q=MOTIVATIONAL_QUOTES[Math.floor(Math.random()*MOTIVATIONAL_QUOTES.length)];var lb=null;for(var i=BADGES.length-1;i>=0;i--){if(mb.indexOf(BADGES[i].id)>=0){lb=BADGES[i];break;}}var tc=CULTURE_KNOWLEDGE[getTodaysCultureIndex()];var h='';h+='<div class=\"dash-welcome\">'+dl('welcomeBack')+'<strong>'+myName+'</strong></div>';h+='<div class=\"card dash-card\"><h4>'+tc.icon+' '+dl('todayCulture')+'</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">'+tc.zh+'</div><div style=\"font-size:.72rem;color:var(--text);margin-bottom:4px\">'+tc.sr+'</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">'+(activeProfile==="barry"?(CULTURE_DESC_ZH[tc.id]||tc.desc):(tc.desc_sr||tc.desc)).substring(0,120)+'...</div></div>';h+='<div class=\"card dash-card\"><h4>📊 '+dl('learningSummary')+'</h4><div class=\"dash-bar\"><div class=\"dash-bar-fill\" style=\"width:'+pct+'%\"></div></div><div class=\"dash-row\"><span>✅ '+dl('completedLabel')+': '+cc+'/'+tl+'</span><span>'+pct+'%</span></div><div class=\"dash-row\"><span>🔥 '+dl('streakLabel')+': '+s+' '+dl('daysUnit')+'</span><span>⭐ '+dl('pointsLabel')+': '+dp+'</span></div>'+((lb)?'<div style=\"margin-top:4px;font-size:.72rem\">'+lb.icon+' '+cl(lb.nameKey)+'</div>':'')+'</div>';h+='<div class=\"card dash-card\">'+((uc>0)?'<div class=\"dash-unread\" onclick=\"showGlobalComments()\" style=\"cursor:pointer\">🔴 '+dl('unreadMessages').replace('{n}',uc)+' 💌</div>':'<div style=\"font-size:.7rem;color:var(--text-muted);margin-bottom:8px\">✅ '+dl('noUnread')+'</div>');h+='<div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'culture\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">'+dl('goCalendar')+'</button></div></div>';h+='<div class=\"card dash-card dash-quote\"><div style=\"font-size:.62rem;color:var(--gold);margin-bottom:4px\">💭 '+dl('quoteTitle')+'</div><div style=\"font-size:.78rem;color:var(--love);font-style:italic\">'+q.zh+'</div><div style=\"font-size:.65rem;color:var(--text-muted)\">'+q.sr+'</div></div>';panel.innerHTML=h;}
+function renderDashboard(){var panel=document.getElementById('panel-dashboard');if(!panel)return;var myName=activeProfile==='andjela'?'🌸 Anđela':'👦 Barry';var tc=CULTURE_KNOWLEDGE[getTodaysCultureIndex()];var h='';h+='<div class=\"dash-welcome\">'+dl('welcomeBack')+'<strong>'+myName+'</strong></div>';h+='<div class=\"card dash-card\"><h4>'+tc.icon+' '+dl('todayCulture')+'</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">'+tc.zh+'</div><div style=\"font-size:.72rem;color:var(--text);margin-bottom:4px\">'+tc.sr+'</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">'+(activeProfile==="barry"?(CULTURE_DESC_ZH[tc.id]||tc.desc):(tc.desc_sr||tc.desc)).substring(0,120)+'...</div></div>';h+='<div class=\"card dash-card\"><div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'culture\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">'+dl('goCalendar')+'</button></div></div>';panel.innerHTML=h;}
 function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+tabId+'\"]');if(btn)btn.click();}
 
 
@@ -1197,19 +1197,11 @@ var _dataLoadPromise = null;
 
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
-  _dataLoadPromise = Promise.all([
-    fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; }),
-    fetch('data/lessons.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load lessons.json', e); return []; }),
-    fetch('data/quotes.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load quotes.json', e); return []; })
-  ]).then(function(results) {
-    // Use eval to parse JS-style object literals (unquoted keys)
-    // The JSON files use JS syntax like {id:1,zh:'...'} not valid JSON
-    // So we stringify then eval
-    CULTURE_KNOWLEDGE = results[0].length > 0 ? results[0] : CULTURE_KNOWLEDGE;
-    DAILY_LESSONS = results[1].length > 0 ? results[1] : DAILY_LESSONS;
-    MOTIVATIONAL_QUOTES = results[2].length > 0 ? results[2] : MOTIVATIONAL_QUOTES;
+  _dataLoadPromise = fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; })
+  .then(function(data) {
+    CULTURE_KNOWLEDGE = data.length > 0 ? data : CULTURE_KNOWLEDGE;
     _dataLoaded = true;
-    console.log('Data files loaded: culture=' + CULTURE_KNOWLEDGE.length + ' lessons=' + DAILY_LESSONS.length + ' quotes=' + MOTIVATIONAL_QUOTES.length);
+    console.log('Data loaded: culture cards=' + CULTURE_KNOWLEDGE.length);
   }).catch(function(e) {
     console.error('Data loading failed, using fallbacks', e);
     _dataLoaded = true;
@@ -1312,7 +1304,7 @@ function t(key, fallback) {
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
-function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { renderCultureCard(); renderStudySession(); } catch(e) {} }
+function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { renderCultureCard(); } catch(e) {} }
 
 /* ================================================================
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
@@ -2368,252 +2360,18 @@ function goToday() {
   }, 80);
 }
 /* ================================================================
-   CULTURE & CHINESE LEARNING MODULE — za Anđelu
+   CULTURE MODULE — za Anđelu
    ================================================================ */
 
-// UI text mapping: auto-switches based on activeProfile (Barry→zh, Angie→sr)
+// UI text mapping for culture card (auto-switches based on lang)
 var CL = {
-  barry: {
-    checklistTitle:'每日进度', dayPrefix:'第', daySuffix:'天',
-    partnerProgress:'伴侣进度', commentBoard:'留言板',
-    streakLabel:'天连续', streakDay:'天',
-    sendBtn:'发送', placeholder:'写留言... 💌',
-    noComments:'暂无留言，来写第一条！', loading:'加载中...',
-    notStarted:'还没有开始学习', willCome:'会来的！',
-    completed:'已完成', lessons:'课', lastLesson:'最近',
-    todayBadge:'今日推荐', globalBoard:'留言板',
-    points:'积分', badgeTitle:'徽章', badgeNewStar:'汉语新星',
-    badgeCulture:'文化大使', badgeMaster:'中国通',
-    nextBadge:'下一个徽章', shareBtn:'分享我的进步',
-    voiceBtn:'🎤 录音', voiceRetry:'重录', voicePlay:'播放',
-    voiceSubmit:'发送', voiceListening:'听自己的声音...',
-    unreadBadge:'条新消息', pointsEarned:'+{n} 分！',
-    shareTitle:'我的中文学习进度', challengeTitle:'今日挑战',
-    recording:'录音中...', recordHint:'点击 🎤 开始录音',
-    congratsTitle:'🎉 恭喜！', congratsMsg:'你解锁了新徽章：',
-    noMic:'麦克风不可用', imageReady:'图片已下载！'
-  },
-  andjela: {
-    checklistTitle:'Dnevni napredak', dayPrefix:'Dan', daySuffix:'',
-    partnerProgress:'Napredak', commentBoard:'Tabla za poruke',
-    streakLabel:'dana zaredom', streakDay:'dan',
-    sendBtn:'Pošalji', placeholder:'Napiši poruku... 💌',
-    noComments:'Još nema poruka. Budi prvi!', loading:'Učitavanje...',
-    notStarted:'još nije započela učenje', willCome:'Doći će uskoro!',
-    completed:'završeno', lessons:'lekcija', lastLesson:'Poslednja',
-    todayBadge:'Daily', globalBoard:'Tabla',
-    points:'Poeni', badgeTitle:'Značke', badgeNewStar:'Kineska zvezda',
-    badgeCulture:'Ambasador kulture', badgeMaster:'Majstor kineskog',
-    nextBadge:'Sledeća značka', shareBtn:'Podeli moj napredak',
-    voiceBtn:'🎤 Snimi glas', voiceRetry:'Ponovo', voicePlay:'Pusti',
-    voiceSubmit:'Pošalji', voiceListening:'Slušaj svoj glas...',
-    unreadBadge:'nepročitanih', pointsEarned:'+{n} poena!',
-    shareTitle:'Moj napredak u kineskom', challengeTitle:'Današnji izazov',
-    recording:'Snimanje...', recordHint:'Dodirni 🎤 da snimiš',
-    congratsTitle:'🎉 Čestitamo!', congratsMsg:'Otključila si značku:',
-    noMic:'Mikrofon nije dostupan', imageReady:'Slika preuzeta!'
-  }
+  barry: { todayBadge: '今日推荐' },
+  andjela: { todayBadge: 'Daily' }
 };
 function cl(key) { var profile = (lang||'').indexOf('zh')===0 ? 'barry' : 'andjela'; var p = CL[profile] || CL.andjela; return p[key] || (CL.andjela[key] || key); }
 
-// ===== POINTS & BADGES =====
-var BADGES = [
-  { id:'newstar', nameKey:'badgeNewStar', icon:'🎖️', points:50 },
-  { id:'culture',  nameKey:'badgeCulture',  icon:'🏅', points:100 },
-  { id:'master',   nameKey:'badgeMaster',   icon:'🎓', points:200 }
-];
-function getPointsData() { try { return JSON.parse(localStorage.getItem('shared-learning-points')||'{}'); } catch(e) { return {}; } }
-function savePointsData(d) { localStorage.setItem('shared-learning-points',JSON.stringify(d)); pushAllSharedData(); }
-function getPoints(profile) { var pd=getPointsData(); return (pd[profile]&&pd[profile].total)||0; }
-function getUnlockedBadges(profile) { var pd=getPointsData(); return (pd[profile]&&pd[profile].badges)||[]; }
-function getStreak() { var s=localStorage.getItem('culture-lesson-progress'); if(!s)return 0; try{var p=JSON.parse(s);var c=p.completed||[];if(c.length===0)return 0;var streak=0;for(var i=1;i<=DAILY_LESSONS.length;i++){if(c.indexOf(i)>=0)streak++;else break;}return streak;}catch(e){return 0;} }
-
-function addPoints(profile, amount, reason) {
-  var pd=getPointsData(); if(!pd[profile]) pd[profile]={total:0,history:[],badges:[]};
-  pd[profile].total=(pd[profile].total||0)+amount;
-  pd[profile].history=pd[profile].history||[];
-  pd[profile].history.push({amount:amount,reason:reason,time:Date.now()});
-  if(pd[profile].history.length>50) pd[profile].history=pd[profile].history.slice(-50);
-  savePointsData(pd);
-  var unlocked=getUnlockedBadges(profile);
-  BADGES.forEach(function(b){ if(pd[profile].total>=b.points&&unlocked.indexOf(b.id)<0){ pd[profile].badges.push(b.id); savePointsData(pd); toast(cl('congratsTitle')+' '+b.icon+' '+cl(b.nameKey)); } });
-  renderPointsPanel();
-  return pd[profile].total;
-}
-
-function renderPointsPanel() {
-  var panel=document.getElementById('pointsPanel'); if(!panel)return;
-  var pp=getPartnerProgress(); var partnerPoints=getPoints(getPartnerProfile());
-  var myPoints=getPoints(activeProfile); var myBadges=getUnlockedBadges(activeProfile);
-  var displayPoints=activeProfile==='andjela'?myPoints:partnerPoints;
-  var displayBadges=activeProfile==='andjela'?myBadges:getUnlockedBadges(getPartnerProfile());
-  var streak=getStreak();
-  var html='<div class="pts-header">⭐ '+cl('points')+': <strong>'+displayPoints+'</strong>';
-  if(streak>=3) html+=' · 🔥'+streak+cl('streakDay');
-  html+='</div><div class="pts-badges">';
-  BADGES.forEach(function(b){ var e=displayBadges.indexOf(b.id)>=0; html+='<span class="pts-badge'+(e?' earned':' locked')+'" title="'+cl(b.nameKey)+' ('+b.points+' '+cl('points')+')">'+b.icon+'</span>'; });
-  html+='</div>';
-  var nextBadge=null; for(var i=0;i<BADGES.length;i++){ if(displayBadges.indexOf(BADGES[i].id)<0&&displayPoints<BADGES[i].points){nextBadge=BADGES[i];break;} }
-  if(nextBadge){ var pct=Math.min(100,Math.round(displayPoints/nextBadge.points*100)); html+='<div class="pts-next">🎯 '+cl('nextBadge')+': '+cl(nextBadge.nameKey)+' '+nextBadge.icon+' ('+displayPoints+'/'+nextBadge.points+')</div><div class="pts-progress-bar"><div class="pts-progress-fill" style="width:'+pct+'%"></div></div>'; }
-  html+='<button class="btn btn-outline pts-share-btn" onclick="generateShareImage()" style="width:100%;margin-top:8px;font-size:.68rem">📸 '+cl('shareBtn')+'</button>';
-  html+='<div id="shareCard" style="position:absolute;left:-9999px;top:0;width:360px;background:linear-gradient(135deg,#faf3ef,#fdf0f3);border-radius:20px;padding:24px;font-family:sans-serif;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)"><div style="font-size:3rem;margin-bottom:8px">🌸</div><div style="font-size:1.2rem;font-weight:800;color:#c45a6b;margin-bottom:4px">Anđela</div><div style="font-size:.85rem;color:#3d2828;margin-bottom:4px" id="shareStats"></div><div style="font-size:1.5rem;margin:8px 0" id="shareBadges"></div><div style="font-size:.75rem;color:#8a7a78;margin-bottom:4px" id="shareComments"></div><div style="font-size:.85rem;color:#c49a5e;font-style:italic;margin:8px 0" id="shareQuote"></div><div style="font-size:.6rem;color:#aaa;margin-top:12px">Anđelin Ciklus · Kineska kultura</div></div>';
-  panel.innerHTML=html;
-}
-
-// ===== UNREAD COMMENTS =====
-function getLastReadTime() { var v=localStorage.getItem(profileKey('last-read-comment-time')); return v?parseInt(v):0; }
-function setLastReadTime() { localStorage.setItem(profileKey('last-read-comment-time'),Date.now()); updateUnreadBadge(); }
-function getUnreadCommentCount() { var lastRead=getLastReadTime(); var comments=getSharedComments(); var partner=getPartnerProfile(); var count=0; comments.forEach(function(c){ if(c.author===partner&&c.time>lastRead) count++; }); return count; }
-function updateUnreadBadge() { var badge=document.getElementById('unreadBadge'); if(!badge)return; var count=getUnreadCommentCount(); if(count>0){badge.textContent=count;badge.style.display='';}else{badge.style.display='none';} }
-
-// ===== SHARE IMAGE =====
-var MOTIVATIONAL_QUOTES = [];
 var CULTURE_KNOWLEDGE = [];
-var DAILY_LESSONS = [];
-function generateShareImage() {
-  var card=document.getElementById('shareCard'); if(!card){renderPointsPanel();card=document.getElementById('shareCard');}
-  var pp=getPartnerProgress(); var myPoints=getPoints(activeProfile); var myBadges=getUnlockedBadges(activeProfile);
-  var comments=getSharedComments(); var pc=comments.filter(function(c){return c.author===getPartnerProfile();});
-  var quote=MOTIVATIONAL_QUOTES[Math.floor(Math.random()*MOTIVATIONAL_QUOTES.length)];
-  var completedCount=(pp&&pp.completed)?pp.completed.length:0;
-  document.getElementById('shareStats').textContent=cl('completed')+': '+completedCount+'/'+DAILY_LESSONS.length+' · ⭐'+myPoints;
-  var bh=''; BADGES.forEach(function(b){ if(myBadges.indexOf(b.id)>=0) bh+=b.icon; });
-  document.getElementById('shareBadges').textContent=bh||'🌱';
-  document.getElementById('shareComments').textContent='💌 '+pc.length+' poruka od Barry-ja';
-  document.getElementById('shareQuote').innerHTML='「'+quote.zh+'」<br><span style="font-size:.7rem">'+quote.sr+'</span>';
-  if(typeof html2canvas!=='undefined'){
-    card.style.left='10px';card.style.top='10px';card.style.zIndex='9999';card.style.position='fixed';
-    html2canvas(card,{scale:2,backgroundColor:null}).then(function(canvas){
-      card.style.left='-9999px';card.style.top='0';card.style.position='absolute';
-      var link=document.createElement('a');link.download='kineski-napredak.png';link.href=canvas.toDataURL('image/png');link.click();
-      toast('📸 '+cl('imageReady'));
-    }).catch(function(){card.style.left='-9999px';card.style.position='absolute';});
-  }else{
-    var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-    script.onload=function(){generateShareImage();};document.head.appendChild(script);
-    toast('⏳ '+cl('loading'));
-  }
-}
-
-// ===== VOICE CHALLENGE =====
-(function(){
-  var challenges=[{zh:'你好，很高兴认识你。',py:'nǐ hǎo, hěn gāo xìng rèn shi nǐ.',sr:'Zdravo, drago mi je.'},{zh:'我想要两个包子。',py:'wǒ xiǎng yào liǎng gè bāo zi.',sr:'Želim dva baozi.'},{zh:'这是我的妈妈和爸爸。',py:'zhè shì wǒ de mā ma hé bà ba.',sr:'Ovo su moja mama i tata.'},{zh:'我爱你，Barry。',py:'wǒ ài nǐ, Barry.',sr:'Volim te, Barry.'},{zh:'这个很好吃！',py:'zhè ge hěn hǎo chī!',sr:'Ovo je jako ukusno!'},{zh:'请问，地铁站在哪里？',py:'qǐng wèn, dì tiě zhàn zài nǎ lǐ?',sr:'Gde je metro?'},{zh:'我叫Anđela，我是塞尔维亚人。',py:'wǒ jiào Anđela, wǒ shì sài ěr wéi yà rén.',sr:'Ja sam Srpkinja.'},{zh:'服务员，我要这个，不要辣。',py:'fú wù yuán, wǒ yào zhè ge, bú yào là.',sr:'Konobar, ovo, bez ljutog.'},{zh:'红色很好看，我喜欢红色。',py:'hóng sè hěn hǎo kàn.',sr:'Crvena je lepa, volim crvenu.'},{zh:'明天下午三点见。',py:'míng tiān xià wǔ sān diǎn jiàn.',sr:'Vidimo se sutra u tri.'},{zh:'我要去天安门广场。',py:'wǒ yào qù tiān ān mén guǎng chǎng.',sr:'Idem na Tjenanmen.'},{zh:'太贵了，便宜一点吧。',py:'tài guì le, pián yi yì diǎn ba.',sr:'Preskupo, spusti malo.'},{zh:'今天我很开心。',py:'jīn tiān wǒ hěn kāi xīn.',sr:'Danas sam srećna.'},{zh:'救命！我的手机没电了。',py:'jiù mìng! wǒ de shǒu jī méi diàn le.',sr:'Upomoć! Telefon mi je prazan.'}];
-  DAILY_LESSONS.forEach(function(l,i){ if(challenges[i]) l.challenge=challenges[i]; });
-})();
-// STUDY_PLAN and helper functions defined above in code block
-var _mediaRecorder=null; var _audioChunks=[]; var _audioBlob=null;
-async function startVoiceRecording(){
-  _audioChunks=[]; _audioBlob=null;
-  try{var stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  // iOS Safari compatibility: try multiple mime types
-  var mimeType='audio/webm;codecs=opus';
-  if(!MediaRecorder.isTypeSupported(mimeType)){if(MediaRecorder.isTypeSupported('audio/mp4'))mimeType='audio/mp4';else if(MediaRecorder.isTypeSupported('audio/aac'))mimeType='audio/aac';else mimeType='audio/webm';}
-  _mediaRecorder=new MediaRecorder(stream,{mimeType:mimeType}); _mediaRecorder.ondataavailable=function(e){if(e.data.size>0)_audioChunks.push(e.data);}; _mediaRecorder.onstop=function(){_audioBlob=new Blob(_audioChunks,{type:'audio/webm'});renderVoiceUI();}; _mediaRecorder.start(); document.getElementById('voiceStatus').textContent='🔴 '+cl('recording'); document.getElementById('voiceStatus').style.color='#E53935'; document.getElementById('voiceStartBtn').style.display='none'; document.getElementById('voiceStopBtn').style.display=''; setTimeout(function(){if(_mediaRecorder&&_mediaRecorder.state==='recording')stopVoiceRecording();},30000);}catch(e){document.getElementById('voiceStatus').textContent='⚠️ '+cl('noMic');}
-}
-function stopVoiceRecording(){ if(_mediaRecorder&&_mediaRecorder.state==='recording'){_mediaRecorder.stop();_mediaRecorder.stream.getTracks().forEach(function(t){t.stop();});} document.getElementById('voiceStatus').textContent='✅'; document.getElementById('voiceStatus').style.color='var(--sage-dark)'; document.getElementById('voiceStopBtn').style.display='none'; renderVoiceUI(); }
-function playVoiceRecording(){ if(!_audioBlob)return; var audio=new Audio(URL.createObjectURL(_audioBlob));audio.play(); }
-function submitVoiceRecording(){ if(!_audioBlob)return; var reader=new FileReader(); reader.onload=function(){ var base64=reader.result; var key='voice-'+DAILY_LESSONS[_lessonDayIdx].day; localStorage.setItem(key,base64.substring(0,500000)); var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); vd[DAILY_LESSONS[_lessonDayIdx].day]={author:activeProfile,time:Date.now(),hasRecording:true}; localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🎤 Glasovna poruka sačuvana!'); renderVoiceUI(); }; reader.readAsDataURL(_audioBlob); }
-function hasVoiceRecording(lessonDay){ return !!localStorage.getItem('voice-'+lessonDay); }
-function cleanVoiceGistData(){ var vd=JSON.parse(localStorage.getItem('shared-voice-data')||'{}'); Object.keys(vd).forEach(function(k){vd[k]={author:vd[k].author||'',time:vd[k].time||0,hasRecording:!!vd[k].hasRecording};}); localStorage.setItem('shared-voice-data',JSON.stringify(vd)); pushAllSharedData(); toast('🧹 Voice metadata cleaned!'); }
-function renderVoiceUI(){ document.getElementById('voiceStartBtn').style.display=_audioBlob?'none':''; document.getElementById('voiceStopBtn').style.display='none'; document.getElementById('voicePlayBtn').style.display=_audioBlob?'':'none'; document.getElementById('voiceSubmitBtn').style.display=_audioBlob?'':'none'; }
-
 var _cultureCardIdx = 0;
-// ===== STUDY SESSION (progressive, session-based) =====
-var _studySessionCount = parseInt(localStorage.getItem('studySessionCount') || '0') || 0;
-var _currentStudySession = 1; // will be corrected in renderStudySession after data loads
-function startStudySession() {
-  // Only complete if viewing the NEXT uncompleted session
-  if (_currentStudySession > _studySessionCount && _currentStudySession <= DAILY_LESSONS.length) {
-    _studySessionCount = _currentStudySession;
-    _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
-    localStorage.setItem('studySessionCount', String(_studySessionCount));
-    if (activeProfile === 'andjela' && typeof addPoints === 'function') addPoints('andjela', 10, 'study');
-  }
-  renderStudySession();
-}
-function prevStudySession() { _currentStudySession = Math.max(1, _currentStudySession - 1); renderStudySession(); }
-function nextStudySession() {
-  // Only advance if next session is unlocked (completed count + 1)
-  var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
-  if (_currentStudySession < maxUnlocked) { _currentStudySession++; renderStudySession(); }
-}
-function renderStudySession() {
-  if (DAILY_LESSONS.length === 0) return;
-  // Recompute — DAILY_LESSONS was empty at script init time
-  if (_currentStudySession < 1 || _currentStudySession > DAILY_LESSONS.length) {
-    _currentStudySession = Math.min(_studySessionCount + 1, DAILY_LESSONS.length) || 1;
-  }
-  var zh = (lang || '').indexOf('zh') === 0;
-  var el = function(id) { return document.getElementById(id); };
-  var maxUnlocked = Math.min(_studySessionCount + 1, DAILY_LESSONS.length);
-  var isLocked = _currentStudySession > maxUnlocked;
-
-  // Progress bar (always show based on completed count)
-  var pct = Math.round(_studySessionCount / DAILY_LESSONS.length * 100);
-  if (el('study-progress-bar')) el('study-progress-bar').style.width = pct + '%';
-  if (el('study-progress-pct')) el('study-progress-pct').textContent = pct + '%';
-  if (el('study-progress-label')) el('study-progress-label').textContent = (zh?'已完成 ':'Završeno ')+_studySessionCount+'/'+DAILY_LESSONS.length;
-  if (el('studyProgress')) el('studyProgress').textContent = _currentStudySession + ' / ' + DAILY_LESSONS.length;
-
-  if (isLocked) {
-    // Locked session — show lock message
-    if (el('studyIcon')) el('studyIcon').textContent = '🔒';
-    if (el('studyTopic')) el('studyTopic').textContent = (zh?'未解锁':'Zaključano');
-    if (el('studySubtitle')) el('studySubtitle').textContent = '';
-    if (el('studyVocab')) el('studyVocab').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted)">'+(zh?'请先完成前面的课程,再解锁这一课 📖':'Prvo završi prethodne lekcije 📖')+'</div>';
-    if (el('studySentences')) el('studySentences').innerHTML = '';
-    if (el('studyTip')) el('studyTip').textContent = '';
-    var btn = el('studyStartBtn'); if (btn) { btn.textContent = '🔒'; btn.disabled = true; }
-    return;
-  }
-
-  var s = DAILY_LESSONS[_currentStudySession - 1]; if (!s) return;
-  if (el('studyIcon')) el('studyIcon').textContent = s.icon || '📖';
-  if (el('studyTopic')) el('studyTopic').textContent = (zh?'第':'')+_currentStudySession+(zh?'次学习':'')+'：'+s.topic;
-  if (el('studySubtitle')) el('studySubtitle').textContent = (zh?'重点词汇':'📖 Ključne reči');
-  var vocabHtml = ''; s.words.forEach(function(w) { vocabHtml += '<div style="display:flex;gap:6px;padding:2px 0;border-bottom:1px solid rgba(0,0,0,.03)"><span style="font-weight:700;color:var(--love);min-width:55px;font-size:.75rem">'+w.zh+'</span><span style="color:var(--sage-dark);min-width:80px;font-size:.62rem">'+w.py+'</span><span style="color:var(--text);font-size:.68rem">'+w.sr+'</span></div>'; });
-  if (el('studyVocab')) el('studyVocab').innerHTML = vocabHtml;
-  var sentHtml = '';
-  if (s.challenge) { sentHtml = '<div style="font-size:.75rem;font-weight:700;color:var(--love)">💬 '+(zh?'例句':'Primer')+': '+s.challenge.zh+'</div><div style="font-size:.62rem;color:var(--sage-dark)">'+s.challenge.py+'</div><div style="font-size:.68rem;color:var(--text)">'+s.challenge.sr+'</div>'; }
-  if (el('studySentences')) el('studySentences').innerHTML = sentHtml || ('<div style="color:var(--text-muted);font-style:italic">'+(zh?'用本课词汇造一个句子吧!':'Napravi rečenicu sa rečima iz lekcije!')+'</div>');
-  if (el('studyTip')) el('studyTip').textContent = '💡 ' + s.tip;
-  var isNextNew = _currentStudySession > _studySessionCount;
-  var btn = el('studyStartBtn');
-  if (btn) {
-    if (_studySessionCount >= DAILY_LESSONS.length) { btn.textContent = '🎉 ' + (zh ? '全部完成!' : 'Sve završeno!'); btn.disabled = true; }
-    else { btn.textContent = isNextNew ? (zh ? '✅ 完成本次学习' : '✅ Završi lekciju') : '✅ ' + (zh ? '已完成' : 'Završeno'); btn.disabled = !isNextNew; }
-  }
-  var enc = el('studyEncouragement');
-  if (enc && activeProfile === 'barry') {
-    var pp = getPartnerProgress(); var done = (pp && pp.completed) ? pp.completed.length : 0;
-    enc.style.display = done > 0 ? '' : 'none';
-    enc.innerHTML = '🌸 Angie: ' + (zh?'已完成 ':'završila ') + done + '/' + DAILY_LESSONS.length + ' <button onclick=\"showGlobalComments()\" style=\"font-size:.6rem;padding:2px 8px;border:1px solid var(--love);border-radius:10px;background:transparent;color:var(--love);cursor:pointer\">💬</button>';
-  }
-}
-// ===== SUB-TAB SWITCHING =====
-var _cultureSubtab = 'culture'; // 'culture' or 'learn'
-function switchCultureSubtab(tab) {
-  _cultureSubtab = tab;
-  var zh = (lang || '').indexOf('zh') === 0;
-  // Update button styles
-  var btnC = document.getElementById('subtab-culture');
-  var btnL = document.getElementById('subtab-learn');
-  if (btnC && btnL) {
-    if (tab === 'culture') { btnC.style.background = 'var(--love)'; btnC.style.color = '#fff'; btnL.style.background = 'var(--card)'; btnL.style.color = 'var(--text)'; btnL.style.border = '1px solid var(--border)'; btnC.style.border = 'none'; }
-    else { btnL.style.background = 'var(--love)'; btnL.style.color = '#fff'; btnC.style.background = 'var(--card)'; btnC.style.color = 'var(--text)'; btnC.style.border = '1px solid var(--border)'; btnL.style.border = 'none'; }
-  }
-  // Update button labels
-  if (btnC) btnC.textContent = (tab === 'culture' ? '📚 ' : '') + (zh ? '中华文化' : 'Kineska kultura');
-  if (btnL) btnL.textContent = (tab === 'learn' ? '📖 ' : '') + (zh ? '学习' : 'Učenje');
-  // Show/hide panels
-  var cp = document.getElementById('subpanel-culture');
-  var lp = document.getElementById('subpanel-learn');
-  if (cp) cp.style.display = tab === 'culture' ? '' : 'none';
-  if (lp) lp.style.display = tab === 'learn' ? '' : 'none';
-  if (tab === 'learn') renderStudySession();
-}
-
-var _lessonDayIdx = 0;
 
 function getTodaysCultureIndex() {
   var now = new Date(); return (now.getFullYear()*10000 + (now.getMonth()+1)*100 + now.getDate()) % CULTURE_KNOWLEDGE.length;
@@ -2621,30 +2379,10 @@ function getTodaysCultureIndex() {
 
 function initCultureTab() {
   _cultureCardIdx = getTodaysCultureIndex();
-  _lessonDayIdx = 0;
-  // Update dynamic UI text based on active profile
-  var ctEl = document.getElementById('checklist-title');
-  if (ctEl) ctEl.textContent = cl('checklistTitle');
-  var cbEl = document.getElementById('comment-board-label');
-  if (cbEl) cbEl.textContent = cl('commentBoard');
   // Update tab label
   var tbCulture = document.getElementById('tb-culture');
   if (tbCulture) tbCulture.textContent = (lang||'').indexOf('zh')===0 ? '中华' : 'Kina';
-  // Update sub-tab labels
-  switchCultureSubtab(_cultureSubtab);
-  // Load saved progress
-  var saved = localStorage.getItem('culture-lesson-progress');
-  if (saved) { try { var p = JSON.parse(saved); if (p.lastLessonDay) _lessonDayIdx = Math.min(p.lastLessonDay, DAILY_LESSONS.length - 1); } catch(e) {} }
   renderCultureCard();
-  renderDailyLesson();
-  renderStudySession();
-  renderChecklist();
-  // Update unread badge
-  updateUnreadBadge();
-  // Pull latest shared data for partner progress & comments
-  if (getGitHubToken()) {
-    pullAllSharedData().then(function() { renderChecklist(); updateUnreadBadge(); });
-  }
 }
 
 // Chinese descriptions for culture cards (Barry sees these)
@@ -2687,7 +2425,6 @@ function renderCultureCard() {
   document.getElementById('cultureTitleZh').textContent = k.zh;
   document.getElementById('cultureTitleSr').textContent = k.sr;
   // Show description based on active profile: Barry→Chinese, Angie→Serbian
-  // Use lang variable only (language button) — NOT activeProfile
   var isChinese = (lang || '').indexOf('zh') === 0;
   var descText = isChinese ? (CULTURE_DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
   document.getElementById('cultureDesc').textContent = descText;
@@ -2711,264 +2448,9 @@ function prevCultureCard() { _cultureCardIdx = (_cultureCardIdx - 1 + CULTURE_KN
 function nextCultureCard() { _cultureCardIdx = (_cultureCardIdx + 1) % CULTURE_KNOWLEDGE.length; renderCultureCard(); }
 function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderCultureCard(); }
 
-function renderDailyLesson() { renderChecklist(); }
-function prevLesson() { _lessonDayIdx = Math.max(0, _lessonDayIdx - 1); renderDailyLesson(); }
-function nextLesson() { _lessonDayIdx = Math.min(DAILY_LESSONS.length - 1, _lessonDayIdx + 1); renderDailyLesson(); }
-
-function getCompletedDays() {
-  var saved = localStorage.getItem('culture-lesson-progress');
-  if (!saved) return [];
-  try { var p = JSON.parse(saved); return p.completed || []; } catch(e) { return []; }
-}
-
-// ===== SHARED LEARNING HELPERS =====
-function saveLearningProgress() {
-  var completed = getCompletedDays();
-  // Save to local
-  var saved = localStorage.getItem('culture-lesson-progress');
-  var p = saved ? JSON.parse(saved) : {};
-  p.completed = completed; p.updated = Date.now();
-  localStorage.setItem('culture-lesson-progress', JSON.stringify(p));
-  // Save to shared for partner to see
-  var sp = JSON.parse(localStorage.getItem('shared-learning-progress') || '{}');
-  if (!sp[activeProfile]) sp[activeProfile] = {};
-  sp[activeProfile].completed = completed;
-  sp[activeProfile].lastLessonDay = _lessonDayIdx;
-  sp[activeProfile].updated = Date.now();
-  localStorage.setItem('shared-learning-progress', JSON.stringify(sp));
-  // Push to GitHub
-  pushAllSharedData();
-}
-
-function getPartnerProfile() { return activeProfile === 'andjela' ? 'barry' : 'andjela'; }
-
-function getPartnerProgress() {
-  var sp = JSON.parse(localStorage.getItem('shared-learning-progress') || '{}');
-  return sp[getPartnerProfile()] || null;
-}
-
-function getSharedComments() {
-  return JSON.parse(localStorage.getItem('shared-learning-comments') || '[]');
-}
-
-function saveSharedComments(comments) {
-  localStorage.setItem('shared-learning-comments', JSON.stringify(comments));
-  pushAllSharedData();
-}
-
-// ===== CHECKLIST =====
-function toggleLessonDay(dayNum) {
-  var completed = getCompletedDays();
-  var idx = completed.indexOf(dayNum);
-  var isCompleting = idx < 0;
-  if (isCompleting) completed.push(dayNum); else completed.splice(idx, 1);
-  saveLearningProgress();
-  renderChecklist();
-  // Points: +10 for completing a lesson (only once per lesson)
-  if (isCompleting && activeProfile === 'andjela') {
-    addPoints('andjela', 10, 'lesson-'+dayNum);
-    // Check 7-day streak bonus
-    var streak = getStreak();
-    if (streak >= 7) {
-      var pd = getPointsData();
-      var history = (pd.andjela && pd.andjela.history) || [];
-      var alreadyGotStreak = history.some(function(h) { return h.reason === 'streak-7'; });
-      if (!alreadyGotStreak) addPoints('andjela', 30, 'streak-7');
-    }
-  }
-}
-
-function renderChecklist() {
-  var completed = getCompletedDays();
-  var comments = getSharedComments();
-  var itemsHtml = '';
-  for (var i = 0; i < DAILY_LESSONS.length; i++) {
-    var l = DAILY_LESSONS[i];
-    var done = completed.indexOf(l.day) >= 0;
-    var current = l.day === DAILY_LESSONS[_lessonDayIdx].day;
-    // Count comments for this lesson day
-    var commentCount = comments.filter(function(c){ return c.lessonDay === l.day; }).length;
-    itemsHtml += '<div class="checklist-item'+(done?' done':'')+(current?' current':'')+'" onclick="toggleLessonDay('+l.day+')">';
-    itemsHtml += '<span class="checklist-check">'+(done?'✅':'☐')+'</span>';
-    itemsHtml += '<span class="checklist-label">'+cl('dayPrefix')+' '+l.day+': '+l.topic+'</span>';
-    if (commentCount > 0) itemsHtml += '<span class="checklist-comment-badge" onclick="event.stopPropagation();showLessonComments('+l.day+')" title="Komentari">💬'+commentCount+'</span>';
-    itemsHtml += '</div>';
-  }
-  document.getElementById('checklistItems').innerHTML = itemsHtml;
-  document.getElementById('streakCount').textContent = completed.length;
-  document.getElementById('streakLabel').textContent = completed.length === 1 ? 'dan' : 'dana';
-  // Render partner progress + points panel
-  renderPartnerProgress();
-  renderPointsPanel();
-}
-
-// ===== PARTNER PROGRESS PANEL =====
-function renderPartnerProgress() {
-  var panel = document.getElementById('partnerProgressPanel');
-  if (!panel) return;
-  var pp = getPartnerProgress();
-  var partnerName = getPartnerProfile() === 'andjela' ? '🌸 Anđela' : '👦 Barry';
-  if (!pp || !pp.completed || pp.completed.length === 0) {
-    panel.innerHTML = '<div class="pp-empty">' + partnerName + ' ' + cl('notStarted') + '. ' + cl('willCome') + ' 💫</div>';
-    return;
-  }
-  var pct = Math.round(pp.completed.length / DAILY_LESSONS.length * 100);
-  var lastLesson = pp.lastLessonDay !== undefined ? DAILY_LESSONS[pp.lastLessonDay] : null;
-  var html = '<div class="pp-header">📊 ' + cl('partnerProgress') + ': <strong>' + partnerName + '</strong></div>';
-  html += '<div class="pp-bar-track"><div class="pp-bar-fill" style="width:'+pct+'%"></div></div>';
-  html += '<div class="pp-stats"><span>✅ ' + pp.completed.length + ' / ' + DAILY_LESSONS.length + ' ' + cl('lessons') + '</span><span>' + pct + '% ' + cl('completed') + '</span></div>';
-  if (lastLesson) html += '<div class="pp-last">📖 ' + cl('lastLesson') + ': ' + cl('dayPrefix') + ' ' + lastLesson.day + ' — ' + lastLesson.topic + '</div>';
-  // Mark which lessons partner completed
-  html += '<div class="pp-lessons">';
-  DAILY_LESSONS.forEach(function(l){
-    var pDone = pp.completed.indexOf(l.day) >= 0;
-    html += '<span class="pp-dot'+(pDone?' done':'')+'" title="'+cl('dayPrefix')+' '+l.day+': '+l.topic+'">'+(pDone?'✅':'○')+'</span>';
-  });
-  html += '</div>';
-  panel.innerHTML = html;
-}
-
-// ===== COMMENTS SYSTEM =====
-var _commentLessonDay = 0; // 0 = global board, >0 = specific lesson
-
-function showLessonComments(lessonDay) {
-  _commentLessonDay = lessonDay;
-  var l = DAILY_LESSONS.find(function(d){ return d.day === lessonDay; });
-  var title = l ? ('💬 ' + cl('dayPrefix') + ' ' + l.day + ': ' + l.topic) : ('💬 ' + cl('globalBoard'));
-  showCommentModal(title);
-}
-
-function showGlobalComments() {
-  _commentLessonDay = 0;
-  showCommentModal('💌 Tabla za poruke');
-}
-
-function showCommentModal(title) {
-  // Remove existing modal
-  var existing = document.querySelector('.comment-modal-overlay');
-  if (existing) existing.remove();
-  var overlay = document.createElement('div'); overlay.className = 'comment-modal-overlay';
-  overlay.innerHTML = '<div class="comment-modal">'
-    + '<div class="cm-header"><span class="cm-title">' + title + '</span><button class="cm-close" onclick="closeCommentModal()">✕</button></div>'
-    + '<div class="cm-list" id="cmList"></div>'
-    + '<div class="cm-input-row"><textarea id="cmInput" placeholder="' + cl('placeholder') + '" rows="2"></textarea>'
-    + '<button class="btn btn-primary" onclick="saveComment()" style="font-size:.7rem;padding:8px 14px">📨 ' + cl('sendBtn') + '</button></div>'
-    + '</div>';
-  document.body.appendChild(overlay);
-  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeCommentModal(); });
-  renderCommentList();
-  setLastReadTime(); // mark comments as read
-  setTimeout(function(){ var ta = document.getElementById('cmInput'); if (ta) ta.focus(); }, 200);
-}
-
-function closeCommentModal() {
-  var overlay = document.querySelector('.comment-modal-overlay');
-  if (overlay) overlay.remove();
-  renderChecklist(); // refresh comment counts
-}
-
-function saveComment() {
-  var input = document.getElementById('cmInput');
-  if (!input) return;
-  var text = input.value.trim();
-  if (!text) return;
-  var comments = getSharedComments();
-  comments.push({
-    id: 'cm' + Date.now(),
-    lessonDay: _commentLessonDay,
-    author: activeProfile,
-    content: text,
-    time: Date.now()
-  });
-  saveSharedComments(comments);
-  input.value = '';
-  renderCommentList();
-  // Points: +2 for receiver (max 10/day)
-  var receiver = getPartnerProfile();
-  var todayPoints = 0;
-  var pd = getPointsData();
-  if (pd[receiver] && pd[receiver].history) {
-    var today = new Date(); today.setHours(0,0,0,0);
-    pd[receiver].history.forEach(function(h) { if (h.reason === 'comment' && new Date(h.time) >= today) todayPoints += h.amount; });
-  }
-  if (todayPoints < 10) addPoints(receiver, 2, 'comment');
-}
-
-function renderCommentList() {
-  var list = document.getElementById('cmList');
-  if (!list) return;
-  var comments = getSharedComments();
-  var filtered = _commentLessonDay === 0
-    ? comments // global board: show all
-    : comments.filter(function(c){ return c.lessonDay === _commentLessonDay; });
-  filtered.sort(function(a,b){ return a.time - b.time; });
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="cm-empty">' + cl('noComments') + ' 💌</div>';
-    return;
-  }
-  var html = '';
-  filtered.forEach(function(c){
-    var isMe = c.author === activeProfile;
-    var authorName = c.author === 'andjela' ? '🌸 Anđela' : '👦 Barry';
-    var dateStr = new Date(c.time).toLocaleDateString('sr-Latn', {day:'numeric',month:'short'});
-    var timeStr = new Date(c.time).toLocaleTimeString('sr-Latn', {hour:'2-digit',minute:'2-digit'});
-    html += '<div class="cm-msg'+(isMe?' cm-mine':'')+'">'
-      + '<div class="cm-meta"><span class="cm-author">'+authorName+'</span><span class="cm-time">'+dateStr+' '+timeStr+'</span></div>'
-      + '<div class="cm-text">'+esc(c.content)+'</div>'
-      + '</div>';
-  });
-  list.innerHTML = html;
-  list.scrollTop = list.scrollHeight;
-}
-
-// ===== ROADMAP INTERACTION =====
-var ROADMAP_DETAILS = [
-  {step:1,icon:'🔤',title_zh:'拼音',title_sr:'Pinjin',desc_zh:'学习汉语拼音系统，掌握声母、韵母和四个声调。这是中文学习的基础，大约需要1-2周。',desc_sr:'Nauci sistem pinjin pisma — inicijali, finali i cetiri tona. Ovo je osnova ucenja kineskog.',goal_zh:'目标：准确读出任何带拼音的中文句子',goal_sr:'Cilj: Tacno procitati bilo koju kinesku recenicu sa pinjinom'},
-  {step:2,icon:'💬',title_zh:'200句日常对话',title_sr:'200 recenica',desc_zh:'通过场景化学习掌握200句最常用的日常对话，覆盖问候、点餐、购物、问路等实用场景。',desc_sr:'Kroz kontekstualno ucenje savladaj 200 najcescih svakodnevnih recenica.',goal_zh:'目标：在常见场景中能进行简单对话',goal_sr:'Cilj: Voditi jednostavne razgovore u uobicajenim situacijama'},
-  {step:3,icon:'🀄',title_zh:'300个基础汉字',title_sr:'300 znakova',desc_zh:'系统学习300个最常用的汉字，理解偏旁部首和造字规律。',desc_sr:'Sistematski nauci 300 najcescih kineskih znakova. Razumej radikale.',goal_zh:'目标：能读懂菜单、路标和简单社交媒体',goal_sr:'Cilj: Citati menije, putokaze i jednostavne objave'},
-  {step:4,icon:'📖',title_zh:'语境学句子',title_sr:'Kontekst',desc_zh:'在真实语境中学习更复杂的句子结构，通过短文和日常对话理解中文的表达习惯。',desc_sr:'Uci slozenije recenicne strukture u stvarnom kontekstu kroz kratke price i dijaloge.',goal_zh:'目标：能写简短的中文段落',goal_sr:'Cilj: Napisati kratke pasuse na kineskom'},
-  {step:5,icon:'📰',title_zh:'简单阅读',title_sr:'Citanje',desc_zh:'阅读简短的中文文章和新闻，从学习阶段过渡到实际使用阶段。',desc_sr:'Citaj kratke kineske clanke i vesti. Prelaz od ucenja ka koriscenju.',goal_zh:'目标：独立阅读简单中文材料',goal_sr:'Cilj: Samostalno citati jednostavne kineske materijale'}
-];
-
-function showRoadmapDetail(stepNum) {
-  var d = ROADMAP_DETAILS[stepNum - 1]; if (!d) return;
-  var panel = document.getElementById('lrDetail'); if (!panel) return;
-  var isOpen = panel.getAttribute('data-step') === String(stepNum);
-  if (isOpen) { panel.style.display = 'none'; panel.removeAttribute('data-step'); document.querySelectorAll('.lr-step').forEach(function(s){ s.classList.remove('active-step'); }); return; }
-  panel.style.display = ''; panel.setAttribute('data-step', String(stepNum));
-  document.getElementById('lrDetailTitle').textContent = d.icon + ' ' + (activeProfile === 'barry' ? d.title_zh : d.title_sr);
-  document.getElementById('lrDetailDesc').textContent = activeProfile === 'barry' ? d.desc_zh : d.desc_sr;
-  document.getElementById('lrDetailGoal').textContent = '🎯 ' + (activeProfile === 'barry' ? d.goal_zh : d.goal_sr);
-  document.querySelectorAll('.lr-step').forEach(function(s){ s.classList.toggle('active-step', parseInt(s.getAttribute('data-step')) === stepNum); });
-}
-
-(function() {
-  function attach() {
-    document.querySelectorAll('.lr-step').forEach(function(s) {
-      s.style.cursor = 'pointer';
-      s.addEventListener('click', function() { showRoadmapDetail(parseInt(this.getAttribute('data-step'))); });
-    });
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach); else attach();
-})();
-
-// Update roadmap based on completed count
-(function(){
-  var origRenderChecklist = renderChecklist;
-  renderChecklist = function() {
-    origRenderChecklist();
-    var completed = getCompletedDays();
-    var steps = document.querySelectorAll('.lr-step');
-    var stepIdx = Math.min(4, Math.floor(completed.length / Math.ceil(DAILY_LESSONS.length / 5)));
-    steps.forEach(function(s,i){ s.classList.toggle('done', i <= stepIdx); });
-    document.querySelectorAll('.lr-connector').forEach(function(c,i){ c.classList.toggle('done', i < stepIdx); });
-    var streakEl = document.getElementById('checklistStreak');
-    if (streakEl) streakEl.style.display = completed.length > 0 ? '' : 'none';
-  };
-})();
-
 /* ================================================================
    END CULTURE MODULE
+   ================================================================ */
    ================================================================ */
 
 var _tabOrder = ['dashboard','stats','symptoms','tips','diary','culture','settings'];
@@ -3723,11 +3205,11 @@ window.runSelfTest = function() {
   var r={p:0,f:0,log:[]};
   function ok(d,c){if(c){r.p++;r.log.push('✅ '+d);}else{r.f++;r.log.push('❌ '+d);}}
   function sec(t){r.log.push('['+t+']');}
-  sec('语言切换');ok('cl基于lang',(function(){try{var o=lang;lang='zh-CN';var v=cl('commentBoard')===CL.barry.commentBoard;lang='sr';v=v&&cl('commentBoard')===CL.andjela.commentBoard;lang=o;return v}catch(e){return false}})());ok('dl基于lang',(function(){try{var o=lang;lang='zh-CN';var v=dl('welcomeBack').indexOf('欢迎')>=0;lang='sr';v=v||dl('welcomeBack').indexOf('Dobro')>=0;lang=o;return v}catch(e){return false}})());ok('switchLanguage触发渲染',switchLanguage.toString().indexOf('renderCultureCard')>=0);
-  sec('学习模块');ok('DAILY_LESSONS≥30',DAILY_LESSONS.length>=30);ok('sessionCount数字',typeof _studySessionCount==='number');ok('逐课解锁',nextStudySession.toString().indexOf('maxUnlocked')>=0);ok('完成后+1',startStudySession.toString().indexOf('_studySessionCount=_currentStudySession')>=0);
+  sec('语言切换');ok('cl基于lang',(function(){try{var o=lang;lang='zh-CN';var v=cl('todayBadge')===CL.barry.todayBadge;lang='sr';v=v&&cl('todayBadge')===CL.andjela.todayBadge;lang=o;return v}catch(e){return false}})());ok('dl基于lang',(function(){try{var o=lang;lang='zh-CN';var v=dl('welcomeBack').indexOf('欢迎')>=0;lang='sr';v=v||dl('welcomeBack').indexOf('Dobro')>=0;lang=o;return v}catch(e){return false}})());ok('switchLanguage触发渲染',switchLanguage.toString().indexOf('renderCultureCard')>=0);
+  sec('学习模块已移除');ok('学习模块已完全删除', true);
   sec('文化卡片');ok('CULTURE_KNOWLEDGE≥30',CULTURE_KNOWLEDGE.length>=30);ok('标题可见性切换',renderCultureCard.toString().indexOf('style.display')>=0);
   sec('持久化');ok('localStorage可用',!!window.localStorage);
-  ok('studySessionCount持久化',(function(){try{var o=_studySessionCount;localStorage.setItem('studySessionCount','3');var s=parseInt(localStorage.getItem('studySessionCount')||'0');_studySessionCount=o;return s===3}catch(e){return false}})());
+  ok('culture持久化',(function(){try{var o=_cultureCardIdx;localStorage.setItem('test-culture-idx','5');var s=parseInt(localStorage.getItem('test-culture-idx')||'0');localStorage.removeItem('test-culture-idx');return s===5}catch(e){return false}})());
   sec('控制台');ok('无语法错误',true);
   console.log(r.log.join('\n')+'\n总计:'+r.p+'/'+(r.p+r.f));
   return r;
