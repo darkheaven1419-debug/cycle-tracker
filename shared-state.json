@@ -139,6 +139,13 @@
         "wish": "Hmmmmmm. Danas sam zadovoljna svime. Možda možeš češće da mi kažeš \"Anđela, da li si napunila telefon?\"",
         "time": 1781736001229
       }
+    },
+    "2026-06-18": {
+      "andjela": {
+        "hug": {
+          "time": 1781736099097
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -187,8 +194,8 @@
     }
   ],
   "hug": {
-    "from": "barry",
-    "time": 1781657377824
+    "from": "andjela",
+    "time": 1781736099097
   },
   "songs": {
     "barry": null,
@@ -233,5 +240,5 @@
     }
   },
   "sunCounter": {},
-  "updated": 1781736004681
+  "updated": 1781736099098
 }
