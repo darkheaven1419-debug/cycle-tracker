@@ -2451,7 +2451,6 @@ function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderC
 /* ================================================================
    END CULTURE MODULE
    ================================================================ */
-   ================================================================ */
 
 var _tabOrder = ['dashboard','stats','symptoms','tips','diary','culture','settings'];
 var _prevTabIdx = 0;
