@@ -172,7 +172,14 @@
         "time": 1781657424307
       }
     },
-    "diaries": {},
+    "diaries": {
+      "2026-06-18": [
+        {
+          "text": "To što smo zajedno gledali nastup maturanata",
+          "time": 1781736141742
+        }
+      ]
+    },
     "settings": {
       "cycleLength": 28,
       "periodLength": 7,
@@ -240,5 +247,5 @@
     }
   },
   "sunCounter": {},
-  "updated": 1781736099098
+  "updated": 1781736143444
 }
