@@ -1,8 +1,8 @@
 // Service Worker — Anđelin Ciklus
 // Cache-First for static assets, Network-First for HTML
 
-const CACHE_STATIC = 'ciklus-static-v4';
-const CACHE_PAGES = 'ciklus-pages-v4';
+const CACHE_STATIC = 'ciklus-static-v5';
+const CACHE_PAGES = 'ciklus-pages-v5';
 
 const STATIC_ASSETS = [
   './',
@@ -26,7 +26,7 @@ self.addEventListener('install', function(event) {
   self.skipWaiting();
 });
 
-var KNOWN_CACHES = ['ciklus-static-v4', 'ciklus-pages-v4'];
+var KNOWN_CACHES = ['ciklus-static-v5', 'ciklus-pages-v5'];
 
 self.addEventListener('activate', function(event) {
   // Only delete known old caches; preserve any others
