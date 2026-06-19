@@ -146,6 +146,15 @@
           "time": 1781736099097
         }
       }
+    },
+    "2026-06-19": {
+      "andjela": {
+        "happy": "To što si pričao sa svojim roditeljima o meni.",
+        "uncomf": "To što mi nisi rekao šta radiš, pa sam se zabrinula gde si zapravo.",
+        "thanks": "Motivaciji da budem bolja.",
+        "wish": "Više razumevanja za onog drugog.",
+        "time": 1781906154576
+      }
     }
   },
   "cycleInfo": {
@@ -205,10 +214,7 @@
       "time": 1781736167893
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1781736099097
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -252,5 +258,5 @@
     }
   },
   "sunCounter": {},
-  "updated": 1781736167898
+  "updated": 1781906154586
 }
