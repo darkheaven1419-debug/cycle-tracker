@@ -273,6 +273,9 @@
       "hasRecording": true
     }
   },
-  "sunCounter": {},
-  "updated": 1781979309730
+  "sunCounter": {
+    "count": 1,
+    "lastDate": "2026-06-20"
+  },
+  "updated": 1781992422630
 }
