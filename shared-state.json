@@ -154,6 +154,13 @@
         "thanks": "Motivaciji da budem bolja.",
         "wish": "Više razumevanja za onog drugog.",
         "time": 1781906154576
+      },
+      "barry": {
+        "happy": "我们一起视频通话",
+        "uncomf": "你不信任我和我母亲说了你的事",
+        "thanks": "感谢你后来的信任",
+        "wish": "更加信任彼此",
+        "time": 1781979304625
       }
     },
     "2026-06-20": {
@@ -267,5 +274,5 @@
     }
   },
   "sunCounter": {},
-  "updated": 1781979271620
+  "updated": 1781979304626
 }
