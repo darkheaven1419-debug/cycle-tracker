@@ -878,7 +878,6 @@ var SYNC_INTERVAL_MS = 120000;    // Cross-device pull interval (2 min)
 var WEATHER_CACHE_MS = 21600000;  // Weather cache validity (6 hours)
 var WEATHER_TIMEOUT_MS = 8000;    // Weather fetch timeout
 var MAX_SHARED_RETRY = 3;         // GitHub sync retry attempts
-var DATE_STRIP_DAYS = 14;         // Shared diary date strip length
 var MAX_DIARY_CHARS = 200;        // Shared diary field character limit
 
 /* ================================================================
