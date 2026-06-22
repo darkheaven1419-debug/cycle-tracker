@@ -1241,6 +1241,23 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
   opacity: .7;
 }
 
+/* --- Lunar date on calendar cells --- */
+.day .lunar-date { position:absolute; bottom:1px; right:2px; font-size:.4rem; color:var(--text-muted); opacity:.55; z-index:1; pointer-events:none; font-weight:500; letter-spacing:-.03em; }
+.day .lunar-date.lunar-first { color:var(--love); opacity:.9; font-weight:700; }
+.day .lunar-date.lunar-fifteen { color:var(--gold); opacity:.8; font-weight:600; }
+.day .lunar-date.lunar-newyear { color:#E53935; opacity:1; font-weight:700; font-size:.45rem; text-shadow:0 0 3px rgba(229,57,53,.3); }
+.day[class*="period"] .lunar-date, .day.ovulation .lunar-date { filter:brightness(8); }
+
+/* --- Culture card (seasonal poems) --- */
+.culture-card { margin:10px 0 14px; padding:14px 16px; background:linear-gradient(135deg, rgba(196,90,107,.05), rgba(180,140,100,.07)); border-radius:14px; font-size:.73rem; line-height:1.8; border:1px solid rgba(180,140,100,.1); }
+.culture-card .poem-title { font-weight:700; color:var(--love); font-size:.8rem; }
+.culture-card .poem-body { font-style:italic; color:var(--text-muted); padding:4px 0; }
+[data-theme="dark"] .culture-card { background:linear-gradient(135deg, rgba(196,90,107,.08), rgba(180,140,100,.06)); }
+[data-theme="dark"] .culture-card .poem-body { color:var(--text); opacity:.7; }
+
+/* --- Lunar info row (zodiac + year) --- */
+.lunar-info { text-align:center; font-size:.68rem; color:var(--text-muted); margin-bottom:2px; opacity:.7; font-weight:500; letter-spacing:.01em; }
+
 /* --- Responsive stats --- */
 @media (min-width: 500px) {
   .stats-summary-grid { grid-template-columns: repeat(4, 1fr); }

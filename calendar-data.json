@@ -693,6 +693,66 @@
         "sr": "Zimska kratkodnevica je dan sa najdužom noći u godini – trenutak najdublje tame. Drevni Kinezi su verovali: \"Na zimsku kratkodnevicu rađa se jang\" – od danas dani postaju duži, jang energija se vraća. Kinezi ovaj dan posebno poštuju, kaže se \"Zimska kratkodnevica važna je kao Nova Godina.\" Na severu jedu knedle, na jugu slatke pirinčane knedle. Kao dete, baka je uvek govorila: \"Ako ne jedeš knedle na zimsku kratkodnevicu, smrznuće ti se uši.\" Verovao sam i jeo veoma ozbiljno. Ali pravi smisao nije u činiji knedli – već u svetlosti lampe oko koje je cela porodica okupljena u najdužoj noći.",
         "en": "Winter Solstice has the longest night of the year — the darkest moment of winter. The ancients believed that \"on winter solstice, yang is born\" — from this day forward, daylight grows longer and yang energy begins to rise. Chinese people hold this day in high regard, saying \"Winter Solstice is as important as the New Year.\" In the north, people eat dumplings; in the south, they eat tangyuan (sweet glutinous rice balls). As a child, my grandmother always said: \"If you do not eat dumplings on winter solstice, your ears will freeze off.\" I believed it completely and ate with great seriousness. But the real meaning is not the dumplings or the rice balls — it is the lamplight around which the whole family gathers on the longest night of the year."
       }
+    },
+    {
+      "id": "xiaonian",
+      "date": "2026-02-11",
+      "name": { "zh": "小年", "sr": "Mala Nova Godina", "en": "Little New Year" },
+      "country": "china",
+      "story": {
+        "zh": "腊月二十三，北方的小年。这一天要送灶王爷上天汇报工作。家家户户会准备灶糖——一种甜甜的饴糖，让灶王爷嘴甜多说好话。还要大扫除，把一年的灰尘和霉运统统扫出门。奶奶说，灶王爷在天上只说好事，因为吃了甜甜的糖，嘴巴就只会说甜话了。从这天起，春节的序幕正式拉开。",
+        "sr": "Dvadeset treći dan dvanaestog lunarnog meseca — Mala Nova Godina na severu Kine. Danas se ispraća Bog Kuhinje na nebo da podnese godišnji izveštaj. Svaka porodica priprema lepljive slatkiše kako bi Božija usta bila slatka i rekla samo lepe stvari. Kuća se čisti od poda do plafona — bukvalno se mete stara godina napolje. Od danas, prolećni festival zvanično počinje.",
+        "en": "The 23rd of the 12th lunar month — Little New Year in northern China. The Kitchen God is sent off to heaven to deliver his annual report. Families prepare malt-sugar candies to sweeten his words, and sweep every corner of the house — literally sweeping the old year out. From today, Spring Festival officially begins."
+      }
+    },
+    {
+      "id": "dongzhi-festival",
+      "date": "2026-12-22",
+      "name": { "zh": "冬至节", "sr": "Zimski solsticij festival", "en": "Winter Solstice Festival" },
+      "country": "china",
+      "story": {
+        "zh": "冬至大如年！这是中国最重要的节气节日之一。古时候，冬至是一个比新年还重要的日子，皇帝在这一天祭天，百姓一家人围在一起吃饺子。北方人相信「冬至不端饺子碗，冻掉耳朵没人管」，所以这天一定要吃热腾腾的饺子。南方人则喜欢吃汤圆，象征团圆。从今天起，白天会一天比一天长，阳气慢慢回升——春天，已经在路上了。",
+        "sr": "Zimski solsticij je važniji od Nove Godine! Ovo je jedan od najvažnijih kineskih solarnih praznika. U drevnoj Kini, car bi prinosio žrtvu Nebu, a porodice bi se okupljale uz jufke. Na severu veruju: 'Ako na solsticij ne jedeš jufke, niko ti neće sačuvati uši od smrzavanja!' Na jugu jedu tangyuan — slatke kuglice od pirinča koje simbolizuju zajedništvo. Od danas, dani postaju duži, a jang energija polako raste — proleće je već na putu.",
+        "en": "Winter Solstice is as grand as New Year! One of China's most important solar festivals. In ancient times, the emperor would offer sacrifices to Heaven. Northerners say: 'If you don't eat dumplings on Winter Solstice, who will save your ears from freezing?' Southerners eat tangyuan — sweet rice balls symbolizing togetherness. From today, days grow longer and yang energy rises — spring is already on its way."
+      }
+    },
+    {
+      "id": "zhongyuan",
+      "date": "2026-09-15",
+      "name": { "zh": "中元节", "sr": "Festival gladnih duhova", "en": "Hungry Ghost Festival" },
+      "country": "china",
+      "story": {
+        "zh": "农历七月十五，中元节，也叫盂兰盆节。传说这一天，阴阳两界的界限变得模糊，祖先的灵魂会回到人间探望亲人。人们会在河边放水灯，一盏盏莲花灯顺着水流漂向远方，就像在说：回家的路，我们为你照亮了。小时候外婆总说，这天晚上要早点回家，但也别害怕——回来的都是爱我们的人。",
+        "sr": "Petnaesti dan sedmog lunarnog meseca — Festival gladnih duhova. Kažu da na ovaj dan granica između svetova postaje tanja, i duše predaka se vraćaju da posete svoje najmilije. Ljudi puštaju vodene lampione niz reku — svaki plamen je svetionik za dušu koja traži put kući. Baka je uvek govorila: 'Vrati se kući pre mraka, ali ne boj se — oni koji se vraćaju su oni koji te vole.'",
+        "en": "The 15th of the 7th lunar month. The boundary between worlds grows thin tonight, and ancestral spirits return to visit their loved ones. People set water lanterns adrift on rivers — each flame a beacon for a soul finding its way home. Grandma always said: 'Come home before dark, but don't be afraid — those who return are those who love you.'"
+      }
     }
+  ],
+  "poems": [
+    { "month": 1, "title": { "zh":"元日", "sr":"Novogodišnji dan", "en":"New Year's Day" },
+      "author": "王安石", "dynasty": "宋",
+      "lines": { "zh":"爆竹声中一岁除，春风送暖入屠苏。\n千门万户曈曈日，总把新桃换旧符。",
+                 "sr":"Uz prasak petardi stara godina odlazi,\nProlećni vetar donosi toplinu u tusu vino.\nSunce obasjava hiljade domova,\nSvi menjaju stare amajlije za nove.",
+                 "en":"Amidst firecrackers the old year passes,\nSpring wind brings warmth into the wine.\nThe sun shines on a thousand homes,\nAll replace old charms with new peach-wood signs." }},
+    { "month": 3, "title": { "zh":"春晓", "sr":"Prolećno jutro", "en":"Spring Morning" },
+      "author": "孟浩然", "dynasty": "唐",
+      "lines": { "zh":"春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。",
+                 "sr":"U prolećnom snu ne čuješ zoru,\nSvuda cvrkut ptica.\nSinoć šum vetra i kiše —\nKoliko latica je palo?",
+                 "en":"Spring sleep, unaware of dawn,\nEverywhere birds are singing.\nLast night — wind and rain,\nHow many flowers have fallen?" }},
+    { "month": 6, "title": { "zh":"小池", "sr":"Mali ribnjak", "en":"Little Pond" },
+      "author": "杨万里", "dynasty": "宋",
+      "lines": { "zh":"泉眼无声惜细流，树阴照水爱晴柔。\n小荷才露尖尖角，早有蜻蜓立上头。",
+                 "sr":"Izvor šapuće, štedeći tanak mlaz,\nSenka drveta miluje vodu.\nTek što lotos pokaže vrh,\nVilin konjic već na njemu stoji.",
+                 "en":"The spring murmurs, sparing its stream,\nTree shade caresses the water.\nThe lotus bud just shows its tip,\nA dragonfly already rests upon it." }},
+    { "month": 9, "title": { "zh":"山居秋暝", "sr":"Jesenje veče u planinama", "en":"Autumn Evening" },
+      "author": "王维", "dynasty": "唐",
+      "lines": { "zh":"空山新雨后，天气晚来秋。\n明月松间照，清泉石上流。",
+                 "sr":"Prazne planine posle sveže kiše,\nVazduh miriše na jesen.\nMesec sija kroz borove,\nPotok teče preko kamenja.",
+                 "en":"Empty mountains after fresh rain,\nThe air feels of autumn.\nMoon shines through the pines,\nSpring flows over the stones." }},
+    { "month": 12, "title": { "zh":"江雪", "sr":"Sneg na reci", "en":"River Snow" },
+      "author": "柳宗元", "dynasty": "唐",
+      "lines": { "zh":"千山鸟飞绝，万径人踪灭。\n孤舟蓑笠翁，独钓寒江雪。",
+                 "sr":"Na hiljadu planina ni ptice,\nNa deset hiljada staza ni traga.\nU čamcu starac sa slamnim šeširom —\nSam peca na hladnoj reci pod snegom.",
+                 "en":"A thousand hills — no bird in flight,\nTen thousand paths — no human trace.\nA lone boat, an old man in straw cloak,\nFishing alone in the cold river snow." }}
   ]
 }
