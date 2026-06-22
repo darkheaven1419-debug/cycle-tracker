@@ -160,37 +160,7 @@ function renderMoodSection() {
 /* ================================================================
    ONE-LINE DIARY
    ================================================================ */
-function saveDiary() {
-  var input = document.getElementById('diaryInput');
-  if (!input) return;
-  var text = input.value.trim();
-  if (!text) return;
-  if (!state.diaries) state.diaries = {};
-  var key = fmtDate(today());
-  if (!state.diaries[key]) state.diaries[key] = [];
-  state.diaries[key].push({ text: text, time: Date.now() });
-  saveState();
-  input.value = '';
-  renderDiarySection();
-  toast('📓 ✓');
-}
-function renderDiarySection() {
-  document.getElementById('diary-title').textContent = t('diaryTitle');
-  document.getElementById('diaryPrompt').textContent = t('diaryPrompt');
-  document.getElementById('diaryInput').placeholder = t('diaryPlaceholder');
-  // Auto-save on blur when user navigates away
-  var di = document.getElementById('diaryInput');
-  if (di) { di.onblur = function() { if (di.value.trim()) saveDiary(); }; }
-  var key = fmtDate(today());
-  var entries = (state.diaries && state.diaries[key]) ? state.diaries[key] : [];
-  var hist = document.getElementById('diaryHistory');
-  if (entries.length === 0) { hist.innerHTML = ''; return; }
-  hist.innerHTML = entries.slice().reverse().map(function(e) {
-    var t = new Date(e.time);
-    var timeStr = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
-    return '<div class="diary-history-item"><span class="diary-history-date">' + timeStr + '</span><span class="diary-history-text">' + esc(e.text) + '</span></div>';
-  }).join('');
-}
+/* One-line diary merged into Letters module — see SHARED DIARY section */
 
 /* ================================================================
    LOVE NOTE
@@ -848,10 +818,260 @@ function renderDiaryLabels() {
 }
 
 function initSharedDiaryTab() {
-  sharedDiaryViewDate = new Date();
-  renderDiaryLabels();
-  renderDateStrip();
-  renderSharedDiary();
+  letterViewDate = new Date(); letterMonth = letterViewDate.getMonth(); letterYear = letterViewDate.getFullYear();
+  letterMood = ''; renderLettersPanel();
+}
+
+/* ================================================================
+   💌 LETTERS MODULE — Unified diary (replaces 4-field + one-line)
+   Uses existing data layer: loadSharedDiaryData/saveSharedDiaryData
+   Old entry format auto-merged to letter text on read
+   ================================================================ */
+var letterViewDate = new Date();
+var letterMonth = new Date().getMonth();
+var letterYear = new Date().getFullYear();
+var letterMood = '';
+var _letterAutoSaveTimer = null;
+
+var LETTER_MOODS = ['😊','🥰','😢','😤','😴','🤩'];
+var LETTER_PROMPTS = {
+  '💝':{sr:'Danas me obradovalo...',zh:'今天让我开心的事...',en:'Today I felt happy because...'},
+  '🤔':{sr:'Malo mi je zasmetalo...',zh:'让我有点不舒服...',en:'Something uncomfortable...'},
+  '🙏':{sr:'Želim da ti se zahvalim za...',zh:'我想感谢你...',en:'I want to thank you for...'},
+  '💪':{sr:'Voleo bih da poradimo na...',zh:'希望我们一起改进...',en:'I hope we can improve...'}
+};
+
+// Merge old 4-field entry into letter text
+function letterTextFromEntry(entry) {
+  if (!entry) return '';
+  if (entry.text) return entry.text; // new format
+  var parts = [];
+  if (entry.happy) parts.push('💝 ' + entry.happy);
+  if (entry.uncomf) parts.push('🤔 ' + entry.uncomf);
+  if (entry.thanks) parts.push('🙏 ' + entry.thanks);
+  if (entry.wish) parts.push('💪 ' + entry.wish);
+  return parts.join('\n\n');
+}
+
+function saveLetter() {
+  var input = document.getElementById('letterInput'); if (!input) return;
+  var text = input.value.trim(); if (!text) return;
+  var dateKey = fmtDate(new Date(letterViewDate));
+  var allData = loadSharedDiaryData();
+  if (!allData[dateKey]) allData[dateKey] = {};
+  var existing = allData[dateKey][activeProfile] || {};
+  allData[dateKey][activeProfile] = { text:text, mood:letterMood, time:Date.now() };
+  if (existing.hug) allData[dateKey][activeProfile].hug = existing.hug;
+  saveSharedDiaryData(allData);
+  // Show saved badge
+  var badge = document.getElementById('letterSavedBadge');
+  badge.classList.add('show'); setTimeout(function(){badge.classList.remove('show');},2000);
+  pushAllSharedData();
+  renderLettersPanel();
+  toast('💌 ✓');
+}
+
+function insertPrompt(emoji) {
+  var input = document.getElementById('letterInput'); if (!input) return;
+  var prompt = LETTER_PROMPTS[emoji][lang] || LETTER_PROMPTS[emoji].sr;
+  var cursor = input.selectionStart || input.value.length;
+  var before = input.value.substring(0, cursor);
+  var after = input.value.substring(cursor);
+  var sep = before.length > 0 && !before.endsWith('\n') ? '\n' : '';
+  input.value = before + sep + prompt + ' ' + after;
+  input.focus();
+  input.selectionStart = input.selectionEnd = cursor + sep.length + prompt.length + 1;
+  updateLetterCharCount();
+}
+
+function updateLetterCharCount() {
+  var input = document.getElementById('letterInput');
+  var cnt = document.getElementById('letterCharCount');
+  if (cnt) cnt.textContent = input ? input.value.length : 0;
+}
+
+function renderMiniCalendar() {
+  var cal = document.getElementById('lettersMiniCal'); if (!cal) return;
+  var allData = loadSharedDiaryData();
+  var first = new Date(letterYear, letterMonth, 1);
+  var dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
+  var selKey = fmtDate(new Date(letterViewDate));
+  var todayKey = fmtDate(today());
+  var dowLabels = lang==='sr'?['Po','Ut','Sr','Če','Pe','Su','Ne']:lang==='en'?['Mo','Tu','We','Th','Fr','Sa','Su']:['一','二','三','四','五','六','日'];
+  var html = dowLabels.map(function(d){return '<div class="mc-dow">'+d+'</div>';}).join('');
+  for (var i = 0; i < 42; i++) {
+    var d = new Date(first); d.setDate(d.getDate() - dow + i);
+    var key = fmtDate(d); var inMonth = d.getMonth() === letterMonth;
+    var dayData = allData[key]; var both = dayData && dayData['barry'] && dayData['andjela'];
+    var hasEntry = dayData && (dayData['barry'] || dayData['andjela']);
+    var cls = ['mc-day']; if (!inMonth) cls.push('other-month');
+    if (key === todayKey) cls.push('today');
+    if (key === selKey) cls.push('selected');
+    html += '<div class="' + cls.join(' ') + '" onclick="selectLetterDate(\'' + key + '\')">';
+    html += '<span>' + d.getDate() + '</span>';
+    if (hasEntry && inMonth) { html += '<span class="mc-dot' + (both ? ' both' : ' has-entry') + '"></span>'; }
+    html += '</div>';
+  }
+  cal.innerHTML = html;
+  document.getElementById('lettersMonthLabel').textContent = L(letterYear+'. '+(letterMonth+1)+'.', (letterYear)+'年'+(letterMonth+1)+'月', t('months')[letterMonth]+' '+letterYear);
+  var todayBtn = document.getElementById('lettersTodayBtn');
+  if (todayBtn) todayBtn.textContent = L('📍 Danas', '📍 今天', '📍 Today');
+}
+
+function selectLetterDate(key) {
+  letterViewDate = new Date(key + 'T00:00:00');
+  letterMonth = letterViewDate.getMonth();
+  letterYear = letterViewDate.getFullYear();
+  letterMood = '';
+  renderLettersPanel();
+}
+
+function shiftLetterMonth(dir) {
+  letterMonth += dir;
+  if (letterMonth < 0) { letterMonth = 11; letterYear--; }
+  if (letterMonth > 11) { letterMonth = 0; letterYear++; }
+  renderLettersPanel();
+}
+
+function goLetterToday() {
+  var t = today(); letterViewDate = t; letterMonth = t.getMonth(); letterYear = t.getFullYear();
+  letterMood = ''; renderLettersPanel();
+}
+
+function renderLettersPanel() {
+  renderMiniCalendar();
+  var dateKey = fmtDate(new Date(letterViewDate));
+  var selDate = new Date(letterViewDate);
+  document.getElementById('letterDate').textContent = '📅 ' + dateKey;
+  // Mood tags
+  var moodHtml = '';
+  LETTER_MOODS.forEach(function(m){
+    moodHtml += '<span class="mood-tag'+(letterMood===m?' picked':'')+'" onclick="pickLetterMood(\''+m+'\')">'+m+'</span>';
+  });
+  document.getElementById('letterMoodTags').innerHTML = moodHtml;
+  document.getElementById('letterPromptHint').textContent = L('klikni da dodaš u pismo ↑','点击添入信中 ↑','tap to add to letter ↑');
+  // My entry
+  var allData = loadSharedDiaryData();
+  var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
+  var input = document.getElementById('letterInput');
+  if (!myEntry || !input.value) {
+    input.value = myEntry ? letterTextFromEntry(myEntry) : '';
+  }
+  updateLetterCharCount();
+  // Auto-save draft
+  if (input) {
+    input.oninput = function() {
+      updateLetterCharCount();
+      clearTimeout(_letterAutoSaveTimer);
+      _letterAutoSaveTimer = setTimeout(function() {
+        var txt = input.value; if (!txt.trim()) return;
+        var ad = loadSharedDiaryData();
+        if (!ad[dateKey]) ad[dateKey] = {};
+        ad[dateKey][activeProfile] = { text:txt, mood:letterMood, time:Date.now(), draft:true };
+        saveSharedDiaryData(ad);
+      }, 3000);
+    };
+  }
+  // Send button label
+  document.getElementById('letter-send-text').textContent = L('Pošalji', '发送', 'Send');
+  document.getElementById('letter-my-title').textContent = L('Moje pismo', '我的信', 'My Letter');
+  document.getElementById('letter-saved-text').textContent = L('Sačuvano', '已保存', 'Saved');
+  // Partner card
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+  var partnerEntry = allData[dateKey] && allData[dateKey][partnerProfile];
+  var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+  document.getElementById('letter-partner-title').textContent = partnerName + ' ' + L('pismo', '的信', '\'s Letter');
+  document.getElementById('letter-lock-text').textContent = L('Napiši svoje pismo da otključaš partnerovo 💌', '写下你的信来解锁伴侣的 💌', 'Write your letter to unlock your partner\'s 💌');
+  var lockedEl = document.getElementById('letterLocked');
+  var contentEl = document.getElementById('letterPartnerContent');
+  var translateBtn = document.getElementById('letterTranslateBtn');
+  if (myEntry || (allData[dateKey] && allData[dateKey][activeProfile])) {
+    lockedEl.style.display = 'none'; contentEl.style.display = '';
+    if (partnerEntry) {
+      var body = partnerEntry.text || letterTextFromEntry(partnerEntry);
+      var mood = partnerEntry.mood || '';
+      var timeStr = partnerEntry.time ? (function(t){var d=new Date(t);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');})(partnerEntry.time) : '';
+      contentEl.innerHTML = '<div class="letter-body">' + esc(body) + '</div><div class="letter-signature">— ' + partnerName + ' ' + mood + ' 💕</div>' + (timeStr ? '<div class="letter-time">'+timeStr+'</div>' : '');
+      translateBtn.style.display = '';
+    } else {
+      contentEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:var(--text-sm);color:var(--text-muted);font-style:italic">' + L('Partner još nije napisao pismo za ovaj dan 📭', '伴侣还没写这一天的信 📭', 'Your partner hasn\'t written for this day yet 📭') + '</div>';
+      translateBtn.style.display = 'none';
+    }
+  } else {
+    lockedEl.style.display = ''; contentEl.style.display = 'none'; translateBtn.style.display = 'none';
+  }
+  // Mailbox
+  renderMailbox(allData);
+}
+
+function pickLetterMood(m) { letterMood = letterMood === m ? '' : m; renderLettersPanel(); }
+
+function renderMailbox(allData) {
+  var list = document.getElementById('mailboxList'); if (!list) return;
+  var items = [];
+  Object.keys(allData).forEach(function(date){
+    var day = allData[date];
+    if (day['barry'] || day['andjela']) items.push({date:date, barry:day['barry'], andjela:day['andjela']});
+  });
+  items.sort(function(a,b){return b.date.localeCompare(a.date);});
+  document.getElementById('mailbox-title').textContent = L('Poštansko sanduče', '信箱', 'Mailbox');
+  if (items.length === 0) {
+    list.innerHTML = '<div class="mailbox-empty">' + L('Još nema pisama — napiši prvo! 💌', '还没有信——写第一封吧！💌', 'No letters yet — write the first! 💌') + '</div>';
+    return;
+  }
+  var showCount = 8;
+  var html = '';
+  for (var i = 0; i < Math.min(items.length, showCount); i++) {
+    var item = items[i];
+    var both = item.barry && item.andjela;
+    var myEntry = item[activeProfile];
+    var partnerEntry = item[activeProfile === 'andjela' ? 'barry' : 'andjela'];
+    var icon = both ? '💌' : (myEntry ? '✉️' : '📭');
+    var preview = myEntry ? (myEntry.text || letterTextFromEntry(myEntry)).substring(0, 60) : (partnerEntry ? '🔒 ' + L('piši da otključaš','写信解锁','write to unlock') : '');
+    var moodEmoji = myEntry && myEntry.mood ? myEntry.mood : '';
+    html += '<div class="mailbox-item" onclick="jumpToLetter(\'' + item.date + '\')">';
+    html += '<span class="mb-icon">' + icon + '</span>';
+    html += '<span class="mb-date">' + item.date.slice(5) + '</span>';
+    if (moodEmoji) html += '<span class="mb-mood">' + moodEmoji + '</span>';
+    html += '<span class="mb-preview">' + esc(preview) + '</span>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+}
+
+function jumpToLetter(dateKey) {
+  letterViewDate = new Date(dateKey + 'T00:00:00');
+  letterMonth = letterViewDate.getMonth(); letterYear = letterViewDate.getFullYear();
+  letterMood = ''; renderLettersPanel();
+  var panel = document.getElementById('panel-diary');
+  if (panel) panel.scrollIntoView({behavior:'smooth'});
+}
+
+function translatePartnerLetter() {
+  var dateKey = fmtDate(new Date(letterViewDate));
+  var allData = loadSharedDiaryData();
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+  var entry = allData[dateKey] && allData[dateKey][partnerProfile];
+  if (!entry) return;
+  var body = entry.text || letterTextFromEntry(entry);
+  var vl = (lang||'sr') === 'zh-CN' ? 'zh-CN' : 'sr';
+  var pl = partnerProfile === 'barry' ? 'zh-CN' : 'sr';
+  if (vl === pl) return;
+  var btn = document.getElementById('letterTranslateBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+  translateText(body, pl, vl).then(function(result) {
+    var contentEl = document.getElementById('letterPartnerContent');
+    if (result && result !== body && contentEl) {
+      var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+      var mood = entry.mood || '';
+      contentEl.innerHTML = '<div class="letter-body">' + esc(result) + '</div><div class="letter-signature">— ' + partnerName + ' ' + mood + ' 💕</div><div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:4px">🌐 ' + L('Prevedeno', '已翻译', 'Translated') + '</div>';
+      if (btn) { btn.textContent = '✅'; btn.disabled = false; }
+    } else {
+      if (btn) { btn.textContent = '⚠️'; btn.disabled = false; setTimeout(function(){btn.textContent='🌐';},3000); }
+    }
+  }).catch(function() {
+    if (btn) { btn.textContent = '⚠️'; btn.disabled = false; setTimeout(function(){btn.textContent='🌐';},3000); }
+  });
 }
 
 /* ================================================================
@@ -1899,9 +2119,7 @@ function applyAllUI(what) {
   if (all || what === 'mood' || (Array.isArray(what) && what.indexOf('mood') >= 0)) {
     renderMoodSection(); renderGarden();
   }
-  if (all || what === 'diary' || (Array.isArray(what) && what.indexOf('diary') >= 0)) {
-    renderDiarySection();
-  }
+  // Letters module renders on-demand when diary tab is active (no auto-refresh needed)
   if (all || what === 'connection' || (Array.isArray(what) && what.indexOf('connection') >= 0)) {
     renderLoveNote(); renderForecast(); renderRelTips();
     renderHug(); renderSong(); renderCheckin(); renderSleepCard();

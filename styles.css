@@ -610,6 +610,85 @@ body {
 /* Fade-in animation */
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
+/* ================================================================
+   💌 LETTERS — Redesigned Diary Module (v8)
+   ================================================================ */
+
+/* Mini Calendar */
+.mini-cal { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:12px; }
+.mini-cal .mc-dow { text-align:center; font-size:var(--text-xs); color:var(--text-muted); font-weight:600; padding:2px 0; }
+.mini-cal .mc-day {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  border-radius:8px; font-size:.72rem; font-weight:500; cursor:pointer;
+  transition:transform .12s, background .2s; touch-action:manipulation;
+  min-width:32px; min-height:32px; position:relative;
+}
+.mini-cal .mc-day:hover { background:var(--rose-light); transform:scale(1.1); }
+.mini-cal .mc-day:active { transform:scale(.9); }
+.mini-cal .mc-day.today { font-weight:700; box-shadow:inset 0 0 0 2px var(--text); }
+.mini-cal .mc-day.selected { background:var(--love); color:#fff; font-weight:700; }
+.mini-cal .mc-day .mc-dot {
+  position:absolute; bottom:2px; width:4px; height:4px; border-radius:50%;
+}
+.mini-cal .mc-day .mc-dot.has-entry { background:var(--love); }
+.mini-cal .mc-day .mc-dot.both { background:var(--gold); }
+
+/* Letter Card */
+.letter-card { background:linear-gradient(175deg, #FFFDF9 0%, #FFF9F5 40%, #FFF5F0 100%); border:1px solid rgba(196,154,94,.2); border-radius:var(--radius); }
+[data-theme="dark"] .letter-card { background:linear-gradient(175deg, #1E1C18 0%, #1F1C1A 40%, #1C1A18 100%); border-color:rgba(196,154,94,.15); }
+.letter-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.letter-header h3 { margin:0; font-size:.8rem; color:var(--text); }
+.letter-saved { display:inline-flex; align-items:center; gap:4px; font-size:var(--text-xs); color:var(--sage); font-weight:600; opacity:0; transform:translateY(-6px); transition:all .35s cubic-bezier(.34,1.56,.64,1); }
+.letter-saved.show { opacity:1; transform:translateY(0); }
+.letter-date-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:var(--text-xs); color:var(--gold); }
+
+/* Mood Tags */
+.mood-tags { display:flex; gap:4px; }
+.mood-tag { width:32px; height:32px; border-radius:50%; border:2px solid transparent; background:var(--card); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; touch-action:manipulation; }
+.mood-tag:hover { transform:scale(1.15); }
+.mood-tag.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.2); }
+
+/* Letter Input */
+.letter-card textarea { width:100%; border:none; background:transparent; font-family:var(--font); font-size:var(--text-base); color:var(--text); line-height:1.7; resize:vertical; min-height:100px; }
+.letter-card textarea:focus { outline:none; }
+.letter-card textarea::placeholder { color:var(--text-muted); opacity:.4; font-style:italic; }
+
+/* Prompt Chips */
+.letter-prompts { display:flex; gap:6px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+.prompt-chip { width:36px; height:36px; border-radius:50%; background:var(--card); border:1px solid var(--border); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; touch-action:manipulation; }
+.prompt-chip:hover { border-color:var(--love); background:var(--rose-light); transform:scale(1.1); }
+.prompt-chip:active { transform:scale(.9); }
+#letterPromptHint { font-size:var(--text-xs); color:var(--text-muted); opacity:.7; font-style:italic; }
+
+/* Letter Actions */
+.letter-actions { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+.letter-char-count { font-size:var(--text-xs); color:var(--text-muted); }
+
+/* Partner Letter */
+.partner-letter { background:linear-gradient(175deg, #FFF5FA 0%, #FFF0F5 40%, #FFEFF5 100%); border-color:rgba(212,120,138,.2); }
+[data-theme="dark"] .partner-letter { background:linear-gradient(175deg, #1E1A1D 0%, #1F1A1E 40%, #1C1A1D 100%); }
+
+/* Letter Locked State */
+.letter-locked { text-align:center; padding:28px 20px; }
+.letter-lock-icon { font-size:2.5rem; display:block; margin-bottom:8px; opacity:.6; }
+.letter-lock-text { font-size:.74rem; color:var(--text-muted); line-height:1.5; }
+
+/* Letter Content (unlocked) */
+.letter-content { padding:8px 0; }
+.letter-body { font-size:var(--text-base); color:var(--text); line-height:1.8; white-space:pre-wrap; }
+.letter-signature { text-align:right; font-size:var(--text-sm); color:var(--love); font-style:italic; margin-top:12px; }
+.letter-time { font-size:var(--text-xs); color:var(--text-muted); margin-top:4px; }
+
+/* Mailbox List */
+.mailbox-list { display:flex; flex-direction:column; gap:2px; }
+.mailbox-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px; cursor:pointer; transition:background .15s; font-size:var(--text-sm); }
+.mailbox-item:hover { background:var(--rose-light); }
+.mailbox-item .mb-icon { font-size:1.1rem; flex-shrink:0; }
+.mailbox-item .mb-date { font-weight:600; color:var(--text); min-width:44px; }
+.mailbox-item .mb-preview { flex:1; color:var(--text-muted); font-size:var(--text-xs); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mailbox-item .mb-mood { font-size:.85rem; }
+.mailbox-empty { text-align:center; padding:16px; font-size:var(--text-sm); color:var(--text-muted); font-style:italic; }
+
 /* Enhanced shared diary form */
 .sd-field-card { background:var(--card); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:10px; border:1px solid var(--border); transition:all .2s; }
 .sd-field-card:focus-within { border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.08); }

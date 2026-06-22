@@ -11,7 +11,7 @@
 <link rel="dns-prefetch" href="https://api.open-meteo.com">
 <link rel="dns-prefetch" href="https://api.github.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=19">
+<link rel="stylesheet" href="styles.css?v=20">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
@@ -351,76 +351,63 @@
   <div class="panel" id="panel-tips" role="tabpanel" aria-labelledby="tab-tips"><div id="tips-list"></div></div>
 
   <div class="panel" id="panel-diary" role="tabpanel" aria-labelledby="tab-diary">
-    <!-- Date Strip -->
-    <div class="date-strip-wrap">
-      <button class="date-strip-arrow" onclick="scrollDateStrip(-1)" aria-label="Earlier">◂</button>
-      <div class="date-strip" id="dateStrip"></div>
-      <button class="date-strip-arrow" onclick="scrollDateStrip(1)" aria-label="Later">▸</button>
+    <!-- Mini Calendar Navigator -->
+    <div class="cal-nav" style="margin-bottom:8px">
+      <button class="nav-btn" onclick="shiftLetterMonth(-1)" aria-label="Prethodni mesec">◂</button>
+      <span class="month-label" id="lettersMonthLabel"></span>
+      <button class="nav-btn" onclick="shiftLetterMonth(1)" aria-label="Sledeći mesec">▸</button>
+      <button class="today-pill" onclick="goLetterToday()" id="lettersTodayBtn">📍</button>
     </div>
+    <div class="mini-cal" id="lettersMiniCal"></div>
 
-    <!-- MY ENTRY — guided prompts -->
-    <div class="card" id="sharedDiaryMyCard">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">✏️ <span id="sd-my-title">My Reflection</span></h3>
-        <span class="sd-saved-badge" id="sdSavedBadge">✅ <span id="sd-saved-text">已保存</span></span>
+    <!-- 💌 MY LETTER -->
+    <div class="card letter-card" id="letterMyCard">
+      <div class="letter-header">
+        <h3>💌 <span id="letter-my-title">Moje pismo</span></h3>
+        <span class="letter-saved" id="letterSavedBadge">✅ <span id="letter-saved-text">Sačuvano</span></span>
       </div>
-      <div style="font-size:.68rem;color:var(--gold);margin:6px 0 10px;font-style:italic" id="sd-my-hint"></div>
-
-      <div class="sd-field-card">
-        <div class="sdf-label"><span class="sdf-emoji">💝</span> <span id="sd-l-happy">What made me happy today</span></div>
-        <textarea id="sd-happy" rows="1" placeholder="..."></textarea>
-        <div class="sdf-count"><span id="sdc-happy">0</span>/200</div>
+      <div class="letter-date-row">
+        <span id="letterDate"></span>
+        <span class="mood-tags" id="letterMoodTags"></span>
       </div>
-      <div class="sd-field-card">
-        <div class="sdf-label"><span class="sdf-emoji">🤔</span> <span id="sd-l-uncomf">What felt a little uncomfortable</span></div>
-        <textarea id="sd-uncomf" rows="1" placeholder="..."></textarea>
-        <div class="sdf-count"><span id="sdc-uncomf">0</span>/200</div>
+      <textarea id="letterInput" placeholder="Piši ovde... kao da pišeš pismo..."
+        maxlength="500" rows="4"></textarea>
+      <div class="letter-prompts" id="letterPrompts">
+        <span class="prompt-chip" data-prompt="💝">💝</span>
+        <span class="prompt-chip" data-prompt="🤔">🤔</span>
+        <span class="prompt-chip" data-prompt="🙏">🙏</span>
+        <span class="prompt-chip" data-prompt="💪">💪</span>
+        <span id="letterPromptHint"></span>
       </div>
-      <div class="sd-field-card">
-        <div class="sdf-label"><span class="sdf-emoji">🙏</span> <span id="sd-l-thanks">Something I want to thank you for</span></div>
-        <textarea id="sd-thanks" rows="1" placeholder="..."></textarea>
-        <div class="sdf-count"><span id="sdc-thanks">0</span>/200</div>
-      </div>
-      <div class="sd-field-card">
-        <div class="sdf-label"><span class="sdf-emoji">💪</span> <span id="sd-l-wish">Something I hope we can improve together</span></div>
-        <textarea id="sd-wish" rows="1" placeholder="..."></textarea>
-        <div class="sdf-count"><span id="sdc-wish">0</span>/200</div>
-      </div>
-
-      <button class="btn btn-primary" id="sd-save-btn" onclick="saveSharedDiary()" style="margin-top:8px;width:100%">💾 <span id="sd-save-text">Save & View Partner's</span></button>
-      <div style="text-align:center;font-size:.6rem;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:4px">
-        <span id="sd-sync-icon"></span><span id="sd-gate-hint">写完才能看伴侣的哦</span>
+      <div class="letter-actions">
+        <span class="letter-char-count"><span id="letterCharCount">0</span>/500</span>
+        <button class="btn btn-primary" id="letterSendBtn" onclick="saveLetter()" style="width:auto;padding:10px 24px;margin:0">💌 <span id="letter-send-text">Pošalji</span></button>
       </div>
     </div>
 
-    <!-- PARTNER'S ENTRY — always visible -->
-    <div class="partner-card-wrapper">
-      <div class="card" id="sharedDiaryPartnerCard">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <h3 style="margin:0">👀 <span id="sd-partner-title">Partner's Reflection</span></h3>
-          <button class="btn btn-outline" onclick="translatePartnerEntries()" style="font-size:.65rem;padding:4px 10px;display:none" id="translateBtnSm">🌐</button>
-        </div>
-        <!-- Locked state -->
-        <div class="partner-card-locked" id="partnerLocked">
-          <span class="pcl-icon">🔒</span>
-          <div class="pcl-text" id="partner-locked-text">先保存你的日记才能解锁伴侣的哦 💌</div>
-          <span class="pcl-arrow">👇</span>
-        </div>
-        <!-- Unlocked content -->
-        <div id="sharedDiaryPartnerContent" style="display:none"></div>
-        <!-- Actions -->
-        <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center">
-          <span style="font-size:.62rem;color:var(--text-muted);flex:1" id="sd-sync-hint"></span>
-          <button class="btn btn-outline" onclick="exportSharedDiary()" style="font-size:.65rem;padding:4px 10px">📤 <span id="sd-export">Share</span></button>
-          <button class="btn btn-outline" onclick="showImportModal()" style="font-size:.65rem;padding:4px 10px">📥 <span id="sd-import">Import</span></button>
-        </div>
+    <!-- 🌸 PARTNER'S LETTER -->
+    <div class="card letter-card partner-letter" id="letterPartnerCard">
+      <div class="letter-header">
+        <h3 id="letter-partner-title">🌸 Anđelino pismo</h3>
+        <button class="btn btn-outline" onclick="translatePartnerLetter()" style="font-size:.62rem;padding:3px 10px;display:none" id="letterTranslateBtn">🌐</button>
       </div>
+      <!-- Locked -->
+      <div class="letter-locked" id="letterLocked">
+        <span class="letter-lock-icon">🔒</span>
+        <div class="letter-lock-text" id="letter-lock-text">Napiši svoje pismo da otključaš partnerovo 💌</div>
+      </div>
+      <!-- Unlocked -->
+      <div class="letter-content" id="letterPartnerContent" style="display:none"></div>
     </div>
 
-    <!-- Timeline History -->
-    <div class="card" style="margin-top:14px">
-      <h3>📜 <span id="sd-history-title">Timeline</span></h3>
-      <div class="timeline" id="sharedDiaryHistory"></div>
+    <!-- 📮 MAILBOX -->
+    <div class="card" style="margin-top:10px">
+      <h3>📮 <span id="mailbox-title">Poštansko sanduče</span></h3>
+      <div class="mailbox-list" id="mailboxList"></div>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button class="btn btn-outline" onclick="exportSharedDiary()" style="font-size:.65rem;padding:4px 10px;flex:1">📤 <span id="sd-export">Podeli</span></button>
+        <button class="btn btn-outline" onclick="showImportModal()" style="font-size:.65rem;padding:4px 10px;flex:1">📥 <span id="sd-import">Uvezi</span></button>
+      </div>
     </div>
   </div>
 
@@ -519,7 +506,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=38" defer></script>
+<script src="app.js?v=39" defer></script>
 </body>
 </html>
 
