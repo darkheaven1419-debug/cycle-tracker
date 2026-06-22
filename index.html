@@ -11,12 +11,12 @@
 <link rel="dns-prefetch" href="https://api.open-meteo.com">
 <link rel="dns-prefetch" href="https://api.github.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=17">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="styles.css?v=19">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
-<title>🌸 Anđelin Ciklus v5</title>
+<title>🌸 Anđelin Ciklus v6</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <script src="libs/html2canvas.min.js" defer></script>
 <script src="js/i18n.js?v=1" defer></script>
@@ -180,13 +180,13 @@
   <div class="pred-legend" id="predLegend" style="display:none">※ 半透明标记为未来2-3周期的预测</div>
 
   <nav><div class="tabs" role="tablist">
-    <button class="tab active" data-panel="dashboard" role="tab" id="tab-dashboard" aria-selected="true">🏠 <span class="tb-label" id="tb-dashboard">Početna</span></button>
-    <button class="tab" data-panel="stats" role="tab" id="tab-stats" aria-selected="false">📊 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false">📝 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false">💡 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false">💌 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="culture" role="tab" id="tab-culture" aria-selected="false">🇨🇳 <span class="tb-label" id="tb-culture">Kina</span></button>
-    <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false">⚙ <span class="tb-label"></span></button>
+    <button class="tab active" data-panel="dashboard" role="tab" id="tab-dashboard" aria-selected="true" aria-controls="panel-dashboard">🏠 <span class="tb-label" id="tb-dashboard">Početna</span></button>
+    <button class="tab" data-panel="stats" role="tab" id="tab-stats" aria-selected="false" aria-controls="panel-stats">📊 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false" aria-controls="panel-symptoms">📝 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false" aria-controls="panel-tips">💡 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false" aria-controls="panel-diary">💌 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="culture" role="tab" id="tab-culture" aria-selected="false" aria-controls="panel-culture">🇨🇳 <span class="tb-label" id="tb-culture">Kina</span></button>
+    <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">⚙ <span class="tb-label"></span></button>
   </div></nav>
 
   <div class="panel active" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
@@ -497,7 +497,7 @@
   <span class="fab-label" id="fab-label"></span>
 </button>
 
-<div class="modal-overlay hidden" id="modal" role="dialog" aria-modal="true" aria-label="Detalji datuma">
+<div class="modal-overlay hidden" id="modal" role="dialog" aria-modal="true" aria-label="Detalji datuma" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h2 id="modal-title"></h2><div class="date-display" id="modal-date"></div>
     <div class="info-row"><span id="m-l-phase"></span><span id="modal-phase">--</span></div>
@@ -519,7 +519,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=36" defer></script>
+<script src="app.js?v=38" defer></script>
 </body>
 </html>
 

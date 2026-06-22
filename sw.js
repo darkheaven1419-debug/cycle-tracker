@@ -2,7 +2,7 @@
 // Cache-First for static assets, Network-First for HTML/Live data
 // Cache version matches resource versions in index.html
 
-var CACHE_STATIC = 'ciklus-static-v7';
+var CACHE_STATIC = 'ciklus-static-v9';
 
 var STATIC_ASSETS = [
   './',
@@ -29,7 +29,7 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v5', 'ciklus-static-v6', 'ciklus-static-v7'];
+var KNOWN_CACHES = ['ciklus-static-v5', 'ciklus-static-v6', 'ciklus-static-v7', 'ciklus-static-v8', 'ciklus-static-v9'];
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(

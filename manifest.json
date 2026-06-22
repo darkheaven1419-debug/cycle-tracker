@@ -1,7 +1,7 @@
 {
-  "name": "Anđelin Ciklus",
+  "name": "Anđelin Ciklus v6",
   "short_name": "Ciklus",
-  "description": "Personal cycle tracker & cross-cultural love diary",
+  "description": "Personal cycle tracker & cross-cultural love diary — v6",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
