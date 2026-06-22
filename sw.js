@@ -1,15 +1,17 @@
-// Service Worker — Anđelin Ciklus
-// Cache-First for static assets, Network-First for HTML
+// Service Worker — Anđelin Ciklus v6
+// Cache-First for static assets, Network-First for HTML/Live data
+// Cache version matches resource versions in index.html
 
-const CACHE_STATIC = 'ciklus-static-v5';
-const CACHE_PAGES = 'ciklus-pages-v5';
+var CACHE_STATIC = 'ciklus-static-v6';
 
-const STATIC_ASSETS = [
+var STATIC_ASSETS = [
   './',
   './index.html',
   './styles.css',
   './app.js',
-  './calendar-data.js',
+  './js/i18n.js',
+  './calendar-data.json',
+  './data/culture.json',
   './manifest.json'
 ];
 
@@ -26,10 +28,10 @@ self.addEventListener('install', function(event) {
   self.skipWaiting();
 });
 
-var KNOWN_CACHES = ['ciklus-static-v5', 'ciklus-pages-v5'];
+// Clean up old cache versions
+var KNOWN_CACHES = ['ciklus-static-v5', 'ciklus-static-v6'];
 
 self.addEventListener('activate', function(event) {
-  // Only delete known old caches; preserve any others
   event.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
@@ -47,13 +49,19 @@ self.addEventListener('fetch', function(event) {
   var request = event.request;
   var url = new URL(request.url);
 
-  // Google Fonts — pass through normally
+  // Google Fonts — bypass SW, fetch directly
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
-    event.respondWith(fetch(event.request));
     return;
   }
 
-  // CSS / JS / HTML — network first, cache fallback for offline
+  // External APIs — network only, don't cache
+  if (url.hostname.includes('api.github.com') || url.hostname.includes('api.open-meteo.com') ||
+      url.hostname.includes('translate.googleapis.com') || url.hostname.includes('api.mymemory.translated.net') ||
+      url.hostname.includes('translate.argosopentech.com')) {
+    return;
+  }
+
+  // CSS/JS/HTML — stale-while-revalidate: network first, cache fallback
   if (request.destination === 'style' || request.destination === 'script' || request.mode === 'navigate') {
     event.respondWith(
       fetch(request).then(function(response) {
@@ -67,7 +75,7 @@ self.addEventListener('fetch', function(event) {
     return;
   }
 
-  // Everything else
+  // Everything else: network first, cache fallback
   event.respondWith(
     fetch(request).catch(function() { return caches.match(request); })
   );

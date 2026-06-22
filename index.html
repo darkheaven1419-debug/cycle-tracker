@@ -5,6 +5,8 @@
 <!-- Preconnect for faster font delivery -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.open-meteo.com">
+<link rel="dns-prefetch" href="https://api.github.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="styles.css?v=17">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -14,6 +16,7 @@
 <title>🌸 Anđelin Ciklus v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <script src="libs/html2canvas.min.js" defer></script>
+<script src="js/i18n.js?v=1" defer></script>
 </head>
 <body>
 
@@ -166,6 +169,10 @@
     <div class="days" id="daysGrid"></div>
   </div>
 
+  <!-- Month Holiday Summary -->
+  <div class="holiday-summary" id="holidaySummary" style="display:none"></div>
+  <!-- Upcoming Holiday Countdown -->
+  <div class="holiday-countdown" id="holidayCountdown" style="display:none"></div>
   <div class="legend" id="legend"></div>
   <div class="pred-legend" id="predLegend" style="display:none">※ 半透明标记为未来2-3周期的预测</div>
 
@@ -290,6 +297,11 @@
         <button onclick="addGratitude()" style="padding:8px 14px;border:none;border-radius:10px;background:var(--love);color:#fff;font-size:.7rem;font-weight:600;cursor:pointer;white-space:nowrap">💝 +</button>
       </div>
       <div id="gratList"></div>
+    </div>
+    <!-- Know Me Quiz — daily question about each other -->
+    <div class="card" id="knowMeCard">
+      <h3>💭 <span id="knowMe-title">Do You Know Me?</span></h3>
+      <div id="knowMeContent"></div>
     </div>
     <!-- Weekly Check-in -->
     <div class="card" id="checkinCard">

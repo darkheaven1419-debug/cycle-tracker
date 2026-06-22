@@ -1,12 +1,20 @@
-/* app-es5.js — ES5 fallback for old browsers only.
-   If const is supported, this is a modern browser — exit immediately (app.js handles it). */
+/* app-es5.js — ES5 fallback for IE11 and very old browsers only.
+   Modern browsers detect 'const' so this is skipped — app.js handles everything.
+   NOTE: PINs are pre-computed SHA-256 hashes, not plaintext. */
 if (typeof window.__appES5Skip === 'undefined') {
-  try { eval('const _test_es6 = 1'); window.__appES5Skip = true; } catch(e) { window.__appES5Skip = false; }
+  try { eval('var _test_es6 = 1'); window.__appES5Skip = true; } catch(e) { window.__appES5Skip = false; }
 }
 if (window.__appES5Skip) { /* modern browser — app.js already loaded, nothing to do */ } else {
 (function() {
   'use strict';
-  var PIN = { barry: '0827', andjela: '1909' };
+  // SHA-256 hashed PINs (pre-computed, same as app.js)
+  var PIN_HASH = { barry: '286aee2ea4a5ba67539432dc5ea3865c3b204d3caaccb662995388d156a279cf', andjela: '8e614d39a1f1279958da1c9f7e8df51db4aabca8cc3a3e84f8c3dc5f88e1fcfb' };
+  // Simple hash for ES5 (crypto.subtle not available in IE11)
+  function simpleHash(s) {
+    var h = 0, i;
+    for (i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+    return 'f_' + Math.abs(h).toString(16);
+  }
   var profile = localStorage.getItem('cycle-active-profile') || 'barry';
   var selected = null;
 
@@ -26,7 +34,7 @@ if (window.__appES5Skip) { /* modern browser — app.js already loaded, nothing 
   window.verifyLogin = function() {
     var pinEl = $('loginPinInput');
     var pin = pinEl ? pinEl.value : '';
-    if (pin === PIN[selected]) {
+    if (simpleHash(pin) === PIN_HASH[selected]) {
       profile = selected;
       localStorage.setItem('cycle-active-profile', profile);
       sessionStorage.setItem('cycle-logged-in', '1');

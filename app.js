@@ -1,179 +1,4 @@
-﻿console.log('APP JS LOADED v17');
-try {
-  var _ldr = document.getElementById('appLoader');
-  console.log('loader found:', !!_ldr, _ldr ? 'display:'+_ldr.style.display : 'null');
-  if (_ldr) { _ldr.style.display = 'none'; console.log('loader hidden by top-level script'); }
-} catch(e) { console.error('top-level error:', e); }
-
-/* ================================================================
-   i18n — Full 3-language data (sr as default for Anđela)
-   ================================================================ */
-const I18N = {
-'sr': {
-  appTitle:'Anđelin Ciklus', theme:'Tamni režim', themeHint:'Prebacite između tamnog i svetlog režima',
-  weekdays:['Pon','Uto','Sre','Čet','Pet','Sub','Ned'],
-  months:['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Avg','Sep','Okt','Nov','Dec'],
-  today:'Danas', tabs:['Početna','Statistika','Simptomi','Saveti','Dnevnik','Kina','Podeš.'],
-  legend:['Menstruacija','Ovul./Plodni','Folikularna','Lutealna','Danas','Ljubav'],
-  progressLabels:['Menstr.','Folikul.','Ovulacija','Lutealna'],
-  phases:{'period-on':'Početak','period-mid':'Menstruacija','period-pred-first':'Predviđen početak','period-pred':'Predviđeno','period-future-first':'Buduća pred.','period-future':'Buduća pred.','ovulation':'Ovulacija','fertile':'Plodni dani','luteal':'Lutealna','follicular':'Folikularna'},
-  phaseBadges:{period:'Menstruacija',follicular:'Folikularna',ovulation:'Ovulacija',fertile:'Plodni dani',luteal:'Lutealna',late:'Kašnjenje'},
-  knowledgeToggle:'📖 Saznaj više o ovoj fazi ▾', knowledgeToggleHide:'Sakrij ▴',
-  knowledge:{period:{title:'O menstrualnoj fazi',desc:'Sluzokoža materice se ljušti i izbacuje se sa krvlju.',what:'Estrogen i progesteron su na najnižem nivou. Endometrijum se odvaja.',symptoms:'Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima',tips:'Povećajte unos gvožđa, zagrejte stomak, izbegavajte naporne vežbe, spavajte dovoljno'},follicular:{title:'O folikularnoj fazi',desc:'Posle menstruacije, folikuli u jajnicima se razvijaju i estrogen raste.',what:'Hipofiza luči FSH koji stimuliše rast folikula. Estrogen obnavlja sluzokožu.',symptoms:'Povratak energije, jasnije razmišljanje, bolja koža, povećan libido',tips:'Odlično vreme za nove projekte, povećajte vežbanje, uravnotežena ishrana'},ovulation:{title:'O ovulaciji',desc:'Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.',what:'LH talas pokreće ovulaciju. Estrogen dostiže vrhunac.',symptoms:'Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature',tips:'Najbolje vreme za začeće, fizičke performanse na vrhuncu'},luteal:{title:'O lutealnoj fazi',desc:'Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.',what:'Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.',symptoms:'PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom',tips:'Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu'},fertile:{title:'O plodnim danima',desc:'Dani oko ovulacije kada je najveća verovatnoća začeća.',what:'Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h.',symptoms:'Bistar rastegljiv sekret, povećan libido, promene bazalne temperature',tips:'Za začeće svaki drugi dan, folna kiselina, dobar san'}},
-  emptyState:'Dodirnite datum za prvi unos', emptySymptom:'Dodirnite datum na kalendaru<br>za unos simptoma',
-  daysUntil:'Još {n} dana do sledeće menstruacije', daysOverdue:'Kašnjenje {n} dana', day:' dana', periodDay:'{n}. dan ciklusa', expected:'Očekivano',
-  onboarding:'👋 Dobrodošla, Anđelo! Dodirni bilo koji datum da započneš. ♥',
-  fabLabel:'Danas je',
-  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'Dobro jutro, anđele moj. Želim ti divan dan — budi nežna prema sebi.',sub:'— Sa ljubavlju, Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'Prijatno popodne, moja draga. Napravi pauzu, popij čaj i odmori — brinem se kad preteruješ.',sub:'— Tvoj Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'Dobro veče, najlepša moja. Polako večeras — zaslužuješ miran i topao kraj dana.',sub:'— Sa ljubavlju, tvoj Barry'},night:{icon:'🌙',name:'Anđelo!',msg:'Zašto si još uvek budna? Odmah na spavanje! Brinem se kad ne spavaš, znaš.',sub:'— Voli te, Barry'},dismiss:'♥ Zatvori'},
-  stats:{cycleTitle:'📈 Statistika ciklusa',historyTitle:'📅 Nedavni ciklusi',predTitle:'🔮 Predviđanje',count:'Zabeleženih ciklusa',avg:'Prosečan ciklus',range:'Najkraći / Najduži',reg:'Regularnost',next:'Sledeća menstruacija',ovulation:'Ovulacija',fertile:'Plodni dani',confidence:'Pouzdanost',future:'Buduća predviđanja'},
-  historyLabel:'● Kratak  ● Normalan  ● Dug  (tačka = ciklus)',
-  modal:{details:'Detalji datuma',marked:'Zabeležen početak',phase:'Faza',day:'Dan ciklusa',symptoms:'Simptomi',mark:'Označi početak',unmark:'Ukloni',close:'Zatvori',quickSymptom:'Brzi unos',notesPlaceholder:'Beleške...'},
-  symptoms:{cramps:'Grčevi',mood:'Raspoloženje',flow:'Protok',headache:'Glavobolja',fatigue:'Umor',cravings:'Žudnja'},
-  tips:{period:[{icon:'🩸',text:'Telo gubi gvožđe — jedite crveno meso, spanać i susam.',source:'',tcm:false},{icon:'♨',text:'Zagrejte stomak termoforom ili toplom vodom.',source:'',tcm:false},{icon:'🍵',text:'Popijte čaj od šipurka posle obroka — umiruje grčeve.',source:'Srpska tradicija',tcm:false},{icon:'🧘',text:'Blago istezanje ili joga ublažavaju tegobe.',source:'',tcm:false},{icon:'🫘',text:'Crveni pasulj i susam bogati gvožđem — tradicionalni srpski izvor gvožđa.',source:'Srpska kuhinja',tcm:false}],follicular:[{icon:'💪',text:'Estrogen raste, energija se vraća — odlično za novi fitnes plan.',source:'',tcm:false},{icon:'🥗',text:'Jedite dosta povrća i voća za uravnoteženu ishranu.',source:'',tcm:false},{icon:'🌿',text:'U kineskoj medicini, ovo je vreme za jačanje krvi (养血). Probajte goji bobice.',source:'中医智慧',tcm:true},{icon:'🎯',text:'Jasno razmišljanje i visoka energija za važne odluke.',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'Faza ovulacije — najplodniji dani.',source:'',tcm:false},{icon:'🏃',text:'Fizičke performanse na vrhuncu — odlično za treninge.',source:'',tcm:false},{icon:'🌸',text:'U kineskoj tradiciji, ovo je vreme ravnoteže (阴阳调和). Uživajte u prirodi.',source:'中医智慧',tcm:true}],luteal:[{icon:'🍵',text:'Smanjite kofein — može pogoršati anksioznost.',source:'',tcm:false},{icon:'🌿',text:'Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.',source:'',tcm:false},{icon:'🫚',text:'Topla voda sa đumbirom i crvenim datulama greje telo pred ciklus.',source:'中医智慧 · 姜枣茶',tcm:true},{icon:'🍌',text:'Skloni nadutosti? Smanjite so, jedite banane.',source:'',tcm:false}]},
-  settings:{lang:'Jezik / Language / 语言',langHint:'Promenite jezik',theme:'Tema',themeHint:'Tamni / Svetli režim',cycle:'Dužina ciklusa',cycleHint:'Automatski, možete ručno',period:'Trajanje menstruacije',periodHint:'Trajanje svake menstruacije',override:'Ručne vrednosti',overrideHint:'Ignoriši automatski proračun',save:'💾 Sačuvaj',export:'📤 Izvezi (JSON)',import:'📥 Uvezi (JSON)',clear:'🗑 Obriši sve',clearConfirm:'Sigurna si? Ovo se ne može opozvati!',anniversary:'Godišnjica',anniversaryHint:'Dan kada ste počeli'},
-  toast:{saved:'Sačuvano ✓',marked:'Označeno ✓',unmarked:'Uklonjeno',symptomSaved:'Sačuvano ✓',symptomQuick:'Ažurirano ✓',exported:'Izvezeno ✓',imported:'Uvezeno ✓',importError:'Greška',cleared:'Obrisano'},
-  reminder:{beforePeriod:'⏰ Menstruacija za {days} dana — spremi se, dušo',late:'⚠️ Kašnjenje {days} dana — konsultuj lekara',ovulation:'✨ Danas je ovulacija — vrhunac plodnosti'},
-  cycleCounter:'Zajedno: {n} ciklusa', cycleCounterSub:'Barry prati svaki tvoj ciklus ♥',
-  anniversaryTitle:'💕 Datumi koji znače', annMetLabel:'✨ Prvi put smo se sreli', annLoveLabel:'♥ Zajedno smo od', annCountMet:'{n} dana od prvog susreta ✨', annCountLove:'{n} dana zajedno ♥',
-  yearTitle:'Godišnji pregled'
-},
-'zh-CN': {
-  appTitle:'Anđelin Ciklus', theme:'暗色模式', themeHint:'切换深色/浅色主题',
-  weekdays:['一','二','三','四','五','六','日'],
-  months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-  today:'今天', tabs:['主页','统计','症状','贴士','日记','中华','设置'],
-  legend:['经期','排卵/易孕','卵泡期','黄体期','今天','♥纪念日'],
-  progressLabels:['经期','卵泡期','排卵','黄体期'],
-  phases:{'period-on':'经期开始','period-mid':'经期中','period-pred-first':'预测开始','period-pred':'预测经期','period-future-first':'未来预测','period-future':'未来预测','ovulation':'排卵日','fertile':'易孕期','luteal':'黄体期','follicular':'卵泡期'},
-  phaseBadges:{period:'经期中',follicular:'卵泡期',ovulation:'排卵日',fertile:'易孕期',luteal:'黄体期',late:'已推迟'},
-  knowledgeToggle:'📖 了解这个阶段 ▾', knowledgeToggleHide:'收起 ▴',
-  knowledge:{period:{title:'关于经期',desc:'月经周期的第一阶段。子宫内膜脱落，伴随出血排出体外。',what:'雌激素和孕激素都处于最低水平。子宫内膜正在脱落。',symptoms:'腹部绞痛、疲劳、情绪波动、头痛、腰酸',tips:'多补充铁质、注意保暖、避免剧烈运动、保证睡眠'},follicular:{title:'关于卵泡期',desc:'经期结束后，卵泡开始发育，雌激素逐渐上升。',what:'脑垂体分泌FSH刺激卵泡生长。雌激素上升使子宫内膜重新增厚。',symptoms:'精力恢复、思维清晰、皮肤状态改善',tips:'适合开始新计划、增加运动强度、均衡饮食'},ovulation:{title:'关于排卵期',desc:'成熟卵子从卵巢释放，是最易受孕的时期。',what:'LH激素激增触发排卵。雌激素达到峰值。',symptoms:'轻微腹痛、分泌物增多、性欲增强、体温微升',tips:'备孕最佳时机、体能高峰适合运动'},luteal:{title:'关于黄体期',desc:'排卵后到下次月经前的阶段。黄体分泌孕激素。',what:'孕激素上升稳定子宫内膜。如未受孕，黄体退化。',symptoms:'PMS、乳房胀痛、情绪波动、水肿、食欲变化',tips:'减少咖啡因和盐分、补充B6和镁、轻度运动'},fertile:{title:'关于易孕期',desc:'排卵日前后几天，怀孕可能性最高的时间段。',what:'精子可存活3-5天。卵子约24小时。共约6天易孕窗口。',symptoms:'分泌物清亮黏滑、性欲增强、基础体温变化',tips:'备孕可隔天同房、补充叶酸、保持良好作息'}},
-  emptyState:'点击日历标记第一次经期', emptySymptom:'点击日历中的日期<br>来记录当日症状',
-  daysUntil:'距下次月经还有 {n} 天', daysOverdue:'已推迟 {n} 天', day:'天', periodDay:'经期第 {n} 天', expected:'预计',
-  onboarding:'👋 欢迎！点击日历开始记录吧 ♥',
-  fabLabel:'今天来了',
-  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'早安，我的天使。愿你今天温柔待自己。',sub:'— 爱你的 Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'下午了，亲爱的。休息一下，喝杯茶——你太拼了我会心疼。',sub:'— 你的 Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'晚上好，最美的你。慢慢来——你值得一个温暖平静的夜晚。',sub:'— 爱你的 Barry'},night:{icon:'🌙',name:'Anđelo！',msg:'怎么还没睡？快去睡觉！你不睡我会担心的，知道吗。',sub:'— 想你的 Barry'},dismiss:'♥ 开始'},
-  stats:{cycleTitle:'📈 周期统计',historyTitle:'📅 近期周期',predTitle:'🔮 当前预测',count:'已记录周期数',avg:'平均周期',range:'最短 / 最长',reg:'规律性',next:'下次月经',ovulation:'排卵日',fertile:'易孕窗口',confidence:'置信度',future:'未来预测周期'},
-  historyLabel:'● 偏短  ● 正常  ● 偏长  (每点=一个周期)',
-  modal:{details:'日期详情',marked:'已记录的经期开始日',phase:'阶段',day:'周期第几天',symptoms:'已记录症状',mark:'标记经期开始',unmark:'取消标记',close:'关闭',quickSymptom:'快速记录症状',notesPlaceholder:'添加备注...'},
-  symptoms:{cramps:'痛经',mood:'情绪',flow:'流量',headache:'头痛',fatigue:'疲劳',cravings:'食欲'},
-  tips:{period:[{icon:'🩸',text:'经期身体流失铁质，多吃红肉、菠菜、黑芝麻等富含铁的食物。',source:'',tcm:false},{icon:'♨',text:'注意腹部保暖，可使用暖水袋或暖宝宝缓解不适。',source:'',tcm:false},{icon:'🍵',text:'喝杯红枣姜茶，暖宫驱寒，缓解经期不适。',source:'中医养生 · 姜枣茶',tcm:true},{icon:'🧘',text:'轻度拉伸或瑜伽有助缓解不适，避免剧烈运动。',source:'',tcm:false},{icon:'🫘',text:'红豆补血养心——相思之物，亦养身之物。',source:'中医智慧 · 红豆',tcm:true}],follicular:[{icon:'💪',text:'卵泡期雌激素上升，精力和体能恢复中，适合开启新运动计划。',source:'',tcm:false},{icon:'🥗',text:'新陈代谢较好，多吃蔬菜水果，均衡营养。',source:'',tcm:false},{icon:'🌿',text:'中医认为此时宜养血（养血），枸杞红枣茶正当时。',source:'中医智慧',tcm:true},{icon:'🎯',text:'思维清晰精力充沛，适合处理复杂任务和做重要决定。',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'排卵期，如有备孕计划，这几天是最佳时机。',source:'',tcm:false},{icon:'🏃',text:'体能处于高峰，适合高强度训练。',source:'',tcm:false},{icon:'🌸',text:'中医讲究阴阳调和，此时阴阳平衡，适合赏花散步。',source:'中医养生',tcm:true}],luteal:[{icon:'🍵',text:'黄体期减少咖啡因摄入，可能加重焦虑和情绪波动。',source:'',tcm:false},{icon:'🌿',text:'适当补充维生素B6和镁，有助缓解经前不适。',source:'',tcm:false},{icon:'🫚',text:'姜枣茶温经散寒——东方古老的温柔。',source:'中医智慧 · 姜枣茶',tcm:true},{icon:'🍌',text:'易水肿，减少盐分，多吃香蕉等富含钾的食物。',source:'',tcm:false}]},
-  settings:{lang:'语言 / Language / Jezik',langHint:'切换界面语言',theme:'主题',themeHint:'深色/浅色模式',cycle:'默认周期长度',cycleHint:'系统自动计算，可手动覆盖',period:'默认经期天数',periodHint:'每次经期持续天数',override:'使用手动值预测',overrideHint:'开启后忽略自动计算',save:'💾 保存设置',export:'📤 导出数据 (JSON)',import:'📥 导入数据 (JSON)',clear:'🗑 清除所有数据',clearConfirm:'确定清除所有数据？此操作不可恢复！',anniversary:'纪念日',anniversaryHint:'你们在一起的那一天'},
-  toast:{saved:'设置已保存 ✓',marked:'已标记 ✓',unmarked:'已取消标记',symptomSaved:'症状已保存 ✓',symptomQuick:'症状已更新 ✓',exported:'数据已导出 ✓',imported:'数据导入成功 ✓',importError:'导入失败',cleared:'所有数据已清除'},
-  reminder:{beforePeriod:'⏰ 预计 {days} 天后经期开始，提前准备哦',late:'⚠️ 经期已推迟 {days} 天，建议关注身体状况',ovulation:'✨ 今天是排卵期，备孕的最佳时机'},
-  cycleCounter:'一起走过 {n} 个周期', cycleCounterSub:'Barry 记录着你的每一个周期 ♥',
-  anniversaryTitle:'💕 重要的日子', annMetLabel:'✨ 初次相遇', annLoveLabel:'♥ 在一起的日子', annCountMet:'相遇 {n} 天 ✨', annCountLove:'相恋 {n} 天 ♥',
-  yearTitle:'年度概览'
-},
-'en': {
-  appTitle:'Anđelin Ciklus', theme:'Dark Mode', themeHint:'Switch theme',
-  weekdays:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-  months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-  today:'Today', tabs:['Home','Stats','Symptoms','Tips','Diary','Culture','Settings'],
-  legend:['Period','Ovul./Fertile','Follicular','Luteal','Today','♥ Love'],
-  progressLabels:['Period','Follicular','Ovulation','Luteal'],
-  phases:{'period-on':'Period Start','period-mid':'Period','period-pred-first':'Predicted Start','period-pred':'Predicted','period-future-first':'Future Pred.','period-future':'Future Pred.','ovulation':'Ovulation','fertile':'Fertile','luteal':'Luteal','follicular':'Follicular'},
-  phaseBadges:{period:'Period',follicular:'Follicular',ovulation:'Ovulation',fertile:'Fertile',luteal:'Luteal',late:'Late'},
-  knowledgeToggle:'📖 Learn about this phase ▾', knowledgeToggleHide:'Hide ▴',
-  knowledge:{period:{title:'Menstrual Phase',desc:'The uterine lining sheds. First phase of the cycle.',what:'Estrogen and progesterone at lowest. Endometrium shedding.',symptoms:'Cramps, fatigue, mood swings, headaches',tips:'Increase iron, keep warm, avoid intense exercise, sleep well'},follicular:{title:'Follicular Phase',desc:'Follicles develop and estrogen rises.',what:'FSH stimulates follicle growth. Estrogen rebuilds lining.',symptoms:'Energy returning, clear thinking, better skin',tips:'Great for new projects, increase exercise, balanced nutrition'},ovulation:{title:'Ovulation',desc:'Mature egg released. Most fertile time.',what:'LH surge triggers ovulation. Estrogen peaks.',symptoms:'Mild pelvic pain, egg-white mucus, increased libido',tips:'Best time for conception, peak performance'},luteal:{title:'Luteal Phase',desc:'Between ovulation and next period.',what:'Progesterone stabilizes lining. Corpus luteum degrades if no pregnancy.',symptoms:'PMS, breast tenderness, mood swings, bloating',tips:'Reduce caffeine and salt, supplement B6 and magnesium'},fertile:{title:'Fertile Window',desc:'Days around ovulation when pregnancy is most likely.',what:'Sperm survive 3-5 days. Egg ~24h. ~6-day fertile window.',symptoms:'Clear mucus, increased libido, temperature changes',tips:'Every other day for conception, folic acid, good sleep'}},
-  emptyState:'Tap a date to record your first period', emptySymptom:'Tap a date on the calendar<br>to log symptoms',
-  daysUntil:'{n} days until next period', daysOverdue:'{n} days late', day:' days', periodDay:'Period Day {n}', expected:'Expected',
-  onboarding:'👋 Welcome, Anđela! Tap any date to begin. ♥',
-  fabLabel:'Period today',
-  greeting:{morning:{icon:'🌅',name:'Anđelo',msg:'Good morning, my angel. Wishing you a wonderful day — be gentle with yourself.',sub:'— With love, Barry'},afternoon:{icon:'🌤️',name:'Anđelo',msg:'Good afternoon, my dear. Take a break, have some tea — you worry me when you overdo it.',sub:'— Your Barry'},evening:{icon:'🌆',name:'Anđelo',msg:'Good evening, my most beautiful. Take it slow tonight — you deserve a peaceful end to the day.',sub:'— With love, your Barry'},night:{icon:'🌙',name:'Anđelo!',msg:'Why are you still awake? Go to sleep right now! I worry when you don\'t sleep, you know.',sub:'— Love, Barry'},dismiss:'♥ Enter'},
-  stats:{cycleTitle:'📈 Cycle Statistics',historyTitle:'📅 Recent Cycles',predTitle:'🔮 Prediction',count:'Cycles recorded',avg:'Average cycle',range:'Shortest / Longest',reg:'Regularity',next:'Next period',ovulation:'Ovulation',fertile:'Fertile window',confidence:'Confidence',future:'Future predictions'},
-  historyLabel:'● Short  ● Normal  ● Long  (dot = cycle)',
-  modal:{details:'Date Details',marked:'Recorded Period Start',phase:'Phase',day:'Cycle day',symptoms:'Symptoms',mark:'Mark Period Start',unmark:'Remove',close:'Close',quickSymptom:'Quick Symptom Log',notesPlaceholder:'Add notes...'},
-  symptoms:{cramps:'Cramps',mood:'Mood',flow:'Flow',headache:'Headache',fatigue:'Fatigue',cravings:'Cravings'},
-  tips:{period:[{icon:'🩸',text:'Your body loses iron — eat iron-rich foods like red meat and spinach.',source:'',tcm:false},{icon:'♨',text:'Keep your abdomen warm. A heating pad helps relieve discomfort.',source:'',tcm:false},{icon:'🍵',text:'Try rosehip tea after meals — a Serbian tradition for easing cramps.',source:'Serbian tradition',tcm:false},{icon:'🧘',text:'Gentle stretching or yoga helps. Avoid intense exercise.',source:'',tcm:false},{icon:'🫘',text:'Red beans nourish the blood — an ancient Chinese remedy for women.',source:'TCM Wisdom',tcm:true}],follicular:[{icon:'💪',text:'Estrogen rising, energy returning — great time for new fitness.',source:'',tcm:false},{icon:'🥗',text:'Eat plenty of vegetables and fruits for balanced nutrition.',source:'',tcm:false},{icon:'🌿',text:'In Chinese medicine, this is the time to nourish blood (养血). Try goji tea.',source:'TCM Wisdom',tcm:true},{icon:'🎯',text:'Clear thinking and high energy — ideal for important decisions.',source:'',tcm:false}],ovulation:[{icon:'⭐',text:'Ovulation phase. Most fertile days if planning pregnancy.',source:'',tcm:false},{icon:'🏃',text:'Physical performance peaks — great for high-intensity workouts.',source:'',tcm:false},{icon:'🌸',text:'In Chinese tradition, a time of balance (阴阳调和). Enjoy nature.',source:'TCM Wisdom',tcm:true}],luteal:[{icon:'🍵',text:'Reduce caffeine — it can worsen anxiety and mood swings.',source:'',tcm:false},{icon:'🌿',text:'Vitamin B6 and magnesium may ease premenstrual symptoms.',source:'',tcm:false},{icon:'🫚',text:'Ginger tea with red dates warms the body — an ancient Eastern remedy.',source:'TCM Wisdom',tcm:true},{icon:'🍌',text:'Prone to bloating? Reduce salt, eat bananas.',source:'',tcm:false}]},
-  settings:{lang:'Language / 语言 / Jezik',langHint:'Switch language',theme:'Theme',themeHint:'Dark / Light mode',cycle:'Default cycle length',cycleHint:'Auto-calculated',period:'Default period length',periodHint:'Duration of each period',override:'Use manual values',overrideHint:'Ignore auto-calculation',save:'💾 Save Settings',export:'📤 Export Data (JSON)',import:'📥 Import Data (JSON)',clear:'🗑 Clear All Data',clearConfirm:'Are you sure? This cannot be undone!',anniversary:'Anniversary',anniversaryHint:'The day you two started'},
-  toast:{saved:'Saved ✓',marked:'Marked ✓',unmarked:'Removed',symptomSaved:'Saved ✓',symptomQuick:'Updated ✓',exported:'Exported ✓',imported:'Imported ✓',importError:'Import failed',cleared:'Cleared'},
-  reminder:{beforePeriod:'⏰ Period in {days} days — get ready, darling',late:'⚠️ Period {days} days late — check with doctor',ovulation:'✨ Ovulation day — peak fertility'},
-  cycleCounter:'Together: {n} cycles', cycleCounterSub:'Barry tracks every cycle for you ♥',
-  anniversaryTitle:'💕 Dates that matter', annMetLabel:'✨ First time we met', annLoveLabel:'♥ Together since', annCountMet:'{n} days since we met ✨', annCountLove:'{n} days together ♥',
-  yearTitle:'Year Overview'
-}};
-
-/* ================================================================
-   i18n EXTENSION — New Features
-   ================================================================ */
-const I18N_EXT = {
-'sr': {
-  profileName: 'Anđela', profileName2: 'Barry',
-  loveNoteDefault: 'Svakog dana mislim na tebe — ti si najlepši deo mog sveta. 💕', loveNoteSig: '— Tvoj Barry',
-  moodTitle: '😊 Raspoloženje', moodToday: 'Kako se osećaš danas?',
-  moodHistoryLabel: 'Poslednjih 7 dana',
-  streakLabel: 'dana zaredom!', streakLabel0: 'Započni niz!', streakBadgeHot: 'Sjajno! 🔥', streakBadgeWarm: 'Dobro ✨', streakBadgeCold: 'Započni danas 🌱',
-  diaryTitle: '📓 Moja rečenica', diaryPrompt: 'Danas ______ me je nasmejalo.', diaryPlaceholder: 'upiši jednu rečenicu...',
-  gardenTitle: '🌱 Naša bašta', gardenSeed: 'Zalivaj me svaki dan — klikni na emoji iznad! 🌱', gardenSprout: 'Tvoj niz raste... nastavi dalje! 🌿', gardenGrowing: 'Sve si bliže cvetanju! 🌷', gardenBudding: 'Skoro procvetala — još malo! 🎀', gardenBlooming: 'Prelepo cvetaš! Kao naša ljubav. 🌸✨',
-  forecastTomorrow: 'Sutra', forecastFollicular: 'Sutra si u folikularnoj fazi — energija raste, sjajan dan za planove! 💪',
-  forecastOvulation: 'Sutra je ovulacija — tvoje telo sija najjače! ✨', forecastLuteal: 'Sutra ulaziš u lutealnu fazu — uspori malo, zaslužuješ odmor 🌙',
-  forecastPeriod: 'Sutra bi mogla da krene menstruacija — pripremi grejač i čaj 💗',
-  forecastNormal: 'Slušaj svoje telo. Ti si neverovatna svakog dana. 🌸',
-  moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
-  moodNames: ['Srećno','Voljeno','Frustrirano','Umorno','Tužno','Uzbuđeno','Anksiozno','Meh'],
-  sharedDiaryTab: 'Dnevnik',
-  profileSwitch: 'Profil promenjen',
-  barryTipsPeriod:[{icon:'🫂',text:'Ona je u bolovima — budi nežan, zagrli je, donesi joj termofor i čaj.'},{icon:'🍫',text:'Ponesi joj čokoladu. Male stvari znače najviše kad je boli.'},{icon:'😤',text:'Ne svađaj se — raspoloženje joj je na minimumu. Slušaj, klimaj, reci "u pravu si".'},{icon:'🛏️',text:'Pusti je da se odmara. Donesi joj ćebe i ostavi na miru ako želi.'},{icon:'💆',text:'Ponudi masažu leđa ili stopala — nežno, njeno telo je sad osetljivo.'}],
-  barryTipsFollicular:[{icon:'🎯',text:'Imaće više energije — isplaniraj izlazak, šetnju, zajedničku aktivnost!'},{icon:'💬',text:'Društvenija je — odlično vreme za dublje razgovore i planove za budućnost.'},{icon:'💪',text:'Pridruži joj se u sportu ili fizičkoj aktivnosti. Zajedno ste jači.'},{icon:'🌸',text:'Kupi joj cveće bez povoda. Primetiće i najmanji znak pažnje.'},{icon:'🎨',text:'Faza kreativnosti — predloži novi hobi ili zajednički projekat.'}],
-  barryTipsOvulation:[{icon:'✨',text:'Danas sija — reci joj koliko je lepa. Budi iskren i detaljan u komplimentima.'},{icon:'💋',text:'Fizička bliskost joj je važna — grli je, ljubi, drži za ruku.'},{icon:'🎉',text:'Vrhunac energije — odličan dan za ples, izlazak, druženje.'},{icon:'🔥',text:'Njen libido je na vrhuncu — budi pažljiv i romantičan večeras.'},{icon:'📸',text:'Fotografiši je danas — blistaće na svakoj slici.'}],
-  barryTipsLuteal:[{icon:'🧘',text:'PMS počinje — ne shvataj ništa lično. Njen mozak je u hormonskom haosu.'},{icon:'🍵',text:'Skuvaj joj čaj od kamilice ili nane. Smiruje nerve i pokazuje da brineš.'},{icon:'🤐',text:'Slušaj više, pričaj manje. Ne rešavaj — samo slušaj.'},{icon:'🍕',text:'Imaće žudnju — naruči njenu omiljenu hranu bez pitanja.'},{icon:'🌙',text:'Pomogni joj da se opusti — topla kupka, sveće, muzika. Zaslužuje mir.'}],
-  barryTipsGeneral:[{icon:'💌',text:'Pošalji joj poruku sad — reci da misliš na nju. Ne treba povod.'},{icon:'💝',text:'Mali znak pažnje danas — njen omiljeni sok, voće, nešto što voli.'},{icon:'📞',text:'Pozovi je — čuj njen glas, pitaj kako je prošao dan.'},{icon:'🌍',text:'Seti se — ti si njen oslonac. Voli te. Ti si dovoljan.'}]
-},
-'zh-CN': {
-  profileName: 'Anđela', profileName2: 'Barry',
-  loveNoteDefault: '每一天都在想你——你是我世界里最美好的一部分。💕', loveNoteSig: '— 你的 Barry',
-  moodTitle: '😊 今日心情', moodToday: '今天感觉怎么样？',
-  moodHistoryLabel: '最近7天',
-  streakLabel: '天连续记录！', streakLabel0: '开始打卡吧！', streakBadgeHot: '太棒了！🔥', streakBadgeWarm: '不错 ✨', streakBadgeCold: '今天开始 🌱',
-  diaryTitle: '📓 一行日记', diaryPrompt: '今天______让我笑了。', diaryPlaceholder: '写一句话...',
-  gardenTitle: '🌱 我们的花园', gardenSeed: '每天给我浇水——点击上面 emoji 打卡！🌱', gardenSprout: '你的坚持开始发芽了...继续加油！🌿', gardenGrowing: '越来越茁壮了！🌷', gardenBudding: '快要开花了——再坚持一下！🎀', gardenBlooming: '绽放得真美！就像我们的爱。🌸✨',
-  forecastTomorrow: '明天', forecastFollicular: '明天进入卵泡期——精力回升，适合做计划！💪',
-  forecastOvulation: '明天是排卵日——你的身体最有光彩！✨', forecastLuteal: '明天进入黄体期——放慢节奏，你值得好好休息 🌙',
-  forecastPeriod: '明天可能会来月经——准备好暖宝宝和热茶 💗',
-  forecastNormal: '听从你的身体。每一天你都很了不起。🌸',
-  moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
-  moodNames: ['开心','被爱','烦躁','疲惫','难过','兴奋','焦虑','还行'],
-  sharedDiaryTab: '日记',
-  profileSwitch: '已切换账号',
-  barryTipsPeriod:[{icon:'🫂',text:'她正在经历疼痛——温柔一点，抱抱她，给她暖水袋和热茶。'},{icon:'🍫',text:'带巧克力或她喜欢的零食给她——小事情在经期最重要。'},{icon:'😤',text:'别跟她争论——她情绪很低。倾听、点头、说"你说得对"。'},{icon:'🛏️',text:'让她休息。如果她想睡一整天——给她毯子，让她安静。'},{icon:'💆',text:'给她按摩背或脚——动作轻柔，她的身体现在很敏感。'}],
-  barryTipsFollicular:[{icon:'🎯',text:'她会精力充沛——计划一起出去！散步、新活动、约会。'},{icon:'💬',text:'比平时更善于社交——适合深入交谈和未来规划。'},{icon:'💪',text:'和她一起运动或健身——一起变得更强。'},{icon:'🌸',text:'买花给她——不需要理由。这个阶段她最容易被小细节打动。'},{icon:'🎨',text:'创造力高峰期——提议一个新爱好或项目一起做。'}],
-  barryTipsOvulation:[{icon:'✨',text:'今天她最闪耀——告诉她她有多美。真诚且具体的夸奖。'},{icon:'💋',text:'身体接触对她很重要——拥抱、亲吻、牵手。'},{icon:'🎉',text:'能量巅峰——适合出去玩、跳舞、朋友聚会。'},{icon:'🔥',text:'她最有"性致"——今晚要体贴又浪漫。'},{icon:'📸',text:'今天给她拍照——每张都会发光。'}],
-  barryTipsLuteal:[{icon:'🧘',text:'PMS 开始了——别把她的情绪当回事。她的大脑在荷尔蒙风暴里。'},{icon:'🍵',text:'给她泡杯无咖啡因的花草茶——洋甘菊或薄荷。'},{icon:'🤐',text:'多听少说。别试图"解决问题"——只需倾听就好。'},{icon:'🍕',text:'她会突然想吃东西——不问就点她最爱的外卖。'},{icon:'🌙',text:'帮她放松——热水澡、蜡烛、轻音乐。她值得安宁。'}],
-  barryTipsGeneral:[{icon:'💌',text:'现在就给她发条消息——说你在想她。不需要理由。'},{icon:'💝',text:'今天一件小事——她喜欢的饮料、水果、小东西。'},{icon:'📞',text:'给她打电话——听听她的声音，问问今天过得怎么样。'},{icon:'🌍',text:'记住——你是她的依靠。她爱你。你足够好。'}]
-},
-'en': {
-  profileName: 'Anđela', profileName2: 'Barry',
-  loveNoteDefault: 'Every day I think of you — you are the most beautiful part of my world. 💕', loveNoteSig: '— Your Barry',
-  moodTitle: '😊 Daily Mood', moodToday: 'How are you feeling today?',
-  moodHistoryLabel: 'Last 7 days',
-  streakLabel: 'day streak!', streakLabel0: 'Start your streak!', streakBadgeHot: 'Amazing! 🔥', streakBadgeWarm: 'Good ✨', streakBadgeCold: 'Start today 🌱',
-  diaryTitle: '📓 One-Line Diary', diaryPrompt: 'Today ______ made me smile.', diaryPlaceholder: 'write one sentence...',
-  gardenTitle: '🌱 Our Garden', gardenSeed: 'Water me daily — tap an emoji above! 🌱', gardenSprout: 'Your streak is sprouting... keep going! 🌿', gardenGrowing: 'Getting stronger! 🌷', gardenBudding: 'Almost blooming — just a bit more! 🎀', gardenBlooming: 'Blooming beautifully! Just like our love. 🌸✨',
-  forecastTomorrow: 'Tomorrow', forecastFollicular: 'Tomorrow you enter the follicular phase — energy rising, great day for plans! 💪',
-  forecastOvulation: 'Tomorrow is ovulation — your body shines brightest! ✨', forecastLuteal: 'Tomorrow begins the luteal phase — slow down, you deserve rest 🌙',
-  forecastPeriod: 'Tomorrow your period may start — get your heating pad and tea ready 💗',
-  forecastNormal: 'Listen to your body. You are amazing every single day. 🌸',
-  moodEmojis: ['😊','🥰','😤','😴','😢','🤩','😰','😐'],
-  moodNames: ['Happy','Loved','Frustrated','Tired','Sad','Excited','Anxious','Meh'],
-  sharedDiaryTab: 'Diary',
-  profileSwitch: 'Profile switched',
-  barryTipsPeriod:[{icon:'🫂',text:'She is in pain — be gentle, hold her, bring her a heating pad and tea.'},{icon:'🍫',text:'Bring her chocolate or her favorite treat. Little things matter most right now.'},{icon:'😤',text:'Don\'t argue — her mood is at its lowest. Listen, nod, say "you\'re right."'},{icon:'🛏️',text:'Let her rest. If she wants to sleep all day — bring her a blanket and peace.'},{icon:'💆',text:'Offer a back or foot massage — be gentle, her body is sensitive now.'}],
-  barryTipsFollicular:[{icon:'🎯',text:'She has rising energy — plan a date, a walk, a shared activity!'},{icon:'💬',text:'She\'s more social — great time for deep talks and future plans.'},{icon:'💪',text:'Join her for a workout. Stronger together.'},{icon:'🌸',text:'Buy her flowers for no reason. She\'ll notice the smallest gesture now.'},{icon:'🎨',text:'Creative phase — suggest a new hobby or project to do together.'}],
-  barryTipsOvulation:[{icon:'✨',text:'She shines brightest today — tell her how beautiful she is. Be specific.'},{icon:'💋',text:'Physical touch matters to her — hug, kiss, hold hands.'},{icon:'🎉',text:'Peak energy — great day for dancing, going out, social fun.'},{icon:'🔥',text:'Her libido peaks — be attentive and romantic tonight.'},{icon:'📸',text:'Take photos of her today — she will glow in every shot.'}],
-  barryTipsLuteal:[{icon:'🧘',text:'PMS begins — don\'t take anything personally. Her brain is in a hormone storm.'},{icon:'🍵',text:'Make her caffeine-free tea — chamomile or mint. It calms and shows you care.'},{icon:'🤐',text:'Listen more, talk less. Don\'t try to "fix" — just listen.'},{icon:'🍕',text:'She\'ll have cravings — order her favorite food without asking.'},{icon:'🌙',text:'Help her unwind — warm bath, candles, soft music. She deserves peace.'}],
-  barryTipsGeneral:[{icon:'💌',text:'Text her right now — say you\'re thinking of her. No reason needed.'},{icon:'💝',text:'A small gesture today — her favorite drink, fruit, something thoughtful.'},{icon:'📞',text:'Call her — hear her voice, ask how her day went.'},{icon:'🌍',text:'Remember — you are her rock. She loves you. You are enough.'}]
-}};
-
-// Love Notes Pool (60 entries per language)
-const LOVE_NOTES = (function(){
-  var sr=['Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅','Tvoj osmeh je moja omiljena boja. 🎨','Da si ovde, skuvao bih ti čaj i slušao kako ti je prošao dan. 🍵','Znaš onaj osećaj kad sunce izađe posle kiše? Ti si to za mene. 🌈','Nadam se da si danas nosila onaj osmeh koji toliko volim. 😊','Koliko god da si daleko, uvek si mi u srcu. 💝','Vojvodina je dobila najlepši cvet kad si se ti rodila. 🌻','Ti si ona vrsta lepote koja ne bledi — postaje samo dublja. ✨','Kad bih mogao da ti pošaljem zagrljaj kroz ekran, već bi stigao. 🤗','Ti si moja omiljena pesma, ona koja nikad ne dosadi. 🎵','Prošlo je X dana otkad smo zajedno, a ja te volim sve više. ♥','Razmišljam o tebi dok ovo pišem — i smešim se. 😌','Da mogu da biram gde ću biti sad, bio bih pored tebe. 🌍→🏡','Tvoja snaga me inspiriše svaki dan. Ti si neverovatna. 💪🌸','Sećaš se našeg prvog razgovora? Ja ga često prepričavam u glavi. 💭','Volim način na koji se smeješ — kao da cela soba postane svetlija. ✨','U svakom zalasku sunca vidim tvoje oči. 🌆','Danas sam video nešto lepo i poželeo da si tu da podelim s tobom. 🌸','Ako ikada posumnjaš u sebe, seti se da te Barry voli — a Barry zna. 😉','Ti nisi samo moja devojka — ti si moj najbolji prijatelj. 💑','Svaka priča ima svoju heroinu. U mojoj, to si ti. 📖','Da napišem knjigu o tebi, nestalo bi mi stranica. 📚','Ti si moj mir u haosu, moja tišina u buci. 🧘','Ne mogu da zamislim svet bez tvog osmeha. Ne želim ni da pokušam. 🌍♥','Kad te čujem preko telefona, ceo dan mi bude bolji. 📞','Ponekad samo zatvorim oči i zamislim da si pored mene. 💫','Ti me činiš boljom osobom — hvala ti za to. 💗','Kao što Mesec prati Zemlju, tako moje misli prate tebe. 🌙','Da si cvet, bila bi ruža — lepa, jaka, i sa trnjem kad treba. 🌹','Najbolji deo mog dana? Kad pomislim na tebe. A to je mnogo puta. 💌','Tvoja hrabrost me oduševljava. Ti se boriš kao lavica. 🦁','Volim i tvoje dobre i tvoje loše dane. Sve je to deo tebe. 🫂','Peking je veliki grad, ali bez tebe je prazan. 🏙️','Da mogu da ti dam jednu stvar, dao bih ti večnost nežnosti. ♾️','Ti si moj dokaz da ljubav ne poznaje granice. 🌍♥','Od Vojvodine do Pekinga — ljubav je najduža reka, i sve povezuje. 🌊','Kad bih umeo da slikam, slikao bih samo tebe. 🎨','Ti si mi u mislima kao što je beat u muzici — stalno. 🥁','Sanjam dan kad nećemo morati da brojimo kilometre. 🗺️','Volim te na srpskom, kineskom, i svim jezicima koji postoje. 🌐♥','Ako ikada zaboraviš koliko vrediš, pozovi me — podsetiću te. 📱','Ti si moja srećna zvezda. ⭐','Kad si srećna, i ja sam srećan. Tako je jednostavno. 😊','Tvoja lepota nije samo spolja — ona izvire iz tvoje duše. 🕯️','Volim te više nego što reči mogu da izraze. Zato ti šaljem srca. 💕💕💕','Svakog dana zahvaljujem univerzumu što si u mom životu. 🙏','Da se ponovo rodim, opet bih te tražio. 🔄♥','Tvoje ime Anđela — kao anđeo. I stvarno si to. 👼','Ti ulepšavaš svet samim tim što postojiš. 🌍→🌸','Nikad ne zaboravi: voljen si, i to beskrajno. ♾️💗'];
-  var zh=['每天睁开眼，第一个想到的就是你。🌅','你的笑容是我最喜欢的颜色。🎨','如果你在身边，我会给你泡杯茶，听你讲今天的故事。🍵','你知道雨后阳光的感觉吗？你就是我的那种感觉。🌈','希望你今天带着我最爱的笑容。😊','不管多远，你一直在我心里。💝','Vojvodina 最美的花开在你出生的那天。🌻','你的美不会褪色——只会越来越深。✨','如果能穿过屏幕给你一个拥抱，它已经到了。🤗','你是我最爱的歌，永远听不腻的那一首。🎵','在一起 X 天了，每一天都更爱你。♥','写着写着就笑了——因为我在想你。😌','如果能选择此刻在哪里，我会选你身边。🌍→🏡','你的坚强每天都激励着我。你是了不起的。💪🌸','还记得我们第一次聊天吗？我经常在脑海里回放。💭','我喜欢你笑的样子——整个房间都亮了。✨','每一个日落里，我都看到你的眼睛。🌆','今天看到了美好的东西，真想你在身边分享。🌸','如果你怀疑自己，记住 Barry 爱你——Barry 是对的。😉','你不仅是我的女朋友——你是我最好的朋友。💑','每个故事都有女主角。在我的故事里，是你。📖','如果写一本关于你的书，纸都不够用。📚','你是我混乱中的平静，喧嚣中的安宁。🧘','无法想象没有你笑容的世界。也不想尝试。🌍♥','每次电话里听到你的声音，一整天都变好了。📞','有时候闭上眼，假装你就在身边。💫','你让我成为更好的人——谢谢你。💗','就像月亮绕着地球转，我的思绪绕着你。🌙','如果你是花，你一定是玫瑰——美丽、坚强，必要时有刺。🌹','一天中最棒的时刻？想你的那一刻。每天好多次。💌','你的勇敢让我惊叹。你像母狮一样战斗。🦁','我爱你的好日子，也爱你的坏日子。都是你的一部分。🫂','北京很大，但没有你是空的。🏙️','如果能给你一样东西，我会给你永恒的温柔。♾️','你是我跨过山海的证据。🌍♥','从 Vojvodina 到北京——爱是最长的河，连接一切。🌊','如果我会画画，只画你。🎨','你在我脑海里就像心跳——永不停止。🥁','梦想着不再数公里数的那一天。🗺️','用中文、塞语和所有语言说爱你。🌐♥','如果你忘了自己有多珍贵，打给我——我提醒你。📱','你是我的幸运星。⭐','你开心我就开心。就这么简单。😊','你的美不止在外表——从灵魂深处发光。🕯️','爱你超过言语能表达。所以给你发心心。💕💕💕','每一天都感谢宇宙让你出现在我的生命中。🙏','如果有来生，我还会去找你。🔄♥','你的名字 Anđela——意为天使。你真的是。👼','你存在本身就让世界更美好。🌍→🌸','永远不要忘记：你是被爱着的，无限地。♾️💗'];
-  var en=['Every morning when I open my eyes, my first thought is you. 🌅','Your smile is my favorite color. 🎨','If you were here, I would make you tea and listen to your day. 🍵','You know that feeling when the sun comes out after rain? You are that for me. 🌈','I hope you wore that smile I love so much today. 😊','No matter how far, you are always in my heart. 💝','Vojvodina got its most beautiful flower the day you were born. 🌻','You are the kind of beauty that never fades — it only deepens. ✨','If I could send you a hug through the screen, it would already be there. 🤗','You are my favorite song, the one that never gets old. 🎵','It has been X days together, and I love you more each one. ♥','I am writing this thinking of you — and smiling. 😌','If I could choose where to be right now, I would be next to you. 🌍→🏡','Your strength inspires me every day. You are amazing. 💪🌸','Remember our first conversation? I replay it in my head often. 💭','I love the way you laugh — like the whole room gets brighter. ✨','In every sunset, I see your eyes. 🌆','I saw something beautiful today and wished you were here to share it. 🌸','If you ever doubt yourself, remember Barry loves you — and Barry knows. 😉','You are not just my girlfriend — you are my best friend. 💑','Every story has a heroine. In mine, it is you. 📖','If I wrote a book about you, I would run out of pages. 📚','You are my calm in the chaos, my silence in the noise. 🧘','I cannot imagine a world without your smile. I do not want to try. 🌍♥','When I hear your voice on the phone, my whole day improves. 📞','Sometimes I close my eyes and pretend you are beside me. 💫','You make me a better person — thank you for that. 💗','As the moon follows the Earth, so my thoughts follow you. 🌙','If you were a flower, you would be a rose — beautiful, strong, with thorns when needed. 🌹','The best moment of my day? When I think of you. Which is a lot. 💌','Your courage astounds me. You fight like a lioness. 🦁','I love your good days and your bad days. All of it is you. 🫂','Beijing is a big city, but without you it is empty. 🏙️','If I could give you one thing, I would give you eternal tenderness. ♾️','You are my proof that love knows no borders. 🌍♥','From Vojvodina to Beijing — love is the longest river, connecting everything. 🌊','If I could paint, I would only paint you. 🎨','You are in my thoughts like a heartbeat — constant. 🥁','I dream of the day we stop counting kilometers. 🗺️','I love you in Serbian, Chinese, and every language that exists. 🌐♥','If you ever forget how precious you are, call me — I will remind you. 📱','You are my lucky star. ⭐','When you are happy, I am happy. It is that simple. 😊','Your beauty is not just outside — it glows from your soul. 🕯️','I love you more than words can say. So I send hearts. 💕💕💕','Every day I thank the universe for putting you in my life. 🙏','If I were born again, I would look for you. 🔄♥','Your name Anđela — like an angel. And you truly are one. 👼','You make the world more beautiful just by existing. 🌍→🌸','Never forget: you are loved, infinitely. ♾️💗'];
-  function get(){ var arr=lang==='zh-CN'?zh:lang==='en'?en:sr; var day=Math.floor(Date.now()/86400000); return arr[day%arr.length]; }
-  return {get:get};
-})();
-
+﻿
 /* ================================================================
    PROFILE SYSTEM
    ================================================================ */
@@ -203,7 +28,7 @@ function switchProfile(p) {
   if (getGitHubToken()) {
     pullAllSharedData().then(function() {
       if (p === 'barry') { renderCalendar(); renderBarrySymptomView(); renderTips(); }
-      renderHug(); renderGratitude(); renderSong(); renderCheckin();
+      renderHug(); renderGratitude(); renderSong(); renderCheckin(); renderKnowMe();
       renderSharedDiary(); renderDateStrip();
       updateSyncStatusBadge();
     });
@@ -337,6 +162,7 @@ function renderMoodSection() {
    ================================================================ */
 function saveDiary() {
   var input = document.getElementById('diaryInput');
+  if (!input) return;
   var text = input.value.trim();
   if (!text) return;
   if (!state.diaries) state.diaries = {};
@@ -352,6 +178,9 @@ function renderDiarySection() {
   document.getElementById('diary-title').textContent = t('diaryTitle');
   document.getElementById('diaryPrompt').textContent = t('diaryPrompt');
   document.getElementById('diaryInput').placeholder = t('diaryPlaceholder');
+  // Auto-save on blur when user navigates away
+  var di = document.getElementById('diaryInput');
+  if (di) { di.onblur = function() { if (di.value.trim()) saveDiary(); }; }
   var key = fmtDate(today());
   var entries = (state.diaries && state.diaries[key]) ? state.diaries[key] : [];
   var hist = document.getElementById('diaryHistory');
@@ -451,9 +280,16 @@ function renderGarden() {
 }
 
 // HTML escape — prevents XSS in user-generated content
+// Escapes: & < > " ' ` for safe innerHTML usage
 function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/`/g, '&#96;');
 }
 
 /* ================================================================
@@ -466,7 +302,7 @@ const GITHUB_FILE = 'shared-diary.json';
 let sharedDiaryViewDate = new Date();
 const DATE_STRIP_DAYS = 14; // show 14 days in date strip
 
-function getGitHubToken() { return localStorage.getItem('gh-token') || ''; }
+function getGitHubToken() { return sessionStorage.getItem('gh-token') || ''; }
 
 function loadSharedDiaryData() {
   try { return JSON.parse(localStorage.getItem(SD_KEY)) || {}; } catch(e) { return {}; }
@@ -887,13 +723,13 @@ function expandTimeline() {
 // ==============================
 // TRANSLATION
 // ==============================
-// Translation cache — avoids re-fetching identical text (session only)
-var _transCache = {};
+// Translation cache — Map for faster lookup vs plain object
+var _transCache = new Map();
 
 async function translateText(text, from, to) {
   if(!text||from===to||text.length<2)return text;
   var cacheKey = from + '|' + to + '|' + text;
-  if (_transCache[cacheKey]) return _transCache[cacheKey];
+  if (_transCache.has(cacheKey)) return _transCache.get(cacheKey);
 
   var result = null;
 
@@ -932,7 +768,7 @@ async function translateText(text, from, to) {
     } catch(e) {}
   }
 
-  if (result) { _transCache[cacheKey] = result; return result; }
+  if (result) { _transCache.set(cacheKey, result); return result; }
   return null; // all translation APIs exhausted
 }
 async function translatePartnerEntries() {
@@ -1034,6 +870,18 @@ function applyTheme(th) { theme = th; localStorage.setItem(profileKey('cycle-the
 function switchTheme(th) { applyTheme(th); }
 
 /* ================================================================
+   APP CONSTANTS — named values for maintainability
+   ================================================================ */
+var DEBOUNCE_SAVE_MS = 200;       // localStorage save debounce
+var DEBOUNCE_PUSH_MS = 1500;      // GitHub push debounce
+var SYNC_INTERVAL_MS = 120000;    // Cross-device pull interval (2 min)
+var WEATHER_CACHE_MS = 21600000;  // Weather cache validity (6 hours)
+var WEATHER_TIMEOUT_MS = 8000;    // Weather fetch timeout
+var MAX_SHARED_RETRY = 3;         // GitHub sync retry attempts
+var DATE_STRIP_DAYS = 14;         // Shared diary date strip length
+var MAX_DIARY_CHARS = 200;        // Shared diary field character limit
+
+/* ================================================================
    MODIFIED: init
    ================================================================ */
 // loadPerProfileSettings() is called in the INIT section below
@@ -1045,7 +893,8 @@ let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 /* ================================================================
    LOGIN SYSTEM
    ================================================================ */
-const LOGIN_PINS = { andjela: '1909', barry: '0827' };
+// SHA-256 hashed PINs (not plaintext). Generated via: crypto.createHash('sha256').update('PIN').digest('hex')
+const LOGIN_PINS = { andjela: '8e614d39a1f1279958da1c9f7e8df51db4aabca8cc3a3e84f8c3dc5f88e1fcfb', barry: '286aee2ea4a5ba67539432dc5ea3865c3b204d3caaccb662995388d156a279cf' };
 let selectedLoginProfile = null;
 let isLoggedIn = false;
 
@@ -1096,22 +945,42 @@ function spawnLoginHearts() {
 }
 
 function verifyLogin() {
-  var pin = document.getElementById('loginPinInput').value;
+  var pinEl = document.getElementById('loginPinInput');
+  var pin = pinEl ? pinEl.value : '';
   var card = selectedLoginProfile === 'andjela' ? document.getElementById('loginCardAndjela') : document.getElementById('loginCardBarry');
-  if (pin === LOGIN_PINS[selectedLoginProfile]) {
-    // Correct PIN
-    activeProfile = selectedLoginProfile;
-    localStorage.setItem('cycle-active-profile', activeProfile);
-    sessionStorage.setItem('cycle-logged-in', '1');
-    isLoggedIn = true;
-    document.getElementById('loginOverlay').classList.add('hidden');
-    bootApp();
-  } else {
-    // Wrong PIN
-    card.classList.add('shake');
-    document.getElementById('loginError').textContent = (selectedLoginProfile==='barry'?'PIN 不对，再试一次':'Pogrešan PIN — pokušaj ponovo');
-    document.getElementById('loginPinInput').value = '';
-    setTimeout(function(){ card.classList.remove('shake'); }, 500);
+  // Hash input PIN with SHA-256 and compare against stored hash
+  hashPIN(pin).then(function(hashed) {
+    if (hashed === LOGIN_PINS[selectedLoginProfile]) {
+      // Correct PIN
+      activeProfile = selectedLoginProfile;
+      localStorage.setItem('cycle-active-profile', activeProfile);
+      sessionStorage.setItem('cycle-logged-in', '1');
+      isLoggedIn = true;
+      document.getElementById('loginOverlay').classList.add('hidden');
+      bootApp();
+    } else {
+      // Wrong PIN
+      card.classList.add('shake');
+      document.getElementById('loginError').textContent = (selectedLoginProfile==='barry'?'PIN 不对，再试一次':'Pogrešan PIN — pokušaj ponovo');
+      pinEl.value = '';
+      setTimeout(function(){ card.classList.remove('shake'); }, 500);
+    }
+  });
+}
+// SHA-256 hash using Web Crypto API
+function hashPIN(pin) {
+  if (!pin) return Promise.resolve('');
+  try {
+    var encoder = new TextEncoder();
+    var data = encoder.encode(pin);
+    return crypto.subtle.digest('SHA-256', data).then(function(hashBuffer) {
+      return Array.from(new Uint8Array(hashBuffer)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    });
+  } catch(e) {
+    // Fallback for very old browsers: simple hash (less secure but better than plaintext)
+    var h = 0;
+    for (var i = 0; i < pin.length; i++) { h = ((h << 5) - h) + pin.charCodeAt(i); h |= 0; }
+    return Promise.resolve('fallback_' + Math.abs(h).toString(16));
   }
 }
 
@@ -1181,7 +1050,10 @@ function applyFestivalTheme(){var cls=getFestivalTheme();document.body.classList
 // ===== SEASONAL DECOR =====
 function applySeasonalDecor(){var cls=getFestivalTheme();if(cls)return;var m=new Date().getMonth();var icons=null,count=0;if(m>=2&&m<=4){icons=['🌸','🌷','💮','🌿'];count=8;}else if(m>=5&&m<=7){icons=['☀️','🌻','🍦','🦋'];count=6;}else if(m>=8&&m<=10){icons=['🍂','🍁','🎃','🌾'];count=8;}else{icons=['❄️','⛄','🧣','✨'];count=6;}var old=document.getElementById('seasonalDecorations');if(old)old.remove();var c=document.createElement('div');c.className='seasonal-deco';c.id='seasonalDecorations';for(var i=0;i<count;i++){var d=document.createElement('span');d.textContent=icons[i%icons.length];d.style.left=(3+Math.random()*94)+'%';d.style.fontSize=(0.7+Math.random()*1.2)+'rem';d.style.animationDelay=(Math.random()*8)+'s';c.appendChild(d);}document.body.appendChild(c);}
 function setupOfflineDetection(){var banner=document.getElementById('offlineBanner');if(!banner)return;function update(){banner.classList.toggle('show',!navigator.onLine);document.getElementById('offline-text').textContent=lang==='sr'?'Offline — neke funkcije možda ne rade':lang==='en'?'Offline — some features unavailable':'当前离线，部分功能不可用';}window.addEventListener('online',update);window.addEventListener('offline',update);update();}
-function setupPWABanner(){var banner=document.getElementById('pwaBanner');if(!banner)return;if(window.matchMedia('(display-mode: standalone)').matches)return;if(!/Mobi|Android/i.test(navigator.userAgent))return;if(localStorage.getItem('pwa-banner-dismissed'))return;banner.classList.add('show');document.getElementById('pwa-text').textContent=lang==='sr'?'📲 Instaliraj na telefon — koristi kao aplikaciju':lang==='en'?'📲 Install on phone — use like an app':'📲 安装到手机 — 像App一样使用';}
+var _deferredPWA = null; // store beforeinstallprompt for manual trigger
+function setupPWABanner(){var banner=document.getElementById('pwaBanner');if(!banner)return;if(window.matchMedia('(display-mode: standalone)').matches)return;if(!/Mobi|Android/i.test(navigator.userAgent))return;if(localStorage.getItem('pwa-banner-dismissed'))return;// Use native install prompt if available
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_deferredPWA=e;banner.classList.add('show');banner.onclick=function(){_deferredPWA.prompt();_deferredPWA.userChoice.then(function(r){if(r.outcome==='accepted'){banner.classList.remove('show');localStorage.setItem('pwa-installed','1');}});};});if(_deferredPWA)return;// fallback for browsers without beforeinstallprompt
+banner.classList.add('show');banner.onclick=function(){banner.classList.remove('show');localStorage.setItem('pwa-banner-dismissed','1');};document.getElementById('pwa-text').textContent=lang==='sr'?'📲 Instaliraj na telefon — koristi kao aplikaciju':lang==='en'?'📲 Install on phone — use like an app':'📲 安装到手机 — 像App一样使用';}
 
 // ===== DASHBOARD =====
 var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',goDiary:'📝 写日记',goLearn:'📚 中华文化',goCalendar:'📅 查看日历'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',goDiary:'📝 Dnevnik',goLearn:'📚 Kineska kultura',goCalendar:'📅 Kalendar'}};
@@ -1197,11 +1069,10 @@ var _dataLoadPromise = null;
 
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
-  _dataLoadPromise = fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; })
+  _dataLoadPromise = fetch('data/culture.json').then(function(r){ return r.json(); }).catch(function(e){ console.error('Failed to load culture.json', e); return []; })
   .then(function(data) {
     CULTURE_KNOWLEDGE = data.length > 0 ? data : CULTURE_KNOWLEDGE;
     _dataLoaded = true;
-    console.log('Data loaded: culture cards=' + CULTURE_KNOWLEDGE.length);
   }).catch(function(e) {
     console.error('Data loading failed, using fallbacks', e);
     _dataLoaded = true;
@@ -1234,7 +1105,7 @@ async function bootApp() {
   // Pull shared data in background (2s timeout, non-blocking)
   if (getGitHubToken()) {
     var ghTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('GitHub timeout')); }, 2000); });
-    Promise.race([pullAllSharedData(), ghTimeout]).catch(function(e) { console.log('Shared data pull skipped:', e.message); }).then(function() {
+    Promise.race([pullAllSharedData(), ghTimeout]).catch(function(e) {}).then(function() {
       try {
         var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
         if (sd && sd.records) {
@@ -1249,7 +1120,7 @@ async function bootApp() {
         renderBarrySymptomView();
         renderTips();
       }
-      renderHug(); renderGratitude(); renderSong(); renderCheckin();
+      renderHug(); renderGratitude(); renderSong(); renderCheckin(); renderKnowMe();
       renderSharedDiary(); renderDateStrip();
       renderDashboard(); // Refresh dashboard with synced data
       updateSyncStatusBadge();
@@ -1328,11 +1199,64 @@ const HOLIDAYS = [
   {d:'2026-05-01',name:{sr:'Praznik rada',zh:'劳动节',en:'Labour Day'},country:'rs',icon:'🌿',desc:{sr:'Majski uranak, izleti u prirodu — dan odmora za sve vredne ruke.',zh:'五一去郊游，在自然中放松，犒劳辛勤的自己。',en:'May Day picnics in nature — a well-earned rest for every hard-working soul.'}},
   {d:'2026-05-09',name:{sr:'Dan pobede',zh:'胜利日',en:'Victory Day'},country:'rs',icon:'🕊️',desc:{sr:'Sa cvećem i tihim ponosom, sećamo se heroja koji su doneli mir.',zh:'带着鲜花和安静的骄傲，铭记那些带来和平的英雄。',en:'With flowers and quiet pride, we remember the heroes who brought peace.'}},
   {d:'2026-06-28',name:{sr:'Vidovdan',zh:'维多夫丹',en:'St. Vitus Day'},country:'rs',icon:'🏛️',desc:{sr:'Dan sećanja i duboke tišine — kad smo kao narod sabrani u veri.',zh:'一个沉思和纪念的日子，塞尔维亚民族信仰与记忆交汇的时刻。',en:'A day of remembrance and quiet reflection, when a nation gathers in its memory.'}},
-  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs',icon:'🌸',desc:{sr:'Cvet nade na reveru — dan kada se sećamo cene mira.',zh:'胸前别一朵象征希望的鲜花，铭记和平的代价。',en:'A flower of hope on the lapel, remembering the cost of peace.'}}
+  {d:'2026-11-11',name:{sr:'Dan primirja',zh:'停战日',en:'Armistice Day'},country:'rs',icon:'🌸',desc:{sr:'Cvet nade na reveru — dan kada se sećamo cene mira.',zh:'胸前别一朵象征希望的鲜花，铭记和平的代价。',en:'A flower of hope on the lapel, remembering the cost of peace.'}},
+  // === INTERNATIONAL & CULTURAL HOLIDAYS ===
+  {d:'2026-02-14',name:{sr:'Dan zaljubljenih',zh:'情人节',en:'Valentine\'s Day'},country:'cn',icon:'💝',desc:{sr:'Dan za ljubavne poruke i slatka iznenađenja.',zh:'送一束玫瑰，说一句"我爱你"——最简单的浪漫。',en:'A day for love notes, roses, and saying "I love you" simply.'}},
+  {d:'2026-03-08',name:{sr:'Dan žena',zh:'三八妇女节',en:'Women\'s Day'},country:'cn',icon:'👩',desc:{sr:'Slavimo snagu, nežnost i lepotu svake žene.',zh:'致敬每一位坚强又温柔的女性——你们让世界更美好。',en:'Honoring every strong, gentle woman who makes the world brighter.'}},
+  {d:'2026-04-01',name:{sr:'Dan šale',zh:'愚人节',en:'April Fools\' Day'},country:'cn',icon:'🤡',desc:{sr:'Danas sve može biti šala — ali moja ljubav prema tebi nije! 😉',zh:'今天什么都可以是玩笑——但我对你的爱是真的！😉',en:'Everything can be a joke today — but not my love for you! 😉'}},
+  {d:'2026-04-22',name:{sr:'Dan planete Zemlje',zh:'世界地球日',en:'Earth Day'},country:'cn',icon:'🌍',desc:{sr:'Podsetnik da čuvamo našu zajedničku planetu — za sve buduće generacije.',zh:'提醒我们爱护这唯一的蓝色星球——为了所有未来。',en:'A reminder to care for our shared blue planet — for all generations to come.'}},
+  {d:'2026-05-10',name:{sr:'Majčin dan (Kina)',zh:'母亲节',en:'Mother\'s Day'},country:'cn',icon:'👩‍👧',desc:{sr:'Dan kada slavimo prvu ljubav našeg života — maminu.',zh:'给妈妈一个拥抱，告诉她你有多爱她。',en:'Give your mom a hug and tell her how much you love her.'}},
+  {d:'2026-05-15',name:{sr:'Dan porodice',zh:'国际家庭日',en:'Family Day'},country:'cn',icon:'👨‍👩‍👧‍👦',desc:{sr:'Porodica je mesto gde život počinje i ljubav nikad ne prestaje.',zh:'家是生命开始的地方，也是爱永远不会结束的地方。',en:'Family is where life begins and love never ends.'}},
+  {d:'2026-06-01',name:{sr:'Dečiji dan',zh:'六一儿童节',en:'Children\'s Day'},country:'cn',icon:'🧒',desc:{sr:'Dan kada slavimo najčistiju radost — dečiji osmeh.',zh:'愿每个孩子都被温柔守护，永远保持那份纯真的快乐。',en:'May every child be loved and keep that pure joy forever.'}},
+  {d:'2026-06-21',name:{sr:'Dan očeva',zh:'父亲节',en:'Father\'s Day'},country:'cn',icon:'👨',desc:{sr:'Hvala tatama što su naša prva zaštita, učitelji i heroji.',zh:'给爸爸打个电话吧——他等你这句话很久了。',en:'Call your dad — he\'s been waiting for your words longer than you know.'}},
+  {d:'2026-09-10',name:{sr:'Dan učitelja (Kina)',zh:'教师节',en:'Teachers\' Day'},country:'cn',icon:'📚',desc:{sr:'Hvala svim učiteljima koji su nas oblikovali.',zh:'一支粉笔，三尺讲台，感谢每一位引领我们成长的老师。',en:'A piece of chalk, three feet of podium — gratitude to every teacher.'}},
+  {d:'2026-10-25',name:{sr:'Festival devet dvojki',zh:'重阳节',en:'Double Ninth Festival'},country:'cn',icon:'🏔️',desc:{sr:'Dan kada se penjemo na brda i pokazujemo poštovanje starijima.',zh:'遍插茱萸，登高望远——祝福长辈健康长寿。',en:'Climbing high, wearing dogwood — wishing elders health and longevity.'}},
+  {d:'2026-10-31',name:{sr:'Noć veštica',zh:'万圣节',en:'Halloween'},country:'cn',icon:'🎃',desc:{sr:'Bundeve, maske i slatkiši — noć kad sve može biti magično.',zh:'南瓜灯和糖果——一年中最有魔法感的夜晚。',en:'Pumpkins, costumes, and candy — the most magical night of the year.'}},
+  {d:'2026-12-19',name:{sr:'Sveti Nikola',zh:'圣尼古拉节',en:'St. Nicholas Day'},country:'rs',icon:'🎅',desc:{sr:'Sveti Nikola noćas donosi poklone u čizme — deca jedva spavaju od uzbuđenja.',zh:'圣尼古拉今晚把礼物放进靴子里——孩子们兴奋得睡不着。',en:'St. Nicholas fills boots with gifts tonight — children can barely sleep.'}},
+  // Serbian Father's Day — Očevi (first Sunday after Christmas in Jan)
+  {d:'2026-01-04',name:{sr:'Očevi (Dan očeva)',zh:'塞尔维亚父亲节',en:'Father\'s Day (RS)'},country:'rs',icon:'👨',desc:{sr:'Srpski Dan očeva — tatino rame je najsigurnije mesto na svetu.',zh:'塞尔维亚父亲节——爸爸的肩膀是世界上最安全的地方。',en:'Serbian Father\'s Day — Dad\'s shoulder is the safest place in the world.'}},
+  {d:'2026-11-02',name:{sr:'Zadušnice',zh:'亡灵节',en:'All Souls\' Day'},country:'rs',icon:'🕯️',desc:{sr:'Palimo sveće za one koji su otišli — svetlost koja spaja svetove.',zh:'为逝去的亲人点燃蜡烛——跨越世界的光芒。',en:'Lighting candles for those who have left us — light that bridges worlds.'}},
+  {d:'2026-01-20',name:{sr:'Laba festival',zh:'腊八节',en:'Laba Festival'},country:'cn',icon:'🥣',desc:{sr:'Topla činija laba kaše najavljuje dolazak Nove Godine.',zh:'一碗暖暖的腊八粥，预告着新年的脚步近了。',en:'A warm bowl of Laba porridge heralds the coming of the New Year.'}}
 ];
 
 function getHoliday(dateKey) {
   return HOLIDAYS.filter(function(h){return h.d===dateKey;});
+}
+// Holiday countdown: find next upcoming holiday within 60 days
+function renderUpcomingHoliday() {
+  var el = document.getElementById('holidayCountdown'); if (!el) return;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var limit = new Date(today); limit.setDate(limit.getDate() + 60);
+  var upcoming = null;
+  for (var i = 0; i < HOLIDAYS.length; i++) {
+    var d = new Date(HOLIDAYS[i].d + 'T00:00:00');
+    if (d >= today && d <= limit) {
+      if (!upcoming || d < new Date(upcoming.d + 'T00:00:00')) upcoming = HOLIDAYS[i];
+    }
+  }
+  if (upcoming) {
+    var days = Math.ceil((new Date(upcoming.d + 'T00:00:00') - today) / 86400000);
+    var name = upcoming.name[lang] || upcoming.name['sr'];
+    var daysText = days === 0 ? (lang==='sr'?'danas! 🎉':lang==='en'?'today! 🎉':'就是今天！🎉') : (lang==='sr'?'još '+days+' dana':lang==='en'?days+' days away':'还有 '+days+' 天');
+    el.style.display = ''; el.textContent = '🎌 ' + name + ' · ' + daysText;
+  } else { el.style.display = 'none'; }
+}
+// Month holiday summary: show all holidays in current view month
+function renderMonthHolidaySummary() {
+  var el = document.getElementById('holidaySummary'); if (!el) return;
+  var m = viewMonth; var y = viewYear;
+  var monthHolidays = [];
+  for (var i = 0; i < HOLIDAYS.length; i++) {
+    var d = new Date(HOLIDAYS[i].d + 'T00:00:00');
+    if (d.getMonth() === m && d.getFullYear() === y) monthHolidays.push(HOLIDAYS[i]);
+  }
+  if (monthHolidays.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  var flag = function(c){ return c === 'cn' ? '🇨🇳' : '🇷🇸'; };
+  el.innerHTML = monthHolidays.sort(function(a,b){ return new Date(a.d+'T00:00:00') - new Date(b.d+'T00:00:00'); }).map(function(h){
+    var day = h.d.split('-')[2].replace(/^0/, '');
+    return '<span>'+flag(h.country)+' '+h.icon+' '+h.name[lang||'sr']+' '+day+'</span>';
+  }).join('');
 }
 var solarTermsCache = null;
 // Built-in solar terms fallback (always works, no fetch needed)
@@ -2061,6 +1985,7 @@ function renderCalendar(){
     ml.innerHTML = ml.textContent + ' <span class="season-tag" style="font-size:.6rem;opacity:.5">'+SEASON_EMOJI[viewMonth]+' '+getSeasonLabel(viewMonth)+'</span>';
   }
   updateProgress(pred); updateStats(pred); updateHistoryDots(pred); updateReminder(pred);
+  renderMonthHolidaySummary(); renderUpcomingHoliday();
 }
 
 function updateProgress(pred){
@@ -2288,7 +2213,7 @@ function renderTips(){
   const names={period:lang==='sr'?'Menstruacija':lang==='en'?'Period':'经期',follicular:lang==='sr'?'Folikularna':lang==='en'?'Follicular':'卵泡期',ovulation:lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵期',luteal:lang==='sr'?'Lutealna':lang==='en'?'Luteal':'黄体期'};
   tips=t('tips.'+cat);
   document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
-function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){localStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');pullAllSharedData().then(function(){updateSyncStatusBadge();renderAll();});}else{localStorage.removeItem('gh-token');updateSyncStatusBadge();}}
+function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){sessionStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');pullAllSharedData().then(function(){updateSyncStatusBadge();renderAll();});}else{sessionStorage.removeItem('gh-token');updateSyncStatusBadge();}}
 function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();updateSyncStatusBadge();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||7;saveState();renderAll();toast(t('toast.saved'));}
 function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${activeProfile}-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
@@ -2798,6 +2723,77 @@ function saveMySong() {
 function loadSong(profile) {
   try { return JSON.parse(localStorage.getItem('shared-song-' + profile)); } catch(e) { return null; }
 }
+
+/* ================================================================
+   KNOW ME QUIZ — Daily question to understand each other better
+   ================================================================ */
+var KNOW_ME_QUESTIONS = [
+  {key:'fav_city',q:{sr:'Koji je omiljeni grad tvog/tvoje partnera?',zh:'对方最喜欢的城市是哪里？',en:'What is your partner\'s favorite city?'}},
+  {key:'first_date_color',q:{sr:'Šta je tvoj/tvoja partner/ka nosio/la na prvom sastanku?',zh:'第一次约会对方穿什么颜色的衣服？',en:'What color did your partner wear on your first date?'}},
+  {key:'dream_trip',q:{sr:'Gde bi tvoj/tvoja partner/ka najradije putovao/la?',zh:'对方最想去的旅行目的地是哪里？',en:'Where does your partner dream of traveling to?'}},
+  {key:'comfort_food',q:{sr:'Koja je omiljena hrana tvog/tvoje partnera za utehu?',zh:'对方心情不好时最爱吃什么？',en:'What comfort food does your partner reach for?'}},
+  {key:'hidden_talent',q:{sr:'Koji skriveni talenat ima tvoj/tvoja partner/ka?',zh:'对方有什么隐藏的才艺？',en:'What hidden talent does your partner have?'}},
+  {key:'childhood_dream',q:{sr:'Šta je tvoj/tvoja partner/ka želeo/la da bude kao dete?',zh:'对方小时候的梦想职业是什么？',en:'What did your partner dream of becoming as a child?'}},
+  {key:'pet_peeve',q:{sr:'Šta tvog/tvoju partnera/ku najviše nervira?',zh:'对方最讨厌的事情是什么？',en:'What annoys your partner the most?'}},
+  {key:'perfect_day',q:{sr:'Kako izgleda savršen dan za tvog/tvoju partnera/ku?',zh:'对方心目中的完美一天是怎样的？',en:'What does your partner\'s perfect day look like?'}},
+  {key:'music_taste',q:{sr:'Koja je omiljena pesma tvog/tvoje partnera trenutno?',zh:'对方最近单曲循环的歌是什么？',en:'What song is your partner playing on repeat lately?'}},
+  {key:'love_language',q:{sr:'Koji je glavni jezik ljubavi tvog/tvoje partnera?',zh:'对方最重要的爱的语言是什么？',en:'What is your partner\'s primary love language?'}},
+  {key:'smell_memory',q:{sr:'Koji miris podseća tvog/tvoju partnera/ku na vas?',zh:'什么味道会让对方想起你？',en:'What scent reminds your partner of you?'}},
+  {key:'future_5years',q:{sr:'Gde tvoj/tvoja partner/ka vidi sebe za 5 godina?',zh:'对方觉得五年后的自己会在哪里？',en:'Where does your partner see themselves in 5 years?'}},
+  {key:'best_quality',q:{sr:'Šta tvoj/tvoja partner/ka najviše ceni kod sebe?',zh:'对方最欣赏自己的哪个品质？',en:'What quality does your partner admire most in themselves?'}},
+  {key:'favorite_memory',q:{sr:'Koje je omiljeno zajedničko sećanje tvog/tvoje partnera?',zh:'对方最喜欢你们在一起时的哪个回忆？',en:'What is your partner\'s favorite shared memory with you?'}},
+  {key:'morning_routine',q:{sr:'Kako tvoj/tvoja partner/ka započinje jutro?',zh:'对方早上起来做的第一件事是什么？',en:'What is the first thing your partner does in the morning?'}}
+];
+
+function getKnowMeData() { try { return JSON.parse(localStorage.getItem('shared-knowme') || '{}'); } catch(e) { return {}; } }
+function saveKnowMeData(data) { localStorage.setItem('shared-knowme', JSON.stringify(data)); }
+
+function renderKnowMe() {
+  var card = document.getElementById('knowMeCard'); if (!card) return;
+  document.getElementById('knowMe-title').textContent = lang==='sr'?'💭 Da li me poznaješ?':lang==='en'?'💭 Do You Know Me?':'💭 你了解我吗？';
+  var todayIdx = Math.floor(Date.now() / 86400000) % KNOW_ME_QUESTIONS.length;
+  var q = KNOW_ME_QUESTIONS[todayIdx];
+  var qText = q.q[lang] || q.q['sr'];
+  var dateKey = fmtDate(today());
+  var allData = getKnowMeData();
+  var dayData = allData[dateKey] || {};
+  var myAns = dayData[activeProfile];
+  var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+  var partnerAns = dayData[partnerProfile];
+  var partnerName = partnerProfile === 'andjela' ? '🌹 Anđela' : '👦 Barry';
+  var myName = activeProfile === 'andjela' ? '🌹 Anđela' : '👦 Barry';
+  var html = '';
+  html += '<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">'+qText+'</div>';
+  if (myAns) {
+    html += '<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+myName+' '+(lang==='sr'?'odgovor':'的回答</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(myAns.answer)+'</div>':' answer</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(myAns.answer)+'</div>')+'</div>';
+  } else {
+    html += '<div style="margin-bottom:10px"><textarea id="knowMeInput" placeholder="'+(lang==='sr'?'Tvoj odgovor...':lang==='en'?'Your answer...':'你的答案...')+'" style="width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);resize:none;min-height:44px" maxlength="120"></textarea><button class="btn btn-primary" onclick="saveKnowMeAnswer()" style="width:100%;font-size:.7rem;padding:8px;margin-top:6px">💭 '+(lang==='sr'?'Odgovori':lang==='en'?'Answer':'回答')+'</button></div>';
+  }
+  // Partner answer section
+  if (partnerAns) {
+    html += '<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+partnerName+(lang==='sr'?' misli da je:':' thinks it is:':'认为:')+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(partnerAns.answer)+'</div></div>';
+    // Show if answers match!
+    if (myAns && partnerAns && myAns.answer.trim().toLowerCase() === partnerAns.answer.trim().toLowerCase()) {
+      html += '<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:bounce-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">'+(lang==='sr'?'Savršeno se razumete! ✨':lang==='en'?'You two are perfectly in sync! ✨':'你们太有默契了！✨')+'</div>';
+    }
+  } else if (myAns) {
+    html += '<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ '+(lang==='sr'?'Čeka se odgovor tvog partnera...':lang==='en'?'Waiting for your partner to answer...':'等待对方回答...')+'</div>';
+  }
+  document.getElementById('knowMeContent').innerHTML = html;
+}
+function saveKnowMeAnswer() {
+  var input = document.getElementById('knowMeInput'); if (!input) return;
+  var answer = input.value.trim(); if (!answer) return;
+  var dateKey = fmtDate(today());
+  var allData = getKnowMeData();
+  if (!allData[dateKey]) allData[dateKey] = {};
+  allData[dateKey][activeProfile] = { answer: answer, time: Date.now() };
+  saveKnowMeData(allData);
+  pushAllSharedData();
+  renderKnowMe();
+  toast('💭 '+(lang==='sr'?'Odgovor sačuvan!':lang==='en'?'Answer saved!':'答案已保存！'));
+}
+
 function renderSong() {
   var st = document.getElementById('song-title'); if (!st) return;
   st.textContent = lang==='sr'?'🎵 Naša pesma':lang==='en'?'🎵 Our Song':'🎵 我们的歌';
@@ -2812,7 +2808,7 @@ function renderSong() {
     html += '<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="'+(lang==='sr'?'Naziv pesme...':lang==='en'?'Song title...':'歌名...')+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="'+(lang==='sr'?'Zašto baš ova pesma?':lang==='en'?'Why this song?':'为什么是这首歌？')+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 '+(lang==='sr'?'Sačuvaj':lang==='en'?'Save':'保存')+'</button></div>';
   }
   if (partnerSong) {
-    html += '<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+partnerName+' '+(lang==='sr'?'pesma':lang==='en'?'song':'的歌')+'</span><div class="song-title">🎶 '+partnerSong.title+'</div>'+(partnerSong.note?'<div class="song-note">'+partnerSong.note+'</div>':'')+'</div>';
+    html += '<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+partnerName+' '+(lang==='sr'?'pesma':lang==='en'?'song':'的歌')+'</span><div class="song-title">🎶 '+esc(partnerSong.title)+'</div>'+(partnerSong.note?'<div class="song-note">'+esc(partnerSong.note)+'</div>':'')+'</div>';
   }
   document.getElementById('songContent').innerHTML = html || '<span class="song-icon">🎶</span><div class="song-note">'+(lang==='sr'?'Postavite pesme koje vas podsećaju jedno na drugo':lang==='en'?'Set songs that remind you of each other':'设置让你们想到彼此的歌')+'</div>';
 }
@@ -3006,6 +3002,7 @@ function collectSharedState() {
     learningPoints: JSON.parse(localStorage.getItem('shared-learning-points') || '{}'),
     voiceData: JSON.parse(localStorage.getItem('shared-voice-data') || '{}'),
     sunCounter: JSON.parse(localStorage.getItem('shared-sun-counter') || '{}'),
+    knowme: JSON.parse(localStorage.getItem('shared-knowme') || '{}'),
     updated: Date.now()
   };
 }
@@ -3045,6 +3042,7 @@ function applySharedState(shared) {
   if (shared.learningPoints) localStorage.setItem('shared-learning-points', JSON.stringify(shared.learningPoints));
   if (shared.voiceData) localStorage.setItem('shared-voice-data', JSON.stringify(shared.voiceData));
   if (shared.sunCounter) localStorage.setItem('shared-sun-counter', JSON.stringify(shared.sunCounter));
+  if (shared.knowme) localStorage.setItem('shared-knowme', JSON.stringify(shared.knowme));
 }
 
 async function pushAllSharedData(retryCount) {
@@ -3052,14 +3050,14 @@ async function pushAllSharedData(retryCount) {
   var MAX_RETRIES = 3;
   var token = getGitHubToken();
   if (!token) return;
-  var state = collectSharedState();
+  var sharedState = collectSharedState();
   var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
   var sha = null;
   try {
     var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
     if (resp.ok) { var d = await resp.json(); sha = d.sha; }
   } catch(e) { if (retryCount < MAX_RETRIES) { setTimeout(function(){ pushAllSharedData(retryCount + 1); }, 2000); } return; }
-  var content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(sharedState, null, 2))));
   var body = { message: '🔄 Sync shared state', content: content };
   if (sha) body.sha = sha;
   try {
@@ -3098,7 +3096,7 @@ async function pullAllSharedData() {
     applySharedState(content);
     localStorage.setItem('shared-last-sync', Date.now());
     // Refresh all shared UI — not just diary panel
-    renderHug(); renderGratitude(); renderSong(); renderCheckin();
+    renderHug(); renderGratitude(); renderSong(); renderCheckin(); renderKnowMe();
     if (activeProfile === 'barry') {
       renderBarrySymptomView();
       renderCalendar();  // Sync Anđela's calendar to Barry's view
@@ -3180,22 +3178,16 @@ toggleProfile = function() {
 (function initApp() {
   applyTheme(theme);
   loadCalendarData(function(data){solarTermsCache=(data&&data.solarTerms)||[];localStorage.setItem('cycle-solarterms',JSON.stringify(solarTermsCache));});
-  // Check if already logged in today
   var sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
   var savedProfile = localStorage.getItem('cycle-active-profile');
-  console.log('INIT: session=' + !!sessionLoggedIn + ' saved=' + savedProfile);
-  if (savedProfile && sessionLoggedIn === '1' && LOGIN_PINS[savedProfile]) {
-    console.log('INIT: auto-login as ' + savedProfile);
+  if (savedProfile && sessionLoggedIn === '1') {
     activeProfile = savedProfile;
     isLoggedIn = true;
     document.getElementById('loginOverlay').classList.add('hidden');
-    bootApp().catch(function(e) { console.error('bootApp rejected:', e); });
-    console.log('INIT: bootApp called');
+    bootApp().catch(function(e) { console.error('bootApp failed:', e); });
   } else {
-    console.log('INIT: showing login screen (no saved session)');
     localStorage.removeItem('cycle-active-profile');
     document.getElementById('loginOverlay').classList.remove('hidden');
-    console.log('INIT: login overlay visible');
   }
 })();
 
@@ -3210,7 +3202,7 @@ window.runSelfTest = function() {
   sec('持久化');ok('localStorage可用',!!window.localStorage);
   ok('culture持久化',(function(){try{var o=_cultureCardIdx;localStorage.setItem('test-culture-idx','5');var s=parseInt(localStorage.getItem('test-culture-idx')||'0');localStorage.removeItem('test-culture-idx');return s===5}catch(e){return false}})());
   sec('控制台');ok('无语法错误',true);
-  console.log(r.log.join('\n')+'\n总计:'+r.p+'/'+(r.p+r.f));
+  // Results returned as object; no console.log in production
   return r;
 };
 if((new URLSearchParams(location.search)).get('selftest')==='1')setTimeout(window.runSelfTest,2000);
