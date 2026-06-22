@@ -178,6 +178,15 @@
         "wish": "Hmmmm, danas sam zadovoljna svime, osim što bih naravno želela da sutra provedemo više vremena zajedno.",
         "time": 1781992613590
       }
+    },
+    "2026-06-21": {
+      "andjela": {
+        "happy": "To što smo puno pričali na video pozivu, bila sam baš srećna.",
+        "uncomf": "To što smo se ujutru posvađali.",
+        "thanks": "Za to što imaš razumevanja za mene kada se naljutim.",
+        "wish": "Boljoj komunikaciji.",
+        "time": 1782118389223
+      }
     }
   },
   "cycleInfo": {
@@ -284,5 +293,5 @@
     "count": 1,
     "lastDate": "2026-06-20"
   },
-  "updated": 1781992619314
+  "updated": 1782118389227
 }
