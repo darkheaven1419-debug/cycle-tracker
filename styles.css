@@ -689,6 +689,28 @@ body {
 .mailbox-item .mb-mood { font-size:.85rem; }
 .mailbox-empty { text-align:center; padding:16px; font-size:var(--text-sm); color:var(--text-muted); font-style:italic; }
 
+/* Guided Letter Sections */
+.letter-section { margin-bottom:10px; border-radius:12px; background:rgba(255,255,255,.5); overflow:hidden; transition:all .3s; }
+[data-theme="dark"] .letter-section { background:rgba(255,255,255,.03); }
+.letter-section-label {
+  display:flex; align-items:center; gap:6px; padding:10px 12px;
+  font-size:.73rem; font-weight:600; color:var(--text); cursor:pointer;
+  user-select:none; transition:background .15s;
+}
+.letter-section-label:hover { background:rgba(196,90,107,.05); }
+.letter-section-label .ls-char-count { font-size:var(--text-xs); color:var(--text-muted); font-weight:400; margin-left:auto; }
+.letter-section-input {
+  display:block; width:100%; border:none; background:transparent;
+  font-family:var(--font); font-size:.78rem; color:var(--text);
+  line-height:1.6; resize:none; padding:0 12px 12px 12px; min-height:40px;
+}
+.letter-section-input:focus { outline:none; }
+.letter-section-input::placeholder { color:var(--text-muted); opacity:.3; font-style:italic; }
+.letter-section.collapsed .letter-section-input { display:none; }
+.letter-section.collapsed .letter-section-label { opacity:.5; font-weight:400; }
+.letter-section.collapsed:hover .letter-section-label { opacity:.8; }
+.letter-section.has-content { border-left:3px solid var(--love); }
+
 /* Enhanced shared diary form */
 .sd-field-card { background:var(--card); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:10px; border:1px solid var(--border); transition:all .2s; }
 .sd-field-card:focus-within { border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.08); }

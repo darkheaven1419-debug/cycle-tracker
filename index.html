@@ -11,7 +11,7 @@
 <link rel="dns-prefetch" href="https://api.open-meteo.com">
 <link rel="dns-prefetch" href="https://api.github.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=20">
+<link rel="stylesheet" href="styles.css?v=21">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
@@ -360,7 +360,7 @@
     </div>
     <div class="mini-cal" id="lettersMiniCal"></div>
 
-    <!-- 💌 MY LETTER -->
+    <!-- 💌 MY LETTER — guided sections -->
     <div class="card letter-card" id="letterMyCard">
       <div class="letter-header">
         <h3>💌 <span id="letter-my-title">Moje pismo</span></h3>
@@ -370,17 +370,28 @@
         <span id="letterDate"></span>
         <span class="mood-tags" id="letterMoodTags"></span>
       </div>
-      <textarea id="letterInput" placeholder="Piši ovde... kao da pišeš pismo..."
-        maxlength="500" rows="4"></textarea>
-      <div class="letter-prompts" id="letterPrompts">
-        <span class="prompt-chip" data-prompt="💝">💝</span>
-        <span class="prompt-chip" data-prompt="🤔">🤔</span>
-        <span class="prompt-chip" data-prompt="🙏">🙏</span>
-        <span class="prompt-chip" data-prompt="💪">💪</span>
-        <span id="letterPromptHint"></span>
+      <div class="letter-section" id="ls-happy">
+        <div class="letter-section-label" onclick="toggleLetterSection('happy')">💝 <span id="lsl-happy">Šta me je danas obradovalo</span> <span class="ls-char-count"><span id="lsc-happy">0</span>/150</span></div>
+        <textarea class="letter-section-input" id="letter-happy" maxlength="150" rows="1" placeholder="..."></textarea>
+      </div>
+      <div class="letter-section" id="ls-uncomf">
+        <div class="letter-section-label" onclick="toggleLetterSection('uncomf')">🤔 <span id="lsl-uncomf">Šta mi je malo zasmetalo</span> <span class="ls-char-count"><span id="lsc-uncomf">0</span>/150</span></div>
+        <textarea class="letter-section-input" id="letter-uncomf" maxlength="150" rows="1" placeholder="..."></textarea>
+      </div>
+      <div class="letter-section" id="ls-thanks">
+        <div class="letter-section-label" onclick="toggleLetterSection('thanks')">🙏 <span id="lsl-thanks">Želim da ti se zahvalim za...</span> <span class="ls-char-count"><span id="lsc-thanks">0</span>/150</span></div>
+        <textarea class="letter-section-input" id="letter-thanks" maxlength="150" rows="1" placeholder="..."></textarea>
+      </div>
+      <div class="letter-section" id="ls-wish">
+        <div class="letter-section-label" onclick="toggleLetterSection('wish')">💪 <span id="lsl-wish">Voleo bih da poradimo na...</span> <span class="ls-char-count"><span id="lsc-wish">0</span>/150</span></div>
+        <textarea class="letter-section-input" id="letter-wish" maxlength="150" rows="1" placeholder="..."></textarea>
+      </div>
+      <div class="letter-section collapsed" id="ls-extra">
+        <div class="letter-section-label" onclick="toggleLetterSection('extra')">💬 <span id="lsl-extra">Još nešto... (opciono)</span> <span class="ls-char-count"><span id="lsc-extra">0</span>/300</span></div>
+        <textarea class="letter-section-input" id="letter-extra" maxlength="300" rows="1" placeholder="..."></textarea>
       </div>
       <div class="letter-actions">
-        <span class="letter-char-count"><span id="letterCharCount">0</span>/500</span>
+        <span class="letter-char-count" id="letterCharCount"></span>
         <button class="btn btn-primary" id="letterSendBtn" onclick="saveLetter()" style="width:auto;padding:10px 24px;margin:0">💌 <span id="letter-send-text">Pošalji</span></button>
       </div>
     </div>
@@ -506,7 +517,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=39" defer></script>
+<script src="app.js?v=40" defer></script>
 </body>
 </html>
 

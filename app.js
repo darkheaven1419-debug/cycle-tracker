@@ -853,41 +853,39 @@ function letterTextFromEntry(entry) {
   return parts.join('\n\n');
 }
 
+var LETTER_FIELDS = ['happy','uncomf','thanks','wish','extra'];
 function saveLetter() {
-  var input = document.getElementById('letterInput'); if (!input) return;
-  var text = input.value.trim(); if (!text) return;
   var dateKey = fmtDate(new Date(letterViewDate));
-  var allData = loadSharedDiaryData();
-  if (!allData[dateKey]) allData[dateKey] = {};
+  var allData = loadSharedDiaryData(); if (!allData[dateKey]) allData[dateKey] = {};
+  var entry = { mood:letterMood, time:Date.now() }; var hasContent = false;
+  LETTER_FIELDS.forEach(function(f){
+    var el = document.getElementById('letter-'+f);
+    var val = el ? el.value.trim() : '';
+    if (val) { entry[f] = val; hasContent = true; }
+  });
+  if (!hasContent) return;
   var existing = allData[dateKey][activeProfile] || {};
-  allData[dateKey][activeProfile] = { text:text, mood:letterMood, time:Date.now() };
-  if (existing.hug) allData[dateKey][activeProfile].hug = existing.hug;
+  if (existing.hug) entry.hug = existing.hug;
+  allData[dateKey][activeProfile] = entry;
   saveSharedDiaryData(allData);
-  // Show saved badge
   var badge = document.getElementById('letterSavedBadge');
   badge.classList.add('show'); setTimeout(function(){badge.classList.remove('show');},2000);
-  pushAllSharedData();
-  renderLettersPanel();
-  toast('💌 ✓');
-}
-
-function insertPrompt(emoji) {
-  var input = document.getElementById('letterInput'); if (!input) return;
-  var prompt = LETTER_PROMPTS[emoji][lang] || LETTER_PROMPTS[emoji].sr;
-  var cursor = input.selectionStart || input.value.length;
-  var before = input.value.substring(0, cursor);
-  var after = input.value.substring(cursor);
-  var sep = before.length > 0 && !before.endsWith('\n') ? '\n' : '';
-  input.value = before + sep + prompt + ' ' + after;
-  input.focus();
-  input.selectionStart = input.selectionEnd = cursor + sep.length + prompt.length + 1;
-  updateLetterCharCount();
+  pushAllSharedData(); renderLettersPanel(); toast('💌 ✓');
 }
 
 function updateLetterCharCount() {
-  var input = document.getElementById('letterInput');
+  var total = 0;
+  LETTER_FIELDS.forEach(function(f){
+    var el = document.getElementById('letter-'+f);
+    if (el) { total += el.value.length; document.getElementById('lsc-'+f).textContent = el.value.length; }
+  });
   var cnt = document.getElementById('letterCharCount');
-  if (cnt) cnt.textContent = input ? input.value.length : 0;
+  if (cnt) cnt.textContent = L('ukupno ','合计 ','total ')+total+L(' znakova',' 字',' chars');
+}
+
+function toggleLetterSection(name) {
+  var sec = document.getElementById('ls-'+name); if (!sec) return;
+  sec.classList.toggle('collapsed');
 }
 
 function renderMiniCalendar() {
@@ -949,29 +947,53 @@ function renderLettersPanel() {
     moodHtml += '<span class="mood-tag'+(letterMood===m?' picked':'')+'" onclick="pickLetterMood(\''+m+'\')">'+m+'</span>';
   });
   document.getElementById('letterMoodTags').innerHTML = moodHtml;
-  document.getElementById('letterPromptHint').textContent = L('klikni da dodaš u pismo ↑','点击添入信中 ↑','tap to add to letter ↑');
-  // My entry
+  // Section labels i18n
+  document.getElementById('lsl-happy').textContent = L('Šta me je danas obradovalo','今天让我开心的事','What made me happy today');
+  document.getElementById('lsl-uncomf').textContent = L('Šta mi je malo zasmetalo','让我有点不舒服的事','What felt a little uncomfortable');
+  document.getElementById('lsl-thanks').textContent = L('Želim da ti se zahvalim za...','我想感谢你...','I want to thank you for...');
+  document.getElementById('lsl-wish').textContent = L('Voleo bih da poradimo na...','希望我们一起改进...','I hope we can improve on...');
+  document.getElementById('lsl-extra').textContent = L('Još nešto... (opciono)','还想说什么...（可选）','Anything else... (optional)');
+  // My entry — populate 5 guided fields
   var allData = loadSharedDiaryData();
   var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
-  var input = document.getElementById('letterInput');
-  if (!myEntry || !input.value) {
-    input.value = myEntry ? letterTextFromEntry(myEntry) : '';
-  }
-  updateLetterCharCount();
-  // Auto-save draft
-  if (input) {
-    input.oninput = function() {
+  LETTER_FIELDS.forEach(function(f){
+    var el = document.getElementById('letter-'+f);
+    var sec = document.getElementById('ls-'+f);
+    if (!el || !sec) return;
+    // Populate from saved entry or leave empty
+    if (myEntry) {
+      if (myEntry[f]) el.value = myEntry[f];
+      else if (myEntry.text && f === 'happy') el.value = myEntry.text; // old v8 format
+      else el.value = '';
+    } else if (!el.value) {
+      el.value = '';
+    }
+    // Smart collapse: expand if has content, collapse if empty (except first 4 always visible but collapsed if empty)
+    var hasVal = el.value.trim().length > 0;
+    if (hasVal) sec.classList.add('has-content');
+    else sec.classList.remove('has-content');
+    // Extra field is collapsed by default unless has content
+    if (f === 'extra' && !hasVal && !sec.classList.contains('collapsed')) sec.classList.add('collapsed');
+    // Auto-save on input
+    el.oninput = function() {
       updateLetterCharCount();
+      var hasNow = el.value.trim().length > 0;
+      if (hasNow) sec.classList.add('has-content');
+      else sec.classList.remove('has-content');
       clearTimeout(_letterAutoSaveTimer);
-      _letterAutoSaveTimer = setTimeout(function() {
-        var txt = input.value; if (!txt.trim()) return;
-        var ad = loadSharedDiaryData();
-        if (!ad[dateKey]) ad[dateKey] = {};
-        ad[dateKey][activeProfile] = { text:txt, mood:letterMood, time:Date.now(), draft:true };
+      _letterAutoSaveTimer = setTimeout(function(){
+        var ad = loadSharedDiaryData(); if (!ad[dateKey]) ad[dateKey] = {};
+        var draft = ad[dateKey][activeProfile] || {mood:letterMood,time:Date.now()};
+        LETTER_FIELDS.forEach(function(ff){
+          var fell = document.getElementById('letter-'+ff);
+          if (fell && fell.value.trim()) draft[ff] = fell.value.trim();
+        });
+        draft.draft = true; ad[dateKey][activeProfile] = draft;
         saveSharedDiaryData(ad);
       }, 3000);
     };
-  }
+  });
+  updateLetterCharCount();
   // Send button label
   document.getElementById('letter-send-text').textContent = L('Pošalji', '发送', 'Send');
   document.getElementById('letter-my-title').textContent = L('Moje pismo', '我的信', 'My Letter');
@@ -988,10 +1010,24 @@ function renderLettersPanel() {
   if (myEntry || (allData[dateKey] && allData[dateKey][activeProfile])) {
     lockedEl.style.display = 'none'; contentEl.style.display = '';
     if (partnerEntry) {
-      var body = partnerEntry.text || letterTextFromEntry(partnerEntry);
       var mood = partnerEntry.mood || '';
       var timeStr = partnerEntry.time ? (function(t){var d=new Date(t);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');})(partnerEntry.time) : '';
-      contentEl.innerHTML = '<div class="letter-body">' + esc(body) + '</div><div class="letter-signature">— ' + partnerName + ' ' + mood + ' 💕</div>' + (timeStr ? '<div class="letter-time">'+timeStr+'</div>' : '');
+      var sections = [
+        {emoji:'💝',key:'happy',label:L('Obradovalo','开心的事','Happy')},
+        {emoji:'🤔',key:'uncomf',label:L('Zasmetalo','不舒服的事','Uncomfortable')},
+        {emoji:'🙏',key:'thanks',label:L('Zahvalnost','感谢','Thanks')},
+        {emoji:'💪',key:'wish',label:L('Da poradimo','希望改进','To improve')},
+        {emoji:'💬',key:'extra',label:L('Još','还想说','Also')}
+      ];
+      var bodyHtml = '';
+      sections.forEach(function(s){
+        var val = partnerEntry[s.key];
+        if (!val && partnerEntry.text) val = letterTextFromEntry(partnerEntry); // old v8 format
+        if (val && s.key==='happy') bodyHtml += '<div class="letter-body">' + esc(val) + '</div>';
+        else if (val && s.key!=='happy') bodyHtml += '<div style="margin-top:10px"><span style="font-size:var(--text-xs);color:var(--text-muted)">'+s.emoji+' '+s.label+'</span><div class="letter-body">'+esc(val)+'</div></div>';
+      });
+      if (!bodyHtml) bodyHtml = '<div class="letter-body">' + esc(partnerEntry.text || letterTextFromEntry(partnerEntry)) + '</div>';
+      contentEl.innerHTML = bodyHtml + '<div class="letter-signature">— ' + partnerName + ' ' + mood + ' 💕</div>' + (timeStr ? '<div class="letter-time">'+timeStr+'</div>' : '');
       translateBtn.style.display = '';
     } else {
       contentEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:var(--text-sm);color:var(--text-muted);font-style:italic">' + L('Partner još nije napisao pismo za ovaj dan 📭', '伴侣还没写这一天的信 📭', 'Your partner hasn\'t written for this day yet 📭') + '</div>';
@@ -1027,7 +1063,7 @@ function renderMailbox(allData) {
     var myEntry = item[activeProfile];
     var partnerEntry = item[activeProfile === 'andjela' ? 'barry' : 'andjela'];
     var icon = both ? '💌' : (myEntry ? '✉️' : '📭');
-    var preview = myEntry ? (myEntry.text || letterTextFromEntry(myEntry)).substring(0, 60) : (partnerEntry ? '🔒 ' + L('piši da otključaš','写信解锁','write to unlock') : '');
+    var preview = myEntry ? (myEntry.happy || myEntry.text || letterTextFromEntry(myEntry)).substring(0, 60) : (partnerEntry ? '🔒 ' + L('piši da otključaš','写信解锁','write to unlock') : '');
     var moodEmoji = myEntry && myEntry.mood ? myEntry.mood : '';
     html += '<div class="mailbox-item" onclick="jumpToLetter(\'' + item.date + '\')">';
     html += '<span class="mb-icon">' + icon + '</span>';
