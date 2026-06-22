@@ -870,7 +870,7 @@ function saveLetter() {
   saveSharedDiaryData(allData);
   var badge = document.getElementById('letterSavedBadge');
   badge.classList.add('show'); setTimeout(function(){badge.classList.remove('show');},2000);
-  pushAllSharedData(); renderLettersPanel(); toast('💌 ✓');
+  pushAllSharedData().catch(function(){}); renderLettersPanel(); toast('💌 ✓');
 }
 
 function updateLetterCharCount() {
@@ -1634,6 +1634,14 @@ async function bootApp() {
 
 // Profile-aware overrides happen in loadPerProfileSettings() below
 
+// i18n map helper: L({sr:'...',en:'...',zh:'...'}) -> value for current lang
+function L(sr, en, zh) {
+  if (typeof sr === 'object') { var m = sr; return (m[lang] || m[lang.split('-')[0]] || m['sr'] || ''); }
+  if (lang === 'sr' || lang === 'sr-RS') return sr;
+  if (lang === 'en') return en;
+  return zh || sr;
+}
+
 function t(key, fallback) {
   // Check I18N_EXT first (new features), then main I18N
   const keys = key.split('.');
@@ -1957,7 +1965,12 @@ function fetchWeather() {
   } catch(e) {}
 }
 function renderWeather(w) {
-  var card=document.getElementById('weatherCard'); if(!w) return;
+  var card=document.getElementById('weatherCard');
+  if(!w) {
+    card.style.display='';
+    card.innerHTML='<div style="text-align:center;padding:20px"><div class="skeleton" style="width:200px;height:20px;margin:8px auto;border-radius:8px"></div><div class="skeleton" style="width:140px;height:14px;margin:6px auto;border-radius:6px"></div><div style="font-size:.6rem;color:var(--text-muted);margin-top:8px">'+L('Učitavam vreme...','Loading weather...','加载天气中...')+'</div></div>';
+    return;
+  }
   card.style.display='';
   var bjLabel = lang==='sr'?'🏙 Peking·Čaojang':lang==='en'?'🏙 Beijing·Chaoyang':'🏙 北京·朝阳';
   var kiLabel = lang==='sr'?'🏡 Kikinda':lang==='en'?'🏡 Kikinda':'🏡 Kikinda';
@@ -3341,10 +3354,10 @@ function getHugStreak() {
 
 function sendHug(hugBack) {
   var todayKey = fmtDate(new Date());
-  var count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
+  var count = parseInt(localStorage.getItem('hug-count-' + todayKey) || '0');
   if (count >= 2) { toast(lang === 'sr' ? 'Već si poslao/la 2 zagrljaja danas — probaj sutra! 🤗' : lang === 'en' ? 'You already sent 2 hugs today — try tomorrow! 🤗' : '今天已经抱了2次——明天再来！🤗'); return; }
   count++;
-  sessionStorage.setItem('hug-count-' + todayKey, count);
+  localStorage.setItem('hug-count-' + todayKey, count);
 
   var hug = { from: activeProfile, time: Date.now() };
   localStorage.setItem('shared-hug', JSON.stringify(hug));
@@ -3709,7 +3722,7 @@ function renderBarrySymptomView() {
   var phaseKey=(shared&&shared.phase)?shared.phase:'general';
   var l=lang||'sr';
   document.getElementById('bs-title').textContent=l==='sr'?'🔬 Anđela danas — detaljna analiza':l==='en'?'🔬 Anđela Today — Full Analysis':'🔬 Anđela 今日详细分析';
-  if(phaseKey==='general'||!PHASE_ANALYSIS[phaseKey]){container.innerHTML='<div class="card" style="text-align:center;padding:20px"><span style="font-size:3rem">🌸</span><div style="font-size:.78rem;color:var(--text-muted);margin-top:8px">'+(l==='sr'?'Čekam podatke sa Anđelinog telefona...':l==='en'?'Waiting for data from Anđela\'s phone...':'等待 Anđela 手机同步数据...')+'</div></div>';return;}
+  if(phaseKey==='general'||typeof PHASE_ANALYSIS==='undefined'||!PHASE_ANALYSIS[phaseKey]){container.innerHTML='<div class="card" style="text-align:center;padding:20px"><span style="font-size:3rem">🌸</span><div style="font-size:.78rem;color:var(--text-muted);margin-top:8px">'+(l==='sr'?'Čekam podatke sa Anđelinog telefona...':l==='en'?'Waiting for data from Anđela\'s phone...':'等待 Anđela 手机同步数据...')+'</div></div>';return;}
   var pa=PHASE_ANALYSIS[phaseKey];
   var pc={period:'var(--love)',follicular:'var(--sage)',ovulation:'var(--teal)',luteal:'var(--lavender)'};
   var pe={period:'🩸',follicular:'🌱',ovulation:'✨',luteal:'🌙'};

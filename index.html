@@ -88,18 +88,18 @@
 </div>
 
 <main>
-<header role="banner">
 <div class="app">
+  <header role="banner" class="app-header">
   <div class="header">
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
     <div class="header-actions">
-      <div class="profile-pill" id="profilePill" onclick="toggleProfile()">
+      <div class="profile-pill" id="profilePill" role="button" tabindex="0" onclick="toggleProfile()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleProfile();}">
         <span class="pf-avatar" id="pfAvatar">🌸</span>
         <span class="pf-name" id="pfName">Anđela</span>
       </div>
       <div class="moon-phase" id="moonPhase" title="月相"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
-      <div class="lang-switch" id="langSwitch">
+      <div class="lang-switch" id="langSwitch" role="radiogroup" aria-label="Language selection">
         <button class="lang-btn" data-lang="zh-CN" aria-label="中文">中</button>
         <button class="lang-btn" data-lang="sr" aria-label="Srpski">SR</button>
         <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
@@ -110,6 +110,7 @@
       <span id="titleLoveCounter" style="font-size:.68rem;color:var(--love);font-weight:600;background:var(--rose-light);border-radius:12px;padding:2px 12px"></span>
     </div>
   </div>
+  </header>
 
   <div class="onboarding" id="onboardingBanner" style="display:none">
     <span class="ob-icon">👋</span><span id="ob-text"></span>
@@ -535,7 +536,6 @@
     </div>
   </div>
 </div>
-</header>
 </main>
 
 <button class="fab hidden" id="fabBtn" title="Quick add" aria-label="Quick add period">
