@@ -359,15 +359,20 @@ function scrollDateStrip(dir) {
 // ==============================
 async function saveSharedDiary() {
   var dateKey = fmtDate(sharedDiaryViewDate);
-  var happy = document.getElementById('sd-happy').value.trim();
-  var uncomf = document.getElementById('sd-uncomf').value.trim();
-  var thanks = document.getElementById('sd-thanks').value.trim();
-  var wish = document.getElementById('sd-wish').value.trim();
+  var elHappy = document.getElementById('sd-happy');
+  var elUncomf = document.getElementById('sd-uncomf');
+  var elThanks = document.getElementById('sd-thanks');
+  var elWish = document.getElementById('sd-wish');
+  if (!elHappy && !elUncomf && !elThanks && !elWish) return; // Elements don't exist (letters UI only)
+  var happy = elHappy ? elHappy.value.trim() : '';
+  var uncomf = elUncomf ? elUncomf.value.trim() : '';
+  var thanks = elThanks ? elThanks.value.trim() : '';
+  var wish = elWish ? elWish.value.trim() : '';
   if (!happy && !uncomf && !thanks && !wish) { toast(lang==='sr'?'Napiši bar nešto...':lang==='en'?'Write at least something...':'至少写点什么吧...'); return; }
 
   // Disable save button during save
   var saveBtn = document.getElementById('sd-save-btn');
-  saveBtn.disabled = true; saveBtn.textContent = '⏳ ' + (lang==='sr'?'Čuvanje...':lang==='en'?'Saving...':'保存中...');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ ' + (lang==='sr'?'Čuvanje...':lang==='en'?'Saving...':'保存中...'); }
 
   var allData = loadSharedDiaryData();
   if (!allData[dateKey]) allData[dateKey] = {};
@@ -388,11 +393,9 @@ async function saveSharedDiary() {
 
   // Show saved badge
   var badge = document.getElementById('sdSavedBadge');
-  badge.classList.add('show');
-  setTimeout(function() { badge.classList.remove('show'); }, 2000);
+  if (badge) { badge.classList.add('show'); setTimeout(function() { badge.classList.remove('show'); }, 2000); }
 
-  saveBtn.disabled = false;
-  saveBtn.innerHTML = '💾 <span id="sd-save-text">' + (lang==='sr'?'Sačuvaj':lang==='en'?'Save':'保存') + '</span>';
+  if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '💾 <span id="sd-save-text">' + (lang==='sr'?'Sačuvaj':lang==='en'?'Save':'保存') + '</span>'; }
 
   renderDateStrip();
   renderSharedDiary();
@@ -497,13 +500,18 @@ async function renderSharedDiary() {
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   var partnerEntry = allData[dateKey] && allData[dateKey][partnerProfile];
 
-  // Fill my entry fields instantly
-  document.getElementById('sd-happy').value = myEntry ? (myEntry.happy || '') : '';
-  document.getElementById('sd-uncomf').value = myEntry ? (myEntry.uncomf || '') : '';
-  document.getElementById('sd-thanks').value = myEntry ? (myEntry.thanks || '') : '';
-  document.getElementById('sd-wish').value = myEntry ? (myEntry.wish || '') : '';
+  // Fill my entry fields instantly (guard: elements may not exist in letters-only UI)
+  var sdHappy = document.getElementById('sd-happy');
+  var sdUncomf = document.getElementById('sd-uncomf');
+  var sdThanks = document.getElementById('sd-thanks');
+  var sdWish = document.getElementById('sd-wish');
+  if (sdHappy) sdHappy.value = myEntry ? (myEntry.happy || '') : '';
+  if (sdUncomf) sdUncomf.value = myEntry ? (myEntry.uncomf || '') : '';
+  if (sdThanks) sdThanks.value = myEntry ? (myEntry.thanks || '') : '';
+  if (sdWish) sdWish.value = myEntry ? (myEntry.wish || '') : '';
   ['happy','uncomf','thanks','wish'].forEach(function(f) {
-    var el = document.getElementById('sdc-'+f); if (el) el.textContent = (document.getElementById('sd-'+f).value || '').length;
+    var el = document.getElementById('sdc-'+f); var src = document.getElementById('sd-'+f);
+    if (el) el.textContent = src ? (src.value || '').length : 0;
   });
 
   // Partner card — locked until you save your own entry first (by design)
@@ -541,10 +549,10 @@ async function renderSharedDiary() {
         if (!isTyping) {
           // Only update MY fields if I haven't written anything yet (don't overwrite unsaved work)
           if (!myEntry || !myEntry.time) {
-            document.getElementById('sd-happy').value = freshMy ? (freshMy.happy || '') : '';
-            document.getElementById('sd-uncomf').value = freshMy ? (freshMy.uncomf || '') : '';
-            document.getElementById('sd-thanks').value = freshMy ? (freshMy.thanks || '') : '';
-            document.getElementById('sd-wish').value = freshMy ? (freshMy.wish || '') : '';
+            if (sdHappy) sdHappy.value = freshMy ? (freshMy.happy || '') : '';
+            if (sdUncomf) sdUncomf.value = freshMy ? (freshMy.uncomf || '') : '';
+            if (sdThanks) sdThanks.value = freshMy ? (freshMy.thanks || '') : '';
+            if (sdWish) sdWish.value = freshMy ? (freshMy.wish || '') : '';
           }
         }
         // Always update partner display and lock state - same invariant: user must have own entry for THIS date
