@@ -186,6 +186,13 @@
         "thanks": "Za to što imaš razumevanja za mene kada se naljutim.",
         "wish": "Boljoj komunikaciji.",
         "time": 1782118389223
+      },
+      "barry": {
+        "happy": "咱们俩通过视频通话一起进行了有趣的事",
+        "uncomf": "你认为我会离开",
+        "thanks": "感谢你最后的信任",
+        "wish": "更加了解彼此，知道如何沟通",
+        "time": 1782137501846
       }
     }
   },
@@ -293,5 +300,5 @@
     "count": 1,
     "lastDate": "2026-06-20"
   },
-  "updated": 1782118393001
+  "updated": 1782137519252
 }
