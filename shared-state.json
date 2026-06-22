@@ -194,6 +194,13 @@
         "wish": "更加了解彼此，知道如何沟通",
         "time": 1782137501846
       }
+    },
+    "2026-06-22": {
+      "barry": {
+        "hug": {
+          "time": 1782138626250
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -218,16 +225,17 @@
       "2026-06-17": {
         "mood": "happy",
         "time": 1781657424307
+      },
+      "2026-06-22": {
+        "mood": "happy",
+        "time": 1782138863624
+      },
+      "2026-06-23": {
+        "mood": "happy",
+        "time": 1782146691077
       }
     },
-    "diaries": {
-      "2026-06-18": [
-        {
-          "text": "To što smo zajedno gledali nastup maturanata",
-          "time": 1781736141742
-        }
-      ]
-    },
+    "diaries": {},
     "settings": {
       "cycleLength": 28,
       "periodLength": 7,
@@ -253,7 +261,10 @@
       "time": 1781736167893
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "barry",
+    "time": 1782138626250
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -300,5 +311,6 @@
     "count": 1,
     "lastDate": "2026-06-20"
   },
-  "updated": 1782137519252
+  "knowme": {},
+  "updated": 1782152622316
 }
