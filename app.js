@@ -2764,13 +2764,15 @@ function renderKnowMe() {
   var html = '';
   html += '<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">'+qText+'</div>';
   if (myAns) {
-    html += '<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+myName+' '+(lang==='sr'?'odgovor':'的回答</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(myAns.answer)+'</div>':' answer</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(myAns.answer)+'</div>')+'</div>';
+    var myLabel = lang==='sr'?'odgovor':lang==='en'?' answer':'的回答';
+    html += '<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+myName+' '+myLabel+'</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(myAns.answer)+'</div></div>';
   } else {
     html += '<div style="margin-bottom:10px"><textarea id="knowMeInput" placeholder="'+(lang==='sr'?'Tvoj odgovor...':lang==='en'?'Your answer...':'你的答案...')+'" style="width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);resize:none;min-height:44px" maxlength="120"></textarea><button class="btn btn-primary" onclick="saveKnowMeAnswer()" style="width:100%;font-size:.7rem;padding:8px;margin-top:6px">💭 '+(lang==='sr'?'Odgovori':lang==='en'?'Answer':'回答')+'</button></div>';
   }
   // Partner answer section
   if (partnerAns) {
-    html += '<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+partnerName+(lang==='sr'?' misli da je:':' thinks it is:':'认为:')+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(partnerAns.answer)+'</div></div>';
+    var partnerThinkLabel = lang==='sr'?' misli da je:':lang==='en'?' thinks it is:':'认为:';
+    html += '<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+partnerName+partnerThinkLabel+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(partnerAns.answer)+'</div></div>';
     // Show if answers match!
     if (myAns && partnerAns && myAns.answer.trim().toLowerCase() === partnerAns.answer.trim().toLowerCase()) {
       html += '<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:bounce-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">'+(lang==='sr'?'Savršeno se razumete! ✨':lang==='en'?'You two are perfectly in sync! ✨':'你们太有默契了！✨')+'</div>';
