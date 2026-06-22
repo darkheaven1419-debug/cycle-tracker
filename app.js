@@ -1330,13 +1330,23 @@ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_de
 banner.classList.add('show');banner.onclick=function(){banner.classList.remove('show');localStorage.setItem('pwa-banner-dismissed','1');};document.getElementById('pwa-text').textContent=lang==='sr'?'📲 Instaliraj na telefon — koristi kao aplikaciju':lang==='en'?'📲 Install on phone — use like an app':'📲 安装到手机 — 像App一样使用';}
 
 // ===== DASHBOARD =====
-var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',goDiary:'📝 写日记',goLearn:'📚 中华文化',goCalendar:'📅 查看日历',connectQ:'💭 今天的对话',refreshQ:'🔄 换一个问题'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',goDiary:'📝 Dnevnik',goLearn:'📚 Kineska kultura',goCalendar:'📅 Kalendar',connectQ:'💭 Pitanje dana',refreshQ:'🔄 Drugo pitanje'}};
+var DASH_I18N={barry:{dashTitle:'🏠 主页',welcomeBack:'欢迎回来，',todayCulture:'今日文化知识',goDiary:'📝 写日记',goLearn:'📚 中华文化',goCalendar:'📅 查看日历',connectQ:'💭 今天的对话',refreshQ:'🔄 换一个问题',todayPhase:'今日阶段',todayMoodDash:'今日心情',todayStreak:'连续打卡',todayCycles:'周期总数',avgAbbr:'平均'},andjela:{dashTitle:'🏠 Početna',welcomeBack:'Dobrodošla nazad, ',todayCulture:'Današnje kulturno znanje',goDiary:'📝 Dnevnik',goLearn:'📚 Kineska kultura',goCalendar:'📅 Kalendar',connectQ:'💭 Pitanje dana',refreshQ:'🔄 Drugo pitanje',todayPhase:'Trenutna faza',todayMoodDash:'Raspoloženje',todayStreak:'Niz dana',todayCycles:'Ukupno ciklusa',avgAbbr:'Prosek'}};
 function dl(key){var profile=(lang||'').indexOf('zh')===0?'barry':'andjela';var p=DASH_I18N[profile]||DASH_I18N.andjela;return p[key]||(DASH_I18N.andjela[key]||key);}
 // Daily conversation starters — rotating questions to deepen understanding
 var CONVERSATION_QUESTIONS={sr:['Koja je tvoja najlepša uspomena iz detinjstva?','Šta te je danas nasmejalo?','Kad si se poslednji put osećao/la najviše voljeno?','Koji je tvoj omiljeni miris i na šta te podseća?','Šta bi voleo/la da naučiš zajedno?','Koja pesma te uvek oraspoloži?','Kako voliš da ti neko pokaže da mu je stalo?','Koje mesto bi voleo/la da posetimo zajedno?','Šta najviše ceniš kod mene — iskreno?','Koji je bio najbolji dan u našoj vezi do sada?','Da možeš da promeniš jednu stvar na svetu, šta bi to bilo?','Kako zamišljaš naš savršen dan za 10 godina?','Šta te čini ponosnim/om na sebe?','Koji je tvoj omiljeni način da se opustiš?','Kad si poslednji put probao/la nešto novo — i šta je to bilo?'],'zh-CN':['你童年最美好的回忆是什么？','今天什么让你笑了？','你最近一次感到被深爱是什么时候？','你最喜欢的气味是什么？它让你想起什么？','你想一起学什么新东西？','哪首歌总是能让你心情变好？','你喜欢别人用什么方式表达对你的在乎？','你最想和我一起去哪里旅行？','你最欣赏我哪一点——说真的？','到目前为止，我们关系中最好的一天是哪天？','如果你能改变世界上的一件事，会是什么？','你想象中我们十年后的完美一天是怎样的？','什么让你为自己感到骄傲？','你最喜欢的放松方式是什么？','你最近一次尝试新事物是什么——尝试了什么？'],en:['What is your most beautiful childhood memory?','What made you smile today?','When did you last feel most loved?','What is your favorite scent and what does it remind you of?','What would you like to learn together?','Which song always lifts your mood?','How do you like someone to show they care?','Which place would you love to visit together?','What do you appreciate most about me — honestly?','What was the best day in our relationship so far?','If you could change one thing in the world, what would it be?','How do you imagine our perfect day 10 years from now?','What makes you proud of yourself?','What is your favorite way to relax?','When did you last try something new — and what was it?']};
 function getDailyQuestion(){var qs=CONVERSATION_QUESTIONS[lang]||CONVERSATION_QUESTIONS['sr'];var idx=new Date().getDate()%qs.length;return qs[idx];}
 function initDashboard(){if(getGitHubToken()){pullAllSharedData().then(function(){renderDashboard();});}else{renderDashboard();}}
 function renderDashboard(){var panel=document.getElementById('panel-dashboard');if(!panel)return;var myName=activeProfile==='andjela'?'🌸 Anđela':'👦 Barry';var h='';h+='<div class=\"dash-welcome\">'+dl('welcomeBack')+'<strong>'+myName+'</strong></div>';
+  // Today's overview strip
+  var predDash=predict();var tdDash=today();var phaseDash=getPhase(tdDash,predDash);
+  var pe={};pe['period-on']='🩸';pe['period-mid']='🩸';pe['period-pred-first']='🔮';pe['period-pred']='🔮';pe['ovulation']='🥚';pe['fertile']='🌱';pe['luteal']='🌙';pe['follicular']='🌿';
+  var phLabel=t('phaseBadges')[phaseDash]||'--';var tm=getMood(fmtDate(tdDash));var strk=calculateStreak();var sc=state.records.length;var avgD=predDash.avgCycle||'--';
+  h+='<div class=\"card dash-card\" style=\"text-align:center\"><div style=\"display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:8px\">';
+  h+='<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">'+(pe[phaseDash]||'📊')+'</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">'+dl('todayPhase')+'</div><div style=\"font-size:.58rem;color:var(--text-muted)\">'+phLabel+'</div></div>';
+  h+='<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">'+(tm?MOOD_EMOJIS[MOOD_KEYS.indexOf(tm)]:'🌤️')+'</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">'+dl('todayMoodDash')+'</div><div style=\"font-size:.58rem;color:var(--text-muted)\">'+(tm?t('moodNames')[MOOD_KEYS.indexOf(tm)]:(lang==='sr'?'Nije uneto':lang==='en'?'Not set':'未记录'))+'</div></div>';
+  h+='<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">🔥</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">'+dl('todayStreak')+'</div><div style=\"font-size:.58rem;color:var(--text-muted)\">'+strk+' '+(lang==='sr'?'dana':lang==='en'?'days':'天')+'</div></div>';
+  h+='<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">📊</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">'+dl('todayCycles')+'</div><div style=\"font-size:.58rem;color:var(--text-muted)\">'+sc+' / '+dl('avgAbbr')+' '+avgD+'d</div></div>';
+  h+='</div></div>';
   // Today's holiday highlight
   var todayKey=fmtDate(today());var todayHolidays=getHoliday(todayKey);
   if(todayHolidays.length>0){h+='<div class=\"card dash-card\" style=\"background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)\"><h4>🎌 '+(lang==='sr'?'Današnji praznik':lang==='en'?'Today\'s Holiday':'今日节日')+'</h4>'+todayHolidays.map(function(h){return '<div style=\"font-size:.8rem;font-weight:700;color:var(--love)\">'+h.icon+' '+(h.name[lang]||h.name['sr'])+'</div><div style=\"font-size:.68rem;color:var(--text-muted);margin-top:4px\">'+(h.desc[lang]||h.desc['sr'])+'</div>';}).join('<div style=\"height:4px\"></div>')+'</div>';}
@@ -1347,6 +1357,181 @@ function renderDashboard(){var panel=document.getElementById('panel-dashboard');
   // Quick links
   h+='<div class=\"card dash-card\"><div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'culture\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">'+dl('goCalendar')+'</button></div></div>';panel.innerHTML=h;}
 function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+tabId+'\"]');if(btn)btn.click();}
+
+/* ================================================================
+   STATS PANEL RENDERER — Canvas charts + summary cards
+   ================================================================ */
+function renderStatsPanel() {
+  var panel = document.getElementById('panel-stats');
+  if (!panel || !panel.classList.contains('active')) return;
+  var pred = predict();
+  var td = today();
+
+  // --- Summary cards ---
+  var grid = document.getElementById('statsSummaryGrid');
+  if (grid) {
+    var clen = state.records.length;
+    var streak = calculateStreak();
+    var phase = getPhase(td, pred);
+    var pe2 = {'period-on':'🩸','period-mid':'🩸','ovulation':'🥚','fertile':'🌱','luteal':'🌙','follicular':'🌿'};
+    var phaseName = t('phaseBadges')[phase] || '--';
+    var phIcon = pe2[phase] || '📊';
+    var rl = lang==='sr'?{high:'Visoka',medium:'Srednija',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
+    var regLabel = clen >= 2 ? rl[pred.confidence] : '--';
+    var rc = {high:'var(--sage)',medium:'var(--gold)',low:'var(--rose)'};
+    var regColor = rc[pred.confidence] || 'var(--text-muted)';
+    grid.innerHTML =
+      '<div class="stats-mini-card card-accent-rose"><span class="mini-icon">🩸</span><div class="mini-value">'+clen+'</div><div class="mini-label" id="smini-cycles">'+t('stats.count')+'</div></div>'+
+      '<div class="stats-mini-card card-accent-sage"><span class="mini-icon">📏</span><div class="mini-value">'+(pred.avgCycle||'--')+'<span style="font-size:.65rem">d</span></div><div class="mini-label" id="smini-avg">'+t('stats.avg')+'</div><div class="mini-sub" id="smini-range">'+(clen>=2?pred.minCycle+'–'+pred.maxCycle+'d':'--')+'</div></div>'+
+      '<div class="stats-mini-card card-accent-teal"><span class="mini-icon">'+phIcon+'</span><div class="mini-value" style="font-size:.9rem;line-height:1.6">'+phaseName+'</div><div class="mini-label" id="smini-phase">'+(lang==='sr'?'Trenutna faza':lang==='en'?'Current Phase':'当前阶段')+'</div></div>'+
+      '<div class="stats-mini-card card-accent-gold"><span class="mini-icon">🎯</span><div class="mini-value" style="color:'+regColor+'">'+regLabel+'</div><div class="mini-label" id="smini-reg">'+t('stats.reg')+'</div><div class="mini-sub">'+(clen>=2?'σ='+pred.stdDev:'--')+'</div></div>';
+  }
+
+  // --- Cycle trend chart ---
+  var trendCanvas = document.getElementById('chartCycleTrend');
+  var trendEmpty = document.getElementById('chartCycleEmpty');
+  document.getElementById('schart-cycle-title').textContent = lang==='sr'?'📈 Trend Ciklusa':lang==='en'?'📈 Cycle Trend':'📈 周期趋势';
+  if (trendCanvas && pred.cycles && pred.cycles.length >= 2) {
+    trendCanvas.parentElement.style.display = '';
+    if (trendEmpty) trendEmpty.style.display = 'none';
+    var recentCycles = pred.cycles.slice(-8);
+    var labels = [];
+    for (var ci = 0; ci < recentCycles.length; ci++) { labels.push('C' + (pred.cycles.length - recentCycles.length + ci + 1)); }
+    ChartRenderer.drawLineChart(trendCanvas, recentCycles, labels, {
+      width: 500, height: 200,
+      avgLine: pred.avgCycle,
+      avgLabel: lang==='sr'?'Prosek':lang==='en'?'Avg':'均值',
+      emptyText: lang==='sr'?'Premalo podataka':lang==='en'?'Not enough data':'数据不足'
+    });
+  } else if (trendCanvas) {
+    trendCanvas.parentElement.style.display = 'none';
+    if (trendEmpty) { trendEmpty.style.display = ''; trendEmpty.textContent = lang==='sr'?'Potrebno bar 2 ciklusa za trend':lang==='en'?'Need 2+ cycles for trend':'需要至少2个周期才显示趋势'; }
+  }
+
+  // --- Mood donut chart ---
+  var moodCanvas = document.getElementById('chartMoodDonut');
+  var moodEmpty = document.getElementById('chartMoodEmpty');
+  var moodLegend = document.getElementById('chartMoodLegend');
+  document.getElementById('schart-mood-title').textContent = lang==='sr'?'🎭 Distribucija Raspoloženja':lang==='en'?'🎭 Mood Distribution':'🎭 心情分布';
+  if (moodCanvas && state.moods) {
+    var moodCounts = {};
+    var moodKeysArr = Object.keys(state.moods);
+    for (var mi = 0; mi < moodKeysArr.length; mi++) {
+      var mk = state.moods[moodKeysArr[mi]].mood;
+      moodCounts[mk] = (moodCounts[mk] || 0) + 1;
+    }
+    var segments = [];
+    var moodColors = ['#c45a6b','#d4bfb5','#E57373','#b8a0c8','#5e8b7a','#FFB74D','#80a590','#bdbdbd'];
+    for (var mj = 0; mj < MOOD_KEYS.length; mj++) {
+      if (moodCounts[MOOD_KEYS[mj]]) {
+        segments.push({ label: t('moodNames')[mj], value: moodCounts[MOOD_KEYS[mj]], color: moodColors[mj] });
+      }
+    }
+    if (segments.length > 0) {
+      moodCanvas.parentElement.style.display = '';
+      if (moodEmpty) moodEmpty.style.display = 'none';
+      var legendData = ChartRenderer.drawDonutChart(moodCanvas, segments, {
+        width: 260, height: 200,
+        centerLabel: lang==='sr'?'unosa':lang==='en'?'entries':'次记录',
+        emptyText: lang==='sr'?'Nema podataka':lang==='en'?'No mood data':'暂无心情数据'
+      });
+      if (moodLegend && legendData.length > 0) {
+        moodLegend.innerHTML = legendData.map(function(ld) {
+          return '<span><span class="legend-dot" style="background:'+ld.color+'"></span>'+ld.label+' ('+ld.pct+'%)</span>';
+        }).join('');
+      }
+    } else {
+      moodCanvas.parentElement.style.display = 'none';
+      if (moodEmpty) { moodEmpty.style.display = ''; moodEmpty.textContent = lang==='sr'?'Još nema zapisa o raspoloženju':lang==='en'?'No mood records yet':'还没有心情记录'; }
+      if (moodLegend) moodLegend.innerHTML = '';
+    }
+  }
+
+  // --- Symptom bar chart ---
+  var symptomCanvas = document.getElementById('chartSymptomBar');
+  var symptomEmpty = document.getElementById('chartSymptomEmpty');
+  document.getElementById('schart-symptom-title').textContent = lang==='sr'?'📋 Učestalost Simptoma':lang==='en'?'📋 Symptom Frequency':'📋 症状频率';
+  if (symptomCanvas && state.symptoms) {
+    var sympKeysArr = Object.keys(state.symptoms);
+    var sympFreq = { cramps: 0, mood: 0, flow: 0, headache: 0, fatigue: 0, cravings: 0 };
+    var sympEmojis = { cramps: '😣', mood: '😊', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' };
+    for (var si2 = 0; si2 < sympKeysArr.length; si2++) {
+      var sv = state.symptoms[sympKeysArr[si2]];
+      for (var sk in sympFreq) {
+        if (sv[sk] && sv[sk] > 0) sympFreq[sk]++;
+      }
+    }
+    var sympNames = t('symptoms');
+    var sympOrder = ['cramps','mood','flow','headache','fatigue','cravings'];
+    var sympBarColors = ['#c45a6b','#FFB74D','#5e8b7a','#b8a0c8','#a0b0c0','#d4bfb5'];
+    var barData = [];
+    for (var sn2 = 0; sn2 < sympOrder.length; sn2++) {
+      var k = sympOrder[sn2];
+      barData.push({ label: sympEmojis[k]+' '+sympNames[k], value: sympFreq[k], color: sympBarColors[sn2] });
+    }
+    barData.sort(function(a, b) { return b.value - a.value; });
+    var hasSympData = false;
+    for (var bj = 0; bj < barData.length; bj++) { if (barData[bj].value > 0) { hasSympData = true; break; } }
+    if (hasSympData) {
+      symptomCanvas.parentElement.style.display = '';
+      if (symptomEmpty) symptomEmpty.style.display = 'none';
+      ChartRenderer.drawBarChart(symptomCanvas, barData, {
+        width: 460, height: 180,
+        emptyText: lang==='sr'?'Nema podataka o simptomima':lang==='en'?'No symptom data':'暂无症状数据'
+      });
+    } else {
+      symptomCanvas.parentElement.style.display = 'none';
+      if (symptomEmpty) { symptomEmpty.style.display = ''; symptomEmpty.textContent = lang==='sr'?'Još nema zapisa o simptomima':lang==='en'?'No symptom records yet':'还没有症状记录'; }
+    }
+  }
+
+  // --- Prediction highlight ---
+  var clen2 = state.records.length;
+  var ph2 = document.getElementById('predictionHighlight');
+  if (ph2 && pred.nextStart) {
+    ph2.style.display = '';
+    var daysUntil = daysDiff(td, pred.nextStart);
+    var rl2 = lang==='sr'?{high:'Visoka',medium:'Srednija',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
+    document.getElementById('predMainNext').textContent = daysUntil >= 0
+      ? (lang==='sr'?'Još '+daysUntil+' dana':lang==='en'?daysUntil+' days until':'距下次 '+daysUntil+' 天')
+      : (lang==='sr'?'Kasni '+Math.abs(daysUntil)+' dana':lang==='en'?Math.abs(daysUntil)+' days late':'已推迟 '+Math.abs(daysUntil)+' 天');
+    document.getElementById('predSubConf').textContent = (clen2>=2
+      ? (lang==='sr'?'Pouzdanost: ':'Confidence: ')+rl2[pred.confidence]+' (±'+pred.stdDev+')'
+      : (lang==='sr'?'(potrebno 2+ ciklusa)':lang==='en'?'(needs 2+ cycles)':'(需2个周期以上)'));
+    document.getElementById('predChipOv').textContent = pred.ovulation ? fmtDate(pred.ovulation) : '--';
+    document.getElementById('predChipOvLabel').textContent = lang==='sr'?'Ovulacija':lang==='en'?'Ovulation':'排卵日';
+    document.getElementById('predChipFert').textContent = pred.fertileStart && pred.fertileEnd ? fmtDate(pred.fertileStart)+' ~ '+fmtDate(pred.fertileEnd) : '--';
+    document.getElementById('predChipFertLabel').textContent = lang==='sr'?'Plodni dani':lang==='en'?'Fertile Window':'易孕窗口';
+    document.getElementById('predChipFuture').textContent = pred.futurePeriods.length > 0 ? pred.futurePeriods.map(function(fp){return fmtDate(fp.start);}).join(', ') : '--';
+    document.getElementById('predChipFutureLabel').textContent = lang==='sr'?'Buduće':lang==='en'?'Future':'未来预测';
+    document.getElementById('predChipReg').textContent = clen2 >= 2 ? rl2[pred.confidence]+' ±'+pred.stdDev : '--';
+    document.getElementById('predChipRegLabel').textContent = lang==='sr'?'Regularnost':lang==='en'?'Regularity':'规律性';
+  } else if (ph2) {
+    ph2.style.display = 'none';
+  }
+
+  // --- Timeline ---
+  var tlRow = document.getElementById('timelineRow');
+  document.getElementById('schart-history-title').textContent = lang==='sr'?'📜 Istorija Ciklusa':lang==='en'?'📜 Cycle History':'📜 周期历史';
+  document.getElementById('tleg-short').textContent = lang==='sr'?'Kratak':lang==='en'?'Short':'偏短';
+  document.getElementById('tleg-normal').textContent = lang==='sr'?'Normalan':lang==='en'?'Normal':'正常';
+  document.getElementById('tleg-long').textContent = lang==='sr'?'Dug':lang==='en'?'Long':'偏长';
+  if (tlRow && pred.cycles.length > 0) {
+    var recent = pred.cycles.slice(-12), avg = pred.avgCycle;
+    tlRow.innerHTML = recent.map(function(cy) {
+      var cls = 'normal';
+      if (cy < avg - 3) cls = 'short';
+      else if (cy > avg + 3) cls = 'long';
+      return '<span class="timeline-dot '+cls+'" title="'+cy+'d" onclick="toast(\''+cy+' '+t('day')+'\')"></span>';
+    }).join('');
+  }
+
+  // --- Relationship section label ---
+  var sectRel = document.getElementById('sect-relationship');
+  if (sectRel) {
+    sectRel.textContent = lang==='sr'?'💝 Veza':lang==='en'?'💝 Relationship':'💝 关系';
+  }
+}
 
 
 // ===== DATA LOADER: fetch JSON files =====
@@ -2049,6 +2234,285 @@ function getPhase(date,pred){
 }
 
 /* ================================================================
+   CHART RENDERER — Pure Canvas 2D, no external deps
+   ================================================================ */
+var ChartRenderer = {
+  _theme: function() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return {
+      bg: isDark ? '#1e1518' : '#faf3ef',
+      text: isDark ? '#c4a8a8' : '#3d2828',
+      textMuted: isDark ? '#7a6a68' : '#8a7a78',
+      grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(80,40,40,0.08)',
+      line: isDark ? '#d47888' : '#c45a6b',
+      fill: isDark ? 'rgba(212,120,136,0.15)' : 'rgba(196,90,107,0.12)',
+      dot: isDark ? '#d47888' : '#c45a6b',
+      sage: isDark ? '#8fc7b0' : '#80a590',
+      teal: isDark ? '#7ab8a5' : '#5e8b7a',
+      lavender: isDark ? '#c8b8d8' : '#b8a0c8',
+      gold: isDark ? '#d4aa6e' : '#c49a5e',
+      donutColors: [
+        isDark ? '#d47888' : '#c45a6b',
+        isDark ? '#e090a0' : '#d4bfb5',
+        isDark ? '#8fc7b0' : '#80a590',
+        isDark ? '#c8b8d8' : '#b8a0c8',
+        isDark ? '#7ab8a5' : '#5e8b7a',
+        isDark ? '#d4aa6e' : '#c49a5e',
+        isDark ? '#e8a0b0' : '#e8c8c0',
+        isDark ? '#a0c8b8' : '#a0c0b0'
+      ]
+    };
+  },
+
+  _setupCanvas: function(canvas, w, h) {
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.getBoundingClientRect();
+    var displayW = rect.width || w;
+    canvas.width = displayW * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = displayW + 'px';
+    canvas.style.height = h + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx: ctx, w: displayW, h: h };
+  },
+
+  drawLineChart: function(canvas, dataPoints, labels, opts) {
+    opts = opts || {};
+    var self = this; var t = self._theme();
+    var _a = self._setupCanvas(canvas, opts.width || 500, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
+    var pad = { top: 16, right: 16, bottom: 28, left: 32 };
+    var pw = w - pad.left - pad.right, ph = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (!dataPoints || dataPoints.length === 0) {
+      ctx.fillStyle = t.textMuted; ctx.font = 'italic .68rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center'; ctx.fillText(opts.emptyText || 'No data yet', w / 2, h / 2);
+      return;
+    }
+
+    var allVals = dataPoints.slice();
+    if (opts.avgLine) allVals.push(opts.avgLine);
+    var minVal = Math.floor(Math.min.apply(Math, allVals) - 2);
+    var maxVal = Math.ceil(Math.max.apply(Math, allVals) + 2);
+    if (maxVal - minVal < 4) { var mid = (minVal + maxVal) / 2; minVal = mid - 2; maxVal = mid + 2; }
+    var xStep = dataPoints.length > 1 ? pw / (dataPoints.length - 1) : pw / 2;
+    var valToY = function(v) { return pad.top + ph - ((v - minVal) / (maxVal - minVal)) * ph; };
+
+    // Grid
+    ctx.strokeStyle = t.grid; ctx.lineWidth = 0.5; ctx.setLineDash([3, 4]);
+    var gridLines = 4;
+    for (var i = 0; i <= gridLines; i++) {
+      var y = pad.top + (ph / gridLines) * i;
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+      ctx.fillStyle = t.textMuted; ctx.font = '.55rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'right'; ctx.fillText(Math.round(maxVal - (maxVal - minVal) / gridLines * i), pad.left - 6, y + 3);
+    }
+    ctx.setLineDash([]);
+
+    // X labels
+    if (labels && labels.length > 0) {
+      ctx.fillStyle = t.textMuted; ctx.font = '.52rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center';
+      var labelStep = Math.max(1, Math.floor(labels.length / 5));
+      for (var i2 = 0; i2 < labels.length; i2 += labelStep) {
+        var lx = pad.left + i2 * xStep;
+        if (lx <= w - pad.right) ctx.fillText(labels[i2], lx, h - 4);
+      }
+    }
+
+    // Average line
+    if (opts.avgLine) {
+      var ay = valToY(opts.avgLine);
+      ctx.strokeStyle = t.textMuted; ctx.lineWidth = 1; ctx.setLineDash([4, 6]);
+      ctx.beginPath(); ctx.moveTo(pad.left, ay); ctx.lineTo(w - pad.right, ay); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = t.textMuted; ctx.font = '.52rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'left'; ctx.fillText(opts.avgLabel || 'Avg', w - pad.right - 24, ay - 4);
+    }
+
+    // Fill area
+    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ph);
+    grad.addColorStop(0, t.fill); grad.addColorStop(1, 'rgba(196,90,107,0.01)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top + ph);
+    for (var i3 = 0; i3 < dataPoints.length; i3++) {
+      ctx.lineTo(pad.left + i3 * xStep, valToY(dataPoints[i3]));
+    }
+    ctx.lineTo(pad.left + (dataPoints.length - 1) * xStep, pad.top + ph);
+    ctx.closePath(); ctx.fill();
+
+    // Line
+    ctx.strokeStyle = t.line; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(pad.left, valToY(dataPoints[0]));
+    for (var i4 = 1; i4 < dataPoints.length; i4++) {
+      ctx.lineTo(pad.left + i4 * xStep, valToY(dataPoints[i4]));
+    }
+    ctx.stroke();
+
+    // Dots + values
+    for (var i5 = 0; i5 < dataPoints.length; i5++) {
+      var cx = pad.left + i5 * xStep, cy = valToY(dataPoints[i5]);
+      ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = t.dot; ctx.fill();
+      ctx.strokeStyle = t.bg; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = t.text; ctx.font = 'bold .55rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center'; ctx.fillText(dataPoints[i5], cx, cy - 10);
+    }
+  },
+
+  drawDonutChart: function(canvas, segments, opts) {
+    opts = opts || {};
+    var self = this; var t = self._theme();
+    var _a = self._setupCanvas(canvas, opts.width || 260, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
+    var cx = w / 2, cy = h / 2;
+    var outerR = Math.min(cx, cy) - 8;
+    var innerR = outerR * 0.58;
+    var total = 0;
+    for (var si = 0; si < segments.length; si++) total += segments[si].value;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (total === 0) {
+      ctx.fillStyle = t.textMuted; ctx.font = 'italic .68rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center'; ctx.fillText(opts.emptyText || 'No data yet', cx, cy);
+      return [];
+    }
+
+    var colors = t.donutColors;
+    var startAngle = -Math.PI / 2;
+    for (var i = 0; i < segments.length; i++) {
+      var sliceAngle = (segments[i].value / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerR, startAngle, startAngle + sliceAngle);
+      ctx.arc(cx, cy, innerR, startAngle + sliceAngle, startAngle, true);
+      ctx.closePath();
+      ctx.fillStyle = segments[i].color || colors[i % colors.length];
+      ctx.fill();
+      // Label on slice
+      var midAngle = startAngle + sliceAngle / 2;
+      var labelR = outerR + 14;
+      var lx = cx + Math.cos(midAngle) * labelR, ly = cy + Math.sin(midAngle) * labelR;
+      if (sliceAngle > 0.35 && segments[i].value > 0) {
+        ctx.fillStyle = t.text; ctx.font = 'bold .52rem ' + getComputedStyle(document.body).fontFamily;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(segments[i].value, lx, ly);
+      }
+      startAngle += sliceAngle;
+    }
+
+    // Center text
+    ctx.fillStyle = t.text; ctx.font = 'bold .9rem ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(total, cx, cy - 6);
+    ctx.fillStyle = t.textMuted; ctx.font = '.55rem ' + getComputedStyle(document.body).fontFamily;
+    ctx.fillText(opts.centerLabel || 'total', cx, cy + 12);
+
+    var result = [];
+    for (var ri = 0; ri < segments.length; ri++) {
+      result.push({
+        label: segments[ri].label,
+        color: segments[ri].color || colors[ri % colors.length],
+        value: segments[ri].value,
+        pct: total > 0 ? Math.round(segments[ri].value / total * 100) : 0
+      });
+    }
+    return result;
+  },
+
+  drawBarChart: function(canvas, bars, opts) {
+    opts = opts || {};
+    var self = this; var t = self._theme();
+    var _a = self._setupCanvas(canvas, opts.width || 460, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
+    var maxVal = 1;
+    for (var bi = 0; bi < bars.length; bi++) { if (bars[bi].value > maxVal) maxVal = bars[bi].value; }
+    var barH = Math.min(22, (h - 20) / bars.length);
+    var gap = 4;
+    var labelW = Math.min(70, w * 0.22);
+    var barAreaW = w - labelW - 12;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (bars.length === 0 || maxVal === 0) {
+      ctx.fillStyle = t.textMuted; ctx.font = 'italic .68rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center'; ctx.fillText(opts.emptyText || 'No data yet', w / 2, h / 2);
+      return;
+    }
+
+    for (var i = 0; i < bars.length; i++) {
+      var y = 10 + i * (barH + gap);
+      var bw = Math.max(4, (bars[i].value / maxVal) * barAreaW);
+
+      // Label
+      ctx.fillStyle = t.text; ctx.font = '.6rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'right'; ctx.fillText(bars[i].label, labelW - 6, y + barH / 2 + 3);
+
+      // Bar bg
+      ctx.fillStyle = t.grid;
+      ChartRenderer._roundRect(ctx, labelW + 4, y, barAreaW, barH, 4); ctx.fill();
+
+      // Bar fill
+      ctx.fillStyle = bars[i].color || t.line;
+      ChartRenderer._roundRect(ctx, labelW + 4, y, bw, barH, 4); ctx.fill();
+
+      // Value
+      ctx.fillStyle = t.text; ctx.font = 'bold .58rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'left'; ctx.fillText(bars[i].value, labelW + bw + 10, y + barH / 2 + 3);
+    }
+  },
+
+  drawSparkline: function(canvas, dataPoints, opts) {
+    opts = opts || {};
+    var self = this; var t = self._theme();
+    var _a = self._setupCanvas(canvas, opts.width || 120, opts.height || 36), ctx = _a.ctx, w = _a.w, h = _a.h;
+    ctx.clearRect(0, 0, w, h);
+
+    if (!dataPoints || dataPoints.length < 2) {
+      ctx.fillStyle = t.textMuted; ctx.font = '.5rem ' + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = 'center'; ctx.fillText('--', w / 2, h / 2 + 4);
+      return;
+    }
+
+    var minV = Math.min.apply(Math, dataPoints), maxV = Math.max.apply(Math, dataPoints);
+    var range = maxV - minV || 1;
+    var pad = 2;
+    var xStep = (w - pad * 2) / (dataPoints.length - 1);
+    var valToY = function(v) { return h - pad - ((v - minV) / range) * (h - pad * 2); };
+
+    var color = opts.color || t.line;
+    ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(pad, valToY(dataPoints[0]));
+    for (var i = 1; i < dataPoints.length; i++) {
+      ctx.lineTo(pad + i * xStep, valToY(dataPoints[i]));
+    }
+    ctx.stroke();
+
+    // Last dot
+    var lx = pad + (dataPoints.length - 1) * xStep, ly = valToY(dataPoints[dataPoints.length - 1]);
+    ctx.beginPath(); ctx.arc(lx, ly, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+  },
+
+  _roundRect: function(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+};
+
+/* ================================================================
    UI STATE
    ================================================================ */
 let viewYear=today().getFullYear(), viewMonth=today().getMonth();
@@ -2154,6 +2618,9 @@ function applyAllUI(what) {
   }
   if (all || what === 'mood' || (Array.isArray(what) && what.indexOf('mood') >= 0)) {
     renderMoodSection(); renderGarden();
+  }
+  if (all || what === 'stats' || (Array.isArray(what) && what.indexOf('stats') >= 0)) {
+    renderStatsPanel();
   }
   // Letters module renders on-demand when diary tab is active (no auto-refresh needed)
   if (all || what === 'connection' || (Array.isArray(what) && what.indexOf('connection') >= 0)) {
@@ -2742,6 +3209,7 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   if(id==='settings')loadSettingsUI();
   if(id==='symptoms'){if(activeProfile!=='barry'){switchToTab('dashboard');return;}if(getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
   if(id==='dashboard'){initDashboard();}
+  if(id==='stats'){renderStatsPanel();}
   if(id==='diary'){initSharedDiaryTab();}
   if(id==='culture'){initCultureTab();}
 });});

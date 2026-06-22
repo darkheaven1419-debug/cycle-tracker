@@ -198,22 +198,65 @@
   </div>
 
   <div class="panel" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
-    <div class="card"><h3 id="st-title-cycle"></h3>
-      <div class="stat-row"><span id="st-l-count"></span><span class="val" id="st-count">0</span></div>
-      <div class="stat-row"><span id="st-l-avg"></span><span class="val" id="st-avg">--</span></div>
-      <div class="stat-row"><span id="st-l-range"></span><span class="val" id="st-range">--</span></div>
-      <div class="stat-row"><span id="st-l-reg"></span><span class="val" id="st-regularity">--</span></div>
+    <!-- 📊 Summary Cards Row -->
+    <div class="stats-summary-grid" id="statsSummaryGrid"></div>
+
+    <!-- 📈 Cycle Trend Chart -->
+    <div class="card chart-card"><h4>📈 <span id="schart-cycle-title">Cycle Trend</span></h4>
+      <div class="chart-container"><canvas id="chartCycleTrend" width="600" height="220"></canvas></div>
+      <div class="chart-empty" id="chartCycleEmpty" style="display:none"></div>
     </div>
-    <div class="card"><h3 id="st-title-history"></h3>
-      <div class="history-dots" id="historyDots"></div>
-      <div class="history-label" id="historyLabel" style="font-size:.62rem;color:var(--text-muted);margin-top:6px"></div>
+
+    <!-- 🎭 Mood Distribution Chart -->
+    <div class="card chart-card"><h4>🎭 <span id="schart-mood-title">Mood Distribution</span></h4>
+      <div class="chart-container"><canvas id="chartMoodDonut" width="300" height="220"></canvas></div>
+      <div class="chart-legend" id="chartMoodLegend"></div>
+      <div class="chart-empty" id="chartMoodEmpty" style="display:none"></div>
     </div>
-    <div class="card"><h3 id="st-title-pred"></h3>
-      <div class="stat-row"><span id="st-l-next"></span><span class="val" id="st-next">--</span></div>
-      <div class="stat-row"><span id="st-l-ovu"></span><span class="val" id="st-ovulation">--</span></div>
-      <div class="stat-row"><span id="st-l-fert"></span><span class="val" id="st-fertile">--</span></div>
-      <div class="stat-row"><span id="st-l-conf"></span><span class="val" id="st-confidence">--</span></div>
-      <div class="stat-row" id="futurePredRow" style="display:none"><span id="st-l-future"></span><span class="val" id="st-future"></span></div>
+
+    <!-- 📋 Symptom Frequency Chart -->
+    <div class="card chart-card" id="symptomChartCard"><h4>📋 <span id="schart-symptom-title">Symptom Frequency</span></h4>
+      <div class="chart-container"><canvas id="chartSymptomBar" width="500" height="200"></canvas></div>
+      <div class="chart-empty" id="chartSymptomEmpty" style="display:none"></div>
+    </div>
+
+    <!-- 🔮 Prediction Highlight -->
+    <div class="prediction-highlight" id="predictionHighlight">
+      <div class="pred-main" id="predMainNext">--</div>
+      <div class="pred-sub" id="predSubConf">--</div>
+      <div class="prediction-grid">
+        <div class="prediction-chip"><span class="chip-icon">🥚</span><div class="chip-val" id="predChipOv">--</div><div class="chip-label" id="predChipOvLabel">Ovulation</div></div>
+        <div class="prediction-chip"><span class="chip-icon">🌱</span><div class="chip-val" id="predChipFert">--</div><div class="chip-label" id="predChipFertLabel">Fertile</div></div>
+        <div class="prediction-chip"><span class="chip-icon">📅</span><div class="chip-val" id="predChipFuture">--</div><div class="chip-label" id="predChipFutureLabel">Future</div></div>
+        <div class="prediction-chip"><span class="chip-icon">📊</span><div class="chip-val" id="predChipReg">--</div><div class="chip-label" id="predChipRegLabel">Regularity</div></div>
+      </div>
+    </div>
+
+    <!-- 📜 Cycle History Timeline -->
+    <div class="card chart-card"><h4>📜 <span id="schart-history-title">Cycle History</span></h4>
+      <div class="timeline-row" id="timelineRow"></div>
+      <div class="timeline-legend">
+        <span class="tld"><span class="timeline-dot short" style="cursor:default;transform:none"></span> <span id="tleg-short">Short</span></span>
+        <span class="tld"><span class="timeline-dot normal" style="cursor:default;transform:none"></span> <span id="tleg-normal">Normal</span></span>
+        <span class="tld"><span class="timeline-dot long" style="cursor:default;transform:none"></span> <span id="tleg-long">Long</span></span>
+      </div>
+    </div>
+
+    <!-- Hidden legacy elements (kept for updateStats/updateLangUI backward compat) -->
+    <div style="display:none" aria-hidden="true">
+      <h3 id="st-title-cycle"></h3><h3 id="st-title-history"></h3><h3 id="st-title-pred"></h3>
+      <span id="st-l-count"></span><span id="st-l-avg"></span><span id="st-l-range"></span><span id="st-l-reg"></span>
+      <span id="st-l-next"></span><span id="st-l-ovu"></span><span id="st-l-fert"></span><span id="st-l-conf"></span><span id="st-l-future"></span>
+      <span id="st-count">0</span><span id="st-avg">--</span><span id="st-range">--</span>
+      <span id="st-regularity">--</span><span id="st-next">--</span><span id="st-ovulation">--</span>
+      <span id="st-fertile">--</span><span id="st-confidence">--</span>
+      <span id="st-future"></span><span id="futurePredRow"></span>
+      <div id="historyDots"></div><div id="historyLabel"></div>
+    </div>
+
+    <!-- 💝 Relationship Section -->
+    <div style="text-align:center;padding:8px 0 4px;margin-top:8px">
+      <span style="font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em" id="sect-relationship">💝 Relationship</span>
     </div>
     <!-- Cycle counter -->
     <div class="card" id="cycleCounterCard" style="display:none">
@@ -301,7 +344,7 @@
       </div>
       <div id="gratList"></div>
     </div>
-    <!-- Know Me Quiz — daily question about each other -->
+    <!-- Know Me Quiz -->
     <div class="card" id="knowMeCard">
       <h3>💭 <span id="knowMe-title">Do You Know Me?</span></h3>
       <div id="knowMeContent"></div>
@@ -517,7 +560,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=40" defer></script>
+<script src="app.js?v=41" defer></script>
 </body>
 </html>
 
