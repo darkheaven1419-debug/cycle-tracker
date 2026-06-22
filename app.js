@@ -1085,7 +1085,7 @@ async function bootApp() {
   if (loader) { loader.style.display = 'none'; if (loader.parentNode) loader.parentNode.removeChild(loader); }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=11').catch(function(){});
+    navigator.serviceWorker.register('sw.js?v=7').catch(function(){});
   }
   loadPerProfileSettings();
 
