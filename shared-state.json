@@ -120,6 +120,73 @@
           "time": 1781635686400
         }
       }
+    },
+    "2026-06-17": {
+      "barry": {
+        "happy": "你陪我一起看了毕业演出，我非常开心，我相信明年的这段时间我们就会在一起看这场演出了！",
+        "uncomf": "没有",
+        "thanks": "我非常感谢你愿意和我一直打视频通话",
+        "wish": "我希望你可以更相信你很有魅力，也希望你能更相信我不会被其他女生所吸引",
+        "time": 1781723716621,
+        "hug": {
+          "time": 1781657377824
+        }
+      },
+      "andjela": {
+        "happy": "To što smo mnogo pričali preko video poziva, što si mi pokazao nastup na kome si bio, zaista sam se sjajno zabavila i uživala. Takođe i to što me je dočekalo mnogo poruka kada sam stigla kući i uključila telefon 😁",
+        "uncomf": "Jedino što mi je zasmetalo (osim fora sa onim rukavicama 😒😔) je zapravo to što nisam napunila telefon, pa nisam mogla da razgovaram sa tobom taaaako dugo. To zameram sebi...",
+        "thanks": "Želim da ti se zahvalim za to što se uvek maksimalno trudiš da me uključiš u svoj život.",
+        "wish": "Hmmmmmm. Danas sam zadovoljna svime. Možda možeš češće da mi kažeš \"Anđela, da li si napunila telefon?\"",
+        "time": 1781736001229
+      }
+    },
+    "2026-06-18": {
+      "andjela": {
+        "hug": {
+          "time": 1781736099097
+        }
+      }
+    },
+    "2026-06-19": {
+      "andjela": {
+        "happy": "To što si pričao sa svojim roditeljima o meni.",
+        "uncomf": "To što mi nisi rekao šta radiš, pa sam se zabrinula gde si zapravo.",
+        "thanks": "Motivaciji da budem bolja.",
+        "wish": "Više razumevanja za onog drugog.",
+        "time": 1781906154576
+      },
+      "barry": {
+        "happy": "我们一起视频通话",
+        "uncomf": "你不信任我和我母亲说了你的事",
+        "thanks": "感谢你后来的信任",
+        "wish": "更加信任彼此",
+        "time": 1781979304625
+      }
+    },
+    "2026-06-20": {
+      "barry": {
+        "happy": "你和我有空的时候一直在聊天，我们关于未来我们的生活有很美好的憧憬",
+        "uncomf": "你的姐夫和你说那个词",
+        "thanks": "愿意只爱我",
+        "wish": "更信任彼此",
+        "time": 1781979266013
+      },
+      "andjela": {
+        "happy": "To što si mi poslao mnoooogo interesantnih videa i slika, iako si bio zauzet. Takođe, to što sam imala priliku da vidim tvoju jutarnju rutinu.",
+        "uncomf": "Ništa.",
+        "thanks": "Za svu pažnju koju mi poklanjaš čak i kada nemaš mnogo vremena.",
+        "wish": "Hmmmm, danas sam zadovoljna svime, osim što bih naravno želela da sutra provedemo više vremena zajedno.",
+        "time": 1781992613590
+      }
+    },
+    "2026-06-21": {
+      "andjela": {
+        "happy": "To što smo puno pričali na video pozivu, bila sam baš srećna.",
+        "uncomf": "To što smo se ujutru posvađali.",
+        "thanks": "Za to što imaš razumevanja za mene kada se naljutim.",
+        "wish": "Boljoj komunikaciji.",
+        "time": 1782118389223
+      }
     }
   },
   "cycleInfo": {
@@ -141,12 +208,19 @@
         "mood": "happy",
         "time": 1781513886376
       },
-      "2026-06-16": {
-        "mood": "tired",
-        "time": 1781635675434
+      "2026-06-17": {
+        "mood": "happy",
+        "time": 1781657424307
       }
     },
-    "diaries": {},
+    "diaries": {
+      "2026-06-18": [
+        {
+          "text": "To što smo zajedno gledali nastup maturanata",
+          "time": 1781736141742
+        }
+      ]
+    },
     "settings": {
       "cycleLength": 28,
       "periodLength": 7,
@@ -165,12 +239,14 @@
       "text": "Hvala ti za sve izmene koje si napravio na ovom sajtu.",
       "from": "andjela",
       "time": 1781635714379
+    },
+    {
+      "text": "Mnogo poruka koje si mi poslao",
+      "from": "andjela",
+      "time": 1781736167893
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1781635686400
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -181,9 +257,9 @@
     }
   },
   "sleep": {
-    "time": "05:06",
-    "date": "2026-06-08",
-    "saved": 1780905011348
+    "time": "01:29",
+    "date": "2026-06-17",
+    "saved": 1781657411029
   },
   "checkins": {
     "barry": {
@@ -213,6 +289,9 @@
       "hasRecording": true
     }
   },
-  "sunCounter": {},
-  "updated": 1781636298995
+  "sunCounter": {
+    "count": 1,
+    "lastDate": "2026-06-20"
+  },
+  "updated": 1782118393001
 }
