@@ -1759,7 +1759,7 @@ function renderMonthHolidaySummary() {
   var flag = function(c){ return c === 'cn' ? '🇨🇳' : '🇷🇸'; };
   el.innerHTML = monthHolidays.sort(function(a,b){ return new Date(a.d+'T00:00:00') - new Date(b.d+'T00:00:00'); }).map(function(h){
     var day = h.d.split('-')[2].replace(/^0/, '');
-    return '<span>'+flag(h.country)+' '+h.icon+' '+h.name[lang||'sr']+' '+day+'</span>';
+    return '<span>'+flag(h.country)+' '+h.icon+' '+(h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'])+' '+day+'</span>';
   }).join('');
 }
 var solarTermsCache = null;
@@ -3194,17 +3194,16 @@ var CULTURE_DESC_ZH = {
 function renderCultureCard() {
   var k = CULTURE_KNOWLEDGE[_cultureCardIdx];
   document.getElementById('cultureEmoji').textContent = k.icon;
-  document.getElementById('cultureTitleZh').textContent = k.zh;
-  document.getElementById('cultureTitleSr').textContent = k.sr;
-  // Show description based on active profile: Barry→Chinese, Angie→Serbian
+  // Show ONE title based on language (not both)
   var isChinese = (lang || '').indexOf('zh') === 0;
-  var descText = isChinese ? (CULTURE_DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
-  document.getElementById('cultureDesc').textContent = descText;
-  // Also toggle title visibility based on language
+  var isEnglish = (lang || '').indexOf('en') === 0;
   var titleZh = document.getElementById('cultureTitleZh');
   var titleSr = document.getElementById('cultureTitleSr');
-  if (titleZh) titleZh.style.display = isChinese ? '' : 'none';
-  if (titleSr) titleSr.style.display = isChinese ? 'none' : '';
+  if (titleZh) { titleZh.textContent = isEnglish ? k.en : k.zh; titleZh.style.display = isChinese || isEnglish ? '' : 'none'; }
+  if (titleSr) { titleSr.textContent = k.sr; titleSr.style.display = (!isChinese && !isEnglish) ? '' : 'none'; }
+  var descText = isChinese ? (CULTURE_DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
+  if (isEnglish) descText = k.desc_en || k.desc;
+  document.getElementById('cultureDesc').textContent = descText;
   var tagsHtml = ''; k.tags.forEach(function(t){ tagsHtml += '<span class="culture-tag">'+t+'</span>'; });
   document.getElementById('cultureTags').innerHTML = tagsHtml;
   document.getElementById('cultureNavInfo').textContent = (_cultureCardIdx+1) + ' / ' + CULTURE_KNOWLEDGE.length;
