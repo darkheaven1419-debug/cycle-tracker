@@ -1365,7 +1365,7 @@ function renderDashboard(){var panel=document.getElementById('panel-dashboard');
   // Culture card
   if(CULTURE_KNOWLEDGE&&CULTURE_KNOWLEDGE.length>0){var tc=CULTURE_KNOWLEDGE[getTodaysCultureIndex()];if(tc){var isZh=(lang||'').indexOf('zh')===0;var isEn=(lang||'').indexOf('en')===0;var tcTitle=isZh?tc.zh:(isEn&&tc.en?tc.en:tc.sr);var tcDesc=isZh?(CULTURE_DESC_ZH&&CULTURE_DESC_ZH[tc.id]||tc.desc):(isEn&&tc.desc_en?tc.desc_en:(tc.desc_sr||tc.desc));h+='<div class=\"card dash-card\"><h4>'+tc.icon+' '+dl('todayCulture')+'</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">'+tcTitle+'</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">'+tcDesc.substring(0,120)+'...</div></div>';}}
   // Quick links
-  h+='<div class=\"card dash-card\"><div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'culture\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">'+dl('goCalendar')+'</button></div></div>';panel.innerHTML=h;}
+  h+='<div class=\"card dash-card\"><div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">'+dl('goDiary')+'</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'chinese\')\">'+dl('goLearn')+'</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">'+dl('goCalendar')+'</button></div></div>';panel.innerHTML=h;}
 function switchToTab(tabId){var btn=document.querySelector('.tab[data-panel=\"'+tabId+'\"]');if(btn)btn.click();}
 
 /* ================================================================
@@ -1663,7 +1663,7 @@ function t(key, fallback) {
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
-function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { renderCultureCard(); } catch(e) {} renderLunarInfo(); renderSeasonalPoemCard(); }
+function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { if(typeof renderChineseHome==='function')renderChineseHome(); } catch(e) {} renderLunarInfo(); renderSeasonalPoemCard(); }
 
 /* ================================================================
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
@@ -3224,7 +3224,7 @@ function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderC
    END CULTURE MODULE
    ================================================================ */
 
-var _tabOrder = ['dashboard','stats','symptoms','tips','diary','culture','settings'];
+var _tabOrder = ['dashboard','stats','symptoms','tips','diary','chinese','settings'];
 var _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
   var id = btn.dataset.panel;
@@ -3247,7 +3247,7 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   if(id==='dashboard'){initDashboard();}
   if(id==='stats'){renderStatsPanel();}
   if(id==='diary'){initSharedDiaryTab();}
-  if(id==='culture'){initCultureTab();}
+  if(id==='chinese'){if(typeof initChineseTab==='function')initChineseTab();}
 });});
 document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click',()=>switchLanguage(btn.dataset.lang));});
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});

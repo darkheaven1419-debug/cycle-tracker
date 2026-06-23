@@ -22,6 +22,7 @@
 <script src="js/i18n.js?v=1" defer></script>
 	<script src="js/lunar.js?v=37" defer></script>
 	<script src="js/calendar-culture.js?v=37" defer></script>
+	<script src="js/lesson-engine.js?v=1" defer></script>
 </head>
 <body>
 
@@ -192,7 +193,7 @@
     <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false" aria-controls="panel-symptoms">📝 <span class="tb-label"></span></button>
     <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false" aria-controls="panel-tips">💡 <span class="tb-label"></span></button>
     <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false" aria-controls="panel-diary">💌 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="culture" role="tab" id="tab-culture" aria-selected="false" aria-controls="panel-culture">🇨🇳 <span class="tb-label" id="tb-culture">Kina</span></button>
+    <button class="tab" data-panel="chinese" role="tab" id="tab-chinese" aria-selected="false" aria-controls="panel-chinese">📖 <span class="tb-label" id="tb-chinese">Kineski</span></button>
     <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">⚙ <span class="tb-label"></span></button>
   </div></nav>
 
@@ -472,26 +473,66 @@
     </div>
   </div>
 
-  <!-- ===== CULTURE PANEL ===== -->
-  <div class="panel" id="panel-culture" role="tabpanel" aria-labelledby="tab-culture">
-    <div class="card culture-main-card" id="cultureMainCard">
-      <div class="culture-card-inner">
-        <span class="culture-card-emoji" id="cultureEmoji">🏮</span>
-        <div class="culture-card-zh" id="cultureTitleZh"></div>
-        <div class="culture-card-sr" id="cultureTitleSr"></div>
-        <p class="culture-card-desc" id="cultureDesc"></p>
-        <div class="culture-card-tags" id="cultureTags"></div>
+  <!-- ===== CHINESE LEARNING PANEL ===== -->
+  <div class="panel" id="panel-chinese" role="tabpanel" aria-labelledby="tab-chinese">
+    <!-- Sub-navigation -->
+    <div class="lrn-subnav" id="lrnSubnav">
+      <button class="lrn-subnav-btn active" data-lrn-view="home" onclick="switchLrnView('home')">🏠 <span class="lrn-sub-label" id="lrn-sub-home">Learn</span></button>
+      <button class="lrn-subnav-btn" data-lrn-view="achievements" onclick="switchLrnView('achievements')">🏆 <span class="lrn-sub-label" id="lrn-sub-ach">Badges</span></button>
+      <button class="lrn-subnav-btn" data-lrn-view="review" onclick="switchLrnView('review')">🔄 <span class="lrn-sub-label" id="lrn-sub-review">Review</span></button>
+    </div>
+    <!-- Home View -->
+    <div class="lrn-view active" id="lrn-view-home">
+      <div class="lrn-streak-card" id="lrnStreakCard">
+        <div class="lrn-streak-icon">🔥</div>
+        <div class="lrn-streak-info">
+          <div class="lrn-streak-count" id="lrnStreakCount">0</div>
+          <div class="lrn-streak-label" id="lrnStreakLabel">dana zaredom</div>
+        </div>
+        <div class="lrn-ring-container">
+          <svg class="lrn-ring" viewBox="0 0 100 100"><circle class="lrn-ring-bg" cx="50" cy="50" r="40"/><circle class="lrn-ring-fg" id="lrnRingFg" cx="50" cy="50" r="40"/></svg>
+          <span class="lrn-ring-text" id="lrnRingText">0%</span>
+        </div>
       </div>
-      <span class="culture-today-badge" id="cultureTodayBadge">Daily</span>
-      <div class="culture-card-nav">
-        <button class="culture-nav-btn" onclick="prevCultureCard()">◂</button>
-        <span class="culture-nav-info" id="cultureNavInfo">1/30</span>
-        <button class="culture-nav-btn" onclick="nextCultureCard()">▸</button>
-        <button class="culture-nav-btn" onclick="goToTodayCulture()" style="font-size:.75rem">📅</button>
+      <div class="lrn-continue-card" id="lrnContinueCard" style="display:none">
+        <span class="lrn-continue-icon">📖</span>
+        <div class="lrn-continue-info">
+          <div class="lrn-continue-title" id="lrnContinueTitle"></div>
+          <div class="lrn-continue-sub" id="lrnContinueSub"></div>
+        </div>
+        <button class="lrn-continue-btn" onclick="continueLearning()">▶</button>
+      </div>
+      <div class="lrn-phase-title" id="lrn-phase-title">Put učenja</div>
+      <div class="lrn-phase-grid" id="lrnPhaseGrid"></div>
+      <div class="lrn-review-card" id="lrnReviewCard" style="display:none">
+        <div class="lrn-review-header">🔄 <span id="lrn-review-title">Današnji pregled</span></div>
+        <div class="lrn-review-list" id="lrnReviewList"></div>
+        <button class="lrn-review-all-btn" onclick="switchLrnView('review')" id="lrn-review-all-btn">Pregledaj sve</button>
       </div>
     </div>
-    <!-- Category culture list -->
-    <div id="cultureCategories" style="margin-top:8px"></div>
+    <!-- Achievements View -->
+    <div class="lrn-view" id="lrn-view-achievements">
+      <div class="lrn-ach-stats" id="lrnAchStats"></div>
+      <div class="lrn-ach-grid" id="lrnAchGrid"></div>
+    </div>
+    <!-- Review View -->
+    <div class="lrn-view" id="lrn-view-review">
+      <div class="lrn-review-full-list" id="lrnReviewFullList"></div>
+    </div>
+    <!-- Phase Lesson List View -->
+    <div class="lrn-view" id="lrn-view-phase" style="display:none">
+      <button class="lrn-back-btn" onclick="switchLrnView('home')">← <span id="lrn-back-label">Nazad</span></button>
+      <div class="lrn-phase-header" id="lrnPhaseHeader"></div>
+      <div class="lrn-lesson-list" id="lrnLessonList"></div>
+    </div>
+    <!-- Lesson Detail View -->
+    <div class="lrn-view" id="lrn-view-lesson" style="display:none">
+      <button class="lrn-back-btn" onclick="switchLrnView('home')">← <span id="lrn-back-label2">Nazad</span></button>
+      <div class="lrn-lesson-header" id="lrnLessonHeader"></div>
+      <div class="lrn-step-indicator" id="lrnStepIndicator"></div>
+      <div class="lrn-step-content" id="lrnStepContent"></div>
+      <div class="lrn-step-actions" id="lrnStepActions"></div>
+    </div>
   </div>
 
   <div class="panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings">
@@ -566,7 +607,8 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=43" defer></script>
+<script src="js/lesson-engine.js?v=1" defer></script>
+<script src="app.js?v=44" defer></script>
 </body>
 </html>
 
