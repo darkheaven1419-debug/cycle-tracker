@@ -48,13 +48,13 @@
   <div class="login-subtitle" id="loginSubtitle">— Za Anđelu i Barryja —</div>
   <div class="login-cards">
     <!-- Anđela Card -->
-    <div class="login-card" id="loginCardAndjela" onclick="selectLogin('andjela')">
+    <div class="login-card" id="loginCardAndjela" onclick="if(typeof selectLogin!=='undefined')selectLogin('andjela')">
       <span class="lc-avatar">🌸</span>
       <div class="lc-name">Anđela</div>
       <div class="lc-hint" id="lc-hint-a">Dodirni za prijavu</div>
     </div>
     <!-- Barry Card -->
-    <div class="login-card" id="loginCardBarry" onclick="selectLogin('barry')">
+    <div class="login-card" id="loginCardBarry" onclick="if(typeof selectLogin!=='undefined')selectLogin('barry')">
       <span class="lc-avatar">👦</span>
       <div class="lc-name">Barry</div>
       <div class="lc-hint" id="lc-hint-b">Dodirni za prijavu</div>
@@ -62,7 +62,7 @@
   </div>
   <div class="login-pin-area" id="loginPinArea">
     <input type="password" inputmode="numeric" maxlength="4" class="login-pin-input" id="loginPinInput" placeholder="····" aria-label="Unesi PIN" onkeydown="if(event.key==='Enter')verifyLogin()">
-    <button class="login-pin-btn" onclick="verifyLogin()" id="loginPinBtn">🔓 Prijavi se</button>
+    <button class="login-pin-btn" onclick="if(typeof verifyLogin!=='undefined')verifyLogin()" id="loginPinBtn">🔓 Prijavi se</button>
     <div class="login-error" id="loginError"></div>
   </div>
   <div class="login-switch-hint" id="loginSwitchHint">👈 Izaberi svoj profil i unesi PIN</div>
