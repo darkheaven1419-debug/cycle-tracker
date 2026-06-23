@@ -59,16 +59,6 @@ body {
 
 .app { width:100%; max-width:420px; padding:12px 16px 20px; position:relative; }
 .app { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
-/* Desktop: expand beyond phone width */
-@media (min-width: 768px) {
-  .app { max-width: 720px; padding: 24px 32px calc(100px + env(safe-area-inset-bottom, 0px)); }
-  body { padding-left: 0; }
-}
-@media (min-width: 1024px) {
-  .app { max-width: 960px; padding: 28px 40px 40px; display: grid; grid-template-columns: 190px 1fr; grid-template-rows: auto; gap: 28px; align-items: start; }
-  .app > header { grid-column: 1 / -1; }
-  .app > main { grid-column: 2; min-width: 0; }
-}
 
 /* ---- Floating Stars (Anđela = Angel) ---- */
 .floating-stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
@@ -2342,76 +2332,104 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
 }
 
 /* ================================================================
-   DESKTOP RESPONSIVE LAYOUT (Phase 1)
+   DESKTOP RESPONSIVE LAYOUT
+   tabs-nav is OUTSIDE .app in HTML — use fixed left sidebar
    ================================================================ */
 @media (min-width: 768px) {
-  /* Bottom nav → left sidebar */
+  /* Make app wider, leave room for left sidebar */
+  .app {
+    max-width: 680px;
+    margin-left: 180px;
+    margin-right: auto;
+    padding: 20px 28px calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  body {
+    display: block;
+    padding: 0;
+  }
+
+  /* Bottom nav → fixed left sidebar */
   .tabs-nav {
-    position: sticky; top: 16px; width: 180px; max-width: none;
-    margin: 0; pointer-events: auto; z-index: 10; align-self: start;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 170px; max-width: none; z-index: 50;
+    margin: 0; pointer-events: auto;
+    background: var(--bg);
+    display: flex; align-items: flex-start;
+    padding: 20px 6px;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
   }
   .tabs {
-    flex-direction: column; border-radius: var(--radius) !important;
-    box-shadow: var(--shadow-sm); padding: 8px; gap: 2px;
-    border: 1px solid var(--border);
+    flex-direction: column; width: 100%;
+    border-radius: var(--radius) !important;
+    box-shadow: none; padding: 4px; gap: 2px;
+    border: none; background: transparent;
   }
   .tab {
-    text-align: left; padding: 12px 14px; font-size: .78rem;
+    text-align: left; padding: 14px 16px; font-size: .8rem;
     border-radius: var(--radius-sm); justify-content: flex-start;
+    white-space: nowrap;
   }
-  .tab .tb-label { font-size: .7rem; display: block; }
+  .tab .tb-label { font-size: .7rem; display: inline; margin-left: 8px; }
   .tab.active { transform: none; }
-
-  /* Desktop grid layout */
-  .app {
-    display: grid;
-    grid-template-columns: 190px 1fr;
-    grid-template-rows: auto auto 1fr;
-    gap: 20px 28px;
-    align-items: start;
-  }
-  .app > header { grid-column: 1 / -1; }
-  .app > .tabs-nav { grid-column: 1; grid-row: 2 / span 2; }
-  .app > main { grid-column: 2; grid-row: 2 / span 2; min-width: 0; }
 
   /* Wider modal */
   .modal { max-width: 560px; border-radius: 22px; }
 
-  /* FAB stays in content area */
-  .fab { position: fixed; right: calc(50% - 360px + 20px); }
-  @media (min-width: 1024px) {
-    .fab { right: calc(50% - 480px + 20px); }
+  /* FAB — position relative to content area */
+  .fab {
+    right: calc((100vw - 680px - 180px) / 2 + 24px);
+    bottom: 24px;
   }
 
-  /* Two-column stats on tablet */
+  /* Stats grid — more columns */
   .stats-summary-grid { grid-template-columns: repeat(4, 1fr); }
   .prediction-grid { grid-template-columns: repeat(4, 1fr); }
 
   /* Card hover — only on devices with hover */
-  .card:hover, .setting-row:hover, .tip-card:hover {
-    transform: translateY(-2px); box-shadow: var(--shadow-md);
+  @media (hover: hover) {
+    .card:hover, .setting-row:hover, .tip-card:hover {
+      transform: translateY(-2px); box-shadow: var(--shadow-md);
+    }
+    .tab:not(.active):hover { background: var(--rose-light); color: var(--rose-dark); }
+    .theme-btn:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
+    .lang-btn:not(.active):hover { background: var(--rose-light); color: var(--text); }
+    .nav-btn:hover { background: var(--rose-light); transform: scale(1.05); }
   }
-
-  /* Hover states for interactive elements */
-  .tab:not(.active):hover { background: var(--rose-light); color: var(--rose-dark); }
-  .theme-btn:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
-  .lang-btn:not(.active):hover { background: var(--rose-light); color: var(--text); }
-  .nav-btn:hover { background: var(--rose-light); transform: scale(1.05); }
 }
 
 @media (min-width: 1024px) {
-  .app { grid-template-columns: 200px 1fr; gap: 24px 36px; }
-  .tabs-nav { width: 200px; }
-  .tab { padding: 14px 16px; font-size: .82rem; }
-  .tab .tb-label { font-size: .72rem; }
+  .app {
+    max-width: 800px;
+    margin-left: 200px;
+    padding: 28px 40px 40px;
+  }
+  .tabs-nav { width: 190px; padding: 24px 8px; }
+  .tab { padding: 16px 18px; font-size: .84rem; }
+  .tab .tb-label { font-size: .74rem; margin-left: 10px; }
 
-  /* Wider cards on desktop */
+  /* Wider cards */
   .stats-summary-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
 
-  /* Calendar larger on desktop */
+  /* Calendar cells larger */
   .calendar { padding: 14px 12px 12px; }
   .day { min-width: 48px; min-height: 48px; font-size: .88rem; }
 
-  /* Chart cards wider */
-  .chart-card canvas { max-width: 100%; height: auto; }
+  /* FAB reposition */
+  .fab {
+    right: calc((100vw - 800px - 200px) / 2 + 28px);
+    bottom: 28px;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1440px) {
+  .app {
+    max-width: 900px;
+    margin-left: 210px;
+  }
+  .tabs-nav { width: 200px; }
+  .fab {
+    right: calc((100vw - 900px - 210px) / 2 + 32px);
+  }
 }
