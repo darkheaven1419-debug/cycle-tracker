@@ -71,7 +71,11 @@ function nextListenWord() {
     if (options.indexOf(pool[k]) < 0) options.push(pool[k]);
   }
   while (options.length < 4) {
-    var fillers = ['Zdravo', 'Hvala', 'Dovidenja', 'Cao', 'Molim'];
+    var fillers = lang === 'zh-CN'
+      ? ['你好', '谢谢', '再见', '好的', '请问']
+      : lang === 'en'
+      ? ['Hello', 'Thanks', 'Goodbye', 'OK', 'Please']
+      : ['Zdravo', 'Hvala', 'Doviđenja', 'Ćao', 'Molim'];
     var f = fillers[Math.floor(Math.random() * fillers.length)];
     if (options.indexOf(f) < 0) options.push(f);
   }

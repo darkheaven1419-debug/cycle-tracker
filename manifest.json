@@ -1,7 +1,7 @@
 {
-  "name": "Anđelin Ciklus v6",
-  "short_name": "Ciklus",
-  "description": "Personal cycle tracker & cross-cultural love diary — v6",
+  "name": "Anđelin Ciklus v8",
+  "short_name": "Ciklus v8",
+  "description": "Personal cycle tracker & cross-cultural love diary — v8",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -19,6 +19,6 @@
   "categories": ["health", "lifestyle", "education"],
   "shortcuts": [
     {"name": "Dnevnik", "short_name": "Dnevnik", "description": "Piši dnevnik", "url": "./?tab=diary"},
-    {"name": "Kultura", "short_name": "Kultura", "description": "Uči kineski", "url": "./?tab=culture"}
+    {"name": "Kultura", "short_name": "Kultura", "description": "Uči kineski", "url": "./?tab=chinese"}
   ]
 }

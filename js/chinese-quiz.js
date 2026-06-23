@@ -21,7 +21,11 @@ function generatePracticeOptions(correctWord, allWords) {
   for (var j = 0; j < Math.min(3, pool.length); j++) {
     if (options.indexOf(pool[j]) < 0) options.push(pool[j]);
   }
-  var fillers = ['Zdravo', 'Hvala', 'Doviđenja', 'Dobro', 'Molim'];
+  var fillers = lang === 'zh-CN'
+    ? ['你好', '谢谢', '再见', '好的', '请问']
+    : lang === 'en'
+    ? ['Hello', 'Thanks', 'Goodbye', 'OK', 'Please']
+    : ['Zdravo', 'Hvala', 'Doviđenja', 'Dobro', 'Molim'];
   while (options.length < 4) {
     var f = fillers[Math.floor(Math.random() * fillers.length)];
     if (options.indexOf(f) < 0) options.push(f);

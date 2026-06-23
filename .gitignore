@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+*.tmp
+*.log
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS files
+Desktop.ini
+
+# Environment
+.env
+.env.local
