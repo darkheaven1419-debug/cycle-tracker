@@ -550,7 +550,7 @@ function renderGrammarTab(lesson) {
   var html = '<div class="lrn-grammar-box">';
   html += '<div class="lrn-grammar-title">\u{1F4D0} ' + _('语法要点', 'Gramatika', 'Grammar Point') + '</div>';
   if (lesson.grammar) {
-    html += '<div class="lrn-grammar-text">' + _(lesson.grammar.zh || '', lesson.grammar.sr || '', lesson.grammar.en || '') + '</div>';
+    html += '<div class="lrn-grammar-text">' + (lesson.grammar.zh || '') + '</div>';
   } else {
     html += '<div class="lrn-grammar-text">' + _('本课暂无语法要点。', 'Nema gramatičkih objašnjenja.', 'No grammar notes for this lesson.') + '</div>';
   }
@@ -559,7 +559,7 @@ function renderGrammarTab(lesson) {
   if (lesson.dialog) {
     html += '<h3 style="font-size:.72rem;margin:12px 0 6px">\u{1F4AC} ' + _('情景对话', 'Dijalog', 'Dialogue') + '</h3>';
     html += '<div class="lrn-dialog-box">';
-    var lines = _(lesson.dialog.zh || '', lesson.dialog.sr || '', lesson.dialog.en || '').split('\n');
+    var lines = (lesson.dialog.zh || '').split('\n');
     for (var l = 0; l < lines.length; l++) {
       var isA = lines[l].indexOf('A:') === 0;
       html += '<div class="lrn-dialog-bubble speaker-' + (isA ? 'a' : 'b') + '">';
