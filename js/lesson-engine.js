@@ -71,7 +71,16 @@ function loadLessonData(callback) {
       return r.json();
     })
     .then(function (data) {
-      LESSONS_DATA = data;
+      // Flatten phase arrays into a single lesson array (180 lessons)
+      LESSONS_DATA = [];
+      for (var pi = 0; pi < data.length; pi++) {
+        var phaseLessons = data[pi].lessons || [];
+        for (var li = 0; li < phaseLessons.length; li++) {
+          var les = phaseLessons[li];
+          if (!les.phase) les.phase = data[pi].phase;
+          LESSONS_DATA.push(les);
+        }
+      }
       onLoaded(null);
     })
     .catch(function (err) {
@@ -94,14 +103,17 @@ function loadLessonData(callback) {
 }
 
 function applyPhaseAssignments() {
-  // Some lessons may already have a 'phase' field, otherwise assign by index
+  // Lessons already have phase from loading step; ensure day is set
   for (var i = 0; i < LESSONS_DATA.length; i++) {
     var lesson = LESSONS_DATA[i];
     if (!lesson.phase) {
-      lesson.phase = Math.floor(i / LESSONS_PER_PHASE) + 1;
+      lesson.phase = Math.floor(i / 30) + 1;
     }
     if (!lesson.day) {
-      lesson.day = i + 1;
+      lesson.day = (i % 30) + 1;
+    }
+    if (!lesson.id) {
+      lesson.id = i + 1;
     }
   }
 }
@@ -946,7 +958,8 @@ function renderLessonView(lessonId) {
   // Lesson header
   html += '<div class="lrn-lesson-header">';
   html += '<span class="lrn-lesson-header-icon">' + (lesson.icon || '📖') + '</span>';
-  html += '<div class="lrn-lesson-header-topic">' + _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'') + '</div>';
+  var topicText = typeof lesson.topic === 'object' && lesson.topic !== null ? _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'') : _(String(lesson.topic||''), String(lesson.topic||''), String(lesson.topic||''));
+  html += '<div class="lrn-lesson-header-topic">' + topicText + '</div>';
   html += '<div style="font-size:.65rem;color:var(--text-muted)">' + _('第' + lessonId + '课', 'Lekcija ' + lessonId, 'Lesson ' + lessonId) + '</div>';
   html += '</div>';
 
@@ -1555,8 +1568,9 @@ function getLessonById(id) {
   var numId = typeof id === 'string' ? parseInt(id, 10) : id;
   for (var i = 0; i < LESSONS_DATA.length; i++) {
     var lesson = LESSONS_DATA[i];
-    var lessonNum = lesson.day || (i + 1);
-    if (lessonNum === numId) return lesson;
+    // Try matching by lesson.id first, then by array index+1
+    if (lesson.id === numId) return lesson;
+    if (i + 1 === numId) return lesson;
   }
   return null;
 }
