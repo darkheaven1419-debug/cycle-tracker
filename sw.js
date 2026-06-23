@@ -2,7 +2,7 @@
 // Cache-First for static assets, Network-First for HTML/Live data
 // Cache version matches resource versions in index.html
 
-var CACHE_STATIC = 'ciklus-static-v15';
+var CACHE_STATIC = 'ciklus-static-v16';
 
 var STATIC_ASSETS = [
   './',
@@ -13,6 +13,7 @@ var STATIC_ASSETS = [
   './js/lunar.js',
   './js/calendar-culture.js',
   './js/chinese-learn.js',
+  './js/lesson-engine.js',
   './calendar-data.json',
   './data/culture.json',
   './data/lessons.json',
@@ -34,7 +35,7 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v15'];
+var KNOWN_CACHES = ['ciklus-static-v16'];
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
@@ -66,15 +67,23 @@ self.addEventListener('fetch', function(event) {
     return;
   }
 
-  // CSS/JS/HTML — stale-while-revalidate: network first, cache fallback
-  if (request.destination === 'style' || request.destination === 'script' || request.mode === 'navigate') {
+  // HTML — always network first, NO cache (ensures fresh index.html)
+  if (request.mode === 'navigate') {
+    event.respondWith(fetch(request).catch(function() {
+      return caches.match(request);
+    }));
+    return;
+  }
+
+  // CSS/JS — cache-first with network update in background
+  if (request.destination === 'style' || request.destination === 'script') {
     event.respondWith(
-      fetch(request).then(function(response) {
-        var clone = response.clone();
-        caches.open(CACHE_STATIC).then(function(cache) { cache.put(request, clone); });
-        return response;
-      }).catch(function() {
-        return caches.match(request);
+      caches.match(request).then(function(cached) {
+        var fetchPromise = fetch(request).then(function(response) {
+          caches.open(CACHE_STATIC).then(function(cache) { cache.put(request, response.clone()); });
+          return response;
+        });
+        return cached || fetchPromise;
       })
     );
     return;
