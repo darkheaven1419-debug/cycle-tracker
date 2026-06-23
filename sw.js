@@ -2,7 +2,7 @@
 // Cache-First for static assets, Network-First for HTML/Live data
 // Cache version matches resource versions in index.html
 
-var CACHE_STATIC = 'ciklus-static-v13';
+var CACHE_STATIC = 'ciklus-static-v14';
 
 var STATIC_ASSETS = [
   './',
