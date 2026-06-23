@@ -822,7 +822,7 @@ function renderDiaryLabels() {
   document.getElementById('sd-export').textContent = lang==='sr'?'Podeli':lang==='en'?'Share':'分享';
   document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi':lang==='en'?'Import':'导入';
   document.getElementById('sd-history-title').textContent = lang==='sr'?'Vremenska linija':lang==='en'?'Timeline':'时间线';
-  document.getElementById('sd-saved-text').textContent = lang==='sr'?'Sačuvano':'已保存';
+  document.getElementById('sd-saved-text').textContent = L('Sačuvano','已保存','Saved');
   document.getElementById('partner-locked-text').textContent = lang==='sr'?'Prvo sačuvaj svoj unos da otključaš partnerov 💌':lang==='en'?'Save your entry first to unlock your partner\'s 💌':'先保存你的日记才能解锁伴侣的哦 💌';
   document.getElementById('sd-sync-icon').textContent = getGitHubToken() ? '☁️' : '';
 }
@@ -1292,7 +1292,7 @@ function exportAllData() {
   a.download = 'anđelin-ciklus-backup-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('📦 ' + (lang==='sr'?'Podaci izvezeni!':'数据已导出！'));
+  toast('📦 ' + L('Podaci izvezeni!','数据已导出！','Data exported!'));
 }
 
 function importAllData() {
@@ -1301,7 +1301,7 @@ function importAllData() {
   input.onchange = function(e) {
     var file = e.target.files[0];
     if (!file) return;
-    if (!confirm(lang==='sr'?'⚠️ Ovo će PREBRISATI sve trenutne podatke. Nastaviti?':'⚠️ 此操作将覆盖所有当前数据，是否继续？')) return;
+    if (!confirm(L('⚠️ Ovo će PREBRISATI sve trenutne podatke. Nastaviti?','⚠️ 此操作将覆盖所有当前数据，是否继续？','⚠️ This will OVERWRITE all current data. Continue?'))) return;
     var reader = new FileReader();
     reader.onload = function(ev) {
       try {
@@ -1316,10 +1316,10 @@ function importAllData() {
           if (backup.settings.theme) { theme = backup.settings.theme; applyTheme(theme); }
         }
         pushAllSharedData();
-        toast('✅ ' + (lang==='sr'?'Podaci vraćeni! Osvežavanje...':'数据已恢复！刷新中...'));
+        toast('✅ ' + L('Podaci vraćeni! Osvežavanje...','数据已恢复！刷新中...','Data restored! Refreshing...'));
         setTimeout(function(){ location.reload(); }, 1500);
       } catch(e) {
-        toast('❌ ' + (lang==='sr'?'Neispravan fajl':'无效文件'));
+        toast('❌ ' + L('Neispravan fajl','无效文件','Invalid file'));
       }
     };
     reader.readAsText(file);
@@ -1998,9 +1998,9 @@ function renderWeather(w) {
   document.getElementById('weatherLove').innerHTML='<div style="font-style:italic;margin-bottom:4px">"'+poem.txt+'"</div><div style="font-size:.62rem;opacity:.82;line-height:1.5">'+poem.barry+'</div>';
   document.getElementById('weatherLove').style.display='';
   updateWeatherTimes();
-  var lm=getTodaysLoveMessage();var lmEl=document.getElementById('dailyLoveMsg');if(lmEl)lmEl.textContent='💌 '+((lang||'').indexOf('zh')===0?lm.zh:lm.sr);
+  var lm=getTodaysLoveMessage();var lmEl=document.getElementById('dailyLoveMsg');if(lmEl)lmEl.textContent='💌 '+((lang||'').indexOf('zh')===0?lm.zh:(lang||'').indexOf('en')===0?lm.en:lm.sr);
   renderSunCounter();
-  var nh=document.getElementById('weatherNightHint');if(nh){var kiH=new Date().toLocaleString('en-US',{timeZone:'Europe/Belgrade',hour:'numeric',hour12:false});if(parseInt(kiH)>=22||parseInt(kiH)<=5){nh.style.display='';nh.textContent=activeProfile==='barry'?'🌙 Kikinda现在是深夜，Angie该休息了':'🌙 Kod tebe je kasno - vreme za spavanje, Anđela 🛏️';}else{nh.style.display='none';}}
+  var nh=document.getElementById('weatherNightHint');if(nh){var kiH=new Date().toLocaleString('en-US',{timeZone:'Europe/Belgrade',hour:'numeric',hour12:false});if(parseInt(kiH)>=22||parseInt(kiH)<=5){nh.style.display='';nh.textContent=L('🌙 Kod tebe je kasno - vreme za spavanje, Anđela 🛏️','🌙 Kikinda现在是深夜，Angie该休息了','🌙 It\'s late in Kikinda — time for sleep, Anđela 🛏️');}else{nh.style.display='none';}}
   // Update bridge text dynamically
   var bridge = document.getElementById('weatherBridge');
   if (bridge) {
@@ -3154,7 +3154,7 @@ function initCultureTab() {
   _cultureCardIdx = getTodaysCultureIndex();
   // Update tab label
   var tbCulture = document.getElementById('tb-culture');
-  if (tbCulture) tbCulture.textContent = (lang||'').indexOf('zh')===0 ? '中华' : 'Kina';
+  if (tbCulture) tbCulture.textContent = L('Kina','中华','China');
   renderCultureCard();
 }
 
