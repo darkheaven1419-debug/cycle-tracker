@@ -1160,8 +1160,7 @@ var MAX_DIARY_CHARS = 200;        // Shared diary field character limit
    I18N HELPERS
    ================================================================ */
 // i18n helper L() defined below (line ~1647) — handles both object and string args
-// 3-level language fallback for object-based lookups (holidays, solar terms)
-const langName = obj => obj[lang] || obj[lang.split('-')[0]] || obj['sr'] || '';
+// langName() defined in js/chinese-learn.js — 3-level language fallback for object lookups
 
 /* ================================================================
    MODIFIED: init
