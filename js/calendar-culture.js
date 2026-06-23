@@ -121,13 +121,49 @@ var TRADITIONAL_COLORS = {
   11:{name:{zh:'墨色',sr:'tuš crna',en:'ink black'},hex:'#212121'}
 };
 
+// ── Transliteration maps for Gan-Zhi and ShengXiao ──────────────
+var GAN_SR = ['Dzja','Ji','Bing','Ding','Vu','Dji','Geng','Sin','Ren','Guej'];
+var GAN_EN = ['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'];
+var GAN_ELEM_SR = ['Drvo Jang','Drvo Jin','Vatra Jang','Vatra Jin','Zemlja Jang','Zemlja Jin','Metal Jang','Metal Jin','Voda Jang','Voda Jin'];
+var GAN_ELEM_EN = ['Yang Wood','Yin Wood','Yang Fire','Yin Fire','Yang Earth','Yin Earth','Yang Metal','Yin Metal','Yang Water','Yin Water'];
+var ZHI_SR = ['Zi','Čou','Jin','Mao','Čen','Si','Vu','Vej','Šen','Jou','Sju','Haj'];
+var ZHI_EN = ['Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei','Shen','You','Xu','Hai'];
+var ZOO_SR = ['Pacov','Vo','Tigar','Zec','Zmaj','Zmija','Konj','Koza','Majmun','Petao','Pas','Svinja'];
+var ZOO_EN = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
+var ZOO_EMOJI = ['🐭','🐮','🐯','🐰','🐲','🐍','🐴','🐑','🐵','🐔','🐶','🐷'];
+
+function _ganZhiTranslated(tgd) {
+  // tgd is like "丙午" — two chars: gan + zhi
+  if (!tgd || tgd.length < 2) return tgd;
+  var g = tgd[0], z = tgd[1];
+  var gi = Lunar.GAN.indexOf(g), zi = Lunar.ZHI.indexOf(z);
+  if (gi < 0 || zi < 0) return tgd;
+  if (lang === 'sr' || lang === 'sr-RS') return GAN_SR[gi] + ZHI_SR[zi] + ' (' + GAN_ELEM_SR[gi] + ' ' + ZOO_SR[zi] + ')';
+  if (lang === 'en') return GAN_EN[gi] + ZHI_EN[zi] + ' (' + GAN_ELEM_EN[gi] + ' ' + ZOO_EN[zi] + ')';
+  return tgd;
+}
+
+function _shengxiaoTranslated(sx) {
+  // sx is like "马"
+  var si = Lunar.SHENGXIAO.indexOf(sx);
+  if (si < 0) return sx;
+  if (lang === 'sr' || lang === 'sr-RS') return ZOO_SR[si];
+  if (lang === 'en') return ZOO_EN[si];
+  return sx;
+}
+
+function _zooEmoji(sx) {
+  var si = Lunar.SHENGXIAO.indexOf(sx);
+  return si >= 0 ? ZOO_EMOJI[si] : '';
+}
+
 // ── Helper: pick text by current language ──────────────────────
 function _CL(map) {
   if (!map) return '';
   return map[lang] || map[lang.split('-')[0]] || map['sr'] || '';
 }
 
-// ── Lunar info row (follows language) ─────────────────────────
+// ── Lunar info row (fully translated) ──────────────────────────
 function renderLunarInfo() {
   if (typeof today === 'undefined') return;
   var el = document.getElementById('lunarInfo');
@@ -137,13 +173,15 @@ function renderLunarInfo() {
   var lunar = Lunar.toLunar(td);
   if (!info || !lunar) { el.style.display = 'none'; return; }
   el.style.display = '';
-  var zoo = {鼠:'🐭',牛:'🐮',虎:'🐯',兔:'🐰',龙:'🐲',蛇:'🐍',马:'🐴',羊:'🐑',猴:'🐵',鸡:'🐔',狗:'🐶',猪:'🐷'};
+  var tgdDisplay = _ganZhiTranslated(info.tianGanDiZhi);
+  var sxDisplay = _shengxiaoTranslated(info.shengXiao);
+  var lunarDisplay = _CL({sr:'Lunarni '+lunar.month+'. mesec, '+lunar.day+'. dan',en:'Lunar '+lunar.month+'/'+lunar.day,'zh-CN':lunar.monthName+lunar.dayName});
   el.innerHTML =
-    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.tiangandizhi)) + '">🐲 ' + info.tianGanDiZhi + _CL({sr:'',en:'','zh-CN':'年'}) + '</span>' +
+    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.tiangandizhi)) + '">🐲 ' + tgdDisplay + '</span>' +
     ' · ' +
-    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.shengxiao)) + '">' + (zoo[info.shengXiao]||'') + ' ' + info.shengXiao + _CL({sr:'',en:'','zh-CN':'年'}) + '</span>' +
+    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.shengxiao)) + '">' + _zooEmoji(info.shengXiao) + ' ' + sxDisplay + '</span>' +
     ' · ' +
-    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.lunar)) + '">' + _CL({sr:'Lunarni '+lunar.month+'. mesec, '+lunar.day+'. dan',en:'Lunar '+lunar.month+'/'+lunar.day,'zh-CN':lunar.monthName+lunar.dayName}) + '</span>' +
+    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.lunar)) + '">' + lunarDisplay + '</span>' +
     ' <span style="cursor:pointer;font-size:.7rem" onclick="renderCultureExplain()" title="' + escAttr(_CL({sr:'Klikni za objasnjenje',en:'Click to learn more','zh-CN':'点击了解更多'})) + '">ℹ️</span>';
 }
 
@@ -173,7 +211,7 @@ function renderSeasonalPoemCard() {
     '<div style="margin-top:6px;font-size:.6rem;opacity:.4;display:flex;gap:12px;flex-wrap:wrap">' +
       '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.color)) + '">🖌️ ' + _CL({sr:'Tradicionalna boja: ','zh-CN':'中国传统色：',en:'Traditional color: '}) +
         _CL(color.name) + ' <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + color.hex + ';vertical-align:middle;margin-left:2px"></span></span>' +
-      (info ? '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.shengxiao)) + '">🐉 ' + _CL({sr:'Godina ',en:'Year of the ','zh-CN':''}) + info.shengXiao + _CL({sr:'',en:'','zh-CN':'年'}) + '</span>' : '') +
+      (info ? '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.shengxiao)) + '">🐉 ' + _CL({sr:'Godina ',en:'Year of the ','zh-CN':''}) + _shengxiaoTranslated(info.shengXiao) + _CL({sr:'',en:'','zh-CN':'年'}) + '</span>' : '') +
       '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.solarterm)) + '" style="cursor:pointer" onclick="renderCultureExplain()">🌿 ' + _CL({sr:'Sta je sve ovo?',en:'What is all this?','zh-CN':'这些是什么？'}) + '</span>' +
     '</div>';
 }

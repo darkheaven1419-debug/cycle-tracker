@@ -2607,9 +2607,8 @@ function renderSolarTermBadge() {
   var todayKey = fmtDate(today());
   var term = getSolarTerm(todayKey);
   if (term) {
-    var cnName = term.name['zh-CN'] || term.name['zh'] || '';
-    var srName = term.name['sr'] || '';
-    badge.textContent = '🌿 ' + cnName + ' · ' + srName;
+    var termName = term.name[lang] || term.name[lang.split('-')[0]] || term.name['sr'] || term.name['zh-CN'] || '';
+    badge.textContent = '🌿 ' + termName;
     badge.style.display = '';
   } else {
     // Only show upcoming (future) solar terms within 7 days, not past ones
@@ -2621,8 +2620,8 @@ function renderSolarTermBadge() {
       if (dist >= 0 && dist < minDist) { minDist = dist; nearest = s; }
     });
     if (nearest && minDist <= 7) {
-      var cnName = nearest.name['zh-CN'] || nearest.name['zh'] || '';
-      badge.textContent = '🌿 ' + cnName + ' ' + (lang==='sr'?'za '+minDist+' dana':lang==='en'?'in '+minDist+' days':minDist+'天后');
+      var nearName = nearest.name[lang] || nearest.name[lang.split('-')[0]] || nearest.name['sr'] || nearest.name['zh-CN'] || '';
+      badge.textContent = '🌿 ' + nearName + ' ' + (lang==='sr'?'za '+minDist+' dana':lang==='en'?'in '+minDist+' days':minDist+'天后');
       badge.style.display = '';
     } else { badge.style.display = 'none'; }
   }
