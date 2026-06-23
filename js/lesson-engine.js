@@ -895,6 +895,7 @@ function renderPhaseLessons(phaseId) {
   var startId = (phaseId - 1) * 30 + 1;
   var endId = phaseId * 30;
   var progress = getProgress();
+  var phaseProgress = getPhaseProgress(phaseId);
 
   var html = '<div style="padding:4px">';
   html += '<button class="lrn-back-btn" onclick="renderChineseHome()">← ' + _('返回', 'Nazad', 'Back') + '</button>';
