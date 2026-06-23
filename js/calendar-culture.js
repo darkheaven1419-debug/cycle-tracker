@@ -129,6 +129,7 @@ function _CL(map) {
 
 // ── Lunar info row (follows language) ─────────────────────────
 function renderLunarInfo() {
+  if (typeof today === 'undefined') return;
   var el = document.getElementById('lunarInfo');
   if (!el) return;
   var td = today();
@@ -148,6 +149,7 @@ function renderLunarInfo() {
 
 // ── Seasonal poem card (follows language) ──────────────────────
 function renderSeasonalPoemCard() {
+  if (typeof today === 'undefined') return;
   var el = document.getElementById('cultureCard');
   if (!el) return;
   var m = today().getMonth();
@@ -239,8 +241,9 @@ function initExtraHolidays() {
 }
 
 // ── Auto-init ──────────────────────────────────────────────────
-setTimeout(function() {
+(function _cultureInit() {
+  if (typeof today === 'undefined') { setTimeout(_cultureInit, 200); return; }
   initExtraHolidays();
   renderLunarInfo();
   renderSeasonalPoemCard();
-}, 500);
+})();
