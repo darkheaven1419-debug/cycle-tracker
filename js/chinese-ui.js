@@ -550,7 +550,7 @@ function renderGrammarTab(lesson) {
   var html = '<div class="lrn-grammar-box">';
   html += '<div class="lrn-grammar-title">\u{1F4D0} ' + _('语法要点', 'Gramatika', 'Grammar Point') + '</div>';
   if (lesson.grammar) {
-    html += '<div class="lrn-grammar-text">' + (lesson.grammar.zh || '') + '</div>';
+    html += '<div class="lrn-grammar-text">' + _(lesson.grammar.zh || '', lesson.grammar.sr || '', lesson.grammar.en || '') + '</div>';
   } else {
     html += '<div class="lrn-grammar-text">' + _('本课暂无语法要点。', 'Nema gramatičkih objašnjenja.', 'No grammar notes for this lesson.') + '</div>';
   }
