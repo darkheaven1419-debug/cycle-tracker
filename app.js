@@ -1663,7 +1663,7 @@ function t(key, fallback) {
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
-function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { renderCultureCard(); } catch(e) {} }
+function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { renderCultureCard(); } catch(e) {} renderLunarInfo(); renderSeasonalPoemCard(); }
 
 /* ================================================================
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
