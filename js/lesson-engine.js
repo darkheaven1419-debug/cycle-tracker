@@ -438,9 +438,12 @@ function getDueReviews() {
       urgency = 'soon';
     }
 
+    var topicStr = typeof lesson.topic === 'object' && lesson.topic !== null
+      ? _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'')
+      : String(lesson.topic || '');
     reviews.push({
       lessonId: parseInt(id, 10),
-      topic: lesson.topic || '',
+      topic: topicStr,
       icon: lesson.icon || '📖',
       lastReview: getLastReviewDate(review),
       nextDue: dueDate,
@@ -889,15 +892,22 @@ function renderPhaseLessons(phaseId) {
     return;
   }
 
-  var startId = (phaseId - 1) * LESSONS_PER_PHASE + 1;
-  var endId = phaseId * LESSONS_PER_PHASE;
+  var startId = (phaseId - 1) * 30 + 1;
+  var endId = phaseId * 30;
   var progress = getProgress();
 
-  var html = '<div class="chinese-section">';
-  html += '<button class="btn btn-ghost" onclick="renderChineseHome()">◂ ' + _('返回', 'Nazad', 'Back') + '</button>';
-  html += '<h3 class="chinese-section-title">' + getPhaseName(phaseId) + '</h3>';
+  var html = '<div style="padding:4px">';
+  html += '<button class="lrn-back-btn" onclick="renderChineseHome()">← ' + _('返回', 'Nazad', 'Back') + '</button>';
+  html += '<div class="lrn-phase-header">';
+  html += '<span class="lrn-phase-header-icon">' + (PHASE_NAMES[phaseId-1] ? PHASE_NAMES[phaseId-1].icon : '📚') + '</span>';
+  html += '<div class="lrn-phase-header-name">' + getPhaseName(phaseId) + '</div>';
+  html += '<div class="lrn-phase-header-desc">' +
+    phaseProgress.completed + '/' + phaseProgress.total + ' ' +
+    _('课已完成', 'lekcije završene', 'lessons done') +
+    '</div>';
+  html += '</div>';
 
-  html += '<div class="chinese-lesson-list">';
+  html += '<div class="lrn-lesson-list">';
 
   for (var id = startId; id <= endId; id++) {
     var lesson = getLessonById(id);
@@ -905,20 +915,29 @@ function renderPhaseLessons(phaseId) {
 
     var isComplete = !!progress.completedLessons[String(id)];
     var isUnlocked = isLessonUnlocked(id);
-    var score = progress.completedLessons[String(id)] ? progress.completedLessons[String(id)].score : null;
+    var score = isComplete && progress.completedLessons[String(id)] ? progress.completedLessons[String(id)].score : null;
 
-    var statusIcon = isComplete ? '✅' : (isUnlocked ? lesson.icon || '📖' : '🔒');
-    var statusClass = isComplete ? 'lesson-done' : (isUnlocked ? 'lesson-available' : 'lesson-locked');
-    var clickHandler = isUnlocked ? 'renderLessonView(' + id + ')' : '';
+    var statusClass = isComplete ? 'completed' : (isUnlocked ? 'current' : 'locked');
+    var clickHandler = isUnlocked ? ' onclick="renderLessonView(' + id + ')"' : '';
+    var lessonIcon = lesson.icon || '📖';
+    // Handle topic as object or string
+    var topicDisplay = typeof lesson.topic === 'object' && lesson.topic !== null
+      ? _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'')
+      : String(lesson.topic || '');
+    // Show first few words as preview
+    var wordsPreview = '';
+    if (lesson.words && lesson.words.length > 0) {
+      wordsPreview = lesson.words.slice(0,3).map(function(w){return w.zh;}).join(' · ');
+    }
 
-    html += '<div class="chinese-lesson-item ' + statusClass + '" onclick="' + clickHandler + '">';
-    html += '<span class="chinese-lesson-icon">' + statusIcon + '</span>';
-    html += '<div class="chinese-lesson-info">';
-    html += '<div class="chinese-lesson-num">' + _('第' + id + '课', 'Lekcija ' + id, 'Lesson ' + id) + '</div>';
-    html += '<div class="chinese-lesson-topic">' + (lesson.topic || '') + '</div>';
+    html += '<div class="lrn-lesson-item ' + statusClass + '"' + clickHandler + '>';
+    html += '<span class="lrn-lesson-num">' + (isComplete ? '✓' : (statusClass === 'locked' ? '🔒' : lesson.day || (id - startId + 1))) + '</span>';
+    html += '<div class="lrn-lesson-info">';
+    html += '<div class="lrn-lesson-topic">' + lessonIcon + ' ' + topicDisplay + '</div>';
+    if (wordsPreview) html += '<div class="lrn-lesson-words">' + wordsPreview + '</div>';
     html += '</div>';
     if (score !== null) {
-      html += '<span class="chinese-lesson-score">' + score + '%</span>';
+      html += '<span class="lrn-lesson-status" style="color:var(--sage);font-weight:700">' + score + '%</span>';
     }
     html += '</div>';
   }
