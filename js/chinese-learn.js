@@ -438,9 +438,7 @@ function getDueReviews() {
       urgency = 'soon';
     }
 
-    var topicStr = typeof lesson.topic === 'object' && lesson.topic !== null
-      ? _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'')
-      : String(lesson.topic || '');
+    var topicStr = getTopicText(lesson.topic);
     reviews.push({
       lessonId: parseInt(id, 10),
       topic: topicStr,
@@ -719,11 +717,7 @@ function renderContinueCard(progress) {
       html += '<div class="lrn-continue-card" onclick="renderLessonView(' + currentId + ')">';
       html += '<span class="lrn-continue-icon">' + (lesson.icon || '📖') + '</span>';
       html += '<div class="lrn-continue-info">';
-      html += '<div class="lrn-continue-title">' + _(
-        '第' + currentId + '课: ' + (lesson.topic && lesson.topic.zh || ''),
-        'Lekcija ' + currentId + ': ' + (lesson.topic && lesson.topic.sr || ''),
-        'Lesson ' + currentId + ': ' + (lesson.topic && lesson.topic.en || '')
-      ) + '</div>';
+      html += '<div class="lrn-continue-title">' + getTopicText(lesson.topic) + '</div>';
       html += '<div class="lrn-continue-sub">' + _('继续学习', 'Nastavi učenje', 'Continue Learning') + '</div>';
       html += '</div>';
       html += '<button class="lrn-continue-btn">▶</button>';
@@ -921,10 +915,7 @@ function renderPhaseLessons(phaseId) {
     var statusClass = isComplete ? 'completed' : (isUnlocked ? 'current' : 'locked');
     var clickHandler = isUnlocked ? ' onclick="renderLessonView(' + id + ')"' : '';
     var lessonIcon = lesson.icon || '📖';
-    // Handle topic as object or string
-    var topicDisplay = typeof lesson.topic === 'object' && lesson.topic !== null
-      ? _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'')
-      : String(lesson.topic || '');
+    var topicDisplay = getTopicText(lesson.topic);
     // Show first few words as preview
     var wordsPreview = '';
     if (lesson.words && lesson.words.length > 0) {
@@ -978,7 +969,7 @@ function renderLessonView(lessonId) {
   // Lesson header
   html += '<div class="lrn-lesson-header">';
   html += '<span class="lrn-lesson-header-icon">' + (lesson.icon || '📖') + '</span>';
-  var topicText = typeof lesson.topic === 'object' && lesson.topic !== null ? _(lesson.topic.zh||'', lesson.topic.sr||'', lesson.topic.en||'') : _(String(lesson.topic||''), String(lesson.topic||''), String(lesson.topic||''));
+  var topicText = getTopicText(lesson.topic);
   html += '<div class="lrn-lesson-header-topic">' + topicText + '</div>';
   html += '<div style="font-size:.65rem;color:var(--text-muted)">' + _('第' + lessonId + '课', 'Lekcija ' + lessonId, 'Lesson ' + lessonId) + '</div>';
   html += '</div>';
@@ -1582,6 +1573,13 @@ function langName(obj) {
   if (lang === 'sr') return obj.sr || obj.en || obj.zh || '';
   if (lang === 'zh-CN' || lang === 'zh') return obj.zh || obj.en || obj.sr || '';
   return obj.en || obj.sr || obj.zh || '';
+}
+
+function getTopicText(topic) {
+  if (typeof topic === 'object' && topic !== null) {
+    return _(topic.zh||'', topic.sr||'', topic.en||'');
+  }
+  return String(topic || '');
 }
 
 function getLessonById(id) {
