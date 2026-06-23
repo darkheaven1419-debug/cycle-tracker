@@ -34,7 +34,7 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v5', 'ciklus-static-v6', 'ciklus-static-v7', 'ciklus-static-v8', 'ciklus-static-v9', 'ciklus-static-v10', 'ciklus-static-v11'];
+var KNOWN_CACHES = ['ciklus-static-v15'];
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
