@@ -410,67 +410,60 @@
   <div class="panel" id="panel-tips" role="tabpanel" aria-labelledby="tab-tips"><div id="tips-list"></div></div>
 
   <div class="panel" id="panel-diary" role="tabpanel" aria-labelledby="tab-diary">
-    <!-- Mini Calendar Navigator -->
-    <div class="cal-nav" style="margin-bottom:8px">
-      <button class="nav-btn" onclick="shiftLetterMonth(-1)" aria-label="Prethodni mesec">◂</button>
-      <span class="month-label" id="lettersMonthLabel"></span>
-      <button class="nav-btn" onclick="shiftLetterMonth(1)" aria-label="Sledeći mesec">▸</button>
-      <button class="today-pill" onclick="goLetterToday()" id="lettersTodayBtn">📍</button>
+    <!-- 📅 7-Day Date Strip -->
+    <div class="diary-date-strip-wrap">
+      <button class="date-strip-arrow" onclick="scrollDiaryStrip(-1)" aria-label="Prethodna nedelja">◂</button>
+      <div class="diary-date-strip" id="diaryDateStrip"></div>
+      <button class="date-strip-arrow" onclick="scrollDiaryStrip(1)" aria-label="Sledeća nedelja">▸</button>
+      <button class="diary-cal-btn" onclick="toggleDiaryCalendar()" title="Kalendar">📅</button>
     </div>
-    <div class="mini-cal" id="lettersMiniCal"></div>
+    <!-- Expandable Full Calendar -->
+    <div class="diary-full-cal" id="diaryFullCal" style="display:none">
+      <div class="cal-nav" style="margin-bottom:6px">
+        <button class="nav-btn" onclick="shiftDiaryCalMonth(-1)" aria-label="Prethodni mesec">◂</button>
+        <span class="month-label" id="diaryCalMonthLabel"></span>
+        <button class="nav-btn" onclick="shiftDiaryCalMonth(1)" aria-label="Sledeći mesec">▸</button>
+        <button class="today-pill" onclick="goDiaryCalToday()">📍</button>
+      </div>
+      <div class="mini-cal" id="diaryFullCalGrid"></div>
+    </div>
 
-    <!-- 💌 MY LETTER — guided sections -->
-    <div class="card letter-card" id="letterMyCard">
-      <div class="letter-header">
-        <h3>💌 <span id="letter-my-title">Moje pismo</span></h3>
+    <!-- 💌 My Letter -->
+    <div class="card diary-write-card" id="diaryWriteCard">
+      <div class="diary-write-header">
+        <span class="diary-write-date" id="diaryWriteDate"></span>
         <span class="letter-saved" id="letterSavedBadge">✅ <span id="letter-saved-text">Sačuvano</span></span>
       </div>
-      <div class="letter-date-row">
-        <span id="letterDate"></span>
-        <span class="mood-tags" id="letterMoodTags"></span>
-      </div>
-      <div class="letter-section" id="ls-happy">
-        <div class="letter-section-label" onclick="toggleLetterSection('happy')">💝 <span id="lsl-happy">Šta me je danas obradovalo</span> <span class="ls-char-count"><span id="lsc-happy">0</span>/150</span></div>
-        <textarea class="letter-section-input" id="letter-happy" maxlength="150" rows="1" placeholder="..."></textarea>
-      </div>
-      <div class="letter-section" id="ls-uncomf">
-        <div class="letter-section-label" onclick="toggleLetterSection('uncomf')">🤔 <span id="lsl-uncomf">Šta mi je malo zasmetalo</span> <span class="ls-char-count"><span id="lsc-uncomf">0</span>/150</span></div>
-        <textarea class="letter-section-input" id="letter-uncomf" maxlength="150" rows="1" placeholder="..."></textarea>
-      </div>
-      <div class="letter-section" id="ls-thanks">
-        <div class="letter-section-label" onclick="toggleLetterSection('thanks')">🙏 <span id="lsl-thanks">Želim da ti se zahvalim za...</span> <span class="ls-char-count"><span id="lsc-thanks">0</span>/150</span></div>
-        <textarea class="letter-section-input" id="letter-thanks" maxlength="150" rows="1" placeholder="..."></textarea>
-      </div>
-      <div class="letter-section" id="ls-wish">
-        <div class="letter-section-label" onclick="toggleLetterSection('wish')">💪 <span id="lsl-wish">Voleo bih da poradimo na...</span> <span class="ls-char-count"><span id="lsc-wish">0</span>/150</span></div>
-        <textarea class="letter-section-input" id="letter-wish" maxlength="150" rows="1" placeholder="..."></textarea>
-      </div>
-      <div class="letter-section collapsed" id="ls-extra">
-        <div class="letter-section-label" onclick="toggleLetterSection('extra')">💬 <span id="lsl-extra">Još nešto... (opciono)</span> <span class="ls-char-count"><span id="lsc-extra">0</span>/300</span></div>
-        <textarea class="letter-section-input" id="letter-extra" maxlength="300" rows="1" placeholder="..."></textarea>
-      </div>
-      <div class="letter-actions">
-        <span class="letter-char-count" id="letterCharCount"></span>
-        <button class="btn btn-primary" id="letterSendBtn" onclick="saveLetter()" style="width:auto;padding:10px 24px;margin:0">💌 <span id="letter-send-text">Pošalji</span></button>
+      <textarea class="diary-textarea" id="diaryTextarea" maxlength="500" rows="4" placeholder="Piši slobodno... ✍️" aria-label="Dnevni unos"></textarea>
+      <div class="diary-write-footer">
+        <div class="diary-mood-row" id="diaryMoodRow"></div>
+        <div class="diary-actions">
+          <span class="diary-char-count" id="diaryCharCount">0/500</span>
+          <button class="btn btn-primary" id="diarySaveBtn" onclick="saveDiaryEntry()" style="width:auto;padding:8px 20px;margin:0">💾 <span id="diary-save-text">Sačuvaj</span></button>
+        </div>
       </div>
     </div>
 
-    <!-- 🌸 PARTNER'S LETTER -->
+    <!-- 🌸 Partner's Letter -->
     <div class="card letter-card partner-letter" id="letterPartnerCard">
       <div class="letter-header">
-        <h3 id="letter-partner-title">🌸 Anđelino pismo</h3>
+        <h3 id="letter-partner-title">🌸 Partnerovo pismo</h3>
         <button class="btn btn-outline" onclick="translatePartnerLetter()" style="font-size:.62rem;padding:3px 10px;display:none" id="letterTranslateBtn">🌐</button>
       </div>
-      <!-- Locked -->
       <div class="letter-locked" id="letterLocked">
         <span class="letter-lock-icon">🔒</span>
         <div class="letter-lock-text" id="letter-lock-text">Napiši svoje pismo da otključaš partnerovo 💌</div>
       </div>
-      <!-- Unlocked -->
       <div class="letter-content" id="letterPartnerContent" style="display:none"></div>
     </div>
 
-    <!-- 📮 MAILBOX -->
+    <!-- 📜 All Entries Timeline -->
+    <div class="diary-timeline-section">
+      <h3 class="diary-timeline-title">📜 <span id="diary-timeline-title">Svi unosi</span></h3>
+      <div class="diary-timeline-list" id="diaryTimelineList"></div>
+    </div>
+
+    <!-- 📮 Mailbox (kept for import/export) -->
     <div class="card" style="margin-top:10px">
       <h3>📮 <span id="mailbox-title">Poštansko sanduče</span></h3>
       <div class="mailbox-list" id="mailboxList"></div>
