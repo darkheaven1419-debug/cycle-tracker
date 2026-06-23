@@ -2,6 +2,14 @@
 "use strict";
 
 /* ================================================================
+   SHARED CONSTANTS
+   ================================================================ */
+var SYMPTOM_TYPES = ['cramps','mood','flow','headache','fatigue','cravings'];
+var SYMPTOM_EMOJIS = {cramps:'🔴',mood:'😤',flow:'💧',headache:'🤕',fatigue:'😴',cravings:'🍫'};
+var MOOD_EMOJIS = ['😊','🥰','😤','😴','😢','🤩','😰','😐'];
+var MOOD_KEYS = ['happy','loved','frustrated','tired','sad','excited','anxious','meh'];
+
+/* ================================================================
    PROFILE SYSTEM
    ================================================================ */
 let activeProfile = localStorage.getItem('cycle-active-profile') || 'andjela';
@@ -23,7 +31,7 @@ function switchProfile(p) {
       state.symptoms = sd.symptoms || {};
       state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
     }
-  } catch(e) {}
+  } catch(e) { console.warn('[profile] Failed to parse shared-cycle-data:', e.message); }
   lastCycleCount = predict().cycles.length;
 
   // Pull latest shared data from GitHub when switching profiles
@@ -103,8 +111,6 @@ let state = loadState();
 /* ================================================================
    MOOD & STREAK
    ================================================================ */
-const MOOD_EMOJIS = ['😊','🥰','😤','😴','😢','🤩','😰','😐'];
-const MOOD_KEYS = ['happy','loved','frustrated','tired','sad','excited','anxious','meh'];
 function getMood(dateKey) { return state.moods && state.moods[dateKey] ? state.moods[dateKey].mood : null; }
 function setMood(dateKey, moodKey) {
   if (!state.moods) state.moods = {};
@@ -304,7 +310,7 @@ async function pushSharedDiaryToGitHub(diaryData) {
   try {
     var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { headers: headers, cache: 'no-store' });
     if (resp.ok) { var d = await resp.json(); sha = d.sha; }
-  } catch(e) {}
+  } catch(e) { console.warn('[sync] Failed to fetch GitHub SHA:', e.message); }
   var content = btoa(unescape(encodeURIComponent(JSON.stringify(diaryData, null, 2))));
   var body = { message: '💌 Update shared diary', content: content };
   if (sha) body.sha = sha;

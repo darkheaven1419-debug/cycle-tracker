@@ -279,8 +279,13 @@ function initExtraHolidays() {
 }
 
 // ── Auto-init ──────────────────────────────────────────────────
-(function _cultureInit() {
-  if (typeof today === 'undefined') { setTimeout(_cultureInit, 200); return; }
+(function _cultureInit(attempt) {
+  attempt = attempt || 0;
+  if (typeof today === 'undefined') {
+    if (attempt < 50) { setTimeout(function() { _cultureInit(attempt + 1); }, 200); return; }
+    console.warn('[culture] today() not available after 50 retries — skipping culture init');
+    return;
+  }
   initExtraHolidays();
   renderLunarInfo();
   renderSeasonalPoemCard();

@@ -23,8 +23,13 @@
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
 <title>🌸 Anđelin Ciklus v8</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
-<script src="libs/html2canvas.min.js" defer></script>
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap">
+<link rel="canonical" href="./">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Anđelin Ciklus","applicationCategory":"HealthApplication","operatingSystem":"Web"}
+</script>
+
 <script src="js/i18n.js?v=1" defer></script>
 <script src="js/chart-renderer.js?v=1" defer></script>
 	<script src="js/lunar.js?v=37" defer></script>
@@ -88,7 +93,7 @@
 </div>
 
 <!-- Greeting Overlay — tap anywhere to close -->
-<div class="greeting-overlay hidden" id="greetingOverlay" onclick="this.style.display='none';this.classList.add('hidden')">
+<div class="greeting-overlay hidden" id="greetingOverlay" role="dialog" aria-modal="true" aria-label="Pozdravna poruka" onclick="this.style.display='none';this.classList.add('hidden')">
   <div class="greeting-card" onclick="event.stopPropagation()">
     <span class="greeting-icon" id="greetingIcon">✨</span>
     <div class="greeting-name" id="greetingName">Anđelo moja</div>
@@ -101,7 +106,7 @@
 
 <main>
 <div class="app">
-  <header role="banner" class="app-header">
+  <header class="app-header">
   <div class="header">
     <h1 id="h-title" onclick="handleTitleClick()">🌸 Anđelin Ciklus</h1>
     <div class="header-actions">
@@ -202,8 +207,8 @@
   <div class="panel active" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
     <div class="dash-welcome" style="font-size:.85rem;color:var(--text);text-align:center;padding:16px"><span style="font-size:2rem;display:block;animation:pulse 1.5s ease-in-out infinite">🌸</span></div>
     <div class="card dash-card skeleton skel-card"></div>
-    <div class="card dash-card"><h4>📊 Pregled napretka</h4><div class="dash-bar"><div class="dash-bar-fill" style="width:0%"></div></div></div>
-    <div class="card dash-card"><h4>📝 Brzi pristup</h4><div class="dash-links"><button class="dash-link-btn">📝 Dnevnik</button><button class="dash-link-btn">📚 Lekcija</button><button class="dash-link-btn">📅 Kalendar</button></div></div>
+    <div class="card dash-card"><h3>📊 Pregled napretka</h4><div class="dash-bar"><div class="dash-bar-fill" style="width:0%"></div></div></div>
+    <div class="card dash-card"><h3>📝 Brzi pristup</h4><div class="dash-links"><button class="dash-link-btn">📝 Dnevnik</button><button class="dash-link-btn">📚 Lekcija</button><button class="dash-link-btn">📅 Kalendar</button></div></div>
     <div class="card dash-card dash-quote"><div style="font-size:.78rem;color:var(--love);font-style:italic">Učitavanje...</div></div>
   </div>
 
@@ -212,20 +217,20 @@
     <div class="stats-summary-grid" id="statsSummaryGrid"></div>
 
     <!-- 📈 Cycle Trend Chart -->
-    <div class="card chart-card"><h4>📈 <span id="schart-cycle-title">Cycle Trend</span></h4>
+    <div class="card chart-card"><h3>📈 <span id="schart-cycle-title">Cycle Trend</span></h4>
       <div class="chart-container"><canvas id="chartCycleTrend" width="600" height="220"></canvas></div>
       <div class="chart-empty" id="chartCycleEmpty" style="display:none"></div>
     </div>
 
     <!-- 🎭 Mood Distribution Chart -->
-    <div class="card chart-card"><h4>🎭 <span id="schart-mood-title">Mood Distribution</span></h4>
+    <div class="card chart-card"><h3>🎭 <span id="schart-mood-title">Mood Distribution</span></h4>
       <div class="chart-container"><canvas id="chartMoodDonut" width="300" height="220"></canvas></div>
       <div class="chart-legend" id="chartMoodLegend"></div>
       <div class="chart-empty" id="chartMoodEmpty" style="display:none"></div>
     </div>
 
     <!-- 📋 Symptom Frequency Chart -->
-    <div class="card chart-card" id="symptomChartCard"><h4>📋 <span id="schart-symptom-title">Symptom Frequency</span></h4>
+    <div class="card chart-card" id="symptomChartCard"><h3>📋 <span id="schart-symptom-title">Symptom Frequency</span></h4>
       <div class="chart-container"><canvas id="chartSymptomBar" width="500" height="200"></canvas></div>
       <div class="chart-empty" id="chartSymptomEmpty" style="display:none"></div>
     </div>
@@ -243,7 +248,7 @@
     </div>
 
     <!-- 📜 Cycle History Timeline -->
-    <div class="card chart-card"><h4>📜 <span id="schart-history-title">Cycle History</span></h4>
+    <div class="card chart-card"><h3>📜 <span id="schart-history-title">Cycle History</span></h4>
       <div class="timeline-row" id="timelineRow"></div>
       <div class="timeline-legend">
         <span class="tld"><span class="timeline-dot short" style="cursor:default;transform:none"></span> <span id="tleg-short">Short</span></span>
@@ -320,7 +325,7 @@
       <h3><span id="diary-title">Today's Note</span></h3>
       <div class="diary-prompt" id="diaryPrompt"></div>
       <div class="diary-input-row">
-        <input type="text" id="diaryInput" maxlength="140" placeholder="...">
+        <input type="text" id="diaryInput" maxlength="140" placeholder="..." aria-label="Dnevni unos">
         <button class="diary-submit" onclick="saveDiary()">✓</button>
       </div>
       <div id="diaryHistory" style="margin-top:8px"></div>
@@ -349,7 +354,7 @@
     <div class="card" id="gratCard">
       <h3><span id="grat-title">💝 Gratitude Wall</span></h3>
       <div style="display:flex;gap:6px;margin-bottom:8px">
-        <input id="gratInput" placeholder="Hvala ti za..." style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:.7rem;font-family:var(--font);background:var(--card);color:var(--text)">
+        <input id="gratInput" placeholder="Hvala ti za..." aria-label="Napiši zahvalnost" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:.7rem;font-family:var(--font);background:var(--card);color:var(--text)">
         <button onclick="addGratitude()" style="padding:8px 14px;border:none;border-radius:10px;background:var(--love);color:#fff;font-size:.7rem;font-weight:600;cursor:pointer;white-space:nowrap">💝 +</button>
       </div>
       <div id="gratList"></div>
@@ -575,7 +580,7 @@
     <div class="setting-row"><div><span class="setting-label" id="set-l-period"></span><span class="setting-hint" id="set-h-period"></span></div><input type="number" id="set-period" min="2" max="10" value="7"></div>
     <div class="setting-row token-row show" id="tokenSettingRow">
       <div><span class="setting-label">🔑 GitHub Token</span><span class="setting-hint" id="set-h-token">Za sinhronizaciju dnevnika na oba telefona</span></div>
-      <input type="password" id="set-gh-token" placeholder="ghp_..." style="width:100%;font-size:.7rem;padding:8px" onchange="saveGitHubToken()">
+      <input type="password" id="set-gh-token" placeholder="ghp_..." aria-label="GitHub lični token" style="width:100%;font-size:.7rem;padding:8px" onchange="saveGitHubToken()">
       <div id="syncStatusBadge" style="font-size:.65rem;margin-top:6px;font-weight:600"></div>
     </div>
     <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()"></button>

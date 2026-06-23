@@ -128,7 +128,7 @@ function loadProgress() {
 function saveProgress(progress) {
   var p = progress || _currentProgress || getDefaultProgress();
   _currentProgress = p;
-  try { localStorage.setItem(getProgressKey(), JSON.stringify(p)); } catch (e) { /* full */ }
+  try { localStorage.setItem(getProgressKey(), JSON.stringify(p)); } catch (e) { console.warn('[chinese] saveProgress failed:', e.message); }
   if (typeof scheduleSync !== 'undefined') scheduleSync();
 }
 
@@ -643,11 +643,12 @@ function addDaysLocal(d, days) {
 }
 
 function shuffleArray(arr) {
-  for (var i = arr.length - 1; i > 0; i--) {
+  var copy = arr.slice();
+  for (var i = copy.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
-    var temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+    var temp = copy[i]; copy[i] = copy[j]; copy[j] = temp;
   }
-  return arr;
+  return copy;
 }
 
 function escapeHtml(str) {
