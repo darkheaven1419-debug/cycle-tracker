@@ -1250,8 +1250,7 @@ function getPhaseGrammar(phaseId) {
     },
     4: {
       explanation: _(
-        '表达情感时常用"很"(hěn)表示程度。感叹句用"太...了"(tài...le)结构。"
-想"(xiǎng)表示想念或想要。',
+        '表达情感时常用"很"(hěn)表示程度。感叹句用"太...了"(tài...le)结构。"想"(xiǎng)表示想念或想要。',
         'Za izražavanje emocija koristi se 很 (hěn) za stepen. Uzvične rečenice koriste 太...了 (tài...le). 想 (xiǎng) znači nedostajati ili želeti.',
         'Use 很 (hěn) for expressing degree. Exclamatory sentences use 太...了 (tài...le). 想 (xiǎng) means to miss or to want.'
       ),
