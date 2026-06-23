@@ -2948,6 +2948,8 @@ var _tabOrder = ['dashboard','stats','symptoms','tips','diary','chinese','settin
 var _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
   var id = btn.dataset.panel;
+  // Skip if already on this tab — prevents double-click animation glitch
+  if (btn.classList.contains('active')) return;
   var newIdx = _tabOrder.indexOf(id);
   var dir = newIdx > _prevTabIdx ? 'slide-out-left' : 'slide-out-right';
   _prevTabIdx = newIdx;

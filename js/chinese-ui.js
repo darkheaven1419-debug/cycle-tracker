@@ -75,6 +75,8 @@ function continueLearning() {
    ================================================================ */
 
 function initChineseTab() {
+  // Preload speech voices on first user interaction (required for mobile TTS)
+  if (typeof preloadVoices === 'function') preloadVoices();
   var tabLabel = document.getElementById('tb-chinese');
   if (tabLabel) tabLabel.textContent = _('中文学习', 'Kineski', 'Chinese');
 
@@ -535,14 +537,46 @@ function toggleFavBtn(btn, zh) {
   btn.className = 'lrn-fav-btn' + (nowFav ? ' fav-active' : '');
 }
 
-function speakWord(text) {
-  if (window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-CN'; u.rate = 0.7;
-    window.speechSynthesis.speak(u);
-  }
+// Preload Chinese voices on first interaction (mobile requires user gesture)
+var _voicesPreloaded = false;
+
+function preloadVoices() {
+  if (_voicesPreloaded) return;
+  _voicesPreloaded = true;
+  if (!window.speechSynthesis) return;
+  // On mobile, voices load asynchronously — trigger a dummy utterance to populate getVoices()
+  var dummy = new SpeechSynthesisUtterance('');
+  dummy.volume = 0;
+  window.speechSynthesis.speak(dummy);
+  // Some browsers need getVoices() called after a user gesture
+  speechSynthesis.getVoices();
 }
+
+function speakWord(text) {
+  if (!window.speechSynthesis) return;
+  preloadVoices();
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.rate = 0.7;
+  u.volume = 1;
+  // iOS Safari fix: try to find a zh-CN voice, fall back to any Chinese voice
+  var voices = speechSynthesis.getVoices();
+  var zhVoice = null;
+  for (var i = 0; i < voices.length; i++) {
+    if (voices[i].lang === 'zh-CN') { zhVoice = voices[i]; break; }
+  }
+  if (!zhVoice) {
+    for (var j = 0; j < voices.length; j++) {
+      if (voices[j].lang.indexOf('zh') === 0) { zhVoice = voices[j]; break; }
+    }
+  }
+  if (zhVoice) u.voice = zhVoice;
+  window.speechSynthesis.speak(u);
+}
+
+// Expose preloadVoices so initChineseTab can call it on first visit
+window.preloadVoices = preloadVoices;
 
 /* ---- Grammar Tab ---- */
 

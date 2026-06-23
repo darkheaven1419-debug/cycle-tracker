@@ -83,8 +83,19 @@ function nextListenWord() {
 
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
+    if (typeof preloadVoices === 'function') preloadVoices();
     var u = new SpeechSynthesisUtterance(w.zh || '');
-    u.lang = 'zh-CN'; u.rate = 0.6;
+    u.lang = 'zh-CN'; u.rate = 0.6; u.volume = 1;
+    // Select Chinese voice if available (iOS Safari fix)
+    var voices = speechSynthesis.getVoices();
+    for (var vi = 0; vi < voices.length; vi++) {
+      if (voices[vi].lang === 'zh-CN') { u.voice = voices[vi]; break; }
+    }
+    if (!u.voice) {
+      for (var vj = 0; vj < voices.length; vj++) {
+        if (voices[vj].lang.indexOf('zh') === 0) { u.voice = voices[vj]; break; }
+      }
+    }
     window.speechSynthesis.speak(u);
   }
 
@@ -95,9 +106,8 @@ function nextListenWord() {
     _('听中文，选翻译', 'Slušaj kineski, izaberi prevod', 'Listen and choose') +
     ' (' + (_currentListenWordIdx + 1) + '/' + _listenLessonWords.length + ') · ' +
     _('得分: ', 'Rezultat: ', 'Score: ') + _currentListenScore + '</div>';
-  html += '<div class="lrn-listen-sound" onclick="if(window.speechSynthesis){window.speechSynthesis.cancel();' +
-    'var u=new SpeechSynthesisUtterance(\'' + escapeHtml(w.zh || '') +
-    '\');u.lang=\'zh-CN\';u.rate=0.6;window.speechSynthesis.speak(u);}" ' +
+  html += '<div class="lrn-listen-sound" onclick="replayListenWord(\'' +
+    escapeHtml(w.zh || '') + '\')" ' +
     'style="font-size:2.5rem;cursor:pointer;margin-bottom:10px">\u{1F50A}</div>';
   html += '<div id="lrnListenChoices" class="lrn-practice-choice">';
   for (var opt = 0; opt < options.length; opt++) {
@@ -127,7 +137,27 @@ function checkListenAnswer(btn, selected, correct) {
   setTimeout(function () { nextListenWord(); }, 1000);
 }
 
+// Replay button handler — separate function for mobile-compatible TTS
+function replayListenWord(text) {
+  if (!window.speechSynthesis) return;
+  if (typeof preloadVoices === 'function') preloadVoices();
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN'; u.rate = 0.6; u.volume = 1;
+  var voices = speechSynthesis.getVoices();
+  for (var vi = 0; vi < voices.length; vi++) {
+    if (voices[vi].lang === 'zh-CN') { u.voice = voices[vi]; break; }
+  }
+  if (!u.voice) {
+    for (var vj = 0; vj < voices.length; vj++) {
+      if (voices[vj].lang.indexOf('zh') === 0) { u.voice = voices[vj]; break; }
+    }
+  }
+  window.speechSynthesis.speak(u);
+}
+
 window.renderListenPractice = renderListenPractice;
 window.startListenSession = startListenSession;
 window.nextListenWord = nextListenWord;
 window.checkListenAnswer = checkListenAnswer;
+window.replayListenWord = replayListenWord;
