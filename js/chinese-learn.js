@@ -1,6 +1,7 @@
 /* ================================================================
-   lesson-engine.js — 中文学习核心引擎 (Chinese Learning Engine)
+   chinese-learn.js — 中文学习核心引擎 (Chinese Learning Engine)
    180 lessons (6 phases × 30), achievements, review system, progress
+   v2 — refactored: renders into HTML containers, view management
    ================================================================ */
 
 /* ---- Data Caches ---- */
@@ -52,10 +53,8 @@ function loadLessonData(callback) {
       _lessonsLoading = false;
       if (!loadError) {
         _lessonsLoaded = true;
-        // Apply phase assignments to lessons that lack them
         applyPhaseAssignments();
       }
-      // Fire queued callbacks
       if (callback) callback(loadError);
       for (var i = 0; i < _lessonLoadQueue.length; i++) {
         _lessonLoadQueue[i](loadError);
@@ -64,14 +63,12 @@ function loadLessonData(callback) {
     }
   }
 
-  // Load lessons
   fetch(lessonsUrl)
     .then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status + ' loading lessons');
       return r.json();
     })
     .then(function (data) {
-      // Flatten phase arrays into a single lesson array (180 lessons)
       LESSONS_DATA = [];
       for (var pi = 0; pi < data.length; pi++) {
         var phaseLessons = data[pi].lessons || [];
@@ -83,11 +80,8 @@ function loadLessonData(callback) {
       }
       onLoaded(null);
     })
-    .catch(function (err) {
-      onLoaded(err);
-    });
+    .catch(function (err) { onLoaded(err); });
 
-  // Load achievements
   fetch(achievementsUrl)
     .then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status + ' loading achievements');
@@ -97,30 +91,19 @@ function loadLessonData(callback) {
       ACHIEVEMENTS_DATA = data;
       onLoaded(null);
     })
-    .catch(function (err) {
-      onLoaded(err);
-    });
+    .catch(function (err) { onLoaded(err); });
 }
 
 function applyPhaseAssignments() {
-  // Lessons already have phase from loading step; ensure day is set
   for (var i = 0; i < LESSONS_DATA.length; i++) {
     var lesson = LESSONS_DATA[i];
-    if (!lesson.phase) {
-      lesson.phase = Math.floor(i / 30) + 1;
-    }
-    if (!lesson.day) {
-      lesson.day = (i % 30) + 1;
-    }
-    if (!lesson.id) {
-      lesson.id = i + 1;
-    }
+    if (!lesson.phase) lesson.phase = Math.floor(i / 30) + 1;
+    if (!lesson.day) lesson.day = (i % 30) + 1;
+    if (!lesson.id) lesson.id = i + 1;
   }
 }
 
-function isDataLoaded() {
-  return _lessonsLoaded;
-}
+function isDataLoaded() { return _lessonsLoaded; }
 
 /* ================================================================
    2. PROGRESS MANAGEMENT
@@ -136,14 +119,8 @@ function loadProgress() {
   var key = getProgressKey();
   try {
     var raw = localStorage.getItem(key);
-    if (raw) {
-      var parsed = JSON.parse(raw);
-      _currentProgress = parsed;
-      return parsed;
-    }
-  } catch (e) {
-    // corrupted data — reset
-  }
+    if (raw) { _currentProgress = JSON.parse(raw); return _currentProgress; }
+  } catch (e) { /* corrupted */ }
   _currentProgress = getDefaultProgress();
   return _currentProgress;
 }
@@ -151,15 +128,8 @@ function loadProgress() {
 function saveProgress(progress) {
   var p = progress || _currentProgress || getDefaultProgress();
   _currentProgress = p;
-  try {
-    localStorage.setItem(getProgressKey(), JSON.stringify(p));
-  } catch (e) {
-    // localStorage full or unavailable
-  }
-  // Trigger delayed GitHub sync if available
-  if (typeof scheduleSync !== 'undefined') {
-    scheduleSync();
-  }
+  try { localStorage.setItem(getProgressKey(), JSON.stringify(p)); } catch (e) { /* full */ }
+  if (typeof scheduleSync !== 'undefined') scheduleSync();
 }
 
 function getDefaultProgress() {
@@ -169,11 +139,7 @@ function getDefaultProgress() {
     currentLessonId: null,
     totalPoints: 0,
     totalTimeSpent: 0,
-    studyStreak: {
-      current: 0,
-      longest: 0,
-      lastDate: null
-    },
+    studyStreak: { current: 0, longest: 0, lastDate: null },
     reviews: {},
     achievements: {},
     dailyStats: {},
@@ -183,9 +149,7 @@ function getDefaultProgress() {
 }
 
 function getProgress() {
-  if (!_currentProgress) {
-    loadProgress();
-  }
+  if (!_currentProgress) loadProgress();
   return _currentProgress;
 }
 
@@ -202,39 +166,23 @@ function getLessonPhase(lessonId) {
 function isLessonUnlocked(lessonId) {
   var progress = getProgress();
   var phase = getLessonPhase(lessonId);
-
-  // Phase 1: all lessons unlocked by default
   if (phase <= 1) return true;
-
-  // Previous phase must be at 80% completion
-  var prevPhase = phase - 1;
-  var prevProgress = getPhaseProgress(prevPhase);
-  var prevPhaseCompleted = prevProgress.percent >= 80;
-
-  if (!prevPhaseCompleted) return false;
-
-  // Same phase: previous lesson must be completed
+  var prevProgress = getPhaseProgress(phase - 1);
+  if (prevProgress.percent < 80) return false;
   var lessonIndex = (lessonId - 1) % LESSONS_PER_PHASE;
   if (lessonIndex > 0) {
-    var prevLessonId = lessonId - 1;
-    if (!progress.completedLessons[String(prevLessonId)]) {
-      return false;
-    }
+    if (!progress.completedLessons[String(lessonId - 1)]) return false;
   }
-
   return true;
 }
 
 function getPhaseUnlockRequirement(phase) {
-  if (phase <= 1) {
-    return _('直接可用', 'Dostupno odmah', 'Available now');
-  }
-  var prevPhase = phase - 1;
+  if (phase <= 1) return _('直接可用', 'Dostupno odmah', 'Available now');
   var needed = Math.ceil(LESSONS_PER_PHASE * 0.8);
   return _(
-    '完成阶段' + prevPhase + '至少' + needed + '课',
-    'Završite najmanje ' + needed + ' lekcija faze ' + prevPhase,
-    'Complete at least ' + needed + ' lessons in phase ' + prevPhase
+    '完成阶段' + (phase - 1) + '至少' + needed + '课',
+    'Završite najmanje ' + needed + ' lekcija faze ' + (phase - 1),
+    'Complete at least ' + needed + ' lessons in phase ' + (phase - 1)
   );
 }
 
@@ -243,9 +191,7 @@ function markLessonComplete(lessonId, score, timeSpentSeconds) {
   var id = String(lessonId);
   var newAchievements = [];
 
-  // 1. Update completedLessons
   if (progress.completedLessons[id]) {
-    // Already completed — update score if better
     if (score > (progress.completedLessons[id].score || 0)) {
       progress.completedLessons[id].score = score;
     }
@@ -257,34 +203,15 @@ function markLessonComplete(lessonId, score, timeSpentSeconds) {
     };
   }
 
-  // Track perfect scores
-  if (score === 100) {
-    progress.perfectScores = (progress.perfectScores || 0) + 1;
-  }
+  if (score === 100) progress.perfectScores = (progress.perfectScores || 0) + 1;
+  if (score) progress.totalPoints = (progress.totalPoints || 0) + score;
+  if (timeSpentSeconds) progress.totalTimeSpent = (progress.totalTimeSpent || 0) + timeSpentSeconds;
 
-  // 2. Update totalPoints
-  if (score) {
-    progress.totalPoints = (progress.totalPoints || 0) + score;
-  }
-
-  // 3. Update totalTimeSpent
-  if (timeSpentSeconds) {
-    progress.totalTimeSpent = (progress.totalTimeSpent || 0) + timeSpentSeconds;
-  }
-
-  // 4. Update studyStreak
   updateStreak(progress);
-
-  // 5. Update daily stats
   updateDailyStats(progress, timeSpentSeconds || 0);
-
-  // 6. Set review reminder (1 day later)
   setInitialReview(progress, lessonId);
-
-  // 7. Check and unlock achievements
   newAchievements = checkAchievements(progress);
 
-  // 8. Update currentLessonId
   var nextId = lessonId + 1;
   if (nextId <= TOTAL_LESSONS && isLessonUnlocked(nextId)) {
     progress.currentLessonId = nextId;
@@ -292,54 +219,30 @@ function markLessonComplete(lessonId, score, timeSpentSeconds) {
     progress.currentLessonId = null;
   }
 
-  // 9. Save
   saveProgress(progress);
-
   return newAchievements;
 }
 
 function updateStreak(progress) {
   var today = fmtDateLocal(new Date());
   var lastDate = progress.studyStreak.lastDate;
-
-  if (lastDate === today) {
-    // Already recorded today — no change
-    return;
-  }
-
+  if (lastDate === today) return;
   var yesterday = fmtDateLocal(addDaysLocal(new Date(), -1));
-
-  if (lastDate === yesterday) {
-    // Consecutive day
-    progress.studyStreak.current++;
-  } else if (lastDate === null) {
-    // First ever study
-    progress.studyStreak.current = 1;
-  } else {
-    // Streak broken
-    progress.studyStreak.current = 1;
-  }
-
-  // Update longest
+  if (lastDate === yesterday) { progress.studyStreak.current++; }
+  else if (lastDate === null) { progress.studyStreak.current = 1; }
+  else { progress.studyStreak.current = 1; }
   if (progress.studyStreak.current > progress.studyStreak.longest) {
     progress.studyStreak.longest = progress.studyStreak.current;
   }
-
   progress.studyStreak.lastDate = today;
 }
 
 function updateDailyStats(progress, timeSpent) {
   var today = fmtDateLocal(new Date());
   if (!progress.dailyStats) progress.dailyStats = {};
-
   if (!progress.dailyStats[today]) {
-    progress.dailyStats[today] = {
-      lessonsCompleted: 0,
-      timeSpent: 0,
-      pointsEarned: 0
-    };
+    progress.dailyStats[today] = { lessonsCompleted: 0, timeSpent: 0, pointsEarned: 0 };
   }
-
   progress.dailyStats[today].lessonsCompleted++;
   progress.dailyStats[today].timeSpent += timeSpent;
 }
@@ -347,12 +250,10 @@ function updateDailyStats(progress, timeSpent) {
 function getTotalProgress() {
   var progress = getProgress();
   var completed = Object.keys(progress.completedLessons).length;
-  var percent = Math.round((completed / TOTAL_LESSONS) * 100);
-
   return {
     completedLessons: completed,
     totalLessons: TOTAL_LESSONS,
-    percent: percent,
+    percent: Math.round((completed / TOTAL_LESSONS) * 100),
     totalPoints: progress.totalPoints || 0,
     streak: progress.studyStreak.current || 0,
     longestStreak: progress.studyStreak.longest || 0
@@ -361,33 +262,23 @@ function getTotalProgress() {
 
 function getPhaseProgress(phase) {
   var progress = getProgress();
-  var total = LESSONS_PER_PHASE;
   var completed = 0;
-
   var startId = (phase - 1) * LESSONS_PER_PHASE + 1;
   var endId = phase * LESSONS_PER_PHASE;
-
   for (var id = startId; id <= endId; id++) {
-    if (progress.completedLessons[String(id)]) {
-      completed++;
-    }
+    if (progress.completedLessons[String(id)]) completed++;
   }
-
-  var percent = Math.round((completed / total) * 100);
-  var unlocked = isPhaseUnlocked(phase);
-
   return {
     completed: completed,
-    total: total,
-    percent: percent,
-    unlocked: unlocked
+    total: LESSONS_PER_PHASE,
+    percent: Math.round((completed / LESSONS_PER_PHASE) * 100),
+    unlocked: isPhaseUnlocked(phase)
   };
 }
 
 function isPhaseUnlocked(phase) {
   if (phase <= 1) return true;
-  var prevProgress = getPhaseProgress(phase - 1);
-  return prevProgress.percent >= 80;
+  return getPhaseProgress(phase - 1).percent >= 80;
 }
 
 /* ================================================================
@@ -396,15 +287,11 @@ function isPhaseUnlocked(phase) {
 
 function setInitialReview(progress, lessonId) {
   if (!progress.reviews) progress.reviews = {};
-
   var id = String(lessonId);
-  var now = new Date();
-  var firstReview = addDaysLocal(now, REVIEW_INTERVALS[0]);
-
   if (!progress.reviews[id]) {
     progress.reviews[id] = {
       history: [],
-      nextDue: fmtDateLocal(firstReview),
+      nextDue: fmtDateLocal(addDaysLocal(new Date(), REVIEW_INTERVALS[0])),
       intervalIndex: 0
     };
   }
@@ -413,59 +300,41 @@ function setInitialReview(progress, lessonId) {
 function getDueReviews() {
   var progress = getProgress();
   if (!progress.reviews) return [];
-
   var today = fmtDateLocal(new Date());
   var reviews = [];
-  var reviewKeys = Object.keys(progress.reviews);
+  var keys = Object.keys(progress.reviews);
 
-  for (var i = 0; i < reviewKeys.length; i++) {
-    var id = reviewKeys[i];
+  for (var i = 0; i < keys.length; i++) {
+    var id = keys[i];
     var review = progress.reviews[id];
     if (!review.nextDue) continue;
-
     var lesson = getLessonById(parseInt(id, 10));
     if (!lesson) continue;
 
-    var dueDate = review.nextDue;
-    var daysUntilDue = dateDiffDays(dueDate, today);
+    var daysUntilDue = dateDiffDays(review.nextDue, today);
+    var urgency = daysUntilDue <= 0 ? 'urgent' : (daysUntilDue <= 3 ? 'soon' : 'ok');
 
-    var urgency = 'ok';
-    if (daysUntilDue < 0) {
-      urgency = 'urgent'; // overdue
-    } else if (daysUntilDue === 0) {
-      urgency = 'urgent'; // due today
-    } else if (daysUntilDue <= 3) {
-      urgency = 'soon';
-    }
-
-    var topicStr = getTopicText(lesson.topic);
     reviews.push({
       lessonId: parseInt(id, 10),
-      topic: topicStr,
+      topic: getTopicText(lesson.topic),
       icon: lesson.icon || '📖',
       lastReview: getLastReviewDate(review),
-      nextDue: dueDate,
+      nextDue: review.nextDue,
       daysUntilDue: daysUntilDue,
       urgency: urgency
     });
   }
 
-  // Sort: urgent first, then soon, then ok
   reviews.sort(function (a, b) {
     var order = { urgent: 0, soon: 1, ok: 2 };
-    var aOrder = order[a.urgency] || 3;
-    var bOrder = order[b.urgency] || 3;
-    if (aOrder !== bOrder) return aOrder - bOrder;
-    return a.daysUntilDue - b.daysUntilDue;
+    return (order[a.urgency] || 3) - (order[b.urgency] || 3) || a.daysUntilDue - b.daysUntilDue;
   });
 
   return reviews;
 }
 
 function getLastReviewDate(review) {
-  if (review.history && review.history.length > 0) {
-    return review.history[review.history.length - 1];
-  }
+  if (review.history && review.history.length > 0) return review.history[review.history.length - 1];
   return null;
 }
 
@@ -473,41 +342,20 @@ function markLessonReviewed(lessonId) {
   var progress = getProgress();
   var id = String(lessonId);
   var today = fmtDateLocal(new Date());
-
   if (!progress.reviews) progress.reviews = {};
   if (!progress.reviews[id]) {
-    progress.reviews[id] = {
-      history: [],
-      nextDue: today,
-      intervalIndex: 0
-    };
+    progress.reviews[id] = { history: [], nextDue: today, intervalIndex: 0 };
   }
-
   var review = progress.reviews[id];
   if (!review.history) review.history = [];
-
-  // Record this review
   review.history.push(today);
-
-  // Advance to next interval
-  var nextIdx = Math.min(
-    (review.intervalIndex || 0) + 1,
-    REVIEW_INTERVALS.length - 1
-  );
-  review.intervalIndex = nextIdx;
-
-  // Calculate next due date
-  var nextInterval = REVIEW_INTERVALS[nextIdx];
-  var nextDate = addDaysLocal(new Date(), nextInterval);
-  review.nextDue = fmtDateLocal(nextDate);
-
+  review.intervalIndex = Math.min((review.intervalIndex || 0) + 1, REVIEW_INTERVALS.length - 1);
+  review.nextDue = fmtDateLocal(addDaysLocal(new Date(), REVIEW_INTERVALS[review.intervalIndex]));
   saveProgress(progress);
 }
 
 function dateDiffDays(dateStr1, dateStr2) {
-  var d1 = parseDateLocal(dateStr1);
-  var d2 = parseDateLocal(dateStr2);
-  return Math.round((d1 - d2) / 86400000);
+  return Math.round((parseDateLocal(dateStr1) - parseDateLocal(dateStr2)) / 86400000);
 }
 
 /* ================================================================
@@ -516,43 +364,28 @@ function dateDiffDays(dateStr1, dateStr2) {
 
 function checkAchievements(progress) {
   var newlyUnlocked = [];
-
   for (var i = 0; i < ACHIEVEMENTS_DATA.length; i++) {
     var ach = ACHIEVEMENTS_DATA[i];
-    if (progress.achievements[ach.id]) continue; // already unlocked
-
-    var met = isAchievementConditionMet(ach, progress);
-    if (met) {
-      var unlocked = unlockAchievement(progress, ach.id);
-      newlyUnlocked.push(unlocked);
+    if (progress.achievements[ach.id]) continue;
+    if (isAchievementConditionMet(ach, progress)) {
+      newlyUnlocked.push(unlockAchievement(progress, ach.id));
     }
   }
-
   return newlyUnlocked;
 }
 
 function isAchievementConditionMet(ach, progress) {
   var cond = ach.condition;
   if (!cond) return false;
-
   switch (cond.type) {
-    case 'lessonsCompleted':
-      return getCompletedCount(progress) >= cond.value;
-    case 'phaseComplete':
-      var pp = getPhaseProgress(cond.phaseId);
-      return pp.completed >= pp.total;
-    case 'streak':
-      return (progress.studyStreak.current || 0) >= cond.value;
-    case 'totalPoints':
-      return (progress.totalPoints || 0) >= cond.value;
-    case 'perfectScore':
-      return (progress.perfectScores || 0) >= cond.value;
-    case 'timeSpent':
-      return (progress.totalTimeSpent || 0) >= cond.value;
-    case 'allLessons':
-      return getCompletedCount(progress) >= TOTAL_LESSONS;
-    default:
-      return false;
+    case 'lessonsCompleted': return getCompletedCount(progress) >= cond.value;
+    case 'phaseComplete': return getPhaseProgress(cond.phaseId).completed >= LESSONS_PER_PHASE;
+    case 'streak': return (progress.studyStreak.current || 0) >= cond.value;
+    case 'totalPoints': return (progress.totalPoints || 0) >= cond.value;
+    case 'perfectScore': return (progress.perfectScores || 0) >= cond.value;
+    case 'timeSpent': return (progress.totalTimeSpent || 0) >= cond.value;
+    case 'allLessons': return getCompletedCount(progress) >= TOTAL_LESSONS;
+    default: return false;
   }
 }
 
@@ -562,217 +395,249 @@ function getCompletedCount(progress) {
 
 function unlockAchievement(progress, achievementId) {
   if (!progress.achievements) progress.achievements = {};
-  progress.achievements[achievementId] = {
-    unlockedAt: new Date().toISOString()
-  };
-
-  // Find the achievement data
+  progress.achievements[achievementId] = { unlockedAt: new Date().toISOString() };
   var ach = null;
   for (var i = 0; i < ACHIEVEMENTS_DATA.length; i++) {
-    if (ACHIEVEMENTS_DATA[i].id === achievementId) {
-      ach = ACHIEVEMENTS_DATA[i];
-      break;
-    }
+    if (ACHIEVEMENTS_DATA[i].id === achievementId) { ach = ACHIEVEMENTS_DATA[i]; break; }
   }
-
-  // Award points
-  if (ach && ach.points) {
-    progress.totalPoints = (progress.totalPoints || 0) + ach.points;
-  }
-
+  if (ach && ach.points) progress.totalPoints = (progress.totalPoints || 0) + ach.points;
   return ach || { id: achievementId };
 }
 
 function getAchievementStatus() {
   var progress = getProgress();
   var unlocked = 0;
-  var total = ACHIEVEMENTS_DATA.length;
   var list = [];
-
   for (var i = 0; i < ACHIEVEMENTS_DATA.length; i++) {
     var ach = ACHIEVEMENTS_DATA[i];
     var isUnlocked = !!(progress.achievements && progress.achievements[ach.id]);
     if (isUnlocked) unlocked++;
-
     list.push({
-      id: ach.id,
-      icon: ach.icon,
-      name: ach.name,
-      description: ach.description,
-      points: ach.points,
-      isUnlocked: isUnlocked,
+      id: ach.id, icon: ach.icon, name: ach.name, description: ach.description,
+      points: ach.points, isUnlocked: isUnlocked,
       unlockedAt: isUnlocked ? progress.achievements[ach.id].unlockedAt : null
     });
   }
-
   return {
-    unlocked: unlocked,
-    total: total,
-    percent: total > 0 ? Math.round((unlocked / total) * 100) : 0,
+    unlocked: unlocked, total: ACHIEVEMENTS_DATA.length,
+    percent: ACHIEVEMENTS_DATA.length > 0 ? Math.round((unlocked / ACHIEVEMENTS_DATA.length) * 100) : 0,
     list: list
   };
 }
 
 /* ================================================================
-   6. RENDERING
+   6. VIEW MANAGEMENT
+   ================================================================ */
+
+var _currentView = 'home';
+var _currentPhaseId = null;
+var _currentLessonViewId = null;
+var _currentLessonTab = 'vocab';
+
+function switchLrnView(viewName) {
+  _currentView = viewName;
+
+  // Update subnav buttons
+  var btns = document.querySelectorAll('.lrn-subnav-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-lrn-view') === viewName) {
+      btns[i].classList.add('active');
+    } else {
+      btns[i].classList.remove('active');
+    }
+  }
+
+  // Hide all views, show target
+  var allViews = document.querySelectorAll('.lrn-view');
+  for (var v = 0; v < allViews.length; v++) {
+    allViews[v].classList.remove('active');
+    allViews[v].style.display = 'none';
+  }
+
+  var viewMap = {
+    'home': 'lrn-view-home',
+    'achievements': 'lrn-view-achievements',
+    'review': 'lrn-view-review',
+    'phase': 'lrn-view-phase',
+    'lesson': 'lrn-view-lesson'
+  };
+
+  var targetId = viewMap[viewName];
+  if (targetId) {
+    var targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      targetEl.style.display = '';
+      targetEl.classList.add('active');
+    }
+  }
+
+  // Render content
+  if (viewName === 'home') renderChineseHome();
+  else if (viewName === 'achievements') renderAchievementPanel();
+  else if (viewName === 'review') renderReviewPanel();
+}
+
+function continueLearning() {
+  var progress = getProgress();
+  if (progress.currentLessonId && isLessonUnlocked(progress.currentLessonId)) {
+    renderLessonView(progress.currentLessonId);
+    return;
+  }
+  var firstId = getFirstIncompleteLesson();
+  if (firstId) renderLessonView(firstId);
+}
+
+/* ================================================================
+   7. RENDERING — fills HTML containers
    ================================================================ */
 
 function initChineseTab() {
-  // Ensure tab label is updated
-  var tabLabel = document.getElementById('tb-culture');
-  if (tabLabel) {
-    tabLabel.textContent = _('中文学习', 'Kineski', 'Chinese');
-  }
+  var tabLabel = document.getElementById('tb-chinese');
+  if (tabLabel) tabLabel.textContent = _('中文学习', 'Kineski', 'Chinese');
 
   loadLessonData(function (err) {
     if (err) {
-      var panel = document.getElementById('panel-culture');
-      if (panel) {
-        panel.innerHTML =
-          '<div class="empty-state"><span class="empty-icon">⚠️</span>' +
+      var card = document.getElementById('lrnStreakCard');
+      if (card) {
+        card.innerHTML = '<div class="empty-state"><span class="empty-icon">⚠️</span>' +
           '<span class="empty-text">' +
           _('无法加载课程数据', 'Greška pri učitavanju lekcija', 'Failed to load lessons') +
           '</span></div>';
       }
       return;
     }
-    renderChineseHome();
+    switchLrnView('home');
   });
 }
 
 function renderChineseHome() {
-  var panel = getChinesePanel();
-  if (!panel) return;
-
   var progress = getProgress();
   var total = getTotalProgress();
   var todayReviews = getDueReviews();
-  var achievements = getAchievementStatus();
 
-  // Build the home page HTML
-  var html = '';
-  html += '<div class="chinese-section">';
-
-  // Stats bar
-  html += renderStatsBar(total);
-
-  // Continue learning card
-  html += renderContinueCard(progress);
-
-  // Phase path
-  html += renderPhasePath();
-
-  // Review reminders
-  html += renderReviewReminders(todayReviews);
-
-  // Recent achievements
-  html += renderRecentAchievements(achievements);
-
-  html += '</div>';
-
-  panel.innerHTML = html;
+  fillStreakCard(total);
+  fillContinueCard(progress);
+  fillDailyMotivation();
+  fillPhasePath();
+  fillReviewReminders(todayReviews);
 }
 
-function getChinesePanel() {
-  var panel = document.getElementById('panel-chinese');
-  if (!panel) {
-    // Fallback: render inside culture panel as a sub-section
-    panel = document.getElementById('panel-culture');
-  }
-  return panel;
-}
-
-function renderStatsBar(total) {
+function fillStreakCard(total) {
+  var card = document.getElementById('lrnStreakCard');
+  if (!card) return;
   var ringOffset = 251.2 * (1 - total.percent / 100);
-  var html = '';
-
-  // Hero section with greeting + progress ring + streak
-  html += '<div class="lrn-streak-card">';
-  html += '<div class="lrn-streak-icon">🔥</div>';
-  html += '<div class="lrn-streak-info">';
-  html += '<div class="lrn-streak-count">' + total.streak + '</div>';
-  html += '<div class="lrn-streak-label">' + _('连续天数', 'dana zaredom', 'day streak') + '</div>';
-  html += '<div style="margin-top:4px;font-size:.62rem;color:var(--text-muted)">';
-  html += _('已完成 ', 'Završeno ', 'Completed ') + total.completedLessons + '/' + total.totalLessons;
-  html += ' · ⭐' + (total.totalPoints || 0);
-  html += '</div></div>';
-  html += '<div class="lrn-progress-ring-wrap">';
-  html += '<svg class="lrn-progress-ring" viewBox="0 0 100 100">';
-  html += '<circle class="lrn-ring-bg" cx="50" cy="50" r="40"/>';
-  html += '<circle class="lrn-ring-fg" cx="50" cy="50" r="40" style="stroke-dashoffset:' + ringOffset + '"/>';
-  html += '</svg>';
-  html += '<span class="lrn-ring-text">' + total.percent + '%</span>';
-  html += '</div></div>';
-
-  return html;
+  card.innerHTML =
+    '<div class="lrn-streak-icon">🔥</div>' +
+    '<div class="lrn-streak-info">' +
+    '<div class="lrn-streak-count">' + total.streak + '</div>' +
+    '<div class="lrn-streak-label">' + _('连续天数', 'dana zaredom', 'day streak') + '</div>' +
+    '<div style="margin-top:4px;font-size:.62rem;color:var(--text-muted)">' +
+    _('已完成 ', 'Završeno ', 'Completed ') + total.completedLessons + '/' + total.totalLessons +
+    ' · ⭐' + (total.totalPoints || 0) +
+    '</div></div>' +
+    '<div class="lrn-progress-ring-wrap">' +
+    '<svg class="lrn-progress-ring" viewBox="0 0 100 100">' +
+    '<circle class="lrn-ring-bg" cx="50" cy="50" r="40"/>' +
+    '<circle class="lrn-ring-fg" cx="50" cy="50" r="40" style="stroke-dashoffset:' + ringOffset + '"/>' +
+    '</svg>' +
+    '<span class="lrn-ring-text">' + total.percent + '%</span>' +
+    '</div>';
 }
 
-function renderContinueCard(progress) {
-  var currentId = progress.currentLessonId;
-  var html = '';
+function fillDailyMotivation() {
+  var streakCard = document.getElementById('lrnStreakCard');
+  if (!streakCard) return;
+  var old = document.getElementById('lrnDailyMotivation');
+  if (old) old.remove();
 
-  if (currentId) {
-    var lesson = getLessonById(currentId);
-    if (lesson) {
-      html += '<div class="lrn-continue-card" onclick="renderLessonView(' + currentId + ')">';
-      html += '<span class="lrn-continue-icon">' + (lesson.icon || '📖') + '</span>';
-      html += '<div class="lrn-continue-info">';
-      html += '<div class="lrn-continue-title">' + getTopicText(lesson.topic) + '</div>';
-      html += '<div class="lrn-continue-sub">' + _('继续学习', 'Nastavi učenje', 'Continue Learning') + '</div>';
-      html += '</div>';
-      html += '<button class="lrn-continue-btn">▶</button>';
-      html += '</div>';
-    }
+  var motivations = [
+    { zh: '每天进步一点点，滴水穿石！💧', sr: 'Svaki dan po malo — kap koja buši kamen! 💧', en: 'A little progress each day adds up to big results! 💧' },
+    { zh: '学习语言是打开新世界的钥匙 🔑', sr: 'Učenje jezika je ključ za novi svet 🔑', en: 'Learning a language opens doors to a new world 🔑' },
+    { zh: '不怕慢，就怕站！🏃', sr: 'Ne plaši se sporosti, plaši se stajanja! 🏃', en: 'Don\'t fear going slow, fear standing still! 🏃' },
+    { zh: '你说中文的样子很美 💕', sr: 'Prelepa si kad pričaš kineski 💕', en: 'You\'re beautiful when you speak Chinese 💕' },
+    { zh: '今天的努力是明天的自由 🕊️', sr: 'Današnji trud je sutrašnja sloboda 🕊️', en: 'Today\'s effort is tomorrow\'s freedom 🕊️' },
+    { zh: '学而时习之，不亦说乎 📚', sr: 'Učiti i vežbati — nije li to radost? 📚', en: 'To learn and practice — is that not a joy? 📚' },
+    { zh: '每个汉字都是一幅画 🎨', sr: 'Svaki kineski znak je slika 🎨', en: 'Every Chinese character is a painting 🎨' },
+    { zh: '和你一起学中文是最幸福的事 💑', sr: 'Učiti kineski sa tobom je najlepša stvar 💑', en: 'Learning Chinese together is the best 💑' }
+  ];
+  var today = new Date();
+  var idx = (today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()) % motivations.length;
+  var m = motivations[idx];
+
+  var div = document.createElement('div');
+  div.id = 'lrnDailyMotivation';
+  div.className = 'lrn-daily-motivation';
+  div.innerHTML = '<span class="lrn-daily-motivation-icon">💬</span><span>' + _(m.zh, m.sr, m.en) + '</span>';
+  streakCard.parentNode.insertBefore(div, streakCard.nextSibling);
+}
+
+function fillContinueCard(progress) {
+  var card = document.getElementById('lrnContinueCard');
+  if (!card) return;
+  var currentId = progress.currentLessonId;
+  var lesson = currentId ? getLessonById(currentId) : null;
+
+  if (lesson) {
+    card.style.display = 'flex';
+    card.setAttribute('onclick', 'renderLessonView(' + currentId + ')');
+    var iconEl = card.querySelector('.lrn-continue-icon');
+    var titleEl = card.querySelector('.lrn-continue-title');
+    var subEl = card.querySelector('.lrn-continue-sub');
+    if (iconEl) iconEl.textContent = lesson.icon || '📖';
+    if (titleEl) titleEl.textContent = getTopicText(lesson.topic);
+    if (subEl) subEl.textContent = _('继续学习', 'Nastavi učenje', 'Continue Learning');
   } else {
-    var firstIncomplete = getFirstIncompleteLesson();
-    if (firstIncomplete) {
-      html += '<div class="lrn-continue-card" onclick="renderLessonView(' + firstIncomplete + ')">';
-      html += '<span class="lrn-continue-icon">🚀</span>';
-      html += '<div class="lrn-continue-info">';
-      html += '<div class="lrn-continue-title">' + _('开始学习中文！','Započni učenje!','Start Learning!') + '</div>';
-      html += '<div class="lrn-continue-sub">' + _('从第1课开始','Od prve lekcije','From lesson 1') + '</div>';
-      html += '</div>';
-      html += '<button class="lrn-continue-btn">▶</button>';
-      html += '</div>';
+    var firstId = getFirstIncompleteLesson();
+    if (firstId) {
+      card.style.display = 'flex';
+      card.setAttribute('onclick', 'renderLessonView(' + firstId + ')');
+      var icEl = card.querySelector('.lrn-continue-icon');
+      var tEl = card.querySelector('.lrn-continue-title');
+      var sEl = card.querySelector('.lrn-continue-sub');
+      if (icEl) icEl.textContent = '🚀';
+      if (tEl) tEl.textContent = _('开始学习中文！', 'Započni učenje!', 'Start Learning!');
+      if (sEl) sEl.textContent = _('从第' + firstId + '课开始', 'Od lekcije ' + firstId, 'From lesson ' + firstId);
+    } else {
+      card.style.display = 'none';
     }
   }
-
-  return html;
 }
 
 function getFirstIncompleteLesson() {
   var progress = getProgress();
   for (var i = 1; i <= TOTAL_LESSONS; i++) {
-    if (!progress.completedLessons[String(i)] && isLessonUnlocked(i)) {
-      return i;
-    }
+    if (!progress.completedLessons[String(i)] && isLessonUnlocked(i)) return i;
   }
   return null;
 }
 
-function renderPhasePath() {
-  var phaseIcons = ['🏛️','🌅','🌆','🌸','📚','👑'];
-  var html = '<div class="lrn-phase-title">' + _('学习路径', 'Put učenja', 'Learning Path') + '</div>';
-  html += '<div class="lrn-phase-grid">';
+function fillPhasePath() {
+  var titleEl = document.getElementById('lrn-phase-title');
+  var gridEl = document.getElementById('lrnPhaseGrid');
+  if (!titleEl || !gridEl) return;
+
+  titleEl.textContent = _('学习路径', 'Put učenja', 'Learning Path');
+  var phaseIcons = ['🏛️', '🌅', '🌆', '🌸', '📚', '👑'];
+  var html = '';
 
   for (var p = 0; p < PHASE_NAMES.length; p++) {
     var phase = PHASE_NAMES[p];
-    var phaseProgress = getPhaseProgress(phase.id);
-    var isUnlocked = phaseProgress.unlocked;
-    var pct = phaseProgress.percent || 0;
-    var statusClass = isUnlocked ? (pct >= 100 ? 'completed' : 'active') : 'locked';
+    var pp = getPhaseProgress(phase.id);
+    var pct = pp.percent || 0;
+    var statusClass = pp.unlocked ? (pct >= 100 ? 'completed' : 'active') : 'locked';
+    var clrClass = 'phase-clr-' + phase.id;
 
-    html += '<div class="lrn-phase-card phase-clr-' + phase.id + ' ' + statusClass + '" onclick="renderPhaseLessons(' + phase.id + ')" data-phase="' + phase.id + '">';
-    html += '<span class="lrn-phase-icon">' + (statusClass === 'locked' ? '🔒' : (phaseIcons[p] || phase.icon)) + '</span>';
+    html += '<div class="lrn-phase-card ' + clrClass + ' ' + statusClass + '" onclick="renderPhaseLessons(' + phase.id + ')" data-phase="' + phase.id + '">';
+    html += '<div class="lrn-phase-icon-wrap" style="background:' + (statusClass === 'locked' ? 'var(--border-soft)' : 'var(--phase-clr-light)') + '">';
+    html += '<span>' + (statusClass === 'locked' ? '🔒' : (phaseIcons[p] || phase.icon)) + '</span>';
+    html += '</div>';
     html += '<div class="lrn-phase-name">' + getPhaseName(phase.id) + '</div>';
-    html += '<div class="lrn-phase-progress">' + phaseProgress.completed + '/' + phaseProgress.total + '</div>';
-    html += '<div class="lrn-phase-bar"><div class="lrn-phase-bar-fill" style="width:' + pct + '%"></div></div>';
-    if (statusClass === 'locked') html += '<span class="lrn-phase-lock">🔒</span>';
+    html += '<div class="lrn-phase-progress">' + pp.completed + '/' + pp.total + '</div>';
+    html += '<div class="lrn-phase-bar"><div class="lrn-phase-bar-fill" style="width:' + pct + '%;background:var(--phase-clr,var(--love))"></div></div>';
+    if (statusClass === 'locked') html += '<span class="lrn-phase-lock-icon">🔒</span>';
     html += '</div>';
   }
-
-  html += '</div>';
-  return html;
+  gridEl.innerHTML = html;
 }
 
 function getPhaseName(phaseId) {
@@ -788,169 +653,111 @@ function getPhaseName(phaseId) {
   return _(n.zh, n.sr, n.en);
 }
 
-function renderReviewReminders(dueReviews) {
-  var urgent = [];
-  var soon = [];
-  var ok = [];
+function fillReviewReminders(dueReviews) {
+  var card = document.getElementById('lrnReviewCard');
+  var list = document.getElementById('lrnReviewList');
+  var allBtn = document.getElementById('lrn-review-all-btn');
+  var titleEl = document.getElementById('lrn-review-title');
+  if (!card || !list) return;
 
+  var urgent = [], soon = [], ok = [];
   for (var i = 0; i < dueReviews.length; i++) {
     if (dueReviews[i].urgency === 'urgent') urgent.push(dueReviews[i]);
     else if (dueReviews[i].urgency === 'soon') soon.push(dueReviews[i]);
     else ok.push(dueReviews[i]);
   }
 
-  if (urgent.length === 0 && soon.length === 0) {
-    return ''; // No reviews needed
-  }
+  if (urgent.length === 0 && soon.length === 0) { card.style.display = 'none'; return; }
 
-  var html = '<div class="lrn-review-card">';
-  html += '<div class="lrn-review-header">🔄 ' + _('今日复习', 'Današnji pregled', 'Review Today') + '</div>';
-  html += '<div class="lrn-review-list">';
+  card.style.display = '';
+  if (titleEl) titleEl.textContent = _('今日复习', 'Današnji pregled', 'Review Today');
 
-  for (var u = 0; u < Math.min(urgent.length, 3); u++) {
-    html += renderReviewItem(urgent[u]);
-  }
-  for (var s = 0; s < Math.min(soon.length, 3); s++) {
-    html += renderReviewItem(soon[s]);
-  }
-  for (var o = 0; o < Math.min(ok.length, 2); o++) {
-    html += renderReviewItem(ok[o]);
-  }
+  var html = '';
+  for (var u = 0; u < Math.min(urgent.length, 3); u++) html += renderReviewItemHtml(urgent[u]);
+  for (var s = 0; s < Math.min(soon.length, 3); s++) html += renderReviewItemHtml(soon[s]);
+  for (var o = 0; o < Math.min(ok.length, 2); o++) html += renderReviewItemHtml(ok[o]);
+  list.innerHTML = html;
 
-  html += '</div>';
-  if (urgent.length + soon.length + ok.length > 8) {
-    html += '<button class="lrn-review-all-btn" onclick="switchLrnView(\'review\')">' + _('查看全部','Pogledaj sve','View All') + '</button>';
-  }
-  html += '</div>';
-  return html;
+  if (allBtn) allBtn.style.display = (urgent.length + soon.length + ok.length > 8) ? '' : 'none';
 }
 
-function renderReviewItem(review) {
-  var urgClass = review.urgency === 'urgent' ? 'urgent' : (review.urgency === 'soon' ? 'soon' : 'ok');
+function renderReviewItemHtml(review) {
+  var urgClass = review.urgency;
+  var dueText = review.daysUntilDue < 0
+    ? _('超期 ' + Math.abs(review.daysUntilDue) + ' 天', 'Kasni ' + Math.abs(review.daysUntilDue) + ' d', Math.abs(review.daysUntilDue) + 'd late')
+    : review.daysUntilDue === 0
+      ? _('今天到期', 'Danas', 'Due today')
+      : _('还有 ' + review.daysUntilDue + ' 天', 'Za ' + review.daysUntilDue + ' d', 'In ' + review.daysUntilDue + 'd');
   return '<div class="lrn-review-item ' + urgClass + '" onclick="renderLessonView(' + review.lessonId + ')">' +
     '<span class="lrn-review-dot ' + urgClass + '"></span>' +
-    '<div class="lrn-review-info">' +
-    '<div class="lrn-review-topic">' + (review.topic || '') + '</div>' +
-    '<div class="lrn-review-due">' +
-    (review.daysUntilDue < 0 ? _('超期 ' + Math.abs(review.daysUntilDue) + ' 天', 'Kasni ' + Math.abs(review.daysUntilDue) + ' d', Math.abs(review.daysUntilDue) + 'd late') :
-      review.daysUntilDue === 0 ? _('今天到期', 'Danas', 'Due today') :
-      _('还有 ' + review.daysUntilDue + ' 天', 'Za ' + review.daysUntilDue + ' d', 'In ' + review.daysUntilDue + 'd')) +
-    '</div></div></div>';
-}
-
-function renderRecentAchievements(achievementStatus) {
-  // Show only the 3 most recent unlocked achievements
-  var unlocked = [];
-  for (var i = 0; i < achievementStatus.list.length; i++) {
-    if (achievementStatus.list[i].isUnlocked) {
-      unlocked.push(achievementStatus.list[i]);
-    }
-  }
-
-  if (unlocked.length === 0) return '';
-
-  // Sort by unlock time, most recent first
-  unlocked.sort(function (a, b) {
-    return (b.unlockedAt || '').localeCompare(a.unlockedAt || '');
-  });
-
-  var recent = unlocked.slice(0, 3);
-
-  var html = '<div class="chinese-achievements-mini">';
-  html += '<h3 class="chinese-section-title">' + _('近期成就', 'Nedavna dostignuća', 'Recent Achievements') + '</h3>';
-  html += '<div class="chinese-achievement-mini-list">';
-
-  for (var r = 0; r < recent.length; r++) {
-    html += '<div class="chinese-achievement-mini-item">';
-    html += '<span class="chinese-ach-mini-icon">' + recent[r].icon + '</span>';
-    html += '<span class="chinese-ach-mini-name">' + langName(recent[r].name) + '</span>';
-    html += '</div>';
-  }
-
-  html += '</div></div>';
-  return html;
+    '<div class="lrn-review-info"><div class="lrn-review-topic">' + (review.topic || '') + '</div>' +
+    '<div class="lrn-review-due">' + dueText + '</div></div></div>';
 }
 
 /* ---- Phase Lessons List ---- */
 
 function renderPhaseLessons(phaseId) {
-  var panel = getChinesePanel();
-  if (!panel) return;
+  _currentPhaseId = phaseId;
 
   if (!isPhaseUnlocked(phaseId)) {
-    panel.innerHTML =
-      '<div class="chinese-section">' +
-      '<button class="btn btn-ghost" onclick="renderChineseHome()">◂ ' + _('返回', 'Nazad', 'Back') + '</button>' +
-      '<div class="empty-state"><span class="empty-icon">🔒</span>' +
-      '<span class="empty-text">' + getPhaseUnlockRequirement(phaseId) + '</span></div></div>';
+    switchLrnView('home');
+    if (typeof toast !== 'undefined') toast(getPhaseUnlockRequirement(phaseId));
     return;
   }
 
   var startId = (phaseId - 1) * 30 + 1;
   var endId = phaseId * 30;
   var progress = getProgress();
-  var phaseProgress = getPhaseProgress(phaseId);
+  var pp = getPhaseProgress(phaseId);
 
-  var html = '<div style="padding:4px">';
-  html += '<button class="lrn-back-btn" onclick="renderChineseHome()">← ' + _('返回', 'Nazad', 'Back') + '</button>';
-  html += '<div class="lrn-phase-header">';
-  html += '<span class="lrn-phase-header-icon">' + (PHASE_NAMES[phaseId-1] ? PHASE_NAMES[phaseId-1].icon : '📚') + '</span>';
-  html += '<div class="lrn-phase-header-name">' + getPhaseName(phaseId) + '</div>';
-  html += '<div class="lrn-phase-header-desc">' +
-    phaseProgress.completed + '/' + phaseProgress.total + ' ' +
-    _('课已完成', 'lekcije završene', 'lessons done') +
-    '</div>';
-  html += '</div>';
+  // Fill phase header
+  var headerEl = document.getElementById('lrnPhaseHeader');
+  if (headerEl) {
+    headerEl.innerHTML =
+      '<span class="lrn-phase-header-icon">' + (PHASE_NAMES[phaseId - 1] ? PHASE_NAMES[phaseId - 1].icon : '📚') + '</span>' +
+      '<div class="lrn-phase-header-name">' + getPhaseName(phaseId) + '</div>' +
+      '<div class="lrn-phase-header-desc">' + pp.completed + '/' + pp.total + ' ' + _('课已完成', 'lekcije završene', 'lessons done') + '</div>';
+  }
 
-  html += '<div class="lrn-lesson-list">';
+  // Fill lesson list
+  var listEl = document.getElementById('lrnLessonList');
+  if (!listEl) return;
 
+  var html = '';
   for (var id = startId; id <= endId; id++) {
     var lesson = getLessonById(id);
     if (!lesson) continue;
 
     var isComplete = !!progress.completedLessons[String(id)];
-    var isUnlocked = isLessonUnlocked(id);
+    var unlocked = isLessonUnlocked(id);
     var score = isComplete && progress.completedLessons[String(id)] ? progress.completedLessons[String(id)].score : null;
-
-    var statusClass = isComplete ? 'completed' : (isUnlocked ? 'current' : 'locked');
-    var clickHandler = isUnlocked ? ' onclick="renderLessonView(' + id + ')"' : '';
-    var lessonIcon = lesson.icon || '📖';
+    var statusClass = isComplete ? 'completed' : (unlocked ? 'current' : 'locked');
+    var clickHandler = unlocked ? ' onclick="renderLessonView(' + id + ')"' : '';
     var topicDisplay = getTopicText(lesson.topic);
-    // Show first few words as preview
     var wordsPreview = '';
     if (lesson.words && lesson.words.length > 0) {
-      wordsPreview = lesson.words.slice(0,3).map(function(w){return w.zh;}).join(' · ');
+      wordsPreview = lesson.words.slice(0, 3).map(function (w) { return w.zh; }).join(' · ');
     }
 
     html += '<div class="lrn-lesson-item ' + statusClass + '"' + clickHandler + '>';
-    html += '<span class="lrn-lesson-num">' + (isComplete ? '✓' : (statusClass === 'locked' ? '🔒' : lesson.day || (id - startId + 1))) + '</span>';
+    html += '<span class="lrn-lesson-num">' + (isComplete ? '✓' : (statusClass === 'locked' ? '🔒' : (lesson.day || (id - startId + 1)))) + '</span>';
     html += '<div class="lrn-lesson-info">';
-    html += '<div class="lrn-lesson-topic">' + lessonIcon + ' ' + topicDisplay + '</div>';
+    html += '<div class="lrn-lesson-topic">' + (lesson.icon || '📖') + ' ' + topicDisplay + '</div>';
     if (wordsPreview) html += '<div class="lrn-lesson-words">' + wordsPreview + '</div>';
     html += '</div>';
-    if (score !== null) {
-      html += '<span class="lrn-lesson-status" style="color:var(--sage);font-weight:700">' + score + '%</span>';
-    }
+    if (score !== null) html += '<span class="lrn-lesson-status" style="color:var(--sage);font-weight:700">' + score + '%</span>';
     html += '</div>';
   }
-
-  html += '</div></div>';
-  panel.innerHTML = html;
+  listEl.innerHTML = html;
+  switchLrnView('phase');
 }
 
 /* ---- Lesson Detail View ---- */
 
-var _currentLessonViewId = null;
-var _currentLessonTab = 'vocab'; // vocab | grammar | practice | quiz
-
 function renderLessonView(lessonId) {
-  var panel = getChinesePanel();
-  if (!panel) return;
-
   var lesson = getLessonById(lessonId);
   if (!lesson) {
-    panel.innerHTML = '<div class="empty-state"><span class="empty-icon">❓</span>' +
-      '<span class="empty-text">' + _('未找到课程', 'Lekcija nije pronađena', 'Lesson not found') + '</span></div>';
+    if (typeof toast !== 'undefined') toast(_('未找到课程', 'Lekcija nije pronađena', 'Lesson not found'));
     return;
   }
 
@@ -960,56 +767,63 @@ function renderLessonView(lessonId) {
 
   var progress = getProgress();
   var isComplete = !!progress.completedLessons[String(lessonId)];
-
   var phaseId = getLessonPhase(lessonId);
-  var html = '<div style="padding:4px">';
-  html += '<button class="lrn-back-btn" onclick="renderPhaseLessons(' + phaseId + ')">← ' +
-    _('返回列表', 'Nazad', 'Back') + '</button>';
 
-  // Lesson header
-  html += '<div class="lrn-lesson-header">';
-  html += '<span class="lrn-lesson-header-icon">' + (lesson.icon || '📖') + '</span>';
-  var topicText = getTopicText(lesson.topic);
-  html += '<div class="lrn-lesson-header-topic">' + topicText + '</div>';
-  html += '<div style="font-size:.65rem;color:var(--text-muted)">' + _('第' + lessonId + '课', 'Lekcija ' + lessonId, 'Lesson ' + lessonId) + '</div>';
-  html += '</div>';
-
-  // Step indicator
-  html += '<div class="lrn-step-indicator">';
-  var steps = [
-    {key:'review',label_zh:'复习',label_sr:'Pregled',label_en:'Review',icon:'📝'},
-    {key:'vocab',label_zh:'生词',label_sr:'Reči',label_en:'Words',icon:'📖'},
-    {key:'grammar',label_zh:'语法',label_sr:'Gram.',label_en:'Grammar',icon:'📐'},
-    {key:'practice',label_zh:'练习',label_sr:'Vežba',label_en:'Practice',icon:'✏️'},
-    {key:'culture',label_zh:'文化',label_sr:'Kult.',label_en:'Culture',icon:'🏮'},
-    {key:'quiz',label_zh:'测验',label_sr:'Test',label_en:'Quiz',icon:'✅'}
-  ];
-  for (var s = 0; s < steps.length; s++) {
-    var st = steps[s];
-    var stState = _currentLessonTab === st.key ? 'active' : 'pending';
-    html += '<div style="text-align:center">';
-    html += '<div class="lrn-step-dot ' + stState + '" onclick="switchLessonTab(\'' + st.key + '\',' + lessonId + ')">' + st.icon + '</div>';
-    html += '<div style="font-size:.48rem;color:var(--text-muted);margin-top:2px">' + _(st.label_zh,st.label_sr,st.label_en) + '</div>';
-    html += '</div>';
+  // Fill lesson header
+  var headerEl = document.getElementById('lrnLessonHeader');
+  if (headerEl) {
+    headerEl.innerHTML =
+      '<span class="lrn-lesson-header-icon">' + (lesson.icon || '📖') + '</span>' +
+      '<div class="lrn-lesson-header-topic">' + getTopicText(lesson.topic) + '</div>' +
+      '<div style="font-size:.65rem;color:var(--text-muted)">' + _('第' + lessonId + '课', 'Lekcija ' + lessonId, 'Lesson ' + lessonId) + '</div>';
   }
-  html += '</div>';
 
-  // Tab content
-  html += '<div class="lrn-step-content">';
-  html += renderLessonTabContent(_currentLessonTab, lesson, lessonId);
-  html += '</div>';
+  // Fill step indicator
+  var indicatorEl = document.getElementById('lrnStepIndicator');
+  if (indicatorEl) {
+    var steps = [
+      { key: 'review', label_zh: '复习', label_sr: 'Pregled', label_en: 'Review', icon: '📝' },
+      { key: 'vocab', label_zh: '生词', label_sr: 'Reči', label_en: 'Words', icon: '📖' },
+      { key: 'grammar', label_zh: '语法', label_sr: 'Gram.', label_en: 'Grammar', icon: '📐' },
+      { key: 'practice', label_zh: '练习', label_sr: 'Vežba', label_en: 'Practice', icon: '✏️' },
+      { key: 'culture', label_zh: '文化', label_sr: 'Kult.', label_en: 'Culture', icon: '🏮' },
+      { key: 'quiz', label_zh: '测验', label_sr: 'Test', label_en: 'Quiz', icon: '✅' }
+    ];
+    var stepHtml = '';
+    for (var s = 0; s < steps.length; s++) {
+      var st = steps[s];
+      var stState = _currentLessonTab === st.key ? 'active' : 'pending';
+      stepHtml += '<div style="text-align:center;cursor:pointer" onclick="switchLessonTab(\'' + st.key + '\',' + lessonId + ')">';
+      stepHtml += '<div class="lrn-step-dot ' + stState + '">' + st.icon + '</div>';
+      stepHtml += '<div style="font-size:.48rem;color:var(--text-muted);margin-top:2px">' + _(st.label_zh, st.label_sr, st.label_en) + '</div>';
+      stepHtml += '</div>';
+    }
+    indicatorEl.innerHTML = stepHtml;
+  }
 
-  // Action buttons
-  html += '<div style="display:flex;gap:8px;margin-top:14px">';
-  html += '<button class="lrn-back-btn" onclick="switchLessonTab(\'' + getPrevTab() + '\',' + lessonId + ')" style="flex:1">← ' + _('上一步','Prethodni','Prev') + '</button>';
-  html += '<button class="lrn-complete-btn" onclick="switchLessonTab(\'' + getNextTab() + '\',' + lessonId + ')" style="flex:1">' + _('下一步','Sledeći','Next') + ' →</button>';
-  html += '</div>';
+  // Fill tab content
+  var contentEl = document.getElementById('lrnStepContent');
+  if (contentEl) contentEl.innerHTML = renderLessonTabContent(_currentLessonTab, lesson, lessonId);
 
+  // Fill action buttons
+  var actionsEl = document.getElementById('lrnStepActions');
+  if (actionsEl) {
+    actionsEl.innerHTML =
+      '<div style="display:flex;gap:8px;margin-top:14px">' +
+      '<button class="lrn-back-btn" onclick="switchLessonTab(\'' + getPrevTab() + '\',' + lessonId + ')" style="flex:1">← ' + _('上一步', 'Prethodni', 'Prev') + '</button>' +
+      '<button class="lrn-complete-btn" onclick="switchLessonTab(\'' + getNextTab() + '\',' + lessonId + ')" style="flex:1">' + _('下一步', 'Sledeći', 'Next') + ' →</button>' +
+      '</div>' +
+      '<button class="lrn-back-btn" onclick="renderPhaseLessons(' + phaseId + ')" style="width:100%;margin-top:8px;text-align:center">← ' + _('返回列表', 'Nazad na listu', 'Back to list') + '</button>';
+  }
+
+  // Show completed badge
   if (isComplete) {
-    html += '<div style="text-align:center;margin-top:10px"><span style="background:var(--sage-light);color:var(--sage);padding:4px 12px;border-radius:10px;font-size:.68rem">✅ ' + _('已完成','Završeno','Completed') + '</span></div>';
+    if (actionsEl) {
+      actionsEl.innerHTML += '<div style="text-align:center;margin-top:10px"><span style="background:var(--sage-light);color:var(--sage);padding:4px 12px;border-radius:10px;font-size:.68rem">✅ ' + _('已完成', 'Završeno', 'Completed') + '</span></div>';
+    }
   }
 
-  panel.innerHTML = html;
+  switchLrnView('lesson');
 }
 
 function switchLessonTab(tab, lessonId) {
@@ -1017,83 +831,129 @@ function switchLessonTab(tab, lessonId) {
   renderLessonView(lessonId);
 }
 
+function getPrevTab() {
+  var tabs = ['review', 'vocab', 'grammar', 'practice', 'culture', 'quiz'];
+  var idx = tabs.indexOf(_currentLessonTab);
+  return idx > 0 ? tabs[idx - 1] : tabs[0];
+}
+
+function getNextTab() {
+  var tabs = ['review', 'vocab', 'grammar', 'practice', 'culture', 'quiz'];
+  var idx = tabs.indexOf(_currentLessonTab);
+  return idx < tabs.length - 1 ? tabs[idx + 1] : tabs[tabs.length - 1];
+}
+
 function renderLessonTabContent(tab, lesson, lessonId) {
   switch (tab) {
-    case 'vocab':
-      return renderVocabTab(lesson);
-    case 'grammar':
-      return renderGrammarTab(lesson);
-    case 'practice':
-      return renderPracticeTab(lesson, lessonId);
-    case 'quiz':
-      return renderQuizTab(lesson, lessonId);
-    default:
-      return '';
+    case 'review': return renderReviewStepTab(lesson, lessonId);
+    case 'vocab': return renderVocabTab(lesson);
+    case 'grammar': return renderGrammarTab(lesson);
+    case 'practice': return renderPracticeTab(lesson, lessonId);
+    case 'culture': return renderCultureTab(lesson);
+    case 'quiz': return renderQuizTab(lesson, lessonId);
+    default: return '';
   }
 }
 
+/* ---- Review Step Tab ---- */
+
+function renderReviewStepTab(lesson, lessonId) {
+  if (!lesson.words || lesson.words.length === 0) {
+    return '<div class="lrn-empty-state"><span class="lrn-empty-icon">📝</span>' +
+      _('暂无内容', 'Nema sadržaja', 'No content yet') + '</div>';
+  }
+
+  var progress = getProgress();
+  var lp = progress.completedLessons[String(lessonId)];
+
+  var html = '<h3 style="font-size:.82rem;font-weight:700;text-align:center;margin-bottom:12px">📝 ' +
+    _('课前复习', 'Pregled pre lekcije', 'Pre-lesson Review') + '</h3>';
+
+  if (lp) {
+    html += '<div style="background:var(--sage-light);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.7rem">';
+    html += _('上次得分: ', 'Prošli rezultat: ', 'Last score: ') + '<strong>' + (lp.score || 0) + '%</strong>';
+    html += '<span style="margin-left:8px;font-size:.62rem;color:var(--text-muted)">' +
+      _('完成于: ', 'Završeno: ', 'Completed: ') + new Date(lp.completedAt).toLocaleDateString() + '</span>';
+    html += '</div>';
+  }
+
+  html += '<p style="font-size:.68rem;color:var(--text-muted);text-align:center;margin-bottom:8px">' +
+    _('快速浏览本课关键词汇', 'Brzi pregled ključnih reči', 'Quick review of key vocabulary') + '</p>';
+
+  for (var i = 0; i < Math.min(lesson.words.length, 4); i++) {
+    var w = lesson.words[i];
+    html += '<div class="lrn-word-card" style="padding:12px 16px;margin-bottom:6px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    html += '<div><span class="lrn-word-zh" style="font-size:1.2rem">' + (w.zh || '') + '</span>';
+    html += '<span class="lrn-word-py" style="font-size:.68rem;margin-left:8px">' + (w.py || '') + '</span></div>';
+    html += '<span class="lrn-word-sr" style="font-size:.7rem">' + (w.sr || '') + '</span>';
+    html += '</div>';
+    html += '<button class="lrn-word-audio" onclick="event.stopPropagation();speakWord(\'' + escapeHtml(w.zh || '') + '\')" title="' + _('发音', 'Izgovor', 'Pronounce') + '" style="position:static">🔊</button>';
+    html += '</div>';
+  }
+  return html;
+}
+
+/* ---- Vocab Tab ---- */
+
 function renderVocabTab(lesson) {
   if (!lesson.words || lesson.words.length === 0) {
-    return '<div class="lrn-empty-state"><span class="lrn-empty-icon">📝</span>' + _('暂无生词', 'Nema reči', 'No words yet') + '</div>';
+    return '<div class="lrn-empty-state"><span class="lrn-empty-icon">📝</span>' +
+      _('暂无生词', 'Nema reči', 'No words yet') + '</div>';
   }
-  var html = '<div style="position:relative">';
+  var html = '';
   for (var i = 0; i < lesson.words.length; i++) {
     var w = lesson.words[i];
     html += '<div class="lrn-word-card">';
     html += '<div class="lrn-word-zh">' + (w.zh || '') + '</div>';
     html += '<div class="lrn-word-py">' + (w.py || '') + '</div>';
     html += '<div class="lrn-word-sr">' + (w.sr || '') + '</div>';
-    html += '<button class="lrn-word-audio" onclick="event.stopPropagation();speakWord(\'' + (w.zh || '') + '\')" title="' + _('发音','Izgovor','Pronounce') + '">🔊</button>';
+    if (w.en) html += '<div class="lrn-word-en">' + (w.en || '') + '</div>';
+    html += '<button class="lrn-word-audio" onclick="event.stopPropagation();speakWord(\'' + escapeHtml(w.zh || '') + '\')" title="' + _('发音', 'Izgovor', 'Pronounce') + '">🔊</button>';
     html += '</div>';
   }
-  html += '<div class="lrn-word-nav">' + _('共','Ukupno','Total') + ' ' + lesson.words.length + ' ' + _('个词','reči','words') + '</div>';
-  html += '</div>';
+  html += '<div class="lrn-word-nav">' + _('共', 'Ukupno', 'Total') + ' ' + lesson.words.length + ' ' + _('个词', 'reči', 'words') + '</div>';
   return html;
 }
 
 function speakWord(text) {
   if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(text);
     u.lang = 'zh-CN'; u.rate = 0.7;
     window.speechSynthesis.speak(u);
   }
 }
 
-function getPrevTab() {
-  var tabs = ['review','vocab','grammar','practice','culture','quiz'];
-  var idx = tabs.indexOf(_currentLessonTab);
-  return idx > 0 ? tabs[idx-1] : tabs[0];
-}
-function getNextTab() {
-  var tabs = ['review','vocab','grammar','practice','culture','quiz'];
-  var idx = tabs.indexOf(_currentLessonTab);
-  return idx < tabs.length-1 ? tabs[idx+1] : tabs[tabs.length-1];
-}
+/* ---- Grammar Tab ---- */
 
 function renderGrammarTab(lesson) {
   var html = '<div class="lrn-grammar-box">';
-  html += '<div class="lrn-grammar-title">📐 ' + _('语法要点','Gramatika','Grammar Point') + '</div>';
+  html += '<div class="lrn-grammar-title">📐 ' + _('语法要点', 'Gramatika', 'Grammar Point') + '</div>';
   if (lesson.grammar) {
-    html += '<div class="lrn-grammar-text">' + _(lesson.grammar.zh||'', lesson.grammar.sr||'', lesson.grammar.en||'') + '</div>';
+    html += '<div class="lrn-grammar-text">' + _(lesson.grammar.zh || '', lesson.grammar.sr || '', lesson.grammar.en || '') + '</div>';
   } else {
     html += '<div class="lrn-grammar-text">' + _('本课暂无语法要点。', 'Nema gramatičkih objašnjenja.', 'No grammar notes for this lesson.') + '</div>';
   }
   html += '</div>';
 
-  // Show dialog if available
   if (lesson.dialog) {
-    html += '<h3 style="font-size:.72rem;margin:12px 0 6px">💬 ' + _('情景对话','Dijalog','Dialogue') + '</h3>';
-    var lines = _(lesson.dialog.zh||'', lesson.dialog.sr||'', lesson.dialog.en||'').split('\n');
+    html += '<h3 style="font-size:.72rem;margin:12px 0 6px">💬 ' + _('情景对话', 'Dijalog', 'Dialogue') + '</h3>';
+    html += '<div class="lrn-dialog-box">';
+    var lines = _(lesson.dialog.zh || '', lesson.dialog.sr || '', lesson.dialog.en || '').split('\n');
     for (var l = 0; l < lines.length; l++) {
       var isA = lines[l].indexOf('A:') === 0;
-      html += '<div class="lrn-dialog-bubble' + (isA ? '' : ' b') + '">';
-      html += '<span class="lrn-dialog-speaker">' + (isA ? 'A' : 'B') + '</span> ';
-      html += lines[l].replace(/^[AB]: /, '');
+      html += '<div class="lrn-dialog-bubble speaker-' + (isA ? 'a' : 'b') + '">';
+      html += '<span class="lrn-dialog-speaker">' + (isA ? 'A' : 'B') + '</span>';
+      html += '<div class="lrn-dialog-zh">' + escapeHtml(lines[l].replace(/^[AB]: /, '')) + '</div>';
       html += '</div>';
     }
+    html += '</div>';
   }
   return html;
 }
+
+/* ---- Practice Tab ---- */
 
 function renderPracticeTab(lesson, lessonId) {
   if (!lesson.words || lesson.words.length === 0) {
@@ -1103,17 +963,17 @@ function renderPracticeTab(lesson, lessonId) {
   var html = '<div class="chinese-practice-section">';
   html += '<p class="chinese-practice-instruct">' + _('选择正确的翻译', 'Izaberite tačan prevod', 'Choose the correct translation') + '</p>';
 
-  // Generate multiple choice from first 3 words
   var practiceWords = lesson.words.slice(0, Math.min(3, lesson.words.length));
   for (var i = 0; i < practiceWords.length; i++) {
     var w = practiceWords[i];
     var options = generatePracticeOptions(w, lesson.words);
     html += '<div class="chinese-practice-question" data-word-zh="' + escapeHtml(w.zh || '') + '" data-answer="' + escapeHtml(w.sr || '') + '">';
-    html += '<div class="chinese-practice-q">' + (w.zh || '') + ' = ?</div>';
+    html += '<span class="chinese-practice-q">' + (w.zh || '') + ' = ?</span>';
+    html += '<div class="lrn-practice-choice">';
     for (var o = 0; o < options.length; o++) {
-      html += '<button class="chinese-practice-option" onclick="checkPracticeAnswer(this, \'' + escapeHtml(options[o]) + '\', \'' + escapeHtml(w.sr || '') + '\', this.parentElement)">' + options[o] + '</button>';
+      html += '<button class="lrn-practice-option" onclick="checkPracticeAnswer(this, \'' + escapeHtml(options[o]) + '\', \'' + escapeHtml(w.sr || '') + '\', this.parentElement.parentElement)">' + options[o] + '</button>';
     }
-    html += '</div>';
+    html += '</div></div>';
   }
 
   html += '<div class="chinese-practice-result"></div>';
@@ -1121,10 +981,72 @@ function renderPracticeTab(lesson, lessonId) {
   return html;
 }
 
+/* ---- Culture Tab ---- */
+
+var _cultureDataCache = null;
+
+function loadCultureData(callback) {
+  if (_cultureDataCache) { callback(_cultureDataCache); return; }
+  fetch('data/culture.json')
+    .then(function (r) { return r.json(); })
+    .then(function (data) { _cultureDataCache = data; callback(data); })
+    .catch(function () { callback(null); });
+}
+
+function renderCultureTab(lesson) {
+  var cultureText = '';
+  if (lesson.culture) {
+    cultureText = _(lesson.culture.zh || '', lesson.culture.sr || '', lesson.culture.en || '');
+  }
+
+  var html = '<div>';
+
+  if (cultureText) {
+    html += '<div class="lrn-culture-box">';
+    html += '<span class="lrn-culture-icon">🏮</span>';
+    html += '<div class="lrn-culture-text">' + cultureText + '</div>';
+    html += '</div>';
+  }
+
+  html += '<div id="lrn-culture-card-dynamic">';
+  html += '<div class="lrn-empty-state"><span class="lrn-empty-icon">🔄</span>' +
+    _('加载文化知识...', 'Učitavanje...', 'Loading culture knowledge...') + '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Async load culture card
+  var lessonId = _currentLessonViewId;
+  setTimeout(function () {
+    loadCultureData(function (data) {
+      var container = document.getElementById('lrn-culture-card-dynamic');
+      if (!container) return;
+      if (data && data.length > 0) {
+        var idx = (lessonId || 1) % data.length;
+        var card = data[idx];
+        container.innerHTML =
+          '<div class="lrn-culture-box" style="margin-top:10px">' +
+          '<span class="lrn-culture-icon">' + (card.icon || '📚') + '</span>' +
+          '<div style="font-weight:700;font-size:.75rem;margin-bottom:4px;color:var(--text)">' +
+          (card.zh || '') + ' / ' + (card.sr || '') + '</div>' +
+          '<div class="lrn-culture-text">' + (card.desc || '') + '</div>' +
+          '</div>';
+      } else {
+        container.innerHTML = '';
+      }
+    });
+  }, 50);
+
+  return html;
+}
+
+/* ---- Quiz Tab ---- */
+
 function renderQuizTab(lesson, lessonId) {
   if (!lesson.words || lesson.words.length === 0) {
     return '<div class="empty-state">' + _('暂无测验', 'Nema testa', 'No quiz') + '</div>';
   }
+
+  _quizAnswers = {};
 
   var html = '<div class="chinese-quiz-section" data-lesson-id="' + lessonId + '">';
   html += '<p class="chinese-quiz-instruct">' + _('小测验 — 每题10分', 'Kviz — svako pitanje 10 poena', 'Quiz — 10 points each') + '</p>';
@@ -1134,10 +1056,11 @@ function renderQuizTab(lesson, lessonId) {
     var q = questions[i];
     html += '<div class="chinese-quiz-question" data-answer="' + escapeHtml(q.answer) + '" data-index="' + i + '">';
     html += '<div class="chinese-quiz-q">' + (i + 1) + '. ' + q.question + '</div>';
-    html += '<div class="chinese-quiz-options">';
+    html += '<div class="lrn-practice-choice">';
     for (var o = 0; o < q.options.length; o++) {
-      html += '<button class="chinese-quiz-option" onclick="selectQuizOption(this, \'' + escapeHtml(q.options[o]) + '\', \'' + escapeHtml(q.answer) + '\')">' +
-        String.fromCharCode(65 + o) + '. ' + q.options[o] + '</button>';
+      var label = String.fromCharCode(65 + o);
+      html += '<button class="lrn-practice-option chinese-quiz-option" onclick="selectQuizOption(this, \'' + escapeHtml(q.options[o]) + '\', \'' + escapeHtml(q.answer) + '\')" data-opt-text="' + escapeHtml(q.options[o]) + '">' +
+        label + '. ' + q.options[o] + '</button>';
     }
     html += '</div></div>';
   }
@@ -1149,49 +1072,33 @@ function renderQuizTab(lesson, lessonId) {
   return html;
 }
 
-/* ---- Helper: Practice & Quiz ---- */
+/* ---- Helpers: Practice & Quiz ---- */
 
 function generatePracticeOptions(correctWord, allWords) {
   var correct = correctWord.sr || '';
   var options = [correct];
-
-  // Collect all other translations
   var pool = [];
   for (var i = 0; i < allWords.length; i++) {
-    if (allWords[i].sr !== correct && allWords[i].sr) {
-      pool.push(allWords[i].sr);
-    }
+    if (allWords[i].sr !== correct && allWords[i].sr) pool.push(allWords[i].sr);
   }
-
-  // Shuffle and pick 3 distractors
   shuffleArray(pool);
   for (var j = 0; j < Math.min(3, pool.length); j++) {
-    if (options.indexOf(pool[j]) < 0) {
-      options.push(pool[j]);
-    }
+    if (options.indexOf(pool[j]) < 0) options.push(pool[j]);
   }
-
-  // Fill remaining slots with generic options
   var fillers = ['Zdravo', 'Hvala', 'Doviđenja', 'Dobro', 'Molim'];
   while (options.length < 4) {
-    var filler = fillers[Math.floor(Math.random() * fillers.length)];
-    if (options.indexOf(filler) < 0) {
-      options.push(filler);
-    }
+    var f = fillers[Math.floor(Math.random() * fillers.length)];
+    if (options.indexOf(f) < 0) options.push(f);
   }
-
   shuffleArray(options);
   return options;
 }
 
 function generateQuizQuestions(words) {
   var questions = [];
-  var used = {};
-
   for (var i = 0; i < words.length && i < 5; i++) {
     var w = words[i];
     var direction = Math.random() > 0.5 ? 'zh2sr' : 'sr2zh';
-
     if (direction === 'zh2sr') {
       questions.push({
         question: w.zh + ' 的意思是？',
@@ -1206,141 +1113,59 @@ function generateQuizQuestions(words) {
       });
     }
   }
-
   return questions;
 }
 
 function generateQuizOptions(correct, allWords, field) {
   var options = [correct];
   var pool = [];
-
   for (var i = 0; i < allWords.length; i++) {
     var val = allWords[i][field];
-    if (val && val !== correct) {
-      pool.push(val);
-    }
+    if (val && val !== correct) pool.push(val);
   }
-
   shuffleArray(pool);
   for (var j = 0; j < Math.min(3, pool.length); j++) {
-    if (options.indexOf(pool[j]) < 0) {
-      options.push(pool[j]);
-    }
+    if (options.indexOf(pool[j]) < 0) options.push(pool[j]);
   }
-
   shuffleArray(options);
   return options;
 }
 
-function getPhaseGrammar(phaseId) {
-  var grammarMap = {
-    1: {
-      explanation: _(
-        '汉语拼音 (Hànyǔ Pīnyīn) 是学习中文发音的基础。每个汉字对应一个音节，由声母(initial)和韵母(final)组成。四个声调改变意思：mā(妈)、má(麻)、mǎ(马)、mà(骂)。',
-        'Pinyin je osnova za učenje kineskog izgovora. Svaki slog se sastoji od inicijala (suglasnik) i finala (samoglasnik). Četiri tona menjaju značenje: mā (mama), má (konoplja), mǎ (konj), mà (psovati).',
-        'Pinyin is the foundation of Chinese pronunciation. Each syllable has an initial (consonant) and final (vowel). Four tones change meaning: mā (mother), má (hemp), mǎ (horse), mà (curse).'
-      ),
-      examples: [
-        { zh: 'nǐ hǎo', py: 'nǐ hǎo', sr: 'Zdravo (doslovno: ti + dobro)' },
-        { zh: 'xiè xie', py: 'xiè xie', sr: 'Hvala' }
-      ]
-    },
-    2: {
-      explanation: _(
-        '中文的基本语序是：主语 + 时间 + 地点 + 动词 + 宾语。疑问词"吗"(ma)放在句尾将陈述变为是非问句。',
-        'Osnovni red reči u kineskom: Subjekat + Vreme + Mesto + Glagol + Objekat. Rečca 吗 (ma) na kraju rečenice pretvara izjavu u pitanje.',
-        'Basic word order in Chinese: Subject + Time + Place + Verb + Object. The particle 吗 (ma) at the end turns a statement into a yes/no question.'
-      ),
-      examples: [
-        { zh: '你去中国吗？', py: 'nǐ qù zhōng guó ma', sr: 'Ideš li u Kinu?' },
-        { zh: '我今天去学校。', py: 'wǒ jīn tiān qù xué xiào', sr: 'Ja danas idem u školu.' }
-      ]
-    },
-    3: {
-      explanation: _(
-        '社交中常用"请"(qǐng)表示礼貌。量词非常重要：一个人、一本书、一杯茶。否定用"不"(bù)或"没"(méi)。',
-        'U društvenim situacijama koristi se 请 (qǐng) za učtivost. Merno reči (量词) su važne: 一个人 (jedna osoba), 一本书 (jedna knjiga). Negacija sa 不 (bù) ili 没 (méi).',
-        'Use 请 (qǐng) for politeness in social settings. Measure words (量词) are important: 一个人 (one person), 一本书 (one book). Negate with 不 (bù) or 没 (méi).'
-      ),
-      examples: [
-        { zh: '请坐。', py: 'qǐng zuò', sr: 'Sedite, molim.' },
-        { zh: '我没有钱。', py: 'wǒ méi yǒu qián', sr: 'Nemam novac.' }
-      ]
-    },
-    4: {
-      explanation: _(
-        '表达情感时常用"很"(hěn)表示程度。感叹句用"太...了"(tài...le)结构。"想"(xiǎng)表示想念或想要。',
-        'Za izražavanje emocija koristi se 很 (hěn) za stepen. Uzvične rečenice koriste 太...了 (tài...le). 想 (xiǎng) znači nedostajati ili želeti.',
-        'Use 很 (hěn) for expressing degree. Exclamatory sentences use 太...了 (tài...le). 想 (xiǎng) means to miss or to want.'
-      ),
-      examples: [
-        { zh: '我很想你。', py: 'wǒ hěn xiǎng nǐ', sr: 'Mnogo mi nedostaješ.' },
-        { zh: '太好了！', py: 'tài hǎo le', sr: 'Odlično!' }
-      ]
-    },
-    5: {
-      explanation: _(
-        '中文的"了"(le)表示动作完成或状态变化。"着"(zhe)表示持续状态。"过"(guo)表示过去的经历。',
-        'Rečca 了 (le) označava završetak radnje ili promenu stanja. 着 (zhe) označava kontinuirano stanje. 过 (guo) označava prošlo iskustvo.',
-        'The particle 了 (le) marks completed action or change of state. 着 (zhe) marks continuous state. 过 (guo) marks past experience.'
-      ),
-      examples: [
-        { zh: '我吃了。', py: 'wǒ chī le', sr: 'Pojeo/la sam.' },
-        { zh: '我去过中国。', py: 'wǒ qù guo zhōng guó', sr: 'Bio/la sam u Kini.' }
-      ]
-    },
-    6: {
-      explanation: _(
-        '复合句使用"因为...所以..."(yīn wèi...suǒ yǐ...) 表因果，"虽然...但是..."(suī rán...dàn shì...) 表转折。"把"(bǎ)结构是中文特有的。',
-        'Složene rečenice koriste 因为...所以... (jer...zato...) za uzrok-posledicu, 虽然...但是... (iako...ali...) za kontrast. 把 (bǎ) konstrukcija je jedinstvena za kineski.',
-        'Complex sentences use 因为...所以... (because...therefore...) for cause-effect, 虽然...但是... (although...but...) for contrast. The 把 (bǎ) construction is unique to Chinese.'
-      ),
-      examples: [
-        { zh: '因为下雨，所以我不去。', py: 'yīn wèi xià yǔ, suǒ yǐ wǒ bú qù', sr: 'Zato što pada kiša, ne idem.' },
-        { zh: '虽然累，但是开心。', py: 'suī rán lèi, dàn shì kāi xīn', sr: 'Iako sam umoran/na, srećan/na sam.' }
-      ]
-    }
-  };
-
-  return grammarMap[phaseId] || grammarMap[1];
-}
-
 /* ================================================================
-   7. INTERACTION HANDLERS
+   8. INTERACTION HANDLERS
    ================================================================ */
 
 function checkPracticeAnswer(btn, selectedAnswer, correctAnswer, questionEl) {
-  var allOptions = questionEl.querySelectorAll('.chinese-practice-option');
+  var allOptions = questionEl.querySelectorAll('.lrn-practice-option');
   for (var i = 0; i < allOptions.length; i++) {
     allOptions[i].disabled = true;
     allOptions[i].style.cursor = 'default';
     if (allOptions[i].textContent === correctAnswer) {
-      allOptions[i].className = 'chinese-practice-option correct';
+      allOptions[i].className = 'lrn-practice-option correct';
     }
   }
 
   if (selectedAnswer === correctAnswer) {
-    btn.className = 'chinese-practice-option correct';
+    btn.className = 'lrn-practice-option correct';
   } else {
-    btn.className = 'chinese-practice-option wrong';
+    btn.className = 'lrn-practice-option wrong';
   }
 
   // Update result area
-  var resultArea = questionEl.closest('.chinese-practice-section').querySelector('.chinese-practice-result');
-  if (resultArea) {
-    var allCorrect = true;
-    var allQuestions = resultArea.closest('.chinese-practice-section').querySelectorAll('.chinese-practice-question');
-    for (var q = 0; q < allQuestions.length; q++) {
-      var selected = allQuestions[q].querySelector('.chinese-practice-option.correct, .chinese-practice-option.wrong');
-      if (!selected || selected.classList.contains('wrong')) {
-        allCorrect = false;
-        break;
-      }
-    }
-    if (allCorrect) {
-      resultArea.innerHTML = '<div class="chinese-result-success">✅ ' +
-        _('全部正确！', 'Sve tačno!', 'All correct!') + '</div>';
-    }
+  var section = document.querySelector('.chinese-practice-section');
+  if (!section) return;
+  var resultArea = section.querySelector('.chinese-practice-result');
+  if (!resultArea) return;
+
+  var allQuestions = section.querySelectorAll('.chinese-practice-question');
+  var allCorrect = true;
+  for (var q = 0; q < allQuestions.length; q++) {
+    var selected = allQuestions[q].querySelector('.lrn-practice-option.correct, .lrn-practice-option.wrong');
+    if (!selected || selected.className.indexOf('wrong') >= 0) { allCorrect = false; break; }
+  }
+  if (allCorrect) {
+    resultArea.innerHTML = '<div class="lrn-practice-feedback correct">✅ ' +
+      _('全部正确！', 'Sve tačno!', 'All correct!') + '</div>';
   }
 }
 
@@ -1348,27 +1173,19 @@ var _quizAnswers = {};
 
 function selectQuizOption(btn, selectedAnswer, correctAnswer) {
   var questionEl = btn.closest('.chinese-quiz-question');
-  var index = questionEl.getAttribute('data-index');
   var allOptions = questionEl.querySelectorAll('.chinese-quiz-option');
-
-  for (var i = 0; i < allOptions.length; i++) {
-    allOptions[i].classList.remove('selected');
-  }
+  for (var i = 0; i < allOptions.length; i++) allOptions[i].classList.remove('selected');
   btn.classList.add('selected');
-
-  var isCorrect = selectedAnswer === correctAnswer;
-  _quizAnswers[index] = isCorrect;
+  _quizAnswers[questionEl.getAttribute('data-index')] = (selectedAnswer === correctAnswer);
 }
 
 function submitQuiz(lessonId) {
-  var totalQuestions = 0;
-  var correctCount = 0;
-
   var quizSection = document.querySelector('.chinese-quiz-section[data-lesson-id="' + lessonId + '"]');
   if (!quizSection) return;
 
   var questions = quizSection.querySelectorAll('.chinese-quiz-question');
-  totalQuestions = questions.length;
+  var totalQuestions = questions.length;
+  var correctCount = 0;
 
   var submitBtn = quizSection.querySelector('.chinese-quiz-submit');
   if (submitBtn) submitBtn.style.display = 'none';
@@ -1382,181 +1199,183 @@ function submitQuiz(lessonId) {
     for (var o = 0; o < allOpts.length; o++) {
       allOpts[o].disabled = true;
       allOpts[o].style.cursor = 'default';
-      if (allOpts[o].textContent.indexOf(answer) >= 0) {
-        allOpts[o].classList.add('correct');
-      }
+      // FIXED: exact text match via data-opt-text attribute
+      var optText = allOpts[o].getAttribute('data-opt-text') || allOpts[o].textContent.replace(/^[A-D]\. /, '').trim();
+      if (optText === answer) allOpts[o].classList.add('correct');
     }
 
     if (selected) {
-      var selectedText = selected.textContent.substring(2).trim(); // Remove "A. " prefix
-      if (selectedText === answer) {
-        correctCount++;
-      } else {
-        selected.classList.add('wrong');
-      }
+      var selectedText = selected.getAttribute('data-opt-text') || selected.textContent.replace(/^[A-D]\. /, '').trim();
+      if (selectedText === answer) { correctCount++; }
+      else { selected.classList.add('wrong'); }
     }
   }
 
   var score = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
   var resultEl = quizSection.querySelector('.chinese-quiz-result');
+  if (!resultEl) return;
 
-  var resultHtml = '<div class="chinese-quiz-score">';
-  resultHtml += '<span class="chinese-quiz-score-num">' + score + '%</span>';
-  resultHtml += '<span class="chinese-quiz-score-label">' +
-    correctCount + '/' + totalQuestions + ' ' + _('正确', 'tačno', 'correct') + '</span>';
-  resultHtml += '</div>';
+  var resultHtml = '<div class="lrn-quiz-result">';
+  resultHtml += '<span class="lrn-quiz-score-icon">' + (score >= 80 ? '🌟' : score >= 60 ? '👍' : '💪') + '</span>';
+  resultHtml += '<div class="lrn-quiz-score-text">' + score + '%</div>';
+  resultHtml += '<div class="lrn-quiz-score-detail">' + correctCount + '/' + totalQuestions + ' ' + _('正确', 'tačno', 'correct') + '</div>';
 
-  // Auto-mark complete if score >= 60%
+  // Stars
+  var starCount = score >= 100 ? 5 : score >= 80 ? 4 : score >= 60 ? 3 : score >= 40 ? 2 : score >= 20 ? 1 : 0;
+  resultHtml += '<div class="lrn-quiz-stars">';
+  for (var s = 0; s < 5; s++) {
+    resultHtml += '<span class="star ' + (s < starCount ? 'filled' : 'empty') + '">⭐</span>';
+  }
+  resultHtml += '</div></div>';
+
   if (score >= 60) {
     var newAchievements = markLessonComplete(lessonId, score, 0);
-    resultHtml += '<div class="chinese-result-success">✅ ' +
+    resultHtml += '<div class="lrn-practice-feedback correct">✅ ' +
       _('恭喜通过！', 'Čestitamo!', 'Congratulations!') + '</div>';
 
     if (newAchievements && newAchievements.length > 0) {
-      resultHtml += '<div class="chinese-new-achievements">';
-      resultHtml += '<p>' + _('新成就解锁！', 'Nova dostignuća!', 'New achievements!') + '</p>';
+      resultHtml += '<div style="text-align:center;margin-top:8px">';
       for (var a = 0; a < newAchievements.length; a++) {
         if (newAchievements[a]) {
-          resultHtml += '<div class="chinese-achievement-flash">';
-          resultHtml += '<span>' + (newAchievements[a].icon || '🏆') + ' ' +
-            langName(newAchievements[a].name) + '</span>';
+          resultHtml += '<div style="font-size:.7rem;margin:4px;padding:6px 12px;background:var(--rose-light);border-radius:10px;display:inline-block">';
+          resultHtml += (newAchievements[a].icon || '🏆') + ' ' + langName(newAchievements[a].name);
           resultHtml += '</div>';
         }
       }
       resultHtml += '</div>';
     }
 
-    // "Next lesson" button
     var nextLesson = lessonId + 1;
     if (nextLesson <= TOTAL_LESSONS && isLessonUnlocked(nextLesson)) {
       resultHtml += '<button class="btn btn-primary" onclick="renderLessonView(' + nextLesson + ')" style="margin-top:12px;width:100%">' +
         _('下一课 ▸', 'Sledeća lekcija ▸', 'Next Lesson ▸') + '</button>';
     }
+
+    triggerCelebration();
+
+    if (typeof toast !== 'undefined') {
+      toast(_('✅ 第' + lessonId + '课完成！', '✅ Lekcija ' + lessonId + ' završena!', '✅ Lesson ' + lessonId + ' complete!'));
+    }
   } else {
-    resultHtml += '<div class="chinese-result-fail">' +
+    resultHtml += '<div class="lrn-practice-feedback wrong">' +
       _('未通过（需60%以上），再试一次吧', 'Niste prošli (potrebno 60%), probajte ponovo', 'Not passed (need 60%), try again') +
       '</div>';
-    resultHtml += '<button class="btn btn-outline" onclick="renderLessonView(' + lessonId + ')" style="margin-top:8px;width:100%">' +
+    resultHtml += '<button class="lrn-quiz-retry-btn" onclick="renderLessonView(' + lessonId + ')" style="margin-top:8px;width:100%">' +
       _('重新测验', 'Ponovi test', 'Retry Quiz') + '</button>';
   }
 
   resultEl.innerHTML = resultHtml;
+}
 
-  // Show toast
-  if (score >= 60 && typeof toast !== 'undefined') {
-    toast(_('✅ 第' + lessonId + '课完成！', '✅ Lekcija ' + lessonId + ' završena!', '✅ Lesson ' + lessonId + ' complete!'));
+/* ---- Celebration Effect ---- */
+
+function triggerCelebration() {
+  var colors = ['#E8877B', '#F0985C', '#4EB8B0', '#E8919C', '#9B7EC4', '#D4A843', '#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF'];
+  var container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;';
+
+  for (var i = 0; i < 50; i++) {
+    var piece = document.createElement('div');
+    piece.className = 'lrn-confetti-piece';
+    piece.style.cssText =
+      'position:fixed;width:' + (4 + Math.random() * 8) + 'px;' +
+      'height:' + (4 + Math.random() * 8) + 'px;' +
+      'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px') + ';' +
+      'left:' + (Math.random() * 100) + '%;' +
+      'top:' + (-10 - Math.random() * 20) + 'px;' +
+      'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+      'animation:confetti ' + (1.5 + Math.random() * 3) + 's ease-out forwards;' +
+      'animation-delay:' + (Math.random() * 0.8) + 's;' +
+      'pointer-events:none;z-index:99999;';
+    container.appendChild(piece);
   }
+
+  document.body.appendChild(container);
+  setTimeout(function () {
+    if (container.parentNode) container.parentNode.removeChild(container);
+  }, 4000);
 }
 
 /* ---- Achievement Panel ---- */
 
 function renderAchievementPanel() {
-  var panel = getChinesePanel();
-  if (!panel) return;
-
   var status = getAchievementStatus();
 
-  var html = '<div class="chinese-section">';
-  html += '<button class="btn btn-ghost" onclick="renderChineseHome()">◂ ' + _('返回', 'Nazad', 'Back') + '</button>';
-  html += '<h3 class="chinese-section-title">' + _('成就', 'Dostignuća', 'Achievements') + '</h3>';
-
-  // Summary
-  html += '<div class="chinese-achievement-summary">';
-  html += '<span class="chinese-ach-summary-icon">🏆</span>';
-  html += '<span class="chinese-ach-summary-text">' +
-    status.unlocked + '/' + status.total + ' ' + _('已解锁', 'otključano', 'unlocked') + '</span>';
-  html += '</div>';
-
-  // Achievement grid
-  html += '<div class="chinese-achievement-grid">';
-  for (var i = 0; i < status.list.length; i++) {
-    var ach = status.list[i];
-    var achClass = ach.isUnlocked ? 'chinese-ach-card unlocked' : 'chinese-ach-card locked';
-    html += '<div class="' + achClass + '">';
-    html += '<span class="chinese-ach-icon">' + (ach.isUnlocked ? ach.icon : '🔒') + '</span>';
-    html += '<div class="chinese-ach-name">' + langName(ach.name) + '</div>';
-    html += '<div class="chinese-ach-desc">' + langName(ach.description) + '</div>';
-    if (ach.isUnlocked) {
-      html += '<div class="chinese-ach-points">+' + ach.points + '</div>';
-    }
-    html += '</div>';
+  var statsEl = document.getElementById('lrnAchStats');
+  if (statsEl) {
+    statsEl.innerHTML =
+      '<div class="lrn-ach-stat"><div class="lrn-ach-stat-val">' + status.unlocked + '</div><div class="lrn-ach-stat-label">' + _('已解锁', 'Otključano', 'Unlocked') + '</div></div>' +
+      '<div class="lrn-ach-stat"><div class="lrn-ach-stat-val">' + status.total + '</div><div class="lrn-ach-stat-label">' + _('总计', 'Ukupno', 'Total') + '</div></div>' +
+      '<div class="lrn-ach-stat"><div class="lrn-ach-stat-val">' + status.percent + '%</div><div class="lrn-ach-stat-label">' + _('完成率', 'Završeno', 'Complete') + '</div></div>';
   }
-  html += '</div></div>';
 
-  panel.innerHTML = html;
+  var gridEl = document.getElementById('lrnAchGrid');
+  if (gridEl) {
+    var html = '';
+    for (var i = 0; i < status.list.length; i++) {
+      var ach = status.list[i];
+      html += '<div class="lrn-ach-badge ' + (ach.isUnlocked ? 'unlocked' : 'locked') + '">';
+      html += '<span class="lrn-ach-icon">' + (ach.isUnlocked ? ach.icon : '🔒') + '</span>';
+      html += '<div class="lrn-ach-name">' + langName(ach.name) + '</div>';
+      html += '<div class="lrn-ach-desc">' + langName(ach.description) + '</div>';
+      html += '</div>';
+    }
+    gridEl.innerHTML = html;
+  }
 }
 
 /* ---- Review Panel ---- */
 
 function renderReviewPanel() {
-  var panel = getChinesePanel();
-  if (!panel) return;
-
   var dueReviews = getDueReviews();
-
-  var html = '<div class="chinese-section">';
-  html += '<button class="btn btn-ghost" onclick="renderChineseHome()">◂ ' + _('返回', 'Nazad', 'Back') + '</button>';
-  html += '<h3 class="chinese-section-title">' + _('复习', 'Ponavljanje', 'Review') + '</h3>';
+  var listEl = document.getElementById('lrnReviewFullList');
+  if (!listEl) return;
 
   if (dueReviews.length === 0) {
-    html += '<div class="empty-state"><span class="empty-icon">🎉</span>' +
-      '<span class="empty-text">' + _('暂无待复习课程', 'Nema lekcija za ponavljanje', 'No reviews due') + '</span></div>';
-  } else {
-    var urgent = [];
-    var soon = [];
-    var later = [];
-
-    for (var i = 0; i < dueReviews.length; i++) {
-      if (dueReviews[i].urgency === 'urgent') urgent.push(dueReviews[i]);
-      else if (dueReviews[i].urgency === 'soon') soon.push(dueReviews[i]);
-      else later.push(dueReviews[i]);
-    }
-
-    if (urgent.length > 0) {
-      html += '<div class="chinese-review-group"><h4>🔴 ' + _('紧急', 'Hitno', 'Urgent') + '</h4>';
-      for (var u = 0; u < urgent.length; u++) {
-        html += renderFullReviewItem(urgent[u]);
-      }
-      html += '</div>';
-    }
-
-    if (soon.length > 0) {
-      html += '<div class="chinese-review-group"><h4>🟡 ' + _('即将', 'Uskoro', 'Soon') + '</h4>';
-      for (var s = 0; s < soon.length; s++) {
-        html += renderFullReviewItem(soon[s]);
-      }
-      html += '</div>';
-    }
-
-    if (later.length > 0) {
-      html += '<div class="chinese-review-group"><h4>🟢 ' + _('后续', 'Kasnije', 'Later') + '</h4>';
-      for (var l = 0; l < Math.min(later.length, 10); l++) {
-        html += renderFullReviewItem(later[l]);
-      }
-      html += '</div>';
-    }
+    listEl.innerHTML = '<div class="lrn-empty-state"><span class="lrn-empty-icon">🎉</span>' +
+      '<span class="lrn-empty-text">' + _('暂无待复习课程', 'Nema lekcija za ponavljanje', 'No reviews due') + '</span></div>';
+    return;
   }
 
-  html += '</div>';
-  panel.innerHTML = html;
+  var urgent = [], soon = [], later = [];
+  for (var i = 0; i < dueReviews.length; i++) {
+    if (dueReviews[i].urgency === 'urgent') urgent.push(dueReviews[i]);
+    else if (dueReviews[i].urgency === 'soon') soon.push(dueReviews[i]);
+    else later.push(dueReviews[i]);
+  }
+
+  var html = '';
+  if (urgent.length > 0) {
+    html += '<h4 class="lrn-review-section-title">🔴 ' + _('紧急复习', 'Hitno za pregled', 'Urgent Review') + '</h4>';
+    for (var u = 0; u < urgent.length; u++) html += renderFullReviewItem(urgent[u]);
+  }
+  if (soon.length > 0) {
+    html += '<h4 class="lrn-review-section-title">🟡 ' + _('近期复习', 'Uskoro za pregled', 'Review Soon') + '</h4>';
+    for (var s = 0; s < soon.length; s++) html += renderFullReviewItem(soon[s]);
+  }
+  if (later.length > 0) {
+    html += '<h4 class="lrn-review-section-title">🟢 ' + _('后续复习', 'Kasnije za pregled', 'Review Later') + '</h4>';
+    for (var l = 0; l < Math.min(later.length, 10); l++) html += renderFullReviewItem(later[l]);
+  }
+
+  listEl.innerHTML = html;
 }
 
 function renderFullReviewItem(review) {
-  return '<div class="chinese-review-full-item" onclick="renderLessonView(' + review.lessonId + ')">' +
-    '<span class="chinese-review-icon">' + review.icon + '</span>' +
-    '<div class="chinese-review-info">' +
-    '<div class="chinese-review-topic">' + review.topic + '</div>' +
-    '<div class="chinese-review-due">' +
-    (review.daysUntilDue < 0 ?
-      _('超期 ' + Math.abs(review.daysUntilDue) + ' 天', 'Zakašnjenje ' + Math.abs(review.daysUntilDue) + ' dana', 'Overdue by ' + Math.abs(review.daysUntilDue) + ' days') :
-      review.daysUntilDue === 0 ?
-        _('今天到期', 'Dospijeva danas', 'Due today') :
-        _('还有 ' + review.daysUntilDue + ' 天', 'Preostalo ' + review.daysUntilDue + ' dana', review.daysUntilDue + ' days left')) +
-    '</div></div></div>';
+  var dueText = review.daysUntilDue < 0
+    ? _('超期 ' + Math.abs(review.daysUntilDue) + ' 天', 'Zakašnjenje ' + Math.abs(review.daysUntilDue) + ' dana', 'Overdue by ' + Math.abs(review.daysUntilDue) + ' days')
+    : review.daysUntilDue === 0
+      ? _('今天到期', 'Dospijeva danas', 'Due today')
+      : _('还有 ' + review.daysUntilDue + ' 天', 'Preostalo ' + review.daysUntilDue + ' dana', review.daysUntilDue + ' days left');
+
+  return '<div class="lrn-review-item ' + review.urgency + '" onclick="renderLessonView(' + review.lessonId + ')">' +
+    '<span class="lrn-review-dot ' + review.urgency + '"></span>' +
+    '<div class="lrn-review-info"><div class="lrn-review-topic">' + review.icon + ' ' + review.topic + '</div>' +
+    '<div class="lrn-review-due">' + dueText + '</div></div></div>';
 }
 
 /* ================================================================
-   8. UTILITY FUNCTIONS
+   9. UTILITY FUNCTIONS
    ================================================================ */
 
 function _(zh, sr, en) {
@@ -1576,28 +1395,21 @@ function langName(obj) {
 }
 
 function getTopicText(topic) {
-  if (typeof topic === 'object' && topic !== null) {
-    return _(topic.zh||'', topic.sr||'', topic.en||'');
-  }
+  if (typeof topic === 'object' && topic !== null) return _(topic.zh || '', topic.sr || '', topic.en || '');
   return String(topic || '');
 }
 
 function getLessonById(id) {
   var numId = typeof id === 'string' ? parseInt(id, 10) : id;
   for (var i = 0; i < LESSONS_DATA.length; i++) {
-    var lesson = LESSONS_DATA[i];
-    // Try matching by lesson.id first, then by array index+1
-    if (lesson.id === numId) return lesson;
-    if (i + 1 === numId) return lesson;
+    if (LESSONS_DATA[i].id === numId) return LESSONS_DATA[i];
+    if (i + 1 === numId) return LESSONS_DATA[i];
   }
   return null;
 }
 
 function fmtDateLocal(d) {
-  var y = d.getFullYear();
-  var m = String(d.getMonth() + 1).padStart(2, '0');
-  var day = String(d.getDate()).padStart(2, '0');
-  return y + '-' + m + '-' + day;
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 
 function parseDateLocal(str) {
@@ -1615,25 +1427,18 @@ function addDaysLocal(d, days) {
 function shuffleArray(arr) {
   for (var i = arr.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+    var temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
   }
   return arr;
 }
 
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 /* ================================================================
-   EXPOSE — Make functions available to app.js
+   EXPOSE — Global functions for app.js and HTML onclick handlers
    ================================================================ */
 
 window.initChineseTab = initChineseTab;
@@ -1642,6 +1447,8 @@ window.renderPhaseLessons = renderPhaseLessons;
 window.renderLessonView = renderLessonView;
 window.renderAchievementPanel = renderAchievementPanel;
 window.renderReviewPanel = renderReviewPanel;
+window.switchLrnView = switchLrnView;
+window.continueLearning = continueLearning;
 window.switchLessonTab = switchLessonTab;
 window.checkPracticeAnswer = checkPracticeAnswer;
 window.selectQuizOption = selectQuizOption;
@@ -1658,4 +1465,5 @@ window.markLessonComplete = markLessonComplete;
 window.markLessonReviewed = markLessonReviewed;
 window.getAchievementStatus = getAchievementStatus;
 window.getLessonById = getLessonById;
+window.speakWord = speakWord;
 window.lessonsEngineReady = true;

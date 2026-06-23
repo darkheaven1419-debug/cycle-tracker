@@ -1297,38 +1297,8 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
 .lrn-sub-label { display:block; font-size:.58rem; margin-top:2px; }
 .lrn-view { display:none; }
 .lrn-view.active { display:block; animation:panelSlideIn .25s ease; }
-.lrn-streak-card { display:flex; align-items:center; gap:14px; padding:16px; background:var(--card); border-radius:16px; margin-bottom:12px; border:1px solid var(--border); }
-.lrn-streak-icon { font-size:2.2rem; }
-.lrn-streak-info { flex:1; }
-.lrn-streak-count { font-size:1.6rem; font-weight:800; color:var(--love); line-height:1; }
-.lrn-streak-label { font-size:.65rem; color:var(--text-muted); }
-.lrn-ring-container { position:relative; width:64px; height:64px; flex-shrink:0; }
-.lrn-ring { width:64px; height:64px; transform:rotate(-90deg); }
-.lrn-ring-bg { fill:none; stroke:var(--border-soft); stroke-width:8; }
-.lrn-ring-fg { fill:none; stroke:var(--love); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .6s ease; }
-.lrn-ring-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:800; color:var(--love); }
-.lrn-continue-card { display:flex; align-items:center; gap:12px; padding:14px 16px; background:linear-gradient(135deg,var(--rose-light),var(--dust)); border-radius:14px; margin-bottom:12px; border:1px solid var(--gold); cursor:pointer; transition:transform .15s; touch-action:manipulation; }
-.lrn-continue-card:active { transform:scale(.98); }
-.lrn-continue-icon { font-size:1.8rem; }
-.lrn-continue-info { flex:1; }
-.lrn-continue-title { font-size:.82rem; font-weight:700; color:var(--text); margin-bottom:2px; }
-.lrn-continue-sub { font-size:.65rem; color:var(--text-muted); }
-.lrn-continue-btn { width:44px; height:44px; border-radius:50%; border:none; background:var(--love); color:#fff; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; touch-action:manipulation; }
-.lrn-continue-btn:active { transform:scale(.9); }
-.lrn-phase-title { font-size:.72rem; font-weight:700; color:var(--text); margin-bottom:10px; padding-left:4px; }
-.lrn-phase-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
-@media(max-width:420px){ .lrn-phase-grid { grid-template-columns:repeat(2,1fr); } }
-.lrn-phase-card { padding:14px 10px; border-radius:14px; background:var(--card); border:2px solid var(--border); text-align:center; cursor:pointer; transition:all .2s; touch-action:manipulation; position:relative; overflow:hidden; }
-.lrn-phase-card:active { transform:scale(.96); }
-.lrn-phase-card.completed { border-color:var(--sage); background:var(--sage-light); }
-.lrn-phase-card.active { border-color:var(--love); box-shadow:0 0 0 2px var(--rose-light); }
-.lrn-phase-card.locked { opacity:.45; pointer-events:none; }
-.lrn-phase-icon { font-size:1.8rem; display:block; margin-bottom:6px; }
-.lrn-phase-name { font-size:.7rem; font-weight:700; color:var(--text); margin-bottom:4px; }
-.lrn-phase-progress { font-size:.58rem; color:var(--text-muted); margin-bottom:6px; }
-.lrn-phase-bar { height:4px; background:var(--border-soft); border-radius:4px; overflow:hidden; }
-.lrn-phase-bar-fill { height:100%; border-radius:4px; transition:width .4s ease; }
-.lrn-phase-lock { position:absolute; top:6px; right:8px; font-size:.9rem; }
+/* lrn-streak-card, lrn-phase-card, lrn-continue-card, lrn-ring:
+   full definitions in the advanced section below (Phase Color System area) */
 .lrn-review-card { padding:14px 16px; background:var(--card); border-radius:14px; margin-bottom:12px; border:1px solid var(--border); }
 .lrn-review-header { font-size:.72rem; font-weight:700; color:var(--text); margin-bottom:10px; }
 .lrn-review-list { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
@@ -2269,3 +2239,26 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
    │ audioPulse           │ Audio button pulsing when playing             │
    └──────────────────────┴────────────────────────────────────────────────┘
 */
+
+/* ================================================================
+   11. DAILY MOTIVATION — Encouragement banner
+   ================================================================ */
+.lrn-daily-motivation {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--dust), var(--rose-light));
+  border-radius: 12px; border: 1px solid var(--gold);
+  font-size: .7rem; color: var(--text); line-height: 1.5;
+  animation: lrnSlideUp .4s cubic-bezier(.22,1,.36,1);
+}
+[data-theme="dark"] .lrn-daily-motivation {
+  background: linear-gradient(135deg, #2A2220, #302428);
+}
+.lrn-daily-motivation-icon {
+  font-size: 1.2rem; flex-shrink: 0;
+}
+
+@keyframes lrnSlideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
