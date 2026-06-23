@@ -4,7 +4,7 @@
   "description": "Personal cycle tracker & cross-cultural love diary — v8",
   "start_url": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#EDE4DD",
   "theme_color": "#D47A8A",
   "icons": [

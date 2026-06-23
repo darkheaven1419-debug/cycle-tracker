@@ -39,7 +39,7 @@ function switchProfile(p) {
   updateProfileUI();
   renderAll();
   loadSettingsUI();
-  if (p === 'andjela') { showGreeting(); }
+  if (p === 'andjela' && !sessionStorage.getItem('_greetingShown')) { showGreeting(); }
   toast((lang==='sr'?'Profil: ':'') + (p==='andjela' ? '🌸 Anđela' : '👦 Barry') + ' · ' + t('profileSwitch'));
 }
 function toggleProfile() { switchProfile(activeProfile === 'andjela' ? 'barry' : 'andjela'); }
@@ -1608,16 +1608,16 @@ async function bootApp() {
   fetchWeather();
   loadCalendarData(function(data) { solarTermsCache = (data && data.solarTerms) || []; localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache)); renderCalendar(); });
   showOnboardingIfNeeded();
-  if (activeProfile === 'andjela') showGreeting();
+  if (activeProfile === 'andjela' && !sessionStorage.getItem('_greetingShown')) showGreeting();
   updateMoonPhase();
   updateAnniversaryCount();
   updateCycleCounter(predict().cycles.length);
   lastCycleCount = predict().cycles.length;
   updateLoveCounter();
   updateProfileUI();
-  // Show/hide symptoms tab based on activeProfile (Barry only)
+  // Dim symptoms tab for Anđela (click shows toast instead of redirect)
   var symTab = document.getElementById('tab-symptoms');
-  if (symTab) symTab.style.display = activeProfile === 'barry' ? '' : 'none';
+  if (symTab) { symTab.style.opacity = activeProfile === 'barry' ? '' : '0.45'; symTab.title = activeProfile === 'barry' ? '' : (t('profileOnly')||'Only Barry can view this'); }
   randomThinkingOfYou();
 
   // Modal keyboard trap: Escape closes, Tab traps focus
@@ -2110,6 +2110,8 @@ function randomThinkingOfYou() {
    GREETING OVERLAY
    ================================================================ */
 function showGreeting() {
+  if (sessionStorage.getItem('_greetingShown')) return;
+  sessionStorage.setItem('_greetingShown', '1');
   var overlay = document.getElementById('greetingOverlay');
   if (!overlay) return;
   var g = (I18N[lang] || I18N[lang.split('-')[0]] || I18N['sr']).greeting; if (!g) return;
@@ -2694,7 +2696,22 @@ document.getElementById('fabBtn').addEventListener('click',function(){
     clearTimeout(longPressTimer);
     fab.classList.remove('show-label');
   });
+  fab.addEventListener('mouseenter', function() { fab.classList.add('show-label'); });
+  fab.addEventListener('mouseleave', function() { fab.classList.remove('show-label'); });
 })();
+
+/* Escape key handler — dismiss overlays/modals */
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  var greeting = document.getElementById('greetingOverlay');
+  if (greeting && !greeting.classList.contains('hidden') && greeting.style.display !== 'none') {
+    greeting.style.display = 'none'; greeting.classList.add('hidden'); return;
+  }
+  var modal = document.getElementById('modal');
+  if (modal && !modal.parentElement.classList.contains('hidden')) { closeModal(); return; }
+  var importModal = document.querySelector('.import-modal-overlay');
+  if (importModal) { importModal.remove(); return; }
+});
 
 /* ================================================================
    MODAL
@@ -2997,18 +3014,22 @@ function goToTodayCulture() { _cultureCardIdx = getTodaysCultureIndex(); renderC
    END CULTURE MODULE
    ================================================================ */
 
-var _tabOrder = ['dashboard','stats','symptoms','tips','diary','chinese','settings'];
+var _tabOrder = ['dashboard','stats','symptoms','diary','chinese','settings'];
 var _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{
   var id = btn.dataset.panel;
   // Skip if already on this tab — prevents double-click animation glitch
   if (btn.classList.contains('active')) return;
+  // Symptom tab only for Barry — show message for Anđela
+  if(id==='symptoms' && activeProfile!=='barry'){toast(t('profileOnly')||'Only Barry can view this');return;}
   var newIdx = _tabOrder.indexOf(id);
+  if(newIdx===-1)return;
   var dir = newIdx > _prevTabIdx ? 'slide-out-left' : 'slide-out-right';
   _prevTabIdx = newIdx;
-  // Deactivate old
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  // Update aria-selected on all tabs
+  document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');t.setAttribute('aria-selected','false');});
   btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
   var oldPanel = document.querySelector('.panel.active');
   if (oldPanel) { oldPanel.classList.add(dir); oldPanel.addEventListener('animationend', function h() { oldPanel.removeEventListener('animationend', h); oldPanel.classList.remove('active', dir); }, {once:true}); }
   else { document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); }
@@ -3020,10 +3041,9 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   var app = document.querySelector('.app');
   if (app) app.scrollTop = 0;
   window.scrollTo({top: 0, behavior: 'smooth'});
-  if(id==='tips')renderTips();
   if(id==='settings')loadSettingsUI();
-  if(id==='symptoms'){if(activeProfile!=='barry'){switchToTab('dashboard');return;}if(getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
-  if(id==='dashboard'){initDashboard();}
+  if(id==='symptoms'){if(getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
+  if(id==='dashboard'){initDashboard();renderTips();}
   if(id==='stats'){renderStatsPanel();}
   if(id==='diary'){initSharedDiaryTab();}
   if(id==='chinese'){if(typeof initChineseTab==='function')initChineseTab();}
