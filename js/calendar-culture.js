@@ -142,7 +142,7 @@ function renderLunarInfo() {
     ' · ' +
     '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.shengxiao)) + '">' + (zoo[info.shengXiao]||'') + ' ' + info.shengXiao + _CL({sr:'',en:'','zh-CN':'年'}) + '</span>' +
     ' · ' +
-    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.lunar)) + '">' + lunar.monthName + ' ' + lunar.dayName + '</span>' +
+    '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.lunar)) + '">' + _CL({sr:'Lunarni '+lunar.month+'. mesec, '+lunar.day+'. dan',en:'Lunar '+lunar.month+'/'+lunar.day,'zh-CN':lunar.monthName+lunar.dayName}) + '</span>' +
     ' <span style="cursor:pointer;font-size:.7rem" onclick="renderCultureExplain()" title="' + escAttr(_CL({sr:'Klikni za objasnjenje',en:'Click to learn more','zh-CN':'点击了解更多'})) + '">ℹ️</span>';
 }
 
@@ -218,6 +218,11 @@ function getLunarCellClass(date) {
 }
 
 function getLunarCellText(date) {
+  var lunar = Lunar.toLunar(date);
+  if (!lunar) return '';
+  // ZH mode: Chinese day names (初三, 十五...); SR/EN: numeric (L3, L15...)
+  if (lang === 'sr' || lang === 'sr-RS') return lunar.day;
+  if (lang === 'en') return lunar.day;
   return Lunar.getLunarDayName(date);
 }
 
