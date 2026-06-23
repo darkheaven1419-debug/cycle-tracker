@@ -2115,7 +2115,7 @@ function randomThinkingOfYou() {
 function showGreeting() {
   var overlay = document.getElementById('greetingOverlay');
   if (!overlay) return;
-  var g = I18N['sr'].greeting; if (!g) return;
+  var g = (I18N[lang] || I18N[lang.split('-')[0]] || I18N['sr']).greeting; if (!g) return;
   var hour = new Date().getHours();
   var slot;
   if (hour >= 5 && hour < 12) slot = g.morning;
