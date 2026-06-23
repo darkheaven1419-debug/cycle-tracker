@@ -11,7 +11,7 @@
 <link rel="dns-prefetch" href="https://api.open-meteo.com">
 <link rel="dns-prefetch" href="https://api.github.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=24">
+<link rel="stylesheet" href="styles.css?v=25">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <meta name="description" content="Personal cycle tracker & cross-cultural love diary for Anđela & Barry — tracking cycles, shared diaries, Chinese learning, and long-distance love across 7,000km">
 <meta property="og:title" content="🌸 Anđelin Ciklus">
@@ -198,15 +198,6 @@
   <div id="cultureExplain" class="culture-card" style="display:none"></div>
 	  <div class="pred-legend" id="predLegend" style="display:none">※ 半透明标记为未来2-3周期的预测</div>
 
-  <nav><h2 class="sr-only" id="main-content-heading">Main Content</h2><div class="tabs" role="tablist">
-    <button class="tab active" data-panel="dashboard" role="tab" id="tab-dashboard" aria-selected="true" aria-controls="panel-dashboard">🏠 <span class="tb-label" id="tb-dashboard">Početna</span></button>
-    <button class="tab" data-panel="stats" role="tab" id="tab-stats" aria-selected="false" aria-controls="panel-stats">📊 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false" aria-controls="panel-symptoms">📝 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false" aria-controls="panel-tips">💡 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false" aria-controls="panel-diary">💌 <span class="tb-label"></span></button>
-    <button class="tab" data-panel="chinese" role="tab" id="tab-chinese" aria-selected="false" aria-controls="panel-chinese">📖 <span class="tb-label" id="tb-chinese">Kineski</span></button>
-    <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">⚙ <span class="tb-label"></span></button>
-  </div></nav>
 
   <div class="panel active" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
     <div class="dash-welcome" style="font-size:.85rem;color:var(--text);text-align:center;padding:16px"><span style="font-size:2rem;display:block;animation:pulse 1.5s ease-in-out infinite">🌸</span></div>
@@ -603,6 +594,20 @@
 </div>
 </main>
 
+<!-- Fixed Bottom Tab Navigation -->
+<nav class="tabs-nav" role="navigation" aria-label="Main navigation">
+  <h2 class="sr-only">Main Navigation</h2>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-panel="dashboard" role="tab" id="tab-dashboard" aria-selected="true" aria-controls="panel-dashboard">🏠 <span class="tb-label" id="tb-dashboard">Početna</span></button>
+    <button class="tab" data-panel="stats" role="tab" id="tab-stats" aria-selected="false" aria-controls="panel-stats">📊 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="symptoms" role="tab" id="tab-symptoms" aria-selected="false" aria-controls="panel-symptoms">📝 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="tips" role="tab" id="tab-tips" aria-selected="false" aria-controls="panel-tips">💡 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="diary" role="tab" id="tab-diary" aria-selected="false" aria-controls="panel-diary">💌 <span class="tb-label"></span></button>
+    <button class="tab" data-panel="chinese" role="tab" id="tab-chinese" aria-selected="false" aria-controls="panel-chinese">📖 <span class="tb-label" id="tb-chinese">Kineski</span></button>
+    <button class="tab" data-panel="settings" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">⚙ <span class="tb-label"></span></button>
+  </div>
+</nav>
+
 <button class="fab hidden" id="fabBtn" title="Quick add" aria-label="Quick add period">
   <span id="fab-icon">🩸</span>
   <span class="fab-label" id="fab-label"></span>
@@ -630,7 +635,7 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=46" defer></script>
+<script src="app.js?v=47" defer></script>
 </body>
 </html>
 

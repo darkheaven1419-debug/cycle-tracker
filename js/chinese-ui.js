@@ -537,46 +537,87 @@ function toggleFavBtn(btn, zh) {
   btn.className = 'lrn-fav-btn' + (nowFav ? ' fav-active' : '');
 }
 
-// Preload Chinese voices on first interaction (mobile requires user gesture)
-var _voicesPreloaded = false;
+/* ================================================================
+   SPEECH SYNTHESIS — Mobile-optimized with engine pre-warming
+   ================================================================ */
 
-function preloadVoices() {
-  if (_voicesPreloaded) return;
-  _voicesPreloaded = true;
-  if (!window.speechSynthesis) return;
-  // On mobile, voices load asynchronously — trigger a dummy utterance to populate getVoices()
-  var dummy = new SpeechSynthesisUtterance('');
-  dummy.volume = 0;
-  window.speechSynthesis.speak(dummy);
-  // Some browsers need getVoices() called after a user gesture
+// Cached Chinese voice — set once on first load, reused instantly
+var _zhVoice = null;
+var _voicesReady = false;
+
+// Listen for async voice loading (mobile browsers load voices after page load)
+if (window.speechSynthesis) {
+  // On some browsers, getVoices() returns empty until voiceschanged fires
   speechSynthesis.getVoices();
+  speechSynthesis.addEventListener('voiceschanged', function () {
+    _pickChineseVoice();
+  });
+  // Also try immediately (works on desktop, may be empty on mobile)
+  _pickChineseVoice();
 }
 
+function _pickChineseVoice() {
+  var voices = speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return;
+  // Prefer zh-CN mainland, then any Chinese variant
+  for (var i = 0; i < voices.length; i++) {
+    if (voices[i].lang === 'zh-CN') { _zhVoice = voices[i]; _voicesReady = true; return; }
+  }
+  for (var j = 0; j < voices.length; j++) {
+    if (voices[j].lang.indexOf('zh') === 0) { _zhVoice = voices[j]; _voicesReady = true; return; }
+  }
+}
+
+// Pre-warm the TTS engine — called once when user opens the Chinese tab.
+// On Android, the first speak() call can take 1-3 seconds while the engine loads.
+// On iOS, speechSynthesis requires a user gesture — we just load voices here
+// and defer actual speaking to user-initiated clicks.
+function preloadVoices() {
+  if (!window.speechSynthesis) return;
+  var synth = window.speechSynthesis;
+  // Resume if paused (some browsers pause after a while)
+  if (synth.paused) synth.resume();
+  // Pick voice if not yet selected
+  if (!_zhVoice) _pickChineseVoice();
+  // Only warm up on non-iOS (iOS requires user gesture for speak())
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!isIOS) {
+    // Fire a silent utterance to wake up the TTS engine on Android/desktop
+    try {
+      var warmup = new SpeechSynthesisUtterance('');
+      warmup.volume = 0;
+      warmup.rate = 1.5;
+      if (_zhVoice) warmup.voice = _zhVoice;
+      warmup.onend = function () { _voicesReady = true; };
+      warmup.onerror = function () { /* silent fail — engine may not be ready */ };
+      synth.speak(warmup);
+    } catch(e) { /* TTS warmup failed, will work on first user click */ }
+  } else {
+    _voicesReady = true; // iOS: mark ready, actual init happens on first click
+  }
+}
+
+// Speak Chinese text — uses cached voice for zero-latency playback
 function speakWord(text) {
   if (!window.speechSynthesis) return;
-  preloadVoices();
-  window.speechSynthesis.cancel();
+  var synth = window.speechSynthesis;
+  // Cancel any ongoing speech (including warmup)
+  synth.cancel();
+  if (synth.paused) synth.resume();
+  // Refresh voice cache if needed
+  if (!_zhVoice) _pickChineseVoice();
   var u = new SpeechSynthesisUtterance(text);
   u.lang = 'zh-CN';
   u.rate = 0.7;
   u.volume = 1;
-  // iOS Safari fix: try to find a zh-CN voice, fall back to any Chinese voice
-  var voices = speechSynthesis.getVoices();
-  var zhVoice = null;
-  for (var i = 0; i < voices.length; i++) {
-    if (voices[i].lang === 'zh-CN') { zhVoice = voices[i]; break; }
-  }
-  if (!zhVoice) {
-    for (var j = 0; j < voices.length; j++) {
-      if (voices[j].lang.indexOf('zh') === 0) { zhVoice = voices[j]; break; }
-    }
-  }
-  if (zhVoice) u.voice = zhVoice;
-  window.speechSynthesis.speak(u);
+  if (_zhVoice) u.voice = _zhVoice;
+  synth.speak(u);
 }
 
-// Expose preloadVoices so initChineseTab can call it on first visit
+// Expose for other modules
 window.preloadVoices = preloadVoices;
+window.speakWord = speakWord;
 
 /* ---- Grammar Tab ---- */
 

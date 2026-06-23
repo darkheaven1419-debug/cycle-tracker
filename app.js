@@ -2520,10 +2520,10 @@ function renderCalendar(){
       icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
       el.appendChild(icon);
     });
-    // Double-tap detection for quick period mark
+    // Double-tap detection using touch events for mobile responsiveness
     var tapTimer = null;
-    if(inMonth) {
-      el.addEventListener('click',function(e){
+    if (inMonth) {
+      el.addEventListener('click', function(e) {
         if (tapTimer) {
           // Double tap — quick toggle period
           clearTimeout(tapTimer); tapTimer = null;
@@ -2531,8 +2531,25 @@ function renderCalendar(){
           if (idx >= 0) { state.records.splice(idx,1); toast('🚫 '+t('toast.unmarked')); }
           else { state.records.push(new Date(d)); state.records.sort(function(a,b){return a-b;}); el.classList.add('celebrate'); setTimeout(function(){el.classList.remove('celebrate');},500); toast('🩸 '+t('toast.marked')); checkCycleCelebration(); }
           saveState(); renderAll(['calendar','core']); updateFab();
+          e.preventDefault();
         } else {
           tapTimer = setTimeout(function(){ tapTimer = null; openModal(d,pred); }, 280);
+        }
+      });
+      // Also listen for touchend for faster double-tap on mobile
+      var touchCount = 0, touchTimer = null;
+      el.addEventListener('touchend', function(e) {
+        touchCount++;
+        if (touchCount === 1) {
+          touchTimer = setTimeout(function() { touchCount = 0; }, 350);
+        } else if (touchCount === 2) {
+          clearTimeout(touchTimer); touchCount = 0;
+          if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+          var idx = state.records.findIndex(function(r){return sameDay(r,d);});
+          if (idx >= 0) { state.records.splice(idx,1); toast('🚫 '+t('toast.unmarked')); }
+          else { state.records.push(new Date(d)); state.records.sort(function(a,b){return a-b;}); el.classList.add('celebrate'); setTimeout(function(){el.classList.remove('celebrate');},500); toast('🩸 '+t('toast.marked')); checkCycleCelebration(); }
+          saveState(); renderAll(['calendar','core']); updateFab();
+          e.preventDefault();
         }
       });
     }
@@ -2659,11 +2676,47 @@ document.getElementById('fabBtn').addEventListener('click',function(){
   var fab=document.getElementById('fabBtn');fab.classList.add('celebrate');setTimeout(function(){fab.classList.remove('celebrate');},500);
 });
 
+// FAB long-press label on mobile
+(function() {
+  var fab = document.getElementById('fabBtn');
+  if (!fab) return;
+  var longPressTimer = null;
+  fab.addEventListener('touchstart', function() {
+    longPressTimer = setTimeout(function() {
+      fab.classList.add('show-label');
+    }, 500);
+  }, {passive: true});
+  fab.addEventListener('touchend', function() {
+    clearTimeout(longPressTimer);
+    setTimeout(function() { fab.classList.remove('show-label'); }, 1500);
+  });
+  fab.addEventListener('touchcancel', function() {
+    clearTimeout(longPressTimer);
+    fab.classList.remove('show-label');
+  });
+})();
+
 /* ================================================================
    MODAL
    ================================================================ */
 function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);var lunarInfo=typeof Lunar!=='undefined'?Lunar.toLunar(date):null;if(lunarInfo){var lunarDisplay=lang==='sr'?('Lunarni '+lunarInfo.month+'. mesec, '+lunarInfo.day+'. dan'):lang==='en'?('Lunar '+lunarInfo.month+'/'+lunarInfo.day):(lunarInfo.monthName+lunarInfo.dayName);document.getElementById('modal-date').textContent=fmtDate(selectedDate)+' · '+lunarDisplay;}document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var special=getSpecialDate(new Date(key+'T00:00:00'));var specialRow=document.getElementById('modal-special-row');if(special){specialRow.style.display='';document.getElementById('modal-special').innerHTML='<span class=\"holiday-name\">'+special.icon+' '+(activeProfile==='barry'?special.title_zh:special.title_sr)+'</span><span class=\"holiday-detail\" style=\"display:block\">'+(activeProfile==='barry'?special.desc_zh:special.desc_sr)+'</span>';}else{specialRow.style.display='none';}var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;var daysOffInfo=HOLIDAY_DAYS[key];var offHtml='';if(daysOffInfo&&h.country==='cn'){var off=daysOffInfo.zh||daysOffInfo.cn||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}if(daysOffInfo&&h.country==='rs'){var off=daysOffInfo.sr||daysOffInfo.rs||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'+offHtml;});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}window._lastFocusedBeforeModal=document.activeElement;document.getElementById('modal').classList.remove('hidden');document.getElementById('modal-title').focus();}
-function closeModal(){document.getElementById('modal').classList.add('hidden');selectedDate=null;knowledgeOpen=false;if(window._lastFocusedBeforeModal){window._lastFocusedBeforeModal.focus();}}
+function closeModal(){
+  var overlay = document.getElementById('modal');
+  var modalEl = overlay.querySelector('.modal');
+  if (modalEl) {
+    modalEl.classList.add('closing');
+    overlay.classList.add('closing');
+    modalEl.addEventListener('animationend', function h() {
+      modalEl.removeEventListener('animationend', h);
+      overlay.classList.add('hidden');
+      overlay.classList.remove('closing');
+      modalEl.classList.remove('closing');
+      selectedDate = null;
+      knowledgeOpen = false;
+      if (window._lastFocusedBeforeModal) { window._lastFocusedBeforeModal.focus(); }
+    }, {once: true});
+  }
+}
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
 function toggleKnowledge(){knowledgeOpen=!knowledgeOpen;if(selectedDate){const pred=predict();renderKnowledge(getPhase(selectedDate,pred),fmtDate(selectedDate));}}
 function togglePeriodRecord(){if(!selectedDate)return;var sd=fmtDate(selectedDate);
@@ -2963,6 +3016,10 @@ document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=
   var newPanel = document.getElementById('panel-'+id);
   newPanel.classList.remove('slide-out-left','slide-out-right');
   newPanel.classList.add('active');
+  // Scroll to top on mobile when switching tabs
+  var app = document.querySelector('.app');
+  if (app) app.scrollTop = 0;
+  window.scrollTo({top: 0, behavior: 'smooth'});
   if(id==='tips')renderTips();
   if(id==='settings')loadSettingsUI();
   if(id==='symptoms'){if(activeProfile!=='barry'){switchToTab('dashboard');return;}if(getGitHubToken()){pullAllSharedData().then(function(){renderBarrySymptomView();});}document.getElementById('symptom-empty').style.display=symptomDate?'none':'';document.getElementById('symptom-content').style.display=symptomDate?'':'none';}
@@ -2975,6 +3032,65 @@ document.querySelectorAll('.lang-btn').forEach(btn=>{btn.addEventListener('click
 document.getElementById('themeBtn').addEventListener('click',()=>{switchTheme(theme==='dark'?'light':'dark');});
 document.getElementById('set-theme').addEventListener('change',function(){switchTheme(this.value);});
 
+/* Panel swipe gesture — horizontal swipe to navigate between tabs */
+(function() {
+  var app = document.querySelector('.app');
+  if (!app) return;
+  var startX = 0, startY = 0, swiping = false, lockDir = null;
+  app.addEventListener('touchstart', function(e) {
+    // Only handle single-finger swipes
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiping = true;
+    lockDir = null;
+  }, {passive: true});
+  app.addEventListener('touchmove', function(e) {
+    if (!swiping) return;
+    var dx = e.touches[0].clientX - startX;
+    var dy = e.touches[0].clientY - startY;
+    window._lastSwipeX = e.touches[0].clientX;
+    // Lock direction after 10px
+    if (!lockDir && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      lockDir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+    }
+    if (lockDir === 'h') {
+      // Give visual hint — subtle panel shift
+      var activePanel = document.querySelector('.panel.active');
+      if (activePanel && Math.abs(dx) > 20) {
+        var resistance = Math.min(Math.abs(dx) * 0.5, 60);
+        activePanel.style.transition = 'none';
+        activePanel.style.transform = 'translateX(' + (dx > 0 ? resistance : -resistance) + 'px)';
+        activePanel.style.opacity = Math.max(0.5, 1 - Math.abs(dx) / 200);
+      }
+    }
+  }, {passive: true});
+  app.addEventListener('touchend', function() {
+    if (!swiping || lockDir !== 'h') { swiping = false; lockDir = null; return; }
+    var lastX = window._lastSwipeX || startX;
+    var dx = lastX - startX;
+    swiping = false; lockDir = null;
+    var activePanel = document.querySelector('.panel.active');
+    if (activePanel) {
+      activePanel.style.transition = 'transform .3s cubic-bezier(.22,1,.36,1), opacity .3s ease';
+      activePanel.style.transform = '';
+      activePanel.style.opacity = '';
+    }
+    if (Math.abs(dx) > 60) {
+      var currentTab = document.querySelector('.tab.active');
+      var currentId = currentTab ? currentTab.dataset.panel : 'dashboard';
+      var curIdx = _tabOrder.indexOf(currentId);
+      if (dx > 60 && curIdx > 0) {
+        // Swipe right → previous tab
+        switchToTab(_tabOrder[curIdx - 1]);
+      } else if (dx < -60 && curIdx < _tabOrder.length - 1) {
+        // Swipe left → next tab
+        switchToTab(_tabOrder[curIdx + 1]);
+      }
+    }
+  });
+})();
+
 /* ================================================================
    ONBOARDING
    ================================================================ */
@@ -2983,8 +3099,57 @@ function showOnboardingIfNeeded(){if(activeProfile==='andjela'&&state.records.le
 
 function toast(msg){var container=document.getElementById('toastContainer');if(!container)return;while(container.children.length>=3){container.firstChild.remove();}var el=document.createElement('div');el.className='toast';el.textContent=msg;container.appendChild(el);setTimeout(function(){el.classList.add('out');},2800);setTimeout(function(){if(el.parentNode)el.remove();},3300);}
 
-/* Swipe to dismiss modal */
-(function(){let startY=0;const overlay=document.getElementById('modal');overlay.addEventListener('touchstart',e=>{if(e.target===overlay||e.target.closest('.modal'))startY=e.touches[0].clientY;},{passive:true});overlay.addEventListener('touchend',e=>{const diff=e.changedTouches[0].clientY-startY;if(diff>80&&!overlay.classList.contains('hidden'))closeModal();});})();
+/* Swipe to dismiss modal — full drag with visual feedback */
+(function(){
+  var startY = 0, currentY = 0, dragging = false;
+  var overlay = document.getElementById('modal');
+  overlay.addEventListener('touchstart', function(e) {
+    if (e.target === overlay || e.target.closest('.modal')) {
+      startY = e.touches[0].clientY;
+      dragging = true;
+    }
+  }, {passive: true});
+  overlay.addEventListener('touchmove', function(e) {
+    if (!dragging) return;
+    currentY = e.touches[0].clientY;
+    var diff = currentY - startY;
+    if (diff > 0) {
+      var modalEl = overlay.querySelector('.modal');
+      if (modalEl) {
+        modalEl.style.transition = 'none';
+        modalEl.style.transform = 'translateY(' + diff + 'px)';
+        modalEl.style.opacity = Math.max(0.3, 1 - diff / 300);
+      }
+    }
+  }, {passive: true});
+  overlay.addEventListener('touchend', function() {
+    if (!dragging) return;
+    dragging = false;
+    var modalEl = overlay.querySelector('.modal');
+    var diff = currentY - startY;
+    if (modalEl) {
+      modalEl.style.transition = 'transform .25s cubic-bezier(.4,0,1,1), opacity .25s ease';
+      if (diff > 80 && !overlay.classList.contains('hidden')) {
+        modalEl.style.transform = 'translateY(100%)';
+        modalEl.style.opacity = '0.5';
+        modalEl.addEventListener('transitionend', function h() {
+          modalEl.removeEventListener('transitionend', h);
+          modalEl.style.transition = '';
+          modalEl.style.transform = '';
+          modalEl.style.opacity = '';
+          overlay.classList.add('hidden');
+          selectedDate = null;
+          knowledgeOpen = false;
+          if (window._lastFocusedBeforeModal) { window._lastFocusedBeforeModal.focus(); }
+        }, {once: true});
+      } else {
+        modalEl.style.transform = '';
+        modalEl.style.opacity = '';
+      }
+    }
+    startY = 0; currentY = 0;
+  });
+})();
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 /* ================================================================
