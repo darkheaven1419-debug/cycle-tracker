@@ -346,15 +346,21 @@ function renderPhaseLessons(phaseId) {
 
 /* ---- Lesson Detail View ---- */
 
-function renderLessonView(lessonId) {
+function renderLessonView(lessonId, tab) {
   var lesson = getLessonById(lessonId);
   if (!lesson) {
     if (typeof toast !== 'undefined') toast(_('未找到课程', 'Lekcija nije pronađena', 'Lesson not found'));
     return;
   }
 
+  // If opening a different lesson, reset to vocab; otherwise use requested tab
+  var isNewLesson = (_currentLessonViewId !== lessonId);
   _currentLessonViewId = lessonId;
-  _currentLessonTab = 'vocab';
+  if (tab) {
+    _currentLessonTab = tab;
+  } else if (isNewLesson || !_currentLessonTab) {
+    _currentLessonTab = 'vocab';
+  }
   _quizAnswers = {};
 
   var progress = getProgress();
@@ -419,8 +425,7 @@ function renderLessonView(lessonId) {
 }
 
 function switchLessonTab(tab, lessonId) {
-  _currentLessonTab = tab;
-  renderLessonView(lessonId);
+  renderLessonView(lessonId, tab);
 }
 
 function getPrevTab() {

@@ -217,7 +217,7 @@ function submitQuiz(lessonId) {
 
     var nextLesson = lessonId + 1;
     if (nextLesson <= TOTAL_LESSONS && isLessonUnlocked(nextLesson)) {
-      resultHtml += '<button class="btn btn-primary" onclick="renderLessonView(' + nextLesson + ')" style="margin-top:12px;width:100%">' +
+      resultHtml += '<button class="btn btn-primary" onclick="renderLessonView(' + nextLesson + ',\'vocab\')" style="margin-top:12px;width:100%">' +
         _('下一课 ▸', 'Sledeća lekcija ▸', 'Next Lesson ▸') + '</button>';
     }
 
@@ -230,7 +230,7 @@ function submitQuiz(lessonId) {
     resultHtml += '<div class="lrn-practice-feedback wrong">' +
       _('未通过（需60%以上），再试一次吧', 'Niste prošli (potrebno 60%), probajte ponovo', 'Not passed (need 60%), try again') +
       '</div>';
-    resultHtml += '<button class="lrn-quiz-retry-btn" onclick="renderLessonView(' + lessonId + ')" style="margin-top:8px;width:100%">' +
+    resultHtml += '<button class="lrn-quiz-retry-btn" onclick="renderLessonView(' + lessonId + ',\'quiz\')" style="margin-top:8px;width:100%">' +
       _('重新测验', 'Ponovi test', 'Retry Quiz') + '</button>';
   }
 
