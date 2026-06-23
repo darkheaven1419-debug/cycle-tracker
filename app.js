@@ -514,22 +514,22 @@ async function renderSharedDiary() {
     if (el) el.textContent = src ? (src.value || '').length : 0;
   });
 
-  // Partner card — locked until you save your own entry first (by design)
-  // Uses the invariant: each day's permission is tied to that specific day.
+  // Partner card — only if old shared-diary UI elements exist (letters UI skips this)
   var lockedEl = document.getElementById('partnerLocked');
   var contentEl = document.getElementById('sharedDiaryPartnerContent');
   var translateBtn = document.getElementById('translateBtnSm');
-  if (myEntry) {
-    lockedEl.style.display = 'none';
-    contentEl.style.display = '';
-    contentEl.classList.add('partner-card-unlocked');
-    renderPartnerContent(partnerEntry, partnerProfile, contentEl, translateBtn);
-  } else {
-    // Lock stays permanently for this date — user never wrote their entry
-    lockedEl.style.display = '';
-    contentEl.style.display = 'none';
-    contentEl.classList.remove('partner-card-unlocked');
-    translateBtn.style.display = 'none';
+  if (lockedEl && contentEl) {
+    if (myEntry) {
+      lockedEl.style.display = 'none';
+      contentEl.style.display = '';
+      contentEl.classList.add('partner-card-unlocked');
+      renderPartnerContent(partnerEntry, partnerProfile, contentEl, translateBtn);
+    } else {
+      lockedEl.style.display = '';
+      contentEl.style.display = 'none';
+      contentEl.classList.remove('partner-card-unlocked');
+      if (translateBtn) translateBtn.style.display = 'none';
+    }
   }
 
   // Timeline history from localStorage
@@ -555,14 +555,16 @@ async function renderSharedDiary() {
             if (sdWish) sdWish.value = freshMy ? (freshMy.wish || '') : '';
           }
         }
-        // Always update partner display and lock state - same invariant: user must have own entry for THIS date
-        if (freshMy) {
-          lockedEl.style.display = 'none';
-          contentEl.style.display = '';
-          renderPartnerContent(freshPartner, partnerProfile, contentEl, translateBtn);
-        } else {
-          lockedEl.style.display = '';
-          contentEl.style.display = 'none';
+        // Always update partner display and lock state (skip if elements absent)
+        if (lockedEl && contentEl) {
+          if (freshMy) {
+            lockedEl.style.display = 'none';
+            contentEl.style.display = '';
+            renderPartnerContent(freshPartner, partnerProfile, contentEl, translateBtn);
+          } else {
+            lockedEl.style.display = '';
+            contentEl.style.display = 'none';
+          }
         }
         renderSharedDiaryHistory(freshData);
       }
