@@ -2262,3 +2262,109 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
   from { transform: translateY(16px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* ================================================================
+   12. STATS PANEL — Cards + Heatmap
+   ================================================================ */
+.lrn-stats-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;
+}
+.lrn-stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; text-align: center; transition: all .2s;
+}
+.lrn-stat-card:active { transform: scale(.96); }
+.lrn-stat-icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+.lrn-stat-val { font-size: 1.3rem; font-weight: 800; color: var(--text); font-feature-settings: "tnum"; }
+.lrn-stat-label { font-size: .58rem; color: var(--text-muted); margin-top: 2px; }
+
+.lrn-heatmap-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+}
+.lrn-heat-cell {
+  aspect-ratio: 1; border-radius: 4px; background: var(--border-soft);
+  transition: all .15s; min-width: 8px;
+}
+.lrn-heat-cell.low { background: var(--rose-light); }
+.lrn-heat-cell.med { background: var(--rose-mist); }
+.lrn-heat-cell.high { background: var(--rose); opacity: .7; }
+.lrn-heat-cell.today { outline: 2px solid var(--gold); outline-offset: -1px; }
+[data-theme="dark"] .lrn-heat-cell.low { background: #3A2020; }
+[data-theme="dark"] .lrn-heat-cell.med { background: #5A3030; }
+[data-theme="dark"] .lrn-heat-cell.high { background: var(--rose-dark); opacity: .6; }
+
+/* ================================================================
+   13. DAILY GOAL — Progress bar
+   ================================================================ */
+.lrn-goal-track {
+  height: 6px; background: var(--border-soft); border-radius: 3px; overflow: hidden;
+}
+.lrn-goal-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--love));
+  border-radius: 3px; transition: width .4s cubic-bezier(.22,1,.36,1);
+}
+
+/* ================================================================
+   14. FAVORITES — Star toggle button
+   ================================================================ */
+.lrn-fav-btn {
+  position: absolute; top: 8px; left: 8px; width: 32px; height: 32px;
+  border-radius: 50%; border: 1px solid var(--border); background: var(--card);
+  font-size: .8rem; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; transition: all .2s; z-index: 2;
+}
+.lrn-fav-btn.fav-active { border-color: var(--gold); background: #FFF8E1; }
+[data-theme="dark"] .lrn-fav-btn.fav-active { background: #3A3020; }
+
+/* ================================================================
+   15. STROKE HINT — Radical + stroke count
+   ================================================================ */
+.lrn-stroke-hint {
+  font-size: .6rem; color: var(--text-muted); margin-top: 6px;
+  padding: 4px 8px; background: var(--rose-light); border-radius: 8px;
+  display: inline-block; line-height: 1.4;
+}
+[data-theme="dark"] .lrn-stroke-hint { background: #2A1C20; }
+
+/* ================================================================
+   16. LISTENING — Audio practice card
+   ================================================================ */
+.lrn-listen-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 10px;
+}
+.lrn-listen-sound {
+  width: 60px; height: 60px; border-radius: 50%; margin: 0 auto;
+  background: var(--rose-light); border: 2px solid var(--love);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; cursor: pointer;
+}
+.lrn-listen-sound:active { transform: scale(.88); }
+
+/* ================================================================
+   17. QUIZ FILL INPUT — Fill-in-the-blank
+   ================================================================ */
+.chinese-quiz-question .fill-input {
+  margin-top: 8px;
+}
+
+/* ================================================================
+   18. CELEBRATE GOAL — Daily goal reached animation
+   ================================================================ */
+.lrn-goal-celebrate {
+  animation: goalCelebrate .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes goalCelebrate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* ================================================================
+   Responsive additions
+   ================================================================ */
+@media(max-width:420px) {
+  .lrn-stats-cards { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .lrn-stat-card { padding: 12px 8px; }
+  .lrn-stat-val { font-size: 1.1rem; }
+}

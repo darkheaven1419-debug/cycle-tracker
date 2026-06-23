@@ -22,7 +22,11 @@
 <script src="js/i18n.js?v=1" defer></script>
 	<script src="js/lunar.js?v=37" defer></script>
 	<script src="js/calendar-culture.js?v=37" defer></script>
-	<script src="js/chinese-learn.js?v=2" defer></script>
+	<script src="js/chinese-learn.js?v=3" defer></script>
+	<script src="js/chinese-ui.js?v=3" defer></script>
+	<script src="js/chinese-quiz.js?v=3" defer></script>
+	<script src="js/chinese-panels.js?v=3" defer></script>
+	<script src="js/chinese-listen.js?v=3" defer></script>
 </head>
 <body>
 
@@ -478,7 +482,9 @@
     <!-- Sub-navigation -->
     <div class="lrn-subnav" id="lrnSubnav">
       <button class="lrn-subnav-btn active" data-lrn-view="home" onclick="switchLrnView('home')">🏠 <span class="lrn-sub-label" id="lrn-sub-home">Learn</span></button>
+      <button class="lrn-subnav-btn" data-lrn-view="stats" onclick="switchLrnView('stats')">📊 <span class="lrn-sub-label" id="lrn-sub-stats">Stats</span></button>
       <button class="lrn-subnav-btn" data-lrn-view="achievements" onclick="switchLrnView('achievements')">🏆 <span class="lrn-sub-label" id="lrn-sub-ach">Badges</span></button>
+      <button class="lrn-subnav-btn" data-lrn-view="favorites" onclick="switchLrnView('favorites')">⭐ <span class="lrn-sub-label" id="lrn-sub-fav">Favorites</span></button>
       <button class="lrn-subnav-btn" data-lrn-view="review" onclick="switchLrnView('review')">🔄 <span class="lrn-sub-label" id="lrn-sub-review">Review</span></button>
     </div>
     <!-- Home View -->
@@ -514,6 +520,16 @@
     <div class="lrn-view" id="lrn-view-achievements">
       <div class="lrn-ach-stats" id="lrnAchStats"></div>
       <div class="lrn-ach-grid" id="lrnAchGrid"></div>
+    </div>
+    <!-- Stats View -->
+    <div class="lrn-view" id="lrn-view-stats">
+      <div class="lrn-stats-cards" id="lrnStatsCards"></div>
+      <div class="lrn-stats-heatmap" id="lrnStatsHeatmap"></div>
+    </div>
+    <!-- Favorites View -->
+    <div class="lrn-view" id="lrn-view-favorites">
+      <div class="lrn-favorites-header" style="font-size:.7rem;font-weight:600;margin-bottom:10px">⭐ <span id="lrn-fav-title">收藏词汇</span></div>
+      <div id="lrnFavoritesContainer"></div>
     </div>
     <!-- Review View -->
     <div class="lrn-view" id="lrn-view-review">
