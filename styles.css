@@ -300,7 +300,7 @@ body {
 .legend .l-heart::before { content:'♥'; background:none; color:var(--love); font-size:.6rem; line-height:1; }
 
 /* Tabs — Fixed Bottom Navigation */
-.tabs-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:420px; z-index:60; pointer-events:none; }
+.tabs-nav { position:fixed; bottom:0; left:0; right:0; margin:0 auto; width:100%; max-width:420px; z-index:60; pointer-events:none; }
 .tabs-nav h2 { display:none; }
 .tabs { display:flex; padding:6px 4px; box-shadow:0 -2px 16px rgba(80,40,40,0.10); gap:2px; border-radius:var(--radius) var(--radius) 0 0; background:var(--card); margin-bottom:0; pointer-events:auto; padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px)); }
 .tab { flex:1; text-align:center; padding:8px 0; font-size:.68rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:14px; transition:all .25s cubic-bezier(.4,0,.2,1); border:none; background:none; font-family:var(--font); touch-action:manipulation; min-width:0; }
