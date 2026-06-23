@@ -12,7 +12,7 @@ var STATIC_ASSETS = [
   './js/i18n.js',
   './js/lunar.js',
   './js/calendar-culture.js',
-  './js/lesson-engine.js',
+  './js/chinese-learn.js',
   './calendar-data.json',
   './data/culture.json',
   './data/lessons.json',
