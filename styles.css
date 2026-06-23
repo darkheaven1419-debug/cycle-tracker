@@ -2332,104 +2332,34 @@ body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:
 }
 
 /* ================================================================
-   DESKTOP RESPONSIVE LAYOUT
-   tabs-nav is OUTSIDE .app in HTML — use fixed left sidebar
+   DESKTOP — wider content, same layout as mobile
    ================================================================ */
+@media (min-width: 600px) {
+  .app { max-width: 540px; }
+}
 @media (min-width: 768px) {
-  /* Make app wider, leave room for left sidebar */
-  .app {
-    max-width: 680px;
-    margin-left: 180px;
-    margin-right: auto;
-    padding: 20px 28px calc(20px + env(safe-area-inset-bottom, 0px));
-  }
-  body {
-    display: block;
-    padding: 0;
-  }
-
-  /* Bottom nav → fixed left sidebar */
-  .tabs-nav {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: 170px; max-width: none; z-index: 50;
-    margin: 0; pointer-events: auto;
-    background: var(--bg);
-    display: flex; align-items: flex-start;
-    padding: 20px 6px;
-    border-right: 1px solid var(--border);
-    overflow-y: auto;
-  }
-  .tabs {
-    flex-direction: column; width: 100%;
-    border-radius: var(--radius) !important;
-    box-shadow: none; padding: 4px; gap: 2px;
-    border: none; background: transparent;
-  }
-  .tab {
-    text-align: left; padding: 14px 16px; font-size: .8rem;
-    border-radius: var(--radius-sm); justify-content: flex-start;
-    white-space: nowrap;
-  }
-  .tab .tb-label { font-size: .7rem; display: inline; margin-left: 8px; }
-  .tab.active { transform: none; }
-
-  /* Wider modal */
-  .modal { max-width: 560px; border-radius: 22px; }
-
-  /* FAB — position relative to content area */
-  .fab {
-    right: calc((100vw - 680px - 180px) / 2 + 24px);
-    bottom: 24px;
-  }
-
-  /* Stats grid — more columns */
+  .app { max-width: 620px; padding: 18px 24px; }
+  .app { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .modal { max-width: 520px; border-radius: 22px; }
   .stats-summary-grid { grid-template-columns: repeat(4, 1fr); }
   .prediction-grid { grid-template-columns: repeat(4, 1fr); }
-
-  /* Card hover — only on devices with hover */
-  @media (hover: hover) {
-    .card:hover, .setting-row:hover, .tip-card:hover {
-      transform: translateY(-2px); box-shadow: var(--shadow-md);
-    }
-    .tab:not(.active):hover { background: var(--rose-light); color: var(--rose-dark); }
-    .theme-btn:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
-    .lang-btn:not(.active):hover { background: var(--rose-light); color: var(--text); }
-    .nav-btn:hover { background: var(--rose-light); transform: scale(1.05); }
-  }
 }
-
 @media (min-width: 1024px) {
-  .app {
-    max-width: 800px;
-    margin-left: 200px;
-    padding: 28px 40px 40px;
-  }
-  .tabs-nav { width: 190px; padding: 24px 8px; }
-  .tab { padding: 16px 18px; font-size: .84rem; }
-  .tab .tb-label { font-size: .74rem; margin-left: 10px; }
-
-  /* Wider cards */
-  .stats-summary-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
-
-  /* Calendar cells larger */
+  .app { max-width: 700px; padding: 22px 32px; }
   .calendar { padding: 14px 12px 12px; }
-  .day { min-width: 48px; min-height: 48px; font-size: .88rem; }
-
-  /* FAB reposition */
-  .fab {
-    right: calc((100vw - 800px - 200px) / 2 + 28px);
-    bottom: 28px;
-  }
+  .day { font-size: .84rem; }
+}
+@media (min-width: 1400px) {
+  .app { max-width: 760px; }
 }
 
-/* Large desktop */
-@media (min-width: 1440px) {
-  .app {
-    max-width: 900px;
-    margin-left: 210px;
+/* Hover states for desktop (devices with real hover) */
+@media (hover: hover) {
+  .card:hover, .setting-row:hover, .tip-card:hover {
+    transform: translateY(-2px); box-shadow: var(--shadow-md);
   }
-  .tabs-nav { width: 200px; }
-  .fab {
-    right: calc((100vw - 900px - 210px) / 2 + 32px);
-  }
+  .tab:not(.active):hover { background: var(--rose-light); color: var(--rose-dark); }
+  .theme-btn:hover { transform: scale(1.1); box-shadow: var(--shadow-sm); }
+  .lang-btn:not(.active):hover { background: var(--rose-light); color: var(--text); }
+  .nav-btn:hover { background: var(--rose-light); transform: scale(1.05); }
 }
