@@ -1,8 +1,7 @@
-// Service Worker — Anđelin Ciklus v6
-// Cache-First for static assets, Network-First for HTML/Live data
-// Cache version matches resource versions in index.html
+// Service Worker — Anđelin Ciklus v7
+// Network-First for all dynamic assets, Cache-First for static
 
-var CACHE_STATIC = 'ciklus-static-v16';
+var CACHE_STATIC = 'ciklus-static-v17';
 
 var STATIC_ASSETS = [
   './',
@@ -34,7 +33,7 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v16'];
+var KNOWN_CACHES = ['ciklus-static-v17'];
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
@@ -54,19 +53,19 @@ self.addEventListener('fetch', function(event) {
   var request = event.request;
   var url = new URL(request.url);
 
-  // Google Fonts — bypass SW, fetch directly
+  // Google Fonts — bypass SW
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     return;
   }
 
-  // External APIs — network only, don't cache
+  // External APIs — bypass SW
   if (url.hostname.includes('api.github.com') || url.hostname.includes('api.open-meteo.com') ||
       url.hostname.includes('translate.googleapis.com') || url.hostname.includes('api.mymemory.translated.net') ||
       url.hostname.includes('translate.argosopentech.com')) {
     return;
   }
 
-  // HTML — always network first, NO cache (ensures fresh index.html)
+  // HTML — network first, no cache
   if (request.mode === 'navigate') {
     event.respondWith(fetch(request).catch(function() {
       return caches.match(request);
@@ -74,21 +73,25 @@ self.addEventListener('fetch', function(event) {
     return;
   }
 
-  // CSS/JS — cache-first with network update in background
-  if (request.destination === 'style' || request.destination === 'script') {
+  // CSS/JS/Data — network first with cache fallback + background cache update
+  if (request.destination === 'style' || request.destination === 'script' ||
+      request.destination === 'manifest' || url.pathname.endsWith('.json')) {
     event.respondWith(
-      caches.match(request).then(function(cached) {
-        var fetchPromise = fetch(request).then(function(response) {
-          caches.open(CACHE_STATIC).then(function(cache) { cache.put(request, response.clone()); });
-          return response;
+      fetch(request).then(function(response) {
+        // Clone immediately — response body can only be read once
+        var clone = response.clone();
+        caches.open(CACHE_STATIC).then(function(cache) {
+          cache.put(request, clone);
         });
-        return cached || fetchPromise;
+        return response;
+      }).catch(function() {
+        return caches.match(request);
       })
     );
     return;
   }
 
-  // Everything else: network first, cache fallback
+  // Everything else: network first, no cache
   event.respondWith(
     fetch(request).catch(function() { return caches.match(request); })
   );
