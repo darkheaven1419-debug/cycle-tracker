@@ -13,7 +13,7 @@ var WeatherModule = (function () {
   'use strict';
 
   /* ── Daily Love Messages ── */
-  var DAILY_LOVE_MESSAGES = [
+  const DAILY_LOVE_MESSAGES = [
     { zh: '不管多远，我的心和你在一起。', sr: 'Bez obzira na udaljenost, moje srce je s tobom.' },
     { zh: '7000公里，但思念没有距离。', sr: '7.000 kilometara, ali čežnja nema udaljenost.' },
     { zh: '你是我早上醒来的第一个念头。', sr: 'Ti si moja prva misao kad se probudim.' },
@@ -41,7 +41,7 @@ var WeatherModule = (function () {
   }
 
   function today() {
-    var d = new Date();
+    const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
@@ -54,7 +54,7 @@ var WeatherModule = (function () {
   }
 
   function getTodaysLoveMessage() {
-    var idx = new Date().getDate() % DAILY_LOVE_MESSAGES.length;
+    const idx = new Date().getDate() % DAILY_LOVE_MESSAGES.length;
     return DAILY_LOVE_MESSAGES[idx];
   }
 
@@ -64,8 +64,8 @@ var WeatherModule = (function () {
 
   /* ── Sun Counter ── */
   function clickSunCounter() {
-    var sc = getSunCounterData();
-    var todayStr = new Date().toISOString().slice(0, 10);
+    const sc = getSunCounterData();
+    const todayStr = new Date().toISOString().slice(0, 10);
     if (sc.lastDate === todayStr) {
       toast('❤️ ' + L('Već si kliknuo/la danas!', 'Already clicked today!', '今天已经点过了！'));
       return;
@@ -79,10 +79,10 @@ var WeatherModule = (function () {
   }
 
   function renderSunCounter() {
-    var el = document.getElementById('sunCounter');
+    const el = document.getElementById('sunCounter');
     if (!el) return;
-    var sc = getSunCounterData();
-    var c = sc.count || 0;
+    const sc = getSunCounterData();
+    const c = sc.count || 0;
     if (c > 0) {
       el.innerHTML = '☀️ ' + L(c + ' dan zajedničkog sunca ❤️', 'Day ' + c + ' of shared sun ❤️', '共同仰望太阳的第 ' + c + ' 天 ❤️');
     } else {
@@ -103,11 +103,11 @@ var WeatherModule = (function () {
 
   /* ── Fetch Weather ── */
   function fetchWeather() {
-    var cached = localStorage.getItem('cycle-weather');
+    const cached = localStorage.getItem('cycle-weather');
     // Always show cached weather first (even if old — better than nothing)
     if (cached) {
       try {
-        var d = JSON.parse(cached);
+        const d = JSON.parse(cached);
         renderWeather(d);
       } catch (e) {
         console.warn('[weather] Bad cached data');
@@ -116,18 +116,18 @@ var WeatherModule = (function () {
     // Refresh in background (6h cache)
     if (cached) {
       try {
-        var d2 = JSON.parse(cached);
+        const d2 = JSON.parse(cached);
         if (Date.now() - d2.t < 21600000) return;
       } catch (e) {
         console.warn('[weather] Bad cache');
       }
     }
-    var controller = new AbortController();
-    var timeout = setTimeout(function () {
+    const controller = new AbortController();
+    const timeout = setTimeout(function () {
       controller.abort();
     }, 8000);
     try {
-      var bj = fetch(
+      const bj = fetch(
         'https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&daily=sunrise,sunset&timezone=Asia/Shanghai',
         { signal: controller.signal }
       )
@@ -137,7 +137,7 @@ var WeatherModule = (function () {
         .catch(function () {
           return null;
         });
-      var ki = fetch(
+      const ki = fetch(
         'https://api.open-meteo.com/v1/forecast?latitude=45.83&longitude=20.47&current=temperature_2m,relative_humidity_2m,weather_code&daily=sunrise,sunset&timezone=Europe/Belgrade',
         { signal: controller.signal }
       )
@@ -151,17 +151,17 @@ var WeatherModule = (function () {
         .then(function (r) {
           clearTimeout(timeout);
           if (!r[0] && !r[1]) return; // both failed
-          var bjD = r[0] ? r[0].current : null;
+          const bjD = r[0] ? r[0].current : null;
           if (bjD && r[0].daily) {
             bjD.sunrise = r[0].daily.sunrise[0];
             bjD.sunset = r[0].daily.sunset[0];
           }
-          var kiD = r[1] ? r[1].current : null;
+          const kiD = r[1] ? r[1].current : null;
           if (kiD && r[1].daily) {
             kiD.sunrise = r[1].daily.sunrise[0];
             kiD.sunset = r[1].daily.sunset[0];
           }
-          var w = { bj: bjD, ki: kiD, t: Date.now() };
+          const w = { bj: bjD, ki: kiD, t: Date.now() };
           localStorage.setItem('cycle-weather', JSON.stringify(w));
           renderWeather(w);
         })
@@ -173,17 +173,17 @@ var WeatherModule = (function () {
 
   /* ── Update Time Display ── */
   function updateWeatherTimes() {
-    var bjT = new Date().toLocaleString('sr-Latn', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false });
-    var kiT = new Date().toLocaleString('sr-Latn', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hour12: false });
-    var bjEl = document.getElementById('timeBj');
+    const bjT = new Date().toLocaleString('sr-Latn', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false });
+    const kiT = new Date().toLocaleString('sr-Latn', { timeZone: 'Europe/Belgrade', hour: '2-digit', minute: '2-digit', hour12: false });
+    const bjEl = document.getElementById('timeBj');
     if (bjEl) bjEl.textContent = bjT;
-    var kiEl = document.getElementById('timeKi');
+    const kiEl = document.getElementById('timeKi');
     if (kiEl) kiEl.textContent = kiT;
-    var diffEl = document.getElementById('timeDiff');
+    const diffEl = document.getElementById('timeDiff');
     if (diffEl) {
-      var bjH = parseInt(bjT),
+      const bjH = parseInt(bjT),
         kiH = parseInt(kiT);
-      var diff = bjH - kiH;
+      let diff = bjH - kiH;
       if (diff < 0) diff += 24;
       diffEl.textContent = L('razlika ', 'time diff ', '时差 ') + diff + 'h';
     }
@@ -191,7 +191,7 @@ var WeatherModule = (function () {
 
   /* ── Render Weather ── */
   function renderWeather(w) {
-    var card = document.getElementById('weatherCard');
+    const card = document.getElementById('weatherCard');
     if (!w) {
       card.style.display = '';
       card.innerHTML =
@@ -201,9 +201,9 @@ var WeatherModule = (function () {
       return;
     }
     card.style.display = '';
-    var bjLabel = lang === 'sr' ? '🏙 Peking·Čaojang' : lang === 'en' ? '🏙 Beijing·Chaoyang' : '🏙 北京·朝阳';
-    var kiLabel = lang === 'sr' ? '🏡 Kikinda' : lang === 'en' ? '🏡 Kikinda' : '🏡 Kikinda';
-    var humLabel = lang === 'sr' ? 'Vlažnost' : lang === 'en' ? 'Humidity' : '湿度';
+    const bjLabel = lang === 'sr' ? '🏙 Peking·Čaojang' : lang === 'en' ? '🏙 Beijing·Chaoyang' : '🏙 北京·朝阳';
+    const kiLabel = lang === 'sr' ? '🏡 Kikinda' : lang === 'en' ? '🏡 Kikinda' : '🏡 Kikinda';
+    const humLabel = lang === 'sr' ? 'Vlažnost' : lang === 'en' ? 'Humidity' : '湿度';
     document.getElementById('weatherBj').innerHTML =
       '<div style="font-size:.65rem;color:var(--text-muted)">' +
       bjLabel +
@@ -229,12 +229,12 @@ var WeatherModule = (function () {
       w.ki.relative_humidity_2m +
       '%</div>';
     // Bridge Poetry — i18n-aware
-    var poems = [],
+    const poems = [],
       bjc = w.bj.weather_code,
       kic = w.ki.weather_code;
-    var sameWeather = (bjc <= 3 && kic <= 3) || (bjc >= 45 && kic >= 45) || (bjc >= 71 && kic >= 71);
+    const sameWeather = (bjc <= 3 && kic <= 3) || (bjc >= 45 && kic >= 45) || (bjc >= 71 && kic >= 71);
     if (sameWeather && bjc <= 3)
-      poems.push({
+      {poems.push({
         txt:
           lang === 'sr'
             ? 'Sunce sija i u Pekingu i u Kikindi ☀️ — isto sunce greje oba naša srca.'
@@ -247,9 +247,9 @@ var WeatherModule = (function () {
             : lang === 'en'
               ? "Barry says: When you look at the sun, remember — I'm looking at the same sun in Beijing. 7,000 km, one sun. ♥"
               : 'Barry说：当你看着太阳，记住——我在北京也看着同一轮太阳。7000公里，同一个太阳。♥',
-      });
+      });}
     else if (sameWeather && kic >= 45 && kic <= 67)
-      poems.push({
+      {poems.push({
         txt:
           lang === 'sr'
             ? 'Kiša pada i na Vojvodinu i na Peking 🌧️ — iste kapi, dva različita sveta.'
@@ -262,9 +262,9 @@ var WeatherModule = (function () {
             : lang === 'en'
               ? 'Barry says: While rain falls on your Vojvodina, I listen to the rain in Beijing and think of you. Rain connects everything. 🌧️♥'
               : 'Barry说：雨落在你的Vojvodina，我在北京听着雨声想你。雨水连接一切。🌧️♥',
-      });
+      });}
     else
-      poems.push({
+      {poems.push({
         txt:
           lang === 'sr'
             ? 'Različito nebo, isto srce 🌍 — od Pekinga do Kikinde, od Dunava do Jangcea.'
@@ -277,7 +277,7 @@ var WeatherModule = (function () {
             : lang === 'en'
               ? 'Barry says: The Danube flows through your town, the Yangtze through mine. Two rivers, one love flowing between us. ♥'
               : 'Barry说：多瑙河流过你的城市，长江流过我的。两条河流，一份在我们之间流淌的爱。♥',
-      });
+      });}
     poems.push({
       txt:
         lang === 'sr'
@@ -292,7 +292,7 @@ var WeatherModule = (function () {
             ? 'From plains to Beijing, from rakija to tea — our story bridges two worlds.'
             : '从平原到北京，从李子酒到茶——我们的故事连接两个世界。',
     });
-    var poem = poems[Math.floor(Math.random() * poems.length)];
+    const poem = poems[Math.floor(Math.random() * poems.length)];
     document.getElementById('weatherLove').innerHTML =
       '<div style="font-style:italic;margin-bottom:4px">"' +
       poem.txt +
@@ -301,13 +301,13 @@ var WeatherModule = (function () {
       '</div>';
     document.getElementById('weatherLove').style.display = '';
     updateWeatherTimes();
-    var lm = getTodaysLoveMessage();
-    var lmEl = document.getElementById('dailyLoveMsg');
+    const lm = getTodaysLoveMessage();
+    const lmEl = document.getElementById('dailyLoveMsg');
     if (lmEl) lmEl.textContent = '💌 ' + ((lang || '').indexOf('zh') === 0 ? lm.zh : (lang || '').indexOf('en') === 0 ? lm.en : lm.sr);
     renderSunCounter();
-    var nh = document.getElementById('weatherNightHint');
+    const nh = document.getElementById('weatherNightHint');
     if (nh) {
-      var kiH = new Date().toLocaleString('en-US', { timeZone: 'Europe/Belgrade', hour: 'numeric', hour12: false });
+      const kiH = new Date().toLocaleString('en-US', { timeZone: 'Europe/Belgrade', hour: 'numeric', hour12: false });
       if (parseInt(kiH) >= 22 || parseInt(kiH) <= 5) {
         nh.style.display = '';
         nh.textContent = L(
@@ -320,12 +320,12 @@ var WeatherModule = (function () {
       }
     }
     // Update bridge text dynamically
-    var bridge = document.getElementById('weatherBridge');
+    const bridge = document.getElementById('weatherBridge');
     if (bridge) {
-      var bjt = Math.round(w.bj.temperature_2m),
+      const bjt = Math.round(w.bj.temperature_2m),
         kit = Math.round(w.ki.temperature_2m);
-      var diff = Math.abs(bjt - kit);
-      var conn =
+      const diff = Math.abs(bjt - kit);
+      const conn =
         diff <= 3
           ? lang === 'sr'
             ? 'Ista toplina 🌡️♥'
@@ -337,7 +337,7 @@ var WeatherModule = (function () {
             : lang === 'en'
               ? diff + '° apart 🌡️'
               : '温差 ' + diff + '° 🌡️';
-      var dnName = L('Dunav', 'Danube', '多瑙河'),
+      const dnName = L('Dunav', 'Danube', '多瑙河'),
         jcName = L('Jangce', 'Yangtze', '长江');
       bridge.innerHTML = '🌉  ' + dnName + ' → ' + jcName + '<br>Kikinda ' + kit + '° ↔ ' + bjt + '° ' + L('Peking', 'Beijing', '北京') + '<br>' + conn;
     }
@@ -345,36 +345,36 @@ var WeatherModule = (function () {
 
   /* ── Love Counter ── */
   function updateLoveCounter() {
-    var el = document.getElementById('titleLoveCounter');
+    const el = document.getElementById('titleLoveCounter');
     if (!el || !annDateLove()) return;
-    var days = daysDiff(new Date(annDateLove()), today());
+    const days = daysDiff(new Date(annDateLove()), today());
     if (days >= 0) el.textContent = '♥ ' + days + (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起');
     // Also update the stats card
-    var card = document.getElementById('love-days-content');
+    const card = document.getElementById('love-days-content');
     if (!card) return;
-    var parts = [];
+    const parts = [];
     if (annDateMet()) {
       var d = daysDiff(new Date(annDateMet()), today());
       if (d >= 0)
-        parts.push(
+        {parts.push(
           '<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' +
             d +
             (lang === 'sr' ? ' dana od prvog susreta' : lang === 'en' ? ' days since we met' : ' 天前初次相遇') +
             '</div>'
-        );
+        );}
     }
     if (annDateLove()) {
       var d = daysDiff(new Date(annDateLove()), today());
       if (d >= 0)
-        parts.push(
+        {parts.push(
           '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
             d +
             (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起') +
             '</div>'
-        );
+        );}
     }
     card.innerHTML = parts.join('<div style="height:4px"></div>');
-    var titleEl = document.getElementById('love-days-title');
+    const titleEl = document.getElementById('love-days-title');
     if (titleEl) titleEl.textContent = lang === 'sr' ? '💕 Dani zajedno' : lang === 'en' ? '💕 Our Days' : '💕 我们的日子';
   }
 
@@ -382,7 +382,7 @@ var WeatherModule = (function () {
   function randomThinkingOfYou() {
     if (typeof activeProfile !== 'undefined' && activeProfile !== 'andjela') return;
     if (Math.random() > 0.18) return; // 18% chance
-    var msgs =
+    const msgs =
       lang === 'sr'
         ? [
             'Upravo sam pomislio na tebe ♥',
@@ -400,11 +400,11 @@ var WeatherModule = (function () {
               'Barry was just thinking of you 💝',
             ]
           : ['刚刚在想你 ♥', '希望你今天心情好 ✨', '你的笑容是我最喜欢的 🌸', '一直在想你 💫', 'Barry 刚刚想到了你 💝'];
-    var msg = msgs[Math.floor(Math.random() * msgs.length)];
+    const msg = msgs[Math.floor(Math.random() * msgs.length)];
     if (typeof toast === 'function')
-      setTimeout(function () {
+      {setTimeout(function () {
         toast(msg);
-      }, 3000);
+      }, 3000);}
   }
 
   /* ── Init: start time updater ── */

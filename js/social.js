@@ -27,12 +27,12 @@ var SocialModule = (function () {
   // ====================================================================
   // Constants
   // ====================================================================
-  var HUG_EXPIRY_MS = 86400000; // 24 hours
+  const HUG_EXPIRY_MS = 86400000; // 24 hours
 
   // ====================================================================
   // Relationship Tips (Anđela)
   // ====================================================================
-  var REL_TIPS = {
+  const REL_TIPS = {
     sr: [
       { icon: '💬', text: 'Ako ti nešto smeta — reci mu. Barry ne ume da čita misli. Iskren razgovor je temelj.' },
       { icon: '💝', text: 'Kad uradi nešto lepo za tebe — reci mu. Muškarcima treba potvrda isto koliko i ženama.' },
@@ -74,7 +74,7 @@ var SocialModule = (function () {
   // ====================================================================
   // Weekly Check-in Questions
   // ====================================================================
-  var CHECKIN_QUESTIONS = {
+  const CHECKIN_QUESTIONS = {
     sr: [
       { q: 'Kako se osećaš u vezi ove nedelje?', opts: ['😍 Sjajno', '😊 Dobro', '😐 Ok', '😞 Loše'] },
       { q: 'Da li smo dovoljno komunicirali?', opts: ['💬 Da, odlično', '👍 Uglavnom', '🤔 Moglo bi bolje', '👎 Ne baš'] },
@@ -98,7 +98,7 @@ var SocialModule = (function () {
   // ====================================================================
   // Know Me Quiz Questions
   // ====================================================================
-  var KNOW_ME_QUESTIONS = [
+  const KNOW_ME_QUESTIONS = [
     { key: 'fav_city', q: { sr: 'Koji je omiljeni grad tvog/tvoje partnera?', zh: '对方最喜欢的城市是哪里？', en: "What is your partner's favorite city?" } },
     {
       key: 'first_date_color',
@@ -195,11 +195,11 @@ var SocialModule = (function () {
   // Floating Hearts Animation
   // ====================================================================
   function spawnFloatingHearts(container) {
-    var hearts = ['💕', '💖', '💗', '💝', '✨', '💫'];
-    for (var i = 0; i < 8; i++) {
+    const hearts = ['💕', '💖', '💗', '💝', '✨', '💫'];
+    for (let i = 0; i < 8; i++) {
       (function (idx) {
         setTimeout(function () {
-          var h = document.createElement('span');
+          const h = document.createElement('span');
           h.className = 'floating-heart';
           h.textContent = hearts[idx % hearts.length];
           h.style.left = 20 + Math.random() * 60 + '%';
@@ -219,14 +219,14 @@ var SocialModule = (function () {
 
   // Hug streak: count consecutive days with hug exchanged
   function getHugStreak() {
-    var allData = loadSharedDiaryData();
-    var today = new Date();
-    var streak = 0;
-    for (var i = 0; i < 365; i++) {
-      var d = new Date(today);
+    const allData = loadSharedDiaryData();
+    const today = new Date();
+    let streak = 0;
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(today);
       d.setDate(d.getDate() - i);
-      var key = fmtDate(d);
-      var day = allData[key];
+      const key = fmtDate(d);
+      const day = allData[key];
       // Both partners must have sent a hug
       if (day && day['barry'] && day['barry'].hug && day['andjela'] && day['andjela'].hug) {
         streak++;
@@ -238,8 +238,8 @@ var SocialModule = (function () {
   }
 
   function sendHug(hugBack) {
-    var todayKey = fmtDate(new Date());
-    var count = parseInt(localStorage.getItem('hug-count-' + todayKey) || '0');
+    const todayKey = fmtDate(new Date());
+    let count = parseInt(localStorage.getItem('hug-count-' + todayKey) || '0');
     if (count >= 2) {
       toast(
         lang === 'sr'
@@ -253,18 +253,18 @@ var SocialModule = (function () {
     count++;
     localStorage.setItem('hug-count-' + todayKey, count);
 
-    var hug = { from: activeProfile, time: Date.now() };
+    const hug = { from: activeProfile, time: Date.now() };
     localStorage.setItem('shared-hug', JSON.stringify(hug));
 
     // Also store in shared diary for streak tracking
-    var allData = loadSharedDiaryData();
+    const allData = loadSharedDiaryData();
     if (!allData[todayKey]) allData[todayKey] = {};
     if (!allData[todayKey][activeProfile]) allData[todayKey][activeProfile] = {};
     allData[todayKey][activeProfile].hug = { time: Date.now() };
     saveSharedDiaryData(allData);
 
     // Animate
-    var btn = document.getElementById('hugSendBtn');
+    const btn = document.getElementById('hugSendBtn');
     if (btn) {
       btn.classList.add('sending');
       setTimeout(function () {
@@ -273,11 +273,11 @@ var SocialModule = (function () {
     }
 
     // Floating hearts
-    var card = document.getElementById('hugCard');
+    const card = document.getElementById('hugCard');
     if (card) spawnFloatingHearts(card);
 
     renderHug();
-    var senderLabel =
+    const senderLabel =
       activeProfile === 'barry'
         ? lang === 'sr'
           ? 'Poslao si joj zagrljaj!'
@@ -294,7 +294,7 @@ var SocialModule = (function () {
 
   function checkHug() {
     try {
-      var hug = JSON.parse(localStorage.getItem('shared-hug'));
+      const hug = JSON.parse(localStorage.getItem('shared-hug'));
       if (!hug) return null;
       // 24-hour expiry
       if (Date.now() - hug.time > HUG_EXPIRY_MS) {
@@ -314,28 +314,28 @@ var SocialModule = (function () {
   }
 
   function renderHug() {
-    var hug = checkHug();
-    var card = document.getElementById('hugContent');
-    var title = document.getElementById('hug-title');
+    const hug = checkHug();
+    const card = document.getElementById('hugContent');
+    const title = document.getElementById('hug-title');
     if (!title) return;
     title.textContent = lang === 'sr' ? '🤗 Virtuelni zagrljaj' : lang === 'en' ? '🤗 Virtual Hug' : '🤗 隔空拥抱';
-    var todayKey = fmtDate(new Date());
-    var count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
-    var remaining = 2 - count;
-    var streak = getHugStreak();
+    const todayKey = fmtDate(new Date());
+    const count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
+    const remaining = 2 - count;
+    const streak = getHugStreak();
 
     if (hug) {
       // RECEIVED STATE — beautiful card
-      var sender = hug.from === 'andjela' ? '🌸 Anđela' : '👦 Barry';
-      var time = new Date(hug.time);
-      var timeStr = String(time.getHours()).padStart(2, '0') + ':' + String(time.getMinutes()).padStart(2, '0');
+      const sender = hug.from === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+      const time = new Date(hug.time);
+      const timeStr = String(time.getHours()).padStart(2, '0') + ':' + String(time.getMinutes()).padStart(2, '0');
 
       var html = '<div class="hug-received">';
       if (streak > 1)
-        html +=
+        {html +=
           '<div class="hug-streak-badge">🔥 ' +
           (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') +
-          '</div>';
+          '</div>';}
       html += '<span class="hug-icon-wrap"><span class="hug-icon">🤗</span></span>';
       html += '<div class="hug-text">' + sender + ' ' + (lang === 'sr' ? 'te zagrlio/la! 💫' : lang === 'en' ? 'hugged you! 💫' : '抱了你！💫') + '</div>';
       html += '<div class="hug-time">' + timeStr + '</div>';
@@ -349,12 +349,12 @@ var SocialModule = (function () {
       card.innerHTML = html;
 
       // Auto-spawn hearts when receiving
-      var hugCard = document.getElementById('hugCard');
+      const hugCard = document.getElementById('hugCard');
       if (hugCard) spawnFloatingHearts(hugCard);
     } else if (count > 0) {
       // SENT STATE — waiting for partner
-      var sentHearts = '';
-      for (var i = 0; i < 2; i++) {
+      let sentHearts = '';
+      for (let i = 0; i < 2; i++) {
         sentHearts += '<span class="hh-heart' + (i >= remaining ? ' used' : '') + '">' + (i < count ? '❤️' : '🤍') + '</span>';
       }
       var html = '<div class="hug-sent-state">';
@@ -372,13 +372,13 @@ var SocialModule = (function () {
       card.innerHTML = html;
     } else {
       // SEND STATE — fresh button
-      var label = lang === 'sr' ? 'Pošalji zagrljaj' : lang === 'en' ? 'Send a Hug' : '发送拥抱';
+      const label = lang === 'sr' ? 'Pošalji zagrljaj' : lang === 'en' ? 'Send a Hug' : '发送拥抱';
       var html = '';
       if (streak > 1)
-        html +=
+        {html +=
           '<div style="text-align:center"><div class="hug-streak-badge">🔥 ' +
           (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') +
-          '</div></div>';
+          '</div></div>';}
       html += '<button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 ' + label + '</button>';
       card.innerHTML = html;
     }
@@ -387,13 +387,13 @@ var SocialModule = (function () {
   // ====================================================================
   // Gratitude Wall
   // ====================================================================
-  var _gratNotes = null;
+  let _gratNotes = null;
 
   function addGratitude() {
-    var input = document.getElementById('gratInput');
-    var text = input.value.trim();
+    const input = document.getElementById('gratInput');
+    const text = input.value.trim();
     if (!text) return;
-    var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
+    let notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
     notes.push({ text: text, from: activeProfile, time: Date.now() });
     if (notes.length > 20) notes = notes.slice(-20);
     localStorage.setItem('shared-gratitude', JSON.stringify(notes));
@@ -404,13 +404,13 @@ var SocialModule = (function () {
   }
 
   function renderGratitude() {
-    var title = document.getElementById('grat-title');
-    var input = document.getElementById('gratInput');
-    var list = document.getElementById('gratList');
+    const title = document.getElementById('grat-title');
+    const input = document.getElementById('gratInput');
+    const list = document.getElementById('gratList');
     if (!title || !input || !list) return;
     title.textContent = lang === 'sr' ? '💝 Zid zahvalnosti' : lang === 'en' ? '💝 Gratitude Wall' : '💝 感恩便签';
     input.placeholder = lang === 'sr' ? 'Hvala ti za...' : lang === 'en' ? 'Thank you for...' : '谢谢你...';
-    var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
+    const notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
     if (notes.length === 0) {
       list.innerHTML = '';
       return;
@@ -419,10 +419,10 @@ var SocialModule = (function () {
       .slice(-5)
       .reverse()
       .map(function (n, i) {
-        var sender = n.from === 'andjela' ? '🌸' : '👦';
-        var partnerLang = n.from === 'andjela' ? 'sr' : lang === 'sr' ? 'zh-CN' : 'sr';
-        var needTrans = n.from !== (activeProfile === 'andjela' ? 'andjela' : 'barry');
-        var btnHtml = needTrans
+        const sender = n.from === 'andjela' ? '🌸' : '👦';
+        const partnerLang = n.from === 'andjela' ? 'sr' : lang === 'sr' ? 'zh-CN' : 'sr';
+        const needTrans = n.from !== (activeProfile === 'andjela' ? 'andjela' : 'barry');
+        const btnHtml = needTrans
           ? ' <button onclick="translateGrat(' +
             i +
             ')" style="font-size:.55rem;padding:1px 6px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer" title="' +
@@ -446,13 +446,13 @@ var SocialModule = (function () {
 
   function translateGrat(idx) {
     if (!_gratNotes) _gratNotes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
-    var n = _gratNotes[idx];
+    const n = _gratNotes[idx];
     if (!n) return;
-    var fromLang = n.from === 'andjela' ? 'sr' : lang === 'sr' ? 'zh-CN' : 'sr';
-    var toLang = lang === 'sr' ? 'sr' : lang === 'zh-CN' ? 'zh-CN' : 'en';
+    const fromLang = n.from === 'andjela' ? 'sr' : lang === 'sr' ? 'zh-CN' : 'sr';
+    const toLang = lang === 'sr' ? 'sr' : lang === 'zh-CN' ? 'zh-CN' : 'en';
     if (fromLang === toLang) return;
     translateText(n.text, fromLang, toLang).then(function (translated) {
-      var el = document.getElementById('grat-txt-' + idx);
+      const el = document.getElementById('grat-txt-' + idx);
       if (el) el.textContent = translated;
     });
   }
@@ -461,8 +461,8 @@ var SocialModule = (function () {
   // Weekly Check-in
   // ====================================================================
   function saveCheckinAnswer(qIdx, answer) {
-    var key = 'shared-checkin-' + activeProfile;
-    var answers = JSON.parse(localStorage.getItem(key) || '{}');
+    const key = 'shared-checkin-' + activeProfile;
+    const answers = JSON.parse(localStorage.getItem(key) || '{}');
     answers[qIdx] = answer;
     localStorage.setItem(key, JSON.stringify(answers));
     renderCheckin();
@@ -474,24 +474,24 @@ var SocialModule = (function () {
   }
 
   function renderCheckin() {
-    var dow = new Date().getDay(); // 0=Sun,6=Sat
+    const dow = new Date().getDay(); // 0=Sun,6=Sat
     if (dow !== 0 && dow !== 6) {
       document.getElementById('checkinCard').style.display = 'none';
       return;
     }
     document.getElementById('checkinCard').style.display = '';
     document.getElementById('checkin-title').textContent = lang === 'sr' ? '🎯 Nedeljni pregled' : lang === 'en' ? '🎯 Weekly Check-in' : '🎯 每周感情体检';
-    var questions = CHECKIN_QUESTIONS[lang] || CHECKIN_QUESTIONS['sr'];
-    var myAnswers = getCheckinAnswers(activeProfile);
-    var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
-    var partnerAnswers = getCheckinAnswers(partnerProfile);
-    var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+    const questions = CHECKIN_QUESTIONS[lang] || CHECKIN_QUESTIONS['sr'];
+    const myAnswers = getCheckinAnswers(activeProfile);
+    const partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+    const partnerAnswers = getCheckinAnswers(partnerProfile);
+    const partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
 
-    var html = questions
+    let html = questions
       .map(function (q, i) {
-        var myPick = myAnswers[i] || '';
-        var partnerPick = partnerAnswers[i] || '';
-        var optsHtml = q.opts
+        const myPick = myAnswers[i] || '';
+        const partnerPick = partnerAnswers[i] || '';
+        const optsHtml = q.opts
           .map(function (o) {
             return (
               '<span class="cq-opt' +
@@ -506,7 +506,7 @@ var SocialModule = (function () {
             );
           })
           .join('');
-        var partnerHtml = partnerPick ? '<div style="font-size:.62rem;color:var(--gold);margin-top:4px">' + partnerName + ': ' + partnerPick + '</div>' : '';
+        const partnerHtml = partnerPick ? '<div style="font-size:.62rem;color:var(--gold);margin-top:4px">' + partnerName + ': ' + partnerPick + '</div>' : '';
         return (
           '<div class="checkin-q"><div class="cq-label"><span>' + q.q + '</span></div><div class="cq-options">' + optsHtml + '</div>' + partnerHtml + '</div>'
         );
@@ -530,13 +530,13 @@ var SocialModule = (function () {
   // Our Song
   // ====================================================================
   function saveMySong() {
-    var title = document.getElementById('songInputTitle').value.trim();
+    const title = document.getElementById('songInputTitle').value.trim();
     if (!title) {
       toast(lang === 'sr' ? 'Unesi naziv pesme 🎵' : lang === 'en' ? 'Enter a song title 🎵' : '请输入歌名 🎵');
       return;
     }
-    var note = document.getElementById('songInputNote').value.trim();
-    var song = { title: title, note: note || '', from: activeProfile, time: Date.now() };
+    const note = document.getElementById('songInputNote').value.trim();
+    const song = { title: title, note: note || '', from: activeProfile, time: Date.now() };
     localStorage.setItem('shared-song-' + activeProfile, JSON.stringify(song));
     renderSong();
     pushAllSharedData();
@@ -548,14 +548,14 @@ var SocialModule = (function () {
   }
 
   function renderSong() {
-    var st = document.getElementById('song-title');
+    const st = document.getElementById('song-title');
     if (!st) return;
     st.textContent = lang === 'sr' ? '🎵 Naša pesma' : lang === 'en' ? '🎵 Our Song' : '🎵 我们的歌';
-    var mySong = loadSong(activeProfile);
-    var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
-    var partnerSong = loadSong(partnerProfile);
-    var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
-    var html = '';
+    const mySong = loadSong(activeProfile);
+    const partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+    const partnerSong = loadSong(partnerProfile);
+    const partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
+    let html = '';
     if (mySong) {
       html +=
         '<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">' +
@@ -610,26 +610,26 @@ var SocialModule = (function () {
   }
 
   function renderKnowMe() {
-    var card = document.getElementById('knowMeCard');
+    const card = document.getElementById('knowMeCard');
     if (!card) return;
     document.getElementById('knowMe-title').textContent = lang === 'sr' ? '💭 Da li me poznaješ?' : lang === 'en' ? '💭 Do You Know Me?' : '💭 你了解我吗？';
-    var todayIdx = Math.floor(Date.now() / 86400000) % KNOW_ME_QUESTIONS.length;
-    var q = KNOW_ME_QUESTIONS[todayIdx];
-    var qText = q.q[lang] || q.q['sr'];
-    var dateKey = fmtDate(today());
-    var allData = getKnowMeData();
-    var dayData = allData[dateKey] || {};
-    var myAns = dayData[activeProfile];
-    var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
-    var partnerAns = dayData[partnerProfile];
-    var partnerName = partnerProfile === 'andjela' ? '🌹 Anđela' : '👦 Barry';
-    var myName = activeProfile === 'andjela' ? '🌹 Anđela' : '👦 Barry';
+    const todayIdx = Math.floor(Date.now() / 86400000) % KNOW_ME_QUESTIONS.length;
+    const q = KNOW_ME_QUESTIONS[todayIdx];
+    const qText = q.q[lang] || q.q['sr'];
+    const dateKey = fmtDate(today());
+    const allData = getKnowMeData();
+    const dayData = allData[dateKey] || {};
+    const myAns = dayData[activeProfile];
+    const partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
+    const partnerAns = dayData[partnerProfile];
+    const partnerName = partnerProfile === 'andjela' ? '🌹 Anđela' : '👦 Barry';
+    const myName = activeProfile === 'andjela' ? '🌹 Anđela' : '👦 Barry';
 
-    var html = '';
+    let html = '';
     html += '<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">' + qText + '</div>';
 
     if (myAns) {
-      var myLabel = lang === 'sr' ? 'odgovor' : lang === 'en' ? ' answer' : '的回答';
+      const myLabel = lang === 'sr' ? 'odgovor' : lang === 'en' ? ' answer' : '的回答';
       html +=
         '<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">' +
         myName +
@@ -649,7 +649,7 @@ var SocialModule = (function () {
 
     // Partner answer section
     if (partnerAns) {
-      var partnerThinkLabel = lang === 'sr' ? ' misli da je:' : lang === 'en' ? ' thinks it is:' : '认为:';
+      const partnerThinkLabel = lang === 'sr' ? ' misli da je:' : lang === 'en' ? ' thinks it is:' : '认为:';
       html +=
         '<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 ' +
         partnerName +
@@ -674,12 +674,12 @@ var SocialModule = (function () {
   }
 
   function saveKnowMeAnswer() {
-    var input = document.getElementById('knowMeInput');
+    const input = document.getElementById('knowMeInput');
     if (!input) return;
-    var answer = input.value.trim();
+    const answer = input.value.trim();
     if (!answer) return;
-    var dateKey = fmtDate(today());
-    var allData = getKnowMeData();
+    const dateKey = fmtDate(today());
+    const allData = getKnowMeData();
     if (!allData[dateKey]) allData[dateKey] = {};
     allData[dateKey][activeProfile] = { answer: answer, time: Date.now() };
     saveKnowMeData(allData);
@@ -696,8 +696,8 @@ var SocialModule = (function () {
       document.getElementById('relTipCard').style.display = 'none';
       return;
     }
-    var tips = REL_TIPS[lang] || REL_TIPS['sr'];
-    var tip = tips[Math.floor(Math.random() * tips.length)];
+    const tips = REL_TIPS[lang] || REL_TIPS['sr'];
+    const tip = tips[Math.floor(Math.random() * tips.length)];
     document.getElementById('relTipIcon').textContent = tip.icon;
     document.getElementById('relTipText').textContent = tip.text;
     document.getElementById('relTipCard').style.display = '';

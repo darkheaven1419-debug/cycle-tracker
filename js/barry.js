@@ -30,12 +30,12 @@ var BarryModule = (function () {
    */
   function getSharedCyclePhase() {
     // First try shared-cycle-info (old summary format: {phase, nextStart})
-    var shared = null;
+    let shared = null;
     shared = safeParse(localStorage.getItem('shared-cycle-info'), null);
     if (shared && shared.phase) return shared;
 
     // Calculate phase from synced shared cycle data (new neutral key)
-    var cycleData = null;
+    let cycleData = null;
     cycleData = safeParse(localStorage.getItem('shared-cycle-data'), null);
     if (!cycleData) {
       cycleData = safeParse(localStorage.getItem('shared-andjela-cycle-data'), null);
@@ -46,27 +46,27 @@ var BarryModule = (function () {
     if (!cycleData || !cycleData.records || cycleData.records.length === 0) return null;
 
     try {
-      var records = cycleData.records
+      const records = cycleData.records
         .map(function (r) {
           return new Date(r);
         })
         .sort(function (a, b) {
           return a - b;
         });
-      var lastStart = new Date(records[records.length - 1]);
-      var settings = cycleData.settings || { cycleLength: 28, periodLength: 7 };
-      var cycleLen = settings.cycleLength || 28;
-      var periodLen = settings.periodLength || 7;
-      var nextStart = new Date(lastStart);
+      const lastStart = new Date(records[records.length - 1]);
+      const settings = cycleData.settings || { cycleLength: 28, periodLength: 7 };
+      const cycleLen = settings.cycleLength || 28;
+      const periodLen = settings.periodLength || 7;
+      const nextStart = new Date(lastStart);
       nextStart.setDate(nextStart.getDate() + cycleLen);
-      var td = today();
-      var dayNum = Math.floor((td - lastStart) / 86400000);
-      var ovulationDay = new Date(nextStart);
+      const td = today();
+      const dayNum = Math.floor((td - lastStart) / 86400000);
+      const ovulationDay = new Date(nextStart);
       ovulationDay.setDate(ovulationDay.getDate() - 14);
-      var phase;
+      let phase;
       if (dayNum >= 0 && dayNum < periodLen) phase = 'period';
       else if (td >= ovulationDay && td < nextStart) {
-        var daysToOvulation = Math.floor((ovulationDay - lastStart) / 86400000);
+        const daysToOvulation = Math.floor((ovulationDay - lastStart) / 86400000);
         if (dayNum >= daysToOvulation - 3 && dayNum <= daysToOvulation + 1) phase = 'ovulation';
         else if (dayNum > daysToOvulation + 1) phase = 'luteal';
         else phase = 'follicular';
@@ -84,9 +84,9 @@ var BarryModule = (function () {
    */
   function updateSharedCycleInfo() {
     if (activeProfile !== 'andjela') return;
-    var pred = predict();
-    var phase = getPhase(today(), pred);
-    var cat = 'general';
+    const pred = predict();
+    const phase = getPhase(today(), pred);
+    let cat = 'general';
     if (phase === 'period-on' || phase === 'period-mid') cat = 'period';
     else if (phase === 'ovulation' || phase === 'fertile') cat = 'ovulation';
     else if (phase === 'follicular') cat = 'follicular';
@@ -101,7 +101,7 @@ var BarryModule = (function () {
      SYMPTOM HELPER — explains symptoms for Barry's perspective
      ================================================================ */
 
-  var SYMPTOM_HELP = {
+  const SYMPTOM_HELP = {
     cramps: {
       cause: {
         sr: 'Materica se kontrahuje da izbaci sluzokozu — prostaglandini izazivaju bol',
@@ -168,7 +168,7 @@ var BarryModule = (function () {
      PHASE ANALYSIS — detailed cycle phase info for Barry's dashboard
      ================================================================ */
 
-  var PHASE_ANALYSIS = {
+  const PHASE_ANALYSIS = {
     period: {
       name: { sr: 'Menstruacija', en: 'Period', 'zh-CN': '经期' },
       days: { sr: 'Dan 1-7 ciklusa', en: 'Day 1-7 of cycle', 'zh-CN': '周期第1-7天' },
@@ -316,21 +316,21 @@ var BarryModule = (function () {
      ================================================================ */
 
   function renderBarrySymptomView() {
-    var isBarry = activeProfile === 'barry';
-    var barryView = document.getElementById('barry-symptom-view');
-    var angieView = document.getElementById('andjela-symptom-view');
+    const isBarry = activeProfile === 'barry';
+    const barryView = document.getElementById('barry-symptom-view');
+    const angieView = document.getElementById('andjela-symptom-view');
     if (barryView) barryView.style.display = isBarry ? '' : 'none';
     if (angieView) angieView.style.display = isBarry ? 'none' : '';
     if (!isBarry) return;
 
-    var container = document.getElementById('barrySymptomAnalysis');
+    const container = document.getElementById('barrySymptomAnalysis');
     if (!container) return;
 
-    var shared = getSharedCyclePhase();
-    var phaseKey = shared && shared.phase ? shared.phase : 'general';
-    var l = lang || 'sr';
+    const shared = getSharedCyclePhase();
+    const phaseKey = shared && shared.phase ? shared.phase : 'general';
+    const l = lang || 'sr';
 
-    var titleEl = document.getElementById('bs-title');
+    const titleEl = document.getElementById('bs-title');
     if (titleEl) {
       titleEl.textContent =
         l === 'sr' ? 'Analiza Andjelinog ciklusa' : l === 'en' ? 'Andjela Today — Full Analysis' : 'Andjela 今日详细分析';
@@ -344,12 +344,12 @@ var BarryModule = (function () {
       return;
     }
 
-    var pa = PHASE_ANALYSIS[phaseKey];
-    var colorMap = { period: 'var(--love)', follicular: 'var(--sage)', ovulation: 'var(--teal)', luteal: 'var(--lavender)' };
-    var iconMap = { period: 'period', follicular: 'follicular', ovulation: 'ovulation', luteal: 'luteal' };
-    var color = colorMap[phaseKey] || 'var(--love)';
+    const pa = PHASE_ANALYSIS[phaseKey];
+    const colorMap = { period: 'var(--love)', follicular: 'var(--sage)', ovulation: 'var(--teal)', luteal: 'var(--lavender)' };
+    const iconMap = { period: 'period', follicular: 'follicular', ovulation: 'ovulation', luteal: 'luteal' };
+    const color = colorMap[phaseKey] || 'var(--love)';
 
-    var h = '';
+    let h = '';
     h +=
       '<div class="card" style="border-left:5px solid ' +
       color +
@@ -357,10 +357,10 @@ var BarryModule = (function () {
     h += '<div style="font-size:.95rem;font-weight:800;color:var(--text)">' + (pa.name[l] || pa.name['sr']) + '</div>';
     h += '<div style="font-size:.65rem;color:var(--text-muted)">' + (pa.days[l] || pa.days['sr']) + '</div>';
     if (shared && shared.nextStart)
-      h +=
+      {h +=
         '<div style="font-size:.62rem;color:var(--gold);margin-top:2px">' +
         (l === 'sr' ? 'Sledeca: ' + shared.nextStart : l === 'en' ? 'Next: ' + shared.nextStart : '下次: ' + shared.nextStart) +
-        '</div>';
+        '</div>';}
     h += '</div>';
 
     h += '<div class="card" style="padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-around;text-align:center">';
@@ -417,8 +417,8 @@ var BarryModule = (function () {
 
   function updateSharedSymptoms() {
     if (activeProfile !== 'andjela') return;
-    var key = fmtDate(today());
-    var symptoms = state.symptoms[key];
+    const key = fmtDate(today());
+    const symptoms = state.symptoms[key];
     if (symptoms) {
       localStorage.setItem('shared-symptoms', JSON.stringify(symptoms));
       if (typeof pushAllSharedData === 'function') {
@@ -432,9 +432,9 @@ var BarryModule = (function () {
      ================================================================ */
 
   function saveSleep() {
-    var time = document.getElementById('sleepTime').value;
+    const time = document.getElementById('sleepTime').value;
     if (!time) return;
-    var entry = { time: time, date: fmtDate(new Date()), saved: Date.now() };
+    const entry = { time: time, date: fmtDate(new Date()), saved: Date.now() };
     localStorage.setItem('barry-sleep', JSON.stringify(entry));
     if (typeof pushAllSharedData === 'function') {
       pushAllSharedData();
@@ -444,7 +444,7 @@ var BarryModule = (function () {
 
   function getBarrySleep() {
     try {
-      var v = localStorage.getItem('barry-sleep');
+      const v = localStorage.getItem('barry-sleep');
       return v ? JSON.parse(v) : null;
     } catch (e) {
       return null;
@@ -452,43 +452,43 @@ var BarryModule = (function () {
   }
 
   function renderSleepCard() {
-    var card = document.getElementById('sleepCard');
+    const card = document.getElementById('sleepCard');
     if (!card) return;
     card.style.display = '';
 
-    var titleEl = document.getElementById('sleep-title');
+    const titleEl = document.getElementById('sleep-title');
     if (titleEl) {
       titleEl.textContent = t('sleepTitle');
     }
 
     if (activeProfile === 'barry') {
-      var barryView = document.getElementById('sleepBarryView');
-      var angieView = document.getElementById('sleepAngieView');
+      const barryView = document.getElementById('sleepBarryView');
+      const angieView = document.getElementById('sleepAngieView');
       if (barryView) barryView.style.display = '';
       if (angieView) angieView.style.display = 'none';
 
-      var hintEl = document.getElementById('sleep-hint');
+      const hintEl = document.getElementById('sleep-hint');
       if (hintEl) {
         hintEl.textContent = t('sleepHint');
       }
 
-      var saveEl = document.getElementById('sleep-save');
+      const saveEl = document.getElementById('sleep-save');
       if (saveEl) {
         saveEl.textContent = t('sleepSave');
       }
 
       var s = getBarrySleep();
-      var inputEl = document.getElementById('sleepTime');
+      const inputEl = document.getElementById('sleepTime');
       if (s && inputEl) inputEl.value = s.time;
     } else {
       // Angie's view
-      var barryView2 = document.getElementById('sleepBarryView');
-      var angieView2 = document.getElementById('sleepAngieView');
+      const barryView2 = document.getElementById('sleepBarryView');
+      const angieView2 = document.getElementById('sleepAngieView');
       if (barryView2) barryView2.style.display = 'none';
       if (angieView2) angieView2.style.display = '';
 
       var s = getBarrySleep();
-      var contentEl = document.getElementById('sleepAngieContent');
+      const contentEl = document.getElementById('sleepAngieContent');
       if (!contentEl) return;
 
       if (!s) {
@@ -499,10 +499,10 @@ var BarryModule = (function () {
         return;
       }
 
-      var timeParts = s.time.split(':');
-      var hour = parseInt(timeParts[0], 10);
-      var min = parseInt(timeParts[1], 10);
-      var lateMsg = '';
+      const timeParts = s.time.split(':');
+      const hour = parseInt(timeParts[0], 10);
+      const min = parseInt(timeParts[1], 10);
+      let lateMsg = '';
 
       if (hour >= 2 || (hour === 1 && min >= 30)) {
         if (lang === 'sr') {
@@ -540,15 +540,15 @@ var BarryModule = (function () {
      ================================================================ */
 
   function renderSpecialBadge() {
-    var badge = document.getElementById('specialBadge');
+    const badge = document.getElementById('specialBadge');
     if (!badge) return;
     if (activeProfile !== 'andjela') {
       badge.style.display = 'none';
       return;
     }
     badge.style.display = '';
-    var texts = t('specialBadgeTexts');
-    var textEl = document.getElementById('specialBadgeText');
+    const texts = t('specialBadgeTexts');
+    const textEl = document.getElementById('specialBadgeText');
     if (textEl) textEl.textContent = texts[Math.floor(Math.random() * texts.length)];
   }
 

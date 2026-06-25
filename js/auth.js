@@ -9,14 +9,14 @@ var AuthModule = (function () {
   'use strict';
 
   // ── SHA-256 hashed PINs (not plaintext) ──────────────────────────
-  var LOGIN_PINS = {
+  const LOGIN_PINS = {
     andjela: '8e614d39a1f1279958da1c9f7e8df51db4aabca8cc3a3e84f8c3dc5f88e1fcfb',
     barry: '286aee2ea4a5ba67539432dc5ea3865c3b204d3caaccb662995388d156a279cf',
   };
 
   // ── Internal state ──────────────────────────────────────────────
-  var _selectedLoginProfile = null;
-  var _isLoggedIn = false;
+  let _selectedLoginProfile = null;
+  let _isLoggedIn = false;
 
   // ── Public API ──────────────────────────────────────────────────
 
@@ -43,34 +43,34 @@ var AuthModule = (function () {
     _selectedLoginProfile = profile;
 
     // Set language based on profile: Andjela -> sr, Barry -> zh-CN
-    var profileLang = profile === 'barry' ? 'zh-CN' : 'sr';
+    const profileLang = profile === 'barry' ? 'zh-CN' : 'sr';
     lang = profileLang;
     document.querySelectorAll('.lang-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.lang === lang);
     });
 
     // Update card selection visuals
-    var cardA = document.getElementById('loginCardAndjela');
-    var cardB = document.getElementById('loginCardBarry');
+    const cardA = document.getElementById('loginCardAndjela');
+    const cardB = document.getElementById('loginCardBarry');
     if (cardA) cardA.classList.toggle('selected', profile === 'andjela');
     if (cardB) cardB.classList.toggle('selected', profile === 'barry');
 
     // Update login UI text
-    var pinBtn = document.getElementById('loginPinBtn');
+    const pinBtn = document.getElementById('loginPinBtn');
     if (pinBtn) {
       pinBtn.textContent = t('authPinBtn');
     }
-    var hintA = document.getElementById('lc-hint-a');
-    var hintB = document.getElementById('lc-hint-b');
-    var hintText = t('authTapHint');
+    const hintA = document.getElementById('lc-hint-a');
+    const hintB = document.getElementById('lc-hint-b');
+    const hintText = t('authTapHint');
     if (hintA) hintA.textContent = hintText;
     if (hintB) hintB.textContent = hintText;
 
     // Show PIN area
-    var pinArea = document.getElementById('loginPinArea');
+    const pinArea = document.getElementById('loginPinArea');
     if (pinArea) pinArea.classList.add('show');
 
-    var pinInput = document.getElementById('loginPinInput');
+    const pinInput = document.getElementById('loginPinInput');
     if (pinInput) {
       pinInput.value = '';
       setTimeout(function () {
@@ -78,10 +78,10 @@ var AuthModule = (function () {
       }, 300);
     }
 
-    var errorEl = document.getElementById('loginError');
+    const errorEl = document.getElementById('loginError');
     if (errorEl) errorEl.textContent = '';
 
-    var switchHint = document.getElementById('loginSwitchHint');
+    const switchHint = document.getElementById('loginSwitchHint');
     if (switchHint) {
       switchHint.textContent = t('authSwitchHint');
     }
@@ -94,9 +94,9 @@ var AuthModule = (function () {
    * On success: sets activeProfile, persists, boots app.
    */
   function verifyLogin() {
-    var pinEl = document.getElementById('loginPinInput');
-    var pin = pinEl ? pinEl.value : '';
-    var card;
+    const pinEl = document.getElementById('loginPinInput');
+    const pin = pinEl ? pinEl.value : '';
+    let card;
     if (_selectedLoginProfile === 'andjela') {
       card = document.getElementById('loginCardAndjela');
     } else {
@@ -111,14 +111,14 @@ var AuthModule = (function () {
         sessionStorage.setItem('cycle-logged-in', '1');
         _isLoggedIn = true;
 
-        var overlay = document.getElementById('loginOverlay');
+        const overlay = document.getElementById('loginOverlay');
         if (overlay) overlay.classList.add('hidden');
 
         bootApp();
       } else {
         // Wrong PIN
         if (card) card.classList.add('shake');
-        var errorEl = document.getElementById('loginError');
+        const errorEl = document.getElementById('loginError');
         if (errorEl) {
           errorEl.textContent = _selectedLoginProfile === 'barry' ? 'PIN 不对，再试一次' : 'Pogrešan PIN — pokušaj ponovo';
         }
@@ -159,31 +159,31 @@ var AuthModule = (function () {
     lang = 'sr';
 
     // Show login overlay and reset its UI
-    var overlay = document.getElementById('loginOverlay');
+    const overlay = document.getElementById('loginOverlay');
     if (overlay) overlay.classList.remove('hidden');
 
-    var pinArea = document.getElementById('loginPinArea');
+    const pinArea = document.getElementById('loginPinArea');
     if (pinArea) pinArea.classList.remove('show');
 
-    var cardA = document.getElementById('loginCardAndjela');
-    var cardB = document.getElementById('loginCardBarry');
+    const cardA = document.getElementById('loginCardAndjela');
+    const cardB = document.getElementById('loginCardBarry');
     if (cardA) cardA.classList.remove('selected');
     if (cardB) cardB.classList.remove('selected');
 
-    var switchHint = document.getElementById('loginSwitchHint');
+    const switchHint = document.getElementById('loginSwitchHint');
     if (switchHint) switchHint.textContent = '👈 Izaberi svoj profil i unesi PIN';
 
-    var pinInput = document.getElementById('loginPinInput');
+    const pinInput = document.getElementById('loginPinInput');
     if (pinInput) pinInput.value = '';
 
-    var errorEl = document.getElementById('loginError');
+    const errorEl = document.getElementById('loginError');
     if (errorEl) errorEl.textContent = '';
 
-    var pinBtn = document.getElementById('loginPinBtn');
+    const pinBtn = document.getElementById('loginPinBtn');
     if (pinBtn) pinBtn.textContent = '🔓 Prijavi se';
 
-    var hintA = document.getElementById('lc-hint-a');
-    var hintB = document.getElementById('lc-hint-b');
+    const hintA = document.getElementById('lc-hint-a');
+    const hintB = document.getElementById('lc-hint-b');
     if (hintA) hintA.textContent = 'Dodirni za prijavu';
     if (hintB) hintB.textContent = 'Dodirni za prijavu';
   }
@@ -201,8 +201,8 @@ var AuthModule = (function () {
       localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache));
     });
 
-    var sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
-    var savedProfile = localStorage.getItem('cycle-active-profile');
+    const sessionLoggedIn = sessionStorage.getItem('cycle-logged-in');
+    const savedProfile = localStorage.getItem('cycle-active-profile');
 
     if (savedProfile && sessionLoggedIn === '1') {
       activeProfile = savedProfile;
@@ -230,8 +230,8 @@ var AuthModule = (function () {
   function hashPIN(pin) {
     if (!pin) return Promise.resolve('');
     try {
-      var encoder = new TextEncoder();
-      var data = encoder.encode(pin);
+      const encoder = new TextEncoder();
+      const data = encoder.encode(pin);
       return crypto.subtle.digest('SHA-256', data).then(function (hashBuffer) {
         return Array.from(new Uint8Array(hashBuffer))
           .map(function (b) {
@@ -241,8 +241,8 @@ var AuthModule = (function () {
       });
     } catch (e) {
       // Fallback for very old browsers: simple hash (less secure but better than plaintext)
-      var h = 0;
-      for (var i = 0; i < pin.length; i++) {
+      let h = 0;
+      for (let i = 0; i < pin.length; i++) {
         h = (h << 5) - h + pin.charCodeAt(i);
         h |= 0;
       }
@@ -254,15 +254,15 @@ var AuthModule = (function () {
    * spawnLoginHearts — decorative heart animation on login screen.
    */
   function spawnLoginHearts() {
-    var overlay = document.getElementById('loginOverlay');
+    const overlay = document.getElementById('loginOverlay');
     if (!overlay) return;
 
-    var hearts = ['💕', '💖', '💗', '💝', '🌸', '✨', '🌷', '🕊️'];
+    const hearts = ['💕', '💖', '💗', '💝', '🌸', '✨', '🌷', '🕊️'];
 
-    for (var i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
       (function (idx) {
         setTimeout(function () {
-          var h = document.createElement('span');
+          const h = document.createElement('span');
           h.textContent = hearts[idx % hearts.length];
           h.style.cssText =
             'position:fixed;pointer-events:none;z-index:1001;' +
@@ -286,7 +286,7 @@ var AuthModule = (function () {
 
           // Add keyframes if not present
           if (!document.getElementById('loginHeartKeyframes')) {
-            var style = document.createElement('style');
+            const style = document.createElement('style');
             style.id = 'loginHeartKeyframes';
             style.textContent =
               '@keyframes loginHeartFloat{' +

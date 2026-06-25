@@ -16,17 +16,17 @@ var CultureCardsModule = (function () {
   'use strict';
 
   /* ── Internal State ── */
-  var _cultureData = []; // loaded from culture-knowledge.json
-  var _cardIdx = 0;
+  let _cultureData = []; // loaded from culture-knowledge.json
+  let _cardIdx = 0;
 
   /* ── CL (Culture Labels) — dual-profile badge text ── */
-  var CL = {
+  const CL = {
     barry: { todayBadge: '今日推荐' },
     andjela: { todayBadge: 'Daily' },
   };
 
   /* ── Chinese descriptions (Barry's native language) ── */
-  var DESC_ZH = {
+  const DESC_ZH = {
     1: '中国最重要的传统节日。全家人聚在一起吃年夜饭，孩子们收到红包，鞭炮声驱散了旧年的晦气。每个农历年对应一种生肖动物。',
     2: '在中国几乎所有支付都用手机完成——微信支付或支付宝。现金已很少使用。来中国前安装微信并绑定银行卡，就能畅行无阻。',
     3: '中国人喜欢分享菜肴——所有菜放桌子中间大家一起夹。不要把筷子竖直插在米饭里。敬酒时杯子要低于长辈，以示尊重。',
@@ -77,7 +77,7 @@ var CultureCardsModule = (function () {
   }
 
   function locale(key) {
-    var p = CL[getProfile()] || CL.andjela;
+    const p = CL[getProfile()] || CL.andjela;
     return p[key] || CL.andjela[key] || key;
   }
 
@@ -103,21 +103,21 @@ var CultureCardsModule = (function () {
   /* ── Index Calculation ── */
   function getTodaysIndex() {
     if (_cultureData.length === 0) return 0;
-    var now = new Date();
+    const now = new Date();
     return (now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate()) % _cultureData.length;
   }
 
   /* ── Render ── */
   function render() {
     if (_cultureData.length === 0) return;
-    var k = _cultureData[_cardIdx];
+    const k = _cultureData[_cardIdx];
     if (!k) return;
 
-    var emojiEl = document.getElementById('cultureEmoji');
+    const emojiEl = document.getElementById('cultureEmoji');
     if (emojiEl) emojiEl.textContent = k.icon;
 
-    var titleZh = document.getElementById('cultureTitleZh');
-    var titleSr = document.getElementById('cultureTitleSr');
+    const titleZh = document.getElementById('cultureTitleZh');
+    const titleSr = document.getElementById('cultureTitleSr');
 
     if (titleZh) {
       titleZh.textContent = isEnglish() ? k.en || k.zh : k.zh;
@@ -128,33 +128,33 @@ var CultureCardsModule = (function () {
       titleSr.style.display = !isChinese() && !isEnglish() ? '' : 'none';
     }
 
-    var descEl = document.getElementById('cultureDesc');
+    const descEl = document.getElementById('cultureDesc');
     if (descEl) {
-      var desc = isChinese() ? DESC_ZH[k.id] || k.desc : k.desc_sr || k.desc;
+      let desc = isChinese() ? DESC_ZH[k.id] || k.desc : k.desc_sr || k.desc;
       if (isEnglish()) desc = k.desc_en || k.desc;
       descEl.textContent = desc;
     }
 
-    var tagsEl = document.getElementById('cultureTags');
+    const tagsEl = document.getElementById('cultureTags');
     if (tagsEl) {
-      var html = '';
+      let html = '';
       (k.tags || []).forEach(function (t) {
         html += '<span class="culture-tag">' + t + '</span>';
       });
       tagsEl.innerHTML = html;
     }
 
-    var navEl = document.getElementById('cultureNavInfo');
+    const navEl = document.getElementById('cultureNavInfo');
     if (navEl) navEl.textContent = _cardIdx + 1 + ' / ' + _cultureData.length;
 
-    var isToday = _cardIdx === getTodaysIndex();
-    var card = document.getElementById('cultureMainCard');
+    const isToday = _cardIdx === getTodaysIndex();
+    const card = document.getElementById('cultureMainCard');
     if (card) {
       if (isToday) card.classList.add('culture-today');
       else card.classList.remove('culture-today');
     }
 
-    var badge = document.getElementById('cultureTodayBadge');
+    const badge = document.getElementById('cultureTodayBadge');
     if (badge) badge.textContent = locale('todayBadge');
   }
 
@@ -179,7 +179,7 @@ var CultureCardsModule = (function () {
   /* ── Init ── */
   function init(tabLabel) {
     // Update tab label
-    var tb = document.getElementById('tb-culture');
+    const tb = document.getElementById('tb-culture');
     if (tb && typeof L !== 'undefined') {
       tb.textContent = L('Kina', 'China', '中华');
     }
@@ -192,13 +192,13 @@ var CultureCardsModule = (function () {
   /* ── Dashboard snippet (used by app.js renderDashboard) ── */
   function dashboardSnippet(dl) {
     if (_cultureData.length === 0) return '';
-    var tc = _cultureData[getTodaysIndex()];
+    const tc = _cultureData[getTodaysIndex()];
     if (!tc) return '';
 
-    var isZh = isChinese();
-    var isEn = isEnglish();
-    var title = isZh ? tc.zh : isEn && tc.en ? tc.en : tc.sr;
-    var desc = isZh ? DESC_ZH[tc.id] || tc.desc : isEn && tc.desc_en ? tc.desc_en : tc.desc_sr || tc.desc;
+    const isZh = isChinese();
+    const isEn = isEnglish();
+    const title = isZh ? tc.zh : isEn && tc.en ? tc.en : tc.sr;
+    const desc = isZh ? DESC_ZH[tc.id] || tc.desc : isEn && tc.desc_en ? tc.desc_en : tc.desc_sr || tc.desc;
 
     return (
       '<div class="card dash-card"><h4>' +
@@ -214,7 +214,7 @@ var CultureCardsModule = (function () {
   }
 
   /* ── Public API (exposed to window for backward compat) ── */
-  var api = {
+  const api = {
     load: load,
     getData: getData,
     init: init,
@@ -262,7 +262,7 @@ function goToTodayCulture() {
 
 // Sync the global CULTURE_KNOWLEDGE with module data when loaded
 (function () {
-  var origLoad = CultureCardsModule.load;
+  const origLoad = CultureCardsModule.load;
   CultureCardsModule.load = function () {
     return origLoad.call(CultureCardsModule).then(function (data) {
       CULTURE_KNOWLEDGE = data;

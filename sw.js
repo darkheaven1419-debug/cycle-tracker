@@ -72,8 +72,8 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  var request = event.request;
-  var url = new URL(request.url);
+  const request = event.request;
+  const url = new URL(request.url);
 
   // Google Fonts — cache-first (fonts are versioned, rarely change)
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
@@ -82,7 +82,7 @@ self.addEventListener('fetch', function (event) {
         return (
           cached ||
           fetch(request).then(function (response) {
-            var clone = response.clone();
+            const clone = response.clone();
             caches.open(CACHE_FONTS).then(function (cache) {
               cache.put(request, clone);
             });
@@ -128,7 +128,7 @@ self.addEventListener('fetch', function (event) {
       fetch(request)
         .then(function (response) {
           // Clone immediately — response body can only be read once
-          var clone = response.clone();
+          const clone = response.clone();
           caches.open(CACHE_STATIC).then(function (cache) {
             cache.put(request, clone);
           });
@@ -181,7 +181,7 @@ function syncDiaryData() {
 // ================================================================
 
 self.addEventListener('message', function (event) {
-  var data = event.data || {};
+  const data = event.data || {};
 
   if (data.type === 'SKIP_WAITING') {
     self.skipWaiting();

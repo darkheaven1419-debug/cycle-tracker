@@ -22,10 +22,10 @@ var SyncModule = (function () {
   // ====================================================================
   // Constants
   // ====================================================================
-  var GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
-  var GITHUB_SHARED_FILE = 'shared-state.json';
-  var SYNC_INTERVAL_MS = 120000; // Pull every 2 minutes
-  var MAX_RETRIES = 3;
+  const GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
+  const GITHUB_SHARED_FILE = 'shared-state.json';
+  const SYNC_INTERVAL_MS = 120000; // Pull every 2 minutes
+  const MAX_RETRIES = 3;
 
   // ====================================================================
   // Internal: helpers
@@ -34,7 +34,7 @@ var SyncModule = (function () {
   /** Safely parse JSON from localStorage, returning fallback on failure. */
   function _safeGet(key, fallback) {
     try {
-      var val = localStorage.getItem(key);
+      const val = localStorage.getItem(key);
       return val ? JSON.parse(val) : fallback;
     } catch (e) {
       return fallback;
@@ -51,7 +51,7 @@ var SyncModule = (function () {
    * @returns {Object}
    */
   function collectSharedState() {
-    var cycleData = _safeGet('shared-cycle-data', null);
+    let cycleData = _safeGet('shared-cycle-data', null);
     // Fall back to Anđela's local profile data if shared key is empty
     if (!cycleData || !cycleData.records) {
       cycleData = _safeGet('cycle-data-v6-andjela', null);
@@ -172,22 +172,22 @@ var SyncModule = (function () {
    */
   async function pushAllSharedData(retryCount) {
     retryCount = retryCount || 0;
-    var token = getGitHubToken();
+    const token = getGitHubToken();
     if (!token) return;
 
-    var sharedState = collectSharedState();
-    var headers = {
+    const sharedState = collectSharedState();
+    const headers = {
       Authorization: 'Bearer ' + token,
       Accept: 'application/vnd.github.v3+json',
       'Content-Type': 'application/json',
     };
-    var sha = null;
+    let sha = null;
 
     // Fetch current SHA
     try {
-      var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
+      const resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
       if (resp.ok) {
-        var d = await resp.json();
+        const d = await resp.json();
         sha = d.sha;
       }
     } catch (e) {
@@ -199,12 +199,12 @@ var SyncModule = (function () {
       return;
     }
 
-    var content = btoa(unescape(encodeURIComponent(JSON.stringify(sharedState, null, 2))));
-    var body = { message: '🔄 Sync shared state', content: content };
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(sharedState, null, 2))));
+    const body = { message: '🔄 Sync shared state', content: content };
     if (sha) body.sha = sha;
 
     try {
-      var putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, {
+      const putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, {
         method: 'PUT',
         headers: headers,
         body: JSON.stringify(body),
@@ -249,23 +249,23 @@ var SyncModule = (function () {
    * Refreshes all shared UI panels after successful pull.
    */
   async function pullAllSharedData() {
-    var token = getGitHubToken();
+    const token = getGitHubToken();
     if (!token) return;
 
-    var headers = {
+    const headers = {
       Authorization: 'Bearer ' + token,
       Accept: 'application/vnd.github.v3+json',
     };
 
     try {
-      var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
+      const resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
       if (!resp.ok) return;
 
-      var data = await resp.json();
-      var content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      const data = await resp.json();
+      const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
 
       // Only apply if remote data is newer than our last sync timestamp
-      var lastSync = parseInt(localStorage.getItem('shared-last-sync') || '0');
+      const lastSync = parseInt(localStorage.getItem('shared-last-sync') || '0');
       if (content.updated && content.updated <= lastSync) return;
 
       invalidateSDCache(); // Force diary reload on next read
@@ -300,9 +300,9 @@ var SyncModule = (function () {
    * sync status: not configured, synced (with relative time), or waiting.
    */
   function updateSyncStatusBadge() {
-    var hasToken = !!getGitHubToken();
-    var lastSync = localStorage.getItem('shared-last-sync');
-    var badge = document.getElementById('syncStatusBadge');
+    const hasToken = !!getGitHubToken();
+    const lastSync = localStorage.getItem('shared-last-sync');
+    const badge = document.getElementById('syncStatusBadge');
     if (!badge) return;
 
     if (!hasToken) {
@@ -312,8 +312,8 @@ var SyncModule = (function () {
     }
 
     if (lastSync) {
-      var sec = Math.floor((Date.now() - parseInt(lastSync)) / 1000);
-      var ago;
+      const sec = Math.floor((Date.now() - parseInt(lastSync)) / 1000);
+      let ago;
       if (sec < 30) {
         ago = lang === 'sr' ? 'upravo' : lang === 'en' ? 'just now' : '刚刚';
       } else if (sec < 120) {
@@ -343,7 +343,7 @@ var SyncModule = (function () {
    */
   function init() {
     // Monkey-patch saveSharedDiaryData auto-push
-    var _origSaveSharedDiaryData = window.saveSharedDiaryData;
+    const _origSaveSharedDiaryData = window.saveSharedDiaryData;
     window.saveSharedDiaryData = function (d) {
       _origSaveSharedDiaryData(d);
       pushAllSharedData();

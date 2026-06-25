@@ -37,7 +37,7 @@ var sameDay = function (a, b) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 };
 var addDays = function (d, n) {
-  var r = new Date(d);
+  const r = new Date(d);
   r.setDate(r.getDate() + n);
   return r;
 };
@@ -45,12 +45,12 @@ var daysDiff = function (a, b) {
   return Math.round((b.getTime() - a.getTime()) / 86400000);
 };
 var d0 = function (d) {
-  var r = new Date(d);
+  const r = new Date(d);
   r.setHours(0, 0, 0, 0);
   return r;
 };
 var today = function () {
-  var tt = new Date();
+  const tt = new Date();
   tt.setHours(0, 0, 0, 0);
   return tt;
 };
@@ -117,23 +117,23 @@ console.log('\n=== 2. Cycle Prediction ===');
 
 function predictCycles(records) {
   if (!records || records.length === 0) return [];
-  var sorted = records.slice().sort(function (a, b) {
+  const sorted = records.slice().sort(function (a, b) {
     return a - b;
   });
-  var cycles = [];
-  for (var i = 1; i < sorted.length; i++) {
+  const cycles = [];
+  for (let i = 1; i < sorted.length; i++) {
     cycles.push(Math.round((sorted[i] - sorted[i - 1]) / 86400000));
   }
   return cycles;
 }
 function predictNext(records, cycleLength) {
   if (records.length === 0) return null;
-  var sorted = records.slice().sort(function (a, b) {
+  const sorted = records.slice().sort(function (a, b) {
     return a - b;
   });
-  var last = sorted[sorted.length - 1];
-  var cycles = predictCycles(records);
-  var avgCycle =
+  const last = sorted[sorted.length - 1];
+  const cycles = predictCycles(records);
+  const avgCycle =
     cycles.length > 0
       ? Math.round(
           cycles.reduce(function (a, b) {
@@ -211,21 +211,21 @@ assertEqual(predictCycles(longCycle)[0], 59, '59-day cycle detected');
 console.log('\n=== 3. Full predict() with mocked state ===');
 
 function fullPredict(stateMock) {
-  var records = stateMock.records;
-  var settings = stateMock.settings;
-  var periodEnds = stateMock.periodEnds || {};
-  var sorted = records.slice().sort(function (a, b) {
+  const records = stateMock.records;
+  const settings = stateMock.settings;
+  const periodEnds = stateMock.periodEnds || {};
+  const sorted = records.slice().sort(function (a, b) {
     return a - b;
   });
 
-  var periodLengths = [];
+  const periodLengths = [];
   for (var i = 0; i < sorted.length; i++) {
-    var key = fmtDate(sorted[i]);
+    const key = fmtDate(sorted[i]);
     if (periodEnds[key]) {
       periodLengths.push(daysDiff(d0(sorted[i]), d0(new Date(periodEnds[key] + 'T00:00:00'))) + 1);
     }
   }
-  var avgPeriodLen =
+  const avgPeriodLen =
     periodLengths.length > 0
       ? Math.round(
           periodLengths.reduce(function (a, b) {
@@ -234,7 +234,7 @@ function fullPredict(stateMock) {
         )
       : settings.periodLength;
 
-  var def = {
+  const def = {
     lastStart: null,
     nextStart: null,
     ovulation: null,
@@ -260,7 +260,7 @@ function fullPredict(stateMock) {
     for (var i = 1; i < sorted.length; i++) {
       def.cycles.push(daysDiff(d0(sorted[i - 1]), d0(sorted[i])));
     }
-    var recent = def.cycles.slice(-6);
+    const recent = def.cycles.slice(-6);
     if (recent.length > 0) {
       def.avgCycle = Math.round(
         recent.reduce(function (a, b) {
@@ -269,7 +269,7 @@ function fullPredict(stateMock) {
       );
       def.minCycle = Math.min.apply(null, recent);
       def.maxCycle = Math.max.apply(null, recent);
-      var variance =
+      const variance =
         recent.reduce(function (s, c) {
           return s + (c - def.avgCycle) * (c - def.avgCycle);
         }, 0) / recent.length;
@@ -281,11 +281,11 @@ function fullPredict(stateMock) {
     def.nextStart = addDays(def.lastStart, def.avgCycle);
   }
 
-  var td = today();
+  const td = today();
   if (def.nextStart && td > def.nextStart) {
     var useLen = settings.manualOverride ? settings.cycleLength : def.avgCycle;
-    var elapsed = daysDiff(def.lastStart, td);
-    var passed = Math.floor(elapsed / useLen);
+    const elapsed = daysDiff(def.lastStart, td);
+    const passed = Math.floor(elapsed / useLen);
     if (passed >= 1) {
       def.nextStart = addDays(def.lastStart, useLen * (passed + 1));
     }
@@ -299,7 +299,7 @@ function fullPredict(stateMock) {
     def.fertileEnd = addDays(def.ovulation, 2);
     var useLen = settings.manualOverride ? settings.cycleLength : def.avgCycle;
     for (var i = 1; i <= 2; i++) {
-      var np = addDays(def.nextStart, useLen * i);
+      const np = addDays(def.nextStart, useLen * i);
       def.futurePeriods.push({
         start: np,
         ovulation: addDays(np, -14),
@@ -427,31 +427,31 @@ assertEqual(fmtDate(pManual.futurePeriods[1].start), '2027-01-05', 'manual overr
 console.log('\n=== 4. Phase Determination ===');
 
 function getPeriodEndDate(startDate, periodEnds) {
-  var key = fmtDate(startDate);
+  const key = fmtDate(startDate);
   if (periodEnds && periodEnds[key]) return new Date(periodEnds[key] + 'T00:00:00');
   return null;
 }
 
 function getPhase(date, pred, stateMock) {
-  var d = d0(date);
+  const d = d0(date);
   // Check recorded periods
-  for (var ri = 0; ri < stateMock.records.length; ri++) {
-    var s = d0(stateMock.records[ri]);
-    var e = getPeriodEndDate(stateMock.records[ri], stateMock.periodEnds) || addDays(s, pred.periodLen - 1);
+  for (let ri = 0; ri < stateMock.records.length; ri++) {
+    const s = d0(stateMock.records[ri]);
+    let e = getPeriodEndDate(stateMock.records[ri], stateMock.periodEnds) || addDays(s, pred.periodLen - 1);
     e = d0(e);
     if (d >= s && d <= e) return sameDay(d, s) ? 'period-on' : 'period-mid';
   }
   // Check predicted next period
   if (pred.nextStart) {
-    var ps = d0(pred.nextStart),
+    const ps = d0(pred.nextStart),
       pe = addDays(ps, pred.periodLen - 1);
     pe.setHours(0, 0, 0, 0);
     if (d >= ps && d <= pe) return sameDay(d, ps) ? 'period-pred-first' : 'period-pred';
   }
   // Check future predicted periods
-  for (var fi = 0; fi < pred.futurePeriods.length; fi++) {
-    var fps = d0(pred.futurePeriods[fi].start);
-    var fpe = addDays(fps, pred.periodLen - 1);
+  for (let fi = 0; fi < pred.futurePeriods.length; fi++) {
+    const fps = d0(pred.futurePeriods[fi].start);
+    const fpe = addDays(fps, pred.periodLen - 1);
     fpe.setHours(0, 0, 0, 0);
     if (d >= fps && d <= fpe) return sameDay(d, fps) ? 'period-future-first' : 'period-future';
   }
@@ -459,21 +459,21 @@ function getPhase(date, pred, stateMock) {
   if (pred.ovulation && sameDay(d, pred.ovulation)) return 'ovulation';
   // Fertile window
   if (pred.fertileStart && pred.fertileEnd) {
-    var fs = d0(pred.fertileStart),
+    const fs = d0(pred.fertileStart),
       fe = d0(pred.fertileEnd);
     if (d >= fs && d <= fe) return 'fertile';
   }
   // Luteal phase
   if (pred.fertileEnd && pred.nextStart) {
-    var lfe = d0(pred.fertileEnd),
+    const lfe = d0(pred.fertileEnd),
       np = d0(pred.nextStart);
     if (d > lfe && d < np) return 'luteal';
   }
   // Follicular phase
   if (pred.lastStart && pred.fertileStart) {
-    var lpEnd = addDays(pred.lastStart, pred.periodLen);
+    const lpEnd = addDays(pred.lastStart, pred.periodLen);
     lpEnd.setHours(0, 0, 0, 0);
-    var pfs = d0(pred.fertileStart);
+    const pfs = d0(pred.fertileStart);
     if (d >= lpEnd && d < pfs) return 'follicular';
   }
   return null;
@@ -575,7 +575,7 @@ assertEqual(langName({ en: 'Yes' }, 'fr'), '', 'langName no sr fallback returns 
 function makeL(langVar) {
   return function (sr, en, zh) {
     if (typeof sr === 'object') {
-      var m = sr;
+      const m = sr;
       return m[langVar] || m[langVar.split('-')[0]] || m['sr'] || '';
     }
     if (langVar === 'sr' || langVar === 'sr-RS') return sr;
@@ -606,9 +606,9 @@ assertEqual(LsrRS('Zdravo', 'Hello', '你好'), 'Zdravo', 'L sr-RS returns sr');
 // t() function — lookup by dotted key
 function makeT(langVar, i18nData) {
   return function (key, fallback) {
-    var keys = key.split('.');
-    var val = i18nData[langVar] || i18nData['sr'];
-    for (var ki = 0; ki < keys.length; ki++) {
+    const keys = key.split('.');
+    let val = i18nData[langVar] || i18nData['sr'];
+    for (let ki = 0; ki < keys.length; ki++) {
       if (val && val[keys[ki]] !== undefined) val = val[keys[ki]];
       else return fallback || key;
     }
@@ -743,7 +743,7 @@ assertEqual(safeParse('"a string"', ''), 'a string', 'safeParse JSON string valu
 // safeGetItem — no localStorage in Node, test logic only
 function simulateSafeGetItem(storage, key, defaultVal) {
   try {
-    var v = storage[key];
+    const v = storage[key];
     return v != null ? v : defaultVal;
   } catch (e) {
     return defaultVal;

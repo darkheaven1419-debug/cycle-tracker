@@ -4,14 +4,14 @@
    ================================================================ */
 
 function renderStatsPanel() {
-  var cardsEl = document.getElementById('lrnStatsCards');
-  var heatEl = document.getElementById('lrnStatsHeatmap');
+  const cardsEl = document.getElementById('lrnStatsCards');
+  const heatEl = document.getElementById('lrnStatsHeatmap');
   if (!cardsEl || !heatEl) return;
 
-  var progress = getProgress();
-  var total = getTotalProgress();
-  var completedList = progress.completedLessons || {};
-  var completedCount = Object.keys(completedList).length;
+  const progress = getProgress();
+  const total = getTotalProgress();
+  const completedList = progress.completedLessons || {};
+  const completedCount = Object.keys(completedList).length;
 
   cardsEl.innerHTML =
     '<div class="lrn-stat-card"><span class="lrn-stat-icon">\u{1F4DA}</span>' +
@@ -30,34 +30,34 @@ function renderStatsPanel() {
     '<div class="lrn-stat-val">' + getDailyGoal() + '</div>' +
     '<div class="lrn-stat-label">' + _('每日目标', 'Dnevni cilj', 'Daily goal') + '</div></div>';
 
-  var heatHtml = '<h4 style="font-size:.68rem;margin-bottom:8px;font-weight:700">' +
+  let heatHtml = '<h4 style="font-size:.68rem;margin-bottom:8px;font-weight:700">' +
     _('学习热力图', 'Mapa učenja', 'Study heatmap') + '</h4>';
   heatHtml += '<div class="lrn-heatmap-grid">';
 
-  var dayLabels = _('一二三四五六日', 'P U S C P S N', 'M T W T F S S');
-  for (var d = 0; d < 7; d++) {
+  const dayLabels = _('一二三四五六日', 'P U S C P S N', 'M T W T F S S');
+  for (let d = 0; d < 7; d++) {
     heatHtml += '<div style="font-size:.45rem;color:var(--text-muted);text-align:center">' +
       dayLabels.charAt(d) + '</div>';
   }
 
-  var today = new Date();
-  var startDate = new Date(today);
+  const today = new Date();
+  const startDate = new Date(today);
   startDate.setDate(startDate.getDate() - 48);
-  var startDay = startDate.getDay();
+  const startDay = startDate.getDay();
   startDate.setDate(startDate.getDate() - ((startDay + 6) % 7));
 
-  var dailyStats = progress.dailyStats || {};
-  var gridDate = new Date(startDate);
-  var nowStr = fmtDateLocal(new Date());
-  var maxWeeks = 7;
-  var cells = 0;
+  const dailyStats = progress.dailyStats || {};
+  const gridDate = new Date(startDate);
+  const nowStr = fmtDateLocal(new Date());
+  const maxWeeks = 7;
+  let cells = 0;
 
-  for (var w = 0; w < maxWeeks; w++) {
-    for (var day = 0; day < 7; day++) {
-      var dateStr = fmtDateLocal(gridDate);
-      var count = dailyStats[dateStr] ? dailyStats[dateStr].lessonsCompleted || 0 : 0;
-      var intensity = count === 0 ? '' : (count <= 1 ? 'low' : (count <= 3 ? 'med' : 'high'));
-      var isToday = dateStr === nowStr;
+  for (let w = 0; w < maxWeeks; w++) {
+    for (let day = 0; day < 7; day++) {
+      const dateStr = fmtDateLocal(gridDate);
+      const count = dailyStats[dateStr] ? dailyStats[dateStr].lessonsCompleted || 0 : 0;
+      const intensity = count === 0 ? '' : (count <= 1 ? 'low' : (count <= 3 ? 'med' : 'high'));
+      const isToday = dateStr === nowStr;
       heatHtml += '<div class="lrn-heat-cell ' + intensity + (isToday ? ' today' : '') +
         '" title="' + dateStr + ': ' + count + ' ' +
         _('课', 'lekcija', 'lessons') + '"></div>';
@@ -83,19 +83,19 @@ function renderStatsPanel() {
 /* ---- Favorites Panel ---- */
 
 function renderFavoritesPanel() {
-  var container = document.getElementById('lrnFavoritesContainer');
+  const container = document.getElementById('lrnFavoritesContainer');
   if (!container) return;
-  var favs = getFavorites();
+  const favs = getFavorites();
   if (favs.length === 0) {
     container.innerHTML = '<div class="lrn-empty-state"><span class="lrn-empty-icon">\u{2B1A}</span>' +
       '<span class="lrn-empty-text">' +
       _('暂无收藏词汇', 'Nema sačuvanih reči', 'No favorite words') + '</span></div>';
     return;
   }
-  var html = '';
-  for (var i = 0; i < favs.length; i++) {
-    var zh = favs[i];
-    var wordInfo = findWordInLessons(zh);
+  let html = '';
+  for (let i = 0; i < favs.length; i++) {
+    const zh = favs[i];
+    const wordInfo = findWordInLessons(zh);
     if (wordInfo) {
       html += '<div class="lrn-word-card">';
       html += '<button class="lrn-fav-btn fav-active" ' +
@@ -116,10 +116,10 @@ function renderFavoritesPanel() {
 }
 
 function findWordInLessons(zh) {
-  for (var i = 0; i < LESSONS_DATA.length; i++) {
-    var lesson = LESSONS_DATA[i];
+  for (let i = 0; i < LESSONS_DATA.length; i++) {
+    const lesson = LESSONS_DATA[i];
     if (lesson.words) {
-      for (var j = 0; j < lesson.words.length; j++) {
+      for (let j = 0; j < lesson.words.length; j++) {
         if (lesson.words[j].zh === zh) return lesson.words[j];
       }
     }

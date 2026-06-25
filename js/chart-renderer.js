@@ -6,7 +6,7 @@
    ================================================================ */
 var ChartRenderer = {
   _theme: function() {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
       bg: isDark ? '#1e1518' : '#faf3ef',
       text: isDark ? '#c4a8a8' : '#3d2828',
@@ -33,24 +33,24 @@ var ChartRenderer = {
   },
 
   _setupCanvas: function(canvas, w, h) {
-    var dpr = window.devicePixelRatio || 1;
-    var rect = canvas.getBoundingClientRect();
-    var displayW = rect.width || w;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const displayW = rect.width || w;
     canvas.width = displayW * dpr;
     canvas.height = h * dpr;
     canvas.style.width = displayW + 'px';
     canvas.style.height = h + 'px';
-    var ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
     return { ctx: ctx, w: displayW, h: h };
   },
 
   drawLineChart: function(canvas, dataPoints, labels, opts) {
     opts = opts || {};
-    var self = this; var t = self._theme();
-    var _a = self._setupCanvas(canvas, opts.width || 500, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
-    var pad = { top: 16, right: 16, bottom: 28, left: 32 };
-    var pw = w - pad.left - pad.right, ph = h - pad.top - pad.bottom;
+    const self = this; const t = self._theme();
+    const _a = self._setupCanvas(canvas, opts.width || 500, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
+    const pad = { top: 16, right: 16, bottom: 28, left: 32 };
+    const pw = w - pad.left - pad.right, ph = h - pad.top - pad.bottom;
 
     ctx.clearRect(0, 0, w, h);
 
@@ -60,19 +60,19 @@ var ChartRenderer = {
       return;
     }
 
-    var allVals = dataPoints.slice();
+    const allVals = dataPoints.slice();
     if (opts.avgLine) allVals.push(opts.avgLine);
-    var minVal = Math.floor(Math.min.apply(Math, allVals) - 2);
-    var maxVal = Math.ceil(Math.max.apply(Math, allVals) + 2);
-    if (maxVal - minVal < 4) { var mid = (minVal + maxVal) / 2; minVal = mid - 2; maxVal = mid + 2; }
-    var xStep = dataPoints.length > 1 ? pw / (dataPoints.length - 1) : pw / 2;
-    var valToY = function(v) { return pad.top + ph - ((v - minVal) / (maxVal - minVal)) * ph; };
+    let minVal = Math.floor(Math.min.apply(Math, allVals) - 2);
+    let maxVal = Math.ceil(Math.max.apply(Math, allVals) + 2);
+    if (maxVal - minVal < 4) { const mid = (minVal + maxVal) / 2; minVal = mid - 2; maxVal = mid + 2; }
+    const xStep = dataPoints.length > 1 ? pw / (dataPoints.length - 1) : pw / 2;
+    const valToY = function(v) { return pad.top + ph - ((v - minVal) / (maxVal - minVal)) * ph; };
 
     // Grid
     ctx.strokeStyle = t.grid; ctx.lineWidth = 0.5; ctx.setLineDash([3, 4]);
-    var gridLines = 4;
-    for (var i = 0; i <= gridLines; i++) {
-      var y = pad.top + (ph / gridLines) * i;
+    const gridLines = 4;
+    for (let i = 0; i <= gridLines; i++) {
+      const y = pad.top + (ph / gridLines) * i;
       ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
       ctx.fillStyle = t.textMuted; ctx.font = '.55rem ' + getComputedStyle(document.body).fontFamily;
       ctx.textAlign = 'right'; ctx.fillText(Math.round(maxVal - (maxVal - minVal) / gridLines * i), pad.left - 6, y + 3);
@@ -83,16 +83,16 @@ var ChartRenderer = {
     if (labels && labels.length > 0) {
       ctx.fillStyle = t.textMuted; ctx.font = '.52rem ' + getComputedStyle(document.body).fontFamily;
       ctx.textAlign = 'center';
-      var labelStep = Math.max(1, Math.floor(labels.length / 5));
-      for (var i2 = 0; i2 < labels.length; i2 += labelStep) {
-        var lx = pad.left + i2 * xStep;
+      const labelStep = Math.max(1, Math.floor(labels.length / 5));
+      for (let i2 = 0; i2 < labels.length; i2 += labelStep) {
+        const lx = pad.left + i2 * xStep;
         if (lx <= w - pad.right) ctx.fillText(labels[i2], lx, h - 4);
       }
     }
 
     // Average line
     if (opts.avgLine) {
-      var ay = valToY(opts.avgLine);
+      const ay = valToY(opts.avgLine);
       ctx.strokeStyle = t.textMuted; ctx.lineWidth = 1; ctx.setLineDash([4, 6]);
       ctx.beginPath(); ctx.moveTo(pad.left, ay); ctx.lineTo(w - pad.right, ay); ctx.stroke();
       ctx.setLineDash([]);
@@ -101,12 +101,12 @@ var ChartRenderer = {
     }
 
     // Fill area
-    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ph);
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ph);
     grad.addColorStop(0, t.fill); grad.addColorStop(1, 'rgba(196,90,107,0.01)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.moveTo(pad.left, pad.top + ph);
-    for (var i3 = 0; i3 < dataPoints.length; i3++) {
+    for (let i3 = 0; i3 < dataPoints.length; i3++) {
       ctx.lineTo(pad.left + i3 * xStep, valToY(dataPoints[i3]));
     }
     ctx.lineTo(pad.left + (dataPoints.length - 1) * xStep, pad.top + ph);
@@ -116,14 +116,14 @@ var ChartRenderer = {
     ctx.strokeStyle = t.line; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
     ctx.beginPath();
     ctx.moveTo(pad.left, valToY(dataPoints[0]));
-    for (var i4 = 1; i4 < dataPoints.length; i4++) {
+    for (let i4 = 1; i4 < dataPoints.length; i4++) {
       ctx.lineTo(pad.left + i4 * xStep, valToY(dataPoints[i4]));
     }
     ctx.stroke();
 
     // Dots + values
-    for (var i5 = 0; i5 < dataPoints.length; i5++) {
-      var cx = pad.left + i5 * xStep, cy = valToY(dataPoints[i5]);
+    for (let i5 = 0; i5 < dataPoints.length; i5++) {
+      const cx = pad.left + i5 * xStep, cy = valToY(dataPoints[i5]);
       ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2);
       ctx.fillStyle = t.dot; ctx.fill();
       ctx.strokeStyle = t.bg; ctx.lineWidth = 2; ctx.stroke();
@@ -134,13 +134,13 @@ var ChartRenderer = {
 
   drawDonutChart: function(canvas, segments, opts) {
     opts = opts || {};
-    var self = this; var t = self._theme();
-    var _a = self._setupCanvas(canvas, opts.width || 260, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
-    var cx = w / 2, cy = h / 2;
-    var outerR = Math.min(cx, cy) - 8;
-    var innerR = outerR * 0.58;
-    var total = 0;
-    for (var si = 0; si < segments.length; si++) total += segments[si].value;
+    const self = this; const t = self._theme();
+    const _a = self._setupCanvas(canvas, opts.width || 260, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
+    const cx = w / 2, cy = h / 2;
+    const outerR = Math.min(cx, cy) - 8;
+    const innerR = outerR * 0.58;
+    let total = 0;
+    for (let si = 0; si < segments.length; si++) total += segments[si].value;
 
     ctx.clearRect(0, 0, w, h);
 
@@ -150,10 +150,10 @@ var ChartRenderer = {
       return [];
     }
 
-    var colors = t.donutColors;
-    var startAngle = -Math.PI / 2;
-    for (var i = 0; i < segments.length; i++) {
-      var sliceAngle = (segments[i].value / total) * Math.PI * 2;
+    const colors = t.donutColors;
+    let startAngle = -Math.PI / 2;
+    for (let i = 0; i < segments.length; i++) {
+      const sliceAngle = (segments[i].value / total) * Math.PI * 2;
       ctx.beginPath();
       ctx.arc(cx, cy, outerR, startAngle, startAngle + sliceAngle);
       ctx.arc(cx, cy, innerR, startAngle + sliceAngle, startAngle, true);
@@ -161,9 +161,9 @@ var ChartRenderer = {
       ctx.fillStyle = segments[i].color || colors[i % colors.length];
       ctx.fill();
       // Label on slice
-      var midAngle = startAngle + sliceAngle / 2;
-      var labelR = outerR + 14;
-      var lx = cx + Math.cos(midAngle) * labelR, ly = cy + Math.sin(midAngle) * labelR;
+      const midAngle = startAngle + sliceAngle / 2;
+      const labelR = outerR + 14;
+      const lx = cx + Math.cos(midAngle) * labelR, ly = cy + Math.sin(midAngle) * labelR;
       if (sliceAngle > 0.35 && segments[i].value > 0) {
         ctx.fillStyle = t.text; ctx.font = 'bold .52rem ' + getComputedStyle(document.body).fontFamily;
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -179,8 +179,8 @@ var ChartRenderer = {
     ctx.fillStyle = t.textMuted; ctx.font = '.55rem ' + getComputedStyle(document.body).fontFamily;
     ctx.fillText(opts.centerLabel || 'total', cx, cy + 12);
 
-    var result = [];
-    for (var ri = 0; ri < segments.length; ri++) {
+    const result = [];
+    for (let ri = 0; ri < segments.length; ri++) {
       result.push({
         label: segments[ri].label,
         color: segments[ri].color || colors[ri % colors.length],
@@ -193,14 +193,14 @@ var ChartRenderer = {
 
   drawBarChart: function(canvas, bars, opts) {
     opts = opts || {};
-    var self = this; var t = self._theme();
-    var _a = self._setupCanvas(canvas, opts.width || 460, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
-    var maxVal = 1;
-    for (var bi = 0; bi < bars.length; bi++) { if (bars[bi].value > maxVal) maxVal = bars[bi].value; }
-    var barH = Math.min(22, (h - 20) / bars.length);
-    var gap = 4;
-    var labelW = Math.min(70, w * 0.22);
-    var barAreaW = w - labelW - 12;
+    const self = this; const t = self._theme();
+    const _a = self._setupCanvas(canvas, opts.width || 460, opts.height || 200), ctx = _a.ctx, w = _a.w, h = _a.h;
+    let maxVal = 1;
+    for (let bi = 0; bi < bars.length; bi++) { if (bars[bi].value > maxVal) maxVal = bars[bi].value; }
+    const barH = Math.min(22, (h - 20) / bars.length);
+    const gap = 4;
+    const labelW = Math.min(70, w * 0.22);
+    const barAreaW = w - labelW - 12;
 
     ctx.clearRect(0, 0, w, h);
 
@@ -210,9 +210,9 @@ var ChartRenderer = {
       return;
     }
 
-    for (var i = 0; i < bars.length; i++) {
-      var y = 10 + i * (barH + gap);
-      var bw = Math.max(4, (bars[i].value / maxVal) * barAreaW);
+    for (let i = 0; i < bars.length; i++) {
+      const y = 10 + i * (barH + gap);
+      const bw = Math.max(4, (bars[i].value / maxVal) * barAreaW);
 
       // Label
       ctx.fillStyle = t.text; ctx.font = '.6rem ' + getComputedStyle(document.body).fontFamily;
@@ -234,8 +234,8 @@ var ChartRenderer = {
 
   drawSparkline: function(canvas, dataPoints, opts) {
     opts = opts || {};
-    var self = this; var t = self._theme();
-    var _a = self._setupCanvas(canvas, opts.width || 120, opts.height || 36), ctx = _a.ctx, w = _a.w, h = _a.h;
+    const self = this; const t = self._theme();
+    const _a = self._setupCanvas(canvas, opts.width || 120, opts.height || 36), ctx = _a.ctx, w = _a.w, h = _a.h;
     ctx.clearRect(0, 0, w, h);
 
     if (!dataPoints || dataPoints.length < 2) {
@@ -244,23 +244,23 @@ var ChartRenderer = {
       return;
     }
 
-    var minV = Math.min.apply(Math, dataPoints), maxV = Math.max.apply(Math, dataPoints);
-    var range = maxV - minV || 1;
-    var pad = 2;
-    var xStep = (w - pad * 2) / (dataPoints.length - 1);
-    var valToY = function(v) { return h - pad - ((v - minV) / range) * (h - pad * 2); };
+    const minV = Math.min.apply(Math, dataPoints), maxV = Math.max.apply(Math, dataPoints);
+    const range = maxV - minV || 1;
+    const pad = 2;
+    const xStep = (w - pad * 2) / (dataPoints.length - 1);
+    const valToY = function(v) { return h - pad - ((v - minV) / range) * (h - pad * 2); };
 
-    var color = opts.color || t.line;
+    const color = opts.color || t.line;
     ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
     ctx.beginPath();
     ctx.moveTo(pad, valToY(dataPoints[0]));
-    for (var i = 1; i < dataPoints.length; i++) {
+    for (let i = 1; i < dataPoints.length; i++) {
       ctx.lineTo(pad + i * xStep, valToY(dataPoints[i]));
     }
     ctx.stroke();
 
     // Last dot
-    var lx = pad + (dataPoints.length - 1) * xStep, ly = valToY(dataPoints[dataPoints.length - 1]);
+    const lx = pad + (dataPoints.length - 1) * xStep, ly = valToY(dataPoints[dataPoints.length - 1]);
     ctx.beginPath(); ctx.arc(lx, ly, 2.5, 0, Math.PI * 2);
     ctx.fillStyle = color; ctx.fill();
   },

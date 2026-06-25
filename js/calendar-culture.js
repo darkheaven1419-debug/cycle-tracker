@@ -135,8 +135,8 @@ var ZOO_EMOJI = ['🐭','🐮','🐯','🐰','🐲','🐍','🐴','🐑','🐵',
 function _ganZhiTranslated(tgd) {
   // tgd is like "丙午" — two chars: gan + zhi
   if (!tgd || tgd.length < 2) return tgd;
-  var g = tgd[0], z = tgd[1];
-  var gi = Lunar.GAN.indexOf(g), zi = Lunar.ZHI.indexOf(z);
+  const g = tgd[0], z = tgd[1];
+  const gi = Lunar.GAN.indexOf(g), zi = Lunar.ZHI.indexOf(z);
   if (gi < 0 || zi < 0) return tgd;
   if (lang === 'sr' || lang === 'sr-RS') return GAN_SR[gi] + ZHI_SR[zi] + ' (' + GAN_ELEM_SR[gi] + ' ' + ZOO_SR[zi] + ')';
   if (lang === 'en') return GAN_EN[gi] + ZHI_EN[zi] + ' (' + GAN_ELEM_EN[gi] + ' ' + ZOO_EN[zi] + ')';
@@ -145,7 +145,7 @@ function _ganZhiTranslated(tgd) {
 
 function _shengxiaoTranslated(sx) {
   // sx is like "马"
-  var si = Lunar.SHENGXIAO.indexOf(sx);
+  const si = Lunar.SHENGXIAO.indexOf(sx);
   if (si < 0) return sx;
   if (lang === 'sr' || lang === 'sr-RS') return ZOO_SR[si];
   if (lang === 'en') return ZOO_EN[si];
@@ -153,7 +153,7 @@ function _shengxiaoTranslated(sx) {
 }
 
 function _zooEmoji(sx) {
-  var si = Lunar.SHENGXIAO.indexOf(sx);
+  const si = Lunar.SHENGXIAO.indexOf(sx);
   return si >= 0 ? ZOO_EMOJI[si] : '';
 }
 
@@ -166,16 +166,16 @@ function _CL(map) {
 // ── Lunar info row (fully translated) ──────────────────────────
 function renderLunarInfo() {
   if (typeof today === 'undefined') return;
-  var el = document.getElementById('lunarInfo');
+  const el = document.getElementById('lunarInfo');
   if (!el) return;
-  var td = today();
-  var info = Lunar.getYearInfo(td);
-  var lunar = Lunar.toLunar(td);
+  const td = today();
+  const info = Lunar.getYearInfo(td);
+  const lunar = Lunar.toLunar(td);
   if (!info || !lunar) { el.style.display = 'none'; return; }
   el.style.display = '';
-  var tgdDisplay = _ganZhiTranslated(info.tianGanDiZhi);
-  var sxDisplay = _shengxiaoTranslated(info.shengXiao);
-  var lunarDisplay = _CL({sr:'Lunarni '+lunar.month+'. mesec, '+lunar.day+'. dan',en:'Lunar '+lunar.month+'/'+lunar.day,'zh-CN':lunar.monthName+lunar.dayName});
+  const tgdDisplay = _ganZhiTranslated(info.tianGanDiZhi);
+  const sxDisplay = _shengxiaoTranslated(info.shengXiao);
+  const lunarDisplay = _CL({sr:'Lunarni '+lunar.month+'. mesec, '+lunar.day+'. dan',en:'Lunar '+lunar.month+'/'+lunar.day,'zh-CN':lunar.monthName+lunar.dayName});
   el.innerHTML =
     '<span title="' + escAttr(_CL(CULTURE_EXPLAIN.tiangandizhi)) + '">🐲 ' + tgdDisplay + '</span>' +
     ' · ' +
@@ -188,16 +188,16 @@ function renderLunarInfo() {
 // ── Seasonal poem card (follows language) ──────────────────────
 function renderSeasonalPoemCard() {
   if (typeof today === 'undefined') return;
-  var el = document.getElementById('cultureCard');
+  const el = document.getElementById('cultureCard');
   if (!el) return;
-  var m = today().getMonth();
-  var poem = SEASONAL_POEMS[m];
+  const m = today().getMonth();
+  const poem = SEASONAL_POEMS[m];
   if (!poem) { el.style.display = 'none'; return; }
   el.style.display = '';
-  var color = TRADITIONAL_COLORS[m];
-  var info = Lunar.getYearInfo(today());
-  var lines = (poem.lines[lang] || poem.lines[lang.split('-')[0]] || poem.lines['zh']).replace(/\n/g, '<br>');
-  var title = poem.title[lang] || poem.title[lang.split('-')[0]] || poem.title['zh'];
+  const color = TRADITIONAL_COLORS[m];
+  const info = Lunar.getYearInfo(today());
+  const lines = (poem.lines[lang] || poem.lines[lang.split('-')[0]] || poem.lines['zh']).replace(/\n/g, '<br>');
+  const title = poem.title[lang] || poem.title[lang.split('-')[0]] || poem.title['zh'];
   el.innerHTML =
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
       '<span style="font-size:1.2rem">📜</span>' +
@@ -218,11 +218,11 @@ function renderSeasonalPoemCard() {
 
 // ── Culture explain card (clickable ℹ️) ────────────────────────
 function renderCultureExplain() {
-  var el = document.getElementById('cultureExplain');
+  const el = document.getElementById('cultureExplain');
   if (!el) return;
   if (el.style.display !== 'none' && el.innerHTML) { el.style.display = 'none'; return; }
   el.style.display = '';
-  var topics = [
+  const topics = [
     {icon:'📅', key:'lunar', title:{sr:'Lunarni Kalendar',en:'Lunar Calendar','zh-CN':'农历'}},
     {icon:'🐉', key:'shengxiao', title:{sr:'Kineski Zodijak (生肖)',en:'Chinese Zodiac (生肖)','zh-CN':'十二生肖'}},
     {icon:'🔢', key:'tiangandizhi', title:{sr:'Nebeske Stabljike i Zemaljske Grane',en:'Heavenly Stems & Earthly Branches','zh-CN':'天干地支'}},
@@ -230,7 +230,7 @@ function renderCultureExplain() {
     {icon:'🎨', key:'color', title:{sr:'Tradicionalne Kineske Boje',en:'Traditional Chinese Colors','zh-CN':'中国传统色'}},
     {icon:'📜', key:'poem', title:{sr:'Tang & Song Poezija',en:'Tang & Song Poetry','zh-CN':'唐诗宋词'}}
   ];
-  var h = '<div style="font-weight:700;margin-bottom:8px;font-size:.78rem">🏮 ' + _CL({sr:'Kineska Kultura — Objasnjenje',en:'Chinese Culture — Explained','zh-CN':'中国文化小课堂'}) + '</div>';
+  let h = '<div style="font-weight:700;margin-bottom:8px;font-size:.78rem">🏮 ' + _CL({sr:'Kineska Kultura — Objasnjenje',en:'Chinese Culture — Explained','zh-CN':'中国文化小课堂'}) + '</div>';
   topics.forEach(function(t) {
     h += '<div style="margin-bottom:10px;padding:8px 10px;background:var(--card);border-radius:10px;border-left:3px solid var(--love)">' +
       '<div style="font-weight:700;font-size:.72rem;margin-bottom:3px">' + t.icon + ' ' + _CL(t.title) + '</div>' +
@@ -248,9 +248,9 @@ function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot
 // ── Lunar helpers for calendar cells ───────────────────────────
 
 function getLunarCellClass(date) {
-  var lunar = Lunar.toLunar(date);
+  const lunar = Lunar.toLunar(date);
   if (!lunar) return '';
-  var cls = 'lunar-date';
+  let cls = 'lunar-date';
   if (lunar.day === 1) cls += ' lunar-first';
   else if (lunar.day === 15) cls += ' lunar-fifteen';
   if (lunar.month === 1 && lunar.day === 1 && !lunar.isLeap) cls += ' lunar-newyear';
@@ -258,7 +258,7 @@ function getLunarCellClass(date) {
 }
 
 function getLunarCellText(date) {
-  var lunar = Lunar.toLunar(date);
+  const lunar = Lunar.toLunar(date);
   if (!lunar) return '';
   // ZH mode: Chinese day names (初三, 十五...); SR/EN: numeric (L3, L15...)
   if (lang === 'sr' || lang === 'sr-RS') return lunar.day;
@@ -272,7 +272,7 @@ function initExtraHolidays() {
   if (typeof HOLIDAYS === 'undefined') { setTimeout(initExtraHolidays, 100); return; }
   if (HOLIDAYS._mergedExtra) return;
   EXTRA_HOLIDAYS.forEach(function(h) {
-    var dup = HOLIDAYS.some(function(e) { return e.d === h.d && e.country === h.country; });
+    const dup = HOLIDAYS.some(function(e) { return e.d === h.d && e.country === h.country; });
     if (!dup) HOLIDAYS.push(h);
   });
   HOLIDAYS._mergedExtra = true;

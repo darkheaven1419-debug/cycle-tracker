@@ -16,14 +16,14 @@ const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
 // ── Cycle Prediction (depends on global state) ───────────────────
 function predict() {
   const {records,settings}=state; const sorted=[...records].sort((a,b)=>a-b);
-  var periodEnds=state.periodEnds||{};
-  var periodLengths=[];
-  for(var i=0;i<sorted.length;i++){
-    var key=fmtDate(sorted[i]);
+  const periodEnds=state.periodEnds||{};
+  const periodLengths=[];
+  for(let i=0;i<sorted.length;i++){
+    const key=fmtDate(sorted[i]);
     if(periodEnds[key])periodLengths.push(daysDiff(d0(sorted[i]),d0(new Date(periodEnds[key]+'T00:00:00')))+1);
   }
-  var avgPeriodLen=periodLengths.length>0?Math.round(periodLengths.reduce(function(a,b){return a+b;},0)/periodLengths.length):settings.periodLength;
-  var def={lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:settings.cycleLength,periodLen:avgPeriodLen,avgCycle:settings.cycleLength,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
+  const avgPeriodLen=periodLengths.length>0?Math.round(periodLengths.reduce(function(a,b){return a+b;},0)/periodLengths.length):settings.periodLength;
+  const def={lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:settings.cycleLength,periodLen:avgPeriodLen,avgCycle:settings.cycleLength,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
   if(sorted.length===0) return def;
   def.lastStart=d0(sorted[sorted.length-1]);
   if(sorted.length===1){def.nextStart=addDays(def.lastStart,settings.cycleLength);}
@@ -34,14 +34,14 @@ function predict() {
 }
 
 function getPeriodEndDate(startDate){
-  var key=fmtDate(startDate);
+  const key=fmtDate(startDate);
   if(state.periodEnds&&state.periodEnds[key])return new Date(state.periodEnds[key]+'T00:00:00');
   return null;
 }
 
 function getPhase(date,pred){
   const d=d0(date);
-  for(const rec of state.records){const s=d0(rec);var e=getPeriodEndDate(rec)||addDays(s,pred.periodLen-1);e.setHours(0,0,0,0);if(d>=s&&d<=e) return sameDay(d,s)?'period-on':'period-mid';}
+  for(const rec of state.records){const s=d0(rec);const e=getPeriodEndDate(rec)||addDays(s,pred.periodLen-1);e.setHours(0,0,0,0);if(d>=s&&d<=e) return sameDay(d,s)?'period-on':'period-mid';}
   if(pred.nextStart){const ps=d0(pred.nextStart),pe=addDays(ps,pred.periodLen-1);pe.setHours(0,0,0,0);if(d>=ps&&d<=pe) return sameDay(d,ps)?'period-pred-first':'period-pred';}
   for(const fp of pred.futurePeriods){const ps=d0(fp.start),pe=addDays(ps,pred.periodLen-1);pe.setHours(0,0,0,0);if(d>=ps&&d<=pe) return sameDay(d,ps)?'period-future-first':'period-future';}
   if(pred.ovulation&&sameDay(d,pred.ovulation)) return 'ovulation';
@@ -53,8 +53,8 @@ function getPhase(date,pred){
 
 function getOpenPeriodStart(){
   if(!state.periodEnds)return null;
-  for(var i=state.records.length-1;i>=0;i--){
-    var key=fmtDate(state.records[i]);
+  for(let i=state.records.length-1;i>=0;i--){
+    const key=fmtDate(state.records[i]);
     if(!state.periodEnds[key])return state.records[i];
   }
   return null;

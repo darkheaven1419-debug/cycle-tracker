@@ -23,8 +23,8 @@ var CalendarModule = (function () {
   // ── Calendar grid rendering ──────────────────────────────────────
 
   function renderCalendar() {
-    var pred = predict();
-    var td = today();
+    const pred = predict();
+    const td = today();
     document.getElementById('monthLabel').textContent =
       lang === 'sr'
         ? t('months')[viewMonth] + ' ' + viewYear + '.'
@@ -32,16 +32,16 @@ var CalendarModule = (function () {
           ? t('months')[viewMonth] + ' ' + viewYear
           : viewYear + '年' + (viewMonth + 1) + '月';
 
-    var first = new Date(viewYear, viewMonth, 1);
-    var dow = first.getDay();
+    const first = new Date(viewYear, viewMonth, 1);
+    let dow = first.getDay();
     dow = dow === 0 ? 6 : dow - 1;
-    var gridStart = addDays(first, -dow);
-    var grid = document.getElementById('daysGrid');
-    var frag = document.createDocumentFragment();
-    var recordedStarts = new Set(state.records.map(fmtDate));
+    const gridStart = addDays(first, -dow);
+    const grid = document.getElementById('daysGrid');
+    const frag = document.createDocumentFragment();
+    const recordedStarts = new Set(state.records.map(fmtDate));
 
     // Prediction legend
-    var plEl = document.getElementById('predLegend');
+    const plEl = document.getElementById('predLegend');
     if (pred.futurePeriods.length > 0) {
       plEl.style.display = '';
       plEl.textContent = t('calendarPredLegend');
@@ -50,51 +50,51 @@ var CalendarModule = (function () {
     }
 
     // Build shared diary index for dot indicators
-    var sharedDiaryIdx = {};
-    var sd = safeParse(localStorage.getItem('shared-diary'), {});
+    const sharedDiaryIdx = {};
+    const sd = safeParse(localStorage.getItem('shared-diary'), {});
     Object.keys(sd).forEach(function (k) {
       if (sd[k] && (sd[k].barry || sd[k].andjela)) {
         sharedDiaryIdx[k] = true;
       }
     });
 
-    for (var i = 0; i < 42; i++) {
+    for (let i = 0; i < 42; i++) {
       // Week number column at start of each row
       if (i % 7 === 0) {
-        var wkCell = document.createElement('div');
+        const wkCell = document.createElement('div');
         wkCell.className = 'week-num';
-        var wkDate = addDays(gridStart, i);
-        var jan1 = new Date(wkDate.getFullYear(), 0, 1);
-        var wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+        const wkDate = addDays(gridStart, i);
+        const jan1 = new Date(wkDate.getFullYear(), 0, 1);
+        const wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
         wkCell.textContent = wkNum;
         wkCell.setAttribute('aria-hidden', 'true');
         frag.appendChild(wkCell);
       }
 
-      var d = addDays(gridStart, i);
-      var inMonth = d.getMonth() === viewMonth;
-      var isToday = sameDay(d, td);
-      var phase = inMonth ? getPhase(d, pred) : null;
-      var key = fmtDate(d);
+      const d = addDays(gridStart, i);
+      const inMonth = d.getMonth() === viewMonth;
+      const isToday = sameDay(d, td);
+      const phase = inMonth ? getPhase(d, pred) : null;
+      const key = fmtDate(d);
 
       // Symptom check
       var symptoms = state.symptoms && state.symptoms[key];
-      var hasSymptom =
+      const hasSymptom =
         symptoms &&
         Object.entries(symptoms).some(function (kv) {
           return kv[0] !== 'notes' && kv[1] > 0;
         });
 
       // Cycle day number for Andjela's active cycle
-      var cycleDay = '';
+      let cycleDay = '';
       if (activeProfile === 'andjela' && pred.lastStart) {
-        var cd = daysDiff(d0(pred.lastStart), d0(d));
+        const cd = daysDiff(d0(pred.lastStart), d0(d));
         if (cd >= 0 && cd < pred.cycleLen) {
           cycleDay = String(cd + 1);
         }
       }
 
-      var annType = typeof isAnniversary === 'function' ? isAnniversary(d) : 0;
+      const annType = typeof isAnniversary === 'function' ? isAnniversary(d) : 0;
 
       var el = document.createElement('div');
       el.className = 'day';
@@ -114,9 +114,9 @@ var CalendarModule = (function () {
 
       // Special date icon
       if (typeof getSpecialDate === 'function') {
-        var special = getSpecialDate(d);
+        const special = getSpecialDate(d);
         if (special) {
-          var spIcon = document.createElement('span');
+          const spIcon = document.createElement('span');
           spIcon.className = 'special-date-icon';
           spIcon.textContent = special.icon;
           spIcon.title = activeProfile === 'barry' ? special.title_zh : special.title_sr;
@@ -138,14 +138,14 @@ var CalendarModule = (function () {
       }
 
       // Date number
-      var daySpan = document.createElement('span');
+      const daySpan = document.createElement('span');
       daySpan.className = 'day-num';
       daySpan.textContent = d.getDate();
       el.appendChild(daySpan);
 
       // Cycle day badge
       if (cycleDay && inMonth && !phase) {
-        var cdSpan = document.createElement('span');
+        const cdSpan = document.createElement('span');
         cdSpan.className = 'day-cycle-num';
         cdSpan.textContent = cycleDay;
         el.appendChild(cdSpan);
@@ -153,9 +153,9 @@ var CalendarModule = (function () {
 
       // Lunar date label (Chinese calendar)
       if (inMonth && typeof Lunar !== 'undefined') {
-        var lunarDayName = typeof getLunarCellText === 'function' ? getLunarCellText(d) : null;
+        const lunarDayName = typeof getLunarCellText === 'function' ? getLunarCellText(d) : null;
         if (lunarDayName) {
-          var lunarSpan = document.createElement('span');
+          const lunarSpan = document.createElement('span');
           lunarSpan.className = 'lunar-date ' + (typeof getLunarCellClass === 'function' ? getLunarCellClass(d) : '');
           lunarSpan.textContent = lunarDayName;
           el.appendChild(lunarSpan);
@@ -171,7 +171,7 @@ var CalendarModule = (function () {
         miniDiv.className = 'day-symptoms';
         ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
           if (symptoms[sym] && symptoms[sym] > 0) {
-            var symEl = document.createElement('span');
+            const symEl = document.createElement('span');
             symEl.className = 'day-sym-icon';
             symEl.textContent = {
               cramps: '😣',
@@ -190,7 +190,7 @@ var CalendarModule = (function () {
 
       // Diary entry dot
       if (sharedDiaryIdx[key]) {
-        var diaryDot = document.createElement('span');
+        const diaryDot = document.createElement('span');
         diaryDot.className = 'mini-dot gold';
         diaryDot.style.cssText =
           'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
@@ -199,17 +199,17 @@ var CalendarModule = (function () {
 
       // Anniversary dot
       if (annType === 2 && !phase) {
-        var dot = document.createElement('span');
+        const dot = document.createElement('span');
         dot.className = 'mini-dot gold';
         el.appendChild(dot);
       }
 
       // Solar term label
       if (typeof getSolarTerm === 'function') {
-        var solarTerm = getSolarTerm(key);
+        const solarTerm = getSolarTerm(key);
         if (solarTerm && inMonth) {
-          var stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
-          var stLabel = document.createElement('span');
+          const stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
+          const stLabel = document.createElement('span');
           stLabel.className = 'solar-term-label';
           stLabel.textContent = stName;
           stLabel.title = stName;
@@ -226,9 +226,9 @@ var CalendarModule = (function () {
 
       // Holiday emoji icons
       if (typeof getHoliday === 'function') {
-        var holidays = getHoliday(key);
+        const holidays = getHoliday(key);
         holidays.forEach(function (h) {
-          var icon = document.createElement('span');
+          const icon = document.createElement('span');
           icon.className = 'holiday-icon holiday-' + h.country;
           icon.textContent = h.icon || (h.country === 'cn' ? '🎉' : '🇷🇸');
           icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
@@ -247,7 +247,7 @@ var CalendarModule = (function () {
               // Double click — quick toggle period
               clearTimeout(tapTimer);
               tapTimer = null;
-              var idx = state.records.findIndex(function (r) {
+              const idx = state.records.findIndex(function (r) {
                 return sameDay(r, d);
               });
               if (idx >= 0) {
@@ -290,8 +290,8 @@ var CalendarModule = (function () {
 
         // Touch handler (mobile double-tap)
         (function (d, el) {
-          var touchCount = 0;
-          var touchTimer = null;
+          let touchCount = 0;
+          let touchTimer = null;
           el.addEventListener('touchend', function (e) {
             touchCount++;
             if (touchCount === 1) {
@@ -305,7 +305,7 @@ var CalendarModule = (function () {
                 clearTimeout(tapTimer);
                 tapTimer = null;
               }
-              var idx = state.records.findIndex(function (r) {
+              const idx = state.records.findIndex(function (r) {
                 return sameDay(r, d);
               });
               if (idx >= 0) {
@@ -348,9 +348,9 @@ var CalendarModule = (function () {
     grid.appendChild(frag);
 
     // Month season subtitle
-    var ml = document.getElementById('monthLabel');
+    const ml = document.getElementById('monthLabel');
     if (ml) {
-      var existingTag = ml.querySelector('.season-tag');
+      const existingTag = ml.querySelector('.season-tag');
       if (existingTag) existingTag.remove();
       ml.innerHTML =
         ml.textContent +
@@ -376,13 +376,13 @@ var CalendarModule = (function () {
   // ── Progress bar ─────────────────────────────────────────────────
 
   function updateProgress(pred) {
-    var td = today();
-    var numEl = document.getElementById('pg-num');
-    var unitEl = document.getElementById('pg-unit');
-    var subEl = document.getElementById('pg-sub');
-    var fillEl = document.getElementById('pg-fill');
-    var badgeEl = document.getElementById('pg-badge');
-    var badges = t('phaseBadges');
+    const td = today();
+    const numEl = document.getElementById('pg-num');
+    const unitEl = document.getElementById('pg-unit');
+    const subEl = document.getElementById('pg-sub');
+    const fillEl = document.getElementById('pg-fill');
+    const badgeEl = document.getElementById('pg-badge');
+    const badges = t('phaseBadges');
 
     if (state.records.length === 0) {
       numEl.textContent = '--';
@@ -391,33 +391,33 @@ var CalendarModule = (function () {
       fillEl.style.width = '0%';
       badgeEl.textContent = '';
       badgeEl.className = 'phase-badge';
-      var allLabels = document.querySelectorAll('.progress-labels span');
+      const allLabels = document.querySelectorAll('.progress-labels span');
       allLabels.forEach(function (s) {
         s.classList.remove('current');
       });
       return;
     }
 
-    var phase = getPhase(td, pred);
-    var pct = 0;
-    var label = '';
-    var bCls = '';
+    const phase = getPhase(td, pred);
+    let pct = 0;
+    let label = '';
+    let bCls = '';
 
-    var allLabels2 = document.querySelectorAll('.progress-labels span');
+    const allLabels2 = document.querySelectorAll('.progress-labels span');
     allLabels2.forEach(function (s) {
       s.classList.remove('current');
     });
 
     if (phase === 'period-on' || phase === 'period-mid') {
-      var cur = state.records.find(function (r) {
-        var s = d0(r);
-        var e = getPeriodEndDate(r) || addDays(s, pred.periodLen - 1);
+      const cur = state.records.find(function (r) {
+        const s = d0(r);
+        const e = getPeriodEndDate(r) || addDays(s, pred.periodLen - 1);
         return td >= s && td <= e;
       });
-      var dayNum = cur ? daysDiff(d0(cur), td) + 1 : 1;
-      var actualLen = pred.periodLen;
+      const dayNum = cur ? daysDiff(d0(cur), td) + 1 : 1;
+      let actualLen = pred.periodLen;
       if (cur) {
-        var pe = getPeriodEndDate(cur);
+        const pe = getPeriodEndDate(cur);
         if (pe) actualLen = daysDiff(d0(cur), pe) + 1;
       }
       numEl.textContent = dayNum;
@@ -427,7 +427,7 @@ var CalendarModule = (function () {
       label = badges.period;
       bCls = 'period';
       numEl.style.color = 'var(--love)';
-      var periodLbl = document.querySelector('.lbl-period');
+      const periodLbl = document.querySelector('.lbl-period');
       if (periodLbl) periodLbl.classList.add('current');
     } else if (pred.isOverdue) {
       numEl.textContent = pred.overdueDays;
@@ -437,12 +437,12 @@ var CalendarModule = (function () {
       label = badges.late;
       numEl.style.color = '#E65100';
       pct = 100;
-      var lutealLbl = document.querySelector('.lbl-luteal');
+      const lutealLbl = document.querySelector('.lbl-luteal');
       if (lutealLbl) lutealLbl.classList.add('current');
     } else {
-      var totalLen = pred.nextStart ? daysDiff(pred.lastStart, pred.nextStart) : pred.cycleLen;
-      var elapsed = daysDiff(pred.lastStart, td);
-      var remain = pred.nextStart ? daysDiff(td, pred.nextStart) : totalLen - elapsed;
+      const totalLen = pred.nextStart ? daysDiff(pred.lastStart, pred.nextStart) : pred.cycleLen;
+      const elapsed = daysDiff(pred.lastStart, td);
+      const remain = pred.nextStart ? daysDiff(td, pred.nextStart) : totalLen - elapsed;
       pct = Math.min(100, Math.max(0, (elapsed / totalLen) * 100));
       numEl.textContent = remain;
       unitEl.textContent = '';
@@ -451,31 +451,31 @@ var CalendarModule = (function () {
         label = badges.luteal;
         numEl.style.color = 'var(--lavender-dark)';
         bCls = 'luteal';
-        var ll = document.querySelector('.lbl-luteal');
+        const ll = document.querySelector('.lbl-luteal');
         if (ll) ll.classList.add('current');
       } else if (phase === 'luteal') {
         label = badges.luteal;
         numEl.style.color = 'var(--lavender-dark)';
         bCls = 'luteal';
-        var ll2 = document.querySelector('.lbl-luteal');
+        const ll2 = document.querySelector('.lbl-luteal');
         if (ll2) ll2.classList.add('current');
       } else if (phase === 'fertile') {
         label = badges.fertile;
         numEl.style.color = 'var(--teal)';
         bCls = 'fertile';
-        var ol = document.querySelector('.lbl-ovulation');
+        const ol = document.querySelector('.lbl-ovulation');
         if (ol) ol.classList.add('current');
       } else if (phase === 'ovulation') {
         label = badges.ovulation;
         numEl.style.color = 'var(--teal)';
         bCls = 'ovulation';
-        var ol2 = document.querySelector('.lbl-ovulation');
+        const ol2 = document.querySelector('.lbl-ovulation');
         if (ol2) ol2.classList.add('current');
       } else if (phase === 'follicular') {
         label = badges.follicular;
         numEl.style.color = 'var(--sage)';
         bCls = 'follicular';
-        var fl = document.querySelector('.lbl-follicular');
+        const fl = document.querySelector('.lbl-follicular');
         if (fl) fl.classList.add('current');
       } else {
         numEl.style.color = 'var(--text-muted)';
@@ -507,19 +507,19 @@ var CalendarModule = (function () {
   // ── Reminder banner ──────────────────────────────────────────────
 
   function updateReminder(pred) {
-    var banner = document.getElementById('reminderBanner');
+    const banner = document.getElementById('reminderBanner');
     if (!banner) return;
-    var td = today();
-    var phase = getPhase(td, pred);
-    var msg = '';
-    var r = t('reminder');
+    const td = today();
+    const phase = getPhase(td, pred);
+    let msg = '';
+    const r = t('reminder');
 
     if (phase === 'ovulation') {
       msg = r.ovulation;
     } else if (pred.isOverdue) {
       msg = r.late.replace('{days}', pred.overdueDays);
     } else if (pred.nextStart) {
-      var remain = daysDiff(td, pred.nextStart);
+      const remain = daysDiff(td, pred.nextStart);
       if (remain > 0 && remain <= 3) {
         msg = r.beforePeriod.replace('{days}', remain);
       }
@@ -536,9 +536,9 @@ var CalendarModule = (function () {
   // ── Floating action button ───────────────────────────────────────
 
   function updateFab() {
-    var fab = document.getElementById('fabBtn');
-    var fabIcon = document.getElementById('fab-icon');
-    var fabLabel = document.getElementById('fab-label');
+    const fab = document.getElementById('fabBtn');
+    const fabIcon = document.getElementById('fab-icon');
+    const fabLabel = document.getElementById('fab-label');
 
     if (activeProfile !== 'andjela') {
       if (fab) fab.classList.add('hidden');
@@ -546,7 +546,7 @@ var CalendarModule = (function () {
     }
 
     if (fab) fab.classList.remove('hidden');
-    var openStart = typeof getOpenPeriodStart === 'function' ? getOpenPeriodStart() : null;
+    const openStart = typeof getOpenPeriodStart === 'function' ? getOpenPeriodStart() : null;
 
     if (openStart) {
       // Period started but not ended — show end button
@@ -594,7 +594,7 @@ var CalendarModule = (function () {
       viewYear++;
     }
 
-    var grid = document.getElementById('daysGrid');
+    const grid = document.getElementById('daysGrid');
     grid.style.transition = 'opacity 0.08s ease-out';
     grid.style.opacity = '0';
 
@@ -609,7 +609,7 @@ var CalendarModule = (function () {
   function goToday() {
     viewYear = today().getFullYear();
     viewMonth = today().getMonth();
-    var grid = document.getElementById('daysGrid');
+    const grid = document.getElementById('daysGrid');
     grid.style.transition = 'opacity 0.08s ease-out';
     grid.style.opacity = '0';
     setTimeout(function () {
