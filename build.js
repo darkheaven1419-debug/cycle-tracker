@@ -25,9 +25,9 @@ const COPY_FILES = ['index.html', 'manifest.json', 'sw.js', 'calendar-data.json'
 // ---------------------------------------------------------------------------
 
 function banner(msg) {
-  console.log('\n  ' + '='.repeat(50));
-  console.log('  ' + msg);
-  console.log('  ' + '='.repeat(50));
+  console.info('\n  ' + '='.repeat(50));
+  console.info('  ' + msg);
+  console.info('  ' + '='.repeat(50));
 }
 
 function rmRf(dir) {
@@ -56,7 +56,7 @@ function detectVersionRefs(content) {
 banner('CLEAN');
 rmRf(DIST);
 fs.mkdirSync(DIST);
-console.log('  dist/ cleaned');
+console.info('  dist/ cleaned');
 
 // ---------------------------------------------------------------------------
 //  CSS — concatenate & minify
@@ -105,10 +105,10 @@ if (cssContent) {
   fs.writeFileSync(inputPath, cssContent, 'utf8');
 
   try {
-    execSync(`npx cleancss -o "${outputPath}" "${inputPath}"`, { cwd: ROOT, stdio: 'pipe' });
+    execSync(`npx cleancss --source-map -o "${outputPath}" "${inputPath}"`, { cwd: ROOT, stdio: 'pipe' });
     const origSize = (Buffer.byteLength(cssContent, 'utf8') / 1024).toFixed(1);
     const minSize = (fs.statSync(outputPath).size / 1024).toFixed(1);
-    console.log(`  styles.css  (${origSize} KB → ${minSize} KB minified)`);
+    console.info(`  styles.css  (${origSize} KB → ${minSize} KB minified)`);
   } catch (err) {
     console.warn('  WARN: clean-css minification failed, using unminified');
     cp(concatPath, outputPath);
@@ -116,7 +116,7 @@ if (cssContent) {
     if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
   }
 } else {
-  console.log('  No CSS files found, skipping');
+  console.info('  No CSS files found, skipping');
 }
 
 // ---------------------------------------------------------------------------
@@ -151,14 +151,14 @@ if (fs.existsSync(htmlSrc)) {
 
     const origSize = (Buffer.byteLength(html, 'utf8') / 1024).toFixed(1);
     const minSize = (fs.statSync(path.join(DIST, 'index.html')).size / 1024).toFixed(1);
-    console.log(`  index.html  (${origSize} KB → ${minSize} KB)`);
+    console.info(`  index.html  (${origSize} KB → ${minSize} KB)`);
   } catch (err) {
     console.warn('  WARN: html-minifier failed, using unminified copy');
   } finally {
     if (fs.existsSync(inputHtml)) fs.unlinkSync(inputHtml);
   }
 } else {
-  console.log('  No index.html found, skipping');
+  console.info('  No index.html found, skipping');
 }
 
 // ---------------------------------------------------------------------------
@@ -191,7 +191,7 @@ COPY_DIRS.forEach((dir) => {
   });
 
   const count = entries.filter((e) => e.isFile()).length;
-  if (count > 0) console.log(`  ${dir}/  (${count} files)`);
+  if (count > 0) console.info(`  ${dir}/  (${count} files)`);
 });
 
 // ---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ COPY_FILES.forEach((file) => {
   let content = fs.readFileSync(srcPath, 'utf8');
   content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
   fs.writeFileSync(path.join(DIST, file), content, 'utf8');
-  console.log(`  ${file}`);
+  console.info(`  ${file}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -224,7 +224,7 @@ const versionInfo = {
 
 const versionPath = path.join(DIST, 'version.json');
 fs.writeFileSync(versionPath, JSON.stringify(versionInfo, null, 2) + '\n', 'utf8');
-console.log(`  version.json  → ${PKG.version} (${versionInfo.buildTime})`);
+console.info(`  version.json  → ${PKG.version} (${versionInfo.buildTime})`);
 
 // ---------------------------------------------------------------------------
 //  Summary
@@ -251,5 +251,5 @@ function walk(dir) {
 walk(DIST);
 
 const totalKb = (totalSize / 1024).toFixed(1);
-console.log(`  ${fileCount} files, ${totalKb} KB total`);
-console.log(`  Output: ${DIST}\n`);
+console.info(`  ${fileCount} files, ${totalKb} KB total`);
+console.info(`  Output: ${DIST}\n`);

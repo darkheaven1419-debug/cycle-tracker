@@ -4,6 +4,7 @@ node_modules/
 # Build artifacts
 *.tmp
 *.log
+dist/
 
 # Editor files
 .vscode/
@@ -20,3 +21,9 @@ Desktop.ini
 # Environment
 .env
 .env.local
+
+# Build intermediate files
+_build_*
+
+# CSS source maps
+*.min.css.map

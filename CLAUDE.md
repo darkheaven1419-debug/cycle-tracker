@@ -13,7 +13,7 @@
 ## 文件结构 (v7.2)
 ```
 index.html              ← HTML 结构 (~524 行)
-app.js                  ← JS (~2000 行, 主应用逻辑, v7.2精简)
+app.js                  ← JS (~5900 行, 主应用逻辑, v7.2)
 styles.css              ← CSS 入口文件 (imports all css/*.css)
 ├── css/tokens.css      ← Design Tokens (亮色/暗色CSS变量)
 ├── css/base.css        ← 基础样式、重置、版式
@@ -81,7 +81,7 @@ browserconfig.xml       ← Windows PWA 配置
 - 扩展测试覆盖至日历/天气/文化/同步模块
 - 增强 PWA: 注册 Background Sync API
 - 新增 SEO 文件 (robots.txt, sitemap.xml, .htaccess, browserconfig.xml)
-- app.js 从 ~3540 行精简至 ~2000 行
+- app.js 从 ~3540 行精简至 ~5900 行（模块提取后结构更清晰，但核心逻辑仍保留在 app.js）
 
 ## v7 更新 (2026-06-25)
 - 从单一大 app.js 拆分出模块：js/auth.js、js/weather.js、js/sync.js

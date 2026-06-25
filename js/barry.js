@@ -458,7 +458,7 @@ var BarryModule = (function () {
 
     var titleEl = document.getElementById('sleep-title');
     if (titleEl) {
-      titleEl.textContent = lang === 'sr' ? 'Spavanje' : lang === 'en' ? 'Sleep' : '睡眠';
+      titleEl.textContent = t('sleepTitle');
     }
 
     if (activeProfile === 'barry') {
@@ -469,17 +469,12 @@ var BarryModule = (function () {
 
       var hintEl = document.getElementById('sleep-hint');
       if (hintEl) {
-        hintEl.textContent =
-          lang === 'sr'
-            ? 'Kad si legao sinoc? Angie vidi tvoje vreme spavanja'
-            : lang === 'en'
-              ? 'What time did you sleep last night? Angie sees your sleep time'
-              : '昨晚几点睡的？Angie 会看到你的睡眠时间';
+        hintEl.textContent = t('sleepHint');
       }
 
       var saveEl = document.getElementById('sleep-save');
       if (saveEl) {
-        saveEl.textContent = lang === 'sr' ? 'Sacuvaj' : lang === 'en' ? 'Save' : '保存';
+        saveEl.textContent = t('sleepSave');
       }
 
       var s = getBarrySleep();
@@ -499,11 +494,7 @@ var BarryModule = (function () {
       if (!s) {
         contentEl.innerHTML =
           '<div style="text-align:center;color:var(--text-muted);font-size:.72rem">' +
-          (lang === 'sr'
-            ? 'Barry jos nije uneo vreme — podseti ga!'
-            : lang === 'en'
-              ? "Barry hasn't logged sleep yet — remind him!"
-              : 'Barry 还没记录——提醒他！') +
+          t('sleepEmpty') +
           '</div>';
         return;
       }
@@ -523,7 +514,7 @@ var BarryModule = (function () {
           lateMsg =
             '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">He slept at ' +
             s.time +
-            "! That's WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You're the only one who can make him sleep earlier. Tell him tonight — \"Barry, please go to bed before 1:30 AM. For me. 💗\"</div></div>";
+            '! That's WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You're the only one who can make him sleep earlier. Tell him tonight — \"Barry, please go to bed before 1:30 AM. For me. 💗\"</div></div>";
         } else {
           lateMsg =
             '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">他 ' +
@@ -534,7 +525,7 @@ var BarryModule = (function () {
 
       contentEl.innerHTML =
         '<div style="text-align:center"><span style="font-size:2rem">😴</span><div style="font-size:.78rem;color:var(--text);margin-top:4px">' +
-        (lang === 'sr' ? 'Sinoc je legao u' : lang === 'en' ? 'Last night he slept at' : '昨晚他') +
+        t('sleepLabel') +
         ' <b>' +
         s.time +
         '</b></div><div style="font-size:.62rem;color:var(--text-muted)">' +
@@ -556,12 +547,7 @@ var BarryModule = (function () {
       return;
     }
     badge.style.display = '';
-    var texts =
-      lang === 'sr'
-        ? ['Ti si jedinstvena ✨', 'Najlepse na svetu 🌸', 'Barryjeva ljubav 💝', 'Jedna jedina 💫']
-        : lang === 'en'
-          ? ['You are unique ✨', 'Most beautiful 🌸', "Barry's love 💝", 'One and only 💫']
-          : ['独一无二的你 ✨', '最美的人 🌸', 'Barry 的爱 💝', '世界上唯一的你 💫'];
+    var texts = t('specialBadgeTexts');
     var textEl = document.getElementById('specialBadgeText');
     if (textEl) textEl.textContent = texts[Math.floor(Math.random() * texts.length)];
   }

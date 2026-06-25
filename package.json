@@ -7,7 +7,8 @@
     "start": "npx serve .",
     "build": "node build.js",
     "lint": "npx eslint .",
-    "format": "npx prettier --write ."
+    "format": "npx prettier --write .",
+    "check": "node tests/test-core.js"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.0",
@@ -18,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/andjelin-ciklus.git"
+    "url": "git+https://github.com/darkheaven1419-debug/cycle-tracker.git"
   },
   "license": "MIT"
 }

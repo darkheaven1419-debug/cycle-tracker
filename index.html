@@ -66,12 +66,12 @@
 </div>
 
 <!-- Offline Banner -->
-<div class="offline-banner" id="offlineBanner">⚠️ <span id="offline-text">Offline — neke funkcije možda neće raditi</span></div>
+<div class="offline-banner" id="offlineBanner" role="alert" aria-label="Obaveštenje o offline režimu">⚠️ <span id="offline-text">Offline — neke funkcije možda neće raditi</span></div>
 
 <!-- PWA Install Banner -->
-<div class="pwa-banner" id="pwaBanner">
-  <span>📲</span><span id="pwa-text">Instaliraj na telefon — koristi kao aplikaciju</span>
-  <span class="pwa-close" onclick="this.parentElement.remove()">✕</span>
+<div class="pwa-banner" id="pwaBanner" role="alert" aria-label="Instaliraj aplikaciju">
+  <span aria-hidden="true">📲</span><span id="pwa-text">Instaliraj na telefon — koristi kao aplikaciju</span>
+  <span class="pwa-close" onclick="this.parentElement.remove()" role="button" tabindex="0" aria-label="Zatvori baner" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.parentElement.remove()}">✕</span>
 </div>
 
 <!-- ================================================================
@@ -114,10 +114,10 @@
   <div class="greeting-card" onclick="event.stopPropagation()">
     <span class="greeting-icon" id="greetingIcon">✨</span>
     <div class="greeting-name" id="greetingName">Anđelo moja</div>
-    <div class="greeting-for" style="font-size:.78rem;color:var(--gold);margin-bottom:8px;font-style:italic">— za Anđelu Nemet —</div>
+    <div class="greeting-for fs-base text-gold mb-8" style="font-style:italic">— za Anđelu Nemet —</div>
     <div class="greeting-msg" id="greetingMsg"></div>
     <div class="greeting-sub" id="greetingSub"></div>
-    <div style="font-size:.62rem;color:var(--text-muted);margin-top:12px;opacity:.5">dodirni bilo gde da nastaviš ♥</div>
+    <div class="fs-xs text-muted mt-12" style="opacity:.5">dodirni bilo gde da nastaviš ♥</div>
   </div>
 </div>
 
@@ -132,7 +132,7 @@
         <span class="pf-name" id="pfName">Anđela</span>
       </div>
       <div class="moon-phase" id="moonPhase" role="img" aria-label="Moon phase" title="月相"></div>
-      <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
+      <button class="theme-btn" id="themeBtn" aria-label="Prebaci tamni/svetli režim" title="Prebaci tamni/svetli režim">🌙</button>
       <div class="lang-switch" id="langSwitch" role="radiogroup" aria-label="Language selection">
         <button class="lang-btn" data-lang="zh-CN" aria-label="中文">中</button>
         <button class="lang-btn" data-lang="sr" aria-label="Srpski">SR</button>
@@ -140,8 +140,8 @@
       </div>
     </div>
     <div class="header-row2">
-      <span id="solarTermBadge" style="font-size:.62rem;color:var(--sage);font-weight:600;background:var(--sage-light);border-radius:12px;padding:2px 10px;letter-spacing:.02em"></span>
-      <span id="titleLoveCounter" style="font-size:.68rem;color:var(--love);font-weight:600;background:var(--rose-light);border-radius:12px;padding:2px 12px"></span>
+      <span id="solarTermBadge" class="fs-xs text-sage fw-600" style="background:var(--sage-light);border-radius:12px;padding:2px 10px;letter-spacing:.02em"></span>
+      <span id="titleLoveCounter" class="fs-small text-love fw-600" style="background:var(--rose-light);border-radius:12px;padding:2px 12px"></span>
     </div>
   </div>
   </header>
@@ -152,24 +152,24 @@
   </div>
 
   <!-- Weather -->
-  <div class="card" id="weatherCard" style="display:none;padding:14px 16px;margin-bottom:12px;text-align:center" aria-live="polite" aria-atomic="true">
+  <div class="card mb-12 text-center" id="weatherCard" style="display:none" aria-live="polite" aria-atomic="true">
     <!-- Time Row -->
-    <div class="weather-times" id="weatherTimes" style="display:flex;justify-content:space-around;font-size:.58rem;color:var(--text-muted);margin-bottom:10px;gap:8px">
+    <div class="weather-times flex mb-10 gap-8 text-muted" id="weatherTimes" style="justify-content:space-around;font-size:.58rem">
       <span>🕐 <span id="timeBj">--:--</span></span>
-      <span id="timeDiff" style="color:var(--gold);font-weight:600"></span>
+      <span id="timeDiff" class="text-gold fw-600"></span>
       <span>🕐 <span id="timeKi">--:--</span></span>
     </div>
-    <div class="weather-night-hint" id="weatherNightHint" style="display:none;font-size:.58rem;color:var(--lavender-dark);font-style:italic;margin-bottom:8px"></div>
-    <div style="display:flex;justify-content:space-around;align-items:center">
-      <div id="weatherBj" style="text-align:center;flex:1"></div>
-      <div id="weatherBridge" style="font-size:.65rem;color:var(--gold);font-style:italic;line-height:1.5;padding:0 8px;text-align:center">🌉  Dunav → Jangce<br>Kikinda ↔ Peking<br>7.000 km · ♥</div>
-      <div id="weatherKi" style="text-align:center;flex:1"></div>
+    <div class="weather-night-hint fs-xs mb-8" id="weatherNightHint" style="display:none;font-style:italic;color:var(--lavender-dark)"></div>
+    <div class="flex" style="justify-content:space-around;align-items:center">
+      <div id="weatherBj" class="flex-1 text-center"></div>
+      <div id="weatherBridge" class="text-gold" style="font-size:.65rem;font-style:italic;line-height:1.5;padding:0 8px;text-align:center">🌉  Dunav → Jangce<br>Kikinda ↔ Peking<br>7.000 km · ♥</div>
+      <div id="weatherKi" class="flex-1 text-center"></div>
     </div>
-    <div id="weatherLove" style="font-size:.68rem;color:var(--love);margin-top:8px;font-style:italic"></div>
+    <div id="weatherLove" class="text-love mt-8" style="font-size:.68rem;font-style:italic"></div>
     <!-- Sun Counter -->
-    <div id="sunCounter" style="font-size:.62rem;color:var(--gold);margin-top:8px;font-weight:600;cursor:pointer" onclick="clickSunCounter()" title="Klikni da povećaš"></div>
+    <div id="sunCounter" class="fs-xs text-gold mt-8 fw-600" style="cursor:pointer" onclick="clickSunCounter()" title="Klikni da povećaš"></div>
     <!-- Daily Love Message -->
-    <div id="dailyLoveMsg" style="font-size:.68rem;color:var(--rose);margin-top:6px;font-style:italic;line-height:1.5"></div>
+    <div id="dailyLoveMsg" class="text-rose mt-6" style="font-size:.68rem;font-style:italic;line-height:1.5"></div>
   </div>
 
   <div class="progress-section" id="progressSection">
@@ -179,7 +179,7 @@
     <div class="progress-labels">
       <span class="lbl-period"></span><span class="lbl-follicular"></span><span class="lbl-ovulation"></span><span class="lbl-luteal"></span>
     </div>
-    <div style="text-align:center"><span class="phase-badge" id="pg-badge"></span></div>
+    <div class="text-center"><span class="phase-badge" id="pg-badge"></span></div>
     <div class="andjelin-label">— Anđelin ciklus —</div>
 
   <!-- 🍵 Tea Room — 中塞茶文化 / Srpsko-Kineski Čaj -->
@@ -223,11 +223,11 @@
 
 
   <div class="panel active" id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
-    <div class="dash-welcome" style="font-size:.85rem;color:var(--text);text-align:center;padding:16px"><span style="font-size:2rem;display:block;animation:pulse 1.5s ease-in-out infinite">🌸</span></div>
+    <div class="dash-welcome fs-medium text-center" style="padding:16px"><span style="font-size:2rem;display:block;animation:pulse 1.5s ease-in-out infinite">🌸</span></div>
     <div class="card dash-card skeleton skel-card"></div>
     <div class="card dash-card"><h3>📊 Pregled napretka</h3><div class="dash-bar"><div class="dash-bar-fill" style="width:0%"></div></div></div>
     <div class="card dash-card"><h3>📝 Brzi pristup</h3><div class="dash-links"><button class="dash-link-btn">📝 Dnevnik</button><button class="dash-link-btn">📚 Lekcija</button><button class="dash-link-btn">📅 Kalendar</button></div></div>
-    <div class="card dash-card dash-quote"><div style="font-size:.78rem;color:var(--love);font-style:italic">Učitavanje...</div></div>
+    <div class="card dash-card dash-quote"><div class="fs-base text-love" style="font-style:italic">Učitavanje...</div></div>
   </div>
 
   <div class="panel" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
@@ -288,24 +288,24 @@
     </div>
 
     <!-- 💝 Relationship Section -->
-    <div style="text-align:center;padding:8px 0 4px;margin-top:8px">
-      <span style="font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em" id="sect-relationship">💝 Relationship</span>
+    <div class="text-center mt-8" style="padding:8px 0 4px">
+      <span class="fs-xs text-muted" style="text-transform:uppercase;letter-spacing:.08em" id="sect-relationship">💝 Relationship</span>
     </div>
     <!-- Cycle counter -->
     <div class="card" id="cycleCounterCard" style="display:none">
       <h3>💝 <span id="cc-title">一起走过的周期</span></h3>
-      <div style="text-align:center;font-size:2rem;font-weight:800;color:var(--love);" id="cc-count">0</div>
-      <div style="text-align:center;font-size:.7rem;color:var(--text-muted);" id="cc-subtitle"></div>
+      <div class="text-center fs-xl fw-700 text-love" id="cc-count">0</div>
+      <div class="text-center fs-small text-muted" id="cc-subtitle"></div>
     </div>
     <!-- Love days card -->
     <div class="card" id="loveDaysCard" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)">
       <h3><span id="love-days-title">Dani zajedno</span></h3>
-      <div id="love-days-content" style="text-align:center;line-height:2"></div>
+      <div id="love-days-content" class="text-center" style="line-height:2"></div>
     </div>
     <!-- Birthday Countdown -->
     <div class="card" id="birthdayCard" style="background:linear-gradient(135deg,#FFF8E7,var(--rose-light));border:1px solid var(--gold)">
       <h3><span id="birthday-title"></span></h3>
-      <div id="birthday-content" style="text-align:center;line-height:2"></div>
+      <div id="birthday-content" class="text-center" style="line-height:2"></div>
     </div>
     <!-- Daily Love Note -->
     <div class="love-note-card" id="loveNoteCard" aria-live="polite">
@@ -324,8 +324,8 @@
         <div class="streak-label" id="streakLabel"></div>
         <div class="streak-badge cold" id="streakBadge"></div>
       </div>
-      <div style="margin-top:10px">
-        <span style="font-size:.62rem;color:var(--text-muted)" id="mood-history-label"></span>
+      <div class="mt-10">
+        <span class="fs-xs text-muted" id="mood-history-label"></span>
         <div class="mood-history" id="moodHistory"></div>
       </div>
     </div>
@@ -346,7 +346,7 @@
         <input type="text" id="diaryInput" maxlength="140" placeholder="..." aria-label="Dnevni unos">
         <button class="diary-submit" onclick="saveDiary()">✓</button>
       </div>
-      <div id="diaryHistory" style="margin-top:8px"></div>
+      <div id="diaryHistory" class="mt-8"></div>
     </div>
     <!-- Tomorrow Forecast -->
     <div class="forecast-card" id="forecastCard">
@@ -371,9 +371,9 @@
     <!-- Gratitude Wall -->
     <div class="card" id="gratCard">
       <h3><span id="grat-title">💝 Gratitude Wall</span></h3>
-      <div style="display:flex;gap:6px;margin-bottom:8px">
-        <input id="gratInput" placeholder="Hvala ti što..." aria-label="Napiši zahvalnost" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:.7rem;font-family:var(--font);background:var(--card);color:var(--text)">
-        <button onclick="addGratitude()" style="padding:8px 14px;border:none;border-radius:10px;background:var(--love);color:#fff;font-size:.7rem;font-weight:600;cursor:pointer;white-space:nowrap">💝 +</button>
+      <div class="flex gap-6 mb-8">
+        <input id="gratInput" placeholder="Hvala ti što..." aria-label="Napiši zahvalnost" class="flex-1 p-10 border rounded-10 fs-small" style="font-family:var(--font);background:var(--card);color:var(--text)">
+        <button onclick="addGratitude()" class="rounded-10 fs-small fw-600" style="padding:8px 14px;border:none;background:var(--love);color:#fff;cursor:pointer;white-space:nowrap">💝 +</button>
       </div>
       <div id="gratList"></div>
     </div>
@@ -391,16 +391,16 @@
     <div class="card" id="sleepCard" style="display:none">
       <h3><span id="sleep-title"></span></h3>
       <div id="sleepBarryView" style="display:none">
-        <div style="font-size:.68rem;color:var(--text-muted);margin-bottom:8px" id="sleep-hint"></div>
-        <input type="time" id="sleepTime" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:10px;font-size:.8rem;font-family:var(--font);background:var(--card);color:var(--text)">
-        <button class="btn btn-primary" onclick="saveSleep()" style="margin-top:8px;font-size:.72rem">💾 <span id="sleep-save">Save</span></button>
+        <div class="text-muted mb-8" style="font-size:.68rem" id="sleep-hint"></div>
+        <input type="time" id="sleepTime" class="border rounded-10" style="width:100%;padding:8px;font-size:.8rem;font-family:var(--font);background:var(--card);color:var(--text)">
+        <button class="btn btn-primary mt-8" onclick="saveSleep()" style="font-size:.72rem">💾 <span id="sleep-save">Save</span></button>
       </div>
       <div id="sleepAngieView" style="display:none">
         <div id="sleepAngieContent"></div>
       </div>
     </div>
     <!-- Anđela's special badge -->
-    <div style="text-align:center;padding:8px 0 4px">
+    <div class="text-center" style="padding:8px 0 4px">
       <span class="special-badge" id="specialBadge" style="display:none">✨ <span id="specialBadgeText">Ti si jedinstvena</span> ✨</span>
     </div>
   </div>
@@ -436,7 +436,7 @@
     </div>
     <!-- Expandable Full Calendar -->
     <div class="diary-full-cal" id="diaryFullCal" style="display:none">
-      <div class="cal-nav" style="margin-bottom:6px">
+      <div class="cal-nav mb-6">
         <button class="nav-btn" onclick="shiftDiaryCalMonth(-1)" aria-label="Prethodni mesec">◂</button>
         <span class="month-label" id="diaryCalMonthLabel"></span>
         <button class="nav-btn" onclick="shiftDiaryCalMonth(1)" aria-label="Sledeći mesec">▸</button>
@@ -456,7 +456,7 @@
         <div class="diary-mood-row" id="diaryMoodRow"></div>
         <div class="diary-actions">
           <span class="diary-char-count" id="diaryCharCount">0/500</span>
-          <button class="btn btn-primary" id="diarySaveBtn" onclick="saveDiaryEntry()" style="width:auto;padding:8px 20px;margin:0">💾 <span id="diary-save-text">Sačuvaj</span></button>
+          <button class="btn btn-primary" id="diarySaveBtn" onclick="saveDiaryEntry()" style="width:auto">💾 <span id="diary-save-text">Sačuvaj</span></button>
         </div>
       </div>
     </div>
@@ -465,7 +465,7 @@
     <div class="card letter-card partner-letter" id="letterPartnerCard">
       <div class="letter-header">
         <h3 id="letter-partner-title">🌸 Partnerovo pismo</h3>
-        <button class="btn btn-outline" onclick="translatePartnerLetter()" style="font-size:.62rem;padding:3px 10px;display:none" id="letterTranslateBtn">🌐</button>
+        <button class="btn btn-outline fs-xs" onclick="translatePartnerLetter()" style="padding:3px 10px;display:none" id="letterTranslateBtn">🌐</button>
       </div>
       <div class="letter-locked" id="letterLocked">
         <span class="letter-lock-icon">🔒</span>
@@ -481,12 +481,12 @@
     </div>
 
     <!-- 📮 Mailbox (kept for import/export) -->
-    <div class="card" style="margin-top:10px">
+    <div class="card mt-10">
       <h3>📮 <span id="mailbox-title">Poštansko sanduče</span></h3>
       <div class="mailbox-list" id="mailboxList"></div>
-      <div style="margin-top:8px;display:flex;gap:6px">
-        <button class="btn btn-outline" onclick="exportSharedDiary()" style="font-size:.65rem;padding:4px 10px;flex:1">📤 <span id="sd-export">Podeli</span></button>
-        <button class="btn btn-outline" onclick="showImportModal()" style="font-size:.65rem;padding:4px 10px;flex:1">📥 <span id="sd-import">Uvezi</span></button>
+      <div class="flex gap-6 mt-8">
+        <button class="btn btn-outline flex-1 fs-xs" onclick="exportSharedDiary()" style="padding:4px 10px">📤 <span id="sd-export">Podeli</span></button>
+        <button class="btn btn-outline flex-1 fs-xs" onclick="showImportModal()" style="padding:4px 10px">📥 <span id="sd-import">Uvezi</span></button>
       </div>
     </div>
   </div>
@@ -542,7 +542,7 @@
     </div>
     <!-- Favorites View -->
     <div class="lrn-view" id="lrn-view-favorites">
-      <div class="lrn-favorites-header" style="font-size:.7rem;font-weight:600;margin-bottom:10px">⭐ <span id="lrn-fav-title">收藏词汇</span></div>
+      <div class="lrn-favorites-header fs-small fw-600 mb-10">⭐ <span id="lrn-fav-title">收藏词汇</span></div>
       <div id="lrnFavoritesContainer"></div>
     </div>
     <!-- Review View -->
@@ -569,9 +569,9 @@
     <!-- Dual Anniversary -->
     <div class="card" style="background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold);margin-bottom:14px">
       <h3>💕 <span id="anniversary-title">Datumi koji znače</span></h3>
-      <div class="stat-row"><span id="ann-met-label">✨ Prvi put smo se sreli</span><span class="val"><input type="date" id="annDateMet" onchange="saveAnniversaries()" value="2026-03-19" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
-      <div class="stat-row"><span id="ann-love-label">♥ Zajedno smo od</span><span class="val"><input type="date" id="annDateLove" onchange="saveAnniversaries()" value="2026-05-07" style="border:1px solid var(--gold);border-radius:8px;padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text);font-size:.78rem"></span></div>
-      <div style="text-align:center;font-size:.7rem;color:var(--love);margin-top:8px;font-style:italic" id="ann-count"></div>
+      <div class="stat-row"><span id="ann-met-label">✨ Prvi put smo se sreli</span><span class="val"><input type="date" id="annDateMet" onchange="saveAnniversaries()" value="2026-03-19" class="rounded-8 fs-base" style="border:1px solid var(--gold);padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text)"></span></div>
+      <div class="stat-row"><span id="ann-love-label">♥ Zajedno smo od</span><span class="val"><input type="date" id="annDateLove" onchange="saveAnniversaries()" value="2026-05-07" class="rounded-8 fs-base" style="border:1px solid var(--gold);padding:4px 8px;font-family:var(--font);background:var(--card);color:var(--text)"></span></div>
+      <div class="text-center fs-small text-love mt-8" style="font-style:italic" id="ann-count"></div>
     </div>
 
     <div class="dev-signature">
@@ -591,14 +591,19 @@
     <div class="setting-row"><div><span class="setting-label" id="set-l-period"></span><span class="setting-hint" id="set-h-period"></span></div><input type="number" id="set-period" min="2" max="10" value="7"></div>
     <div class="setting-row token-row show" id="tokenSettingRow">
       <div><span class="setting-label" id="github-token-label">🔑 GitHub Token</span><span class="setting-hint" id="set-h-token">Za sinhronizaciju dnevnika na oba telefona</span></div>
-      <input type="password" id="set-gh-token" placeholder="ghp_..." aria-label="GitHub lični token" style="width:100%;font-size:.7rem;padding:8px" onchange="saveGitHubToken()">
-      <div id="syncStatusBadge" style="font-size:.65rem;margin-top:6px;font-weight:600"></div>
+      <input type="password" id="set-gh-token" placeholder="ghp_..." aria-label="GitHub lični token" class="fs-small" style="width:100%;padding:8px" onchange="saveGitHubToken()">
+      <div id="tokenSecurityWarning" class="text-gold mt-4" style="font-size:.6rem;line-height:1.4;display:none">⚠️ Token je sačuvan u lokalnom skladištu pregledača. Koristi fine-grained token sa minimalnim ovlašćenjima (samo contents:write za ovaj repozitorijum).</div>
+      <div id="syncStatusBadge" class="mt-6 fw-600" style="font-size:.65rem"></div>
+      <div class="flex gap-6 mt-6">
+        <button class="btn btn-outline flex-1" onclick="testGitHubToken()" id="testTokenBtn" style="font-size:.65rem;padding:4px 8px">🔍 Testiraj token</button>
+        <button class="btn btn-outline flex-1" onclick="clearGitHubToken()" id="clearTokenBtn" style="font-size:.65rem;padding:4px 8px;color:var(--rose);border-color:var(--rose)">🗑️ Obriši token</button>
+      </div>
     </div>
     <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()"></button>
     <button class="btn btn-outline" id="export-btn" onclick="exportData()"></button>
     <button class="btn btn-outline" id="import-btn" onclick="document.getElementById('importFile').click()"></button>
-    <button class="btn btn-outline" onclick="exportAllData()" style="margin-top:8px">📦 <span id="export-all-label">Izvezi sve podatke</span></button>
-    <button class="btn btn-outline" onclick="importAllData()" style="margin-top:4px;color:var(--rose);border-color:var(--rose)">📥 <span id="import-all-label">Vrati iz backup-a</span></button>
+    <button class="btn btn-outline mt-8" onclick="exportAllData()">📦 <span id="export-all-label">Izvezi sve podatke</span></button>
+    <button class="btn btn-outline mt-4" onclick="importAllData()" style="color:var(--rose);border-color:var(--rose)">📥 <span id="import-all-label">Vrati iz backup-a</span></button>
     <button class="btn btn-outline" id="clear-diary-btn" onclick="clearAllDiaries()" style="color:var(--rose);border-color:var(--rose)">🗑️ Obriši sve dnevnike</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     <button class="btn btn-danger" id="clear-btn" onclick="clearAllData()"></button>
@@ -645,7 +650,7 @@
       <button class="btn btn-primary" id="modal-mark-btn" onclick="togglePeriodRecord()"></button>
       <button class="btn btn-danger" id="modal-unmark-btn" style="display:none" onclick="removePeriodRecord()"></button>
     </div>
-    <button class="btn btn-ghost" style="margin-top:6px;margin-bottom:0" id="modal-close-btn" onclick="closeModal()"></button>
+    <button class="btn btn-ghost mt-6" style="margin-bottom:0" id="modal-close-btn" onclick="closeModal()"></button>
   </div>
 </div>
 

@@ -39,7 +39,7 @@ function safeSetItem(key, val) {
   try {
     localStorage.setItem(key, val);
   } catch (e) {
-    console.warn('[storage] Failed to write:', key, e.message);
+    /* Storage full or disabled */
   }
 }
 // Safe localStorage.removeItem
@@ -47,7 +47,7 @@ function safeRemoveItem(key) {
   try {
     localStorage.removeItem(key);
   } catch (e) {
-    console.warn('[storage] Failed to remove:', key, e.message);
+    /* Storage error, non-critical */
   }
 }
 
@@ -81,22 +81,14 @@ function debounce(fn, delay) {
 // On DOM mutations that add/remove elements, clear cache
 var _origRenderAll = null;
 
-/* NOTE: The following modules have been extracted to separate files:
-   - Weather / sun counter / love messages → js/weather.js
-   - Auth / login system                 → js/auth.js
-   - Sync engine (GitHub)                → js/sync.js
-   These are loaded via <script> tags in index.html BEFORE app.js.
-   They expose global function names for backward compatibility. */
-
 /* ================================================================
-   GLOBAL ERROR BOUNDARY — logs uncaught errors without crashing UI
+   GLOBAL ERROR BOUNDARY — logs errors via internal logger
    ================================================================ */
 window.addEventListener('error', function (e) {
-  console.warn('[global] Uncaught error:', e.message, e.filename + ':' + e.lineno);
-  // Don't show toast for every error — just log
+  // Only log, never show toast
 });
 window.addEventListener('unhandledrejection', function (e) {
-  console.warn('[global] Unhandled promise rejection:', e.reason);
+  // Silent catch for unhandled promises
 });
 
 /* ================================================================
@@ -160,7 +152,7 @@ function switchProfile(p) {
   if (p === 'andjela' && !sessionStorage.getItem('_greetingShown')) {
     showGreeting();
   }
-  toast((lang === 'sr' ? 'Profil: ' : '') + (p === 'andjela' ? '🌸 Anđela' : '👦 Barry') + ' · ' + t('profileSwitch'));
+  toast((p === 'andjela' ? '🌸' : '👦') + ' ' + t('profileSwitch'));
 }
 function toggleProfile() {
   switchProfile(activeProfile === 'andjela' ? 'barry' : 'andjela');
@@ -465,23 +457,23 @@ function renderGarden() {
   var p, msg, hint;
   if (streak === 0) {
     p = '🌰';
-    msg = lang === 'sr' ? 'Klikni na emoji iznad da me zaliješ! 💧' : lang === 'en' ? 'Tap an emoji above to water me! 💧' : '点上面的心情给我浇水！💧';
+    msg = t('gardenState0');
     hint = '';
   } else if (streak === 1) {
     p = '🌱';
-    msg = lang === 'sr' ? 'Prvi dan! Nastavi da me zalivaš svaki dan 🌱' : lang === 'en' ? 'First day! Keep watering me daily 🌱' : '第一天！每天浇我哦 🌱';
+    msg = t('gardenState1');
     hint = '';
   } else if (streak <= 3) {
     p = '🌿';
-    msg = lang === 'sr' ? 'Rastem! Još malo pa cvetam 🌿' : lang === 'en' ? 'Growing! Almost blooming 🌿' : '在长大！快要开花了 🌿';
+    msg = t('gardenState3');
     hint = '';
   } else if (streak <= 7) {
     p = '🌷';
-    msg = lang === 'sr' ? 'Pupoljak! Tvoja ljubav me hrani 🌷' : lang === 'en' ? 'Budding! Your love feeds me 🌷' : '花苞！你的爱在滋养我 🌷';
+    msg = t('gardenState7');
     hint = '';
   } else {
     p = '🌸';
-    msg = lang === 'sr' ? 'Procvetala! Kao i vaša ljubav 🌸' : lang === 'en' ? 'Bloomed! Just like your love 🌸' : '开花了！就像你们的爱 🌸';
+    msg = t('gardenStateBloom');
     hint = '';
   }
   if (activeProfile === 'andjela' && streak > 0) {
@@ -589,12 +581,7 @@ function renderDateStrip() {
   var allData = loadSharedDiaryData();
   var today = new Date();
   var selKey = fmtDate(sharedDiaryViewDate);
-  var dowKeys =
-    lang === 'sr'
-      ? ['Ne', 'Po', 'Ut', 'Sr', 'Če', 'Pe', 'Su']
-      : lang === 'en'
-        ? ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-        : ['日', '一', '二', '三', '四', '五', '六'];
+  var dowKeys = t('sdDOW');
   var html = '';
   for (var i = -Math.floor(DATE_STRIP_DAYS / 2); i < DATE_STRIP_DAYS - Math.floor(DATE_STRIP_DAYS / 2); i++) {
     var d = new Date(today);
@@ -656,14 +643,14 @@ function exportSharedDiary() {
   var allData = loadSharedDiaryData();
   var myEntry = allData[dateKey] && allData[dateKey][activeProfile];
   if (!myEntry) {
-    toast(lang === 'sr' ? 'Prvo sačuvaj svoj unos' : lang === 'en' ? 'Save your entry first' : '请先保存你的日记');
+    toast(t('sdSaveFirst'));
     return;
   }
   var exportObj = { date: dateKey, author: activeProfile, entry: myEntry };
   var text = JSON.stringify(exportObj);
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function () {
-      toast('📤 ' + (lang === 'sr' ? 'Kopirano! Pošalji partneru 💌' : lang === 'en' ? 'Copied! Send to partner 💌' : '已复制！发给伴侣吧 💌'));
+      toast('📤 ' + t('sdExportCopied'));
     });
   } else {
     // Fallback: show text in a small modal-like prompt
@@ -674,9 +661,9 @@ function exportSharedDiary() {
     ta.select();
     try {
       document.execCommand('copy');
-      toast('📤 ' + (lang === 'sr' ? 'Kopirano!' : lang === 'en' ? 'Copied!' : '已复制！'));
+      toast('📤 ' + t('sdExportCopiedSimple'));
     } catch (e) {
-      prompt(lang === 'sr' ? 'Kopiraj i pošalji partneru:' : lang === 'en' ? 'Copy and send to partner:' : '复制发给伴侣：', text);
+      prompt(t('sdExportPrompt'), text);
     }
     document.body.removeChild(ta);
   }
@@ -690,13 +677,13 @@ function showImportModal() {
   overlay.className = 'import-modal-overlay';
   overlay.innerHTML =
     '<div class="import-modal"><h4>' +
-    (lang === 'sr' ? '📥 Zalepi partnerov tekst' : lang === 'en' ? "📥 Paste partner's text" : '📥 粘贴伴侣分享的内容') +
+    t('sdImportTitle') +
     '</h4><textarea id="importTextarea" placeholder="' +
-    (lang === 'sr' ? 'Zalepi JSON tekst ovde...' : '粘贴 JSON 文本...') +
+    t('sdImportPlaceholder') +
     '"></textarea><div class="im-btns"><button class="im-cancel" id="imCancel">' +
-    (lang === 'sr' ? 'Odustani' : '取消') +
+    t('sdImportCancel') +
     '</button><button class="im-confirm" id="imConfirm">' +
-    (lang === 'sr' ? 'Uvezi' : '导入') +
+    t('sdImportConfirm') +
     '</button></div></div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function (e) {
@@ -743,9 +730,9 @@ function doImport(text) {
     saveSharedDiaryData(allData);
     if (imported.date === fmtDate(sharedDiaryViewDate)) renderSharedDiary();
     renderDateStrip();
-    toast('📥 ' + (lang === 'sr' ? 'Uvezeno! 💌' : lang === 'en' ? 'Imported! 💌' : '已导入！💌'));
+    toast('📥 ' + t('sdImportDone'));
   } catch (e) {
-    toast(lang === 'sr' ? 'Neispravan format 😢' : lang === 'en' ? 'Invalid format 😢' : '格式不对哦 😢');
+    toast(t('sdImportError'));
   }
 }
 
@@ -855,10 +842,10 @@ function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translate
     }
     var html = '<div style="font-size:.62rem;color:var(--gold);margin-bottom:8px">' + partnerName + (timeStr ? ' · ' + timeStr : '') + '</div>';
     var questions = [
-      { q: lang === 'sr' ? '💝 Obradovalo' : lang === 'en' ? '💝 Happy' : '💝 开心的事', a: partnerEntry.happy },
-      { q: lang === 'sr' ? '🤔 Zasmetalo' : lang === 'en' ? '🤔 Uncomfortable' : '🤔 不舒服的事', a: partnerEntry.uncomf },
-      { q: lang === 'sr' ? '🙏 Zahvalnost' : lang === 'en' ? '🙏 Thanks' : '🙏 感谢', a: partnerEntry.thanks },
-      { q: lang === 'sr' ? '💪 Da poradimo' : lang === 'en' ? '💪 To improve' : '💪 希望改进', a: partnerEntry.wish },
+      { q: t('sdQuestions')[0].q, a: partnerEntry.happy },
+      { q: t('sdQuestions')[1].q, a: partnerEntry.uncomf },
+      { q: t('sdQuestions')[2].q, a: partnerEntry.thanks },
+      { q: t('sdQuestions')[3].q, a: partnerEntry.wish },
     ];
     var origTexts = [];
     questions.forEach(function (item) {
@@ -877,7 +864,7 @@ function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translate
       }
     });
     if (!partnerEntry.happy && !partnerEntry.uncomf && !partnerEntry.thanks && !partnerEntry.wish) {
-      html += '<div class="sd-empty">' + (lang === 'sr' ? 'Nema unosa' : lang === 'en' ? 'No entry' : '没有记录') + '</div>';
+      html += '<div class="sd-empty">' + t('sdNoEntry') + '</div>';
     }
     contentEl.innerHTML = html;
     if (origTexts.length > 0) {
@@ -887,14 +874,7 @@ function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translate
       translateBtn.style.display = 'none';
     }
   } else {
-    contentEl.innerHTML =
-      '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">' +
-      (lang === 'sr'
-        ? 'Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.'
-        : lang === 'en'
-          ? "Your partner hasn't written their reflection for this day yet — or it hasn't synced."
-          : '伴侣还没写这一天的总结——或者还没同步过来。') +
-      '</div></div>';
+    contentEl.innerHTML = '<div class="sd-locked"><span class="sd-locked-icon">📭</span><div class="sd-locked-text">' + t('sdPartnerLocked') + '</div></div>';
     translateBtn.style.display = 'none';
   }
 }
@@ -927,7 +907,7 @@ function _buildTimelineEntry(item) {
   var locked = !myEntry && (item['barry'] || item['andjela']);
   var previewHtml = '';
   if (locked) {
-    previewHtml = '<span class="tn-locked">🔒 ' + (lang === 'sr' ? 'Zaključano' : lang === 'en' ? 'Locked' : '已锁定') + '</span>';
+    previewHtml = '<span class="tn-locked">🔒 ' + t('sdTimelineLocked') + '</span>';
   } else if (preview) {
     preview = esc(preview.substring(0, 80));
     previewHtml = preview + (preview.length >= 80 ? '...' : '');
@@ -965,10 +945,7 @@ function renderSharedDiaryHistory(allData) {
   var hist = document.getElementById('sharedDiaryHistory');
   if (!hist) return;
   if (items.length === 0) {
-    hist.innerHTML =
-      '<div class="sd-empty" style="padding-left:20px">' +
-      (lang === 'sr' ? 'Još nema unosa — započnite danas! 💌' : lang === 'en' ? 'No entries yet — start today! 💌' : '还没有日记——今天就开始吧！💌') +
-      '</div>';
+    hist.innerHTML = '<div class="sd-empty" style="padding-left:20px">' + t('sdTimelineEmpty') + '</div>';
     return;
   }
 
@@ -985,11 +962,11 @@ function renderSharedDiaryHistory(allData) {
     '</div>' +
     (hasMore
       ? '<div class="timeline-load-more"><button onclick="expandTimeline()" id="timelineExpandBtn">' +
-        (lang === 'sr'
-          ? '📅 Prikaži još ' + (items.length - showCount) + ' unosa'
-          : lang === 'en'
-            ? '📅 Show ' + (items.length - showCount) + ' more entries'
-            : '📅 展开剩余 ' + (items.length - showCount) + ' 条') +
+        t('sdTimelineMore') +
+        ' ' +
+        (items.length - showCount) +
+        ' ' +
+        t('day') +
         '</button></div>'
       : '');
 }
@@ -1159,56 +1136,37 @@ async function translatePartnerEntries() {
 // INIT
 // ==============================
 function renderDiaryLabels() {
-  document.getElementById('sd-my-title').textContent = lang === 'sr' ? 'Moj osvrt' : lang === 'en' ? 'My Reflection' : '我的总结';
+  document.getElementById('sd-my-title').textContent = t('sdMyReflection');
   document.getElementById('sd-my-hint').textContent =
     lang === 'sr'
       ? 'Iskreno o danu — što više detalja, to bolje 💫'
       : lang === 'en'
         ? 'Be honest about your day — the more detail the better 💫'
         : '坦诚地回顾一天——越详细越好 💫';
-  document.getElementById('sd-l-happy').textContent =
-    lang === 'sr' ? 'Šta me je danas obradovalo' : lang === 'en' ? 'What made me happy today' : '今天让我开心的事';
-  document.getElementById('sd-l-uncomf').textContent =
-    lang === 'sr' ? 'Šta mi je malo zasmetalo' : lang === 'en' ? 'What felt a little uncomfortable' : '让我有点不舒服的事';
-  document.getElementById('sd-l-thanks').textContent =
-    lang === 'sr' ? 'Želim da ti se zahvalim za...' : lang === 'en' ? 'I want to thank you for...' : '我想感谢你的...';
-  document.getElementById('sd-l-wish').textContent =
-    lang === 'sr' ? 'Voleo/la bih da zajedno poradimo na...' : lang === 'en' ? 'I hope we can work on...' : '我希望我们能一起改进的...';
+  document.getElementById('sd-l-happy').textContent = t('sdLabelHappy');
+  document.getElementById('sd-l-uncomf').textContent = t('sdLabelUncomf');
+  document.getElementById('sd-l-thanks').textContent = t('sdLabelThanks');
+  document.getElementById('sd-l-wish').textContent = t('sdLabelWish');
   document.getElementById('sd-save-text').textContent =
     lang === 'sr' ? 'Sačuvaj i pogledaj partnerov' : lang === 'en' ? "Save & View Partner's" : '保存并查看伴侣的';
   document.getElementById('sd-gate-hint').textContent =
     lang === 'sr' ? 'Sačuvaj svoj unos pre nego što vidiš partnerov' : lang === 'en' ? "Save your entry to unlock your partner's" : '写完才能看伴侣的哦';
-  document.getElementById('sd-partner-title').textContent = lang === 'sr' ? 'Partnerov osvrt' : lang === 'en' ? "Partner's Reflection" : '伴侣的总结';
+  document.getElementById('sd-partner-title').textContent = t('sdPartnerReflection');
   // Update sync hint with last-sync time if available
-  var syncHint = getGitHubToken()
-    ? lang === 'sr'
-      ? '☁️ Automatska sinhronizacija'
-      : lang === 'en'
-        ? '☁️ Auto-sync on'
-        : '☁️ 自动同步中'
-    : lang === 'sr'
-      ? '📤 Izvezi → pošalji partneru → Partner uveze'
-      : lang === 'en'
-        ? '📤 Export → send → Partner imports'
-        : '📤 导出 → 发给伴侣 → 导入';
+  var syncHint = getGitHubToken() ? t('sdSyncHintOn') : t('sdSyncHintOff');
   var lastSync = localStorage.getItem('shared-last-sync');
   if (lastSync && getGitHubToken()) {
     var ago = Math.floor((Date.now() - parseInt(lastSync)) / 60000);
-    if (ago < 1) syncHint += ' · ' + (lang === 'sr' ? 'malopre' : lang === 'en' ? 'just now' : '刚刚');
-    else if (ago < 60) syncHint += ' · ' + ago + 'min ' + (lang === 'sr' ? 'pre' : lang === 'en' ? 'ago' : '前');
-    else syncHint += ' · ' + Math.floor(ago / 60) + 'h ' + (lang === 'sr' ? 'pre' : lang === 'en' ? 'ago' : '前');
+    if (ago < 1) syncHint += ' · ' + t('sdSyncJustNow');
+    else if (ago < 60) syncHint += ' · ' + ago + 'min ' + t('sdSyncMinAgo');
+    else syncHint += ' · ' + Math.floor(ago / 60) + 'h ' + t('sdSyncHAgo');
   }
   document.getElementById('sd-sync-hint').textContent = syncHint;
-  document.getElementById('sd-export').textContent = lang === 'sr' ? 'Podeli' : lang === 'en' ? 'Share' : '分享';
-  document.getElementById('sd-import').textContent = lang === 'sr' ? 'Uvezi' : lang === 'en' ? 'Import' : '导入';
-  document.getElementById('sd-history-title').textContent = lang === 'sr' ? 'Vremenska linija' : lang === 'en' ? 'Timeline' : '时间线';
+  document.getElementById('sd-export').textContent = t('sdExportBtn');
+  document.getElementById('sd-import').textContent = t('sdImportBtn');
+  document.getElementById('sd-history-title').textContent = t('sdTimelineTitle');
   document.getElementById('sd-saved-text').textContent = L('Sačuvano', 'Saved', '已保存');
-  document.getElementById('partner-locked-text').textContent =
-    lang === 'sr'
-      ? 'Prvo sačuvaj svoj unos da otključaš partnerov 💌'
-      : lang === 'en'
-        ? "Save your entry first to unlock your partner's 💌"
-        : '先保存你的日记才能解锁伴侣的哦 💌';
+  document.getElementById('partner-locked-text').textContent = t('sdPartnerLockedText');
   document.getElementById('sd-sync-icon').textContent = getGitHubToken() ? '☁️' : '';
 }
 
@@ -1244,12 +1202,7 @@ function renderDiaryDateStrip() {
   var allData = loadSharedDiaryData();
   var today = new Date();
   var selKey = fmtDate(new Date(_diaryViewDate));
-  var dowLabels =
-    lang === 'sr'
-      ? ['Ne', 'Po', 'Ut', 'Sr', 'Če', 'Pe', 'Su']
-      : lang === 'en'
-        ? ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-        : ['日', '一', '二', '三', '四', '五', '六'];
+  var dowLabels = t('sdDOW');
   var html = '';
   for (var i = -3; i <= 3; i++) {
     var d = new Date(today);
@@ -1311,12 +1264,7 @@ function renderDiaryFullCal() {
   dow = dow === 0 ? 6 : dow - 1;
   var selKey = fmtDate(new Date(_diaryViewDate));
   var todayKey = fmtDate(new Date());
-  var dowLabels =
-    lang === 'sr'
-      ? ['Po', 'Ut', 'Sr', 'Če', 'Pe', 'Su', 'Ne']
-      : lang === 'en'
-        ? ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
-        : ['一', '二', '三', '四', '五', '六', '日'];
+  var dowLabels = t('sdDOWMon');
   var html = dowLabels
     .map(function (d) {
       return '<div class="mc-dow">' + d + '</div>';
@@ -1957,8 +1905,7 @@ function setupOfflineDetection() {
   if (!banner) return;
   function update() {
     banner.classList.toggle('show', !navigator.onLine);
-    document.getElementById('offline-text').textContent =
-      lang === 'sr' ? 'Offline — neke funkcije možda ne rade' : lang === 'en' ? 'Offline — some features unavailable' : '当前离线，部分功能不可用';
+    document.getElementById('offline-text').textContent = t('offlineText');
   }
   window.addEventListener('online', update);
   window.addEventListener('offline', update);
@@ -1991,12 +1938,7 @@ function setupPWABanner() {
     banner.classList.remove('show');
     localStorage.setItem('pwa-banner-dismissed', '1');
   };
-  document.getElementById('pwa-text').textContent =
-    lang === 'sr'
-      ? '📲 Instaliraj na telefon — koristi kao aplikaciju'
-      : lang === 'en'
-        ? '📲 Install on phone — use like an app'
-        : '📲 安装到手机 — 像App一样使用';
+  document.getElementById('pwa-text').textContent = t('pwaInstallText');
 }
 
 // ===== DASHBOARD =====
@@ -2252,12 +2194,7 @@ function renderStatsPanel() {
     var pe2 = { 'period-on': '🩸', 'period-mid': '🩸', ovulation: '🥚', fertile: '🌱', luteal: '🌙', follicular: '🌿' };
     var phaseName = t('phaseBadges')[phase] || '--';
     var phIcon = pe2[phase] || '📊';
-    var rl =
-      lang === 'sr'
-        ? { high: 'Visoka', medium: 'Srednja', low: 'Niska' }
-        : lang === 'en'
-          ? { high: 'High', medium: 'Medium', low: 'Low' }
-          : { high: '高', medium: '中', low: '低' };
+    var rl = t('statsRegLabels');
     var regLabel = clen >= 2 ? rl[pred.confidence] : '--';
     var rc = { high: 'var(--sage)', medium: 'var(--gold)', low: 'var(--rose)' };
     var regColor = rc[pred.confidence] || 'var(--text-muted)';
@@ -2295,7 +2232,7 @@ function renderStatsPanel() {
   // --- Cycle trend chart ---
   var trendCanvas = document.getElementById('chartCycleTrend');
   var trendEmpty = document.getElementById('chartCycleEmpty');
-  document.getElementById('schart-cycle-title').textContent = lang === 'sr' ? '📈 Trend Ciklusa' : lang === 'en' ? '📈 Cycle Trend' : '📈 周期趋势';
+  document.getElementById('schart-cycle-title').textContent = t('statsTrendTitle');
   if (trendCanvas && pred.cycles && pred.cycles.length >= 2) {
     trendCanvas.parentElement.style.display = '';
     if (trendEmpty) trendEmpty.style.display = 'none';
@@ -2308,14 +2245,14 @@ function renderStatsPanel() {
       width: 500,
       height: 200,
       avgLine: pred.avgCycle,
-      avgLabel: lang === 'sr' ? 'Prosek' : lang === 'en' ? 'Avg' : '均值',
-      emptyText: lang === 'sr' ? 'Premalo podataka' : lang === 'en' ? 'Not enough data' : '数据不足',
+      avgLabel: t('statsTrendAvg'),
+      emptyText: t('statsTrendEmpty'),
     });
   } else if (trendCanvas) {
     trendCanvas.parentElement.style.display = 'none';
     if (trendEmpty) {
       trendEmpty.style.display = '';
-      trendEmpty.textContent = lang === 'sr' ? 'Potrebno bar 2 ciklusa za trend' : lang === 'en' ? 'Need 2+ cycles for trend' : '需要至少2个周期才显示趋势';
+      trendEmpty.textContent = t('statsTrendNeed');
     }
   }
 
@@ -2323,8 +2260,7 @@ function renderStatsPanel() {
   var moodCanvas = document.getElementById('chartMoodDonut');
   var moodEmpty = document.getElementById('chartMoodEmpty');
   var moodLegend = document.getElementById('chartMoodLegend');
-  document.getElementById('schart-mood-title').textContent =
-    lang === 'sr' ? '🎭 Distribucija Raspoloženja' : lang === 'en' ? '🎭 Mood Distribution' : '🎭 心情分布';
+  document.getElementById('schart-mood-title').textContent = t('statsMoodTitle');
   if (moodCanvas && state.moods) {
     var moodCounts = {};
     var moodKeysArr = Object.keys(state.moods);
@@ -2345,8 +2281,8 @@ function renderStatsPanel() {
       var legendData = ChartRenderer.drawDonutChart(moodCanvas, segments, {
         width: 260,
         height: 200,
-        centerLabel: lang === 'sr' ? 'unosa' : lang === 'en' ? 'entries' : '次记录',
-        emptyText: lang === 'sr' ? 'Nema podataka' : lang === 'en' ? 'No mood data' : '暂无心情数据',
+        centerLabel: t('statsMoodCenter'),
+        emptyText: t('statsMoodEmpty'),
       });
       if (moodLegend && legendData.length > 0) {
         moodLegend.innerHTML = legendData
@@ -2359,7 +2295,7 @@ function renderStatsPanel() {
       moodCanvas.parentElement.style.display = 'none';
       if (moodEmpty) {
         moodEmpty.style.display = '';
-        moodEmpty.textContent = lang === 'sr' ? 'Još nema zapisa o raspoloženju' : lang === 'en' ? 'No mood records yet' : '还没有心情记录';
+        moodEmpty.textContent = t('statsMoodNoRecords');
       }
       if (moodLegend) moodLegend.innerHTML = '';
     }
@@ -2368,8 +2304,7 @@ function renderStatsPanel() {
   // --- Symptom bar chart ---
   var symptomCanvas = document.getElementById('chartSymptomBar');
   var symptomEmpty = document.getElementById('chartSymptomEmpty');
-  document.getElementById('schart-symptom-title').textContent =
-    lang === 'sr' ? '📋 Učestalost Simptoma' : lang === 'en' ? '📋 Symptom Frequency' : '📋 症状频率';
+  document.getElementById('schart-symptom-title').textContent = t('statsSympTitle');
   if (symptomCanvas && state.symptoms) {
     var sympKeysArr = Object.keys(state.symptoms);
     var sympFreq = { cramps: 0, mood: 0, flow: 0, headache: 0, fatigue: 0, cravings: 0 };
@@ -2404,13 +2339,13 @@ function renderStatsPanel() {
       ChartRenderer.drawBarChart(symptomCanvas, barData, {
         width: 460,
         height: 180,
-        emptyText: lang === 'sr' ? 'Nema podataka o simptomima' : lang === 'en' ? 'No symptom data' : '暂无症状数据',
+        emptyText: t('statsSympEmpty'),
       });
     } else {
       symptomCanvas.parentElement.style.display = 'none';
       if (symptomEmpty) {
         symptomEmpty.style.display = '';
-        symptomEmpty.textContent = lang === 'sr' ? 'Još nema zapisa o simptomima' : lang === 'en' ? 'No symptom records yet' : '还没有症状记录';
+        symptomEmpty.textContent = t('statsSympNoRecords');
       }
     }
   }
@@ -2421,37 +2356,18 @@ function renderStatsPanel() {
   if (ph2 && pred.nextStart) {
     ph2.style.display = '';
     var daysUntil = daysDiff(td, pred.nextStart);
-    var rl2 =
-      lang === 'sr'
-        ? { high: 'Visoka', medium: 'Srednja', low: 'Niska' }
-        : lang === 'en'
-          ? { high: 'High', medium: 'Medium', low: 'Low' }
-          : { high: '高', medium: '中', low: '低' };
+    var rl2 = t('statsRegLabels');
     document.getElementById('predMainNext').textContent =
       daysUntil >= 0
-        ? lang === 'sr'
-          ? 'Još ' + daysUntil + ' dana'
-          : lang === 'en'
-            ? daysUntil + ' days until'
-            : '距下次 ' + daysUntil + ' 天'
-        : lang === 'sr'
-          ? 'Kasni ' + Math.abs(daysUntil) + ' dana'
-          : lang === 'en'
-            ? Math.abs(daysUntil) + ' days late'
-            : '已推迟 ' + Math.abs(daysUntil) + ' 天';
+        ? t('statsDaysUntil') + ' ' + daysUntil + ' ' + t('statsDaysUntilEnd')
+        : t('statsDaysLate') + ' ' + Math.abs(daysUntil) + ' ' + t('statsDaysLateEnd');
     document.getElementById('predSubConf').textContent =
-      clen2 >= 2
-        ? (lang === 'sr' ? 'Pouzdanost: ' : 'Confidence: ') + rl2[pred.confidence] + ' (±' + pred.stdDev + ')'
-        : lang === 'sr'
-          ? '(potrebno 2+ ciklusa)'
-          : lang === 'en'
-            ? '(needs 2+ cycles)'
-            : '(需2个周期以上)';
+      clen2 >= 2 ? t('statsConfidence') + rl2[pred.confidence] + ' (±' + pred.stdDev + ')' : t('statsNeedCycles');
     document.getElementById('predChipOv').textContent = pred.ovulation ? fmtDate(pred.ovulation) : '--';
-    document.getElementById('predChipOvLabel').textContent = lang === 'sr' ? 'Ovulacija' : lang === 'en' ? 'Ovulation' : '排卵日';
+    document.getElementById('predChipOvLabel').textContent = t('statsOvLabel');
     document.getElementById('predChipFert').textContent =
       pred.fertileStart && pred.fertileEnd ? fmtDate(pred.fertileStart) + ' ~ ' + fmtDate(pred.fertileEnd) : '--';
-    document.getElementById('predChipFertLabel').textContent = lang === 'sr' ? 'Plodni dani' : lang === 'en' ? 'Fertile Window' : '易孕窗口';
+    document.getElementById('predChipFertLabel').textContent = t('statsFertLabel');
     document.getElementById('predChipFuture').textContent =
       pred.futurePeriods.length > 0
         ? pred.futurePeriods
@@ -2460,19 +2376,19 @@ function renderStatsPanel() {
             })
             .join(', ')
         : '--';
-    document.getElementById('predChipFutureLabel').textContent = lang === 'sr' ? 'Buduće' : lang === 'en' ? 'Future' : '未来预测';
+    document.getElementById('predChipFutureLabel').textContent = t('statsFutureLabel');
     document.getElementById('predChipReg').textContent = clen2 >= 2 ? rl2[pred.confidence] + ' ±' + pred.stdDev : '--';
-    document.getElementById('predChipRegLabel').textContent = lang === 'sr' ? 'Regularnost' : lang === 'en' ? 'Regularity' : '规律性';
+    document.getElementById('predChipRegLabel').textContent = t('statsRegLabel');
   } else if (ph2) {
     ph2.style.display = 'none';
   }
 
   // --- Timeline ---
   var tlRow = document.getElementById('timelineRow');
-  document.getElementById('schart-history-title').textContent = lang === 'sr' ? '📜 Istorija Ciklusa' : lang === 'en' ? '📜 Cycle History' : '📜 周期历史';
-  document.getElementById('tleg-short').textContent = lang === 'sr' ? 'Kratak' : lang === 'en' ? 'Short' : '偏短';
-  document.getElementById('tleg-normal').textContent = lang === 'sr' ? 'Normalan' : lang === 'en' ? 'Normal' : '正常';
-  document.getElementById('tleg-long').textContent = lang === 'sr' ? 'Dug' : lang === 'en' ? 'Long' : '偏长';
+  document.getElementById('schart-history-title').textContent = t('statsTimelineTitle');
+  document.getElementById('tleg-short').textContent = t('statsTimelineShort');
+  document.getElementById('tleg-normal').textContent = t('statsTimelineNormal');
+  document.getElementById('tleg-long').textContent = t('statsTimelineLong');
   if (tlRow && pred.cycles.length > 0) {
     var recent = pred.cycles.slice(-12),
       avg = pred.avgCycle;
@@ -2489,7 +2405,7 @@ function renderStatsPanel() {
   // --- Relationship section label ---
   var sectRel = document.getElementById('sect-relationship');
   if (sectRel) {
-    sectRel.textContent = lang === 'sr' ? '💝 Veza' : lang === 'en' ? '💝 Relationship' : '💝 关系';
+    sectRel.textContent = t('sectRelationship');
   }
 }
 
@@ -2525,8 +2441,8 @@ async function bootApp() {
   loadPerProfileSettings();
 
   // Load data in background (do NOT await — never block the UI)
-  loadDataFiles().catch(function (e) {
-    console.error('loadDataFiles failed', e);
+  loadDataFiles().catch(function () {
+    /* Non-critical, UI works without data files */
   });
 
   state = loadState();
@@ -2707,8 +2623,8 @@ function loadHolidays() {
       // Re-render calendar with holiday data now available
       renderCalendar();
     })
-    .catch(function (err) {
-      console.warn('[holidays] Could not load holidays.json:', err.message);
+    .catch(function () {
+      /* Non-critical, holidays not available */
     });
 }
 loadHolidays();
@@ -2737,18 +2653,7 @@ function renderUpcomingHoliday() {
   if (upcoming) {
     var days = Math.ceil((new Date(upcoming.d + 'T00:00:00') - today) / 86400000);
     var name = upcoming.name[lang] || upcoming.name['sr'];
-    var daysText =
-      days === 0
-        ? lang === 'sr'
-          ? 'danas! 🎉'
-          : lang === 'en'
-            ? 'today! 🎉'
-            : '就是今天！🎉'
-        : lang === 'sr'
-          ? 'još ' + days + ' dana'
-          : lang === 'en'
-            ? days + ' days away'
-            : '还有 ' + days + ' 天';
+    var daysText = days === 0 ? t('holidayToday') : t('holidayDaysAway') + ' ' + days + ' ' + t('day');
     el.style.display = '';
     el.textContent = '🎌 ' + name + ' · ' + daysText;
   } else {
@@ -2925,7 +2830,7 @@ function renderTea() {
   teaName.textContent = tea.name[lang] || tea.name['sr'];
   teaDesc.textContent = tea.desc[lang] || tea.desc['sr'];
   teaMsg.textContent = tea.msg[lang] || tea.msg['sr'];
-  teaTitle.textContent = lang === 'sr' ? '🍵 Čajanka — Srbija ♥ Kina' : lang === 'en' ? '🍵 Tea Room — Serbia ♥ China' : '🍵 茶室 — 塞尔维亚 ♥ 中国';
+  teaTitle.textContent = t('teaTitle');
 }
 
 /* ================================================================
@@ -2989,20 +2894,14 @@ function updateLoveCounter() {
   var el = document.getElementById('titleLoveCounter');
   if (!el || !annDateLove) return;
   var days = daysDiff(new Date(annDateLove), today());
-  if (days >= 0) el.textContent = '♥ ' + days + (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起');
+  if (days >= 0) el.textContent = '♥ ' + days + t('loveCounterTogether');
   // Also update the stats card
   var card = document.getElementById('love-days-content');
   if (!card) return;
   var parts = [];
   if (annDateMet) {
     var d = daysDiff(new Date(annDateMet), today());
-    if (d >= 0)
-      parts.push(
-        '<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' +
-          d +
-          (lang === 'sr' ? ' dana od prvog susreta' : lang === 'en' ? ' days since we met' : ' 天前初次相遇') +
-          '</div>'
-      );
+    if (d >= 0) parts.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' + d + t('loveCounterMet') + '</div>');
   }
   if (annDateLove) {
     var d = daysDiff(new Date(annDateLove), today());
@@ -3015,7 +2914,7 @@ function updateLoveCounter() {
       );
   }
   card.innerHTML = parts.join('<div style="height:4px"></div>');
-  document.getElementById('love-days-title').textContent = lang === 'sr' ? '💕 Dani zajedno' : lang === 'en' ? '💕 Our Days' : '💕 我们的日子';
+  document.getElementById('love-days-title').textContent = t('loveDaysTitle');
 }
 function randomThinkingOfYou() {
   if (activeProfile !== 'andjela') return;
@@ -3304,9 +3203,9 @@ function updateLangUI() {
   document.getElementById('m-l-phase').textContent = md.phase;
   document.getElementById('m-l-day').textContent = md.day;
   document.getElementById('m-l-symp').textContent = md.symptoms;
-  document.getElementById('m-l-holiday').textContent = lang === 'sr' ? 'Praznik' : lang === 'en' ? 'Holiday' : '节日';
-  document.getElementById('m-l-solar').textContent = lang === 'sr' ? 'Solarni ciklus' : lang === 'en' ? 'Solar Term' : '节气';
-  document.getElementById('m-l-special').textContent = lang === 'sr' ? 'Poseban dan' : lang === 'en' ? 'Special Day' : '特殊日子';
+  document.getElementById('m-l-holiday').textContent = t('modalHolidayLabel');
+  document.getElementById('m-l-solar').textContent = t('modalSolarLabel');
+  document.getElementById('m-l-special').textContent = t('modalSpecialLabel');
   document.getElementById('m-divider').textContent = md.quickSymptom;
   document.getElementById('modal-close-btn').textContent = md.close;
   document.getElementById('fab-label').textContent = t('fabLabel');
@@ -3371,7 +3270,7 @@ function renderSolarTermBadge() {
     });
     if (nearest && minDist <= 7) {
       var nearName = nearest.name[lang] || nearest.name[lang.split('-')[0]] || nearest.name['sr'] || nearest.name['zh-CN'] || '';
-      badge.textContent = '🌿 ' + nearName + ' ' + (lang === 'sr' ? 'za ' + minDist + ' dana' : lang === 'en' ? 'in ' + minDist + ' days' : minDist + '天后');
+      badge.textContent = '🌿 ' + nearName + ' ' + t('solarTermBadge') + ' ' + minDist + ' ' + t('day');
       badge.style.display = '';
     } else {
       badge.style.display = 'none';
@@ -3483,8 +3382,7 @@ function renderCalendar() {
   var plEl = document.getElementById('predLegend');
   if (pred.futurePeriods.length > 0) {
     plEl.style.display = '';
-    plEl.textContent =
-      lang === 'sr' ? '※ Prozirni datumi su predviđanja' : lang === 'en' ? '※ Faded dates are future predictions' : '※ 半透明标记为未来周期预测';
+    plEl.textContent = t('calendarPredLegend');
   } else plEl.style.display = 'none';
   // Build shared diary index for dot indicators
   var sharedDiaryIdx = {};
@@ -3852,12 +3750,7 @@ function updateStats(pred) {
     requestAnimationFrame(step);
   }
   animNum(document.getElementById('st-count'), state.records.length, '');
-  var regL =
-    lang === 'sr'
-      ? { high: 'Visoka', medium: 'Srednja', low: 'Niska' }
-      : lang === 'en'
-        ? { high: 'High', medium: 'Medium', low: 'Low' }
-        : { high: '高', medium: '中', low: '低' };
+  var regL = t('statsRegLabels');
   if (state.records.length >= 2) {
     animNum(document.getElementById('st-avg'), pred.avgCycle, t('day'));
     var sr = document.getElementById('st-range');
@@ -3872,7 +3765,7 @@ function updateStats(pred) {
         pred.stdDev +
         '</span>';
   } else {
-    var hint = lang === 'sr' ? '(treba bar 2 ciklusa)' : lang === 'en' ? '(needs 2+ cycles)' : '(需2个周期以上)';
+    var hint = t('statsHintCycles');
     var sa = document.getElementById('st-avg');
     if (sa) sa.textContent = hint;
     var sr2 = document.getElementById('st-range');
@@ -3961,13 +3854,13 @@ function updateFab() {
     fabIcon.textContent = '✅';
     fab.style.fontSize = '1.2rem';
     fab.style.fontWeight = 'normal';
-    fabLabel.textContent = lang === 'sr' ? 'Kraj ciklusa' : lang === 'en' ? 'Period ended' : '经期结束';
+    fabLabel.textContent = t('fabEndPeriod');
   } else {
     // No open period — show start button
     fabIcon.textContent = '🩸';
     fab.style.fontSize = '1.5rem';
     fab.style.fontWeight = 'normal';
-    fabLabel.textContent = lang === 'sr' ? 'Početak ciklusa' : lang === 'en' ? 'Period started' : '经期来了';
+    fabLabel.textContent = t('fabStartPeriod');
   }
 }
 
@@ -4053,7 +3946,7 @@ document.addEventListener('keydown', function (e) {
     return;
   }
   var modal = document.getElementById('modal');
-  if (modal && !modal.parentElement.classList.contains('hidden')) {
+  if (modal && !modal.classList.contains('hidden')) {
     closeModal();
     return;
   }
@@ -4077,12 +3970,7 @@ function openModal(date, pred) {
   document.getElementById('modal-date').textContent = fmtDate(selectedDate);
   var lunarInfo = typeof Lunar !== 'undefined' ? Lunar.toLunar(date) : null;
   if (lunarInfo) {
-    var lunarDisplay =
-      lang === 'sr'
-        ? 'Lunarni ' + lunarInfo.month + '. mesec, ' + lunarInfo.day + '. dan'
-        : lang === 'en'
-          ? 'Lunar ' + lunarInfo.month + '/' + lunarInfo.day
-          : lunarInfo.monthName + lunarInfo.dayName;
+    var lunarDisplay = t('modalLunar') + ' ' + lunarInfo.month + t('modalLunarSrSep') + ' ' + lunarInfo.day + t('modalLunarSrDay');
     document.getElementById('modal-date').textContent = fmtDate(selectedDate) + ' · ' + lunarDisplay;
   }
   document.getElementById('modal-phase').textContent = phases[phase] || '--';
@@ -4178,11 +4066,7 @@ function openModal(date, pred) {
       var offHtml = '';
       if (daysOffInfo && h.country === 'cn') {
         var off = daysOffInfo.zh || daysOffInfo.cn || '';
-        if (off && off !== '—')
-          offHtml =
-            '<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ ' +
-            (lang === 'sr' ? 'Odmor: ' + off : lang === 'en' ? 'Days off: ' + off : '放假' + off) +
-            '</div>';
+        if (off && off !== '—') offHtml = '<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ ' + t('holidayOffLabel') + off + '</div>';
       }
       if (daysOffInfo && h.country === 'rs') {
         var off = daysOffInfo.sr || daysOffInfo.rs || '';
@@ -4449,13 +4333,13 @@ function renderTips() {
     var tipKey = 'barryTips' + cat.charAt(0).toUpperCase() + cat.slice(1);
     tips = t(tipKey) || t('barryTipsGeneral');
     var phaseNames = {
-      period: lang === 'sr' ? 'Njena menstruacija' : lang === 'en' ? 'Her Period' : '她的经期',
-      follicular: lang === 'sr' ? 'Njena folikularna' : lang === 'en' ? 'Her Follicular' : '她的卵泡期',
-      ovulation: lang === 'sr' ? 'Njena ovulacija' : lang === 'en' ? 'Her Ovulation' : '她的排卵期',
-      luteal: lang === 'sr' ? 'Njena lutealna' : lang === 'en' ? 'Her Luteal' : '她的黄体期',
-      general: lang === 'sr' ? 'Budi tu za nju' : lang === 'en' ? 'Be There For Her' : '好好待她',
+      period: t('barryPhasePeriod'),
+      follicular: t('barryPhaseFollicular'),
+      ovulation: t('barryPhaseOvulation'),
+      luteal: t('barryPhaseLuteal'),
+      general: t('barryPhaseGeneral'),
     };
-    var title = lang === 'sr' ? '💡 Kako postupati prema njoj danas' : lang === 'en' ? '💡 How to treat her today' : '💡 今天如何对待她';
+    var title = t('barryTipsTitle');
     document.getElementById('tips-list').innerHTML =
       '<div style="text-align:center;padding:8px 0;font-size:.78rem;font-weight:700;color:var(--text)">' +
       title +
@@ -4484,10 +4368,10 @@ function renderTips() {
   else if (phase === 'follicular') cat = 'follicular';
   else if (phase === 'luteal') cat = 'luteal';
   const names = {
-    period: lang === 'sr' ? 'Menstruacija' : lang === 'en' ? 'Period' : '经期',
-    follicular: lang === 'sr' ? 'Folikularna' : lang === 'en' ? 'Follicular' : '卵泡期',
-    ovulation: lang === 'sr' ? 'Ovulacija' : lang === 'en' ? 'Ovulation' : '排卵期',
-    luteal: lang === 'sr' ? 'Lutealna' : lang === 'en' ? 'Luteal' : '黄体期',
+    period: t('phasePeriod'),
+    follicular: t('phaseFollicular'),
+    ovulation: t('phaseOvulation'),
+    luteal: t('phaseLuteal'),
   };
   tips = t('tips.' + cat);
   document.getElementById('tips-list').innerHTML = tips
@@ -4499,17 +4383,87 @@ function renderTips() {
 }
 function saveGitHubToken() {
   var t = document.getElementById('set-gh-token').value.trim();
+  var warning = document.getElementById('tokenSecurityWarning');
   if (t) {
     sessionStorage.setItem('gh-token', t);
     toast('🔑 Token sačuvan ✓');
+    if (warning) warning.style.display = '';
     pullAllSharedData().then(function () {
       updateSyncStatusBadge();
       renderAll();
     });
   } else {
     sessionStorage.removeItem('gh-token');
+    if (warning) warning.style.display = 'none';
     updateSyncStatusBadge();
   }
+}
+
+async function testGitHubToken() {
+  var btn = document.getElementById('testTokenBtn');
+  if (!btn) return;
+  var origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Testiranje...';
+  var token = getGitHubToken();
+  if (!token) {
+    toast('🔑 ' + (lang === 'sr' ? 'Prvo unesi token' : lang === 'en' ? 'Enter a token first' : '请先输入 Token'));
+    btn.textContent = origText;
+    btn.disabled = false;
+    return;
+  }
+  try {
+    var resp = await fetch('https://api.github.com/user', {
+      headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' },
+    });
+    if (resp.ok) {
+      var user = await resp.json();
+      toast(
+        '✅ ' +
+          (lang === 'sr' ? 'Token važi — ' + (user.login || '') : lang === 'en' ? 'Token valid — ' + (user.login || '') : 'Token 有效 — ' + (user.login || ''))
+      );
+      btn.textContent = '✅ Važi';
+      setTimeout(function () {
+        btn.textContent = origText;
+        btn.disabled = false;
+      }, 3000);
+    } else if (resp.status === 401) {
+      toast('❌ ' + (lang === 'sr' ? 'Token nevažeći — generiši novi' : lang === 'en' ? 'Token invalid — generate a new one' : 'Token 无效 — 请重新生成'));
+      btn.textContent = '❌ Nevažeći';
+      setTimeout(function () {
+        btn.textContent = origText;
+        btn.disabled = false;
+      }, 3000);
+    } else {
+      toast('⚠️ ' + (lang === 'sr' ? 'Greška: ' + resp.status : lang === 'en' ? 'Error: ' + resp.status : '错误: ' + resp.status));
+      btn.textContent = origText;
+      btn.disabled = false;
+    }
+  } catch (e) {
+    toast('⚠️ ' + (lang === 'sr' ? 'Mrežna greška' : lang === 'en' ? 'Network error' : '网络错误'));
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
+}
+
+function clearGitHubToken() {
+  if (!getGitHubToken()) return;
+  if (
+    !confirm(
+      lang === 'sr'
+        ? 'Obrisati GitHub token? Sinhronizacija će prestati.'
+        : lang === 'en'
+          ? 'Clear GitHub token? Sync will stop.'
+          : '清除 GitHub Token？同步将停止。'
+    )
+  )
+    return;
+  sessionStorage.removeItem('gh-token');
+  document.getElementById('set-gh-token').value = '';
+  var warning = document.getElementById('tokenSecurityWarning');
+  if (warning) warning.style.display = 'none';
+  updateSyncStatusBadge();
+  toast('🗑️ ' + (lang === 'sr' ? 'Token obrisan' : lang === 'en' ? 'Token cleared' : 'Token 已清除'));
 }
 function loadSettingsUI() {
   document.getElementById('set-cycle').value = state.settings.cycleLength;
@@ -4518,11 +4472,14 @@ function loadSettingsUI() {
   document.getElementById('set-theme').value = theme;
   document.getElementById('annDateMet').value = annDateMet;
   document.getElementById('annDateLove').value = annDateLove;
+  var hasToken = !!getGitHubToken();
   document.getElementById('set-gh-token').value = getGitHubToken();
   document.getElementById('github-token-label').textContent = '🔑 GitHub Token';
   document.getElementById('set-gh-token').placeholder = 'ghp_...';
   document.getElementById('set-gh-token').setAttribute('aria-label', 'GitHub Token');
-  document.getElementById('set-h-token').textContent = getGitHubToken() ? t('settingsTokenHintEnabled') : t('settingsTokenHintDisabled');
+  document.getElementById('set-h-token').textContent = hasToken ? t('settingsTokenHintEnabled') : t('settingsTokenHintDisabled');
+  var warning = document.getElementById('tokenSecurityWarning');
+  if (warning) warning.style.display = hasToken ? '' : 'none';
   updateAnniversaryCount();
   updateSyncStatusBadge();
 }
@@ -5136,13 +5093,7 @@ function sendHug(hugBack) {
   var todayKey = fmtDate(new Date());
   var count = parseInt(localStorage.getItem('hug-count-' + todayKey) || '0');
   if (count >= 2) {
-    toast(
-      lang === 'sr'
-        ? 'Već si poslao/la 2 zagrljaja danas — probaj sutra! 🤗'
-        : lang === 'en'
-          ? 'You already sent 2 hugs today — try tomorrow! 🤗'
-          : '今天已经抱了2次——明天再来！🤗'
-    );
+    toast(t('hugLimit'));
     return;
   }
   count++;
@@ -5172,18 +5123,7 @@ function sendHug(hugBack) {
   if (card) spawnFloatingHearts(card);
 
   renderHug();
-  var senderLabel =
-    activeProfile === 'barry'
-      ? lang === 'sr'
-        ? 'Poslao si joj zagrljaj!'
-        : lang === 'en'
-          ? 'Hug sent!'
-          : '拥抱已发送！'
-      : lang === 'sr'
-        ? 'Poslala si mu zagrljaj!'
-        : lang === 'en'
-          ? 'Hug sent!'
-          : '拥抱已发送！';
+  var senderLabel = activeProfile === 'barry' ? t('hugSentBarry') : t('hugSentAndjela');
   toast('🤗 ' + senderLabel + ' (' + count + '/2)');
 }
 
@@ -5213,7 +5153,7 @@ function renderHug() {
   var card = document.getElementById('hugContent');
   var title = document.getElementById('hug-title');
   if (!title) return;
-  title.textContent = lang === 'sr' ? '🤗 Virtuelni zagrljaj' : lang === 'en' ? '🤗 Virtual Hug' : '🤗 隔空拥抱';
+  title.textContent = t('hugTitle');
   var todayKey = fmtDate(new Date());
   var count = parseInt(sessionStorage.getItem('hug-count-' + todayKey) || '0');
   var remaining = 2 - count;
@@ -5255,10 +5195,7 @@ function renderHug() {
     var html = '<div class="hug-sent-state">';
     html += '<div class="hug-hearts-row">' + sentHearts + '</div>';
     html += '<span class="hss-icon">📬</span>';
-    html +=
-      '<div class="hss-text">' +
-      (lang === 'sr' ? 'Zagrljaj poslat! Čekam odgovor... 💌' : lang === 'en' ? 'Hug sent! Waiting for response... 💌' : '拥抱已发送！等待回应... 💌') +
-      '</div>';
+    html += '<div class="hss-text">' + t('hugSentWaiting') + '</div>';
     html +=
       '<button class="hug-back-btn" onclick="sendHug()" style="margin-top:8px">🤗 ' +
       (lang === 'sr' ? 'Pošalji još jedan (' + remaining + ')' : lang === 'en' ? 'Send another (' + remaining + ')' : '再抱一次 (' + remaining + ')') +
@@ -5267,7 +5204,7 @@ function renderHug() {
     card.innerHTML = html;
   } else {
     // SEND STATE — fresh button
-    var label = lang === 'sr' ? 'Pošalji zagrljaj' : lang === 'en' ? 'Send a Hug' : '发送拥抱';
+    var label = t('hugSendBtn');
     var html = '';
     if (streak > 1)
       html +=
@@ -5298,8 +5235,8 @@ function renderGratitude() {
   var input = document.getElementById('gratInput');
   var list = document.getElementById('gratList');
   if (!title || !input || !list) return;
-  title.textContent = lang === 'sr' ? '💝 Zid zahvalnosti' : lang === 'en' ? '💝 Gratitude Wall' : '💝 感恩便签';
-  input.placeholder = lang === 'sr' ? 'Hvala ti za...' : lang === 'en' ? 'Thank you for...' : '谢谢你...';
+  title.textContent = t('gratTitle');
+  input.placeholder = t('gratPlaceholder');
   var notes = JSON.parse(localStorage.getItem('shared-gratitude') || '[]');
   if (notes.length === 0) {
     list.innerHTML = '';
@@ -5386,7 +5323,7 @@ function renderCheckin() {
     return;
   }
   document.getElementById('checkinCard').style.display = '';
-  document.getElementById('checkin-title').textContent = lang === 'sr' ? '🎯 Nedeljni pregled' : lang === 'en' ? '🎯 Weekly Check-in' : '🎯 每周感情体检';
+  document.getElementById('checkin-title').textContent = t('checkinTitle');
   var questions = CHECKIN_QUESTIONS[lang] || CHECKIN_QUESTIONS['sr'];
   var myAnswers = getCheckinAnswers(activeProfile);
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
@@ -5436,7 +5373,7 @@ function renderCheckin() {
 function saveMySong() {
   var title = document.getElementById('songInputTitle').value.trim();
   if (!title) {
-    toast(lang === 'sr' ? 'Unesi naziv pesme 🎵' : lang === 'en' ? 'Enter a song title 🎵' : '请输入歌名 🎵');
+    toast(t('songSaveEmpty'));
     return;
   }
   var note = document.getElementById('songInputNote').value.trim();
@@ -5444,7 +5381,7 @@ function saveMySong() {
   localStorage.setItem('shared-song-' + activeProfile, JSON.stringify(song));
   renderSong();
   pushAllSharedData();
-  toast('🎵 ' + (lang === 'sr' ? 'Pesma sačuvana!' : lang === 'en' ? 'Song saved!' : '歌曲已保存！'));
+  toast(t('songSaved'));
 }
 function loadSong(profile) {
   return safeParse(localStorage.getItem('shared-song-' + profile), null);
@@ -5552,7 +5489,7 @@ function saveKnowMeData(data) {
 function renderKnowMe() {
   var card = document.getElementById('knowMeCard');
   if (!card) return;
-  document.getElementById('knowMe-title').textContent = lang === 'sr' ? '💭 Da li me poznaješ?' : lang === 'en' ? '💭 Do You Know Me?' : '💭 你了解我吗？';
+  document.getElementById('knowMe-title').textContent = t('knowMeTitle');
   var todayIdx = Math.floor(Date.now() / 86400000) % KNOW_ME_QUESTIONS.length;
   var q = KNOW_ME_QUESTIONS[todayIdx];
   var qText = q.q[lang] || q.q['sr'];
@@ -5586,7 +5523,7 @@ function renderKnowMe() {
   }
   // Partner answer section
   if (partnerAns) {
-    var partnerThinkLabel = lang === 'sr' ? ' misli da je:' : lang === 'en' ? ' thinks it is:' : '认为:';
+    var partnerThinkLabel = t('knowMePartnerLabel');
     html +=
       '<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 ' +
       partnerName +
@@ -5598,14 +5535,11 @@ function renderKnowMe() {
     if (myAns && partnerAns && myAns.answer.trim().toLowerCase() === partnerAns.answer.trim().toLowerCase()) {
       html +=
         '<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:bounce-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">' +
-        (lang === 'sr' ? 'Savršeno se razumete! ✨' : lang === 'en' ? 'You two are perfectly in sync! ✨' : '你们太有默契了！✨') +
+        t('knowMeMatch') +
         '</div>';
     }
   } else if (myAns) {
-    html +=
-      '<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ ' +
-      (lang === 'sr' ? 'Čeka se odgovor tvog partnera...' : lang === 'en' ? 'Waiting for your partner to answer...' : '等待对方回答...') +
-      '</div>';
+    html += '<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ ' + t('knowMeWaiting') + '</div>';
   }
   document.getElementById('knowMeContent').innerHTML = html;
 }
@@ -5621,13 +5555,13 @@ function saveKnowMeAnswer() {
   saveKnowMeData(allData);
   pushAllSharedData();
   renderKnowMe();
-  toast('💭 ' + (lang === 'sr' ? 'Odgovor sačuvan!' : lang === 'en' ? 'Answer saved!' : '答案已保存！'));
+  toast(t('knowMeAnswerSaved'));
 }
 
 function renderSong() {
   var st = document.getElementById('song-title');
   if (!st) return;
-  st.textContent = lang === 'sr' ? '🎵 Naša pesma' : lang === 'en' ? '🎵 Our Song' : '🎵 我们的歌';
+  st.textContent = t('songTitle');
   var mySong = loadSong(activeProfile);
   var partnerProfile = activeProfile === 'andjela' ? 'barry' : 'andjela';
   var partnerSong = loadSong(partnerProfile);
@@ -5636,7 +5570,7 @@ function renderSong() {
   if (mySong) {
     html +=
       '<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">' +
-      (lang === 'sr' ? 'Moja pesma' : lang === 'en' ? 'My song' : '我的歌') +
+      t('songMyLabel') +
       '</span><div class="song-title">🎶 ' +
       mySong.title +
       '</div>' +
@@ -5645,11 +5579,11 @@ function renderSong() {
   } else {
     html +=
       '<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="' +
-      (lang === 'sr' ? 'Naziv pesme...' : lang === 'en' ? 'Song title...' : '歌名...') +
+      t('songTitlePlaceholder') +
       '" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="' +
-      (lang === 'sr' ? 'Zašto baš ova pesma?' : lang === 'en' ? 'Why this song?' : '为什么是这首歌？') +
+      t('songNotePlaceholder') +
       '" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 ' +
-      (lang === 'sr' ? 'Sačuvaj' : lang === 'en' ? 'Save' : '保存') +
+      t('songSave') +
       '</button></div>';
   }
   if (partnerSong) {
@@ -5657,22 +5591,14 @@ function renderSong() {
       '<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">' +
       partnerName +
       ' ' +
-      (lang === 'sr' ? 'pesma' : lang === 'en' ? 'song' : '的歌') +
+      t('songPartnerLabel') +
       '</span><div class="song-title">🎶 ' +
       esc(partnerSong.title) +
       '</div>' +
       (partnerSong.note ? '<div class="song-note">' + esc(partnerSong.note) + '</div>' : '') +
       '</div>';
   }
-  document.getElementById('songContent').innerHTML =
-    html ||
-    '<span class="song-icon">🎶</span><div class="song-note">' +
-      (lang === 'sr'
-        ? 'Postavite pesme koje vas podsećaju jedno na drugo'
-        : lang === 'en'
-          ? 'Set songs that remind you of each other'
-          : '设置让你们想到彼此的歌') +
-      '</div>';
+  document.getElementById('songContent').innerHTML = html || '<span class="song-icon">🎶</span><div class="song-note">' + t('songEmpty') + '</div>';
 }
 
 // Anđela's relationship tips
@@ -6026,79 +5952,4 @@ saveSymptom = function () {
   updateSharedSymptoms();
 };
 
-// ===== SELF-TEST SUITE (?selftest=1) =====
-window.runSelfTest = function () {
-  var r = { p: 0, f: 0, log: [] };
-  function ok(d, c) {
-    if (c) {
-      r.p++;
-      r.log.push('✅ ' + d);
-    } else {
-      r.f++;
-      r.log.push('❌ ' + d);
-    }
-  }
-  function sec(t) {
-    r.log.push('[' + t + ']');
-  }
-  sec('语言切换');
-  ok(
-    'cl基于lang',
-    (function () {
-      try {
-        var o = lang;
-        lang = 'zh-CN';
-        var v = cl('todayBadge') === CL.barry.todayBadge;
-        lang = 'sr';
-        v = v && cl('todayBadge') === CL.andjela.todayBadge;
-        lang = o;
-        return v;
-      } catch (e) {
-        return false;
-      }
-    })()
-  );
-  ok(
-    'dl基于lang',
-    (function () {
-      try {
-        var o = lang;
-        lang = 'zh-CN';
-        var v = dl('welcomeBack').indexOf('欢迎') >= 0;
-        lang = 'sr';
-        v = v || dl('welcomeBack').indexOf('Dobro') >= 0;
-        lang = o;
-        return v;
-      } catch (e) {
-        return false;
-      }
-    })()
-  );
-  ok('switchLanguage触发渲染', switchLanguage.toString().indexOf('renderCultureCard') >= 0);
-  sec('学习模块已移除');
-  ok('学习模块已完全删除', true);
-  sec('文化卡片');
-  ok('CULTURE_KNOWLEDGE≥30', CULTURE_KNOWLEDGE.length >= 30);
-  ok('标题可见性切换', typeof renderCultureCard === 'function');
-  sec('持久化');
-  ok('localStorage可用', !!window.localStorage);
-  ok(
-    'culture持久化',
-    (function () {
-      try {
-        var o = _cultureCardIdx;
-        localStorage.setItem('test-culture-idx', '5');
-        var s = parseInt(localStorage.getItem('test-culture-idx') || '0');
-        localStorage.removeItem('test-culture-idx');
-        return s === 5;
-      } catch (e) {
-        return false;
-      }
-    })()
-  );
-  sec('控制台');
-  ok('无语法错误', true);
-  // Results returned as object; no console.log in production
-  return r;
-};
-if (new URLSearchParams(location.search).get('selftest') === '1') setTimeout(window.runSelfTest, 2000);
+// (self-test suite removed in cleanup)

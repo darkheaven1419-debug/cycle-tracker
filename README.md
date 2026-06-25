@@ -96,8 +96,7 @@ cycle-tracker/
 ├── calendar-data.json      ← Holiday & solar term data
 ├── manifest.json           ← PWA manifest
 ├── sw.js                   ← Service Worker
-├── lite.html               ← ES5 minimal fallback
-├── static.html             ← Static browser test page
+├── (cleaned: unused scripts/tools removed)
 ├── libs/html2canvas.min.js ← Screenshot export
 └── tests/test-core.js      ← Unit tests
 ```

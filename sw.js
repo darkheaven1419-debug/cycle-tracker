@@ -1,13 +1,14 @@
-// Service Worker — Anđelin Ciklus v8 (v7 modules added)
+// Service Worker — Anđelin Ciklus v9 (offline.html, auto-clean caches)
 // Network-First for all dynamic assets, Cache-First for static
 // Features: Background Sync for offline diary saves, cache-first for fonts
 
-var CACHE_STATIC = 'ciklus-static-v22';
+var CACHE_STATIC = 'ciklus-static-v23';
 var CACHE_FONTS = 'ciklus-fonts-v1';
 
 var STATIC_ASSETS = [
   './',
   './index.html',
+  './offline.html',
   './styles.css',
   './app.js',
   './js/i18n.js',
@@ -46,8 +47,8 @@ self.addEventListener('install', function (event) {
   self.skipWaiting();
 });
 
-// Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v20', 'ciklus-static-v21', 'ciklus-static-v22', 'ciklus-fonts-v1'];
+// Clean up old cache versions — keep only current, delete everything else
+var CURRENT_CACHES = [CACHE_STATIC, CACHE_FONTS];
 
 self.addEventListener('activate', function (event) {
   event.waitUntil(
@@ -57,7 +58,7 @@ self.addEventListener('activate', function (event) {
         return Promise.all(
           keys
             .filter(function (key) {
-              return KNOWN_CACHES.indexOf(key) === -1;
+              return CURRENT_CACHES.indexOf(key) === -1;
             })
             .map(function (key) {
               return caches.delete(key);
@@ -104,7 +105,7 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // HTML — network first with timeout fallback (3s), then cache
+  // HTML — network first with timeout fallback (3s), then offline page
   if (request.mode === 'navigate') {
     event.respondWith(
       Promise.race([
@@ -115,7 +116,7 @@ self.addEventListener('fetch', function (event) {
           }, 3000);
         }),
       ]).catch(function () {
-        return caches.match(request);
+        return caches.match('./offline.html');
       })
     );
     return;

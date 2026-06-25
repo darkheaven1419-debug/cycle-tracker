@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="sr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 Anđelin Ciklus — Offline</title>
+<meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
+<style>
+  :root {
+    --bg: #ede0da;
+    --card: #f7efea;
+    --text: #3d2e2b;
+    --text-muted: #8a7a78;
+    --rose: #c96a7b;
+    --love: #b35d6a;
+    --gold: #b8976a;
+    --sage: #7a9e7e;
+    --sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  [data-theme="dark"] {
+    --bg: #19161A;
+    --card: #2a252a;
+    --text: #e8ded8;
+    --text-muted: #9a8a88;
+    --rose: #d47a8a;
+    --love: #d47a8a;
+    --gold: #c8a87a;
+    --sage: #8aae8e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: background .3s, color .3s;
+  }
+  .offline-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 48px 32px 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,.08);
+    border: 1px solid rgba(0,0,0,.04);
+  }
+  .offline-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--rose);
+  }
+  .subtitle {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .msg {
+    font-size: .875rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  .lang-links {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .lang-link {
+    font-size: .7rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background: none;
+    border: none;
+    font-family: var(--sans);
+    padding: 2px 6px;
+  }
+  .lang-link:hover { color: var(--rose); }
+  .retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--rose);
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 12px 32px;
+    font-size: .875rem;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+  }
+  .retry-btn:hover { opacity: .9; }
+  .retry-btn:active { transform: scale(.97); }
+  .retry-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .footer {
+    margin-top: 24px;
+    font-size: .6rem;
+    color: var(--text-muted);
+    opacity: .6;
+  }
+  /* Language-specific visibility */
+  [lang] .lang-sr,
+  [lang] .lang-zh,
+  [lang] .lang-en { display: none; }
+  html[lang="sr"] .lang-sr { display: inline; }
+  html[lang="zh-CN"] .lang-zh { display: inline; }
+  html[lang="en"] .lang-en { display: inline; }
+</style>
+</head>
+<body data-theme="light">
+<div class="offline-card" role="alert">
+  <span class="offline-icon" aria-hidden="true">🌸</span>
+  <h1>Anđelin Ciklus</h1>
+
+  <!-- Serbian -->
+  <p class="msg lang-sr">
+    Izgleda da nemaš internet vezu. 🌙<br>
+    Neke funkcije neće raditi dok se ne povežeš,<br>
+    ali tvoji podaci su bezbedno sačuvani na telefonu.
+  </p>
+  <p class="subtitle lang-sr">— Pokušaj ponovo kad budeš online —</p>
+
+  <!-- Chinese -->
+  <p class="msg lang-zh">
+    看起来你断网了。🌙<br>
+    部分功能需要网络才能使用，<br>
+    但你的数据安全地保存在手机上。
+  </p>
+  <p class="subtitle lang-zh">— 网络恢复后请重试 —</p>
+
+  <!-- English -->
+  <p class="msg lang-en">
+    You appear to be offline. 🌙<br>
+    Some features require a connection,<br>
+    but your data is safely stored on your device.
+  </p>
+  <p class="subtitle lang-en">— Please try again when you're back online —</p>
+
+  <!-- Language Switcher -->
+  <div class="lang-links" role="radiogroup" aria-label="Language selection">
+    <button class="lang-link" data-lang="sr" aria-label="Srpski">SR</button>
+    <button class="lang-link" data-lang="zh-CN" aria-label="中文">中</button>
+    <button class="lang-link" data-lang="en" aria-label="English">EN</button>
+  </div>
+
+  <!-- Retry Button -->
+  <button class="retry-btn" onclick="location.reload()" aria-label="Pokušaj ponovo / 重试 / Retry">
+    <span aria-hidden="true">🔄</span>
+    <span class="lang-sr">Pokušaj ponovo</span>
+    <span class="lang-zh">重试</span>
+    <span class="lang-en">Retry</span>
+  </button>
+
+  <div class="footer">Napravljeno sa ljubavlju za Anđelu Nemet ♥</div>
+</div>
+
+<script>
+  // Persist theme preference
+  (function(){
+    var saved = localStorage.getItem('cycle-theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.body.setAttribute('data-theme', 'dark');
+    }
+  })();
+
+  // Persist language preference
+  (function(){
+    var lang = localStorage.getItem('cycle-lang') || 'sr';
+    if (['sr','zh-CN','en'].indexOf(lang) === -1) lang = 'sr';
+    document.documentElement.lang = lang;
+
+    // Language switcher
+    document.querySelectorAll('.lang-link').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var l = this.getAttribute('data-lang');
+        document.documentElement.lang = l;
+        try { localStorage.setItem('cycle-lang', l); } catch(e) {}
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -44,8 +44,7 @@ var CalendarModule = (function () {
     var plEl = document.getElementById('predLegend');
     if (pred.futurePeriods.length > 0) {
       plEl.style.display = '';
-      plEl.textContent =
-        lang === 'sr' ? '※ Prozirni datumi su predviđanja' : lang === 'en' ? '※ Faded dates are future predictions' : '※ 半透明标记为未来周期预测';
+      plEl.textContent = t('calendarPredLegend');
     } else {
       plEl.style.display = 'none';
     }
@@ -555,7 +554,7 @@ var CalendarModule = (function () {
       if (fab) fab.style.fontSize = '1.2rem';
       if (fab) fab.style.fontWeight = 'normal';
       if (fabLabel) {
-        fabLabel.textContent = lang === 'sr' ? 'Kraj ciklusa' : lang === 'en' ? 'Period ended' : '经期结束';
+        fabLabel.textContent = t('fabEndPeriod');
       }
     } else {
       // No open period — show start button
@@ -563,7 +562,7 @@ var CalendarModule = (function () {
       if (fab) fab.style.fontSize = '1.5rem';
       if (fab) fab.style.fontWeight = 'normal';
       if (fabLabel) {
-        fabLabel.textContent = lang === 'sr' ? 'Početak ciklusa' : lang === 'en' ? 'Period started' : '经期来了';
+        fabLabel.textContent = t('fabStartPeriod');
       }
     }
   }

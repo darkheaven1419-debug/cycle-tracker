@@ -58,11 +58,11 @@ var AuthModule = (function () {
     // Update login UI text
     var pinBtn = document.getElementById('loginPinBtn');
     if (pinBtn) {
-      pinBtn.textContent = lang === 'sr' ? '🔓 Prijavi se' : lang === 'en' ? '🔓 Sign in' : '🔓 登录';
+      pinBtn.textContent = t('authPinBtn');
     }
     var hintA = document.getElementById('lc-hint-a');
     var hintB = document.getElementById('lc-hint-b');
-    var hintText = lang === 'sr' ? 'Dodirni za prijavu' : lang === 'en' ? 'Tap to sign in' : '点击登录';
+    var hintText = t('authTapHint');
     if (hintA) hintA.textContent = hintText;
     if (hintB) hintB.textContent = hintText;
 
@@ -83,7 +83,7 @@ var AuthModule = (function () {
 
     var switchHint = document.getElementById('loginSwitchHint');
     if (switchHint) {
-      switchHint.textContent = lang === 'sr' ? 'Unesi svoj PIN' : lang === 'en' ? 'Enter your PIN' : '输入你的 PIN';
+      switchHint.textContent = t('authSwitchHint');
     }
 
     spawnLoginHearts();
