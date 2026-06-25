@@ -99,7 +99,7 @@ body {
 @keyframes greetOut { to{opacity:0;pointer-events:none} }
 .greeting-card {
   background:var(--card); border-radius:20px; padding:32px 28px; text-align:center;
-  max-width:340px; box-shadow:var(--shadow-lg); backdrop-filter:var(--blur);
+  max-width:340px; box-shadow:var(--shadow-lg); -webkit-backdrop-filter:var(--blur);
   backdrop-filter:var(--blur); position:relative; overflow:hidden;
 }
 .greeting-card::before {

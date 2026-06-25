@@ -1,0 +1,21 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source files
+*.html text diff=html
+*.css text diff=css
+*.js text diff=javascript
+*.json text
+*.md text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# OS files
+.DS_Store binary
+Thumbs.db binary

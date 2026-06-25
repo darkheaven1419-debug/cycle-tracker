@@ -1,7 +1,9 @@
-﻿try {
-  var _ldr = document.getElementById('appLoader');
-  if (_ldr) { _ldr.style.display = 'none'; }
-} catch(e) { console.error('loader error:', e); }
+﻿(function(){
+  try {
+    var _ldr = document.getElementById('appLoader');
+    if (_ldr) { _ldr.style.display = 'none'; }
+  } catch(e) { /* ignore loader errors during boot */ }
+})();
 
 /* ================================================================
    i18n — Full 3-language data (sr as default for Anđela)
