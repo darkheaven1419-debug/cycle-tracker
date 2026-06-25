@@ -1,7 +1,7 @@
-// Service Worker — Anđelin Ciklus v8
+// Service Worker — Anđelin Ciklus v8 (v7 modules added)
 // Network-First for all dynamic assets, Cache-First for static
 
-var CACHE_STATIC = 'ciklus-static-v20';
+var CACHE_STATIC = 'ciklus-static-v21';
 
 var STATIC_ASSETS = [
   './',
@@ -9,6 +9,11 @@ var STATIC_ASSETS = [
   './styles.css',
   './app.js',
   './js/i18n.js',
+  './js/auth.js',
+  './js/weather.js',
+  './js/sync.js',
+  './js/chart-renderer.js',
+  './js/cycle-core.js',
   './js/lunar.js',
   './js/calendar-culture.js',
   './js/chinese-learn.js',
@@ -16,7 +21,6 @@ var STATIC_ASSETS = [
   './js/chinese-quiz.js',
   './js/chinese-panels.js',
   './js/chinese-listen.js',
-  './js/cycle-core.js',
 
   './calendar-data.json',
   './data/quotes.json',
@@ -40,7 +44,7 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v20'];
+var KNOWN_CACHES = ['ciklus-static-v20', 'ciklus-static-v21'];
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(

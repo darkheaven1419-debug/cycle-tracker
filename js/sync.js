@@ -18,14 +18,13 @@
  *   saveSharedDiaryData — original diary save function
  *   SD_KEY              — localStorage key for shared diary
  */
-var SyncModule = (function() {
-
+var SyncModule = (function () {
   // ====================================================================
   // Constants
   // ====================================================================
   var GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
   var GITHUB_SHARED_FILE = 'shared-state.json';
-  var SYNC_INTERVAL_MS = 120000;    // Pull every 2 minutes
+  var SYNC_INTERVAL_MS = 120000; // Pull every 2 minutes
   var MAX_RETRIES = 3;
 
   // ====================================================================
@@ -37,7 +36,7 @@ var SyncModule = (function() {
     try {
       var val = localStorage.getItem(key);
       return val ? JSON.parse(val) : fallback;
-    } catch(e) {
+    } catch (e) {
       return fallback;
     }
   }
@@ -65,12 +64,12 @@ var SyncModule = (function() {
       hug: _safeGet('shared-hug', null),
       songs: {
         barry: _safeGet('shared-song-barry', null),
-        andjela: _safeGet('shared-song-andjela', null)
+        andjela: _safeGet('shared-song-andjela', null),
       },
       sleep: _safeGet('barry-sleep', null),
       checkins: {
         barry: _safeGet('shared-checkin-barry', {}),
-        andjela: _safeGet('shared-checkin-andjela', {})
+        andjela: _safeGet('shared-checkin-andjela', {}),
       },
       learningProgress: _safeGet('shared-learning-progress', {}),
       learningComments: _safeGet('shared-learning-comments', []),
@@ -78,7 +77,7 @@ var SyncModule = (function() {
       voiceData: _safeGet('shared-voice-data', {}),
       sunCounter: _safeGet('shared-sun-counter', {}),
       knowme: _safeGet('shared-knowme', {}),
-      updated: Date.now()
+      updated: Date.now(),
     };
   }
 
@@ -105,7 +104,9 @@ var SyncModule = (function() {
       }
       // Apply to live state so calendar reflects synced data immediately
       if (shared.cycleInfo.records) {
-        state.records = shared.cycleInfo.records.map(function(r) { return new Date(r); });
+        state.records = shared.cycleInfo.records.map(function (r) {
+          return new Date(r);
+        });
         state.periodEnds = shared.cycleInfo.periodEnds || {};
         state.symptoms = shared.cycleInfo.symptoms || {};
         state.settings = shared.cycleInfo.settings || { cycleLength: 28, periodLength: 7 };
@@ -176,25 +177,24 @@ var SyncModule = (function() {
 
     var sharedState = collectSharedState();
     var headers = {
-      'Authorization': 'Bearer ' + token,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
     };
     var sha = null;
 
     // Fetch current SHA
     try {
-      var resp = await fetch(
-        'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE,
-        { headers: headers, cache: 'no-store' }
-      );
+      var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
       if (resp.ok) {
         var d = await resp.json();
         sha = d.sha;
       }
-    } catch(e) {
+    } catch (e) {
       if (retryCount < MAX_RETRIES) {
-        setTimeout(function() { pushAllSharedData(retryCount + 1); }, 2000);
+        setTimeout(function () {
+          pushAllSharedData(retryCount + 1);
+        }, 2000);
       }
       return;
     }
@@ -204,10 +204,11 @@ var SyncModule = (function() {
     if (sha) body.sha = sha;
 
     try {
-      var putResp = await fetch(
-        'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE,
-        { method: 'PUT', headers: headers, body: JSON.stringify(body) }
-      );
+      var putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(body),
+      });
       if (putResp.ok) {
         localStorage.setItem('shared-last-sync', Date.now());
       } else if (putResp.status === 409 || putResp.status === 422) {
@@ -215,19 +216,23 @@ var SyncModule = (function() {
         console.warn('[Sync] 409 Conflict — pulling latest and merging');
         await pullAllSharedData();
         if (retryCount < MAX_RETRIES) {
-          setTimeout(function() { pushAllSharedData(retryCount + 1); }, 1500);
+          setTimeout(function () {
+            pushAllSharedData(retryCount + 1);
+          }, 1500);
         } else {
           console.error('[Sync] Failed after ' + MAX_RETRIES + ' retries — giving up');
           if (typeof toast === 'function') {
-            toast((lang === 'sr' ? '⚠️ Sinhronizacija nije uspela — pokušaj ponovo' : '⚠️ 同步失败，请稍后重试'));
+            toast(lang === 'sr' ? '⚠️ Sinhronizacija nije uspela — pokušaj ponovo' : '⚠️ 同步失败，请稍后重试');
           }
         }
       } else {
         console.error('[Sync] Unexpected response:', putResp.status, putResp.statusText);
       }
-    } catch(e) {
+    } catch (e) {
       if (retryCount < MAX_RETRIES) {
-        setTimeout(function() { pushAllSharedData(retryCount + 1); }, 2000);
+        setTimeout(function () {
+          pushAllSharedData(retryCount + 1);
+        }, 2000);
       } else {
         console.error('[Sync] Network error after retries:', e.message);
       }
@@ -248,15 +253,12 @@ var SyncModule = (function() {
     if (!token) return;
 
     var headers = {
-      'Authorization': 'Bearer ' + token,
-      'Accept': 'application/vnd.github.v3+json'
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/vnd.github.v3+json',
     };
 
     try {
-      var resp = await fetch(
-        'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE,
-        { headers: headers, cache: 'no-store' }
-      );
+      var resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_SHARED_FILE, { headers: headers, cache: 'no-store' });
       if (!resp.ok) return;
 
       var data = await resp.json();
@@ -271,16 +273,20 @@ var SyncModule = (function() {
       localStorage.setItem('shared-last-sync', Date.now());
 
       // Refresh all shared UI panels
-      renderHug(); renderGratitude(); renderSong(); renderCheckin(); renderKnowMe();
+      renderHug();
+      renderGratitude();
+      renderSong();
+      renderCheckin();
+      renderKnowMe();
       if (activeProfile === 'barry') {
         renderBarrySymptomView();
-        renderCalendar();  // Sync Anđela's calendar to Barry's view
-        renderTips();      // Refresh tips based on synced cycle phase
+        renderCalendar(); // Sync Anđela's calendar to Barry's view
+        renderTips(); // Refresh tips based on synced cycle phase
       }
-      renderSharedDiary();               // Always refresh diary data
-      renderDateStrip();                 // Refresh date strip dots
+      renderSharedDiary(); // Always refresh diary data
+      renderDateStrip(); // Refresh date strip dots
       updateSyncStatusBadge();
-    } catch(e) {
+    } catch (e) {
       updateSyncStatusBadge(); // Network error — will retry on next interval
     }
   }
@@ -338,13 +344,13 @@ var SyncModule = (function() {
   function init() {
     // Monkey-patch saveSharedDiaryData auto-push
     var _origSaveSharedDiaryData = window.saveSharedDiaryData;
-    window.saveSharedDiaryData = function(d) {
+    window.saveSharedDiaryData = function (d) {
       _origSaveSharedDiaryData(d);
       pushAllSharedData();
     };
 
     // Periodic pull from GitHub every 2 minutes
-    setInterval(function() {
+    setInterval(function () {
       if (getGitHubToken()) pullAllSharedData();
     }, SYNC_INTERVAL_MS);
 
@@ -362,7 +368,6 @@ var SyncModule = (function() {
     pull: pullAllSharedData,
     collect: collectSharedState,
     apply: applySharedState,
-    updateBadge: updateSyncStatusBadge
+    updateBadge: updateSyncStatusBadge,
   };
-
 })();

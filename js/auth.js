@@ -5,13 +5,13 @@
      saveSharedDiaryData, pushAllSharedData, pullAllSharedData,
      _syncInterval, getGitHubToken, toggleProfile (may be overridden)
    ================================================================ */
-var AuthModule = (function() {
+var AuthModule = (function () {
   'use strict';
 
   // ── SHA-256 hashed PINs (not plaintext) ──────────────────────────
   var LOGIN_PINS = {
     andjela: '8e614d39a1f1279958da1c9f7e8df51db4aabca8cc3a3e84f8c3dc5f88e1fcfb',
-    barry: '286aee2ea4a5ba67539432dc5ea3865c3b204d3caaccb662995388d156a279cf'
+    barry: '286aee2ea4a5ba67539432dc5ea3865c3b204d3caaccb662995388d156a279cf',
   };
 
   // ── Internal state ──────────────────────────────────────────────
@@ -45,7 +45,7 @@ var AuthModule = (function() {
     // Set language based on profile: Andjela -> sr, Barry -> zh-CN
     var profileLang = profile === 'barry' ? 'zh-CN' : 'sr';
     lang = profileLang;
-    document.querySelectorAll('.lang-btn').forEach(function(b) {
+    document.querySelectorAll('.lang-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.lang === lang);
     });
 
@@ -58,15 +58,11 @@ var AuthModule = (function() {
     // Update login UI text
     var pinBtn = document.getElementById('loginPinBtn');
     if (pinBtn) {
-      pinBtn.textContent = lang === 'sr' ? '🔓 Prijavi se' :
-                           lang === 'en' ? '🔓 Sign in' :
-                           '🔓 登录';
+      pinBtn.textContent = lang === 'sr' ? '🔓 Prijavi se' : lang === 'en' ? '🔓 Sign in' : '🔓 登录';
     }
     var hintA = document.getElementById('lc-hint-a');
     var hintB = document.getElementById('lc-hint-b');
-    var hintText = lang === 'sr' ? 'Dodirni za prijavu' :
-                   lang === 'en' ? 'Tap to sign in' :
-                   '点击登录';
+    var hintText = lang === 'sr' ? 'Dodirni za prijavu' : lang === 'en' ? 'Tap to sign in' : '点击登录';
     if (hintA) hintA.textContent = hintText;
     if (hintB) hintB.textContent = hintText;
 
@@ -77,7 +73,9 @@ var AuthModule = (function() {
     var pinInput = document.getElementById('loginPinInput');
     if (pinInput) {
       pinInput.value = '';
-      setTimeout(function() { pinInput.focus(); }, 300);
+      setTimeout(function () {
+        pinInput.focus();
+      }, 300);
     }
 
     var errorEl = document.getElementById('loginError');
@@ -85,9 +83,7 @@ var AuthModule = (function() {
 
     var switchHint = document.getElementById('loginSwitchHint');
     if (switchHint) {
-      switchHint.textContent = lang === 'sr' ? 'Unesi svoj PIN' :
-                               lang === 'en' ? 'Enter your PIN' :
-                               '输入你的 PIN';
+      switchHint.textContent = lang === 'sr' ? 'Unesi svoj PIN' : lang === 'en' ? 'Enter your PIN' : '输入你的 PIN';
     }
 
     spawnLoginHearts();
@@ -107,7 +103,7 @@ var AuthModule = (function() {
       card = document.getElementById('loginCardBarry');
     }
 
-    hashPIN(pin).then(function(hashed) {
+    hashPIN(pin).then(function (hashed) {
       if (hashed === LOGIN_PINS[_selectedLoginProfile]) {
         // Correct PIN
         activeProfile = _selectedLoginProfile;
@@ -124,12 +120,10 @@ var AuthModule = (function() {
         if (card) card.classList.add('shake');
         var errorEl = document.getElementById('loginError');
         if (errorEl) {
-          errorEl.textContent = _selectedLoginProfile === 'barry' ?
-            'PIN 不对，再试一次' :
-            'Pogrešan PIN — pokušaj ponovo';
+          errorEl.textContent = _selectedLoginProfile === 'barry' ? 'PIN 不对，再试一次' : 'Pogrešan PIN — pokušaj ponovo';
         }
         if (pinEl) pinEl.value = '';
-        setTimeout(function() {
+        setTimeout(function () {
           if (card) card.classList.remove('shake');
         }, 500);
       }
@@ -157,7 +151,7 @@ var AuthModule = (function() {
       moods: {},
       diaries: {},
       settings: { cycleLength: 28, periodLength: 7, manualOverride: false },
-      _migrated: true
+      _migrated: true,
     };
 
     localStorage.removeItem('cycle-active-profile');
@@ -202,7 +196,7 @@ var AuthModule = (function() {
     applyTheme(localStorage.getItem('cycle-theme') || 'light');
 
     // Preload calendar/solar terms data
-    loadCalendarData(function(data) {
+    loadCalendarData(function (data) {
       solarTermsCache = (data && data.solarTerms) || [];
       localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache));
     });
@@ -216,7 +210,7 @@ var AuthModule = (function() {
       var overlay = document.getElementById('loginOverlay');
       if (overlay) overlay.classList.add('hidden');
 
-      bootApp().catch(function(e) {
+      bootApp().catch(function (e) {
         console.error('bootApp failed:', e);
       });
     } else {
@@ -238,16 +232,18 @@ var AuthModule = (function() {
     try {
       var encoder = new TextEncoder();
       var data = encoder.encode(pin);
-      return crypto.subtle.digest('SHA-256', data).then(function(hashBuffer) {
+      return crypto.subtle.digest('SHA-256', data).then(function (hashBuffer) {
         return Array.from(new Uint8Array(hashBuffer))
-          .map(function(b) { return b.toString(16).padStart(2, '0'); })
+          .map(function (b) {
+            return b.toString(16).padStart(2, '0');
+          })
           .join('');
       });
     } catch (e) {
       // Fallback for very old browsers: simple hash (less secure but better than plaintext)
       var h = 0;
       for (var i = 0; i < pin.length; i++) {
-        h = ((h << 5) - h) + pin.charCodeAt(i);
+        h = (h << 5) - h + pin.charCodeAt(i);
         h |= 0;
       }
       return Promise.resolve('fallback_' + Math.abs(h).toString(16));
@@ -261,22 +257,30 @@ var AuthModule = (function() {
     var overlay = document.getElementById('loginOverlay');
     if (!overlay) return;
 
-    var hearts = ['💕', '💖', '💗', '💝',
-                  '🌸', '✨', '🌷', '🕊️'];
+    var hearts = ['💕', '💖', '💗', '💝', '🌸', '✨', '🌷', '🕊️'];
 
     for (var i = 0; i < 15; i++) {
-      (function(idx) {
-        setTimeout(function() {
+      (function (idx) {
+        setTimeout(function () {
           var h = document.createElement('span');
           h.textContent = hearts[idx % hearts.length];
-          h.style.cssText = 'position:fixed;pointer-events:none;z-index:1001;' +
-            'font-size:' + (0.8 + Math.random() * 1.5) + 'rem;' +
-            'left:' + (5 + Math.random() * 90) + '%;' +
-            'top:' + (80 + Math.random() * 15) + '%;' +
-            'animation:loginHeartFloat ' + (2 + Math.random() * 3) + 's ease-out forwards';
+          h.style.cssText =
+            'position:fixed;pointer-events:none;z-index:1001;' +
+            'font-size:' +
+            (0.8 + Math.random() * 1.5) +
+            'rem;' +
+            'left:' +
+            (5 + Math.random() * 90) +
+            '%;' +
+            'top:' +
+            (80 + Math.random() * 15) +
+            '%;' +
+            'animation:loginHeartFloat ' +
+            (2 + Math.random() * 3) +
+            's ease-out forwards';
           h.style.opacity = '0.7';
           overlay.appendChild(h);
-          setTimeout(function() {
+          setTimeout(function () {
             if (h.parentNode) h.remove();
           }, 3500);
 
@@ -284,7 +288,8 @@ var AuthModule = (function() {
           if (!document.getElementById('loginHeartKeyframes')) {
             var style = document.createElement('style');
             style.id = 'loginHeartKeyframes';
-            style.textContent = '@keyframes loginHeartFloat{' +
+            style.textContent =
+              '@keyframes loginHeartFloat{' +
               '0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}' +
               '100%{opacity:0;transform:translateY(-120px) scale(.3) rotate(45deg)}}';
             document.head.appendChild(style);
@@ -297,12 +302,12 @@ var AuthModule = (function() {
   // ── Public interface ────────────────────────────────────────────
   return {
     init: init,
-    login: verifyLogin,      // alias: login == verifyLogin
+    login: verifyLogin, // alias: login == verifyLogin
     logout: logout,
     selectLogin: selectLogin,
     verifyLogin: verifyLogin,
     isLoggedIn: isLoggedIn,
     getSelectedProfile: getSelectedProfile,
-    getPinHashes: getPinHashes
+    getPinHashes: getPinHashes,
   };
 })();
