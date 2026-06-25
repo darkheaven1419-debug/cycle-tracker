@@ -830,7 +830,7 @@ function renderDiaryLabels() {
   document.getElementById('sd-export').textContent = lang==='sr'?'Podeli':lang==='en'?'Share':'分享';
   document.getElementById('sd-import').textContent = lang==='sr'?'Uvezi':lang==='en'?'Import':'导入';
   document.getElementById('sd-history-title').textContent = lang==='sr'?'Vremenska linija':lang==='en'?'Timeline':'时间线';
-  document.getElementById('sd-saved-text').textContent = L('Sačuvano','已保存','Saved');
+  document.getElementById('sd-saved-text').textContent = L('Sačuvano','Saved','已保存');
   document.getElementById('partner-locked-text').textContent = lang==='sr'?'Prvo sačuvaj svoj unos da otključaš partnerov 💌':lang==='en'?'Save your entry first to unlock your partner\'s 💌':'先保存你的日记才能解锁伴侣的哦 💌';
   document.getElementById('sd-sync-icon').textContent = getGitHubToken() ? '☁️' : '';
 }
@@ -980,8 +980,8 @@ function renderDiaryForm() {
     '💌 '+t('months')[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()
   );
   document.getElementById('diaryWriteDate').textContent = dateStr;
-  document.getElementById('diary-save-text').textContent = L('Sačuvaj', '保存', 'Save');
-  document.getElementById('letter-saved-text').textContent = L('Sačuvano', '已保存', 'Saved');
+  document.getElementById('diary-save-text').textContent = L('Sačuvaj', 'Save', '保存');
+  document.getElementById('letter-saved-text').textContent = L('Sačuvano', 'Saved', '已保存');
 
   // Populate textarea
   var allData = loadSharedDiaryData();
@@ -1160,7 +1160,7 @@ function renderMailbox(allData) {
     var myEntry = item[activeProfile];
     var partnerEntry = item[activeProfile === 'andjela' ? 'barry' : 'andjela'];
     var icon = both ? '💌' : (myEntry ? '✉️' : '📭');
-    var preview = myEntry ? (myEntry.happy || myEntry.text || letterTextFromEntry(myEntry)).substring(0, 60) : (partnerEntry ? '🔒 ' + L('piši da otključaš','写信解锁','write to unlock') : '');
+    var preview = myEntry ? (myEntry.happy || myEntry.text || letterTextFromEntry(myEntry)).substring(0, 60) : (partnerEntry ? '🔒 ' + L('piši da otključaš','write to unlock','写信解锁') : '');
     var moodEmoji = myEntry && myEntry.mood ? myEntry.mood : '';
     html += '<div class="mailbox-item" onclick="jumpToLetter(\'' + item.date + '\')">';
     html += '<span class="mb-icon">' + icon + '</span>';
@@ -1197,7 +1197,7 @@ function translatePartnerLetter() {
     if (result && result !== body && contentEl) {
       var partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
       var mood = entry.mood || '';
-      contentEl.innerHTML = '<div class="letter-body">' + esc(result) + '</div><div class="letter-signature">— ' + partnerName + ' ' + mood + ' 💕</div><div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:4px">🌐 ' + L('Prevedeno', '已翻译', 'Translated') + '</div>';
+      contentEl.innerHTML = '<div class="letter-body">' + esc(result) + '</div><div class="letter-signature">— ' + partnerName + ' ' + mood + ' 💕</div><div style="font-size:var(--text-xs);color:var(--text-muted);margin-top:4px">🌐 ' + L('Prevedeno', 'Translated', '已翻译') + '</div>';
       if (btn) { btn.textContent = '✅'; btn.disabled = false; }
     } else {
       if (btn) { btn.textContent = '⚠️'; btn.disabled = false; setTimeout(function(){btn.textContent='🌐';},3000); }
@@ -1374,7 +1374,7 @@ function exportAllData() {
   a.download = 'anđelin-ciklus-backup-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('📦 ' + L('Podaci izvezeni!','数据已导出！','Data exported!'));
+  toast('📦 ' + L('Podaci izvezeni!','Data exported!','数据已导出！'));
 }
 
 function importAllData() {
@@ -1383,7 +1383,7 @@ function importAllData() {
   input.onchange = function(e) {
     var file = e.target.files[0];
     if (!file) return;
-    if (!confirm(L('⚠️ Ovo će PREBRISATI sve trenutne podatke. Nastaviti?','⚠️ 此操作将覆盖所有当前数据，是否继续？','⚠️ This will OVERWRITE all current data. Continue?'))) return;
+    if (!confirm(L('⚠️ Ovo će PREBRISATI sve trenutne podatke. Nastaviti?','⚠️ This will OVERWRITE all current data. Continue?','⚠️ 此操作将覆盖所有当前数据，是否继续？'))) return;
     var reader = new FileReader();
     reader.onload = function(ev) {
       try {
@@ -1398,10 +1398,10 @@ function importAllData() {
           if (backup.settings.theme) { theme = backup.settings.theme; applyTheme(theme); }
         }
         pushAllSharedData();
-        toast('✅ ' + L('Podaci vraćeni! Osvežavanje...','数据已恢复！刷新中...','Data restored! Refreshing...'));
+        toast('✅ ' + L('Podaci vraćeni! Osvežavanje...','Data restored! Refreshing...','数据已恢复！刷新中...'));
         setTimeout(function(){ location.reload(); }, 1500);
       } catch(e) {
-        toast('❌ ' + L('Neispravan fajl','无效文件','Invalid file'));
+        toast('❌ ' + L('Neispravan fajl','Invalid file','无效文件'));
       }
     };
     reader.readAsText(file);
@@ -1632,7 +1632,7 @@ var _dataLoadPromise = null;
 
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
-  _dataLoadPromise = fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return (new Function('return ' + t))(); }).catch(function(e){ return []; })
+  _dataLoadPromise = fetch('data/culture.json').then(function(r){ return r.text(); }).then(function(t){ return JSON.parse(t); }).catch(function(e){ return []; })
   .then(function(data) {
     CULTURE_KNOWLEDGE = data.length > 0 ? data : CULTURE_KNOWLEDGE;
     _dataLoaded = true;
@@ -2028,9 +2028,9 @@ const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
 var DAILY_LOVE_MESSAGES=[{zh:'不管多远，我的心和你在一起。',sr:'Bez obzira na udaljenost, moje srce je s tobom.'},{zh:'7000公里，但思念没有距离。',sr:'7.000 kilometara, ali čežnja nema udaljenost.'},{zh:'你是我早上醒来的第一个念头。',sr:'Ti si moja prva misao kad se probudim.'},{zh:'同一个太阳，同一份爱。',sr:'Jedno sunce, jedna ljubav.'},{zh:'每次抬头看天空，我知道你也在这片天空下。',sr:'Svaki put kad pogledam u nebo, znam da si i ti pod istim nebom.'},{zh:'从北京到贝尔格莱德，我的心跳只为你。',sr:'Od Pekinga do Beograda, moje srce kuca samo za tebe.'},{zh:'你是我跨越山海的理由。',sr:'Ti si razlog zbog kog prelazim planine i mora.'},{zh:'爱不是距离除以时间，爱是心与心的零距离。',sr:'Ljubav nije udaljenost podeljena vremenom, ljubav je nulta udaljenost između srca.'},{zh:'有人问我想去哪里，我说：去有你的地方。',sr:'Pitaju me gde želim da idem, ja kažem: tamo gde si ti.'},{zh:'世界上最美的距离，是你和我之间的距离。',sr:'Najlepša udaljenost na svetu je ona između tebe i mene.'},{zh:'今天也想你，比昨天多一点，比明天少一点。',sr:'I danas mislim na tebe, malo više nego juče, malo manje nego sutra.'},{zh:'你是我此生最美的风景。',sr:'Ti si najlepši prizor u mom životu.'}];
 function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES.length;return DAILY_LOVE_MESSAGES[idx];}
 function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
-function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+L('Već si kliknuo/la danas!','今天已经点过了！','Already clicked today!'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+L('Dan '+sc.count+' zajedničkog sunca!','共同仰望太阳的第'+sc.count+'天！','Day '+sc.count+' of shared sun!'));}
-function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+L(c+' dan zajedničkog sunca ❤️','共同仰望太阳的第 '+c+' 天 ❤️','Day '+c+' of shared sun ❤️');}else{el.innerHTML='❤️ '+L('Klikni ovde da započneš brojanje','点击此处开始计数','Click here to start counting');}}
-function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=L('razlika ','时差 ','time diff ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
+function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+L('Već si kliknuo/la danas!','Already clicked today!','今天已经点过了！'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+L('Dan '+sc.count+' zajedničkog sunca!','Day '+sc.count+' of shared sun!','共同仰望太阳的第'+sc.count+'天！'));}
+function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+L(c+' dan zajedničkog sunca ❤️','Day '+c+' of shared sun ❤️','共同仰望太阳的第 '+c+' 天 ❤️');}else{el.innerHTML='❤️ '+L('Klikni ovde da započneš brojanje','Click here to start counting','点击此处开始计数');}}
+function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=L('razlika ','time diff ','时差 ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
 
 function weatherIcon(code) {
   if(code<=3) return '☀️'; if(code<=48) return '⛅'; if(code<=57) return '🌧️';
@@ -2089,8 +2089,8 @@ function renderWeather(w) {
     var bjt = Math.round(w.bj.temperature_2m), kit = Math.round(w.ki.temperature_2m);
     var diff = Math.abs(bjt - kit);
     var conn = diff <= 3 ? (lang==='sr'?'Ista toplina 🌡️♥':lang==='en'?'Same warmth 🌡️♥':'同样温度 🌡️♥') : (lang==='sr'?'Razlika '+diff+'° 🌡️':lang==='en'?diff+'° apart 🌡️':'温差 '+diff+'° 🌡️');
-    var dnName = L('Dunav','多瑙河','Danube'), jcName = L('Jangce','长江','Yangtze');
-    bridge.innerHTML = '🌉  '+dnName+' → '+jcName+'<br>Kikinda '+kit+'° ↔ '+bjt+'° '+L('Peking','北京','Beijing')+'<br>'+conn;
+    var dnName = L('Dunav','Danube','多瑙河'), jcName = L('Jangce','Yangtze','长江');
+    bridge.innerHTML = '🌉  '+dnName+' → '+jcName+'<br>Kikinda '+kit+'° ↔ '+bjt+'° '+L('Peking','Beijing','北京')+'<br>'+conn;
   }
 }
 
@@ -2379,6 +2379,33 @@ function updateLangUI(){
 ['set-h-lang','set-h-theme','set-h-cycle','set-h-period','set-h-override'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=st[id.replace('set-h-','')+'Hint']||'';}});
   document.getElementById('save-settings-btn').textContent=st.save;
   document.getElementById('export-btn').textContent=st.export;document.getElementById('import-btn').textContent=st.import;document.getElementById('clear-btn').textContent=st.clear;
+  // Settings extras
+  document.getElementById('export-all-label').textContent = t('settingsExportAll');
+  document.getElementById('import-all-label').textContent = t('settingsImportAll');
+  document.getElementById('clear-diary-btn').innerHTML = t('settingsClearDiary');
+  // Diary panel i18n
+  var ta = document.getElementById('diaryTextarea');
+  if (ta) ta.placeholder = t('diaryTextareaPlaceholder');
+  document.getElementById('sd-export').textContent = st.export;
+  document.getElementById('sd-import').textContent = st.import;
+  // Diary aria-labels
+  var dsp = document.querySelector('.date-strip-arrow[onclick*="scrollDiaryStrip(-1)"]');
+  if (dsp) dsp.setAttribute('aria-label', t('diaryDateStripPrev'));
+  var dsn = document.querySelector('.date-strip-arrow[onclick*="scrollDiaryStrip(1)"]');
+  if (dsn) dsn.setAttribute('aria-label', t('diaryDateStripNext'));
+  var cpm = document.querySelector('.nav-btn[onclick*="shiftDiaryCalMonth(-1)"]');
+  if (cpm) cpm.setAttribute('aria-label', t('diaryCalPrevMonth'));
+  var cpn = document.querySelector('.nav-btn[onclick*="shiftDiaryCalMonth(1)"]');
+  if (cpn) cpn.setAttribute('aria-label', t('diaryCalNextMonth'));
+  // Footer credit
+  var fc = document.querySelector('.footer-credit');
+  if (fc) fc.textContent = t('diaryFooterCredit');
+  // Diary calendar button title
+  var calBtn = document.querySelector('.diary-cal-btn');
+  if (calBtn) calBtn.setAttribute('title', t('diaryCalBtnTitle'));
+  // Theme option labels
+  var themeSel = document.getElementById('set-theme');
+  if (themeSel) { themeSel.options[0].text = t('settingsThemeLight'); themeSel.options[1].text = t('settingsThemeDark'); }
   document.getElementById('anniversary-title').textContent = t('anniversaryTitle');
   document.getElementById('ann-met-label').textContent = t('annMetLabel');
   document.getElementById('ann-love-label').textContent = t('annLoveLabel');
@@ -2934,12 +2961,12 @@ function renderTips(){
   tips=t('tips.'+cat);
   document.getElementById('tips-list').innerHTML=tips.map(tip=>`<div class="tip-card ${tip.tcm?'tcm':(tip.source&&tip.source.includes('Srpska')||tip.source.includes('Serbian')?'serbian':'')}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source?`<span class="tip-source">${tip.source}</span>`:''}</div></div>`).join('');}
 function saveGitHubToken(){var t=document.getElementById('set-gh-token').value.trim();if(t){sessionStorage.setItem('gh-token',t);toast('🔑 Token sačuvan ✓');pullAllSharedData().then(function(){updateSyncStatusBadge();renderAll();});}else{sessionStorage.removeItem('gh-token');updateSyncStatusBadge();}}
-function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('set-h-token').textContent=getGitHubToken()?(lang==='sr'?'✅ Sinhronizacija uključena 🌐':lang==='en'?'✅ Auto-sync enabled 🌐':'✅ 自动同步已开启 🌐'):(lang==='sr'?'Unesite GitHub Token za sinhronizaciju dva telefona':lang==='en'?'Enter GitHub Token to sync both phones':'输入 GitHub Token 以同步两台手机');updateAnniversaryCount();updateSyncStatusBadge();}
+function loadSettingsUI(){document.getElementById('set-cycle').value=state.settings.cycleLength;document.getElementById('set-period').value=state.settings.periodLength;document.getElementById('set-language').value=lang;document.getElementById('set-theme').value=theme;document.getElementById('annDateMet').value=annDateMet;document.getElementById('annDateLove').value=annDateLove;document.getElementById('set-gh-token').value=getGitHubToken();document.getElementById('github-token-label').textContent='🔑 GitHub Token';document.getElementById('set-gh-token').placeholder='ghp_...';document.getElementById('set-gh-token').setAttribute('aria-label','GitHub Token');document.getElementById('set-h-token').textContent=getGitHubToken()?t('settingsTokenHintEnabled'):t('settingsTokenHintDisabled');updateAnniversaryCount();updateSyncStatusBadge();}
 function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById('set-cycle').value)||28;state.settings.periodLength=parseInt(document.getElementById('set-period').value)||7;saveState();renderAll(['calendar','core']);toast(t('toast.saved'));}
 function exportData(){const blob=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`andjelin-ciklus-${activeProfile}-${fmtDate(new Date())}.json`;a.click();URL.revokeObjectURL(a.href);toast(t('toast.exported'));}
 function importData(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var d=JSON.parse(reader.result);if(!d.records||!Array.isArray(d.records))throw new Error('Invalid format');state.records=d.records.map(function(r){var dt=new Date(r);return isNaN(dt.getTime())?null:dt;}).filter(Boolean);if(state.records.length===0&&d.records.length>0)throw new Error('No valid dates');state.symptoms=d.symptoms||{};state.moods=d.moods||{};state.diaries=d.diaries||{};state.settings={cycleLength:28,periodLength:7,manualOverride:false};if(d.settings){Object.keys(d.settings).forEach(function(k){state.settings[k]=d.settings[k];});}saveState();renderAll();updateFab();toast(t('toast.imported'));}catch(err){toast(t('toast.importError'));}};reader.readAsText(file);e.target.value='';}
 function clearAllData(){if(!confirm(t('settings.clearConfirm')))return;state={records:[],symptoms:{},moods:{},diaries:{},settings:{cycleLength:28,periodLength:7,manualOverride:false},_migrated:true};saveState();renderAll();updateFab();toast(t('toast.cleared'));}
-function clearAllDiaries(){if(!confirm(lang==='sr'?'Obrisati SVE zajedničke dnevnike? Ovo se ne može vratiti.':lang==='en'?'Delete ALL shared diaries? This cannot be undone.':'删除所有共享日记？此操作不可撤销。'))return;localStorage.setItem('shared-diary','{}');saveSharedDiaryData({});pushAllSharedData().then(function(){renderSharedDiary();renderDateStrip();renderCalendar();toast('🗑️ '+(lang==='sr'?'Dnevnici obrisani':lang==='en'?'Diaries cleared':'日记已清空'));});}
+function clearAllDiaries(){if(!confirm(L('Obrisati SVE zajedničke dnevnike? Ovo se ne može vratiti.','Delete ALL shared diaries? This cannot be undone.','删除所有共享日记？此操作不可撤销。')))return;localStorage.setItem('shared-diary','{}');saveSharedDiaryData({});pushAllSharedData().then(function(){renderSharedDiary();renderDateStrip();renderCalendar();toast('🗑️ '+L('Dnevnici obrisani','Diaries cleared','日记已清空'));});}
 
 /* ================================================================
    NAVIGATION
@@ -3029,7 +3056,7 @@ function initCultureTab() {
   _cultureCardIdx = getTodaysCultureIndex();
   // Update tab label
   var tbCulture = document.getElementById('tb-culture');
-  if (tbCulture) tbCulture.textContent = L('Kina','中华','China');
+  if (tbCulture) tbCulture.textContent = L('Kina','China','中华');
   renderCultureCard();
 }
 

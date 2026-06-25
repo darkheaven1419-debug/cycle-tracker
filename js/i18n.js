@@ -116,8 +116,25 @@ const I18N_EXT = {
   barryTipsFollicular:[{icon:'🎯',text:'Imaće više energije — isplaniraj izlazak, šetnju, zajedničku aktivnost!'},{icon:'💬',text:'Društvenija je — odlično vreme za dublje razgovore i planove za budućnost.'},{icon:'💪',text:'Pridruži joj se u sportu ili fizičkoj aktivnosti. Zajedno ste jači.'},{icon:'🌸',text:'Kupi joj cveće bez povoda. Primetiće i najmanji znak pažnje.'},{icon:'🎨',text:'Faza kreativnosti — predloži novi hobi ili zajednički projekat.'}],
   barryTipsOvulation:[{icon:'✨',text:'Danas sija — reci joj koliko je lepa. Budi iskren i detaljan u komplimentima.'},{icon:'💋',text:'Fizička bliskost joj je važna — grli je, ljubi, drži za ruku.'},{icon:'🎉',text:'Vrhunac energije — odličan dan za ples, izlazak, druženje.'},{icon:'🔥',text:'Njen libido je na vrhuncu — budi pažljiv i romantičan večeras.'},{icon:'📸',text:'Fotografiši je danas — blistaće na svakoj slici.'}],
   barryTipsLuteal:[{icon:'🧘',text:'PMS počinje — ne shvataj ništa lično. Njen mozak je u hormonskom haosu.'},{icon:'🍵',text:'Skuvaj joj čaj od kamilice ili nane. Smiruje nerve i pokazuje da brineš.'},{icon:'🤐',text:'Slušaj više, pričaj manje. Ne rešavaj — samo slušaj.'},{icon:'🍕',text:'Imaće žudnju — naruči njenu omiljenu hranu bez pitanja.'},{icon:'🌙',text:'Pomogni joj da se opusti — topla kupka, sveće, muzika. Zaslužuje mir.'}],
-  barryTipsGeneral:[{icon:'💌',text:'Pošalji joj poruku sad — reci da misliš na nju. Ne treba povod.'},{icon:'💝',text:'Mali znak pažnje danas — njen omiljeni sok, voće, nešto što voli.'},{icon:'📞',text:'Pozovi je — čuj njen glas, pitaj kako je prošao dan.'},{icon:'🌍',text:'Seti se — ti si njen oslonac. Voli te. Ti si dovoljan.'}]
-},
+  barryTipsGeneral:[{icon:'💌',text:'Pošalji joj poruku sad — reci da misliš na nju. Ne treba povod.'},{icon:'💝',text:'Mali znak pažnje danas — njen omiljeni sok, voće, nešto što voli.'},{icon:'📞',text:'Pozovi je — čuj njen glas, pitaj kako je prošao dan.'},{icon:'🌍',text:'Seti se — ti si njen oslonac. Voli te. Ti si dovoljan.'}],
+  // Diary module
+  diaryTextareaPlaceholder: 'Piši, dušo moja... ✍️',
+  diaryDateStripPrev: '◂ Prethodna nedelja',
+  diaryDateStripNext: 'Sledeća nedelja ▸',
+  diaryCalPrevMonth: '◂ Prethodni mesec',
+  diaryCalNextMonth: 'Sledeći mesec ▸',
+  diaryGoToday: '📍 Danas',
+  diaryCalBtnTitle: 'Kalendar' ,
+  diaryFooterCredit: 'Napravljeno sa ljubavlju za Anđelu Nemet ♥',
+  // Settings extras
+  settingsTokenHintEnabled: '✅ Sinhronizacija uključena 🌐',
+  settingsTokenHintDisabled: 'Unesite GitHub Token za sinhronizaciju dva telefona',
+  settingsExportAll: '📦 Izvezi sve podatke',
+  settingsImportAll: '📥 Vrati iz backup-a',
+  settingsClearDiary: '🗑️ Obriši sve dnevnike',
+  settingsClearDiaryConfirm: 'Obrisati SVE zajedničke dnevnike? Ovo se ne može vratiti.',
+  settingsThemeLight: '☀️ Svetli',
+  settingsThemeDark: '🌙 Tamni',
 'zh-CN': {
   profileName: 'Anđela', profileName2: 'Barry',
   loveNoteDefault: '每一天都在想你——你是我世界里最美好的一部分。💕', loveNoteSig: '— 你的 Barry',
@@ -138,8 +155,25 @@ const I18N_EXT = {
   barryTipsFollicular:[{icon:'🎯',text:'她会精力充沛——计划一起出去！散步、新活动、约会。'},{icon:'💬',text:'比平时更善于社交——适合深入交谈和未来规划。'},{icon:'💪',text:'和她一起运动或健身——一起变得更强。'},{icon:'🌸',text:'买花给她——不需要理由。这个阶段她最容易被小细节打动。'},{icon:'🎨',text:'创造力高峰期——提议一个新爱好或项目一起做。'}],
   barryTipsOvulation:[{icon:'✨',text:'今天她最闪耀——告诉她她有多美。真诚且具体的夸奖。'},{icon:'💋',text:'身体接触对她很重要——拥抱、亲吻、牵手。'},{icon:'🎉',text:'能量巅峰——适合出去玩、跳舞、朋友聚会。'},{icon:'🔥',text:'她最有"性致"——今晚要体贴又浪漫。'},{icon:'📸',text:'今天给她拍照——每张都会发光。'}],
   barryTipsLuteal:[{icon:'🧘',text:'PMS 开始了——别把她的情绪当回事。她的大脑在荷尔蒙风暴里。'},{icon:'🍵',text:'给她泡杯无咖啡因的花草茶——洋甘菊或薄荷。'},{icon:'🤐',text:'多听少说。别试图"解决问题"——只需倾听就好。'},{icon:'🍕',text:'她会突然想吃东西——不问就点她最爱的外卖。'},{icon:'🌙',text:'帮她放松——热水澡、蜡烛、轻音乐。她值得安宁。'}],
-  barryTipsGeneral:[{icon:'💌',text:'现在就给她发条消息——说你在想她。不需要理由。'},{icon:'💝',text:'今天一件小事——她喜欢的饮料、水果、小东西。'},{icon:'📞',text:'给她打电话——听听她的声音，问问今天过得怎么样。'},{icon:'🌍',text:'记住——你是她的依靠。她爱你。你足够好。'}]
-},
+  barryTipsGeneral:[{icon:'💌',text:'现在就给她发条消息——说你在想她。不需要理由。'},{icon:'💝',text:'今天一件小事——她喜欢的饮料、水果、小东西。'},{icon:'📞',text:'给她打电话——听听她的声音，问问今天过得怎么样。'},{icon:'🌍',text:'记住——你是她的依靠。她爱你。你足够好。'}],
+  // Diary module
+  diaryTextareaPlaceholder: '写吧，亲爱的... ✍️',
+  diaryDateStripPrev: '◂ 上一周',
+  diaryDateStripNext: '下一周 ▸',
+  diaryCalPrevMonth: '◂ 上个月',
+  diaryCalNextMonth: '下个月 ▸',
+  diaryGoToday: '📍 今天',
+  diaryCalBtnTitle: '日历' ,
+  diaryFooterCredit: '为 Anđela Nemet 用爱制作 ♥',
+  // Settings extras
+  settingsTokenHintEnabled: '✅ 自动同步已开启 🌐',
+  settingsTokenHintDisabled: '输入 GitHub Token 以同步两台手机',
+  settingsExportAll: '📦 导出所有数据',
+  settingsImportAll: '📥 从备份恢复',
+  settingsClearDiary: '🗑️ 清空所有日记',
+  settingsClearDiaryConfirm: '删除所有共享日记？此操作不可撤销。',
+  settingsThemeLight: '☀️ 浅色',
+  settingsThemeDark: '🌙 深色',
 'en': {
   profileName: 'Anđela', profileName2: 'Barry',
   loveNoteDefault: 'Every day I think of you — you are the most beautiful part of my world. 💕', loveNoteSig: '— Your Barry',
@@ -161,6 +195,25 @@ const I18N_EXT = {
   barryTipsOvulation:[{icon:'✨',text:'She shines brightest today — tell her how beautiful she is. Be specific.'},{icon:'💋',text:'Physical touch matters to her — hug, kiss, hold hands.'},{icon:'🎉',text:'Peak energy — great day for dancing, going out, social fun.'},{icon:'🔥',text:'Her libido peaks — be attentive and romantic tonight.'},{icon:'📸',text:'Take photos of her today — she will glow in every shot.'}],
   barryTipsLuteal:[{icon:'🧘',text:'PMS begins — don\'t take anything personally. Her brain is in a hormone storm.'},{icon:'🍵',text:'Make her caffeine-free tea — chamomile or mint. It calms and shows you care.'},{icon:'🤐',text:'Listen more, talk less. Don\'t try to "fix" — just listen.'},{icon:'🍕',text:'She\'ll have cravings — order her favorite food without asking.'},{icon:'🌙',text:'Help her unwind — warm bath, candles, soft music. She deserves peace.'}],
   barryTipsGeneral:[{icon:'💌',text:'Text her right now — say you\'re thinking of her. No reason needed.'},{icon:'💝',text:'A small gesture today — her favorite drink, fruit, something thoughtful.'},{icon:'📞',text:'Call her — hear her voice, ask how her day went.'},{icon:'🌍',text:'Remember — you are her rock. She loves you. You are enough.'}]
+},
+  // Diary module
+  diaryTextareaPlaceholder: 'Write, my darling... ✍️',
+  diaryDateStripPrev: '◂ Previous week',
+  diaryDateStripNext: 'Next week ▸',
+  diaryCalPrevMonth: '◂ Previous month',
+  diaryCalNextMonth: 'Next month ▸',
+  diaryCalBtnTitle: 'Calendar' ,
+  diaryGoToday: '📍 Today',
+  diaryFooterCredit: 'Made with love for Anđela Nemet ♥',
+  // Settings extras
+  settingsTokenHintEnabled: '✅ Auto-sync enabled 🌐',
+  settingsTokenHintDisabled: 'Enter GitHub Token to sync both phones',
+  settingsExportAll: '📦 Export All Data',
+  settingsImportAll: '📥 Restore from Backup',
+  settingsClearDiary: '🗑️ Clear All Diaries',
+  settingsClearDiaryConfirm: 'Delete ALL shared diaries? This cannot be undone.',
+  settingsThemeLight: '☀️ Light',
+  settingsThemeDark: '🌙 Dark'
 }};
 
 // Love Notes Pool (60 entries per language)

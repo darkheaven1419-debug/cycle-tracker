@@ -1,7 +1,7 @@
 // Service Worker — Anđelin Ciklus v8
 // Network-First for all dynamic assets, Cache-First for static
 
-var CACHE_STATIC = 'ciklus-static-v19';
+var CACHE_STATIC = 'ciklus-static-v20';
 
 var STATIC_ASSETS = [
   './',
@@ -39,7 +39,7 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v19'];
+var KNOWN_CACHES = ['ciklus-static-v20'];
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
