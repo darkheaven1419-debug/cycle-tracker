@@ -1,0 +1,81 @@
+/* ================================================================
+   BASE — Reset, body, typography, utility classes, scrollbar
+   ================================================================ */
+* { margin:0; padding:0; box-sizing:border-box; }
+:focus-visible { outline: 2px solid var(--love); outline-offset: 2px; border-radius: 4px; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  min-height: 100vh; display:flex; justify-content:center;
+  -webkit-tap-highlight-color: transparent; transition: background .3s, color .3s;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+[data-theme="dark"] body { background: var(--bg); }
+
+.app { width:100%; max-width:420px; padding:12px 16px 20px; position:relative; }
+.app { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+
+/* Glass utility — use wherever backdrop glass effect is needed */
+.glass { backdrop-filter:var(--blur); }
+
+/* Developer signature */
+.dev-signature {
+  background:linear-gradient(135deg, var(--love) 0%, var(--lavender-dark) 100%);
+  color:#fff; border-radius:var(--radius); padding:24px 22px; margin-top:18px;
+  text-align:center; box-shadow:0 8px 32px rgba(142,111,163,.25);
+  position:relative; overflow:hidden;
+}
+.dev-signature::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%);
+}
+.dev-signature .dev-name { font-size:1.2rem; font-weight:700; letter-spacing:.02em; position:relative; }
+.dev-signature .dev-for { font-size:.72rem; opacity:.9; margin-top:4px; position:relative; font-style:italic; }
+.dev-signature .dev-divider { width:50px; height:2px; background:rgba(255,255,255,.4); margin:12px auto; border-radius:1px; position:relative; }
+.dev-signature .dev-tagline { font-size:.66rem; opacity:.8; line-height:1.6; position:relative; }
+.dev-signature .dev-location { font-size:.62rem; opacity:.65; margin-top:6px; position:relative; }
+
+/* Footer */
+.app-footer { text-align:center; padding:10px 0 20px; }
+.footer-divider { width:60px; height:1px; background:var(--gold); margin:0 auto 12px; opacity:.4; }
+.footer-credit { font-size:.7rem; color:var(--gold); font-style:italic; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+
+/* Empty state */
+.empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
+.empty-icon { font-size:3rem; display:block; margin-bottom:12px; }
+
+/* Offline banner */
+.offline-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--error);color:#fff;text-align:center;padding:6px;font-size:.65rem;font-weight:600;display:none}
+.offline-banner.show{display:block}
+
+/* Skeleton screen */
+.skeleton{background:linear-gradient(90deg,var(--border-soft) 25%,var(--bg) 50%,var(--border-soft) 75%);background-size:200% 100%;animation:skeletonShimmer 1.5s ease-in-out infinite;border-radius:8px}
+.skel-card{height:80px;margin-bottom:10px;border-radius:12px}
+.skel-title{height:16px;width:60%;margin-bottom:8px}
+.skel-text{height:12px;width:90%;margin-bottom:6px}
+.skel-text.short{width:40%}
+
+/* PWA install banner */
+.pwa-banner{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom, 0px));left:10px;right:10px;z-index:500;background:var(--card);border:1px solid var(--gold);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow-lg);display:none;align-items:center;gap:10px;font-size:.7rem}
+.pwa-banner.show{display:flex}
+.pwa-banner .pwa-close{position:absolute;top:4px;right:8px;font-size:1rem;cursor:pointer;color:var(--text-muted)}
+
+/* Season decorations */
+.seasonal-deco{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden}
+.seasonal-deco span{position:absolute;animation:seasonFloat 8s ease-in-out infinite;opacity:.2}
+
+/* Festival decorations */
+.festival-decorations{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+.festival-deco{position:absolute;top:-40px;animation:decoFall 6s ease-in-out infinite;opacity:.35}
+
+/* Prevent pull-to-refresh on calendar swipe */
+.calendar { overscroll-behavior:contain; }
+
+@media(max-width:600px){input,textarea,select{font-size:16px!important}}

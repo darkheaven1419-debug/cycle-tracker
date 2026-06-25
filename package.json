@@ -1,0 +1,24 @@
+{
+  "name": "andjelin-ciklus",
+  "version": "7.1.0",
+  "description": "Personal cycle tracker & cross-cultural love diary — Beijing ↔ Kikinda",
+  "private": true,
+  "scripts": {
+    "start": "npx serve .",
+    "build": "node build.js",
+    "lint": "npx eslint .",
+    "format": "npx prettier --write ."
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.0",
+    "html-minifier": "^4.0.0",
+    "serve": "^14.2.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/andjelin-ciklus.git"
+  },
+  "license": "MIT"
+}

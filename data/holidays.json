@@ -1,0 +1,359 @@
+{
+  "holidays": [
+    {
+      "d": "2026-01-01",
+      "name": { "sr": "Nova Godina (Kina)", "zh": "元旦", "en": "New Year" },
+      "country": "cn",
+      "icon": "🎉",
+      "desc": { "sr": "Nov početak, vreme kada zajedno sanjamo o lepšoj godini.", "zh": "新的一年，和身边的人一起许下美好的愿望。", "en": "A fresh start, dreaming together of a kinder year ahead." }
+    },
+    {
+      "d": "2026-02-16",
+      "name": { "sr": "Kineska Nova Godina (veče)", "zh": "除夕", "en": "CNY Eve" },
+      "country": "cn",
+      "icon": "🏮",
+      "desc": { "sr": "Porodična večera koja spaja generacije, uz vatromet.", "zh": "全家围坐吃年夜饭，在爆竹声中送走旧岁。", "en": "Generations gather for the reunion feast, bidding farewell to the old year." }
+    },
+    {
+      "d": "2026-02-17",
+      "name": { "sr": "Kineska Nova Godina", "zh": "春节", "en": "Chinese New Year" },
+      "country": "cn",
+      "icon": "🧧",
+      "desc": { "sr": "Prvi dan proleća donosi radost i crvene koverte pune ljubavi.", "zh": "新春第一天，红包和祝福让整个月都暖暖的。", "en": "The first day of spring brings red envelopes and warm wishes all month." }
+    },
+    {
+      "d": "2026-03-03",
+      "name": { "sr": "Festival lampiona", "zh": "元宵节", "en": "Lantern Festival" },
+      "country": "cn",
+      "icon": "🏮",
+      "desc": { "sr": "Slatke pirinčane knedle i lampioni — noć puna svetlosti.", "zh": "吃一碗软糯的汤圆，看花灯照亮夜空。", "en": "Sweet rice balls and lanterns that turn the night into a sea of light." }
+    },
+    {
+      "d": "2026-04-05",
+      "name": { "sr": "Čingming festival", "zh": "清明节", "en": "Qingming" },
+      "country": "cn",
+      "icon": "🌿",
+      "desc": { "sr": "Dan kada se sećamo onih koji su otišli, dok priroda budi novi život.", "zh": "在春天的细雨中，轻轻想起那些远去的亲人。", "en": "A quiet spring day to remember those we have loved and lost." }
+    },
+    {
+      "d": "2026-05-01",
+      "name": { "sr": "Praznik rada (Kina)", "zh": "劳动节", "en": "Labour Day" },
+      "country": "cn",
+      "icon": "🌿",
+      "desc": { "sr": "Dan odmora za sve koji svojim radom čine svet boljim.", "zh": "停下忙碌的脚步，对自己说一声辛苦了。", "en": "A day of rest for every hand that helps the world go round." }
+    },
+    {
+      "d": "2026-06-19",
+      "name": { "sr": "Festival zmajevih čamaca", "zh": "端午节", "en": "Dragon Boat" },
+      "country": "cn",
+      "icon": "🎋",
+      "desc": { "sr": "Miris zongija i ritam zmajevih čamaca — sećanje na pesnika Qu Yuana.", "zh": "粽叶飘香，龙舟竞渡，纪念一位心怀家国的诗人。", "en": "Fragrant zongzi and racing dragon boats, remembering a poet who loved his people." }
+    },
+    {
+      "d": "2026-08-19",
+      "name": { "sr": "Kineski Dan zaljubljenih", "zh": "七夕", "en": "Qixi Festival" },
+      "country": "cn",
+      "icon": "💫",
+      "desc": { "sr": "Zvezdana noć ljubavi — kad se dvoje sastaje na Nebeskom mostu.", "zh": "七夕之夜，愿天下有情人终成眷属。", "en": "A starry night of love — two hearts meet across the Milky Way." }
+    },
+    {
+      "d": "2026-09-25",
+      "name": { "sr": "Festival sredine jeseni", "zh": "中秋节", "en": "Mid-Autumn" },
+      "country": "cn",
+      "icon": "🥮",
+      "desc": { "sr": "Pun mesec, porodica na okupu i miris mesečevog kolača.", "zh": "月圆人团圆，月饼的甜香就是家的味道。", "en": "Full moon, family gathered, and the sweet taste of mooncakes — home at its warmest." }
+    },
+    {
+      "d": "2026-10-01",
+      "name": { "sr": "Nacionalni dan Kine", "zh": "国庆节", "en": "National Day" },
+      "country": "cn",
+      "icon": "🇨🇳",
+      "desc": { "sr": "Zlatna nedelja slave i ponosa — Kina u najlepšim bojama.", "zh": "黄金周里红旗飘扬，举国同庆这属于每一个人的节日。", "en": "A golden week of national pride, when the land dresses in its finest colors." }
+    },
+    {
+      "d": "2026-01-01",
+      "name": { "sr": "Nova Godina", "zh": "新年", "en": "New Year" },
+      "country": "rs",
+      "icon": "🎆",
+      "desc": { "sr": "Uz vatromet, rakiju i tople zagrljaje — nova godina stiže.", "zh": "在烟花和家人的拥抱中，迎接全新的一年。", "en": "With fireworks, rakija, and warm embraces — a fresh year begins." }
+    },
+    {
+      "d": "2026-01-07",
+      "name": { "sr": "Božić", "zh": "东正教圣诞节", "en": "Orthodox Christmas" },
+      "country": "rs",
+      "icon": "🎄",
+      "desc": { "sr": "Mir Božiji, Hristos se rodi — uz badnjak, česnicu i toplinu doma.", "zh": "在橡木火光和祝福面包的香气中，感受家的温暖。", "en": "Christ is born — the oak log burns, the bread is broken, and home feels holy." }
+    },
+    {
+      "d": "2026-01-27",
+      "name": { "sr": "Sveti Sava", "zh": "圣萨瓦日", "en": "St. Sava Day" },
+      "country": "rs",
+      "icon": "📚",
+      "desc": { "sr": "Dan prosvetitelja — praznik dece, učitelja i znanja.", "zh": "纪念塞尔维亚最伟大的教育家的日子，属于孩子们和老师的温暖节日。", "en": "A day for teachers and children, honoring Serbia's patron saint of learning." }
+    },
+    {
+      "d": "2026-02-15",
+      "name": { "sr": "Dan državnosti", "zh": "塞尔维亚国庆日", "en": "Statehood Day" },
+      "country": "rs",
+      "icon": "🇷🇸",
+      "desc": { "sr": "Dan ponosa — sećanje na ustanke koji su utrli put slobodi.", "zh": "一个骄傲的日子——纪念为自由开辟道路的先辈们。", "en": "A day of pride — remembering the uprisings that paved the way to freedom." }
+    },
+    {
+      "d": "2026-04-12",
+      "name": { "sr": "Vaskrs", "zh": "东正教复活节", "en": "Orthodox Easter" },
+      "country": "rs",
+      "icon": "🥚",
+      "desc": { "sr": "Hristos vaskrse — kucamo se farbanim jajima, slavimo pobedu života.", "zh": "主复活了——碰响彩蛋，庆祝生命的胜利和春天的重生。", "en": "Christ is risen — painted eggs are tapped, celebrating life's triumph over death." }
+    },
+    {
+      "d": "2026-05-01",
+      "name": { "sr": "Praznik rada", "zh": "劳动节", "en": "Labour Day" },
+      "country": "rs",
+      "icon": "🌿",
+      "desc": { "sr": "Majski uranak, izleti u prirodu — dan odmora za sve vredne ruke.", "zh": "五一去郊游，在自然中放松，犒劳辛勤的自己。", "en": "May Day picnics in nature — a well-earned rest for every hard-working soul." }
+    },
+    {
+      "d": "2026-05-09",
+      "name": { "sr": "Dan pobede", "zh": "胜利日", "en": "Victory Day" },
+      "country": "rs",
+      "icon": "🕊️",
+      "desc": { "sr": "Sa cvećem i tihim ponosom, sećamo se heroja koji su doneli mir.", "zh": "带着鲜花和安静的骄傲，铭记那些带来和平的英雄。", "en": "With flowers and quiet pride, we remember the heroes who brought peace." }
+    },
+    {
+      "d": "2026-06-28",
+      "name": { "sr": "Vidovdan", "zh": "维多夫丹", "en": "St. Vitus Day" },
+      "country": "rs",
+      "icon": "🏛️",
+      "desc": { "sr": "Dan sećanja i duboke tišine — kad smo kao narod sabrani u veri.", "zh": "一个沉思和纪念的日子，塞尔维亚民族信仰与记忆交汇的时刻。", "en": "A day of remembrance and quiet reflection, when a nation gathers in its memory." }
+    },
+    {
+      "d": "2026-11-11",
+      "name": { "sr": "Dan primirja", "zh": "停战日", "en": "Armistice Day" },
+      "country": "rs",
+      "icon": "🌸",
+      "desc": { "sr": "Cvet nade na reveru — dan kada se sećamo cene mira.", "zh": "胸前别一朵象征希望的鲜花，铭记和平的代价。", "en": "A flower of hope on the lapel, remembering the cost of peace." }
+    },
+    {
+      "d": "2026-02-14",
+      "name": { "sr": "Dan zaljubljenih", "zh": "情人节", "en": "Valentine's Day" },
+      "country": "cn",
+      "icon": "💝",
+      "desc": { "sr": "Dan za ljubavne poruke i slatka iznenađenja.", "zh": "送一束玫瑰，说一句\"我爱你\"——最简单的浪漫。", "en": "A day for love notes, roses, and saying \"I love you\" simply." }
+    },
+    {
+      "d": "2026-03-08",
+      "name": { "sr": "Dan žena", "zh": "三八妇女节", "en": "Women's Day" },
+      "country": "cn",
+      "icon": "👩",
+      "desc": { "sr": "Slavimo snagu, nežnost i lepotu svake žene.", "zh": "致敬每一位坚强又温柔的女性——你们让世界更美好。", "en": "Honoring every strong, gentle woman who makes the world brighter." }
+    },
+    {
+      "d": "2026-04-01",
+      "name": { "sr": "Dan šale", "zh": "愚人节", "en": "April Fools' Day" },
+      "country": "cn",
+      "icon": "🤡",
+      "desc": { "sr": "Danas sve može biti šala — ali moja ljubav prema tebi nije! 😉", "zh": "今天什么都可以是玩笑——但我对你的爱是真的！😉", "en": "Everything can be a joke today — but not my love for you! 😉" }
+    },
+    {
+      "d": "2026-04-22",
+      "name": { "sr": "Dan planete Zemlje", "zh": "世界地球日", "en": "Earth Day" },
+      "country": "cn",
+      "icon": "🌍",
+      "desc": { "sr": "Podsetnik da čuvamo našu zajedničku planetu — za sve buduće generacije.", "zh": "提醒我们爱护这唯一的蓝色星球——为了所有未来。", "en": "A reminder to care for our shared blue planet — for all generations to come." }
+    },
+    {
+      "d": "2026-05-10",
+      "name": { "sr": "Majčin dan (Kina)", "zh": "母亲节", "en": "Mother's Day" },
+      "country": "cn",
+      "icon": "👩‍👧",
+      "desc": { "sr": "Dan kada slavimo prvu ljubav našeg života — maminu.", "zh": "给妈妈一个拥抱，告诉她你有多爱她。", "en": "Give your mom a hug and tell her how much you love her." }
+    },
+    {
+      "d": "2026-05-15",
+      "name": { "sr": "Dan porodice", "zh": "国际家庭日", "en": "Family Day" },
+      "country": "cn",
+      "icon": "👨‍👩‍👧‍👦",
+      "desc": { "sr": "Porodica je mesto gde život počinje i ljubav nikad ne prestaje.", "zh": "家是生命开始的地方，也是爱永远不会结束的地方。", "en": "Family is where life begins and love never ends." }
+    },
+    {
+      "d": "2026-06-01",
+      "name": { "sr": "Dečiji dan", "zh": "六一儿童节", "en": "Children's Day" },
+      "country": "cn",
+      "icon": "🧒",
+      "desc": { "sr": "Dan kada slavimo najčistiju radost — dečiji osmeh.", "zh": "愿每个孩子都被温柔守护，永远保持那份纯真的快乐。", "en": "May every child be loved and keep that pure joy forever." }
+    },
+    {
+      "d": "2026-06-21",
+      "name": { "sr": "Dan očeva", "zh": "父亲节", "en": "Father's Day" },
+      "country": "cn",
+      "icon": "👨",
+      "desc": { "sr": "Hvala tatama što su naša prva zaštita, učitelji i heroji.", "zh": "给爸爸打个电话吧——他等你这句话很久了。", "en": "Call your dad — he's been waiting for your words longer than you know." }
+    },
+    {
+      "d": "2026-09-10",
+      "name": { "sr": "Dan učitelja (Kina)", "zh": "教师节", "en": "Teachers' Day" },
+      "country": "cn",
+      "icon": "📚",
+      "desc": { "sr": "Hvala svim učiteljima koji su nas oblikovali.", "zh": "一支粉笔，三尺讲台，感谢每一位引领我们成长的老师。", "en": "A piece of chalk, three feet of podium — gratitude to every teacher." }
+    },
+    {
+      "d": "2026-10-25",
+      "name": { "sr": "Festival devet dvojki", "zh": "重阳节", "en": "Double Ninth Festival" },
+      "country": "cn",
+      "icon": "🏔️",
+      "desc": { "sr": "Dan kada se penjemo na brda i pokazujemo poštovanje starijima.", "zh": "遍插茱萸，登高望远——祝福长辈健康长寿。", "en": "Climbing high, wearing dogwood — wishing elders health and longevity." }
+    },
+    {
+      "d": "2026-10-31",
+      "name": { "sr": "Noć veštica", "zh": "万圣节", "en": "Halloween" },
+      "country": "cn",
+      "icon": "🎃",
+      "desc": { "sr": "Bundeve, maske i slatkiši — noć kad sve može biti magično.", "zh": "南瓜灯和糖果——一年中最有魔法感的夜晚。", "en": "Pumpkins, costumes, and candy — the most magical night of the year." }
+    },
+    {
+      "d": "2026-12-19",
+      "name": { "sr": "Sveti Nikola", "zh": "圣尼古拉节", "en": "St. Nicholas Day" },
+      "country": "rs",
+      "icon": "🎅",
+      "desc": { "sr": "Sveti Nikola noćas donosi poklone u čizme — deca jedva spavaju od uzbuđenja.", "zh": "圣尼古拉今晚把礼物放进靴子里——孩子们兴奋得睡不着。", "en": "St. Nicholas fills boots with gifts tonight — children can barely sleep." }
+    },
+    {
+      "d": "2026-01-04",
+      "name": { "sr": "Očevi (Dan očeva)", "zh": "塞尔维亚父亲节", "en": "Father's Day (RS)" },
+      "country": "rs",
+      "icon": "👨",
+      "desc": { "sr": "Srpski Dan očeva — tatino rame je najsigurnije mesto na svetu.", "zh": "塞尔维亚父亲节——爸爸的肩膀是世界上最安全的地方。", "en": "Serbian Father's Day — Dad's shoulder is the safest place in the world." }
+    },
+    {
+      "d": "2026-11-02",
+      "name": { "sr": "Zadušnice", "zh": "亡灵节", "en": "All Souls' Day" },
+      "country": "rs",
+      "icon": "🕯️",
+      "desc": { "sr": "Palimo sveće za one koji su otišli — svetlost koja spaja svetove.", "zh": "为逝去的亲人点燃蜡烛——跨越世界的光芒。", "en": "Lighting candles for those who have left us — light that bridges worlds." }
+    },
+    {
+      "d": "2026-01-20",
+      "name": { "sr": "Laba festival", "zh": "腊八节", "en": "Laba Festival" },
+      "country": "cn",
+      "icon": "🥣",
+      "desc": { "sr": "Topla činija laba kaše najavljuje dolazak Nove Godine.", "zh": "一碗暖暖的腊八粥，预告着新年的脚步近了。", "en": "A warm bowl of Laba porridge heralds the coming of the New Year." }
+    },
+    {
+      "d": "2026-05-06",
+      "name": { "sr": "Đurđevdan", "zh": "圣乔治节", "en": "St. George's Day" },
+      "country": "rs",
+      "icon": "🐎",
+      "desc": { "sr": "Đurđevdan — praznik proleća, pastira i novog početka. Nekad se verovalo da na ovaj dan treba ustati pre zore.", "zh": "圣乔治节——春天的节日，牧羊人和新开始的节日。", "en": "St. George's Day — a feast of spring, shepherds, and fresh starts." }
+    },
+    {
+      "d": "2026-07-12",
+      "name": { "sr": "Petrovdan", "zh": "圣彼得节", "en": "St. Peter's Day" },
+      "country": "rs",
+      "icon": "🔑",
+      "desc": { "sr": "Petrovdan — dan kad se pale lile i slave ključevi raja. Topli letnji praznik uz narodne običaje.", "zh": "圣彼得节——夏日里充满民俗温暖的节日。", "en": "St. Peter's Day — a warm summer feast with folk traditions and the keys of heaven." }
+    },
+    {
+      "d": "2026-08-28",
+      "name": { "sr": "Velika Gospojina", "zh": "圣母安息节", "en": "Dormition of Theotokos" },
+      "country": "rs",
+      "icon": "🙏",
+      "desc": { "sr": "Velika Gospojina — jedan od najvećih pravoslavnih praznika, posvećen Bogorodici. Porodice se okupljaju i idu u crkvu.", "zh": "圣母安息节——东正教最重要的节日之一，家人相聚。", "en": "The Dormition — one of the greatest Orthodox feasts, dedicated to the Mother of God." }
+    },
+    {
+      "d": "2026-09-21",
+      "name": { "sr": "Mala Gospojina", "zh": "圣母圣诞日", "en": "Nativity of Theotokos" },
+      "country": "rs",
+      "icon": "👶",
+      "desc": { "sr": "Mala Gospojina — slavi rođenje Bogorodice. Dan kada su se nekad sklapali brakovi i veridbe.", "zh": "圣母圣诞日——传统上缔结婚约和订婚的日子。", "en": "Nativity of Theotokos — traditionally a day for engagements and weddings." }
+    },
+    {
+      "d": "2026-12-19",
+      "name": { "sr": "Nikoljdan", "zh": "圣尼古拉节", "en": "St. Nicholas Day" },
+      "country": "rs",
+      "icon": "🎅",
+      "desc": { "sr": "Nikoljdan — najveća srpska slava! Ko slavi Svetog Nikolu, danas prima goste i deli radost.", "zh": "圣尼古拉节——塞尔维亚最重要的家庭守护圣徒日！", "en": "St. Nicholas Day — the most celebrated Serbian Slava! Hosts welcome guests and share joy." }
+    },
+    {
+      "d": "2026-05-20",
+      "name": { "sr": "Dan ljubavi 520", "zh": "520 情人节", "en": "520 Love Day" },
+      "country": "cn",
+      "icon": "💝",
+      "desc": { "sr": "520 — kineski internet Dan zaljubljenih! Brojevi 5-2-0 zvuče kao \"volim te\" na kineskom.", "zh": "520——中国的网络情人节！5-2-0 听起来像\"我爱你\"。", "en": "520 — Chinese internet Valentine's! 5-2-0 sounds like \"I love you\" in Chinese." }
+    },
+    {
+      "d": "2026-11-11",
+      "name": { "sr": "Dan samaca", "zh": "双十一", "en": "Singles' Day" },
+      "country": "cn",
+      "icon": "🎊",
+      "desc": { "sr": "11.11. — Dan samaca u Kini! Ali i najveći dan za onlajn kupovinu na svetu.", "zh": "双十一——光棍节！也是全球最大的网购狂欢日。", "en": "11.11 — Singles' Day in China! Also the world's biggest online shopping day." }
+    },
+    {
+      "d": "2026-12-24",
+      "name": { "sr": "Badnje veče (katoličko)", "zh": "平安夜", "en": "Christmas Eve" },
+      "country": "cn",
+      "icon": "🎄",
+      "desc": { "sr": "Badnje veče po gregorijanskom kalendaru — noć puna iščekivanja, darivanja i porodične topline.", "zh": "平安夜——充满期待、礼物和家庭温暖的夜晚。", "en": "Christmas Eve — a night of anticipation, gifts, and family warmth." }
+    },
+    {
+      "d": "2026-12-25",
+      "name": { "sr": "Božić (katolički)", "zh": "圣诞节", "en": "Christmas Day" },
+      "country": "cn",
+      "icon": "🎁",
+      "desc": { "sr": "Božić po gregorijanskom kalendaru — dan radosti, poklona i zajedništva širom sveta.", "zh": "圣诞节——全世界共同的欢乐和分享的日子。", "en": "Christmas Day — a day of joy, gifts, and togetherness around the world." }
+    },
+    {
+      "d": "2026-12-31",
+      "name": { "sr": "Doček Nove Godine", "zh": "跨年夜", "en": "New Year's Eve" },
+      "country": "cn",
+      "icon": "🎆",
+      "desc": { "sr": "Poslednji dan u godini — vreme za rezime, zagrljaje i želje za novu godinu. Srećna Nova! 🥂", "zh": "一年的最后一天——写下愿望，拥抱身边的人。新年快乐！🥂", "en": "The last day of the year — time for reflection, hugs, and wishes. Happy New Year! 🥂" }
+    },
+    {
+      "d": "2027-02-05",
+      "name": { "sr": "Kineska Nova Godina 2027", "zh": "除夕 2027", "en": "CNY Eve 2027" },
+      "country": "cn",
+      "icon": "🏮",
+      "desc": { "sr": "Kineska Nova Godina 2027 — godina Koze počinje!", "zh": "2027除夕夜——羊年即将来临！", "en": "Chinese New Year's Eve 2027 — the Year of the Goat begins!" }
+    },
+    {
+      "d": "2027-02-06",
+      "name": { "sr": "Prolećni festival 2027", "zh": "春节 2027", "en": "Spring Festival 2027" },
+      "country": "cn",
+      "icon": "🧧",
+      "desc": { "sr": "Kineska Nova Godina 2027 — godina Koze! Srećna Nova Godina!", "zh": "2027春节——羊年大吉！新年快乐！", "en": "Spring Festival 2027 — Year of the Goat! Happy New Year!" }
+    },
+    {
+      "d": "2027-10-14",
+      "name": { "sr": "Festival sredine jeseni 2027", "zh": "中秋节 2027", "en": "Mid-Autumn 2027" },
+      "country": "cn",
+      "icon": "🥮",
+      "desc": { "sr": "Festival sredine jeseni 2027 — pun mesec, porodica i mesečevi kolači.", "zh": "2027中秋——月圆人团圆。", "en": "Mid-Autumn Festival 2027 — full moon, family, and mooncakes." }
+    }
+  ],
+  "holidayDays": {
+    "2026-01-01": { "cn": "1 dan", "rs": "2 dana", "zh": "1天", "sr": "1 dan", "en": "1 day" },
+    "2026-02-16": { "cn": "7 dana (Prolećni festival)", "rs": "—", "zh": "7天（春节长假）", "sr": "7 dana (Prolećni festival)", "en": "7 days (Spring Festival)" },
+    "2026-02-17": { "cn": "7 dana (Prolećni festival)", "rs": "—", "zh": "7天（春节长假）", "sr": "7 dana (Prolećni festival)", "en": "7 days (Spring Festival)" },
+    "2026-03-03": { "cn": "1 dan", "rs": "—", "zh": "1天", "sr": "1 dan", "en": "1 day" },
+    "2026-04-05": { "cn": "3 dana", "rs": "—", "zh": "3天", "sr": "3 dana", "en": "3 days" },
+    "2026-05-01": { "cn": "5 dana", "rs": "2 dana", "zh": "5天", "sr": "5 dana", "en": "5 days" },
+    "2026-06-19": { "cn": "3 dana", "rs": "—", "zh": "3天", "sr": "3 dana", "en": "3 days" },
+    "2026-08-19": { "cn": "1 dan", "rs": "—", "zh": "1天", "sr": "1 dan", "en": "1 day" },
+    "2026-09-25": { "cn": "3 dana", "rs": "—", "zh": "3天", "sr": "3 dana", "en": "3 days" },
+    "2026-10-01": { "cn": "7 dana (Zlatna nedelja)", "rs": "—", "zh": "7天（黄金周）", "sr": "7 dana (Zlatna nedelja)", "en": "7 days (Golden Week)" },
+    "2026-01-07": { "cn": "—", "rs": "2 dana", "zh": "—", "sr": "2 dana", "en": "2 days" },
+    "2026-01-27": { "cn": "—", "rs": "1 dan (školski praznik)", "zh": "—", "sr": "1 dan (školski praznik)", "en": "1 day (school holiday)" },
+    "2026-02-15": { "cn": "—", "rs": "2 dana (Dan državnosti)", "zh": "—", "sr": "2 dana (Dan državnosti)", "en": "2 days (Statehood Day)" },
+    "2026-04-12": { "cn": "—", "rs": "4 dana (Vaskrs)", "zh": "—", "sr": "4 dana (Vaskrs)", "en": "4 days (Easter)" },
+    "2026-06-28": { "cn": "—", "rs": "1 dan", "zh": "—", "sr": "1 dan", "en": "1 day" },
+    "2026-11-11": { "cn": "—", "rs": "1 dan", "zh": "—", "sr": "1 dan", "en": "1 day" },
+    "2026-05-06": { "cn": "—", "rs": "1 dan", "zh": "—", "sr": "1 dan", "en": "1 day" },
+    "2026-08-28": { "cn": "—", "rs": "1 dan", "zh": "—", "sr": "1 dan", "en": "1 day" },
+    "2026-12-19": { "cn": "—", "rs": "1 dan (slava)", "zh": "—", "sr": "1 dan (slava)", "en": "1 day (slava)" },
+    "2026-12-25": { "cn": "1 dan", "rs": "1 dan", "zh": "1天", "sr": "1 dan", "en": "1 day" },
+    "2026-02-05": { "cn": "7 dana (Prolećni festival 2027)", "rs": "—", "zh": "7天（2027春节）", "sr": "7 dana", "en": "7 days" },
+    "2026-02-06": { "cn": "7 dana (Prolećni festival 2027)", "rs": "—", "zh": "7天（2027春节）", "sr": "7 dana", "en": "7 days" },
+    "2027-10-14": { "cn": "3 dana", "rs": "—", "zh": "3天", "sr": "3 dana", "en": "3 days" }
+  },
+  "version": "v1"
+}

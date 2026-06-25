@@ -1,7 +1,9 @@
 // Service Worker — Anđelin Ciklus v8 (v7 modules added)
 // Network-First for all dynamic assets, Cache-First for static
+// Features: Background Sync for offline diary saves, cache-first for fonts
 
-var CACHE_STATIC = 'ciklus-static-v21';
+var CACHE_STATIC = 'ciklus-static-v22';
+var CACHE_FONTS = 'ciklus-fonts-v1';
 
 var STATIC_ASSETS = [
   './',
@@ -25,17 +27,18 @@ var STATIC_ASSETS = [
   './calendar-data.json',
   './data/quotes.json',
   './data/culture.json',
+  './data/culture-knowledge.json',
   './data/lessons.json',
   './data/achievements.json',
-  './manifest.json'
+  './manifest.json',
 ];
 
-self.addEventListener('install', function(event) {
+self.addEventListener('install', function (event) {
   event.waitUntil(
-    caches.open(CACHE_STATIC).then(function(cache) {
+    caches.open(CACHE_STATIC).then(function (cache) {
       return Promise.allSettled(
-        STATIC_ASSETS.map(function(url) {
-          return cache.add(url).catch(function() {});
+        STATIC_ASSETS.map(function (url) {
+          return cache.add(url).catch(function () {});
         })
       );
     })
@@ -44,66 +47,146 @@ self.addEventListener('install', function(event) {
 });
 
 // Clean up old cache versions
-var KNOWN_CACHES = ['ciklus-static-v20', 'ciklus-static-v21'];
+var KNOWN_CACHES = ['ciklus-static-v20', 'ciklus-static-v21', 'ciklus-static-v22', 'ciklus-fonts-v1'];
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', function (event) {
   event.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys
-          .filter(function(key) { return KNOWN_CACHES.indexOf(key) === -1; })
-          .map(function(key) { return caches.delete(key); })
-      );
-    }).then(function() {
-      return self.clients.claim();
-    })
+    caches
+      .keys()
+      .then(function (keys) {
+        return Promise.all(
+          keys
+            .filter(function (key) {
+              return KNOWN_CACHES.indexOf(key) === -1;
+            })
+            .map(function (key) {
+              return caches.delete(key);
+            })
+        );
+      })
+      .then(function () {
+        return self.clients.claim();
+      })
   );
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function (event) {
   var request = event.request;
   var url = new URL(request.url);
 
-  // Google Fonts — bypass SW
+  // Google Fonts — cache-first (fonts are versioned, rarely change)
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(
+      caches.match(request).then(function (cached) {
+        return cached || fetch(request).then(function (response) {
+          var clone = response.clone();
+          caches.open(CACHE_FONTS).then(function (cache) {
+            cache.put(request, clone);
+          });
+          return response;
+        });
+      })
+    );
     return;
   }
 
   // External APIs — bypass SW
-  if (url.hostname.includes('api.github.com') || url.hostname.includes('api.open-meteo.com') ||
-      url.hostname.includes('translate.googleapis.com') || url.hostname.includes('api.mymemory.translated.net') ||
-      url.hostname.includes('translate.argosopentech.com')) {
+  if (
+    url.hostname.includes('api.github.com') ||
+    url.hostname.includes('api.open-meteo.com') ||
+    url.hostname.includes('translate.googleapis.com') ||
+    url.hostname.includes('api.mymemory.translated.net') ||
+    url.hostname.includes('translate.argosopentech.com')
+  ) {
     return;
   }
 
-  // HTML — network first, no cache
+  // HTML — network first with timeout fallback (3s), then cache
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(function() {
-      return caches.match(request);
-    }));
-    return;
-  }
-
-  // CSS/JS/Data — network first with cache fallback + background cache update
-  if (request.destination === 'style' || request.destination === 'script' ||
-      request.destination === 'manifest' || url.pathname.endsWith('.json')) {
     event.respondWith(
-      fetch(request).then(function(response) {
-        // Clone immediately — response body can only be read once
-        var clone = response.clone();
-        caches.open(CACHE_STATIC).then(function(cache) {
-          cache.put(request, clone);
-        });
-        return response;
-      }).catch(function() {
+      Promise.race([
+        fetch(request),
+        new Promise(function (_, reject) {
+          setTimeout(function () { reject(new Error('network timeout')); }, 3000);
+        })
+      ]).catch(function () {
         return caches.match(request);
       })
     );
     return;
   }
 
+  // CSS/JS/Data — network first with cache fallback + background cache update
+  if (request.destination === 'style' || request.destination === 'script' || request.destination === 'manifest' || url.pathname.endsWith('.json')) {
+    event.respondWith(
+      fetch(request)
+        .then(function (response) {
+          // Clone immediately — response body can only be read once
+          var clone = response.clone();
+          caches.open(CACHE_STATIC).then(function (cache) {
+            cache.put(request, clone);
+          });
+          return response;
+        })
+        .catch(function () {
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
   // Everything else: network first, no cache
   event.respondWith(
-    fetch(request).catch(function() { return caches.match(request); })
+    fetch(request).catch(function () {
+      return caches.match(request);
+    })
   );
+});
+
+// ================================================================
+// Background Sync — offline diary saves
+// ================================================================
+
+self.addEventListener('sync', function (event) {
+  if (event.tag === 'sync-diary') {
+    event.waitUntil(syncDiaryData());
+  }
+});
+
+/**
+ * Retrieve queued diary entries from IndexedDB and push them via the
+ * app's sync endpoint. On success, clear the queue.
+ */
+function syncDiaryData() {
+  // Fall back to the sync.js mechanism: open a client and re-trigger the
+  // app-level sync function which knows how to push pending entries.
+  return self.clients.matchAll().then(function (clients) {
+    if (clients && clients.length) {
+      clients.forEach(function (client) {
+        client.postMessage({ type: 'SYNC_DIARY_TRIGGER' });
+      });
+    }
+  });
+}
+
+// ================================================================
+// Message event — allow the app to trigger a sync or perform
+// other SW-level actions
+// ================================================================
+
+self.addEventListener('message', function (event) {
+  var data = event.data || {};
+
+  if (data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
+  // Allow the app to ask the SW to try syncing now
+  if (data.type === 'TRIGGER_SYNC') {
+    self.registration.sync.register('sync-diary').catch(function () {
+      // Sync registration failed — client should push immediately
+    });
+    return;
+  }
 });

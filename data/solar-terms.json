@@ -1,0 +1,29 @@
+{
+  "solarTerms": [
+    { "date": "2026-01-05", "name": { "zh-CN": "小寒", "sr": "Mali hlad", "en": "Minor Cold" } },
+    { "date": "2026-01-20", "name": { "zh-CN": "大寒", "sr": "Veliki hlad", "en": "Major Cold" } },
+    { "date": "2026-02-04", "name": { "zh-CN": "立春", "sr": "Početak proleća", "en": "Start of Spring" } },
+    { "date": "2026-02-19", "name": { "zh-CN": "雨水", "sr": "Kiše", "en": "Rain Water" } },
+    { "date": "2026-03-05", "name": { "zh-CN": "惊蛰", "sr": "Buđenje insekata", "en": "Awakening of Insects" } },
+    { "date": "2026-03-20", "name": { "zh-CN": "春分", "sr": "Prolećna ravnodnevica", "en": "Spring Equinox" } },
+    { "date": "2026-04-05", "name": { "zh-CN": "清明", "sr": "Vedro i svetlo", "en": "Clear and Bright" } },
+    { "date": "2026-04-20", "name": { "zh-CN": "谷雨", "sr": "Kiša za žito", "en": "Grain Rain" } },
+    { "date": "2026-05-05", "name": { "zh-CN": "立夏", "sr": "Početak leta", "en": "Start of Summer" } },
+    { "date": "2026-05-21", "name": { "zh-CN": "小满", "sr": "Punoća klasja", "en": "Grain Buds" } },
+    { "date": "2026-06-05", "name": { "zh-CN": "芒种", "sr": "Žetva i setva", "en": "Grain in Ear" } },
+    { "date": "2026-06-21", "name": { "zh-CN": "夏至", "sr": "Letnja dugodnevica", "en": "Summer Solstice" } },
+    { "date": "2026-07-07", "name": { "zh-CN": "小暑", "sr": "Mala vrućina", "en": "Minor Heat" } },
+    { "date": "2026-07-23", "name": { "zh-CN": "大暑", "sr": "Velika vrućina", "en": "Major Heat" } },
+    { "date": "2026-08-07", "name": { "zh-CN": "立秋", "sr": "Početak jeseni", "en": "Start of Autumn" } },
+    { "date": "2026-08-23", "name": { "zh-CN": "处暑", "sr": "Prestanak vrućine", "en": "End of Heat" } },
+    { "date": "2026-09-07", "name": { "zh-CN": "白露", "sr": "Bela rosa", "en": "White Dew" } },
+    { "date": "2026-09-23", "name": { "zh-CN": "秋分", "sr": "Jesenja ravnodnevica", "en": "Autumn Equinox" } },
+    { "date": "2026-10-08", "name": { "zh-CN": "寒露", "sr": "Hladna rosa", "en": "Cold Dew" } },
+    { "date": "2026-10-23", "name": { "zh-CN": "霜降", "sr": "Pad mraza", "en": "Frost Descent" } },
+    { "date": "2026-11-07", "name": { "zh-CN": "立冬", "sr": "Početak zime", "en": "Start of Winter" } },
+    { "date": "2026-11-22", "name": { "zh-CN": "小雪", "sr": "Mali sneg", "en": "Minor Snow" } },
+    { "date": "2026-12-07", "name": { "zh-CN": "大雪", "sr": "Veliki sneg", "en": "Major Snow" } },
+    { "date": "2026-12-22", "name": { "zh-CN": "冬至", "sr": "Zimska kratkodnevica", "en": "Winter Solstice" } }
+  ],
+  "version": "v1"
+}

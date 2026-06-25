@@ -10,26 +10,48 @@
 - localStorage + GitHub API 跨设备同步
 - PWA (Service Worker + manifest)
 
-## 文件结构 (v7)
+## 文件结构 (v7.2)
 ```
 index.html              ← HTML 结构 (~524 行)
-styles.css              ← CSS (~920 行, Design Tokens + 动画 + 组件)
-app.js                  ← JS (~3250 行, 主应用逻辑)
+app.js                  ← JS (~2000 行, 主应用逻辑, v7.2精简)
+styles.css              ← CSS 入口文件 (imports all css/*.css)
+├── css/tokens.css      ← Design Tokens (亮色/暗色CSS变量)
+├── css/base.css        ← 基础样式、重置、版式
+├── css/components.css  ← 组件样式：按钮、弹窗、表单、卡片
+├── css/calendar.css    ← 日历网格、进度条、月份导航
+├── css/diary.css       ← 日记编辑器、时间线、订阅源
+├── css/animations.css  ← 所有 @keyframes 动画
+├── css/learning.css    ← 学习模块样式
+└── css/responsive.css  ← 响应式断点适配
 js/i18n.js              ← 三语翻译 + Love Notes
 js/auth.js              ← 双人账号认证 & 登录系统
 js/weather.js           ← 北京↔贝尔格莱德双城天气模块
+js/social.js            ← 社交媒体模块 (Instagram/TikTok集成)
+js/calendar.js          ← 日历渲染模块 (IIFE, 日历网格/进度/FAB/月份导航)
+js/barry.js             ← Barry专属模块 (程序员礼物/文化档案)
+js/culture-cards.js     ← 中国文化知识卡片模块 (IIFE)
 js/sync.js              ← GitHub API 跨设备同步引擎
-calendar-data.json      ← 节日/节气文化数据 (19节日 + 24节气)
 manifest.json           ← PWA manifest
-sw.js                   ← Service Worker 离线缓存
-data/culture.json       ← 中国文化知识卡片
+sw.js                   ← Service Worker 离线缓存 (含Background Sync)
+data/holidays.json      ← 50+ 节日数据 (中国+塞尔维亚+国际)
+data/solar-terms.json   ← 24 节气三语数据
+data/culture-knowledge.json ← 中国文化知识卡片数据 (30张，含en)
 data/quotes.json        ← 名人名言
 data/lessons.json       ← 中文学习课程
+data/s-events.json      ← Solar term events
 libs/html2canvas.min.js ← 截图导出
 .eslintrc.json          ← ESLint 代码规范配置
 .prettierrc             ← Prettier 格式化配置
+package.json            ← 构建管道 (npm run build)
+build.js                ← 构建脚本 (打包/校验/缩)
+.github/workflows/test.yml   ← GitHub Actions CI 测试
+.github/workflows/deploy.yml ← GitHub Actions 自动部署
 LICENSE                 ← 开源许可证
 CONTRIBUTING.md         ← 贡献指南
+robots.txt              ← SEO
+sitemap.xml             ← SEO
+.htaccess               ← Apache 配置
+browserconfig.xml       ← Windows PWA 配置
 ```
 
 ## 功能模块
@@ -39,12 +61,27 @@ CONTRIBUTING.md         ← 贡献指南
 - 💌 共享日记（GitHub同步）/ 🤗 远程拥抱
 - 💭 每日对话开场白（v6新增）
 - 🌱 虚拟花园 / ☀️ 共同太阳计数器
+- 📱 社交媒体集成 (Instagram/TikTok) (v7新增)
+- 🎮 Barry专属模块 (程序员礼物+文化档案) (v7新增)
 
 ## 开发注意事项
 - 三语 i18n：sr / zh-CN / en
 - 双人账号：Anđela(PIN 1909) / Barry(PIN 0827)
-- 节日数据在 app.js HOLIDAYS 数组（36+ 条目）
-- 版本号分散在各文件，更新时需同步
+- 节日数据在 data/holidays.json (50+ 条目)
+- 版本号统一在 app.js 中 VERSION 常量
+- 构建指令: `npm run build` (合并+校验+缩)
+- CI: 每次 push 自动跑测试 + 部署 GitHub Pages
+
+## v7.2 更新 (2026-06-25)
+- 从 app.js 提取模块：js/calendar.js, js/social.js, js/barry.js, js/culture-cards.js
+- 内联数据外移至 data/holidays.json, data/solar-terms.json, data/culture-knowledge.json
+- CSS 拆分为 8 个模块文件在 css/ 目录
+- 新增构建管道 (package.json + build.js)
+- 新增 GitHub Actions CI (test.yml + deploy.yml)
+- 扩展测试覆盖至日历/天气/文化/同步模块
+- 增强 PWA: 注册 Background Sync API
+- 新增 SEO 文件 (robots.txt, sitemap.xml, .htaccess, browserconfig.xml)
+- app.js 从 ~3540 行精简至 ~2000 行
 
 ## v7 更新 (2026-06-25)
 - 从单一大 app.js 拆分出模块：js/auth.js、js/weather.js、js/sync.js

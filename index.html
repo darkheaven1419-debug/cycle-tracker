@@ -18,11 +18,19 @@
 <meta property="og:description" content="Personal cycle tracker & cross-cultural love diary — Beijing ↔ Kikinda">
 <meta property="og:type" content="website">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Anđelin Ciklus">
 <link rel="manifest" href="manifest.json">
+<style>
+  /* Hide apps-loader when launched in standalone/display-mode standalone */
+  @media all and (display-mode: standalone) {
+    .pwa-banner { display: none !important; }
+  }
+</style>
 <meta name="theme-color" content="#ede0da" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#19161A" media="(prefers-color-scheme: dark)">
-<title>🌸 Anđelin Ciklus v8</title>
+<title>🌸 Anđelin Ciklus v7.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap">
@@ -44,6 +52,10 @@
 	<script src="js/auth.js?v=2" defer></script>
 	<script src="js/weather.js?v=1" defer></script>
 	<script src="js/sync.js?v=1" defer></script>
+	<script src="js/social.js?v=1" defer></script>
+	<script src="js/culture-cards.js?v=1" defer></script>
+	<script src="js/calendar.js?v=1" defer></script>
+	<script src="js/barry.js?v=1" defer></script>
 </head>
 <body>
 
