@@ -514,7 +514,7 @@ var BarryModule = (function () {
           lateMsg =
             '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">He slept at ' +
             s.time +
-            '! That's WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You're the only one who can make him sleep earlier. Tell him tonight — \"Barry, please go to bed before 1:30 AM. For me. 💗\"</div></div>";
+            "! That's WAY too late!</div><div style=\"font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5\">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You're the only one who can make him sleep earlier. Tell him tonight — \"Barry, please go to bed before 1:30 AM. For me. 💗\"</div></div>";
         } else {
           lateMsg =
             '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">他 ' +
