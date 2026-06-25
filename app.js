@@ -1,4 +1,4 @@
-﻿
+
 "use strict";
 
 /* ================================================================
@@ -8,6 +8,57 @@ var SYMPTOM_TYPES = ['cramps','mood','flow','headache','fatigue','cravings'];
 var SYMPTOM_EMOJIS = {cramps:'🔴',mood:'😤',flow:'💧',headache:'🤕',fatigue:'😴',cravings:'🍫'};
 var MOOD_EMOJIS = ['😊','🥰','😤','😴','😢','🤩','😰','😐'];
 var MOOD_KEYS = ['happy','loved','frustrated','tired','sad','excited','anxious','meh'];
+
+/* ================================================================
+   SAFE UTILITIES — error-safe wrappers for common operations
+   ================================================================ */
+// Safe JSON.parse — returns default on failure, never throws
+function safeParse(text, defaultVal) {
+  if (text == null) return defaultVal;
+  try { return JSON.parse(text); } catch(e) { return defaultVal; }
+}
+// Safe localStorage.getItem — returns default on failure
+function safeGetItem(key, defaultVal) {
+  try { var v = localStorage.getItem(key); return v != null ? v : defaultVal; } catch(e) { return defaultVal; }
+}
+// Safe localStorage.setItem
+function safeSetItem(key, val) { try { localStorage.setItem(key, val); } catch(e) { console.warn('[storage] Failed to write:', key, e.message); } }
+// Safe localStorage.removeItem
+function safeRemoveItem(key) { try { localStorage.removeItem(key); } catch(e) { console.warn('[storage] Failed to remove:', key, e.message); } }
+
+/* ================================================================
+   DOM CACHE — reduces repeated document.getElementById calls
+   ================================================================ */
+var _elCache = {};
+function $(id) {
+  if (!_elCache[id]) { var el = document.getElementById(id); if (el) _elCache[id] = el; }
+  return _elCache[id] || null;
+}
+function clearElCache() { _elCache = {}; }
+
+// Generic debounce utility — returns a debounced version of fn
+function debounce(fn, delay) {
+  var timer = null;
+  return function() {
+    var args = arguments, ctx = this;
+    clearTimeout(timer);
+    timer = setTimeout(function() { fn.apply(ctx, args); }, delay);
+  };
+}
+// On DOM mutations that add/remove elements, clear cache
+var _origRenderAll = null;
+
+/* ================================================================
+   GLOBAL ERROR BOUNDARY — logs uncaught errors without crashing UI
+   ================================================================ */
+window.addEventListener('error', function(e) {
+  console.warn('[global] Uncaught error:', e.message, e.filename + ':' + e.lineno);
+  // Don't show toast for every error — just log
+});
+window.addEventListener('unhandledrejection', function(e) {
+  console.warn('[global] Unhandled promise rejection:', e.reason);
+});
+
 
 /* ================================================================
    PROFILE SYSTEM
@@ -84,12 +135,12 @@ function loadState() {
   try {
     const raw = localStorage.getItem(key);
     if (raw) { const d = JSON.parse(raw); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:d.moods||{}, diaries:d.diaries||{}, periodEnds:d.periodEnds||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
-  } catch(e) {}
+  } catch(e) { console.warn('[state] Failed to load state:', e.message); }
   // Try old key
   try {
     const old = localStorage.getItem('cycle-data-v5');
     if (old && activeProfile === 'andjela') { const d=JSON.parse(old); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
-  } catch(e) {}
+  } catch(e) { console.warn('[state] Failed to migrate old state:', e.message); }
   return { records:activeProfile==='andjela'?[new Date(2026,4,28)]:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
 }
 // Debounced saveState — prevents excessive localStorage writes during rapid clicks
@@ -282,10 +333,13 @@ const DATE_STRIP_DAYS = 14; // show 14 days in date strip
 
 function getGitHubToken() { return sessionStorage.getItem('gh-token') || ''; }
 
+var _sdCache = null;
 function loadSharedDiaryData() {
-  try { return JSON.parse(localStorage.getItem(SD_KEY)) || {}; } catch(e) { return {}; }
+  if (_sdCache) return _sdCache;
+  try { _sdCache = JSON.parse(localStorage.getItem(SD_KEY)) || {}; return _sdCache; } catch(e) { return {}; }
 }
-function saveSharedDiaryData(data) { localStorage.setItem(SD_KEY, JSON.stringify(data)); }
+function saveSharedDiaryData(data) { _sdCache = data; localStorage.setItem(SD_KEY, JSON.stringify(data)); }
+function invalidateSDCache() { _sdCache = null; } // Call when pull from GitHub returns new data
 
 // Fetch shared diary from GitHub
 async function fetchSharedDiaryFromGitHub() {
@@ -463,7 +517,7 @@ function showImportModal() {
   // Auto-paste from clipboard
   if (navigator.clipboard && navigator.clipboard.readText) {
     navigator.clipboard.readText().then(function(t) {
-      try { JSON.parse(t); document.getElementById('importTextarea').value = t; } catch(e) {}
+      try { JSON.parse(t); document.getElementById('importTextarea').value = t; } catch(e) { console.warn('[import] Clipboard content is not valid JSON'); }
     }).catch(function() {});
   }
   document.getElementById('importTextarea').focus();
@@ -611,6 +665,41 @@ function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translate
 // ==============================
 // TIMELINE HISTORY
 // ==============================
+// Extract shared diary items from allData (used by both normal and expanded views)
+function _collectDiaryItems(allData) {
+  var items = [];
+  Object.keys(allData).forEach(function(date) {
+    var day = allData[date];
+    if (day['barry'] || day['andjela']) items.push({date:date, barry:day['barry'], andjela:day['andjela']});
+  });
+  items.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  return items;
+}
+
+// Build a single timeline entry HTML (shared between normal and expanded views)
+function _buildTimelineEntry(item) {
+  var both = item.barry && item.andjela;
+  var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
+  var authors = [];
+  if (item.andjela) authors.push('🌸 Anđela');
+  if (item.barry) authors.push('👦 Barry');
+  var myEntry = item[activeProfile];
+  var preview = myEntry ? (myEntry.happy || myEntry.thanks || myEntry.uncomf || myEntry.wish || '') : '';
+  var locked = !myEntry && (item['barry'] || item['andjela']);
+  var previewHtml = '';
+  if (locked) {
+    previewHtml = '<span class="tn-locked">🔒 ' + (lang==='sr'?'Zaključano':lang==='en'?'Locked':'已锁定') + '</span>';
+  } else if (preview) {
+    preview = esc(preview.substring(0, 80));
+    previewHtml = preview + (preview.length >= 80 ? '...' : '');
+  }
+  return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
+    + '<div class="tn-date">📅 ' + item.date + '</div>'
+    + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
+    + '<div class="tn-preview">' + previewHtml + '</div>'
+    + '</div>';
+}
+
 function renderSharedDiaryHistory(allData) {
   var items = [];
   Object.keys(allData).forEach(function(date) {
@@ -630,31 +719,7 @@ function renderSharedDiaryHistory(allData) {
   var hasMore = items.length > showCount;
 
   function buildTimeline(list) {
-    return list.map(function(item) {
-      var both = item.barry && item.andjela;
-      var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
-      var authors = [];
-      if (item.andjela) { authors.push('🌸 Anđela'); }
-      if (item.barry) { authors.push('👦 Barry'); }
-      // PREVIEW: only use current user's OWN content — never leak partner's
-      // diary for dates where the user hasn't written their own entry.
-      // Invariant: each day's view permission is tied to that specific day.
-      var myEntry = item[activeProfile];
-      var preview = myEntry ? (myEntry.happy || myEntry.thanks || myEntry.uncomf || myEntry.wish || '') : '';
-      var locked = !myEntry && (item['barry'] || item['andjela']);
-      var previewHtml = '';
-      if (locked) {
-        previewHtml = '<span class="tn-locked">🔒 ' + (lang==='sr'?'Zaključano':lang==='en'?'Locked':'已锁定') + '</span>';
-      } else if (preview) {
-        preview = esc(preview.substring(0, 80));
-        previewHtml = preview + (preview.length >= 80 ? '...' : '');
-      }
-      return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
-        + '<div class="tn-date">📅 ' + item.date + '</div>'
-        + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
-        + '<div class="tn-preview">' + previewHtml + '</div>'
-        + '</div>';
-    }).join('');
+    return list.map(_buildTimelineEntry).join('');
   }
 
   hist.innerHTML = '<div class="timeline-inner">' + buildTimeline(items.slice(0, showCount)) + '</div>'
@@ -671,40 +736,12 @@ function jumpToDiaryDate(dateKey) {
   if (panel) panel.scrollIntoView({ behavior:'smooth' });
 }
 
-window._allTimelineItems = null;
 function expandTimeline() {
   var allData = loadSharedDiaryData();
-  var items = [];
-  Object.keys(allData).forEach(function(date) {
-    var day = allData[date];
-    if (day['barry'] || day['andjela']) items.push({date:date, barry:day['barry'], andjela:day['andjela']});
-  });
-  items.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  var items = _collectDiaryItems(allData);
   var hist = document.getElementById('sharedDiaryHistory'); if (!hist) return;
   hist.innerHTML = '<div class="timeline-inner">'
-    + items.map(function(item) {
-      var both = item.barry && item.andjela;
-      var dotClass = both ? 'dot-both' : (item[activeProfile] ? 'dot-mine' : 'dot-partner');
-      var authors = [];
-      if (item.andjela) { authors.push('🌸 Anđela'); }
-      if (item.barry) { authors.push('👦 Barry'); }
-      // PREVIEW: only use current user's OWN content — never leak partner's
-      var myEntry = item[activeProfile];
-      var preview = myEntry ? (myEntry.happy || myEntry.thanks || myEntry.uncomf || myEntry.wish || '') : '';
-      var locked = !myEntry && (item['barry'] || item['andjela']);
-      var previewHtml = '';
-      if (locked) {
-        previewHtml = '<span class="tn-locked">🔒 ' + (lang==='sr'?'Zaključano':lang==='en'?'Locked':'已锁定') + '</span>';
-      } else if (preview) {
-        preview = esc(preview.substring(0, 80));
-        previewHtml = preview + (preview.length >= 80 ? '...' : '');
-      }
-      return '<div class="timeline-node ' + dotClass + '" onclick="jumpToDiaryDate(\'' + item.date + '\')">'
-        + '<div class="tn-date">📅 ' + item.date + '</div>'
-        + '<div class="tn-authors">' + authors.join(' · ') + '</div>'
-        + '<div class="tn-preview">' + previewHtml + '</div>'
-        + '</div>';
-    }).join('')
+    + items.map(_buildTimelineEntry).join('')
     + '</div>';
 }
 
@@ -737,7 +774,7 @@ async function translateText(text, from, to) {
       var t = d1[0].map(function(s){return s[0];}).join('');
       if (t && t !== text) result = t;
     }
-  } catch(e) {}
+  } catch(e) { console.warn('[translate] Google API failed:', e.message); }
 
   // 2) MyMemory (free, no key needed, good fallback)
   if (!result) {
@@ -748,7 +785,7 @@ async function translateText(text, from, to) {
       if (d2.responseData && d2.responseData.translatedText && d2.responseData.translatedText !== text) {
         result = d2.responseData.translatedText;
       }
-    } catch(e) {}
+    } catch(e) { console.warn('[translate] MyMemory failed:', e.message); }
   }
 
   // 3) LibreTranslate (public instance, free/open-source, good for European langs)
@@ -761,7 +798,7 @@ async function translateText(text, from, to) {
       });
       var d3 = await r3.json();
       if (d3.translatedText && d3.translatedText !== text) result = d3.translatedText;
-    } catch(e) {}
+    } catch(e) { console.warn('[translate] LibreTranslate failed:', e.message); }
   }
 
   if (result) { _transCacheSet(cacheKey, result); return result; }
@@ -2012,15 +2049,8 @@ function isAnniversary(d) {
 /* ================================================================
    DATA — migrated to profile-aware storage above
    ================================================================ */
-// Storage key and state are now defined in the Profile System section above
-// fmtDate and utility functions below remain unchanged
-
-const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-const addDays = (d,n) => { const r=new Date(d); r.setDate(r.getDate()+n); return r; };
-const daysDiff = (a,b) => Math.round((b.getTime()-a.getTime())/86400000);
-const d0 = d => { const r=new Date(d); r.setHours(0,0,0,0); return r; };
-const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
+// Date utilities (fmtDate, sameDay, addDays, daysDiff, d0, today)
+// are now defined in js/cycle-core.js — loaded before app.js
 
 /* ================================================================
    WEATHER — Beijing ↔ Kikinda
@@ -2039,9 +2069,9 @@ function weatherIcon(code) {
 function fetchWeather() {
   var cached=localStorage.getItem('cycle-weather');
   // Always show cached weather first (even if old — better than nothing)
-  if(cached){try{var d=JSON.parse(cached);renderWeather(d);}catch(e){}}
+  if(cached){try{var d=JSON.parse(cached);renderWeather(d);}catch(e){console.warn('[weather] Bad cached data')}}
   // Refresh in background (6h cache)
-  if(cached){try{var d2=JSON.parse(cached);if(Date.now()-d2.t<21600000)return;}catch(e){}}
+  if(cached){try{var d2=JSON.parse(cached);if(Date.now()-d2.t<21600000)return;}catch(e){console.warn('[weather] Bad cache')}}
   var controller=new AbortController();var timeout=setTimeout(function(){controller.abort();},8000);
   try {
     var bj=fetch('https://api.open-meteo.com/v1/forecast?latitude=39.92&longitude=116.44&current=temperature_2m,relative_humidity_2m,weather_code&daily=sunrise,sunset&timezone=Asia/Shanghai',{signal:controller.signal}).then(function(r){return r.json()}).catch(function(){return null;});
@@ -2303,43 +2333,9 @@ function updateCycleCounter(n) {
 /* ================================================================
    PREDICTION
    ================================================================ */
-function predict() {
-  const {records,settings}=state; const sorted=[...records].sort((a,b)=>a-b);
-  // Auto-calculate period length from actual data
-  var periodEnds=state.periodEnds||{};
-  var periodLengths=[];
-  for(var i=0;i<sorted.length;i++){
-    var key=fmtDate(sorted[i]);
-    if(periodEnds[key])periodLengths.push(daysDiff(d0(sorted[i]),d0(new Date(periodEnds[key]+'T00:00:00')))+1);
-  }
-  var avgPeriodLen=periodLengths.length>0?Math.round(periodLengths.reduce(function(a,b){return a+b;},0)/periodLengths.length):settings.periodLength;
-  var def={lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:settings.cycleLength,periodLen:avgPeriodLen,avgCycle:settings.cycleLength,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
-  if(sorted.length===0) return def;
-  def.lastStart=d0(sorted[sorted.length-1]);
-  if(sorted.length===1){def.nextStart=addDays(def.lastStart,settings.cycleLength);}
-  else{for(let i=1;i<sorted.length;i++) def.cycles.push(daysDiff(d0(sorted[i-1]),d0(sorted[i])));const recent=def.cycles.slice(-6);if(recent.length>0){def.avgCycle=Math.round(recent.reduce((a,b)=>a+b,0)/recent.length);def.minCycle=Math.min(...recent);def.maxCycle=Math.max(...recent);const variance=recent.reduce((s,c)=>s+(c-def.avgCycle)**2,0)/recent.length;def.stdDev=Math.round(Math.sqrt(variance)*10)/10;if(def.stdDev<=3)def.confidence='high';else if(def.stdDev<=6)def.confidence='medium';else def.confidence='low';}def.nextStart=addDays(def.lastStart,def.avgCycle);}
-  const td=today();if(def.nextStart&&td>def.nextStart){const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;const elapsed=daysDiff(def.lastStart,td);const passed=Math.floor(elapsed/useLen);if(passed>=1){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}def.isOverdue=(td>def.nextStart);if(def.isOverdue)def.overdueDays=daysDiff(def.nextStart,td);}
-  if(def.nextStart){def.ovulation=addDays(def.nextStart,-14);def.fertileStart=addDays(def.ovulation,-3);def.fertileEnd=addDays(def.ovulation,2);const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;for(let i=1;i<=2;i++){const np=addDays(def.nextStart,useLen*i);def.futurePeriods.push({start:np,ovulation:addDays(np,-14),fertileStart:addDays(np,-17),fertileEnd:addDays(np,-11)});}}
-  return def;
-}
+// predict(), getPeriodEndDate(), getPhase() defined in js/cycle-core.js
 
-function getPeriodEndDate(startDate){
-  // Return the actual end date for a period start, or null if not ended yet
-  var key=fmtDate(startDate);
-  if(state.periodEnds&&state.periodEnds[key])return new Date(state.periodEnds[key]+'T00:00:00');
-  return null;
-}
-function getPhase(date,pred){
-  const d=d0(date);
-  for(const rec of state.records){const s=d0(rec);var e=getPeriodEndDate(rec)||addDays(s,pred.periodLen-1);e.setHours(0,0,0,0);if(d>=s&&d<=e) return sameDay(d,s)?'period-on':'period-mid';}
-  if(pred.nextStart){const ps=d0(pred.nextStart),pe=addDays(ps,pred.periodLen-1);pe.setHours(0,0,0,0);if(d>=ps&&d<=pe) return sameDay(d,ps)?'period-pred-first':'period-pred';}
-  for(const fp of pred.futurePeriods){const ps=d0(fp.start),pe=addDays(ps,pred.periodLen-1);pe.setHours(0,0,0,0);if(d>=ps&&d<=pe) return sameDay(d,ps)?'period-future-first':'period-future';}
-  if(pred.ovulation&&sameDay(d,pred.ovulation)) return 'ovulation';
-  if(pred.fertileStart&&pred.fertileEnd){const fs=d0(pred.fertileStart),fe=d0(pred.fertileEnd);if(d>=fs&&d<=fe) return 'fertile';}
-  if(pred.fertileEnd&&pred.nextStart){const fe=d0(pred.fertileEnd),np=d0(pred.nextStart);if(d>fe&&d<np) return 'luteal';}
-  if(pred.lastStart&&pred.fertileStart){const lpEnd=addDays(pred.lastStart,pred.periodLen);lpEnd.setHours(0,0,0,0);const fs=d0(pred.fertileStart);if(d>=lpEnd&&d<fs) return 'follicular';}
-  return null;
-}
+  /* predict(), getPeriodEndDate(), getPhase() defined in js/cycle-core.js */
 
 /* ChartRenderer extracted to js/chart-renderer.js — loaded via <script> in index.html */
 
@@ -2871,15 +2867,7 @@ function togglePeriodRecord(){if(!selectedDate)return;var sd=fmtDate(selectedDat
   }
   saveState();renderAll();updateFab();openModal(selectedDate,predict());
 }
-function getOpenPeriodStart(){
-  // Return the most recent period start that has no end date
-  if(!state.periodEnds)return null;
-  for(var i=state.records.length-1;i>=0;i--){
-    var key=fmtDate(state.records[i]);
-    if(!state.periodEnds[key])return state.records[i];
-  }
-  return null;
-}
+// getOpenPeriodStart() defined in js/cycle-core.js
 function removePeriodRecord(){if(!selectedDate)return;state.records=state.records.filter(r=>!sameDay(r,selectedDate));state.periodEnds=state.periodEnds||{};delete state.periodEnds[fmtDate(selectedDate)];saveState();toast(t('toast.unmarked'));renderAll();updateFab();closeModal();}
 function quickToggleSymptom(name){if(!selectedDate)return;const key=fmtDate(selectedDate);if(!state.symptoms[key])state.symptoms[key]={};const s=state.symptoms[key];s[name]=s[name]?0:2;if(s[name]===0)delete s[name];document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{if(chip.dataset.s===name)chip.classList.toggle('on',s[name]>0);});saveState();toast(t('toast.symptomQuick'));}
 
@@ -3962,6 +3950,7 @@ async function pullAllSharedData() {
     // Only apply if remote data is newer than our last sync timestamp
     var lastSync = parseInt(localStorage.getItem('shared-last-sync') || '0');
     if (content.updated && content.updated <= lastSync) return;
+    invalidateSDCache(); // Force reload on next read
     applySharedState(content);
     localStorage.setItem('shared-last-sync', Date.now());
     // Refresh all shared UI — not just diary panel

@@ -40,6 +40,7 @@
 	<script src="js/chinese-quiz.js?v=4" defer></script>
 	<script src="js/chinese-panels.js?v=4" defer></script>
 	<script src="js/chinese-listen.js?v=5" defer></script>
+	<script src="js/cycle-core.js?v=1" defer></script>
 </head>
 <body>
 
@@ -115,7 +116,7 @@
         <span class="pf-avatar" id="pfAvatar">🌸</span>
         <span class="pf-name" id="pfName">Anđela</span>
       </div>
-      <div class="moon-phase" id="moonPhase" title="月相"></div>
+      <div class="moon-phase" id="moonPhase" role="img" aria-label="Moon phase" title="月相"></div>
       <button class="theme-btn" id="themeBtn" title="Theme">🌙</button>
       <div class="lang-switch" id="langSwitch" role="radiogroup" aria-label="Language selection">
         <button class="lang-btn" data-lang="zh-CN" aria-label="中文">中</button>
@@ -136,7 +137,7 @@
   </div>
 
   <!-- Weather -->
-  <div class="card" id="weatherCard" style="display:none;padding:14px 16px;margin-bottom:12px;text-align:center">
+  <div class="card" id="weatherCard" style="display:none;padding:14px 16px;margin-bottom:12px;text-align:center" aria-live="polite" aria-atomic="true">
     <!-- Time Row -->
     <div class="weather-times" id="weatherTimes" style="display:flex;justify-content:space-around;font-size:.58rem;color:var(--text-muted);margin-bottom:10px;gap:8px">
       <span>🕐 <span id="timeBj">--:--</span></span>
@@ -292,8 +293,8 @@
       <div id="birthday-content" style="text-align:center;line-height:2"></div>
     </div>
     <!-- Daily Love Note -->
-    <div class="love-note-card" id="loveNoteCard">
-      <span class="love-note-icon" id="loveNoteIcon">💌</span>
+    <div class="love-note-card" id="loveNoteCard" aria-live="polite">
+      <span class="love-note-icon" id="loveNoteIcon" role="img" aria-label="Love note">💌</span>
       <div class="love-note-text" id="loveNoteText"></div>
       <div class="love-note-signature" id="loveNoteSig"></div>
     </div>

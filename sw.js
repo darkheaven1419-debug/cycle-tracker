@@ -16,6 +16,7 @@ var STATIC_ASSETS = [
   './js/chinese-quiz.js',
   './js/chinese-panels.js',
   './js/chinese-listen.js',
+  './js/cycle-core.js',
 
   './calendar-data.json',
   './data/quotes.json',
