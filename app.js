@@ -1468,7 +1468,7 @@ function renderStatsPanel() {
     var pe2 = {'period-on':'🩸','period-mid':'🩸','ovulation':'🥚','fertile':'🌱','luteal':'🌙','follicular':'🌿'};
     var phaseName = t('phaseBadges')[phase] || '--';
     var phIcon = pe2[phase] || '📊';
-    var rl = lang==='sr'?{high:'Visoka',medium:'Srednija',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
+    var rl = lang==='sr'?{high:'Visoka',medium:'Srednja',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
     var regLabel = clen >= 2 ? rl[pred.confidence] : '--';
     var rc = {high:'var(--sage)',medium:'var(--gold)',low:'var(--rose)'};
     var regColor = rc[pred.confidence] || 'var(--text-muted)';
@@ -1583,7 +1583,7 @@ function renderStatsPanel() {
   if (ph2 && pred.nextStart) {
     ph2.style.display = '';
     var daysUntil = daysDiff(td, pred.nextStart);
-    var rl2 = lang==='sr'?{high:'Visoka',medium:'Srednija',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
+    var rl2 = lang==='sr'?{high:'Visoka',medium:'Srednja',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
     document.getElementById('predMainNext').textContent = daysUntil >= 0
       ? (lang==='sr'?'Još '+daysUntil+' dana':lang==='en'?daysUntil+' days until':'距下次 '+daysUntil+' 天')
       : (lang==='sr'?'Kasni '+Math.abs(daysUntil)+' dana':lang==='en'?Math.abs(daysUntil)+' days late':'已推迟 '+Math.abs(daysUntil)+' 天');
@@ -2025,7 +2025,7 @@ const today = () => { const tt=new Date(); tt.setHours(0,0,0,0); return tt; };
 /* ================================================================
    WEATHER — Beijing ↔ Kikinda
    ================================================================ */
-var DAILY_LOVE_MESSAGES=[{zh:'不管多远，我的心和你在一起。',sr:'Bez obzira na udaljenost, moje srce je s tobom.'},{zh:'7000公里，但思念没有距离。',sr:'7.000 kilometara, ali čežnja nema udaljenost.'},{zh:'你是我早上醒来的第一个念头。',sr:'Ti si moja prva misao kad se probudim.'},{zh:'同一个太阳，同一份爱。',sr:'Jedno sunce, jedna ljubav.'},{zh:'每次抬头看天空，我知道你也在这片天空下。',sr:'Svaki put kad pogledam u nebo, znam da si i ti pod istim nebom.'},{zh:'从北京到贝尔格莱德，我的心跳只为你。',sr:'Od Pekinga do Beograda, moje srce kuca samo za tebe.'},{zh:'你是我跨越山海的理由。',sr:'Ti si razlog zbog kog prelazim planine i mora.'},{zh:'爱不是距离除以时间，爱是心与心的零距离。',sr:'Ljubav nije udaljenost podeljena vremenom, ljubav je nulta udaljenost izmedju srca.'},{zh:'有人问我想去哪里，我说：去有你的地方。',sr:'Pitaju me gde zelim da idem, ja kazem: tamo gde si ti.'},{zh:'世界上最美的距离，是你和我之间的距离。',sr:'Najlepsa udaljenost na svetu je ona izmedju tebe i mene.'},{zh:'今天也想你，比昨天多一点，比明天少一点。',sr:'I danas mislim na tebe, malo vise nego juce, malo manje nego sutra.'},{zh:'你是我此生最美的风景。',sr:'Ti si najlepsi prizor u mom zivotu.'}];
+var DAILY_LOVE_MESSAGES=[{zh:'不管多远，我的心和你在一起。',sr:'Bez obzira na udaljenost, moje srce je s tobom.'},{zh:'7000公里，但思念没有距离。',sr:'7.000 kilometara, ali čežnja nema udaljenost.'},{zh:'你是我早上醒来的第一个念头。',sr:'Ti si moja prva misao kad se probudim.'},{zh:'同一个太阳，同一份爱。',sr:'Jedno sunce, jedna ljubav.'},{zh:'每次抬头看天空，我知道你也在这片天空下。',sr:'Svaki put kad pogledam u nebo, znam da si i ti pod istim nebom.'},{zh:'从北京到贝尔格莱德，我的心跳只为你。',sr:'Od Pekinga do Beograda, moje srce kuca samo za tebe.'},{zh:'你是我跨越山海的理由。',sr:'Ti si razlog zbog kog prelazim planine i mora.'},{zh:'爱不是距离除以时间，爱是心与心的零距离。',sr:'Ljubav nije udaljenost podeljena vremenom, ljubav je nulta udaljenost između srca.'},{zh:'有人问我想去哪里，我说：去有你的地方。',sr:'Pitaju me gde želim da idem, ja kažem: tamo gde si ti.'},{zh:'世界上最美的距离，是你和我之间的距离。',sr:'Najlepša udaljenost na svetu je ona između tebe i mene.'},{zh:'今天也想你，比昨天多一点，比明天少一点。',sr:'I danas mislim na tebe, malo više nego juče, malo manje nego sutra.'},{zh:'你是我此生最美的风景。',sr:'Ti si najlepši prizor u mom životu.'}];
 function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES.length;return DAILY_LOVE_MESSAGES[idx];}
 function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
 function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+L('Već si kliknuo/la danas!','今天已经点过了！','Already clicked today!'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+L('Dan '+sc.count+' zajedničkog sunca!','共同仰望太阳的第'+sc.count+'天！','Day '+sc.count+' of shared sun!'));}
@@ -2697,7 +2697,7 @@ function updateStats(pred){
     requestAnimationFrame(step);
   }
   animNum(document.getElementById('st-count'), state.records.length, '');
-  var regL=lang==='sr'?{high:'Visoka',medium:'Srednija',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
+  var regL=lang==='sr'?{high:'Visoka',medium:'Srednja',low:'Niska'}:lang==='en'?{high:'High',medium:'Medium',low:'Low'}:{high:'高',medium:'中',low:'低'};
   if(state.records.length>=2){animNum(document.getElementById('st-avg'), pred.avgCycle, t('day'));var sr=document.getElementById('st-range');if(sr)sr.textContent=pred.minCycle+' / '+pred.maxCycle+t('day');var sreg=document.getElementById('st-regularity');if(sreg)sreg.innerHTML=regL[pred.confidence]+' <span class="cycle-badge '+({high:'high',medium:'medium',low:'low'})[pred.confidence]+'">±'+pred.stdDev+'</span>';}
   else{var hint=lang==='sr'?'(treba bar 2 ciklusa)':lang==='en'?'(needs 2+ cycles)':'(需2个周期以上)';var sa=document.getElementById('st-avg');if(sa)sa.textContent=hint;var sr2=document.getElementById('st-range');if(sr2)sr2.textContent=hint;var sreg2=document.getElementById('st-regularity');if(sreg2)sreg2.textContent=hint;}
   var sn=document.getElementById('st-next');if(sn)sn.textContent=pred.nextStart?fmtDate(pred.nextStart):'--';
