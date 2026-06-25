@@ -210,8 +210,8 @@ body {
 .progress-labels span.current { color:var(--text); font-weight:600; }
 .phase-badge { display:inline-block; padding:5px 14px; border-radius:14px; font-size:.7rem; font-weight:600; margin-top:10px; letter-spacing:.01em; }
 .phase-badge.period { background:var(--rose-light); color:var(--rose-dark); }
-.phase-badge.follicular { background:var(--sage-light); color:var(--sage-dark); }
-.phase-badge.ovulation, .phase-badge.fertile { background:var(--teal-light); color:var(--teal-dark); }
+.phase-badge.follicular { background:var(--sage-light); color:#3D6B55; }
+.phase-badge.ovulation, .phase-badge.fertile { background:var(--teal-light); color:#2D5F6E; }
 .phase-badge.luteal { background:var(--lavender-light); color:var(--lavender-dark); }
 .phase-badge.late { background:var(--warm-bg); color:var(--warm-text); }
 [data-theme="dark"] .phase-badge.late { background:#3D2000; color:#FFB74D; }
@@ -252,13 +252,13 @@ body {
 .day.period-future { background:var(--rose-mist); color:var(--rose-dark); opacity:.35; }
 .day.period-future-first { background:var(--love); color:#fff; font-weight:700; opacity:.25; border-radius:50%; }
 .day.ovulation { background:var(--teal); color:#fff; font-weight:700; border-radius:50%; box-shadow:0 0 0 4px rgba(94,155,170,.22); }
-.day.fertile { background:var(--teal-light); color:var(--teal-dark); }
+.day.fertile { background:var(--teal-light); color:#2D5F6E; }
 .day.luteal { background:var(--lavender-light); color:var(--lavender-dark); }
-.day.follicular { background:var(--sage-light); color:var(--sage-dark); }
+.day.follicular { background:var(--sage-light); color:#3D6B55; }
 /* Anniversary marker */
 .day.anniversary { box-shadow:inset 0 0 0 2px var(--gold); }
 .day.anniversary::after { content:'♥'; position:absolute; top:1px; right:2px; font-size:.45rem; color:var(--love); }
-.day.birthday { box-shadow:inset 0 0 0 2px var(--gold); background:linear-gradient(135deg,var(--rose-light),var(--gold-light)); }
+.day.birthday { box-shadow:inset 0 0 0 2px var(--gold); background:linear-gradient(135deg,var(--rose-light),#FFF8E7); }
 .day.birthday::after { content:'🎂'; position:absolute; top:0; right:1px; font-size:.48rem; }
 [data-theme="dark"] .day.birthday { background:linear-gradient(135deg,#2A1E22,#2A2218); }
 [data-theme="dark"] .day.fertile { background: #182822; color: var(--teal); }
@@ -328,7 +328,7 @@ body {
 .stat-row .val { font-weight:700; font-feature-settings:"tnum"; }
 
 .cycle-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:.66rem; font-weight:600; margin-left:4px; }
-.cycle-badge.high { background:var(--sage-light); color:var(--sage-dark); }
+.cycle-badge.high { background:var(--sage-light); color:#3D6B55; }
 .cycle-badge.medium { background:var(--warm-bg); color:var(--warm-text); }
 .cycle-badge.low { background:var(--rose-light); color:var(--rose-dark); }
 [data-theme="dark"] .cycle-badge.medium { background:#3D2000; color:#FFB74D; }

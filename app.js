@@ -518,7 +518,7 @@ function showImportModal() {
   if (navigator.clipboard && navigator.clipboard.readText) {
     navigator.clipboard.readText().then(function(t) {
       try { JSON.parse(t); document.getElementById('importTextarea').value = t; } catch(e) { console.warn('[import] Clipboard content is not valid JSON'); }
-    }).catch(function() {});
+    }).catch(function(e) { console.warn('[weather] Fetch failed'); });
   }
   document.getElementById('importTextarea').focus();
 }
@@ -1713,7 +1713,7 @@ async function bootApp() {
           state.symptoms = sd.symptoms || {};
           state.settings = sd.settings || { cycleLength: 28, periodLength: 7 };
         }
-      } catch(e) {}
+      } catch(e) { /* non-critical */ }
       if (activeProfile === 'barry') {
         renderCalendar();
         renderBarrySymptomView();
@@ -1782,7 +1782,7 @@ function t(key, fallback) {
   for (const k of keys) { if (val && val[k] !== undefined) val = val[k]; else return fallback || key; }
   return val;
 }
-function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { if(typeof renderChineseHome==='function')renderChineseHome(); } catch(e) {} renderLunarInfo(); renderSeasonalPoemCard(); }
+function switchLanguage(l) { setLang(l); applyAllUI(); loadSettingsUI(); document.getElementById('set-language').value=l; try { if(typeof renderChineseHome==='function')renderChineseHome(); } catch(e) { /* renderChineseHome may not exist */ } renderLunarInfo(); renderSeasonalPoemCard(); }
 
 /* ================================================================
    HOLIDAY DATA — China 🇨🇳 + Serbia 🇷🇸
@@ -1914,7 +1914,7 @@ function getSolarTerm(dateKey) {
   // Check cached rich data first (has stories from calendar-data.json)
   if (!solarTermsCache || solarTermsCache.length === 0) {
     var cached = localStorage.getItem('cycle-solarterms');
-    if (cached) { try { solarTermsCache = JSON.parse(cached); } catch(e) {} }
+    if (cached) { solarTermsCache = safeParse(cached, null); }
   }
   // Use rich cache if available
   if (solarTermsCache && solarTermsCache.length > 0) {
@@ -2057,7 +2057,7 @@ function isAnniversary(d) {
    ================================================================ */
 var DAILY_LOVE_MESSAGES=[{zh:'不管多远，我的心和你在一起。',sr:'Bez obzira na udaljenost, moje srce je s tobom.'},{zh:'7000公里，但思念没有距离。',sr:'7.000 kilometara, ali čežnja nema udaljenost.'},{zh:'你是我早上醒来的第一个念头。',sr:'Ti si moja prva misao kad se probudim.'},{zh:'同一个太阳，同一份爱。',sr:'Jedno sunce, jedna ljubav.'},{zh:'每次抬头看天空，我知道你也在这片天空下。',sr:'Svaki put kad pogledam u nebo, znam da si i ti pod istim nebom.'},{zh:'从北京到贝尔格莱德，我的心跳只为你。',sr:'Od Pekinga do Beograda, moje srce kuca samo za tebe.'},{zh:'你是我跨越山海的理由。',sr:'Ti si razlog zbog kog prelazim planine i mora.'},{zh:'爱不是距离除以时间，爱是心与心的零距离。',sr:'Ljubav nije udaljenost podeljena vremenom, ljubav je nulta udaljenost između srca.'},{zh:'有人问我想去哪里，我说：去有你的地方。',sr:'Pitaju me gde želim da idem, ja kažem: tamo gde si ti.'},{zh:'世界上最美的距离，是你和我之间的距离。',sr:'Najlepša udaljenost na svetu je ona između tebe i mene.'},{zh:'今天也想你，比昨天多一点，比明天少一点。',sr:'I danas mislim na tebe, malo više nego juče, malo manje nego sutra.'},{zh:'你是我此生最美的风景。',sr:'Ti si najlepši prizor u mom životu.'}];
 function getTodaysLoveMessage(){var idx=new Date().getDate()%DAILY_LOVE_MESSAGES.length;return DAILY_LOVE_MESSAGES[idx];}
-function getSunCounterData(){try{return JSON.parse(localStorage.getItem('shared-sun-counter')||'{}');}catch(e){return{};}}
+function getSunCounterData(){ return safeParse(localStorage.getItem('shared-sun-counter'), {}); }
 function clickSunCounter(){var sc=getSunCounterData();var today=new Date().toISOString().slice(0,10);if(sc.lastDate===today){toast('❤️ '+L('Već si kliknuo/la danas!','Already clicked today!','今天已经点过了！'));return;}sc.count=(sc.count||0)+1;sc.lastDate=today;localStorage.setItem('shared-sun-counter',JSON.stringify(sc));pushAllSharedData();renderSunCounter();toast('☀️ '+L('Dan '+sc.count+' zajedničkog sunca!','Day '+sc.count+' of shared sun!','共同仰望太阳的第'+sc.count+'天！'));}
 function renderSunCounter(){var el=document.getElementById('sunCounter');if(!el)return;var sc=getSunCounterData();var c=sc.count||0;if(c>0){el.innerHTML='☀️ '+L(c+' dan zajedničkog sunca ❤️','Day '+c+' of shared sun ❤️','共同仰望太阳的第 '+c+' 天 ❤️');}else{el.innerHTML='❤️ '+L('Klikni ovde da započneš brojanje','Click here to start counting','点击此处开始计数');}}
 function updateWeatherTimes(){var bjT=new Date().toLocaleString('sr-Latn',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false});var kiT=new Date().toLocaleString('sr-Latn',{timeZone:'Europe/Belgrade',hour:'2-digit',minute:'2-digit',hour12:false});var bjEl=document.getElementById('timeBj');if(bjEl)bjEl.textContent=bjT;var kiEl=document.getElementById('timeKi');if(kiEl)kiEl.textContent=kiT;var diffEl=document.getElementById('timeDiff');if(diffEl){var bjH=parseInt(bjT),kiH=parseInt(kiT);var diff=bjH-kiH;if(diff<0)diff+=24;diffEl.textContent=L('razlika ','time diff ','时差 ')+diff+'h';}}setInterval(updateWeatherTimes,60000);
@@ -2084,7 +2084,7 @@ function fetchWeather() {
       var w={bj:bjD,ki:kiD,t:Date.now()};
       localStorage.setItem('cycle-weather',JSON.stringify(w));renderWeather(w);
     }).catch(function(){});
-  } catch(e) {}
+  } catch(e) { console.warn('[weather] Forecast fetch failed'); }
 }
 function renderWeather(w) {
   var card=document.getElementById('weatherCard');
@@ -2167,7 +2167,7 @@ var calendarExtraData = null;
 function loadCalendarData(cb) {
   if (calendarExtraData) { cb(calendarExtraData); return; }
   var cached = localStorage.getItem('cycle-caldata');
-  if (cached) { try { calendarExtraData = JSON.parse(cached); cb(calendarExtraData); return; } catch(e) {} }
+  if (cached) { try { calendarExtraData = JSON.parse(cached); cb(calendarExtraData); return; } catch(e) { console.warn("[caldata] Bad cache"); } }
   fetch('calendar-data.json').then(function(r){return r.json()}).then(function(d){
     calendarExtraData = d; localStorage.setItem('cycle-caldata', JSON.stringify(d)); cb(d);
   }).catch(function(){});
@@ -2422,7 +2422,7 @@ function updateLangUI(){
 function ensureSolarTermData() {
   if (solarTermsCache && solarTermsCache.length > 0) return;
   var cached = localStorage.getItem('cycle-solarterms');
-  if (cached) { try { solarTermsCache = JSON.parse(cached); if (solarTermsCache.length > 0) return; } catch(e) {} }
+  if (cached) { try { solarTermsCache = JSON.parse(cached); if (solarTermsCache.length > 0) return; } catch(e) { console.warn("[solar] Bad cached data"); } }
   // Load from calendar-data.json
   fetch('calendar-data.json').then(function(r){return r.json()}).then(function(d){
     if (d && d.solarTerms) {
@@ -2492,7 +2492,7 @@ function applyAllUI(what) {
     renderTea();
   }
   if (all || what === 'weather' || (Array.isArray(what) && what.indexOf('weather') >= 0)) {
-    var wc = localStorage.getItem('cycle-weather'); if (wc) { try { renderWeather(JSON.parse(wc)); } catch (e) {} }
+    var wc = localStorage.getItem('cycle-weather'); if (wc) { try { renderWeather(JSON.parse(wc)); } catch (e) { console.warn('[weather] Bad cached render data'); } }
   }
   // Always refresh shared state and symptoms (lightweight, needed for cross-profile sync)
   if (all) { updateSharedCycleInfo(); updateSharedSymptoms(); }
@@ -2515,7 +2515,7 @@ function renderCalendar(){
   var plEl=document.getElementById('predLegend'); if(pred.futurePeriods.length>0){plEl.style.display='';plEl.textContent=lang==='sr'?'※ Prozirni datumi su predviđanja':lang==='en'?'※ Faded dates are future predictions':'※ 半透明标记为未来周期预测';} else plEl.style.display='none';
   // Build shared diary index for dot indicators
   var sharedDiaryIdx = {};
-  try { var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); Object.keys(sd).forEach(function(k){ if(sd[k]&&(sd[k].barry||sd[k].andjela)) sharedDiaryIdx[k]=true; }); } catch(e) {}
+  var sd = safeParse(localStorage.getItem('shared-diary'), {}); Object.keys(sd).forEach(function(k){ if(sd[k]&&(sd[k].barry||sd[k].andjela)) sharedDiaryIdx[k]=true; });
   for(let i=0;i<42;i++){
     // Insert week number at start of each row (every 7th position)
     var colPos = i + Math.floor(i / 7); // actual grid position including week columns
@@ -2880,16 +2880,16 @@ function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])st
 function getSharedCyclePhase() {
   // First try shared-cycle-info (old summary format: {phase, nextStart})
   var shared = null;
-  try { shared = JSON.parse(localStorage.getItem('shared-cycle-info')); } catch(e) {}
+  shared = safeParse(localStorage.getItem('shared-cycle-info'), null);
   if (shared && shared.phase) return shared;
   // Calculate phase from synced shared cycle data (new neutral key)
   var cycleData = null;
-  try { cycleData = JSON.parse(localStorage.getItem('shared-cycle-data')); } catch(e) {}
+  cycleData = safeParse(localStorage.getItem('shared-cycle-data'), null);
   if (!cycleData) {
-    try { cycleData = JSON.parse(localStorage.getItem('shared-andjela-cycle-data')); } catch(e) {}
+    cycleData = safeParse(localStorage.getItem('shared-andjela-cycle-data'), null);
   }
   if (!cycleData) {
-    try { cycleData = JSON.parse(localStorage.getItem('cycle-data-v6-andjela')); } catch(e) {}
+    cycleData = safeParse(localStorage.getItem('cycle-data-v6-andjela'), null);
   }
   if (!cycleData || !cycleData.records || cycleData.records.length === 0) return null;
   try {
@@ -3576,7 +3576,7 @@ function saveMySong() {
   toast('🎵 ' + (lang==='sr'?'Pesma sačuvana!':lang==='en'?'Song saved!':'歌曲已保存！'));
 }
 function loadSong(profile) {
-  try { return JSON.parse(localStorage.getItem('shared-song-' + profile)); } catch(e) { return null; }
+  return safeParse(localStorage.getItem('shared-song-' + profile), null);
 }
 
 /* ================================================================
@@ -3600,7 +3600,7 @@ var KNOW_ME_QUESTIONS = [
   {key:'morning_routine',q:{sr:'Kako tvoj/tvoja partner/ka započinje jutro?',zh:'对方早上起来做的第一件事是什么？',en:'What is the first thing your partner does in the morning?'}}
 ];
 
-function getKnowMeData() { try { return JSON.parse(localStorage.getItem('shared-knowme') || '{}'); } catch(e) { return {}; } }
+function getKnowMeData() { return safeParse(localStorage.getItem('shared-knowme'), {}); }
 function saveKnowMeData(data) { localStorage.setItem('shared-knowme', JSON.stringify(data)); }
 
 function renderKnowMe() {
@@ -3784,7 +3784,7 @@ function saveSleep() {
   toast('😴 ' + (lang==='sr'?'Sačuvano!':lang==='en'?'Saved!':'已保存！'));
 }
 function getBarrySleep() {
-  try { return JSON.parse(localStorage.getItem('barry-sleep')); } catch(e) { return null; }
+  return safeParse(localStorage.getItem('barry-sleep'), null);
 }
 function renderSleepCard() {
   var card = document.getElementById('sleepCard');
