@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /* ================================================================
    CALENDAR MODULE — Calendar grid, progress, FAB, month navigation
@@ -17,9 +17,7 @@ var CalendarModule = (function () {
 
   /** Get season label for a month in current language */
   function getSeasonLabel(month) {
-    return SEASON_LABEL[lang]
-      ? SEASON_LABEL[lang][month]
-      : SEASON_LABEL['sr'][month];
+    return SEASON_LABEL[lang] ? SEASON_LABEL[lang][month] : SEASON_LABEL['sr'][month];
   }
 
   // ── Calendar grid rendering ──────────────────────────────────────
@@ -47,11 +45,7 @@ var CalendarModule = (function () {
     if (pred.futurePeriods.length > 0) {
       plEl.style.display = '';
       plEl.textContent =
-        lang === 'sr'
-          ? '※ Prozirni datumi su predviđanja'
-          : lang === 'en'
-            ? '※ Faded dates are future predictions'
-            : '※ 半透明标记为未来周期预测';
+        lang === 'sr' ? '※ Prozirni datumi su predviđanja' : lang === 'en' ? '※ Faded dates are future predictions' : '※ 半透明标记为未来周期预测';
     } else {
       plEl.style.display = 'none';
     }
@@ -101,8 +95,7 @@ var CalendarModule = (function () {
         }
       }
 
-      var annType =
-        typeof isAnniversary === 'function' ? isAnniversary(d) : 0;
+      var annType = typeof isAnniversary === 'function' ? isAnniversary(d) : 0;
 
       var el = document.createElement('div');
       el.className = 'day';
@@ -127,10 +120,7 @@ var CalendarModule = (function () {
           var spIcon = document.createElement('span');
           spIcon.className = 'special-date-icon';
           spIcon.textContent = special.icon;
-          spIcon.title =
-            activeProfile === 'barry'
-              ? special.title_zh
-              : special.title_sr;
+          spIcon.title = activeProfile === 'barry' ? special.title_zh : special.title_sr;
           el.appendChild(spIcon);
           if (special.type === 'firstmeet') el.classList.add('first-meet');
           if (special.type === 'monthly') el.classList.add('monthly-anni');
@@ -164,17 +154,10 @@ var CalendarModule = (function () {
 
       // Lunar date label (Chinese calendar)
       if (inMonth && typeof Lunar !== 'undefined') {
-        var lunarDayName =
-          typeof getLunarCellText === 'function'
-            ? getLunarCellText(d)
-            : null;
+        var lunarDayName = typeof getLunarCellText === 'function' ? getLunarCellText(d) : null;
         if (lunarDayName) {
           var lunarSpan = document.createElement('span');
-          lunarSpan.className =
-            'lunar-date ' +
-            (typeof getLunarCellClass === 'function'
-              ? getLunarCellClass(d)
-              : '');
+          lunarSpan.className = 'lunar-date ' + (typeof getLunarCellClass === 'function' ? getLunarCellClass(d) : '');
           lunarSpan.textContent = lunarDayName;
           el.appendChild(lunarSpan);
         }
@@ -187,24 +170,22 @@ var CalendarModule = (function () {
       if (hasSymptom && !phase && symptoms) {
         var miniDiv = document.createElement('div');
         miniDiv.className = 'day-symptoms';
-        ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(
-          function (sym) {
-            if (symptoms[sym] && symptoms[sym] > 0) {
-              var symEl = document.createElement('span');
-              symEl.className = 'day-sym-icon';
-              symEl.textContent = {
-                cramps: '😣',
-                mood: '😊',
-                flow: '💧',
-                headache: '🤕',
-                fatigue: '😴',
-                cravings: '🍫',
-              }[sym];
-              symEl.title = sym;
-              miniDiv.appendChild(symEl);
-            }
+        ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
+          if (symptoms[sym] && symptoms[sym] > 0) {
+            var symEl = document.createElement('span');
+            symEl.className = 'day-sym-icon';
+            symEl.textContent = {
+              cramps: '😣',
+              mood: '😊',
+              flow: '💧',
+              headache: '🤕',
+              fatigue: '😴',
+              cravings: '🍫',
+            }[sym];
+            symEl.title = sym;
+            miniDiv.appendChild(symEl);
           }
-        );
+        });
         if (miniDiv.children.length > 0) el.appendChild(miniDiv);
       }
 
@@ -228,12 +209,7 @@ var CalendarModule = (function () {
       if (typeof getSolarTerm === 'function') {
         var solarTerm = getSolarTerm(key);
         if (solarTerm && inMonth) {
-          var stName =
-            solarTerm.name[lang] ||
-            solarTerm.name[lang.split('-')[0]] ||
-            solarTerm.name['sr'] ||
-            solarTerm.name['zh-CN'] ||
-            '';
+          var stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
           var stLabel = document.createElement('span');
           stLabel.className = 'solar-term-label';
           stLabel.textContent = stName;
@@ -255,14 +231,8 @@ var CalendarModule = (function () {
         holidays.forEach(function (h) {
           var icon = document.createElement('span');
           icon.className = 'holiday-icon holiday-' + h.country;
-          icon.textContent =
-            h.icon || (h.country === 'cn' ? '🎉' : '🇷🇸');
-          icon.title =
-            h.name[lang] ||
-            h.name[lang.split('-')[0]] ||
-            h.name['sr'] ||
-            h.name['zh-CN'] ||
-            '';
+          icon.textContent = h.icon || (h.country === 'cn' ? '🎉' : '🇷🇸');
+          icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
           el.appendChild(icon);
         });
       }
@@ -463,12 +433,7 @@ var CalendarModule = (function () {
     } else if (pred.isOverdue) {
       numEl.textContent = pred.overdueDays;
       unitEl.textContent = '';
-      subEl.textContent =
-        t('daysOverdue').replace('{n}', pred.overdueDays) +
-        ' · ' +
-        t('expected') +
-        ' ' +
-        fmtDate(pred.nextStart);
+      subEl.textContent = t('daysOverdue').replace('{n}', pred.overdueDays) + ' · ' + t('expected') + ' ' + fmtDate(pred.nextStart);
       bCls = 'late';
       label = badges.late;
       numEl.style.color = '#E65100';
@@ -476,13 +441,9 @@ var CalendarModule = (function () {
       var lutealLbl = document.querySelector('.lbl-luteal');
       if (lutealLbl) lutealLbl.classList.add('current');
     } else {
-      var totalLen = pred.nextStart
-        ? daysDiff(pred.lastStart, pred.nextStart)
-        : pred.cycleLen;
+      var totalLen = pred.nextStart ? daysDiff(pred.lastStart, pred.nextStart) : pred.cycleLen;
       var elapsed = daysDiff(pred.lastStart, td);
-      var remain = pred.nextStart
-        ? daysDiff(td, pred.nextStart)
-        : totalLen - elapsed;
+      var remain = pred.nextStart ? daysDiff(td, pred.nextStart) : totalLen - elapsed;
       pct = Math.min(100, Math.max(0, (elapsed / totalLen) * 100));
       numEl.textContent = remain;
       unitEl.textContent = '';
@@ -521,10 +482,7 @@ var CalendarModule = (function () {
         numEl.style.color = 'var(--text-muted)';
       }
 
-      subEl.textContent =
-        remain >= 0
-          ? t('daysUntil').replace('{n}', remain)
-          : t('expected') + ' ' + fmtDate(pred.nextStart);
+      subEl.textContent = remain >= 0 ? t('daysUntil').replace('{n}', remain) : t('expected') + ' ' + fmtDate(pred.nextStart);
     }
 
     fillEl.style.width = pct + '%';
@@ -570,9 +528,7 @@ var CalendarModule = (function () {
 
     if (msg) {
       banner.style.display = 'flex';
-      banner.innerHTML =
-        msg +
-        ' <span class="dismiss" onclick="this.parentElement.style.display=\'none\'">✕</span>';
+      banner.innerHTML = msg + ' <span class="dismiss" onclick="this.parentElement.style.display=\'none\'">✕</span>';
     } else {
       banner.style.display = 'none';
     }
@@ -591,10 +547,7 @@ var CalendarModule = (function () {
     }
 
     if (fab) fab.classList.remove('hidden');
-    var openStart =
-      typeof getOpenPeriodStart === 'function'
-        ? getOpenPeriodStart()
-        : null;
+    var openStart = typeof getOpenPeriodStart === 'function' ? getOpenPeriodStart() : null;
 
     if (openStart) {
       // Period started but not ended — show end button
@@ -602,12 +555,7 @@ var CalendarModule = (function () {
       if (fab) fab.style.fontSize = '1.2rem';
       if (fab) fab.style.fontWeight = 'normal';
       if (fabLabel) {
-        fabLabel.textContent =
-          lang === 'sr'
-            ? 'Kraj ciklusa'
-            : lang === 'en'
-              ? 'Period ended'
-              : '经期结束';
+        fabLabel.textContent = lang === 'sr' ? 'Kraj ciklusa' : lang === 'en' ? 'Period ended' : '经期结束';
       }
     } else {
       // No open period — show start button
@@ -615,12 +563,7 @@ var CalendarModule = (function () {
       if (fab) fab.style.fontSize = '1.5rem';
       if (fab) fab.style.fontWeight = 'normal';
       if (fabLabel) {
-        fabLabel.textContent =
-          lang === 'sr'
-            ? 'Početak ciklusa'
-            : lang === 'en'
-              ? 'Period started'
-              : '经期来了';
+        fabLabel.textContent = lang === 'sr' ? 'Početak ciklusa' : lang === 'en' ? 'Period started' : '经期来了';
       }
     }
   }

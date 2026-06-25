@@ -5,38 +5,54 @@
  */
 
 // --- Minimal test framework ---
-var passed = 0, failed = 0, asserted = 0;
+var passed = 0,
+  failed = 0,
+  asserted = 0;
 function assert(condition, msg) {
   asserted++;
-  if (condition) { passed++; }
-  else { console.error('FAIL:', msg); failed++; }
+  if (condition) {
+    passed++;
+  } else {
+    console.error('FAIL:', msg);
+    failed++;
+  }
 }
 function assertEqual(actual, expected, msg) {
   asserted++;
-  if (actual === expected) { passed++; }
-  else { console.error('FAIL:', msg, 'expected:', JSON.stringify(expected), 'got:', JSON.stringify(actual)); failed++; }
+  if (actual === expected) {
+    passed++;
+  } else {
+    console.error('FAIL:', msg, 'expected:', JSON.stringify(expected), 'got:', JSON.stringify(actual));
+    failed++;
+  }
 }
 
 /* ================================================================
    SECTION 1 — Date Helpers (replicated from js/cycle-core.js)
    ================================================================ */
-var fmtDate = function(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+var fmtDate = function (d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 };
-var sameDay = function(a, b) {
-  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+var sameDay = function (a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 };
-var addDays = function(d, n) {
-  var r = new Date(d); r.setDate(r.getDate()+n); return r;
+var addDays = function (d, n) {
+  var r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
 };
-var daysDiff = function(a, b) {
-  return Math.round((b.getTime()-a.getTime())/86400000);
+var daysDiff = function (a, b) {
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
 };
-var d0 = function(d) {
-  var r = new Date(d); r.setHours(0, 0, 0, 0); return r;
+var d0 = function (d) {
+  var r = new Date(d);
+  r.setHours(0, 0, 0, 0);
+  return r;
 };
-var today = function() {
-  var tt = new Date(); tt.setHours(0,0,0,0); return tt;
+var today = function () {
+  var tt = new Date();
+  tt.setHours(0, 0, 0, 0);
+  return tt;
 };
 
 console.log('\n=== 1. Date Helpers ===');
@@ -101,21 +117,30 @@ console.log('\n=== 2. Cycle Prediction ===');
 
 function predictCycles(records) {
   if (!records || records.length === 0) return [];
-  var sorted = records.slice().sort(function(a, b) { return a - b; });
+  var sorted = records.slice().sort(function (a, b) {
+    return a - b;
+  });
   var cycles = [];
   for (var i = 1; i < sorted.length; i++) {
-    cycles.push(Math.round((sorted[i] - sorted[i-1]) / 86400000));
+    cycles.push(Math.round((sorted[i] - sorted[i - 1]) / 86400000));
   }
   return cycles;
 }
 function predictNext(records, cycleLength) {
   if (records.length === 0) return null;
-  var sorted = records.slice().sort(function(a, b) { return a - b; });
+  var sorted = records.slice().sort(function (a, b) {
+    return a - b;
+  });
   var last = sorted[sorted.length - 1];
   var cycles = predictCycles(records);
-  var avgCycle = cycles.length > 0
-    ? Math.round(cycles.reduce(function(a, b) { return a + b; }, 0) / cycles.length)
-    : cycleLength;
+  var avgCycle =
+    cycles.length > 0
+      ? Math.round(
+          cycles.reduce(function (a, b) {
+            return a + b;
+          }, 0) / cycles.length
+        )
+      : cycleLength;
   return addDays(last, avgCycle);
 }
 
@@ -148,10 +173,10 @@ assertEqual(fmtDate(predictNext(r3, 28)), '2026-06-26', 'predictNext from 3 reco
 // Irregular cycles
 var irreg = [
   new Date(2026, 0, 1),
-  new Date(2026, 0, 29),  // 28
-  new Date(2026, 2, 5),   // 35
-  new Date(2026, 3, 2),   // 28
-  new Date(2026, 4, 3)    // 31
+  new Date(2026, 0, 29), // 28
+  new Date(2026, 2, 5), // 35
+  new Date(2026, 3, 2), // 28
+  new Date(2026, 4, 3), // 31
 ];
 var cIrreg = predictCycles(irreg);
 assertEqual(cIrreg.length, 4, '5 records => 4 cycles');
@@ -189,20 +214,25 @@ function fullPredict(stateMock) {
   var records = stateMock.records;
   var settings = stateMock.settings;
   var periodEnds = stateMock.periodEnds || {};
-  var sorted = records.slice().sort(function(a, b) { return a - b; });
+  var sorted = records.slice().sort(function (a, b) {
+    return a - b;
+  });
 
   var periodLengths = [];
   for (var i = 0; i < sorted.length; i++) {
     var key = fmtDate(sorted[i]);
     if (periodEnds[key]) {
-      periodLengths.push(
-        daysDiff(d0(sorted[i]), d0(new Date(periodEnds[key] + 'T00:00:00'))) + 1
-      );
+      periodLengths.push(daysDiff(d0(sorted[i]), d0(new Date(periodEnds[key] + 'T00:00:00'))) + 1);
     }
   }
-  var avgPeriodLen = periodLengths.length > 0
-    ? Math.round(periodLengths.reduce(function(a, b) { return a + b; }, 0) / periodLengths.length)
-    : settings.periodLength;
+  var avgPeriodLen =
+    periodLengths.length > 0
+      ? Math.round(
+          periodLengths.reduce(function (a, b) {
+            return a + b;
+          }, 0) / periodLengths.length
+        )
+      : settings.periodLength;
 
   var def = {
     lastStart: null,
@@ -220,7 +250,7 @@ function fullPredict(stateMock) {
     cycles: [],
     isOverdue: false,
     overdueDays: 0,
-    futurePeriods: []
+    futurePeriods: [],
   };
   if (sorted.length === 0) return def;
   def.lastStart = d0(sorted[sorted.length - 1]);
@@ -232,10 +262,17 @@ function fullPredict(stateMock) {
     }
     var recent = def.cycles.slice(-6);
     if (recent.length > 0) {
-      def.avgCycle = Math.round(recent.reduce(function(a, b) { return a + b; }, 0) / recent.length);
+      def.avgCycle = Math.round(
+        recent.reduce(function (a, b) {
+          return a + b;
+        }, 0) / recent.length
+      );
       def.minCycle = Math.min.apply(null, recent);
       def.maxCycle = Math.max.apply(null, recent);
-      var variance = recent.reduce(function(s, c) { return s + (c - def.avgCycle) * (c - def.avgCycle); }, 0) / recent.length;
+      var variance =
+        recent.reduce(function (s, c) {
+          return s + (c - def.avgCycle) * (c - def.avgCycle);
+        }, 0) / recent.length;
       def.stdDev = Math.round(Math.sqrt(variance) * 10) / 10;
       if (def.stdDev <= 3) def.confidence = 'high';
       else if (def.stdDev <= 6) def.confidence = 'medium';
@@ -252,7 +289,7 @@ function fullPredict(stateMock) {
     if (passed >= 1) {
       def.nextStart = addDays(def.lastStart, useLen * (passed + 1));
     }
-    def.isOverdue = (td > def.nextStart);
+    def.isOverdue = td > def.nextStart;
     if (def.isOverdue) def.overdueDays = daysDiff(def.nextStart, td);
   }
 
@@ -267,7 +304,7 @@ function fullPredict(stateMock) {
         start: np,
         ovulation: addDays(np, -14),
         fertileStart: addDays(np, -17),
-        fertileEnd: addDays(np, -11)
+        fertileEnd: addDays(np, -11),
       });
     }
   }
@@ -279,7 +316,7 @@ function fullPredict(stateMock) {
 var state1 = {
   records: [new Date(2026, 7, 4), new Date(2026, 8, 1)],
   settings: { cycleLength: 28, periodLength: 7, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var p1 = fullPredict(state1);
 assertEqual(fmtDate(p1.lastStart), '2026-09-01', 'pred lastStart = Sep 1');
@@ -305,7 +342,7 @@ assertEqual(fmtDate(p1.futurePeriods[0].start), '2026-10-27', 'first future peri
 var stateSingle = {
   records: [new Date(2026, 8, 1)],
   settings: { cycleLength: 28, periodLength: 5, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pSingle = fullPredict(stateSingle);
 assertEqual(fmtDate(pSingle.lastStart), '2026-09-01', 'single record lastStart');
@@ -320,7 +357,7 @@ assertEqual(pSingle.maxCycle, null, 'single record no maxCycle');
 var stateEmpty = {
   records: [],
   settings: { cycleLength: 28, periodLength: 5, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pEmpty = fullPredict(stateEmpty);
 assertEqual(pEmpty.lastStart, null, 'empty records lastStart null');
@@ -330,12 +367,12 @@ assertEqual(pEmpty.nextStart, null, 'empty records nextStart null');
 // Using future dates to avoid overdue logic
 var midState = {
   records: [
-    new Date(2026, 6, 1),   // Jul 1
-    new Date(2026, 6, 28),  // Jul 28 (27 days)
-    new Date(2026, 7, 28)   // Aug 28 (31 days)
+    new Date(2026, 6, 1), // Jul 1
+    new Date(2026, 6, 28), // Jul 28 (27 days)
+    new Date(2026, 7, 28), // Aug 28 (31 days)
   ],
   settings: { cycleLength: 28, periodLength: 5, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pMid = fullPredict(midState);
 assertEqual(pMid.cycles.length, 2, 'mid has 2 cycles');
@@ -348,13 +385,13 @@ assert(pMid.confidence === 'medium' || pMid.confidence === 'high', 'mid confiden
 // Mock state: very irregular cycles => low confidence
 var lowState = {
   records: [
-    new Date(2026, 6, 1),   // Jul 1
-    new Date(2026, 7, 5),   // Aug 5 (35 days)
-    new Date(2026, 8, 2),   // Sep 2 (28 days)
-    new Date(2026, 9, 29)   // Oct 29 (57 days)
+    new Date(2026, 6, 1), // Jul 1
+    new Date(2026, 7, 5), // Aug 5 (35 days)
+    new Date(2026, 8, 2), // Sep 2 (28 days)
+    new Date(2026, 9, 29), // Oct 29 (57 days)
   ],
   settings: { cycleLength: 28, periodLength: 5, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pLow = fullPredict(lowState);
 assertEqual(pLow.cycles.length, 3, 'low confidence 3 cycles');
@@ -366,16 +403,16 @@ assertEqual(pLow.maxCycle, 57, 'low maxCycle = 57');
 var stateWithEnds = {
   records: [new Date(2026, 7, 1), new Date(2026, 7, 29)],
   settings: { cycleLength: 28, periodLength: 7, manualOverride: false },
-  periodEnds: { '2026-08-01': '2026-08-05' }
+  periodEnds: { '2026-08-01': '2026-08-05' },
 };
 var pEnds = fullPredict(stateWithEnds);
 assertEqual(pEnds.periodLen, 5, 'periodLen computed from periodEnds (Aug 1-5 = 5 days)');
 
 // Manual override with future dates
 var manualState = {
-  records: [new Date(2026, 8, 1), new Date(2026, 9, 6)],  // 35 day cycle
+  records: [new Date(2026, 8, 1), new Date(2026, 9, 6)], // 35 day cycle
   settings: { cycleLength: 28, periodLength: 5, manualOverride: true },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pManual = fullPredict(manualState);
 // With manualOverride, initial nextStart uses avgCycle (from data = 35 days)
@@ -406,7 +443,8 @@ function getPhase(date, pred, stateMock) {
   }
   // Check predicted next period
   if (pred.nextStart) {
-    var ps = d0(pred.nextStart), pe = addDays(ps, pred.periodLen - 1);
+    var ps = d0(pred.nextStart),
+      pe = addDays(ps, pred.periodLen - 1);
     pe.setHours(0, 0, 0, 0);
     if (d >= ps && d <= pe) return sameDay(d, ps) ? 'period-pred-first' : 'period-pred';
   }
@@ -421,12 +459,14 @@ function getPhase(date, pred, stateMock) {
   if (pred.ovulation && sameDay(d, pred.ovulation)) return 'ovulation';
   // Fertile window
   if (pred.fertileStart && pred.fertileEnd) {
-    var fs = d0(pred.fertileStart), fe = d0(pred.fertileEnd);
+    var fs = d0(pred.fertileStart),
+      fe = d0(pred.fertileEnd);
     if (d >= fs && d <= fe) return 'fertile';
   }
   // Luteal phase
   if (pred.fertileEnd && pred.nextStart) {
-    var lfe = d0(pred.fertileEnd), np = d0(pred.nextStart);
+    var lfe = d0(pred.fertileEnd),
+      np = d0(pred.nextStart);
     if (d > lfe && d < np) return 'luteal';
   }
   // Follicular phase
@@ -449,8 +489,8 @@ var phaseState = {
   settings: { cycleLength: 28, periodLength: 5, manualOverride: false },
   periodEnds: {
     '2026-08-04': '2026-08-08',
-    '2026-09-01': '2026-09-05'
-  }
+    '2026-09-01': '2026-09-05',
+  },
 };
 var phasePred = fullPredict(phaseState);
 
@@ -502,7 +542,7 @@ assertEqual(getPhase(new Date(2025, 0, 1), phasePred, phaseState), null, 'phase 
 var phaseStateNoEnds = {
   records: [new Date(2026, 8, 1)],
   settings: { cycleLength: 28, periodLength: 7, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var phasePredNoEnds = fullPredict(phaseStateNoEnds);
 assertEqual(getPhase(new Date(2026, 8, 1), phasePredNoEnds, phaseStateNoEnds), 'period-on', 'phase no-end Sep 1 = period-on');
@@ -518,7 +558,7 @@ function langName(obj, lang) {
   return obj[lang] || obj[lang.split('-')[0]] || obj['sr'] || '';
 }
 
-var tObj = { 'sr': 'Здраво', 'zh-CN': '你好', 'en': 'Hello' };
+var tObj = { sr: 'Здраво', 'zh-CN': '你好', en: 'Hello' };
 assertEqual(langName(tObj, 'sr'), 'Здраво', 'langName sr');
 assertEqual(langName(tObj, 'zh-CN'), '你好', 'langName zh');
 assertEqual(langName(tObj, 'en'), 'Hello', 'langName en');
@@ -529,11 +569,11 @@ assertEqual(langName(tObj, 'sr-RS'), 'Здраво', 'langName sr-RS -> sr');
 
 // Fallback chain: exact -> language prefix -> sr -> ''
 assertEqual(langName({}, 'fr'), '', 'langName empty object returns empty string');
-assertEqual(langName({'en': 'Yes'}, 'fr'), '', 'langName no sr fallback returns empty');
+assertEqual(langName({ en: 'Yes' }, 'fr'), '', 'langName no sr fallback returns empty');
 
 // i18n map helper L()
 function makeL(langVar) {
-  return function(sr, en, zh) {
+  return function (sr, en, zh) {
     if (typeof sr === 'object') {
       var m = sr;
       return m[langVar] || m[langVar.split('-')[0]] || m['sr'] || '';
@@ -565,7 +605,7 @@ assertEqual(LsrRS('Zdravo', 'Hello', '你好'), 'Zdravo', 'L sr-RS returns sr');
 
 // t() function — lookup by dotted key
 function makeT(langVar, i18nData) {
-  return function(key, fallback) {
+  return function (key, fallback) {
     var keys = key.split('.');
     var val = i18nData[langVar] || i18nData['sr'];
     for (var ki = 0; ki < keys.length; ki++) {
@@ -578,21 +618,21 @@ function makeT(langVar, i18nData) {
 
 // Minimal i18n data for testing
 var i18nTest = {
-  'sr': {
+  sr: {
     appTitle: 'Anđelin Ciklus',
     tabs: ['Početna', 'Statistika'],
-    phases: { 'period-on': 'Početak', 'ovulation': 'Ovulacija' }
+    phases: { 'period-on': 'Početak', ovulation: 'Ovulacija' },
   },
   'zh-CN': {
     appTitle: 'Anđelin Ciklus',
     tabs: ['主页', '统计'],
-    phases: { 'period-on': '经期开始', 'ovulation': '排卵日' }
+    phases: { 'period-on': '经期开始', ovulation: '排卵日' },
   },
-  'en': {
+  en: {
     appTitle: 'Anđelin Ciklus',
     tabs: ['Home', 'Stats'],
-    phases: { 'period-on': 'Period Start', 'ovulation': 'Ovulation' }
-  }
+    phases: { 'period-on': 'Period Start', ovulation: 'Ovulation' },
+  },
 };
 
 var tsr = makeT('sr', i18nTest);
@@ -626,10 +666,7 @@ var tFr = makeT('fr', i18nTest);
 assertEqual(tFr('appTitle'), 'Anđelin Ciklus', 't fr falls back to sr data');
 
 // Love Notes pool
-var srNotes = [
-  'Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅',
-  'Tvoj osmeh je moja omiljena boja. 🎨'
-];
+var srNotes = ['Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅', 'Tvoj osmeh je moja omiljena boja. 🎨'];
 assertEqual(srNotes[0].substring(0, 10), 'Svakog jut', 'love note 0 sr starts correctly');
 assertEqual(srNotes[1].substring(0, 10), 'Tvoj osmeh', 'love note 1 sr starts correctly');
 
@@ -679,8 +716,11 @@ console.log('\n=== 7. Safe Utilities ===');
 // safeParse
 function safeParse(text, defaultVal) {
   if (text == null) return defaultVal;
-  try { return JSON.parse(text); }
-  catch (e) { return defaultVal; }
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return defaultVal;
+  }
 }
 
 var parsed1 = safeParse('{"a":1,"b":"hello"}', {});
@@ -710,14 +750,16 @@ function simulateSafeGetItem(storage, key, defaultVal) {
   }
 }
 
-var mockStore = { 'existing': 'hello', 'empty': '' };
+var mockStore = { existing: 'hello', empty: '' };
 assertEqual(simulateSafeGetItem(mockStore, 'existing', 'default'), 'hello', 'safeGetItem existing key');
 assertEqual(simulateSafeGetItem(mockStore, 'nonexistent', 'default'), 'default', 'safeGetItem missing key');
 assertEqual(simulateSafeGetItem(mockStore, 'empty', 'default'), '', 'safeGetItem empty string (not null)');
 
 // When storage throws
 var brokenStore = {
-  get key() { throw new Error('quota exceeded'); }
+  get key() {
+    throw new Error('quota exceeded');
+  },
 };
 assertEqual(simulateSafeGetItem(brokenStore, 'key', 'default'), 'default', 'safeGetItem handles storage errors');
 
@@ -757,17 +799,13 @@ assertEqual(fmtDate(predictNext([new Date(2026, 11, 25)], 45)), '2027-02-08', 'p
 
 // fullPredict with periodEnds for all records
 var stateMultiEnds = {
-  records: [
-    new Date(2026, 6, 1),
-    new Date(2026, 6, 28),
-    new Date(2026, 7, 25)
-  ],
+  records: [new Date(2026, 6, 1), new Date(2026, 6, 28), new Date(2026, 7, 25)],
   settings: { cycleLength: 28, periodLength: 7, manualOverride: false },
   periodEnds: {
     '2026-07-01': '2026-07-05',
     '2026-07-28': '2026-08-01',
-    '2026-08-25': '2026-08-29'
-  }
+    '2026-08-25': '2026-08-29',
+  },
 };
 var pMulti = fullPredict(stateMultiEnds);
 assertEqual(pMulti.periodLen, 5, 'multi-end periodLen avg (5+5+5)/3 = 5');
@@ -777,15 +815,12 @@ assertEqual(pMulti.avgCycle, 28, 'multi-end avgCycle ~28');
 
 // Edge: periodEnds only for some records
 var statePartialEnds = {
-  records: [
-    new Date(2026, 7, 1),
-    new Date(2026, 7, 28)
-  ],
+  records: [new Date(2026, 7, 1), new Date(2026, 7, 28)],
   settings: { cycleLength: 28, periodLength: 7, manualOverride: false },
   periodEnds: {
-    '2026-08-01': '2026-08-05'
+    '2026-08-01': '2026-08-05',
     // Aug 28 has no periodEnd
-  }
+  },
 };
 var pPartial = fullPredict(statePartialEnds);
 // Only one periodEnd gives periodLen=5, not default 7
@@ -797,7 +832,7 @@ assertEqual(pPartial.periodLen, 5, 'partial-end periodLen from single end record
 var stateOverdue = {
   records: [new Date(2025, 0, 1), new Date(2025, 0, 29)],
   settings: { cycleLength: 28, periodLength: 5, manualOverride: false },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pOverdue = fullPredict(stateOverdue);
 // The overdue logic will have adjusted nextStart to be in the future
@@ -811,11 +846,11 @@ assert(typeof pOverdue.isOverdue === 'boolean', 'isOverdue is boolean');
 var stateManualFuture = {
   records: [
     new Date(2026, 8, 1),
-    new Date(2026, 8, 29),  // 28-day cycle
-    new Date(2026, 9, 27)   // 28-day cycle
+    new Date(2026, 8, 29), // 28-day cycle
+    new Date(2026, 9, 27), // 28-day cycle
   ],
   settings: { cycleLength: 35, periodLength: 5, manualOverride: true },
-  periodEnds: {}
+  periodEnds: {},
 };
 var pMF = fullPredict(stateManualFuture);
 // With manualOverride, futurePeriods should use 35-day cycle

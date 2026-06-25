@@ -110,7 +110,11 @@ var SocialModule = (function () {
     },
     {
       key: 'dream_trip',
-      q: { sr: 'Gde bi tvoj/tvoja partner/ka najradije putovao/la?', zh: '对方最想去的旅行目的地是哪里？', en: 'Where does your partner dream of traveling to?' },
+      q: {
+        sr: 'Gde bi tvoj/tvoja partner/ka najradije putovao/la?',
+        zh: '对方最想去的旅行目的地是哪里？',
+        en: 'Where does your partner dream of traveling to?',
+      },
     },
     {
       key: 'comfort_food',
@@ -751,6 +755,8 @@ var REL_TIPS = SocialModule.REL_TIPS;
 var CHECKIN_QUESTIONS = SocialModule.CHECKIN_QUESTIONS;
 var KNOW_ME_QUESTIONS = SocialModule.KNOW_ME_QUESTIONS;
 
-function spawnFloatingHearts(container) { return SocialModule.spawnFloatingHearts(container); }
+function spawnFloatingHearts(container) {
+  return SocialModule.spawnFloatingHearts(container);
+}
 // NOTE: All social module functions (sendHug, renderHug, etc.)
 // are defined in app.js. Do NOT redefine globals here.

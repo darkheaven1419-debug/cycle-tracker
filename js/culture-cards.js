@@ -16,7 +16,7 @@ var CultureCardsModule = (function () {
   'use strict';
 
   /* ── Internal State ── */
-  var _cultureData = [];       // loaded from culture-knowledge.json
+  var _cultureData = []; // loaded from culture-knowledge.json
   var _cardIdx = 0;
 
   /* ── CL (Culture Labels) — dual-profile badge text ── */
@@ -84,7 +84,9 @@ var CultureCardsModule = (function () {
   /* ── Loading ── */
   function load() {
     return fetch('data/culture-knowledge.json')
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        return r.json();
+      })
       .then(function (data) {
         _cultureData = Array.isArray(data) && data.length > 0 ? data : _cultureData;
         return _cultureData;
@@ -118,7 +120,7 @@ var CultureCardsModule = (function () {
     var titleSr = document.getElementById('cultureTitleSr');
 
     if (titleZh) {
-      titleZh.textContent = isEnglish() ? (k.en || k.zh) : k.zh;
+      titleZh.textContent = isEnglish() ? k.en || k.zh : k.zh;
       titleZh.style.display = isChinese() || isEnglish() ? '' : 'none';
     }
     if (titleSr) {
@@ -128,7 +130,7 @@ var CultureCardsModule = (function () {
 
     var descEl = document.getElementById('cultureDesc');
     if (descEl) {
-      var desc = isChinese() ? (DESC_ZH[k.id] || k.desc) : (k.desc_sr || k.desc);
+      var desc = isChinese() ? DESC_ZH[k.id] || k.desc : k.desc_sr || k.desc;
       if (isEnglish()) desc = k.desc_en || k.desc;
       descEl.textContent = desc;
     }
@@ -143,7 +145,7 @@ var CultureCardsModule = (function () {
     }
 
     var navEl = document.getElementById('cultureNavInfo');
-    if (navEl) navEl.textContent = (_cardIdx + 1) + ' / ' + _cultureData.length;
+    if (navEl) navEl.textContent = _cardIdx + 1 + ' / ' + _cultureData.length;
 
     var isToday = _cardIdx === getTodaysIndex();
     var card = document.getElementById('cultureMainCard');
@@ -195,17 +197,20 @@ var CultureCardsModule = (function () {
 
     var isZh = isChinese();
     var isEn = isEnglish();
-    var title = isZh ? tc.zh : (isEn && tc.en ? tc.en : tc.sr);
-    var desc = isZh ? (DESC_ZH[tc.id] || tc.desc) : (isEn && tc.desc_en ? tc.desc_en : tc.desc_sr || tc.desc);
+    var title = isZh ? tc.zh : isEn && tc.en ? tc.en : tc.sr;
+    var desc = isZh ? DESC_ZH[tc.id] || tc.desc : isEn && tc.desc_en ? tc.desc_en : tc.desc_sr || tc.desc;
 
-    return '<div class="card dash-card"><h4>' +
-      tc.icon + ' ' +
+    return (
+      '<div class="card dash-card"><h4>' +
+      tc.icon +
+      ' ' +
       (dl || 'Today') +
       '</h4><div style="font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px">' +
       title +
       '</div><div style="font-size:.65rem;color:var(--text-muted);line-height:1.5">' +
       (desc || '').substring(0, 120) +
-      '...</div></div>';
+      '...</div></div>'
+    );
   }
 
   /* ── Public API (exposed to window for backward compat) ── */
@@ -233,13 +238,27 @@ var CULTURE_KNOWLEDGE = [];
 var CULTURE_DESC_ZH = CultureCardsModule.DESC_ZH;
 var _cultureCardIdx = 0;
 
-function cl(key) { return CultureCardsModule.locale(key); }
-function getTodaysCultureIndex() { return CultureCardsModule.getTodaysIndex(); }
-function initCultureTab() { CultureCardsModule.init(); }
-function renderCultureCard() { CultureCardsModule.render(); }
-function prevCultureCard() { CultureCardsModule.prev(); }
-function nextCultureCard() { CultureCardsModule.next(); }
-function goToTodayCulture() { CultureCardsModule.goToToday(); }
+function cl(key) {
+  return CultureCardsModule.locale(key);
+}
+function getTodaysCultureIndex() {
+  return CultureCardsModule.getTodaysIndex();
+}
+function initCultureTab() {
+  CultureCardsModule.init();
+}
+function renderCultureCard() {
+  CultureCardsModule.render();
+}
+function prevCultureCard() {
+  CultureCardsModule.prev();
+}
+function nextCultureCard() {
+  CultureCardsModule.next();
+}
+function goToTodayCulture() {
+  CultureCardsModule.goToToday();
+}
 
 // Sync the global CULTURE_KNOWLEDGE with module data when loaded
 (function () {

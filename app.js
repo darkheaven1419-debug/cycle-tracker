@@ -2704,6 +2704,8 @@ function loadHolidays() {
     .then(function (data) {
       HOLIDAYS = data.holidays || [];
       HOLIDAY_DAYS = data.holidayDays || {};
+      // Re-render calendar with holiday data now available
+      renderCalendar();
     })
     .catch(function (err) {
       console.warn('[holidays] Could not load holidays.json:', err.message);
@@ -3334,6 +3336,14 @@ function ensureSolarTermData() {
       }
     })
     .catch(function () {});
+}
+
+/** Look up a solar term by date key (YYYY-MM-DD). Reads from solarTermsCache. */
+function getSolarTerm(dateKey) {
+  if (!solarTermsCache || !solarTermsCache.length) return;
+  for (var i = 0; i < solarTermsCache.length; i++) {
+    if (solarTermsCache[i].date === dateKey) return solarTermsCache[i];
+  }
 }
 
 function renderSolarTermBadge() {

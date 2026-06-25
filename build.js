@@ -18,24 +18,16 @@ const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
 const VERSION = 'v' + PKG.version;
 
 const COPY_DIRS = ['js', 'data', 'libs'];
-const COPY_FILES = [
-  'index.html',
-  'manifest.json',
-  'sw.js',
-  'calendar-data.json',
-  'shared-diary.json',
-  'shared-state.json',
-  'favicon.ico',
-];
+const COPY_FILES = ['index.html', 'manifest.json', 'sw.js', 'calendar-data.json', 'shared-diary.json', 'shared-state.json', 'favicon.ico'];
 
 // ---------------------------------------------------------------------------
 //  Helpers
 // ---------------------------------------------------------------------------
 
 function banner(msg) {
-  console.log('\n  ' + '=' .repeat(50));
+  console.log('\n  ' + '='.repeat(50));
   console.log('  ' + msg);
-  console.log('  ' + '=' .repeat(50));
+  console.log('  ' + '='.repeat(50));
 }
 
 function rmRf(dir) {
@@ -79,13 +71,14 @@ let cssContent = '';
 
 if (fs.existsSync(cssDir)) {
   // Multiple CSS files in css/ directory
-  const cssFiles = fs.readdirSync(cssDir)
-    .filter(f => f.endsWith('.css'))
+  const cssFiles = fs
+    .readdirSync(cssDir)
+    .filter((f) => f.endsWith('.css'))
     .sort();
 
   if (cssFiles.length > 0) {
     cssContent = cssFiles
-      .map(f => {
+      .map((f) => {
         const p = path.join(cssDir, f);
         return fs.readFileSync(p, 'utf8');
       })
@@ -112,10 +105,7 @@ if (cssContent) {
   fs.writeFileSync(inputPath, cssContent, 'utf8');
 
   try {
-    execSync(
-      `npx cleancss -o "${outputPath}" "${inputPath}"`,
-      { cwd: ROOT, stdio: 'pipe' }
-    );
+    execSync(`npx cleancss -o "${outputPath}" "${inputPath}"`, { cwd: ROOT, stdio: 'pipe' });
     const origSize = (Buffer.byteLength(cssContent, 'utf8') / 1024).toFixed(1);
     const minSize = (fs.statSync(outputPath).size / 1024).toFixed(1);
     console.log(`  styles.css  (${origSize} KB → ${minSize} KB minified)`);
@@ -152,10 +142,10 @@ if (fs.existsSync(htmlSrc)) {
 
     execSync(
       `npx html-minifier --collapse-whitespace --remove-comments ` +
-      `--remove-optional-tags --remove-redundant-attributes ` +
-      `--remove-script-type-attributes --remove-tag-whitespace ` +
-      `--use-short-doctype --minify-css true --minify-js true ` +
-      `-o "${path.join(DIST, 'index.html')}" "${inputHtml}"`,
+        `--remove-optional-tags --remove-redundant-attributes ` +
+        `--remove-script-type-attributes --remove-tag-whitespace ` +
+        `--use-short-doctype --minify-css true --minify-js true ` +
+        `-o "${path.join(DIST, 'index.html')}" "${inputHtml}"`,
       { cwd: ROOT, stdio: 'pipe' }
     );
 
@@ -177,7 +167,7 @@ if (fs.existsSync(htmlSrc)) {
 
 banner('JS');
 
-COPY_DIRS.forEach(dir => {
+COPY_DIRS.forEach((dir) => {
   const srcDir = path.join(ROOT, dir);
   if (!fs.existsSync(srcDir)) return;
 
@@ -185,7 +175,7 @@ COPY_DIRS.forEach(dir => {
   fs.mkdirSync(destDir, { recursive: true });
 
   const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     const srcPath = path.join(srcDir, entry.name);
     const destPath = path.join(destDir, entry.name);
 
@@ -200,7 +190,7 @@ COPY_DIRS.forEach(dir => {
     }
   });
 
-  const count = entries.filter(e => e.isFile()).length;
+  const count = entries.filter((e) => e.isFile()).length;
   if (count > 0) console.log(`  ${dir}/  (${count} files)`);
 });
 
@@ -210,7 +200,7 @@ COPY_DIRS.forEach(dir => {
 
 banner('ROOT FILES');
 
-COPY_FILES.forEach(file => {
+COPY_FILES.forEach((file) => {
   const srcPath = path.join(ROOT, file);
   if (!fs.existsSync(srcPath)) return;
 
@@ -247,7 +237,7 @@ let fileCount = 0;
 
 function walk(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(fullPath);

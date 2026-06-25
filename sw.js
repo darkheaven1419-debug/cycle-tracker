@@ -78,13 +78,16 @@ self.addEventListener('fetch', function (event) {
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
       caches.match(request).then(function (cached) {
-        return cached || fetch(request).then(function (response) {
-          var clone = response.clone();
-          caches.open(CACHE_FONTS).then(function (cache) {
-            cache.put(request, clone);
-          });
-          return response;
-        });
+        return (
+          cached ||
+          fetch(request).then(function (response) {
+            var clone = response.clone();
+            caches.open(CACHE_FONTS).then(function (cache) {
+              cache.put(request, clone);
+            });
+            return response;
+          })
+        );
       })
     );
     return;
@@ -107,8 +110,10 @@ self.addEventListener('fetch', function (event) {
       Promise.race([
         fetch(request),
         new Promise(function (_, reject) {
-          setTimeout(function () { reject(new Error('network timeout')); }, 3000);
-        })
+          setTimeout(function () {
+            reject(new Error('network timeout'));
+          }, 3000);
+        }),
       ]).catch(function () {
         return caches.match(request);
       })
