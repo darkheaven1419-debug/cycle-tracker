@@ -371,3 +371,8 @@ const SyncModule = (function () {
     updateBadge: updateSyncStatusBadge,
   };
 })();
+
+/* ================================================================
+   Global alias — for app.js inline calls
+   ================================================================ */
+const updateSyncStatusBadge = SyncModule.updateBadge;

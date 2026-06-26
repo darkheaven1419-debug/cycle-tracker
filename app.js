@@ -10,7 +10,7 @@
 /* ================================================================
    VERSION
    ================================================================ */
-const APP_VERSION = 'v7.1';
+const APP_VERSION = 'v7.2';
 
 /* ================================================================
    SHARED CONSTANTS
@@ -260,8 +260,10 @@ function saveStateNow() {
 let state = loadState();
 
 /* ================================================================
-   MOOD & STREAK
+   SOLAR TERMS CACHE — fetched from calendar-data.json
    ================================================================ */
+let solarTermsCache = [];
+
 /* Mood, love note, forecast, garden moved to js/render-mood.js */
 function renderGarden() {
   const plantEl = document.getElementById('gardenPlant');
