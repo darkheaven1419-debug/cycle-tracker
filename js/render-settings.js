@@ -33,8 +33,9 @@ function importAllData() {
       !confirm(
         L('Ovo ce PREBRISATI sve trenutne podatke. Nastaviti?', 'This will OVERWRITE all current data. Continue?', '此操作将覆盖所有当前数据，是否继续？')
       )
-    )
-      {return;}
+    ) {
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function (ev) {
       try {

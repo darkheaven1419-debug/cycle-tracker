@@ -373,6 +373,11 @@ const SyncModule = (function () {
 })();
 
 /* ================================================================
-   Global alias — for app.js inline calls
+   Global aliases — for app.js and index.html inline calls
    ================================================================ */
+/* eslint-disable no-unused-vars */
 const updateSyncStatusBadge = SyncModule.updateBadge;
+const pushAllSharedData = SyncModule.push;
+const pullAllSharedData = SyncModule.pull;
+const collectSharedState = SyncModule.collect;
+const applySharedState = SyncModule.apply;
