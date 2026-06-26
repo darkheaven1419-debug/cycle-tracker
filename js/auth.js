@@ -311,3 +311,9 @@ const AuthModule = (function () {
     getPinHashes: getPinHashes,
   };
 })();
+
+/* ================================================================
+   Global aliases — for inline onclick handlers in index.html
+   ================================================================ */
+const selectLogin = AuthModule.selectLogin;
+const verifyLogin = AuthModule.verifyLogin;
