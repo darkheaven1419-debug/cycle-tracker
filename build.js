@@ -136,8 +136,9 @@ if (fs.existsSync(htmlSrc)) {
   fs.writeFileSync(path.join(DIST, 'index.html'), html, 'utf8');
 
   // Minify
+  let inputHtml;
   try {
-    const inputHtml = path.join(ROOT, '_build_index.html');
+    inputHtml = path.join(ROOT, '_build_index.html');
     fs.writeFileSync(inputHtml, html, 'utf8');
 
     execSync(
