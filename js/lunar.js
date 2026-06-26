@@ -4,7 +4,7 @@
  * Includes: 天干地支, 生肖, 农历日期格式化
  */
 
-var Lunar = (function() {
+const Lunar = (function() {
   // ── Lunar year data (1900–2100) ──────────────────────────────
   // Encoding: high nibble(4bits) = leap month (0=none, 1-12=which month)
   // Low 12-16 bits: each bit = 1 month, 0=29days, 1=30days (left to right, month 1-12/13)

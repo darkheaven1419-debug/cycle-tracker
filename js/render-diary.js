@@ -280,7 +280,7 @@ function renderPartnerContent(partnerEntry, partnerProfile, contentEl, translate
     const partnerName = partnerProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
     let timeStr = '';
     if (partnerEntry.time) {
-      var t = new Date(partnerEntry.time);
+      const t = new Date(partnerEntry.time);
       timeStr = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
     }
     let html = '<div style="font-size:.62rem;color:var(--gold);margin-bottom:8px">' + partnerName + (timeStr ? ' · ' + timeStr : '') + '</div>';
@@ -494,11 +494,11 @@ function renderDiaryLabels() {
    💌 DIARY MODULE v9 — Date strip + free writing + timeline
    ================================================================ */
 
-var _diaryViewDate = new Date();
-var _diaryMood = '';
-var _diaryCalMonth, _diaryCalYear;
-var _diaryTimelineLimit = 15;
-var _diaryAutoSaveTimer = null;
+let _diaryViewDate = new Date();
+let _diaryMood = '';
+let _diaryCalMonth, _diaryCalYear;
+let _diaryTimelineLimit = 15;
+let _diaryAutoSaveTimer = null;
 
 function initSharedDiaryTab() {
   _diaryViewDate = new Date();
@@ -845,7 +845,7 @@ function jumpToDiaryDate(dateKey) {
   renderDiaryPanel();
 }
 
-var LETTER_MOODS = ['😊', '🥰', '😢', '😤', '😴', '🤩'];
+const LETTER_MOODS = ['😊', '🥰', '😢', '😤', '😴', '🤩'];
 
 // Merge old 4-field entry into letter text
 function letterTextFromEntry(entry) {

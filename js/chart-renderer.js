@@ -4,7 +4,7 @@
    CHART RENDERER — Pure Canvas 2D, no external deps
    Extracted from app.js for modularity
    ================================================================ */
-var ChartRenderer = {
+const ChartRenderer = {
   _theme: function() {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {

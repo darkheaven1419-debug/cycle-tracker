@@ -17,7 +17,7 @@
  * saveSleep, getBarrySleep, renderSleepCard, renderSpecialBadge,
  * renderRelTips) are preserved by delegating to the module.
  */
-var BarryModule = (function () {
+const BarryModule = (function () {
   'use strict';
 
   /* ================================================================
@@ -477,7 +477,7 @@ var BarryModule = (function () {
         saveEl.textContent = t('sleepSave');
       }
 
-      var s = getBarrySleep();
+      const s = getBarrySleep();
       const inputEl = document.getElementById('sleepTime');
       if (s && inputEl) inputEl.value = s.time;
     } else {
@@ -487,7 +487,7 @@ var BarryModule = (function () {
       if (barryView2) barryView2.style.display = 'none';
       if (angieView2) angieView2.style.display = '';
 
-      var s = getBarrySleep();
+      const s = getBarrySleep();
       const contentEl = document.getElementById('sleepAngieContent');
       if (!contentEl) return;
 

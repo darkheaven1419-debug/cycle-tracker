@@ -2,10 +2,10 @@
 // Network-First for all dynamic assets, Cache-First for static
 // Features: Background Sync for offline diary saves, cache-first for fonts
 
-var CACHE_STATIC = 'ciklus-static-v23';
-var CACHE_FONTS = 'ciklus-fonts-v1';
+const CACHE_STATIC = 'ciklus-static-v23';
+const CACHE_FONTS = 'ciklus-fonts-v1';
 
-var STATIC_ASSETS = [
+const STATIC_ASSETS = [
   './',
   './index.html',
   './offline.html',
@@ -48,7 +48,7 @@ self.addEventListener('install', function (event) {
 });
 
 // Clean up old cache versions — keep only current, delete everything else
-var CURRENT_CACHES = [CACHE_STATIC, CACHE_FONTS];
+const CURRENT_CACHES = [CACHE_STATIC, CACHE_FONTS];
 
 self.addEventListener('activate', function (event) {
   event.waitUntil(

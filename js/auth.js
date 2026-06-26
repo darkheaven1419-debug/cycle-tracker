@@ -5,7 +5,7 @@
      saveSharedDiaryData, pushAllSharedData, pullAllSharedData,
      _syncInterval, getGitHubToken, toggleProfile (may be overridden)
    ================================================================ */
-var AuthModule = (function () {
+const AuthModule = (function () {
   'use strict';
 
   // ── SHA-256 hashed PINs (not plaintext) ──────────────────────────
@@ -207,7 +207,7 @@ var AuthModule = (function () {
     if (savedProfile && sessionLoggedIn === '1') {
       activeProfile = savedProfile;
       _isLoggedIn = true;
-      var overlay = document.getElementById('loginOverlay');
+      const overlay = document.getElementById('loginOverlay');
       if (overlay) overlay.classList.add('hidden');
 
       bootApp().catch(function (e) {
@@ -215,7 +215,7 @@ var AuthModule = (function () {
       });
     } else {
       localStorage.removeItem('cycle-active-profile');
-      var overlay = document.getElementById('loginOverlay');
+      const overlay = document.getElementById('loginOverlay');
       if (overlay) overlay.classList.remove('hidden');
     }
   }

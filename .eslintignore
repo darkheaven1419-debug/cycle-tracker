@@ -1,0 +1,8 @@
+# Third-party minified libraries
+libs/html2canvas.min.js
+
+# Test files (simulate-only, not production)
+test-core.js
+
+# Node modules
+node_modules/

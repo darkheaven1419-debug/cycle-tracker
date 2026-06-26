@@ -10,15 +10,15 @@
 /* ================================================================
    VERSION
    ================================================================ */
-var APP_VERSION = 'v7.1';
+const APP_VERSION = 'v7.1';
 
 /* ================================================================
    SHARED CONSTANTS
    ================================================================ */
-var SYMPTOM_TYPES = ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'];
-var SYMPTOM_EMOJIS = { cramps: '🔴', mood: '😤', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' };
-var MOOD_EMOJIS = ['😊', '🥰', '😤', '😴', '😢', '🤩', '😰', '😐'];
-var MOOD_KEYS = ['happy', 'loved', 'frustrated', 'tired', 'sad', 'excited', 'anxious', 'meh'];
+const SYMPTOM_TYPES = ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'];
+const SYMPTOM_EMOJIS = { cramps: '🔴', mood: '😤', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' };
+const MOOD_EMOJIS = ['😊', '🥰', '😤', '😴', '😢', '🤩', '😰', '😐'];
+const MOOD_KEYS = ['happy', 'loved', 'frustrated', 'tired', 'sad', 'excited', 'anxious', 'meh'];
 
 /* ================================================================
    EXTRACTED to js/ui-core.js
@@ -50,7 +50,7 @@ function safeRemoveItem(key) {
   }
 }
 // On DOM mutations that add/remove elements, clear cache
-var _origRenderAll = null;
+const _origRenderAll = null;
 
 /* ================================================================
    GLOBAL ERROR BOUNDARY — logs errors via internal logger
@@ -205,7 +205,7 @@ function loadState() {
   };
 }
 // Debounced saveState — prevents excessive localStorage writes during rapid clicks
-var _saveTimer = null,
+let _saveTimer = null,
   _pushTimer = null;
 function saveState() {
   clearTimeout(_saveTimer);
@@ -313,7 +313,7 @@ function getGitHubToken() {
   return sessionStorage.getItem('gh-token') || '';
 }
 
-var _sdCache = null;
+let _sdCache = null;
 function loadSharedDiaryData() {
   if (_sdCache) return _sdCache;
   try {
@@ -402,8 +402,8 @@ async function pullPartnerEntry(dateKey) {
 // TRANSLATION
 // ==============================
 // Translation cache — Map with LRU eviction (max 500 entries)
-var _transCache = new Map();
-var _TRANS_CACHE_MAX = 500;
+const _transCache = new Map();
+const _TRANS_CACHE_MAX = 500;
 function _transCacheSet(key, val) {
   if (_transCache.size >= _TRANS_CACHE_MAX) {
     const firstKey = _transCache.keys().next().value;
@@ -573,11 +573,11 @@ function switchTheme(th) {
 /* ================================================================
    APP CONSTANTS — named values for maintainability
    ================================================================ */
-var DEBOUNCE_SAVE_MS = 200; // localStorage save debounce
-var DEBOUNCE_PUSH_MS = 1500; // GitHub push debounce
-var SYNC_INTERVAL_MS = 120000; // Cross-device pull interval (2 min)
-var MAX_SHARED_RETRY = 3; // GitHub sync retry attempts
-var MAX_DIARY_CHARS = 200; // Shared diary field character limit
+const DEBOUNCE_SAVE_MS = 200; // localStorage save debounce
+const DEBOUNCE_PUSH_MS = 1500; // GitHub push debounce
+const SYNC_INTERVAL_MS = 120000; // Cross-device pull interval (2 min)
+const MAX_SHARED_RETRY = 3; // GitHub sync retry attempts
+const MAX_DIARY_CHARS = 200; // Shared diary field character limit
 
 /* ================================================================
    I18N HELPERS
@@ -800,7 +800,7 @@ function setupOfflineDetection() {
   window.addEventListener('offline', update);
   update();
 }
-var _deferredPWA = null; // store beforeinstallprompt for manual trigger
+let _deferredPWA = null; // store beforeinstallprompt for manual trigger
 function setupPWABanner() {
   const banner = document.getElementById('pwaBanner');
   if (!banner) return;
@@ -831,7 +831,7 @@ function setupPWABanner() {
 }
 
 // ===== DASHBOARD =====
-var DASH_I18N = {
+const DASH_I18N = {
   barry: {
     dashTitle: '🏠 主页',
     welcomeBack: '欢迎回来，',
@@ -869,7 +869,7 @@ function dl(key) {
   return p[key] || DASH_I18N.andjela[key] || key;
 }
 // Daily conversation starters — rotating questions to deepen understanding
-var CONVERSATION_QUESTIONS = {
+const CONVERSATION_QUESTIONS = {
   sr: [
     'Koja je tvoja najlepša uspomena iz detinjstva?',
     'Šta te je danas nasmejalo?',
@@ -881,7 +881,7 @@ var CONVERSATION_QUESTIONS = {
     'Koje mesto bi voleo/la da posetimo zajedno?',
     'Šta najviše ceniš kod mene — iskreno?',
     'Koji je bio najbolji dan u našoj vezi do sada?',
-    'Da možeš da promeniš jednu stvar na svetu, šta bi to bilo?',
+    'Da možeš da promeniš jednu st let na svetu, šta bi to bilo?',
     'Kako zamišljaš naš savršen dan za 10 godina?',
     'Šta te čini ponosnim/om na sebe?',
     'Koji je tvoj omiljeni način da se opustiš?',
@@ -1299,8 +1299,8 @@ function renderStatsPanel() {
 }
 
 // ===== DATA LOADER: fetch JSON files =====
-var _dataLoaded = false;
-var _dataLoadPromise = null;
+let _dataLoaded = false;
+let _dataLoadPromise = null;
 
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
@@ -1592,11 +1592,11 @@ function updateAnniversaryCount() {
   if (!el) return;
   const parts = [];
   if (annDateMet) {
-    var d = daysDiff(new Date(annDateMet), today());
+    const d = daysDiff(new Date(annDateMet), today());
     if (d >= 0) parts.push(t('annCountMet').replace('{n}', d));
   }
   if (annDateLove) {
-    var d = daysDiff(new Date(annDateLove), today());
+    const d = daysDiff(new Date(annDateLove), today());
     if (d >= 0) parts.push(t('annCountLove').replace('{n}', d));
   }
   el.innerHTML = parts.join('<br>');
@@ -1604,11 +1604,11 @@ function updateAnniversaryCount() {
 function isAnniversary(d) {
   let result = 0;
   if (annDateMet) {
-    var ad = new Date(annDateMet);
+    const ad = new Date(annDateMet);
     if (d.getDate() === ad.getDate() && d.getMonth() === ad.getMonth()) result = 1;
   }
   if (annDateLove) {
-    var ad = new Date(annDateLove);
+    const ad = new Date(annDateLove);
     if (d.getDate() === ad.getDate() && d.getMonth() === ad.getMonth()) result = 2;
   }
   return result;
@@ -1726,7 +1726,7 @@ function renderTea() {
 /* ================================================================
    CALENDAR DATA LOADER — rich stories + solar terms
    ================================================================ */
-var calendarExtraData = null;
+let calendarExtraData = null;
 function loadCalendarData(cb) {
   if (calendarExtraData) {
     cb(calendarExtraData);
@@ -1790,11 +1790,11 @@ function updateLoveCounter() {
   if (!card) return;
   const parts = [];
   if (annDateMet) {
-    var d = daysDiff(new Date(annDateMet), today());
+    const d = daysDiff(new Date(annDateMet), today());
     if (d >= 0) parts.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' + d + t('loveCounterMet') + '</div>');
   }
   if (annDateLove) {
-    var d = daysDiff(new Date(annDateLove), today());
+    const d = daysDiff(new Date(annDateLove), today());
     if (d >= 0) {
       parts.push(
         '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
@@ -1815,7 +1815,7 @@ function randomThinkingOfYou() {
       ? [
           'Upravo sam pomislio na tebe ♥',
           'Nadam se da se osećaš dobro danas ✨',
-          'Tvoj osmeh mi je najdraža stvar 🌸',
+          'Tvoj osmeh mi je najdraža st let 🌸',
           'Mislim na tebe... uvek 💫',
           'Barry je upravo pomislio na tebe 💝',
         ]
@@ -2235,7 +2235,7 @@ const renderAll = applyAllUI;
    CALENDAR
    ================================================================ */
 const SEASON_EMOJI = { 0: '❄️', 1: '❄️', 2: '🌸', 3: '🌸', 4: '🌸', 5: '☀️', 6: '☀️', 7: '☀️', 8: '🍂', 9: '🍂', 10: '🍂', 11: '❄️' };
-var SEASON_LABEL = {
+const SEASON_LABEL = {
   sr: { 0: 'Zima', 1: 'Zima', 2: 'Proleće', 3: 'Proleće', 4: 'Proleće', 5: 'Leto', 6: 'Leto', 7: 'Leto', 8: 'Jesen', 9: 'Jesen', 10: 'Jesen', 11: 'Zima' },
   en: {
     0: 'Winter',
@@ -2299,7 +2299,7 @@ function renderCalendar() {
     const phase = inMonth ? getPhase(d, pred) : null;
     const key = fmtDate(d);
     // Symptom check
-    var symptoms = state.symptoms[key];
+    const symptoms = state.symptoms[key];
     const hasSymptom =
       symptoms &&
       Object.entries(symptoms).some(function (kv) {
@@ -2367,7 +2367,7 @@ function renderCalendar() {
     el.setAttribute('aria-label', fmtDate(d));
     // Symptom emoji icons on cell
     if (hasSymptom && !phase && symptoms) {
-      var miniDiv = document.createElement('div');
+      const miniDiv = document.createElement('div');
       miniDiv.className = 'day-symptoms';
       ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
         if (symptoms[sym] && symptoms[sym] > 0) {
@@ -2419,7 +2419,7 @@ function renderCalendar() {
       el.appendChild(icon);
     });
     // Double-tap detection using touch events for mobile responsiveness
-    var tapTimer = null;
+    let tapTimer = null;
     if (inMonth) {
       el.addEventListener('click', function (e) {
         if (tapTimer) {
@@ -2456,7 +2456,7 @@ function renderCalendar() {
         }
       });
       // Also listen for touchend for faster double-tap on mobile
-      var touchCount = 0,
+      let touchCount = 0,
         touchTimer = null;
       el.addEventListener('touchend', function (e) {
         touchCount++;
@@ -2936,7 +2936,7 @@ function openModal(date, pred) {
     solarRow.style.display = '';
     const sn = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'];
     document.getElementById('modal-solar').innerHTML =
-      "<span class=\"holiday-name\" onclick=\"var d=this.nextElementSibling;d.classList.toggle('open');this.textContent=this.textContent.replace(' ▾',' ').replace(' ▴',' ')+(d.classList.contains('open')?' ▴':' ▾')\">" +
+      "<span class=\"holiday-name\" onclick=\" let d=this.nextElementSibling;d.classList.toggle('open');this.textContent=this.textContent.replace(' ▾',' ').replace(' ▴',' ')+(d.classList.contains('open')?' ▴':' ▾')\">" +
       sn +
       ' ▾</span><span class="holiday-detail">' +
       (solarTerm.story ? solarTerm.story[lang] || solarTerm.story[lang.split('-')[0]] || solarTerm.story['sr'] : '') +
@@ -2956,11 +2956,11 @@ function openModal(date, pred) {
       const daysOffInfo = HOLIDAY_DAYS[key];
       let offHtml = '';
       if (daysOffInfo && h.country === 'cn') {
-        var off = daysOffInfo.zh || daysOffInfo.cn || '';
+        const off = daysOffInfo.zh || daysOffInfo.cn || '';
         if (off && off !== '—') offHtml = '<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ ' + t('holidayOffLabel') + off + '</div>';
       }
       if (daysOffInfo && h.country === 'rs') {
-        var off = daysOffInfo.sr || daysOffInfo.rs || '';
+        const off = daysOffInfo.sr || daysOffInfo.rs || '';
         if (off && off !== '—') {
           offHtml =
             '<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ ' +
@@ -3421,7 +3421,7 @@ function clearAllData() {
 /* ================================================================
    NAVIGATION
    ================================================================ */
-var _changeMonthTimer = null;
+let _changeMonthTimer = null;
 function changeMonth(d) {
   if (_changeMonthTimer) return; // Debounce: ignore rapid clicks
   _changeMonthTimer = setTimeout(function () {
@@ -3519,14 +3519,14 @@ function goToday() {
 // UI text mapping for culture card (auto-switches based on lang)
 // CULTURE_KNOWLEDGE defined as backward-compat globals in js/culture-cards.js
 // See CultureCardsModule for the IIFE implementation
-var CULTURE_KNOWLEDGE = [];
-var _cultureCardIdx = 0;
+let CULTURE_KNOWLEDGE = [];
+let _cultureCardIdx = 0;
 
 // cl(), getTodaysCultureIndex(), initCultureTab(), renderCultureCard(),
 // prevCultureCard(), nextCultureCard(), goToTodayCulture() are in culture-cards.js
 
-var _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'chinese', 'settings'];
-var _prevTabIdx = 0;
+const _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'chinese', 'settings'];
+let _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach((btn) => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.panel;
@@ -4154,13 +4154,13 @@ function renderSleepCard() {
           ? 'What time did you sleep last night? Angie sees your sleep time 😴'
           : '昨晚几点睡的？Angie 会看到你的睡眠时间 😴';
     document.getElementById('sleep-save').textContent = lang === 'sr' ? 'Sačuvaj' : lang === 'en' ? 'Save' : '保存';
-    var s = getBarrySleep();
+    const s = getBarrySleep();
     if (s) document.getElementById('sleepTime').value = s.time;
   } else {
     // Angie's view
     document.getElementById('sleepBarryView').style.display = 'none';
     document.getElementById('sleepAngieView').style.display = '';
-    var s = getBarrySleep();
+    const s = getBarrySleep();
     if (!s) {
       document.getElementById('sleepAngieContent').innerHTML =
         '<div style="text-align:center;color:var(--text-muted);font-size:.72rem">' +
@@ -4218,7 +4218,7 @@ function renderSpecialBadge() {
 }
 
 /* Update shared symptoms when Anđela saves */
-var _origSaveSymptom = saveSymptom;
+const _origSaveSymptom = saveSymptom;
 saveSymptom = function () {
   _origSaveSymptom();
   updateSharedSymptoms();

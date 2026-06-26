@@ -12,7 +12,7 @@
    Depends on: lunar.js (Lunar global for lunar calendar)
    ================================================================ */
 
-var CalendarModule = (function () {
+const CalendarModule = (function () {
   // ── Private helpers ──────────────────────────────────────────────
 
   /** Get season label for a month in current language */
@@ -78,7 +78,7 @@ var CalendarModule = (function () {
       const key = fmtDate(d);
 
       // Symptom check
-      var symptoms = state.symptoms && state.symptoms[key];
+      const symptoms = state.symptoms && state.symptoms[key];
       const hasSymptom =
         symptoms &&
         Object.entries(symptoms).some(function (kv) {
@@ -96,7 +96,7 @@ var CalendarModule = (function () {
 
       const annType = typeof isAnniversary === 'function' ? isAnniversary(d) : 0;
 
-      var el = document.createElement('div');
+      const el = document.createElement('div');
       el.className = 'day';
       if (!inMonth) el.classList.add('other-month');
       if (isToday) {
@@ -167,7 +167,7 @@ var CalendarModule = (function () {
 
       // Symptom emoji icons
       if (hasSymptom && !phase && symptoms) {
-        var miniDiv = document.createElement('div');
+        const miniDiv = document.createElement('div');
         miniDiv.className = 'day-symptoms';
         ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
           if (symptoms[sym] && symptoms[sym] > 0) {
@@ -237,7 +237,7 @@ var CalendarModule = (function () {
       }
 
       // Single/double tap detection
-      var tapTimer = null;
+      let tapTimer = null;
 
       if (inMonth) {
         // Click handler (desktop single/double click)

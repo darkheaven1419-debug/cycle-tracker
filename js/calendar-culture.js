@@ -5,7 +5,7 @@
  */
 
 // ── Extra Chinese holidays ────────────────────────────────────
-var EXTRA_HOLIDAYS = [
+const EXTRA_HOLIDAYS = [
   {
     d: '2026-02-11',
     name: { sr: 'Mala Nova Godina', zh: '小年', en: 'Little New Year' },
@@ -75,7 +75,7 @@ var EXTRA_HOLIDAYS = [
 ];
 
 // ── Cultural concept explanations (tri-lingual) ─────────────────
-var CULTURE_EXPLAIN = {
+const CULTURE_EXPLAIN = {
   lunar: {
     sr: 'Kinezi već 4000 godina prate vreme pomoću lunarnog kalendara (农历 Nónglì). Svaki mesec počinje mladim mesecom 🌑, a pun mesec 🌕 je uvek 15. dana. Datumi koje vidiš na kalendaru (npr. "初三" = treći dan lunarnog meseca) pomažu Kinezima da odrede kada su tradicionalni praznici, venčanja i važni događaji. Za razliku od gregorijanskog kalendara, lunarna Nova Godina je svake godine na drugi datum!',
     en: 'For 4000 years, Chinese people have tracked time with the lunar calendar (农历 Nónglì). Each month starts with a new moon 🌑, and the full moon 🌕 is always on the 15th. The dates on the calendar (e.g. "初三" = 3rd day of the lunar month) help Chinese people determine traditional holidays, weddings, and important events. Unlike the Gregorian calendar, Lunar New Year falls on a different date each year!',
@@ -109,7 +109,7 @@ var CULTURE_EXPLAIN = {
 };
 
 // ── Seasonal poems ────────────────────────────────────────────
-var SEASONAL_POEMS = {
+const SEASONAL_POEMS = {
   0: {
     title: { zh: '元日', sr: 'Novogodišnji dan', en: "New Year's Day" },
     author: '王安石',
@@ -188,7 +188,7 @@ var SEASONAL_POEMS = {
 };
 
 // ── Traditional Chinese seasonal colors ────────────────────────
-var TRADITIONAL_COLORS = {
+const TRADITIONAL_COLORS = {
   0: { name: { zh: '月白', sr: 'mesečevo bela', en: 'moon white' }, hex: '#D6E4F0' },
   1: { name: { zh: '水色', sr: 'vodeno plava', en: 'water blue' }, hex: '#A8D8EA' },
   2: { name: { zh: '柳绿', sr: 'vrbino zelena', en: 'willow green' }, hex: '#A8D08D' },
@@ -204,15 +204,15 @@ var TRADITIONAL_COLORS = {
 };
 
 // ── Transliteration maps for Gan-Zhi and ShengXiao ──────────────
-var GAN_SR = ['Dzja', 'Ji', 'Bing', 'Ding', 'Vu', 'Dji', 'Geng', 'Sin', 'Ren', 'Guej'];
-var GAN_EN = ['Jia', 'Yi', 'Bing', 'Ding', 'Wu', 'Ji', 'Geng', 'Xin', 'Ren', 'Gui'];
-var GAN_ELEM_SR = ['Drvo Jang', 'Drvo Jin', 'Vatra Jang', 'Vatra Jin', 'Zemlja Jang', 'Zemlja Jin', 'Metal Jang', 'Metal Jin', 'Voda Jang', 'Voda Jin'];
-var GAN_ELEM_EN = ['Yang Wood', 'Yin Wood', 'Yang Fire', 'Yin Fire', 'Yang Earth', 'Yin Earth', 'Yang Metal', 'Yin Metal', 'Yang Water', 'Yin Water'];
-var ZHI_SR = ['Zi', 'Čou', 'Jin', 'Mao', 'Čen', 'Si', 'Vu', 'Vej', 'Šen', 'Jou', 'Sju', 'Haj'];
-var ZHI_EN = ['Zi', 'Chou', 'Yin', 'Mao', 'Chen', 'Si', 'Wu', 'Wei', 'Shen', 'You', 'Xu', 'Hai'];
-var ZOO_SR = ['Pacov', 'Vo', 'Tigar', 'Zec', 'Zmaj', 'Zmija', 'Konj', 'Koza', 'Majmun', 'Petao', 'Pas', 'Svinja'];
-var ZOO_EN = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
-var ZOO_EMOJI = ['🐭', '🐮', '🐯', '🐰', '🐲', '🐍', '🐴', '🐑', '🐵', '🐔', '🐶', '🐷'];
+const GAN_SR = ['Dzja', 'Ji', 'Bing', 'Ding', 'Vu', 'Dji', 'Geng', 'Sin', 'Ren', 'Guej'];
+const GAN_EN = ['Jia', 'Yi', 'Bing', 'Ding', 'Wu', 'Ji', 'Geng', 'Xin', 'Ren', 'Gui'];
+const GAN_ELEM_SR = ['Drvo Jang', 'Drvo Jin', 'Vatra Jang', 'Vatra Jin', 'Zemlja Jang', 'Zemlja Jin', 'Metal Jang', 'Metal Jin', 'Voda Jang', 'Voda Jin'];
+const GAN_ELEM_EN = ['Yang Wood', 'Yin Wood', 'Yang Fire', 'Yin Fire', 'Yang Earth', 'Yin Earth', 'Yang Metal', 'Yin Metal', 'Yang Water', 'Yin Water'];
+const ZHI_SR = ['Zi', 'Čou', 'Jin', 'Mao', 'Čen', 'Si', 'Vu', 'Vej', 'Šen', 'Jou', 'Sju', 'Haj'];
+const ZHI_EN = ['Zi', 'Chou', 'Yin', 'Mao', 'Chen', 'Si', 'Wu', 'Wei', 'Shen', 'You', 'Xu', 'Hai'];
+const ZOO_SR = ['Pacov', 'Vo', 'Tigar', 'Zec', 'Zmaj', 'Zmija', 'Konj', 'Koza', 'Majmun', 'Petao', 'Pas', 'Svinja'];
+const ZOO_EN = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+const ZOO_EMOJI = ['🐭', '🐮', '🐯', '🐰', '🐲', '🐍', '🐴', '🐑', '🐵', '🐔', '🐶', '🐷'];
 
 function _ganZhiTranslated(tgd) {
   // tgd is like "丙午" — two chars: gan + zhi

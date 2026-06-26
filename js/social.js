@@ -21,7 +21,7 @@
  *   relTipCard, relTipIcon, relTipText
  *   tips-list
  */
-var SocialModule = (function () {
+const SocialModule = (function () {
   'use strict';
 
   // ====================================================================
@@ -330,7 +330,7 @@ var SocialModule = (function () {
       const time = new Date(hug.time);
       const timeStr = String(time.getHours()).padStart(2, '0') + ':' + String(time.getMinutes()).padStart(2, '0');
 
-      var html = '<div class="hug-received">';
+      let html = '<div class="hug-received">';
       if (streak > 1)
         {html +=
           '<div class="hug-streak-badge">🔥 ' +
@@ -357,7 +357,7 @@ var SocialModule = (function () {
       for (let i = 0; i < 2; i++) {
         sentHearts += '<span class="hh-heart' + (i >= remaining ? ' used' : '') + '">' + (i < count ? '❤️' : '🤍') + '</span>';
       }
-      var html = '<div class="hug-sent-state">';
+      let html = '<div class="hug-sent-state">';
       html += '<div class="hug-hearts-row">' + sentHearts + '</div>';
       html += '<span class="hss-icon">📬</span>';
       html +=
@@ -373,7 +373,7 @@ var SocialModule = (function () {
     } else {
       // SEND STATE — fresh button
       const label = lang === 'sr' ? 'Pošalji zagrljaj' : lang === 'en' ? 'Send a Hug' : '发送拥抱';
-      var html = '';
+      let html = '';
       if (streak > 1)
         {html +=
           '<div style="text-align:center"><div class="hug-streak-badge">🔥 ' +
@@ -750,10 +750,10 @@ var SocialModule = (function () {
 // ====================================================================
 // Global backward compat — delegate to SocialModule
 // ====================================================================
-var HUG_EXPIRY_MS = SocialModule.HUG_EXPIRY_MS;
-var REL_TIPS = SocialModule.REL_TIPS;
-var CHECKIN_QUESTIONS = SocialModule.CHECKIN_QUESTIONS;
-var KNOW_ME_QUESTIONS = SocialModule.KNOW_ME_QUESTIONS;
+const HUG_EXPIRY_MS = SocialModule.HUG_EXPIRY_MS;
+const REL_TIPS = SocialModule.REL_TIPS;
+const CHECKIN_QUESTIONS = SocialModule.CHECKIN_QUESTIONS;
+const KNOW_ME_QUESTIONS = SocialModule.KNOW_ME_QUESTIONS;
 
 function spawnFloatingHearts(container) {
   return SocialModule.spawnFloatingHearts(container);

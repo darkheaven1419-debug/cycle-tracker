@@ -18,7 +18,7 @@
  *   saveSharedDiaryData — original diary save function
  *   SD_KEY              — localStorage key for shared diary
  */
-var SyncModule = (function () {
+const SyncModule = (function () {
   // ====================================================================
   // Constants
   // ====================================================================

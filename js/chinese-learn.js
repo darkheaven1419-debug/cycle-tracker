@@ -5,16 +5,16 @@
    ================================================================ */
 
 /* ---- Data Caches ---- */
-var LESSONS_DATA = [];
-var ACHIEVEMENTS_DATA = [];
-var _lessonsLoaded = false;
-var _lessonsLoading = false;
-var _lessonLoadQueue = [];
+let LESSONS_DATA = [];
+let ACHIEVEMENTS_DATA = [];
+let _lessonsLoaded = false;
+let _lessonsLoading = false;
+let _lessonLoadQueue = [];
 
 /* ---- Progress Constants ---- */
-var PROGRESS_KEY_PREFIX = 'chinese-progress-';
-var REVIEW_INTERVALS = [1, 3, 7, 14, 30]; // Ebbinghaus review intervals (days)
-var PHASE_NAMES = [
+const PROGRESS_KEY_PREFIX = 'chinese-progress-';
+const REVIEW_INTERVALS = [1, 3, 7, 14, 30]; // Ebbinghaus review intervals (days)
+const PHASE_NAMES = [
   { id: 1, icon: '\u{1F524}', key: 'pinyin' },
   { id: 2, icon: '\u{1F5E3}️', key: 'conversation' },
   { id: 3, icon: '\u{1F91D}', key: 'social' },
@@ -22,8 +22,8 @@ var PHASE_NAMES = [
   { id: 5, icon: '\u{1F4D6}', key: 'reading' },
   { id: 6, icon: '\u{1F393}', key: 'advanced' }
 ];
-var TOTAL_LESSONS = 180;
-var LESSONS_PER_PHASE = 30;
+const TOTAL_LESSONS = 180;
+const LESSONS_PER_PHASE = 30;
 
 /* ================================================================
    1. DATA LOADING
@@ -109,7 +109,7 @@ function isDataLoaded() { return _lessonsLoaded; }
    2. PROGRESS MANAGEMENT
    ================================================================ */
 
-var _currentProgress = null;
+let _currentProgress = null;
 
 function getProgressKey() {
   return PROGRESS_KEY_PREFIX + (typeof activeProfile !== 'undefined' ? activeProfile : 'default');
@@ -411,7 +411,7 @@ function getTodayProgress() {
 
 /* ---- Stroke Info ---- */
 
-var STROKE_DATA = {
+const STROKE_DATA = {
   '我': { radical: '戈', radicalStrokes: 3, totalStrokes: 7 },
   '你': { radical: '亻', radicalStrokes: 2, totalStrokes: 7 },
   '好': { radical: '女', radicalStrokes: 3, totalStrokes: 6 },

@@ -1,7 +1,7 @@
 /* render-misc.js — Misc UI features (greeting, moon, easter eggs, love counter, cycle celebration, special badges) — extracted from app.js v7.1 */
 
-var titleClicks = 0;
-var lastCycleCount = 0;
+let titleClicks = 0;
+let lastCycleCount = 0;
 
 function updateLoveCounter() {
   const el = document.getElementById('titleLoveCounter');
@@ -12,11 +12,11 @@ function updateLoveCounter() {
   if (!card) return;
   const parts = [];
   if (annDateMet) {
-    var d = daysDiff(new Date(annDateMet), today());
+    const d = daysDiff(new Date(annDateMet), today());
     if (d >= 0) parts.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' + d + t('loveCounterMet') + '</div>');
   }
   if (annDateLove) {
-    var d = daysDiff(new Date(annDateLove), today());
+    const d = daysDiff(new Date(annDateLove), today());
     if (d >= 0) {
       parts.push(
         '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
@@ -37,7 +37,7 @@ function randomThinkingOfYou() {
       ? [
           'Upravo sam pomislio na tebe ♥',
           'Nadam se da se osećaš dobro danas ✨',
-          'Tvoj osmeh mi je najdraža stvar 🌸',
+          'Tvoj osmeh mi je najdraža st let 🌸',
           'Mislim na tebe... uvek 💫',
           'Barry je upravo pomislio na tebe 💝',
         ]

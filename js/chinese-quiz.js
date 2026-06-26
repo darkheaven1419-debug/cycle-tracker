@@ -4,7 +4,7 @@
    Dependencies: chinese-learn.js (core engine), chinese-ui.js (UI)
    ================================================================ */
 
-var _quizAnswers = {};
+const _quizAnswers = {};
 
 /* ================================================================
    1. PRACTICE — Option Generation & Answer Checking

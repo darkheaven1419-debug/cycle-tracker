@@ -8,10 +8,10 @@
    1. VIEW MANAGEMENT
    ================================================================ */
 
-var _currentView = 'home';
-var _currentPhaseId = null;
-var _currentLessonViewId = null;
-var _currentLessonTab = 'vocab';
+let _currentView = 'home';
+let _currentPhaseId = null;
+let _currentLessonViewId = null;
+let _currentLessonTab = 'vocab';
 
 function switchLrnView(viewName) {
   _currentView = viewName;
@@ -152,7 +152,7 @@ function fillDailyMotivation() {
     { zh: '今天的努力是明天的自由 \u{1F54A}️', sr: 'Današnji trud je sutrašnja sloboda \u{1F54A}️', en: 'Today\'s effort is tomorrow\'s freedom \u{1F54A}️' },
     { zh: '学而时习之，不亦说乎 \u{1F4DA}', sr: 'Učiti i vežbati — nije li to radost? \u{1F4DA}', en: 'To learn and practice — is that not a joy? \u{1F4DA}' },
     { zh: '每个汉字都是一幅画 \u{1F3A8}', sr: 'Svaki kineski znak je slika \u{1F3A8}', en: 'Every Chinese character is a painting \u{1F3A8}' },
-    { zh: '和你一起学中文是最幸福的事 \u{1F491}', sr: 'Učiti kineski sa tobom je najlepša stvar \u{1F491}', en: 'Learning Chinese together is the best \u{1F491}' }
+    { zh: '和你一起学中文是最幸福的事 \u{1F491}', sr: 'Učiti kineski sa tobom je najlepša st let \u{1F491}', en: 'Learning Chinese together is the best \u{1F491}' }
   ];
   const today = new Date();
   const idx = (today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()) % motivations.length;
@@ -542,8 +542,8 @@ function toggleFavBtn(btn, zh) {
    ================================================================ */
 
 // Cached Chinese voice — set once on first load, reused instantly
-var _zhVoice = null;
-var _voicesReady = false;
+let _zhVoice = null;
+let _voicesReady = false;
 
 // Listen for async voice loading (mobile browsers load voices after page load)
 if (window.speechSynthesis) {
@@ -683,7 +683,7 @@ function renderPracticeTab(lesson, lessonId) {
 
 /* ---- Culture Tab ---- */
 
-var _cultureDataCache = null;
+let _cultureDataCache = null;
 
 function loadCultureData(callback) {
   if (_cultureDataCache) { callback(_cultureDataCache); return; }

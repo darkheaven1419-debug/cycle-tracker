@@ -9,7 +9,7 @@
  * Backward compatible: the global functions (fetchWeather, renderWeather, weatherIcon,
  * clickSunCounter, renderSunCounter) are preserved by delegating to the module.
  */
-var WeatherModule = (function () {
+const WeatherModule = (function () {
   'use strict';
 
   /* ── Daily Love Messages ── */
@@ -354,7 +354,7 @@ var WeatherModule = (function () {
     if (!card) return;
     const parts = [];
     if (annDateMet()) {
-      var d = daysDiff(new Date(annDateMet()), today());
+      const d = daysDiff(new Date(annDateMet()), today());
       if (d >= 0)
         {parts.push(
           '<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' +
@@ -364,7 +364,7 @@ var WeatherModule = (function () {
         );}
     }
     if (annDateLove()) {
-      var d = daysDiff(new Date(annDateLove()), today());
+      const d = daysDiff(new Date(annDateLove()), today());
       if (d >= 0)
         {parts.push(
           '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
@@ -387,7 +387,7 @@ var WeatherModule = (function () {
         ? [
             'Upravo sam pomislio na tebe ♥',
             'Nadam se da se osećaš dobro danas ✨',
-            'Tvoj osmeh mi je najdraža stvar 🌸',
+            'Tvoj osmeh mi je najdraža st let 🌸',
             'Mislim na tebe... uvek 💫',
             'Barry je upravo pomislio na tebe 💝',
           ]
@@ -429,15 +429,15 @@ var WeatherModule = (function () {
 })();
 
 /* ── Backward compatibility: delegate global functions to module ── */
-var fetchWeather = WeatherModule.fetchWeather;
-var renderWeather = WeatherModule.renderWeather;
-var weatherIcon = WeatherModule.weatherIcon;
-var clickSunCounter = WeatherModule.clickSunCounter;
-var renderSunCounter = WeatherModule.renderSunCounter;
-var updateWeatherTimes = WeatherModule.updateWeatherTimes;
-var updateLoveCounter = WeatherModule.updateLoveCounter;
-var randomThinkingOfYou = WeatherModule.randomThinkingOfYou;
-var getTodaysLoveMessage = WeatherModule.getTodaysLoveMessage;
+const fetchWeather = WeatherModule.fetchWeather;
+const renderWeather = WeatherModule.renderWeather;
+const weatherIcon = WeatherModule.weatherIcon;
+const clickSunCounter = WeatherModule.clickSunCounter;
+const renderSunCounter = WeatherModule.renderSunCounter;
+const updateWeatherTimes = WeatherModule.updateWeatherTimes;
+const updateLoveCounter = WeatherModule.updateLoveCounter;
+const randomThinkingOfYou = WeatherModule.randomThinkingOfYou;
+const getTodaysLoveMessage = WeatherModule.getTodaysLoveMessage;
 
 /* ── Keep global DAILY_LOVE_MESSAGES for any remaining references ── */
-var DAILY_LOVE_MESSAGES = WeatherModule.DAILY_LOVE_MESSAGES;
+const DAILY_LOVE_MESSAGES = WeatherModule.DAILY_LOVE_MESSAGES;

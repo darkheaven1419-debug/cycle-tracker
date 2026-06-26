@@ -1,8 +1,8 @@
 /* render-love.js — Love features (hugs, gratitude, checkin, songs, know-me quiz, tips) — extracted from app.js v7.1 */
 
-var HUG_EXPIRY_MS = 86400000;
-var _gratNotes = null;
-var KNOW_ME_QUESTIONS = [
+const HUG_EXPIRY_MS = 86400000;
+let _gratNotes = null;
+const KNOW_ME_QUESTIONS = [
   { key: 'fav_city', q: { sr: 'Koji je omiljeni grad tvog/tvoje partnera?', zh: '对方最喜欢的城市是哪里？', en: "What is your partner's favorite city?" } },
   {
     key: 'first_date_color',
@@ -91,7 +91,7 @@ var KNOW_ME_QUESTIONS = [
   },
 ];
 
-var CHECKIN_QUESTIONS = {
+const CHECKIN_QUESTIONS = {
   sr: [
     { q: 'Kako se osećaš u vezi ove nedelje?', opts: ['😍 Sjajno', '😊 Dobro', '😐 Ok', '😞 Loše'] },
     { q: 'Da li smo dovoljno komunicirali?', opts: ['💬 Da, odlično', '👍 Uglavnom', '🤔 Moglo bi bolje', '👎 Ne baš'] },
@@ -207,12 +207,12 @@ function renderHug() {
     const sender = hug.from === 'andjela' ? '🌸 Anđela' : '👦 Barry';
     const time = new Date(hug.time);
     const timeStr = String(time.getHours()).padStart(2, '0') + ':' + String(time.getMinutes()).padStart(2, '0');
-    var html = '<div class="hug-received">';
+    let html = '<div class="hug-received">';
     if (streak > 1)
-      html +=
+      {html +=
         '<div class="hug-streak-badge">🔥 ' +
         (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') +
-        '</div>';
+        '</div>';}
     html += '<span class="hug-icon-wrap"><span class="hug-icon">🤗</span></span>';
     html += '<div class="hug-text">' + sender + ' ' + (lang === 'sr' ? 'te zagrlio/la! 💫' : lang === 'en' ? 'hugged you! 💫' : '抱了你！💫') + '</div>';
     html += '<div class="hug-time">' + timeStr + '</div>';
@@ -232,7 +232,7 @@ function renderHug() {
     for (let i = 0; i < 2; i++) {
       sentHearts += '<span class="hh-heart' + (i >= remaining ? ' used' : '') + '">' + (i < count ? '❤️' : '🤍') + '</span>';
     }
-    var html =
+    const html =
       '<div class="hug-sent-state">' +
       '<div class="hug-hearts-row">' +
       sentHearts +
@@ -244,12 +244,12 @@ function renderHug() {
     card.innerHTML = html;
   } else {
     const label = t('hugSendBtn');
-    var html = '';
+    let html = '';
     if (streak > 1)
-      html +=
+      {html +=
         '<div style="text-align:center"><div class="hug-streak-badge">🔥 ' +
         (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') +
-        '</div></div>';
+        '</div></div>';}
     html += '<button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 ' + label + '</button>';
     card.innerHTML = html;
   }

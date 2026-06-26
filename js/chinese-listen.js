@@ -5,9 +5,9 @@
    Called by: index.html:27, chinese-ui.js renderPracticeTab
    ================================================================ */
 
-var _currentListenWordIdx = 0;
-var _currentListenScore = 0;
-var _listenLessonWords = [];
+let _currentListenWordIdx = 0;
+let _currentListenScore = 0;
+let _listenLessonWords = [];
 
 function renderListenPractice(lessonId) {
   const container = document.getElementById('lrnListenContainer');
@@ -41,7 +41,7 @@ function startListenSession() {
 
 function nextListenWord() {
   if (_currentListenWordIdx >= _listenLessonWords.length) {
-    var container = document.getElementById('lrnListenContainer');
+    const container = document.getElementById('lrnListenContainer');
     if (!container) return;
     const pct = _listenLessonWords.length > 0
       ? Math.round((_currentListenScore / _listenLessonWords.length) * 100) : 0;
@@ -99,7 +99,7 @@ function nextListenWord() {
     window.speechSynthesis.speak(u);
   }
 
-  var container = document.getElementById('lrnListenContainer');
+  const container = document.getElementById('lrnListenContainer');
   if (!container) return;
   let html = '<div class="lrn-listen-card" style="text-align:center">';
   html += '<div style="font-size:.65rem;color:var(--text-muted);margin-bottom:6px">' +

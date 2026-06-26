@@ -12,7 +12,7 @@
  * toggleHolidayStory) and variables (CULTURE_KNOWLEDGE, CULTURE_DESC_ZH, _cultureCardIdx)
  * are preserved by delegating to the module.
  */
-var CultureCardsModule = (function () {
+const CultureCardsModule = (function () {
   'use strict';
 
   /* ── Internal State ── */
@@ -234,9 +234,9 @@ var CultureCardsModule = (function () {
 /* ================================================================
    Backward-compatible global aliases (delegate to IIFE)
    ================================================================ */
-var CULTURE_KNOWLEDGE = [];
-var CULTURE_DESC_ZH = CultureCardsModule.DESC_ZH;
-var _cultureCardIdx = 0;
+let CULTURE_KNOWLEDGE = [];
+const CULTURE_DESC_ZH = CultureCardsModule.DESC_ZH;
+let _cultureCardIdx = 0;
 
 function cl(key) {
   return CultureCardsModule.locale(key);

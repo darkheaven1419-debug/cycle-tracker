@@ -25,7 +25,7 @@ function safeParse(text, defaultVal) {
 /* ================================================================
    DOM CACHE — reduces repeated document.getElementById calls
    ================================================================ */
-var _elCache = {};
+let _elCache = {};
 function $(id) {
   if (!_elCache[id]) {
     const el = document.getElementById(id);
