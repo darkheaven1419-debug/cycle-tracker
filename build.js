@@ -18,7 +18,7 @@ const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
 const VERSION = 'v' + PKG.version;
 
 const COPY_DIRS = ['js', 'data', 'libs'];
-const COPY_FILES = ['index.html', 'manifest.json', 'sw.js', 'calendar-data.json', 'shared-diary.json', 'shared-state.json', 'favicon.ico'];
+const COPY_FILES = ['index.html', 'app.js', 'styles.css', 'manifest.json', 'sw.js', 'calendar-data.json', 'shared-diary.json', 'shared-state.json', 'favicon.ico', 'robots.txt', 'sitemap.xml', 'offline.html'];
 
 // ---------------------------------------------------------------------------
 //  Helpers

@@ -4049,22 +4049,37 @@ function getSpecialDate(d) {
   const metMMDD = annMet.slice(5);
   const loveMMDD = annLove.slice(5);
   if (mmdd === metMMDD) {
-    return { icon: '💕', type: 'firstmeet',
-      title_sr: '✨ Dan kad smo se sreli', title_zh: '✨ 初次相遇纪念日',
-      desc_sr: 'Najlepši dan — kad smo se prvi put sreli ♥', desc_zh: '最美好的一天——我们初次相遇 ♥' };
+    return {
+      icon: '💕',
+      type: 'firstmeet',
+      title_sr: '✨ Dan kad smo se sreli',
+      title_zh: '✨ 初次相遇纪念日',
+      desc_sr: 'Najlepši dan — kad smo se prvi put sreli ♥',
+      desc_zh: '最美好的一天——我们初次相遇 ♥',
+    };
   }
   if (mmdd === loveMMDD) {
-    return { icon: '💝', type: 'monthly',
-      title_sr: '♥ Zajedno smo', title_zh: '♥ 在一起的纪念日',
-      desc_sr: 'Dan kad je sve počelo — ljubav koja traje ♥', desc_zh: '一切开始的那一天——永恒的爱 ♥' };
+    return {
+      icon: '💝',
+      type: 'monthly',
+      title_sr: '♥ Zajedno smo',
+      title_zh: '♥ 在一起的纪念日',
+      desc_sr: 'Dan kad je sve počelo — ljubav koja traje ♥',
+      desc_zh: '一切开始的那一天——永恒的爱 ♥',
+    };
   }
   if (annMet) {
     const met = new Date(annMet + 'T00:00:00');
     const diff = daysDiff(met, d0(d));
     if (diff > 0 && diff % 90 === 0 && diff <= 365) {
-      return { icon: '🌷', type: 'monthly',
-        title_sr: diff + ' dana od susreta', title_zh: '相遇 ' + diff + ' 天',
-        desc_sr: diff + ' dana od prvog susreta ♥', desc_zh: '相遇 ' + diff + ' 天 ♥' };
+      return {
+        icon: '🌷',
+        type: 'monthly',
+        title_sr: diff + ' dana od susreta',
+        title_zh: '相遇 ' + diff + ' 天',
+        desc_sr: diff + ' dana od prvog susreta ♥',
+        desc_zh: '相遇 ' + diff + ' 天 ♥',
+      };
     }
   }
   return null;
