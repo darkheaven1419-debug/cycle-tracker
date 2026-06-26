@@ -4040,6 +4040,37 @@ function renderSleepCard() {
   }
 }
 /* ================================================================
+   SPECIAL DATES — first meeting & monthly anniversaries
+   ================================================================ */
+function getSpecialDate(d) {
+  const annMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
+  const annLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+  const mmdd = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const metMMDD = annMet.slice(5);
+  const loveMMDD = annLove.slice(5);
+  if (mmdd === metMMDD) {
+    return { icon: '💕', type: 'firstmeet',
+      title_sr: '✨ Dan kad smo se sreli', title_zh: '✨ 初次相遇纪念日',
+      desc_sr: 'Najlepši dan — kad smo se prvi put sreli ♥', desc_zh: '最美好的一天——我们初次相遇 ♥' };
+  }
+  if (mmdd === loveMMDD) {
+    return { icon: '💝', type: 'monthly',
+      title_sr: '♥ Zajedno smo', title_zh: '♥ 在一起的纪念日',
+      desc_sr: 'Dan kad je sve počelo — ljubav koja traje ♥', desc_zh: '一切开始的那一天——永恒的爱 ♥' };
+  }
+  if (annMet) {
+    const met = new Date(annMet + 'T00:00:00');
+    const diff = daysDiff(met, d0(d));
+    if (diff > 0 && diff % 90 === 0 && diff <= 365) {
+      return { icon: '🌷', type: 'monthly',
+        title_sr: diff + ' dana od susreta', title_zh: '相遇 ' + diff + ' 天',
+        desc_sr: diff + ' dana od prvog susreta ♥', desc_zh: '相遇 ' + diff + ' 天 ♥' };
+    }
+  }
+  return null;
+}
+
+/* ================================================================
    BIRTHDAY — check date & render countdown card
    Birthdays stored in localStorage: cycle-bday-andjela, cycle-bday-barry
    Defaults: 13. oktobar (Anđela), 27. avgust (Barry)
@@ -4077,7 +4108,14 @@ function renderBirthdayCard() {
     card.style.display = '';
     const who = aDays < bDays ? '🌸 Anđela' : '👦 Barry';
     title.textContent = '🎂 ' + (lang === 'sr' ? 'Rođendan' : lang === 'en' ? 'Birthday' : '生日');
-    content.innerHTML = '<div class="text-center" style="font-size:.82rem">' + who + ' — ' + closeDays + ' ' + (lang === 'sr' ? 'dana' : lang === 'en' ? 'days' : '天') + '</div>';
+    content.innerHTML =
+      '<div class="text-center" style="font-size:.82rem">' +
+      who +
+      ' — ' +
+      closeDays +
+      ' ' +
+      (lang === 'sr' ? 'dana' : lang === 'en' ? 'days' : '天') +
+      '</div>';
   } else {
     card.style.display = 'none';
   }
