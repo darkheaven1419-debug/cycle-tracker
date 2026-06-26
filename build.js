@@ -217,15 +217,17 @@ if (terserAvailable) {
             compress: { passes: 2, drop_console: false },
             mangle: { reserved: ['Lunar', 'AuthModule', 'ChartRenderer', 'CultureCardsModule', 'syncDiaryData'] },
             output: { comments: false },
-          }).then(function (result) {
-            if (result.code) {
-              fs.writeFileSync(destPath, result.code, 'utf8');
-            } else {
+          })
+            .then(function (result) {
+              if (result.code) {
+                fs.writeFileSync(destPath, result.code, 'utf8');
+              } else {
+                fs.writeFileSync(destPath, content, 'utf8');
+              }
+            })
+            .catch(function () {
               fs.writeFileSync(destPath, content, 'utf8');
-            }
-          }).catch(function () {
-            fs.writeFileSync(destPath, content, 'utf8');
-          });
+            });
         }
       }
     });
@@ -246,12 +248,17 @@ if (terserAvailable) {
     entries.forEach(function (entry) {
       const srcPath = path.join(srcDir, entry.name);
       const destPath = path.join(destDir, entry.name);
-      if (entry.isDirectory()) { cp(srcPath, destPath); return; }
+      if (entry.isDirectory()) {
+        cp(srcPath, destPath);
+        return;
+      }
       let content = fs.readFileSync(srcPath, 'utf8');
       content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
       fs.writeFileSync(destPath, content, 'utf8');
     });
-    var cnt = entries.filter(function (e) { return e.isFile(); }).length;
+    const cnt = entries.filter(function (e) {
+      return e.isFile();
+    }).length;
     if (cnt > 0) console.info('  ' + dir + '/  (' + cnt + ' files)');
   });
 }

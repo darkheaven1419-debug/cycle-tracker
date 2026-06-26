@@ -1,5 +1,10 @@
 'use strict';
 
+/* exported toggleProfile, saveState, loadState, loadSharedDiaryData,
+   saveSharedDiaryData, invalidateSDCache, pullPartnerEntry,
+   translateText, translatePartnerEntries, applyTheme, switchTheme,
+   getFestivalTheme, applyFestivalTheme, applySeasonalDecor */
+
 /* ================================================================
    NOTE: Global utility functions have been extracted to js/ui-core.js:
    safeParse(), $(), clearElCache(), debounce(), esc(),
@@ -124,7 +129,6 @@ function updateProfileUI() {
   const pc = document.getElementById('progressSection');
   const rc = document.getElementById('reminderBanner');
   const fab = document.getElementById('fabBtn');
-  const cyc = document.getElementById('cycleCounterCard');
   const tea = document.getElementById('teaCard');
   if (pc) pc.style.display = isAndjela ? '' : 'none';
   if (rc && !isAndjela) rc.style.display = 'none';
@@ -266,11 +270,13 @@ function renderGarden() {
    kept here because sync.js and other modules depend on them.
    ================================================================ */
 // esc() extracted to js/ui-core.js
+// ===== SHARED DIARY HELPERS =====
+// These functions are used as globals by js/render-diary.js, js/sync.js, etc.
+
 const SD_KEY = 'shared-diary';
 const GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
 const GITHUB_FILE = 'shared-diary.json';
-let sharedDiaryViewDate = new Date();
-const DATE_STRIP_DAYS = 14; // show 14 days in date strip
+const DATE_STRIP_DAYS = 14; // used by render-diary.js
 
 function getGitHubToken() {
   return sessionStorage.getItem('gh-token') || '';
@@ -293,52 +299,6 @@ function saveSharedDiaryData(data) {
 function invalidateSDCache() {
   _sdCache = null;
 } // Call when pull from GitHub returns new data
-
-// Fetch shared diary from GitHub
-async function fetchSharedDiaryFromGitHub() {
-  const token = getGitHubToken();
-  const headers = { Accept: 'application/vnd.github.v3+json' };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  try {
-    const resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { headers: headers, cache: 'no-store' });
-    if (!resp.ok) return null;
-    const data = await resp.json();
-    const content = decodeURIComponent(escape(atob(data.content)));
-    return { data: JSON.parse(content), sha: data.sha };
-  } catch (e) {
-    return null;
-  }
-}
-
-// Push shared diary to GitHub
-async function pushSharedDiaryToGitHub(diaryData) {
-  const token = getGitHubToken();
-  if (!token) return false;
-  const headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
-  let sha = null;
-  try {
-    const resp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, { headers: headers, cache: 'no-store' });
-    if (resp.ok) {
-      const d = await resp.json();
-      sha = d.sha;
-    }
-  } catch (e) {
-    if (DEBUG) console.warn('[sync] Failed to fetch GitHub SHA:', e.message);
-  }
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(diaryData, null, 2))));
-  const body = { message: '💌 Update shared diary', content: content };
-  if (sha) body.sha = sha;
-  try {
-    const putResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, {
-      method: 'PUT',
-      headers: headers,
-      body: JSON.stringify(body),
-    });
-    return putResp.ok;
-  } catch (e) {
-    return false;
-  }
-}
 
 // NOTE: renderDateStrip(), selectDateStrip(), scrollDateStrip() extracted to js/render-diary.js
 

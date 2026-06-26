@@ -38,7 +38,9 @@ async function translateText(text, from, to) {
     const d1 = await r1.json();
     if (d1 && d1[0]) {
       const t = d1[0]
-        .map(function (s) { return s[0]; })
+        .map(function (s) {
+          return s[0];
+        })
         .join('');
       if (t && t !== text) result = t;
     }
@@ -91,10 +93,13 @@ async function translatePartnerEntries() {
     btn.disabled = true;
     btn.textContent = '⏳';
   }
-  const vl = (typeof lang !== 'undefined' && lang === 'zh-CN') ? 'zh-CN' : 'sr';
-  const pl = (typeof activeProfile !== 'undefined' && activeProfile === 'barry') ? 'sr' : 'zh-CN';
+  const vl = typeof lang !== 'undefined' && lang === 'zh-CN' ? 'zh-CN' : 'sr';
+  const pl = typeof activeProfile !== 'undefined' && activeProfile === 'barry' ? 'sr' : 'zh-CN';
   if (vl === pl) {
-    if (btn) { btn.textContent = '🌐'; btn.disabled = false; }
+    if (btn) {
+      btn.textContent = '🌐';
+      btn.disabled = false;
+    }
     return;
   }
   const els = document.querySelectorAll('[id^="sdp-"]');

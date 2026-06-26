@@ -30,10 +30,18 @@ const WeatherModule = (function () {
 
   /* ── Anniversary / Met dates from localStorage ── */
   function annDateLove() {
-    try { return localStorage.getItem('cycle-ann-love') || '2026-05-07'; } catch(e) { return '2026-05-07'; }
+    try {
+      return localStorage.getItem('cycle-ann-love') || '2026-05-07';
+    } catch (e) {
+      return '2026-05-07';
+    }
   }
   function annDateMet() {
-    try { return localStorage.getItem('cycle-ann-met') || '2026-03-19'; } catch(e) { return '2026-03-19'; }
+    try {
+      return localStorage.getItem('cycle-ann-met') || '2026-03-19';
+    } catch (e) {
+      return '2026-03-19';
+    }
   }
 
   function daysDiff(a, b) {

@@ -20,7 +20,7 @@ const PHASE_NAMES = [
   { id: 3, icon: '\u{1F91D}', key: 'social' },
   { id: 4, icon: '\u{1F496}', key: 'emotional' },
   { id: 5, icon: '\u{1F4D6}', key: 'reading' },
-  { id: 6, icon: '\u{1F393}', key: 'advanced' }
+  { id: 6, icon: '\u{1F393}', key: 'advanced' },
 ];
 const TOTAL_LESSONS = 180;
 const LESSONS_PER_PHASE = 30;
@@ -80,7 +80,9 @@ function loadLessonData(callback) {
       }
       onLoaded(null);
     })
-    .catch(function (err) { onLoaded(err); });
+    .catch(function (err) {
+      onLoaded(err);
+    });
 
   fetch(achievementsUrl)
     .then(function (r) {
@@ -91,7 +93,9 @@ function loadLessonData(callback) {
       ACHIEVEMENTS_DATA = data;
       onLoaded(null);
     })
-    .catch(function (err) { onLoaded(err); });
+    .catch(function (err) {
+      onLoaded(err);
+    });
 }
 
 function applyPhaseAssignments() {
@@ -103,7 +107,9 @@ function applyPhaseAssignments() {
   }
 }
 
-function isDataLoaded() { return _lessonsLoaded; }
+function isDataLoaded() {
+  return _lessonsLoaded;
+}
 
 /* ================================================================
    2. PROGRESS MANAGEMENT
@@ -119,8 +125,13 @@ function loadProgress() {
   const key = getProgressKey();
   try {
     const raw = localStorage.getItem(key);
-    if (raw) { _currentProgress = JSON.parse(raw); return _currentProgress; }
-  } catch (e) { /* corrupted */ }
+    if (raw) {
+      _currentProgress = JSON.parse(raw);
+      return _currentProgress;
+    }
+  } catch (e) {
+    /* corrupted */
+  }
   _currentProgress = getDefaultProgress();
   return _currentProgress;
 }
@@ -128,7 +139,11 @@ function loadProgress() {
 function saveProgress(progress) {
   const p = progress || _currentProgress || getDefaultProgress();
   _currentProgress = p;
-  try { localStorage.setItem(getProgressKey(), JSON.stringify(p)); } catch (e) { if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[chinese] saveProgress failed:', e.message); }
+  try {
+    localStorage.setItem(getProgressKey(), JSON.stringify(p));
+  } catch (e) {
+    if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[chinese] saveProgress failed:', e.message);
+  }
   if (typeof scheduleSync !== 'undefined') scheduleSync();
 }
 
@@ -146,7 +161,7 @@ function getDefaultProgress() {
     perfectScores: 0,
     quizResults: {},
     dailyGoal: 3,
-    favoriteWords: []
+    favoriteWords: [],
   };
 }
 
@@ -201,7 +216,7 @@ function markLessonComplete(lessonId, score, timeSpentSeconds) {
     progress.completedLessons[id] = {
       completedAt: new Date().toISOString(),
       score: score || 0,
-      timeSpent: timeSpentSeconds || 0
+      timeSpent: timeSpentSeconds || 0,
     };
   }
 
@@ -230,9 +245,13 @@ function updateStreak(progress) {
   const lastDate = progress.studyStreak.lastDate;
   if (lastDate === today) return;
   const yesterday = fmtDateLocal(addDaysLocal(new Date(), -1));
-  if (lastDate === yesterday) { progress.studyStreak.current++; }
-  else if (lastDate === null) { progress.studyStreak.current = 1; }
-  else { progress.studyStreak.current = 1; }
+  if (lastDate === yesterday) {
+    progress.studyStreak.current++;
+  } else if (lastDate === null) {
+    progress.studyStreak.current = 1;
+  } else {
+    progress.studyStreak.current = 1;
+  }
   if (progress.studyStreak.current > progress.studyStreak.longest) {
     progress.studyStreak.longest = progress.studyStreak.current;
   }
@@ -258,7 +277,7 @@ function getTotalProgress() {
     percent: Math.round((completed / TOTAL_LESSONS) * 100),
     totalPoints: progress.totalPoints || 0,
     streak: progress.studyStreak.current || 0,
-    longestStreak: progress.studyStreak.longest || 0
+    longestStreak: progress.studyStreak.longest || 0,
   };
 }
 
@@ -274,7 +293,7 @@ function getPhaseProgress(phase) {
     completed: completed,
     total: LESSONS_PER_PHASE,
     percent: Math.round((completed / LESSONS_PER_PHASE) * 100),
-    unlocked: isPhaseUnlocked(phase)
+    unlocked: isPhaseUnlocked(phase),
   };
 }
 
@@ -294,7 +313,7 @@ function setInitialReview(progress, lessonId) {
     progress.reviews[id] = {
       history: [],
       nextDue: fmtDateLocal(addDaysLocal(new Date(), REVIEW_INTERVALS[0])),
-      intervalIndex: 0
+      intervalIndex: 0,
     };
   }
 }
@@ -314,7 +333,7 @@ function getDueReviews() {
     if (!lesson) continue;
 
     const daysUntilDue = dateDiffDays(review.nextDue, today);
-    const urgency = daysUntilDue <= 0 ? 'urgent' : (daysUntilDue <= 3 ? 'soon' : 'ok');
+    const urgency = daysUntilDue <= 0 ? 'urgent' : daysUntilDue <= 3 ? 'soon' : 'ok';
 
     reviews.push({
       lessonId: parseInt(id, 10),
@@ -323,7 +342,7 @@ function getDueReviews() {
       lastReview: getLastReviewDate(review),
       nextDue: review.nextDue,
       daysUntilDue: daysUntilDue,
-      urgency: urgency
+      urgency: urgency,
     });
   }
 
@@ -412,109 +431,109 @@ function getTodayProgress() {
 /* ---- Stroke Info ---- */
 
 const STROKE_DATA = {
-  '我': { radical: '戈', radicalStrokes: 3, totalStrokes: 7 },
-  '你': { radical: '亻', radicalStrokes: 2, totalStrokes: 7 },
-  '好': { radical: '女', radicalStrokes: 3, totalStrokes: 6 },
-  '是': { radical: '日', radicalStrokes: 4, totalStrokes: 9 },
-  '不': { radical: '一', radicalStrokes: 1, totalStrokes: 4 },
-  '了': { radical: '亅', radicalStrokes: 1, totalStrokes: 2 },
-  '人': { radical: '人', radicalStrokes: 2, totalStrokes: 2 },
-  '在': { radical: '土', radicalStrokes: 3, totalStrokes: 6 },
-  '有': { radical: '月', radicalStrokes: 4, totalStrokes: 6 },
-  '中': { radical: '丨', radicalStrokes: 1, totalStrokes: 4 },
-  '大': { radical: '大', radicalStrokes: 3, totalStrokes: 3 },
-  '小': { radical: '小', radicalStrokes: 3, totalStrokes: 3 },
-  '天': { radical: '大', radicalStrokes: 3, totalStrokes: 4 },
-  '日': { radical: '日', radicalStrokes: 4, totalStrokes: 4 },
-  '月': { radical: '月', radicalStrokes: 4, totalStrokes: 4 },
-  '水': { radical: '水', radicalStrokes: 4, totalStrokes: 4 },
-  '火': { radical: '火', radicalStrokes: 4, totalStrokes: 4 },
-  '山': { radical: '山', radicalStrokes: 3, totalStrokes: 3 },
-  '木': { radical: '木', radicalStrokes: 4, totalStrokes: 4 },
-  '花': { radical: '艹', radicalStrokes: 3, totalStrokes: 7 },
-  '爱': { radical: '爫', radicalStrokes: 4, totalStrokes: 10 },
-  '一': { radical: '一', radicalStrokes: 1, totalStrokes: 1 },
-  '二': { radical: '二', radicalStrokes: 2, totalStrokes: 2 },
-  '三': { radical: '一', radicalStrokes: 1, totalStrokes: 3 },
-  '四': { radical: '囗', radicalStrokes: 3, totalStrokes: 5 },
-  '五': { radical: '二', radicalStrokes: 2, totalStrokes: 4 },
-  '六': { radical: '八', radicalStrokes: 2, totalStrokes: 4 },
-  '七': { radical: '一', radicalStrokes: 1, totalStrokes: 2 },
-  '八': { radical: '八', radicalStrokes: 2, totalStrokes: 2 },
-  '九': { radical: '丿', radicalStrokes: 1, totalStrokes: 2 },
-  '十': { radical: '十', radicalStrokes: 2, totalStrokes: 2 },
-  '上': { radical: '一', radicalStrokes: 1, totalStrokes: 3 },
-  '下': { radical: '一', radicalStrokes: 1, totalStrokes: 3 },
-  '左': { radical: '工', radicalStrokes: 3, totalStrokes: 5 },
-  '右': { radical: '口', radicalStrokes: 3, totalStrokes: 5 },
-  '学': { radical: '子', radicalStrokes: 3, totalStrokes: 8 },
-  '习': { radical: '冫', radicalStrokes: 2, totalStrokes: 3 },
-  '中': { radical: '丨', radicalStrokes: 1, totalStrokes: 4 },
-  '国': { radical: '囗', radicalStrokes: 3, totalStrokes: 8 },
-  '女': { radical: '女', radicalStrokes: 3, totalStrokes: 3 },
-  '男': { radical: '田', radicalStrokes: 5, totalStrokes: 7 },
-  '子': { radical: '子', radicalStrokes: 3, totalStrokes: 3 },
-  '她': { radical: '女', radicalStrokes: 3, totalStrokes: 6 },
-  '他': { radical: '亻', radicalStrokes: 2, totalStrokes: 5 },
-  '们': { radical: '亻', radicalStrokes: 2, totalStrokes: 5 },
-  '朋': { radical: '月', radicalStrokes: 4, totalStrokes: 8 },
-  '友': { radical: '又', radicalStrokes: 2, totalStrokes: 4 },
-  '老': { radical: '老', radicalStrokes: 6, totalStrokes: 6 },
-  '师': { radical: '巾', radicalStrokes: 3, totalStrokes: 6 },
-  '美': { radical: '羊', radicalStrokes: 6, totalStrokes: 9 },
-  '丽': { radical: '一', radicalStrokes: 1, totalStrokes: 7 },
-  '漂': { radical: '氵', radicalStrokes: 3, totalStrokes: 14 },
-  '亮': { radical: '亠', radicalStrokes: 2, totalStrokes: 9 },
-  '谢': { radical: '讠', radicalStrokes: 2, totalStrokes: 12 },
-  '吗': { radical: '口', radicalStrokes: 3, totalStrokes: 6 },
-  '吃': { radical: '口', radicalStrokes: 3, totalStrokes: 6 },
-  '喝': { radical: '口', radicalStrokes: 3, totalStrokes: 12 },
-  '看': { radical: '目', radicalStrokes: 5, totalStrokes: 9 },
-  '听': { radical: '口', radicalStrokes: 3, totalStrokes: 7 },
-  '说': { radical: '讠', radialStrokes: 2, totalStrokes: 9 },
-  '读': { radical: '讠', radicalStrokes: 2, totalStrokes: 10 },
-  '写': { radical: '冖', radicalStrokes: 2, totalStrokes: 5 },
-  '家': { radical: '宀', radicalStrokes: 3, totalStrokes: 10 },
-  '门': { radical: '门', radicalStrokes: 3, totalStrokes: 3 },
-  '开': { radical: '廾', radicalStrokes: 3, totalStrokes: 4 },
-  '关': { radical: '丷', radicalStrokes: 2, totalStrokes: 6 },
-  '谢': { radical: '讠', radicalStrokes: 2, totalStrokes: 12 },
-  '对': { radical: '又', radicalStrokes: 2, totalStrokes: 5 },
-  '起': { radical: '走', radicalStrokes: 7, totalStrokes: 10 },
-  '来': { radical: '来', radicalStrokes: 7, totalStrokes: 7 },
-  '去': { radical: '土', radicalStrokes: 3, totalStrokes: 5 },
-  '回': { radical: '囗', radicalStrokes: 3, totalStrokes: 6 },
-  '叫': { radical: '口', radicalStrokes: 3, totalStrokes: 5 },
-  '岁': { radical: '山', radicalStrokes: 3, totalStrokes: 6 },
-  '今': { radical: '人', radicalStrokes: 2, totalStrokes: 4 },
-  '年': { radical: '干', radicalStrokes: 3, totalStrokes: 6 },
-  '星': { radical: '日', radicalStrokes: 4, totalStrokes: 9 },
-  '期': { radical: '月', radicalStrokes: 4, totalStrokes: 12 },
-  '的': { radical: '白', radicalStrokes: 5, totalStrokes: 8 },
-  '和': { radical: '禾', radicalStrokes: 5, totalStrokes: 8 },
-  '也': { radical: '乙', radicalStrokes: 1, totalStrokes: 3 },
-  '都': { radical: '阝', radicalStrokes: 2, totalStrokes: 10 },
-  '很': { radical: '彳', radicalStrokes: 3, totalStrokes: 9 },
-  '这': { radical: '辶', radicalStrokes: 3, totalStrokes: 7 },
-  '那': { radical: '阝', radicalStrokes: 2, totalStrokes: 6 },
-  '什': { radical: '亻', radicalStrokes: 2, totalStrokes: 4 },
-  '么': { radical: '丿', radicalStrokes: 1, totalStrokes: 3 },
-  '多': { radical: '夕', radicalStrokes: 3, totalStrokes: 6 },
-  '少': { radical: '小', radicalStrokes: 3, totalStrokes: 4 },
-  '想': { radical: '心', radicalStrokes: 4, totalStrokes: 13 },
-  '知': { radical: '矢', radicalStrokes: 5, totalStrokes: 8 },
-  '道': { radical: '辶', radicalStrokes: 3, totalStrokes: 12 },
-  '能': { radical: '月', radicalStrokes: 4, totalStrokes: 10 },
-  '会': { radical: '人', radicalStrokes: 2, totalStrokes: 6 },
-  '可': { radical: '口', radicalStrokes: 3, totalStrokes: 5 },
-  '以': { radical: '人', radicalStrokes: 2, totalStrokes: 4 },
-  '生': { radical: '生', radicalStrokes: 5, totalStrokes: 5 },
-  '气': { radical: '气', radicalStrokes: 4, totalStrokes: 4 },
-  '新': { radical: '斤', radicalStrokes: 4, totalStrokes: 13 },
-  '旧': { radical: '日', radicalStrokes: 4, totalStrokes: 5 },
-  '前': { radical: '丷', radicalStrokes: 2, totalStrokes: 9 },
-  '后': { radical: '口', radicalStrokes: 3, totalStrokes: 6 },
-  '时': { radical: '日', radicalStrokes: 4, totalStrokes: 7 }
+  我: { radical: '戈', radicalStrokes: 3, totalStrokes: 7 },
+  你: { radical: '亻', radicalStrokes: 2, totalStrokes: 7 },
+  好: { radical: '女', radicalStrokes: 3, totalStrokes: 6 },
+  是: { radical: '日', radicalStrokes: 4, totalStrokes: 9 },
+  不: { radical: '一', radicalStrokes: 1, totalStrokes: 4 },
+  了: { radical: '亅', radicalStrokes: 1, totalStrokes: 2 },
+  人: { radical: '人', radicalStrokes: 2, totalStrokes: 2 },
+  在: { radical: '土', radicalStrokes: 3, totalStrokes: 6 },
+  有: { radical: '月', radicalStrokes: 4, totalStrokes: 6 },
+  中: { radical: '丨', radicalStrokes: 1, totalStrokes: 4 },
+  大: { radical: '大', radicalStrokes: 3, totalStrokes: 3 },
+  小: { radical: '小', radicalStrokes: 3, totalStrokes: 3 },
+  天: { radical: '大', radicalStrokes: 3, totalStrokes: 4 },
+  日: { radical: '日', radicalStrokes: 4, totalStrokes: 4 },
+  月: { radical: '月', radicalStrokes: 4, totalStrokes: 4 },
+  水: { radical: '水', radicalStrokes: 4, totalStrokes: 4 },
+  火: { radical: '火', radicalStrokes: 4, totalStrokes: 4 },
+  山: { radical: '山', radicalStrokes: 3, totalStrokes: 3 },
+  木: { radical: '木', radicalStrokes: 4, totalStrokes: 4 },
+  花: { radical: '艹', radicalStrokes: 3, totalStrokes: 7 },
+  爱: { radical: '爫', radicalStrokes: 4, totalStrokes: 10 },
+  一: { radical: '一', radicalStrokes: 1, totalStrokes: 1 },
+  二: { radical: '二', radicalStrokes: 2, totalStrokes: 2 },
+  三: { radical: '一', radicalStrokes: 1, totalStrokes: 3 },
+  四: { radical: '囗', radicalStrokes: 3, totalStrokes: 5 },
+  五: { radical: '二', radicalStrokes: 2, totalStrokes: 4 },
+  六: { radical: '八', radicalStrokes: 2, totalStrokes: 4 },
+  七: { radical: '一', radicalStrokes: 1, totalStrokes: 2 },
+  八: { radical: '八', radicalStrokes: 2, totalStrokes: 2 },
+  九: { radical: '丿', radicalStrokes: 1, totalStrokes: 2 },
+  十: { radical: '十', radicalStrokes: 2, totalStrokes: 2 },
+  上: { radical: '一', radicalStrokes: 1, totalStrokes: 3 },
+  下: { radical: '一', radicalStrokes: 1, totalStrokes: 3 },
+  左: { radical: '工', radicalStrokes: 3, totalStrokes: 5 },
+  右: { radical: '口', radicalStrokes: 3, totalStrokes: 5 },
+  学: { radical: '子', radicalStrokes: 3, totalStrokes: 8 },
+  习: { radical: '冫', radicalStrokes: 2, totalStrokes: 3 },
+  中: { radical: '丨', radicalStrokes: 1, totalStrokes: 4 },
+  国: { radical: '囗', radicalStrokes: 3, totalStrokes: 8 },
+  女: { radical: '女', radicalStrokes: 3, totalStrokes: 3 },
+  男: { radical: '田', radicalStrokes: 5, totalStrokes: 7 },
+  子: { radical: '子', radicalStrokes: 3, totalStrokes: 3 },
+  她: { radical: '女', radicalStrokes: 3, totalStrokes: 6 },
+  他: { radical: '亻', radicalStrokes: 2, totalStrokes: 5 },
+  们: { radical: '亻', radicalStrokes: 2, totalStrokes: 5 },
+  朋: { radical: '月', radicalStrokes: 4, totalStrokes: 8 },
+  友: { radical: '又', radicalStrokes: 2, totalStrokes: 4 },
+  老: { radical: '老', radicalStrokes: 6, totalStrokes: 6 },
+  师: { radical: '巾', radicalStrokes: 3, totalStrokes: 6 },
+  美: { radical: '羊', radicalStrokes: 6, totalStrokes: 9 },
+  丽: { radical: '一', radicalStrokes: 1, totalStrokes: 7 },
+  漂: { radical: '氵', radicalStrokes: 3, totalStrokes: 14 },
+  亮: { radical: '亠', radicalStrokes: 2, totalStrokes: 9 },
+  谢: { radical: '讠', radicalStrokes: 2, totalStrokes: 12 },
+  吗: { radical: '口', radicalStrokes: 3, totalStrokes: 6 },
+  吃: { radical: '口', radicalStrokes: 3, totalStrokes: 6 },
+  喝: { radical: '口', radicalStrokes: 3, totalStrokes: 12 },
+  看: { radical: '目', radicalStrokes: 5, totalStrokes: 9 },
+  听: { radical: '口', radicalStrokes: 3, totalStrokes: 7 },
+  说: { radical: '讠', radialStrokes: 2, totalStrokes: 9 },
+  读: { radical: '讠', radicalStrokes: 2, totalStrokes: 10 },
+  写: { radical: '冖', radicalStrokes: 2, totalStrokes: 5 },
+  家: { radical: '宀', radicalStrokes: 3, totalStrokes: 10 },
+  门: { radical: '门', radicalStrokes: 3, totalStrokes: 3 },
+  开: { radical: '廾', radicalStrokes: 3, totalStrokes: 4 },
+  关: { radical: '丷', radicalStrokes: 2, totalStrokes: 6 },
+  谢: { radical: '讠', radicalStrokes: 2, totalStrokes: 12 },
+  对: { radical: '又', radicalStrokes: 2, totalStrokes: 5 },
+  起: { radical: '走', radicalStrokes: 7, totalStrokes: 10 },
+  来: { radical: '来', radicalStrokes: 7, totalStrokes: 7 },
+  去: { radical: '土', radicalStrokes: 3, totalStrokes: 5 },
+  回: { radical: '囗', radicalStrokes: 3, totalStrokes: 6 },
+  叫: { radical: '口', radicalStrokes: 3, totalStrokes: 5 },
+  岁: { radical: '山', radicalStrokes: 3, totalStrokes: 6 },
+  今: { radical: '人', radicalStrokes: 2, totalStrokes: 4 },
+  年: { radical: '干', radicalStrokes: 3, totalStrokes: 6 },
+  星: { radical: '日', radicalStrokes: 4, totalStrokes: 9 },
+  期: { radical: '月', radicalStrokes: 4, totalStrokes: 12 },
+  的: { radical: '白', radicalStrokes: 5, totalStrokes: 8 },
+  和: { radical: '禾', radicalStrokes: 5, totalStrokes: 8 },
+  也: { radical: '乙', radicalStrokes: 1, totalStrokes: 3 },
+  都: { radical: '阝', radicalStrokes: 2, totalStrokes: 10 },
+  很: { radical: '彳', radicalStrokes: 3, totalStrokes: 9 },
+  这: { radical: '辶', radicalStrokes: 3, totalStrokes: 7 },
+  那: { radical: '阝', radicalStrokes: 2, totalStrokes: 6 },
+  什: { radical: '亻', radicalStrokes: 2, totalStrokes: 4 },
+  么: { radical: '丿', radicalStrokes: 1, totalStrokes: 3 },
+  多: { radical: '夕', radicalStrokes: 3, totalStrokes: 6 },
+  少: { radical: '小', radicalStrokes: 3, totalStrokes: 4 },
+  想: { radical: '心', radicalStrokes: 4, totalStrokes: 13 },
+  知: { radical: '矢', radicalStrokes: 5, totalStrokes: 8 },
+  道: { radical: '辶', radicalStrokes: 3, totalStrokes: 12 },
+  能: { radical: '月', radicalStrokes: 4, totalStrokes: 10 },
+  会: { radical: '人', radicalStrokes: 2, totalStrokes: 6 },
+  可: { radical: '口', radicalStrokes: 3, totalStrokes: 5 },
+  以: { radical: '人', radicalStrokes: 2, totalStrokes: 4 },
+  生: { radical: '生', radicalStrokes: 5, totalStrokes: 5 },
+  气: { radical: '气', radicalStrokes: 4, totalStrokes: 4 },
+  新: { radical: '斤', radicalStrokes: 4, totalStrokes: 13 },
+  旧: { radical: '日', radicalStrokes: 4, totalStrokes: 5 },
+  前: { radical: '丷', radicalStrokes: 2, totalStrokes: 9 },
+  后: { radical: '口', radicalStrokes: 3, totalStrokes: 6 },
+  时: { radical: '日', radicalStrokes: 4, totalStrokes: 7 },
 };
 
 function getStrokeInfo(zh) {
@@ -545,14 +564,22 @@ function isAchievementConditionMet(ach, progress) {
   const cond = ach.condition;
   if (!cond) return false;
   switch (cond.type) {
-    case 'lessonsCompleted': return getCompletedCount(progress) >= cond.value;
-    case 'phaseComplete': return getPhaseProgress(cond.phaseId).completed >= LESSONS_PER_PHASE;
-    case 'streak': return (progress.studyStreak.current || 0) >= cond.value;
-    case 'totalPoints': return (progress.totalPoints || 0) >= cond.value;
-    case 'perfectScore': return (progress.perfectScores || 0) >= cond.value;
-    case 'timeSpent': return (progress.totalTimeSpent || 0) >= cond.value;
-    case 'allLessons': return getCompletedCount(progress) >= TOTAL_LESSONS;
-    default: return false;
+    case 'lessonsCompleted':
+      return getCompletedCount(progress) >= cond.value;
+    case 'phaseComplete':
+      return getPhaseProgress(cond.phaseId).completed >= LESSONS_PER_PHASE;
+    case 'streak':
+      return (progress.studyStreak.current || 0) >= cond.value;
+    case 'totalPoints':
+      return (progress.totalPoints || 0) >= cond.value;
+    case 'perfectScore':
+      return (progress.perfectScores || 0) >= cond.value;
+    case 'timeSpent':
+      return (progress.totalTimeSpent || 0) >= cond.value;
+    case 'allLessons':
+      return getCompletedCount(progress) >= TOTAL_LESSONS;
+    default:
+      return false;
   }
 }
 
@@ -565,7 +592,10 @@ function unlockAchievement(progress, achievementId) {
   progress.achievements[achievementId] = { unlockedAt: new Date().toISOString() };
   let ach = null;
   for (let i = 0; i < ACHIEVEMENTS_DATA.length; i++) {
-    if (ACHIEVEMENTS_DATA[i].id === achievementId) { ach = ACHIEVEMENTS_DATA[i]; break; }
+    if (ACHIEVEMENTS_DATA[i].id === achievementId) {
+      ach = ACHIEVEMENTS_DATA[i];
+      break;
+    }
   }
   if (ach && ach.points) progress.totalPoints = (progress.totalPoints || 0) + ach.points;
   return ach || { id: achievementId };
@@ -580,15 +610,20 @@ function getAchievementStatus() {
     const isUnlocked = !!(progress.achievements && progress.achievements[ach.id]);
     if (isUnlocked) unlocked++;
     list.push({
-      id: ach.id, icon: ach.icon, name: ach.name, description: ach.description,
-      points: ach.points, isUnlocked: isUnlocked,
-      unlockedAt: isUnlocked ? progress.achievements[ach.id].unlockedAt : null
+      id: ach.id,
+      icon: ach.icon,
+      name: ach.name,
+      description: ach.description,
+      points: ach.points,
+      isUnlocked: isUnlocked,
+      unlockedAt: isUnlocked ? progress.achievements[ach.id].unlockedAt : null,
     });
   }
   return {
-    unlocked: unlocked, total: ACHIEVEMENTS_DATA.length,
+    unlocked: unlocked,
+    total: ACHIEVEMENTS_DATA.length,
     percent: ACHIEVEMENTS_DATA.length > 0 ? Math.round((unlocked / ACHIEVEMENTS_DATA.length) * 100) : 0,
-    list: list
+    list: list,
   };
 }
 
@@ -646,7 +681,9 @@ function shuffleArray(arr) {
   const copy = arr.slice();
   for (let i = copy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const temp = copy[i]; copy[i] = copy[j]; copy[j] = temp;
+    const temp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = temp;
   }
   return copy;
 }

@@ -873,7 +873,8 @@ if (hasTheme) {
   assert(typeof applyFestivalTheme === 'function', 'applyFestivalTheme function exists');
   assert(typeof applySeasonalDecor === 'function', 'applySeasonalDecor function exists');
   assert(typeof switchTheme === 'function', 'switchTheme function exists');
-  passed += 4; asserted += 4;
+  passed += 4;
+  asserted += 4;
   console.log('  Theme tests: passed (DOM available)');
 } else {
   console.log('  Theme tests: skipped (Node.js — DOM not available)');
@@ -888,7 +889,8 @@ console.log('\n=== 10. Translate Module ===');
 if (typeof translateText === 'function') {
   assert(true, 'translateText function exists');
   assert(typeof translatePartnerEntries === 'function', 'translatePartnerEntries function exists');
-  passed += 1; asserted += 1;
+  passed += 1;
+  asserted += 1;
   console.log('  Translate tests: passed');
 } else {
   console.log('  Translate tests: skipped (Node.js)');
@@ -902,7 +904,8 @@ console.log('\n=== 11. Event Delegation ===');
 if (typeof toast === 'function') {
   assert(true, 'toast function exists');
   assert(typeof closeModal === 'function', 'closeModal function exists');
-  passed += 1; asserted += 1;
+  passed += 1;
+  asserted += 1;
   console.log('  Event delegation tests: passed');
 } else {
   console.log('  Event delegation tests: skipped (Node.js)');
