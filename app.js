@@ -1780,33 +1780,7 @@ function toggleHolidayStory(uid, date, country) {
 /* ================================================================
    ROMANTIC TOUCHES
    ================================================================ */
-function updateLoveCounter() {
-  const el = document.getElementById('titleLoveCounter');
-  if (!el || !annDateLove) return;
-  const days = daysDiff(new Date(annDateLove), today());
-  if (days >= 0) el.textContent = '♥ ' + days + t('loveCounterTogether');
-  // Also update the stats card
-  const card = document.getElementById('love-days-content');
-  if (!card) return;
-  const parts = [];
-  if (annDateMet) {
-    const d = daysDiff(new Date(annDateMet), today());
-    if (d >= 0) parts.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' + d + t('loveCounterMet') + '</div>');
-  }
-  if (annDateLove) {
-    const d = daysDiff(new Date(annDateLove), today());
-    if (d >= 0) {
-      parts.push(
-        '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
-          d +
-          (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起') +
-          '</div>'
-      );
-    }
-  }
-  card.innerHTML = parts.join('<div style="height:4px"></div>');
-  document.getElementById('love-days-title').textContent = t('loveDaysTitle');
-}
+/* moved to js/render-misc.js */
 function randomThinkingOfYou() {
   if (activeProfile !== 'andjela') return;
   if (Math.random() > 0.18) return; // 18% chance
@@ -3519,8 +3493,7 @@ function goToday() {
 // UI text mapping for culture card (auto-switches based on lang)
 // CULTURE_KNOWLEDGE defined as backward-compat globals in js/culture-cards.js
 // See CultureCardsModule for the IIFE implementation
-let CULTURE_KNOWLEDGE = [];
-let _cultureCardIdx = 0;
+/* CULTURE_KNOWLEDGE and _cultureCardIdx defined in js/culture-cards.js */
 
 // cl(), getTodaysCultureIndex(), initCultureTab(), renderCultureCard(),
 // prevCultureCard(), nextCultureCard(), goToTodayCulture() are in culture-cards.js
@@ -3771,108 +3744,10 @@ document.getElementById('modal').addEventListener('click', function (e) {
 /* ================================================================
    SYMPTOM ANALYSIS DATA (Barry's view)
    ================================================================ */
-const SYMPTOM_HELP = {
-  cramps: {
-    cause: {
-      sr: 'Materica se kontrahuje da izbaci sluzokožu — prostaglandini izazivaju bol',
-      zh: '子宫收缩排出内膜——前列腺素引起疼痛',
-      en: 'Uterus contracts to shed lining — prostaglandins cause pain',
-    },
-    help: {
-      sr: '🫂 Termofor na stomak • 🍵 Čaj od đumbira • 💆 Nežna masaža donjeg dela leđa • 🚫 Bez hladnih pića',
-      zh: '🫂 暖水袋敷肚子 • 🍵 红糖姜茶 • 💆 轻揉下背部 • 🚫 别喝冰的',
-      en: '🫂 Heating pad • 🍵 Ginger tea • 💆 Gentle lower back massage • 🚫 No cold drinks',
-    },
-  },
-  headache: {
-    cause: { sr: 'Pad estrogena širi krvne sudove u mozgu', zh: '雌激素下降导致脑血管扩张', en: 'Estrogen drop dilates brain blood vessels' },
-    help: {
-      sr: '🤫 Tiha, zamračena soba • 🧊 Hladan oblog na čelo • 💊 Pitaj da li želi lek protiv bolova',
-      zh: '🤫 安静黑暗的房间 • 🧊 凉毛巾敷额头 • 💊 问她需不需要止痛药',
-      en: '🤫 Quiet dark room • 🧊 Cold compress on forehead • 💊 Ask if she needs pain relief',
-    },
-  },
-  fatigue: {
-    cause: { sr: 'Telo troši mnogo energije — gvožđe je nisko', zh: '身体消耗大量能量——铁含量低', en: 'Body uses lots of energy — iron is low' },
-    help: {
-      sr: '🛏️ Pusti je da spava • 🧹 Uradi nešto po kući umesto nje • 🍖 Skoro joj hranu bogatu gvožđem',
-      zh: '🛏️ 让她睡 • 🧹 帮她做家务 • 🍖 做含铁丰富的食物',
-      en: '🛏️ Let her sleep • 🧹 Do chores for her • 🍖 Cook iron-rich food for her',
-    },
-  },
-  mood: {
-    cause: {
-      sr: 'Hormoni divljaju — serotonin i dopamin su na minimumu',
-      zh: '荷尔蒙剧烈波动——血清素和多巴胺都处于低点',
-      en: 'Hormones fluctuating wildly — serotonin and dopamine at lows',
-    },
-    help: {
-      sr: '👂 Slušaj bez osude • 🤐 Ne govori "smiri se" • 🌸 Donesi joj cveće bez razloga • 🫂 Samo je zagrli',
-      zh: '👂 倾听不评判 • 🤐 别说"冷静点" • 🌸 买花给她 • 🫂 就抱着她',
-      en: '👂 Listen without judging • 🤐 Don\'t say "calm down" • 🌸 Bring her flowers • 🫂 Just hold her',
-    },
-  },
-  flow: {
-    cause: { sr: 'Sluzokoža materice se ljušti — normalan proces', zh: '子宫内膜正在脱落——正常过程', en: 'Uterine lining is shedding — normal process' },
-    help: {
-      sr: '🛒 Kupi joj uloške/tampone ako joj treba • 🚫 Bez dizanja teških stvari • 🛏️ Neka se odmara',
-      zh: '🛒 帮她买卫生巾 • 🚫 别让她提重物 • 🛏️ 让她休息',
-      en: '🛒 Buy pads/tampons if she needs • 🚫 No heavy lifting • 🛏️ Let her rest',
-    },
-  },
-  cravings: {
-    cause: {
-      sr: 'Nagli pad serotonina — telo traži utehu u hrani',
-      zh: '血清素急剧下降——身体在食物中寻找安慰',
-      en: 'Serotonin crash — body seeks comfort in food',
-    },
-    help: {
-      sr: '🍫 Donesi joj ono što želi bez komentara • 🍕 Naruči njenu omiljenu hranu • 🤐 Ne komentariši njene izbore',
-      zh: '🍫 给她想吃的不要评论 • 🍕 点她最爱吃的 • 🤐 别评论她的食物选择',
-      en: "🍫 Get her what she wants, no comments • 🍕 Order her favorite food • 🤐 Don't comment on her choices",
-    },
-  },
-};
+/* moved to js/barry.js (BarryModule) */
 
 // Relationship tips for Anđela
-const REL_TIPS = {
-  sr: [
-    { icon: '💬', text: 'Ako ti nešto smeta — reci mu. Barry ne ume da čita misli. Iskren razgovor je temelj.' },
-    { icon: '💝', text: 'Kad uradi nešto lepo za tebe — reci mu. Muškarcima treba potvrda isto koliko i ženama.' },
-    { icon: '🫂', text: 'Svađate se? Seti se: vi ste tim protiv problema, a ne jedno protiv drugog.' },
-    { icon: '🌸', text: 'Tvoja osećanja su važeća. Ne moraš da ih pravdavaš. Samo ih izrazi.' },
-    { icon: '💌', text: 'Male stvari su velike. Poruka "mislim na tebe" znači više nego što misliš.' },
-    { icon: '🎯', text: 'Reci mu šta ti treba. "Volela bih da me sad saslušaš" je jasnije od ćutanja.' },
-    { icon: '🤗', text: 'Fizička bliskost nije samo seks. Držanje za ruke, zagrljaj, dodir — sve to gradi vezu.' },
-    { icon: '🌙', text: 'Kad si umorna i emotivna — reci mu to. "Danas mi je težak dan" je dovoljno.' },
-    { icon: '💪', text: 'Vi ste različite osobe i to je u redu. Ne morate sve da radite isto.' },
-    { icon: '🔥', text: 'Strast se gradi svaki dan — flert, nežne reči, iznenađenja. Ne čekaj "posebne prilike".' },
-  ],
-  'zh-CN': [
-    { icon: '💬', text: '如果有什么不满——直接告诉他。Barry 不会读心术。真诚沟通是感情的基础。' },
-    { icon: '💝', text: '他做了什么让你开心的事？告诉他。男生也需要被肯定。' },
-    { icon: '🫂', text: '吵架时记住：你们 vs 问题，而不是你 vs 他。' },
-    { icon: '🌸', text: '你的感受是真实的。不需要为它辩护。只需要表达出来。' },
-    { icon: '💌', text: '小事最重要。"想你了"三个字的力量比你想象的大得多。' },
-    { icon: '🎯', text: '告诉他你需要什么。"我现在想让你听我说"比沉默更有效。' },
-    { icon: '🤗', text: '亲密不只是性。牵手、拥抱、触摸——这些都在建立连接。' },
-    { icon: '🌙', text: '累了或情绪不好的时候——告诉他。"今天好累"就够了。' },
-    { icon: '💪', text: '你们是不同的个体，这完全没问题。不需要一切都一样。' },
-    { icon: '🔥', text: '激情是每天积累的——调情、温柔的话、小惊喜。别等"特别的日子"。' },
-  ],
-  en: [
-    { icon: '💬', text: "If something bothers you — tell him. Barry can't read minds. Honest talk is the foundation." },
-    { icon: '💝', text: 'He did something nice? Tell him. Men need affirmation as much as women do.' },
-    { icon: '🫂', text: 'In a fight: you are a team against the problem, not against each other.' },
-    { icon: '🌸', text: "Your feelings are valid. You don't need to justify them. Just express them." },
-    { icon: '💌', text: 'Small things are big. A "thinking of you" message means more than you think.' },
-    { icon: '🎯', text: 'Tell him what you need. "I\'d love for you to just listen right now" works better than silence.' },
-    { icon: '🤗', text: "Physical closeness isn't just sex. Holding hands, hugging, touch — it all builds connection." },
-    { icon: '🌙', text: 'When you\'re tired or emotional — just tell him. "Today\'s a hard day" is enough.' },
-    { icon: '💪', text: "You're different people and that's OK. You don't have to do everything the same way." },
-    { icon: '🔥', text: 'Passion builds every day — flirting, sweet words, surprises. Don\'t wait for "special occasions".' },
-  ],
-};
+/* moved to js/render-love.js */
 
 /* ================================================================
    NEW FEATURES — Hug / Gratitude / Check-in / Song
@@ -3881,7 +3756,7 @@ const REL_TIPS = {
 // ================================================================
 // Virtual Hug — redesigned: heartbeat, hug back, streaks, float hearts
 // ================================================================
-const HUG_EXPIRY_MS = 86400000; // 24 hours
+/* moved to js/render-love.js */
 
 // Spawn floating hearts animation
 /* Love features (hug, gratitude, checkin, song, knowme, tips) → js/render-love.js */
