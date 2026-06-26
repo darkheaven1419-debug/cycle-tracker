@@ -152,7 +152,7 @@ function showImportModal() {
         }
       })
       .catch(function (e) {
-        console.warn('[weather] Fetch failed');
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[weather] Fetch failed');
       });
   }
   document.getElementById('importTextarea').focus();

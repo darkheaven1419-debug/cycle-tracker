@@ -110,7 +110,7 @@ const WeatherModule = (function () {
         const d = JSON.parse(cached);
         renderWeather(d);
       } catch (e) {
-        console.warn('[weather] Bad cached data');
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[weather] Bad cached data');
       }
     }
     // Refresh in background (6h cache)
@@ -119,7 +119,7 @@ const WeatherModule = (function () {
         const d2 = JSON.parse(cached);
         if (Date.now() - d2.t < 21600000) return;
       } catch (e) {
-        console.warn('[weather] Bad cache');
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[weather] Bad cache');
       }
     }
     const controller = new AbortController();
@@ -167,7 +167,7 @@ const WeatherModule = (function () {
         })
         .catch(function () {});
     } catch (e) {
-      console.warn('[weather] Forecast fetch failed');
+      if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[weather] Forecast fetch failed');
     }
   }
 

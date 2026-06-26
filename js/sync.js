@@ -213,20 +213,20 @@ const SyncModule = (function () {
         localStorage.setItem('shared-last-sync', Date.now());
       } else if (putResp.status === 409 || putResp.status === 422) {
         // SHA conflict — pull latest, merge, retry
-        console.warn('[Sync] 409 Conflict — pulling latest and merging');
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[Sync] 409 Conflict — pulling latest and merging');
         await pullAllSharedData();
         if (retryCount < MAX_RETRIES) {
           setTimeout(function () {
             pushAllSharedData(retryCount + 1);
           }, 1500);
         } else {
-          console.error('[Sync] Failed after ' + MAX_RETRIES + ' retries — giving up');
+          if (typeof DEBUG !== 'undefined' && DEBUG) console.error('[Sync] Failed after ' + MAX_RETRIES + ' retries — giving up');
           if (typeof toast === 'function') {
             toast(lang === 'sr' ? '⚠️ Sinhronizacija nije uspela — pokušaj ponovo' : '⚠️ 同步失败，请稍后重试');
           }
         }
       } else {
-        console.error('[Sync] Unexpected response:', putResp.status, putResp.statusText);
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.error('[Sync] Unexpected response:', putResp.status, putResp.statusText);
       }
     } catch (e) {
       if (retryCount < MAX_RETRIES) {
@@ -234,7 +234,7 @@ const SyncModule = (function () {
           pushAllSharedData(retryCount + 1);
         }, 2000);
       } else {
-        console.error('[Sync] Network error after retries:', e.message);
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.error('[Sync] Network error after retries:', e.message);
       }
     }
   }

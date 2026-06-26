@@ -153,7 +153,7 @@ function loadState() {
       };
     }
   } catch (e) {
-    console.warn('[state] Failed to load state:', e.message);
+    if (DEBUG) console.warn('[state] Failed to load state:', e.message);
   }
   // Try old key
   try {
@@ -170,7 +170,7 @@ function loadState() {
       };
     }
   } catch (e) {
-    console.warn('[state] Failed to migrate old state:', e.message);
+    if (DEBUG) console.warn('[state] Failed to migrate old state:', e.message);
   }
   return {
     records: activeProfile === 'andjela' ? [new Date(2026, 4, 28)] : [],
@@ -323,7 +323,7 @@ async function pushSharedDiaryToGitHub(diaryData) {
       sha = d.sha;
     }
   } catch (e) {
-    console.warn('[sync] Failed to fetch GitHub SHA:', e.message);
+    if (DEBUG) console.warn('[sync] Failed to fetch GitHub SHA:', e.message);
   }
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(diaryData, null, 2))));
   const body = { message: '💌 Update shared diary', content: content };
@@ -362,131 +362,8 @@ async function pullPartnerEntry(dateKey) {
 // jumpToDiaryDate() extracted to js/render-diary.js
 
 // ==============================
-// TRANSLATION
+// TRANSLATION — extracted to js/translate.js
 // ==============================
-// Translation cache — Map with LRU eviction (max 500 entries)
-const _transCache = new Map();
-const _TRANS_CACHE_MAX = 500;
-function _transCacheSet(key, val) {
-  if (_transCache.size >= _TRANS_CACHE_MAX) {
-    const firstKey = _transCache.keys().next().value;
-    _transCache.delete(firstKey);
-  }
-  _transCache.set(key, val);
-}
-
-async function translateText(text, from, to) {
-  if (!text || from === to || text.length < 2) return text;
-  const cacheKey = from + '|' + to + '|' + text;
-  if (_transCache.has(cacheKey)) return _transCache.get(cacheKey);
-
-  let result = null;
-
-  // 1) Google Translate (newer endpoint, best quality for zh↔sr)
-  try {
-    const r1 = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + from + '&tl=' + to + '&dt=t&q=' + encodeURIComponent(text));
-    const d1 = await r1.json();
-    if (d1 && d1[0]) {
-      const t = d1[0]
-        .map(function (s) {
-          return s[0];
-        })
-        .join('');
-      if (t && t !== text) result = t;
-    }
-  } catch (e) {
-    console.warn('[translate] Google API failed:', e.message);
-  }
-
-  // 2) MyMemory (free, no key needed, good fallback)
-  if (!result) {
-    try {
-      const pair = from + '|' + to;
-      const r2 = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=' + pair);
-      const d2 = await r2.json();
-      if (d2.responseData && d2.responseData.translatedText && d2.responseData.translatedText !== text) {
-        result = d2.responseData.translatedText;
-      }
-    } catch (e) {
-      console.warn('[translate] MyMemory failed:', e.message);
-    }
-  }
-
-  // 3) LibreTranslate (public instance, free/open-source, good for European langs)
-  if (!result) {
-    try {
-      const r3 = await fetch('https://translate.argosopentech.com/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q: text, source: from, target: to, format: 'text' }),
-      });
-      const d3 = await r3.json();
-      if (d3.translatedText && d3.translatedText !== text) result = d3.translatedText;
-    } catch (e) {
-      console.warn('[translate] LibreTranslate failed:', e.message);
-    }
-  }
-
-  if (result) {
-    _transCacheSet(cacheKey, result);
-    return result;
-  }
-  return null; // all translation APIs exhausted
-}
-async function translatePartnerEntries() {
-  const btn = document.getElementById('translateBtnSm');
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = '⏳';
-  }
-  const vl = (lang || 'sr') === 'zh-CN' ? 'zh-CN' : 'sr';
-  const pl = activeProfile === 'barry' ? 'sr' : 'zh-CN';
-  if (vl === pl) {
-    if (btn) {
-      btn.textContent = '🌐';
-      btn.disabled = false;
-    }
-    return;
-  }
-  const els = document.querySelectorAll('[id^="sdp-"]');
-  let ok = 0;
-  for (let i = 0; i < els.length; i++) {
-    const el = els[i];
-    const orig = el.getAttribute('data-original');
-    if (orig && orig.length > 2) {
-      const result = await translateText(orig, pl, vl);
-      if (result === null) {
-        el.textContent = orig + ' [' + (lang === 'sr' ? 'prevod nije uspeo' : lang === 'en' ? 'translation failed' : '翻译失败') + ']';
-        el.style.color = 'var(--text-muted)';
-      } else if (result && result !== orig) {
-        el.textContent = result;
-        el.style.color = 'var(--teal)';
-        el.style.fontWeight = '500';
-        ok++;
-      }
-    }
-  }
-  if (btn) {
-    if (ok > 0) {
-      btn.textContent = '✅';
-      btn.style.borderColor = 'var(--teal)';
-      btn.style.color = 'var(--teal)';
-    } else {
-      btn.textContent = '⚠️';
-      btn.style.borderColor = '#E53935';
-      btn.style.color = '#E53935';
-      btn.disabled = false;
-      setTimeout(function () {
-        if (btn) {
-          btn.textContent = '🌐';
-          btn.style.borderColor = '';
-          btn.style.color = '';
-          btn.disabled = false;
-        }
-      }, 3000);
-    }
-  }
-}
 
 // Character counter listeners + renderDiaryLabels() extracted to js/render-diary.js
 
@@ -519,19 +396,7 @@ function setLang(l) {
   localStorage.setItem(profileKey('cycle-lang'), l);
   localStorage.setItem('cycle-lang', l);
 }
-function applyTheme(th) {
-  theme = th;
-  localStorage.setItem(profileKey('cycle-theme'), th);
-  localStorage.setItem('cycle-theme', th);
-  document.documentElement.setAttribute('data-theme', th);
-  document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙';
-  const sel = document.getElementById('set-theme');
-  if (sel) sel.value = th;
-}
-// switchLanguage defined below after STATE vars
-function switchTheme(th) {
-  applyTheme(th);
-}
+// applyTheme(), switchTheme() — extracted to js/theme.js
 
 /* ================================================================
    APP CONSTANTS — named values for maintainability
@@ -635,123 +500,7 @@ function importAllData() {
   input.click();
 }
 
-// ===== FESTIVAL THEME =====
-function getFestivalTheme() {
-  const t = new Date();
-  const k = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
-  const L = {
-    2025: { s: '2025-01-29', m: '2025-10-06' },
-    2026: { s: '2026-02-17', m: '2026-09-25' },
-    2027: { s: '2027-02-06', m: '2027-10-14' },
-    2028: { s: '2028-01-26', m: '2028-10-03' },
-    2029: { s: '2029-02-13', m: '2029-09-28' },
-  };
-  const ld = L[t.getFullYear()];
-  if (ld) {
-    const ss = new Date(ld.s + 'T00:00:00');
-    const se = new Date(ss);
-    se.setDate(se.getDate() + 3);
-    if (t >= ss && t <= se) return 'festival-spring';
-    if (k === ld.m) return 'festival-midautumn';
-  }
-  const mmdd = String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
-  if (mmdd === '01-07') return 'festival-orthodoxmas';
-  if (mmdd === '01-27') return 'festival-sava';
-  if (mmdd === '02-14') return 'festival-valentine';
-  if (mmdd === '05-09') return 'festival-victory';
-  const ORTHODOX_EASTER = { 2025: '2025-04-20', 2026: '2026-04-12', 2027: '2027-05-02', 2028: '2028-04-16', 2029: '2029-04-08' };
-  const oe = ORTHODOX_EASTER[t.getFullYear()];
-  if (oe && k === oe) return 'festival-easter';
-  if (mmdd === '01-01') return 'festival-newyear';
-  return '';
-}
-function applyFestivalTheme() {
-  const cls = getFestivalTheme();
-  document.body.classList.forEach(function (c) {
-    if (c.startsWith('festival-')) document.body.classList.remove(c);
-  });
-  if (cls) document.body.classList.add(cls);
-  const old = document.getElementById('festivalDecorations');
-  if (old) old.remove();
-  let icons = null,
-    count = 0;
-  if (cls === 'festival-spring') {
-    icons = ['🏮', '🧧', '🎆', '🧨'];
-    count = 12;
-  } else if (cls === 'festival-midautumn') {
-    icons = ['🌕', '🐰', '🥮', '🏮'];
-    count = 10;
-  } else if (cls === 'festival-valentine') {
-    icons = ['💕', '💖', '💗', '🌸', '❤️'];
-    count = 15;
-  } else if (cls === 'festival-newyear') {
-    icons = ['🎆', '✨', '🎉', '🌟'];
-    count = 12;
-  } else if (cls === 'festival-sava') {
-    icons = ['📚', '✝️', '🇷🇸', '🕊️'];
-    count = 8;
-  } else if (cls === 'festival-orthodoxmas') {
-    icons = ['❄️', '🎄', '✝️', '🕯️'];
-    count = 8;
-  } else if (cls === 'festival-easter') {
-    icons = ['🥚', '🐇', '🌸', '🕊️'];
-    count = 10;
-  } else if (cls === 'festival-victory') {
-    icons = ['🕊️', '🌺', '🎖️', '✨'];
-    count = 8;
-  }
-  if (!icons) return;
-  const c = document.createElement('div');
-  c.className = 'festival-decorations';
-  c.id = 'festivalDecorations';
-  for (let i = 0; i < count; i++) {
-    const d = document.createElement('span');
-    d.className = 'festival-deco';
-    d.textContent = icons[i % icons.length];
-    d.style.left = 2 + Math.random() * 94 + '%';
-    d.style.fontSize = 0.8 + Math.random() * 1.8 + 'rem';
-    d.style.animationDelay = Math.random() * 6 + 's';
-    d.style.animationDuration = 4 + Math.random() * 8 + 's';
-    c.appendChild(d);
-  }
-  document.body.appendChild(c);
-}
-
-// ===== SEASONAL DECOR =====
-function applySeasonalDecor() {
-  const cls = getFestivalTheme();
-  if (cls) return;
-  const m = new Date().getMonth();
-  let icons = null,
-    count = 0;
-  if (m >= 2 && m <= 4) {
-    icons = ['🌸', '🌷', '💮', '🌿'];
-    count = 8;
-  } else if (m >= 5 && m <= 7) {
-    icons = ['☀️', '🌻', '🍦', '🦋'];
-    count = 6;
-  } else if (m >= 8 && m <= 10) {
-    icons = ['🍂', '🍁', '🎃', '🌾'];
-    count = 8;
-  } else {
-    icons = ['❄️', '⛄', '🧣', '✨'];
-    count = 6;
-  }
-  const old = document.getElementById('seasonalDecorations');
-  if (old) old.remove();
-  const c = document.createElement('div');
-  c.className = 'seasonal-deco';
-  c.id = 'seasonalDecorations';
-  for (let i = 0; i < count; i++) {
-    const d = document.createElement('span');
-    d.textContent = icons[i % icons.length];
-    d.style.left = 3 + Math.random() * 94 + '%';
-    d.style.fontSize = 0.7 + Math.random() * 1.2 + 'rem';
-    d.style.animationDelay = Math.random() * 8 + 's';
-    c.appendChild(d);
-  }
-  document.body.appendChild(c);
-}
+// getFestivalTheme(), applyFestivalTheme(), applySeasonalDecor() — extracted to js/theme.js
 function setupOfflineDetection() {
   const banner = document.getElementById('offlineBanner');
   if (!banner) return;

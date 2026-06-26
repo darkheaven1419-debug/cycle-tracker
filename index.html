@@ -50,6 +50,8 @@
 	<script src="js/chinese-panels.js?v=5" defer></script>
 	<script src="js/chinese-listen.js?v=6" defer></script>
 	<script src="js/cycle-core.js?v=2" defer></script>
+	<script src="js/theme.js?v=1" defer></script>
+	<script src="js/translate.js?v=1" defer></script>
 	<script src="js/auth.js?v=3" defer></script>
 	<script src="js/weather.js?v=2" defer></script>
 	<script src="js/sync.js?v=2" defer></script>
@@ -138,7 +140,7 @@
         <span class="pf-name" id="pfName">Anđela</span>
       </div>
       <div class="moon-phase" id="moonPhase" role="img" aria-label="Moon phase" title="月相"></div>
-      <button class="theme-btn" id="themeBtn" aria-label="Prebaci tamni/svetli režim" title="Prebaci tamni/svetli režim">🌙</button>
+      <button class="theme-btn" id="themeBtn" data-action="theme-toggle" aria-label="Prebaci tamni/svetli režim" title="Prebaci tamni/svetli režim">🌙</button>
       <div class="lang-switch" id="langSwitch" role="radiogroup" aria-label="Language selection">
         <button class="lang-btn" data-lang="zh-CN" aria-label="中文">中</button>
         <button class="lang-btn" data-lang="sr" aria-label="Srpski">SR</button>
@@ -588,10 +590,10 @@
     </div>
     <div style="height:14px"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-lang"></span><span class="setting-hint" id="set-h-lang"></span></div>
-      <select id="set-language" onchange="switchLanguage(this.value)"><option value="zh-CN">中文</option><option value="en">English</option><option value="sr">Српски</option></select>
+      <select id="set-language" data-action-change="language"><option value="zh-CN">中文</option><option value="en">English</option><option value="sr">Српски</option></select>
     </div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-theme"></span><span class="setting-hint" id="set-h-theme"></span></div>
-      <select id="set-theme" onchange="switchTheme(this.value)"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select>
+      <select id="set-theme" data-action-change="theme"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option></select>
     </div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-cycle"></span><span class="setting-hint" id="set-h-cycle"></span></div><input type="number" id="set-cycle" min="20" max="60" value="28"></div>
     <div class="setting-row"><div><span class="setting-label" id="set-l-period"></span><span class="setting-hint" id="set-h-period"></span></div><input type="number" id="set-period" min="2" max="10" value="7"></div>
@@ -656,12 +658,12 @@
       <button class="btn btn-primary" id="modal-mark-btn" onclick="togglePeriodRecord()"></button>
       <button class="btn btn-danger" id="modal-unmark-btn" style="display:none" onclick="removePeriodRecord()"></button>
     </div>
-    <button class="btn btn-ghost mt-6" style="margin-bottom:0" id="modal-close-btn" onclick="closeModal()"></button>
+    <button class="btn btn-ghost mt-6" style="margin-bottom:0" id="modal-close-btn" data-action="close-modal"></button>
   </div>
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-	<script src="app.js?v=52" defer></script>
+	<script src="app.js?v=53" defer></script>
 </body>
 </html>
 

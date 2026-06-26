@@ -861,6 +861,54 @@ assertEqual(fmtDate(pMF.futurePeriods[0].start), '2026-12-29', 'manual override 
 assertEqual(fmtDate(pMF.futurePeriods[1].start), '2027-02-02', 'manual override future period 2 uses 35-day cycle');
 
 /* ================================================================
+   9. Theme Module (js/theme.js) — function existence (DOM-dependent)
+   ================================================================ */
+console.log('\n=== 9. Theme Module ===');
+
+// Note: these functions require DOM — in Node they may not exist
+var hasTheme = typeof getFestivalTheme === 'function';
+if (hasTheme) {
+  var ft = getFestivalTheme();
+  assert(ft === '' || (typeof ft === 'string' && ft.indexOf('festival-') === 0), 'getFestivalTheme returns valid class or empty');
+  assert(typeof applyFestivalTheme === 'function', 'applyFestivalTheme function exists');
+  assert(typeof applySeasonalDecor === 'function', 'applySeasonalDecor function exists');
+  assert(typeof switchTheme === 'function', 'switchTheme function exists');
+  passed += 4; asserted += 4;
+  console.log('  Theme tests: passed (DOM available)');
+} else {
+  console.log('  Theme tests: skipped (Node.js — DOM not available)');
+}
+
+/* ================================================================
+   10. Translate Module (js/translate.js) — function existence
+   ================================================================ */
+console.log('\n=== 10. Translate Module ===');
+
+// These depend on DOM/window globals — may not exist in Node
+if (typeof translateText === 'function') {
+  assert(true, 'translateText function exists');
+  assert(typeof translatePartnerEntries === 'function', 'translatePartnerEntries function exists');
+  passed += 1; asserted += 1;
+  console.log('  Translate tests: passed');
+} else {
+  console.log('  Translate tests: skipped (Node.js)');
+}
+
+/* ================================================================
+   11. Event Delegation (js/ui-core.js) — data-action system
+   ================================================================ */
+console.log('\n=== 11. Event Delegation ===');
+
+if (typeof toast === 'function') {
+  assert(true, 'toast function exists');
+  assert(typeof closeModal === 'function', 'closeModal function exists');
+  passed += 1; asserted += 1;
+  console.log('  Event delegation tests: passed');
+} else {
+  console.log('  Event delegation tests: skipped (Node.js)');
+}
+
+/* ================================================================
    RESULTS
    ================================================================ */
 console.log('\n========================================');

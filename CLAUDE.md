@@ -72,6 +72,14 @@ browserconfig.xml       ← Windows PWA 配置
 - 构建指令: `npm run build` (合并+校验+缩)
 - CI: 每次 push 自动跑测试 + 部署 GitHub Pages
 
+## v7.3 更新 (2026-06-26)
+- 从 app.js 提取模块：js/translate.js, js/theme.js（app.js ~3700 行）
+- 构建优化：terser JS 压缩（build.js）
+- 清理全部 19 个生产环境 console.warn/error 语句（DEBUG 包装）
+- 集中式事件委托系统 (data-action 替代 inline onclick)
+- 更新 Service Worker 缓存新模块 (v24)
+- 新增 terser devDependency
+
 ## v7.2 更新 (2026-06-25)
 - 从 app.js 提取模块：js/calendar.js, js/social.js, js/barry.js, js/culture-cards.js
 - 内联数据外移至 data/holidays.json, data/solar-terms.json, data/culture-knowledge.json

@@ -452,7 +452,7 @@ function initExtraHolidays() {
       }, 200);
       return;
     }
-    console.warn('[culture] today/lang not available after 50 retries — skipping');
+    if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[culture] today/lang not available after 50 retries — skipping');
     return;
   }
   initExtraHolidays();

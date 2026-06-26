@@ -128,7 +128,7 @@ function loadProgress() {
 function saveProgress(progress) {
   const p = progress || _currentProgress || getDefaultProgress();
   _currentProgress = p;
-  try { localStorage.setItem(getProgressKey(), JSON.stringify(p)); } catch (e) { console.warn('[chinese] saveProgress failed:', e.message); }
+  try { localStorage.setItem(getProgressKey(), JSON.stringify(p)); } catch (e) { if (typeof DEBUG !== 'undefined' && DEBUG) console.warn('[chinese] saveProgress failed:', e.message); }
   if (typeof scheduleSync !== 'undefined') scheduleSync();
 }
 

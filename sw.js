@@ -24,6 +24,8 @@ const STATIC_ASSETS = [
   './js/chinese-quiz.js',
   './js/chinese-panels.js',
   './js/chinese-listen.js',
+  './js/translate.js',
+  './js/theme.js',
 
   './calendar-data.json',
   './data/quotes.json',

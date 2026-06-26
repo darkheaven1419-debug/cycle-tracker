@@ -211,7 +211,7 @@ const AuthModule = (function () {
       if (overlay) overlay.classList.add('hidden');
 
       bootApp().catch(function (e) {
-        console.error('bootApp failed:', e);
+        if (typeof DEBUG !== 'undefined' && DEBUG) console.error('bootApp failed:', e);
       });
     } else {
       localStorage.removeItem('cycle-active-profile');

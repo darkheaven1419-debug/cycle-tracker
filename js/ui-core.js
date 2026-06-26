@@ -119,3 +119,43 @@ function toast(msg) {
     if (el.parentNode) el.remove();
   }, 3300);
 }
+
+/* ================================================================
+   CENTRALIZED EVENT DELEGATION — replace inline onclick handlers
+   Attach data-action="name" to any element. Reduces global scope
+   pollution and improves CSP compatibility.
+   ================================================================ */
+document.addEventListener('click', function (e) {
+  var target = e.target.closest('[data-action]');
+  if (!target) return;
+  var action = target.getAttribute('data-action');
+  if (!action) return;
+  e.preventDefault();
+
+  switch (action) {
+    case 'close-modal': if (typeof closeModal === 'function') closeModal(); break;
+    case 'toggle-period': if (typeof togglePeriodRecord === 'function') togglePeriodRecord(); break;
+    case 'remove-period': if (typeof removePeriodRecord === 'function') removePeriodRecord(); break;
+    case 'save-diary': if (typeof saveDiaryEntry === 'function') saveDiaryEntry(); break;
+    case 'save-symptom': if (typeof saveSymptom === 'function') saveSymptom(); break;
+    case 'add-gratitude': if (typeof addGratitude === 'function') addGratitude(); break;
+    case 'send-hug': if (typeof sendHug === 'function') sendHug(); break;
+    case 'export-data': if (typeof exportAllData === 'function') exportAllData(); break;
+    case 'import-data': if (typeof importAllData === 'function') importAllData(); break;
+    case 'clear-diary': if (typeof clearAllDiaries === 'function') clearAllDiaries(); break;
+    case 'save-settings': if (typeof saveSettings === 'function') saveSettings(); break;
+    default:
+      target.dispatchEvent(new CustomEvent('action-' + action, { bubbles: true }));
+  }
+});
+
+document.addEventListener('change', function (e) {
+  var target = e.target.closest('[data-action-change]');
+  if (!target) return;
+  var action = target.getAttribute('data-action-change');
+  if (!action) return;
+  switch (action) {
+    case 'theme': if (typeof switchTheme === 'function') switchTheme(target.value); break;
+    case 'language': if (typeof switchLanguage === 'function') switchLanguage(target.value); break;
+  }
+});

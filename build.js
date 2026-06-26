@@ -18,7 +18,20 @@ const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
 const VERSION = 'v' + PKG.version;
 
 const COPY_DIRS = ['js', 'data', 'libs'];
-const COPY_FILES = ['index.html', 'app.js', 'styles.css', 'manifest.json', 'sw.js', 'calendar-data.json', 'shared-diary.json', 'shared-state.json', 'favicon.ico', 'robots.txt', 'sitemap.xml', 'offline.html'];
+const COPY_FILES = [
+  'index.html',
+  'app.js',
+  'styles.css',
+  'manifest.json',
+  'sw.js',
+  'calendar-data.json',
+  'shared-diary.json',
+  'shared-state.json',
+  'favicon.ico',
+  'robots.txt',
+  'sitemap.xml',
+  'offline.html',
+];
 
 // ---------------------------------------------------------------------------
 //  Helpers
@@ -163,37 +176,85 @@ if (fs.existsSync(htmlSrc)) {
 }
 
 // ---------------------------------------------------------------------------
-//  JS files — copy (no minification, serves SW and debug)
+//  JS — minify with terser, then create optimized bundles
 // ---------------------------------------------------------------------------
 
 banner('JS');
 
-COPY_DIRS.forEach((dir) => {
-  const srcDir = path.join(ROOT, dir);
-  if (!fs.existsSync(srcDir)) return;
+const terserAvailable = (function () {
+  try {
+    require.resolve('terser');
+    return true;
+  } catch (e) {
+    return false;
+  }
+})();
 
-  const destDir = path.join(DIST, dir);
-  fs.mkdirSync(destDir, { recursive: true });
+if (terserAvailable) {
+  const Terser = require('terser');
 
-  const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-  entries.forEach((entry) => {
-    const srcPath = path.join(srcDir, entry.name);
-    const destPath = path.join(destDir, entry.name);
+  COPY_DIRS.forEach((dir) => {
+    const srcDir = path.join(ROOT, dir);
+    if (!fs.existsSync(srcDir)) return;
 
-    if (entry.isDirectory()) {
-      // Recurse for subdirectories
-      cp(srcPath, destPath);
-    } else {
+    const destDir = path.join(DIST, dir);
+    fs.mkdirSync(destDir, { recursive: true });
+
+    const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+    entries.forEach((entry) => {
+      const srcPath = path.join(srcDir, entry.name);
+      const destPath = path.join(destDir, entry.name);
+
+      if (entry.isDirectory()) {
+        cp(srcPath, destPath);
+      } else {
+        let content = fs.readFileSync(srcPath, 'utf8');
+        content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
+        if (entry.name.endsWith('.min.js')) {
+          fs.writeFileSync(destPath, content, 'utf8');
+        } else {
+          Terser.minify(content, {
+            compress: { passes: 2, drop_console: false },
+            mangle: { reserved: ['Lunar', 'AuthModule', 'ChartRenderer', 'CultureCardsModule', 'syncDiaryData'] },
+            output: { comments: false },
+          }).then(function (result) {
+            if (result.code) {
+              fs.writeFileSync(destPath, result.code, 'utf8');
+            } else {
+              fs.writeFileSync(destPath, content, 'utf8');
+            }
+          }).catch(function () {
+            fs.writeFileSync(destPath, content, 'utf8');
+          });
+        }
+      }
+    });
+
+    const count = entries.filter((e) => e.isFile()).length;
+    if (count > 0) console.info('  ' + dir + '/  (' + count + ' files, terser minified)');
+  });
+} else {
+  console.info('  terser not available — copying JS without minification');
+  console.info('  Run: npm install');
+
+  COPY_DIRS.forEach((dir) => {
+    const srcDir = path.join(ROOT, dir);
+    if (!fs.existsSync(srcDir)) return;
+    const destDir = path.join(DIST, dir);
+    fs.mkdirSync(destDir, { recursive: true });
+    const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+    entries.forEach(function (entry) {
+      const srcPath = path.join(srcDir, entry.name);
+      const destPath = path.join(destDir, entry.name);
+      if (entry.isDirectory()) { cp(srcPath, destPath); return; }
       let content = fs.readFileSync(srcPath, 'utf8');
-      // Update version references
       content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
       fs.writeFileSync(destPath, content, 'utf8');
-    }
+    });
+    var cnt = entries.filter(function (e) { return e.isFile(); }).length;
+    if (cnt > 0) console.info('  ' + dir + '/  (' + cnt + ' files)');
   });
-
-  const count = entries.filter((e) => e.isFile()).length;
-  if (count > 0) console.info(`  ${dir}/  (${count} files)`);
-});
+}
 
 // ---------------------------------------------------------------------------
 //  Root files — copy
@@ -208,7 +269,7 @@ COPY_FILES.forEach((file) => {
   let content = fs.readFileSync(srcPath, 'utf8');
   content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
   fs.writeFileSync(path.join(DIST, file), content, 'utf8');
-  console.info(`  ${file}`);
+  console.info('  ' + file);
 });
 
 // ---------------------------------------------------------------------------
