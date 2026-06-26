@@ -9,6 +9,7 @@
    ================================================================ */
 
 'use strict';
+/* eslint-disable no-unused-vars */
 
 /* ================================================================
    SAFE JSON PARSE — returns default on failure, never throws
@@ -126,9 +127,9 @@ function toast(msg) {
    pollution and improves CSP compatibility.
    ================================================================ */
 document.addEventListener('click', function (e) {
-  var target = e.target.closest('[data-action]');
+  const target = e.target.closest('[data-action]');
   if (!target) return;
-  var action = target.getAttribute('data-action');
+  const action = target.getAttribute('data-action');
   if (!action) return;
   e.preventDefault();
 
@@ -172,9 +173,9 @@ document.addEventListener('click', function (e) {
 });
 
 document.addEventListener('change', function (e) {
-  var target = e.target.closest('[data-action-change]');
+  const target = e.target.closest('[data-action-change]');
   if (!target) return;
-  var action = target.getAttribute('data-action-change');
+  const action = target.getAttribute('data-action-change');
   if (!action) return;
   switch (action) {
     case 'theme':

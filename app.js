@@ -1,9 +1,6 @@
 'use strict';
 
-/* exported toggleProfile, saveState, loadState, loadSharedDiaryData,
-   saveSharedDiaryData, invalidateSDCache, pullPartnerEntry,
-   translateText, translatePartnerEntries, applyTheme, switchTheme,
-   getFestivalTheme, applyFestivalTheme, applySeasonalDecor */
+/* eslint-disable no-unused-vars */
 
 /* ================================================================
    NOTE: Global utility functions have been extracted to js/ui-core.js:
@@ -274,8 +271,6 @@ function renderGarden() {
 // These functions are used as globals by js/render-diary.js, js/sync.js, etc.
 
 const SD_KEY = 'shared-diary';
-const GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
-const GITHUB_FILE = 'shared-diary.json';
 const DATE_STRIP_DAYS = 14; // used by render-diary.js
 
 function getGitHubToken() {
@@ -359,15 +354,6 @@ function setLang(l) {
 // applyTheme(), switchTheme() — extracted to js/theme.js
 
 /* ================================================================
-   APP CONSTANTS — named values for maintainability
-   ================================================================ */
-const DEBOUNCE_SAVE_MS = 200; // localStorage save debounce
-const DEBOUNCE_PUSH_MS = 1500; // GitHub push debounce
-const SYNC_INTERVAL_MS = 120000; // Cross-device pull interval (2 min)
-const MAX_SHARED_RETRY = 3; // GitHub sync retry attempts
-const MAX_DIARY_CHARS = 200; // Shared diary field character limit
-
-/* ================================================================
    I18N HELPERS
    ================================================================ */
 // i18n helper L() defined below (line ~1647) — handles both object and string args
@@ -382,83 +368,7 @@ let theme = localStorage.getItem('cycle-theme') || 'light';
 let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
 let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 
-// ===== DATA BACKUP & RESTORE =====
-function exportAllData() {
-  const backup = {
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    exportedBy: activeProfile,
-    diary: JSON.parse(localStorage.getItem('shared-diary') || '{}'),
-    learningProgress: JSON.parse(localStorage.getItem('shared-learning-progress') || '{}'),
-    learningComments: JSON.parse(localStorage.getItem('shared-learning-comments') || '[]'),
-    learningPoints: JSON.parse(localStorage.getItem('shared-learning-points') || '{}'),
-    voiceData: JSON.parse(localStorage.getItem('shared-voice-data') || '{}'),
-    sunCounter: JSON.parse(localStorage.getItem('shared-sun-counter') || '{}'),
-    settings: {
-      activeProfile: activeProfile,
-      lang: lang,
-      theme: theme,
-    },
-  };
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'anđelin-ciklus-backup-' + new Date().toISOString().slice(0, 10) + '.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  toast('📦 ' + L('Podaci izvezeni!', 'Data exported!', '数据已导出！'));
-}
-
-function importAllData() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (
-      !confirm(
-        L(
-          '⚠️ Ovo će PREBRISATI sve trenutne podatke. Nastaviti?',
-          '⚠️ This will OVERWRITE all current data. Continue?',
-          '⚠️ 此操作将覆盖所有当前数据，是否继续？'
-        )
-      )
-    ) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      try {
-        const backup = JSON.parse(ev.target.result);
-        if (backup.diary) localStorage.setItem('shared-diary', JSON.stringify(backup.diary));
-        if (backup.learningProgress) localStorage.setItem('shared-learning-progress', JSON.stringify(backup.learningProgress));
-        if (backup.learningComments) localStorage.setItem('shared-learning-comments', JSON.stringify(backup.learningComments));
-        if (backup.learningPoints) localStorage.setItem('shared-learning-points', JSON.stringify(backup.learningPoints));
-        if (backup.voiceData) localStorage.setItem('shared-voice-data', JSON.stringify(backup.voiceData));
-        if (backup.settings) {
-          if (backup.settings.lang) {
-            lang = backup.settings.lang;
-            setLang(lang);
-          }
-          if (backup.settings.theme) {
-            theme = backup.settings.theme;
-            applyTheme(theme);
-          }
-        }
-        pushAllSharedData();
-        toast('✅ ' + L('Podaci vraćeni! Osvežavanje...', 'Data restored! Refreshing...', '数据已恢复！刷新中...'));
-        setTimeout(function () {
-          location.reload();
-        }, 1500);
-      } catch (e) {
-        toast('❌ ' + L('Neispravan fajl', 'Invalid file', '无效文件'));
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
+// exportAllData(), importAllData() — defined in js/render-settings.js
 
 // getFestivalTheme(), applyFestivalTheme(), applySeasonalDecor() — extracted to js/theme.js
 function setupOfflineDetection() {

@@ -57,11 +57,6 @@ function cp(src, dest) {
   fs.copyFileSync(src, dest);
 }
 
-function detectVersionRefs(content) {
-  // Finds version references like v7, v7.1, v8, etc.
-  return content.match(/v\d+(?:\.\d+)?/g) || [];
-}
-
 // ---------------------------------------------------------------------------
 //  Clean
 // ---------------------------------------------------------------------------

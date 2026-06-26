@@ -1,23 +1,6 @@
-/* render-settings.js — Settings page, theme/lang, import/export, onboarding — extracted from app.js v7.1 */
+/* render-settings.js — Settings page, import/export, onboarding — extracted from app.js v7.1 */
+/* eslint-disable no-unused-vars */
 
-function setLang(l) {
-  lang = l;
-  document.documentElement.setAttribute('lang', l);
-  localStorage.setItem(profileKey('cycle-lang'), l);
-  localStorage.setItem('cycle-lang', l);
-}
-function applyTheme(th) {
-  theme = th;
-  localStorage.setItem(profileKey('cycle-theme'), th);
-  localStorage.setItem('cycle-theme', th);
-  document.documentElement.setAttribute('data-theme', th);
-  document.getElementById('themeBtn').textContent = th === 'dark' ? '☀️' : '🌙';
-  const sel = document.getElementById('set-theme');
-  if (sel) sel.value = th;
-}
-function switchTheme(th) {
-  applyTheme(th);
-}
 function exportAllData() {
   const backup = {
     version: 1,
@@ -83,17 +66,6 @@ function importAllData() {
     reader.readAsText(file);
   };
   input.click();
-}
-function switchLanguage(l) {
-  setLang(l);
-  applyAllUI();
-  loadSettingsUI();
-  document.getElementById('set-language').value = l;
-  try {
-    if (typeof renderChineseHome === 'function') renderChineseHome();
-  } catch (e) {}
-  renderLunarInfo();
-  renderSeasonalPoemCard();
 }
 function saveAnniversaries() {
   annDateMet = document.getElementById('annDateMet').value;

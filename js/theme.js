@@ -8,6 +8,7 @@
    ================================================================ */
 
 'use strict';
+/* eslint-disable no-unused-vars */
 
 /* ================================================================
    THEME MANAGEMENT
@@ -70,14 +71,31 @@ function applyFestivalTheme() {
   if (old) old.remove();
   let icons = null;
   let count = 0;
-  if (cls === 'festival-spring') { icons = ['🏮', '🧧', '🎆', '🧨']; count = 12; }
-  else if (cls === 'festival-midautumn') { icons = ['🌕', '🐰', '🥮', '🏮']; count = 10; }
-  else if (cls === 'festival-valentine') { icons = ['💕', '💖', '💗', '🌸', '❤️']; count = 15; }
-  else if (cls === 'festival-newyear') { icons = ['🎆', '✨', '🎉', '🌟']; count = 12; }
-  else if (cls === 'festival-sava') { icons = ['📚', '✝️', '🇷🇸', '🕊️']; count = 8; }
-  else if (cls === 'festival-orthodoxmas') { icons = ['❄️', '🎄', '✝️', '🕯️']; count = 8; }
-  else if (cls === 'festival-easter') { icons = ['🥚', '🐇', '🌸', '🕊️']; count = 10; }
-  else if (cls === 'festival-victory') { icons = ['🕊️', '🌺', '🎖️', '✨']; count = 8; }
+  if (cls === 'festival-spring') {
+    icons = ['🏮', '🧧', '🎆', '🧨'];
+    count = 12;
+  } else if (cls === 'festival-midautumn') {
+    icons = ['🌕', '🐰', '🥮', '🏮'];
+    count = 10;
+  } else if (cls === 'festival-valentine') {
+    icons = ['💕', '💖', '💗', '🌸', '❤️'];
+    count = 15;
+  } else if (cls === 'festival-newyear') {
+    icons = ['🎆', '✨', '🎉', '🌟'];
+    count = 12;
+  } else if (cls === 'festival-sava') {
+    icons = ['📚', '✝️', '🇷🇸', '🕊️'];
+    count = 8;
+  } else if (cls === 'festival-orthodoxmas') {
+    icons = ['❄️', '🎄', '✝️', '🕯️'];
+    count = 8;
+  } else if (cls === 'festival-easter') {
+    icons = ['🥚', '🐇', '🌸', '🕊️'];
+    count = 10;
+  } else if (cls === 'festival-victory') {
+    icons = ['🕊️', '🌺', '🎖️', '✨'];
+    count = 8;
+  }
   if (!icons) return;
   const container = document.createElement('div');
   container.className = 'festival-decorations';
@@ -104,10 +122,19 @@ function applySeasonalDecor() {
   const m = new Date().getMonth();
   let icons = null;
   let count = 0;
-  if (m >= 2 && m <= 4) { icons = ['🌸', '🌷', '💮', '🌿']; count = 8; }
-  else if (m >= 5 && m <= 7) { icons = ['☀️', '🌻', '🍦', '🦋']; count = 6; }
-  else if (m >= 8 && m <= 10) { icons = ['🍂', '🍁', '🎃', '🌾']; count = 8; }
-  else { icons = ['❄️', '⛄', '🧣', '✨']; count = 6; }
+  if (m >= 2 && m <= 4) {
+    icons = ['🌸', '🌷', '💮', '🌿'];
+    count = 8;
+  } else if (m >= 5 && m <= 7) {
+    icons = ['☀️', '🌻', '🍦', '🦋'];
+    count = 6;
+  } else if (m >= 8 && m <= 10) {
+    icons = ['🍂', '🍁', '🎃', '🌾'];
+    count = 8;
+  } else {
+    icons = ['❄️', '⛄', '🧣', '✨'];
+    count = 6;
+  }
   const old = document.getElementById('seasonalDecorations');
   if (old) old.remove();
   const container = document.createElement('div');
