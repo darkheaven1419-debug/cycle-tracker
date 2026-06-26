@@ -1902,7 +1902,6 @@ function updateMoonPhase() {
 /* ================================================================
    EASTER EGGS
    ================================================================ */
-let titleClicks = 0;
 function handleTitleClick() {
   titleClicks++;
   if (titleClicks >= 5) {
