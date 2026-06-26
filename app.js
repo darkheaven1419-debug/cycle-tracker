@@ -272,6 +272,7 @@ function renderGarden() {
 
 const SD_KEY = 'shared-diary';
 const DATE_STRIP_DAYS = 14; // used by render-diary.js
+let sharedDiaryViewDate = new Date(); // used by render-diary.js
 
 function getGitHubToken() {
   return sessionStorage.getItem('gh-token') || '';
