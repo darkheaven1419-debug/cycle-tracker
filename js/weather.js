@@ -28,12 +28,12 @@ const WeatherModule = (function () {
     { zh: '你是我此生最美的风景。', sr: 'Ti si najlepši prizor u mom životu.' },
   ];
 
-  /* ── Anniversary / Met dates from global state ── */
+  /* ── Anniversary / Met dates from localStorage ── */
   function annDateLove() {
-    return typeof state !== 'undefined' && state.annDateLove ? state.annDateLove : '2023-10-18';
+    try { return localStorage.getItem('cycle-ann-love') || '2026-05-07'; } catch(e) { return '2026-05-07'; }
   }
   function annDateMet() {
-    return typeof state !== 'undefined' && state.annDateMet ? state.annDateMet : null;
+    try { return localStorage.getItem('cycle-ann-met') || '2026-03-19'; } catch(e) { return '2026-03-19'; }
   }
 
   function daysDiff(a, b) {
@@ -233,8 +233,8 @@ const WeatherModule = (function () {
       bjc = w.bj.weather_code,
       kic = w.ki.weather_code;
     const sameWeather = (bjc <= 3 && kic <= 3) || (bjc >= 45 && kic >= 45) || (bjc >= 71 && kic >= 71);
-    if (sameWeather && bjc <= 3)
-      {poems.push({
+    if (sameWeather && bjc <= 3) {
+      poems.push({
         txt:
           lang === 'sr'
             ? 'Sunce sija i u Pekingu i u Kikindi ☀️ — isto sunce greje oba naša srca.'
@@ -247,9 +247,9 @@ const WeatherModule = (function () {
             : lang === 'en'
               ? "Barry says: When you look at the sun, remember — I'm looking at the same sun in Beijing. 7,000 km, one sun. ♥"
               : 'Barry说：当你看着太阳，记住——我在北京也看着同一轮太阳。7000公里，同一个太阳。♥',
-      });}
-    else if (sameWeather && kic >= 45 && kic <= 67)
-      {poems.push({
+      });
+    } else if (sameWeather && kic >= 45 && kic <= 67) {
+      poems.push({
         txt:
           lang === 'sr'
             ? 'Kiša pada i na Vojvodinu i na Peking 🌧️ — iste kapi, dva različita sveta.'
@@ -262,9 +262,9 @@ const WeatherModule = (function () {
             : lang === 'en'
               ? 'Barry says: While rain falls on your Vojvodina, I listen to the rain in Beijing and think of you. Rain connects everything. 🌧️♥'
               : 'Barry说：雨落在你的Vojvodina，我在北京听着雨声想你。雨水连接一切。🌧️♥',
-      });}
-    else
-      {poems.push({
+      });
+    } else {
+      poems.push({
         txt:
           lang === 'sr'
             ? 'Različito nebo, isto srce 🌍 — od Pekinga do Kikinde, od Dunava do Jangcea.'
@@ -277,7 +277,8 @@ const WeatherModule = (function () {
             : lang === 'en'
               ? 'Barry says: The Danube flows through your town, the Yangtze through mine. Two rivers, one love flowing between us. ♥'
               : 'Barry说：多瑙河流过你的城市，长江流过我的。两条河流，一份在我们之间流淌的爱。♥',
-      });}
+      });
+    }
     poems.push({
       txt:
         lang === 'sr'
@@ -355,23 +356,25 @@ const WeatherModule = (function () {
     const parts = [];
     if (annDateMet()) {
       const d = daysDiff(new Date(annDateMet()), today());
-      if (d >= 0)
-        {parts.push(
+      if (d >= 0) {
+        parts.push(
           '<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> ' +
             d +
             (lang === 'sr' ? ' dana od prvog susreta' : lang === 'en' ? ' days since we met' : ' 天前初次相遇') +
             '</div>'
-        );}
+        );
+      }
     }
     if (annDateLove()) {
       const d = daysDiff(new Date(annDateLove()), today());
-      if (d >= 0)
-        {parts.push(
+      if (d >= 0) {
+        parts.push(
           '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
             d +
             (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起') +
             '</div>'
-        );}
+        );
+      }
     }
     card.innerHTML = parts.join('<div style="height:4px"></div>');
     const titleEl = document.getElementById('love-days-title');
@@ -401,10 +404,11 @@ const WeatherModule = (function () {
             ]
           : ['刚刚在想你 ♥', '希望你今天心情好 ✨', '你的笑容是我最喜欢的 🌸', '一直在想你 💫', 'Barry 刚刚想到了你 💝'];
     const msg = msgs[Math.floor(Math.random() * msgs.length)];
-    if (typeof toast === 'function')
-      {setTimeout(function () {
+    if (typeof toast === 'function') {
+      setTimeout(function () {
         toast(msg);
-      }, 3000);}
+      }, 3000);
+    }
   }
 
   /* ── Init: start time updater ── */

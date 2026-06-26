@@ -50,16 +50,23 @@ function safeRemoveItem(key) {
   }
 }
 // On DOM mutations that add/remove elements, clear cache
-const _origRenderAll = null;
 
 /* ================================================================
-   GLOBAL ERROR BOUNDARY — logs errors via internal logger
+   DEBUG FLAG — set to true to enable console.debug output
+   ================================================================ */
+const DEBUG = false;
+function _dbg() {
+  if (DEBUG) console.warn.apply(console, arguments);
+}
+
+/* ================================================================
+   GLOBAL ERROR BOUNDARY — silent in production
    ================================================================ */
 window.addEventListener('error', function (e) {
-  // Only log, never show toast
+  if (DEBUG) console.warn('[caught]', e.message);
 });
 window.addEventListener('unhandledrejection', function (e) {
-  // Silent catch for unhandled promises
+  if (DEBUG) console.warn('[unhandled]', e.reason);
 });
 
 /* ================================================================
@@ -1739,7 +1746,7 @@ function loadCalendarData(cb) {
       cb(calendarExtraData);
       return;
     } catch (e) {
-      console.warn('[caldata] Bad cache');
+      _dbg('[caldata] Bad cache');
     }
   }
   fetch('calendar-data.json')
@@ -2083,7 +2090,7 @@ function ensureSolarTermData() {
       solarTermsCache = JSON.parse(cached);
       if (solarTermsCache.length > 0) return;
     } catch (e) {
-      console.warn('[solar] Bad cached data');
+      _dbg('[solar] Bad cached data');
     }
   }
   // Load from calendar-data.json
@@ -2122,7 +2129,7 @@ function renderSolarTermBadge() {
     let nearest = null,
       minDist = 30;
     const td = today();
-    const terms = solarTermsLoaded || [];
+    const terms = solarTermsCache || [];
     terms.forEach(function (s) {
       const termDate = new Date(s.date + 'T00:00:00');
       const dist = daysDiff(td, termDate); // positive = future, negative = past
@@ -2192,7 +2199,7 @@ function applyAllUI(what) {
       try {
         renderWeather(JSON.parse(wc));
       } catch (e) {
-        console.warn('[weather] Bad cached render data');
+        _dbg('[weather] Bad cached render data');
       }
     }
   }

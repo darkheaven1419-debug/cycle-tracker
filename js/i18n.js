@@ -320,8 +320,7 @@ const I18N_EXT = {
   barryTipsFollicular:[{icon:'🎯',text:'She has rising energy — plan a date, a walk, a shared activity!'},{icon:'💬',text:'She\'s more social — great time for deep talks and future plans.'},{icon:'💪',text:'Join her for a workout. Stronger together.'},{icon:'🌸',text:'Buy her flowers for no reason. She\'ll notice the smallest gesture now.'},{icon:'🎨',text:'Creative phase — suggest a new hobby or project to do together.'}],
   barryTipsOvulation:[{icon:'✨',text:'She shines brightest today — tell her how beautiful she is. Be specific.'},{icon:'💋',text:'Physical touch matters to her — hug, kiss, hold hands.'},{icon:'🎉',text:'Peak energy — great day for dancing, going out, social fun.'},{icon:'🔥',text:'Her libido peaks — be attentive and romantic tonight.'},{icon:'📸',text:'Take photos of her today — she will glow in every shot.'}],
   barryTipsLuteal:[{icon:'🧘',text:'PMS begins — don\'t take anything personally. Her brain is in a hormone storm.'},{icon:'🍵',text:'Make her caffeine-free tea — chamomile or mint. It calms and shows you care.'},{icon:'🤐',text:'Listen more, talk less. Don\'t try to "fix" — just listen.'},{icon:'🍕',text:'She\'ll have cravings — order her favorite food without asking.'},{icon:'🌙',text:'Help her unwind — warm bath, candles, soft music. She deserves peace.'}],
-  barryTipsGeneral:[{icon:'💌',text:'Text her right now — say you\'re thinking of her. No reason needed.'},{icon:'💝',text:'A small gesture today — her favorite drink, fruit, something thoughtful.'},{icon:'📞',text:'Call her — hear her voice, ask how her day went.'},{icon:'🌍',text:'Remember — you are her rock. She loves you. You are enough.'}]
-},
+  barryTipsGeneral:[{icon:'💌',text:'Text her right now — say you\'re thinking of her. No reason needed.'},{icon:'💝',text:'A small gesture today — her favorite drink, fruit, something thoughtful.'},{icon:'📞',text:'Call her — hear her voice, ask how her day went.'},{icon:'🌍',text:'Remember — you are her rock. She loves you. You are enough.'}],
   // Diary module
   diaryTextareaPlaceholder: 'Write, my darling... ✍️',
   diaryDateStripPrev: '◂ Previous week',
@@ -400,6 +399,7 @@ const I18N_EXT = {
   barryPhasePeriod:'Her Period', barryPhaseFollicular:'Her Follicular', barryPhaseOvulation:'Her Ovulation', barryPhaseLuteal:'Her Luteal', barryPhaseGeneral:'Be There For Her',
   barryTipsTitle:'💡 How to treat her today',
   phasePeriod:'Period', phaseFollicular:'Follicular', phaseOvulation:'Ovulation', phaseLuteal:'Luteal'
+}
 };
 // Love Notes Pool (60 entries per language)
 const LOVE_NOTES = (function(){
