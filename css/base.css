@@ -13,7 +13,7 @@ body {
 }
 [data-theme="dark"] body { background: var(--bg); }
 
-.app { width:100%; max-width:420px; padding:12px 16px 20px; position:relative; }
+.app { width:100%; max-width:420px; padding:12px 18px 20px; position:relative; }
 .app { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 
 /* Glass utility — use wherever backdrop glass effect is needed */

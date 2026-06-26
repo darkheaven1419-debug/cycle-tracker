@@ -6,6 +6,7 @@
 @media (max-width: 768px) {
   .card, .setting-row, .tip-card, .tabs, .cal-nav .nav-btn, .header-actions, .symptom-item,
   .greeting-overlay, .greeting-card, .glass, .toast, .profile-pill, .import-modal-overlay, .login-card { backdrop-filter: none; }
+  .app { padding: 10px 14px 20px; }
 }
 
 /* ---- <= 600px: culture card, dash, font-size ---- */
@@ -105,17 +106,22 @@
 
 /* ---- >= 768px: tablet ---- */
 @media (min-width: 768px) {
-  .app { max-width: 620px; padding: 18px 24px; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
-  .modal { max-width: 520px; border-radius: 22px; }
-  .stats-summary-grid { grid-template-columns: repeat(4, 1fr); }
+  .app { max-width: 620px; padding: 20px 28px; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .modal-overlay { align-items: center; }
+  .modal { max-width: 520px; border-radius: var(--radius-lg); animation: fadeUp .3s cubic-bezier(.32,.72,0,1); }
+  .stats-summary-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
   .prediction-grid { grid-template-columns: repeat(4, 1fr); }
+  .progress-section { padding: 26px 28px; }
+  .card { padding: 22px; }
+  .card h3 { font-size: .7rem; }
 }
 
 /* ---- >= 1024px: desktop ---- */
 @media (min-width: 1024px) {
-  .app { max-width: 700px; padding: 22px 32px; }
-  .calendar { padding: 14px 12px 12px; }
-  .day { font-size: .84rem; }
+  .app { max-width: 700px; padding: 24px 36px; }
+  .calendar { padding: 16px 16px 14px; }
+  .day { font-size: .86rem; border-radius: 14px; }
+  .progress-section { padding: 28px 32px; }
 }
 
 /* ---- >= 1400px: wide desktop ---- */

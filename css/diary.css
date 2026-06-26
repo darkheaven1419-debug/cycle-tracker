@@ -81,38 +81,39 @@
 .diary-full-cal { margin-bottom:10px; }
 .diary-full-cal .mini-cal { margin-bottom:6px; }
 
-/* ---- Diary Write Card ---- */
-.diary-write-card { padding:16px 18px; margin-bottom:12px; }
-.diary-write-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.diary-write-date { font-size:.78rem; font-weight:700; color:var(--text); }
+/* ---- Diary Write Card — refined ---- */
+.diary-write-card { padding:20px 20px; margin-bottom:14px; }
+.diary-write-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.diary-write-date { font-size:.82rem; font-weight:700; color:var(--text); }
 
-.diary-textarea { width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px; font-size:.82rem; font-family:var(--font); background:var(--card); color:var(--text); line-height:1.7; resize:vertical; min-height:100px; transition:border-color .2s; }
-.diary-textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 3px rgba(196,90,107,.08); }
-.diary-textarea::placeholder { color:var(--text-muted); opacity:.4; font-style:italic; }
+.diary-textarea { width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:16px; font-size:.85rem; font-family:var(--font); background:var(--card); color:var(--text); line-height:1.8; resize:vertical; min-height:120px; transition:border-color .25s, box-shadow .25s; }
+.diary-textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 4px rgba(196,90,107,.08); }
+.diary-textarea::placeholder { color:var(--text-muted); opacity:.35; font-style:italic; }
 
 .diary-write-footer { margin-top:10px; }
-.diary-mood-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
-.diary-mood-chip { width:38px; height:38px; border-radius:50%; border:2px solid transparent; background:var(--card); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; touch-action:manipulation; box-shadow:var(--shadow-xs); }
+.diary-mood-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+.diary-mood-chip { width:40px; height:40px; border-radius:50%; border:2px solid transparent; background:var(--card); font-size:1.15rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s cubic-bezier(.34,1.56,.64,1); touch-action:manipulation; box-shadow:var(--shadow-xs); }
+.diary-mood-chip:hover { transform:scale(1.08); background:var(--rose-light); }
 .diary-mood-chip:active { transform:scale(.85); }
-.diary-mood-chip.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.15); box-shadow:0 0 0 3px rgba(196,90,107,.12); }
+.diary-mood-chip.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.18); box-shadow:0 0 0 4px rgba(196,90,107,.12); }
 .diary-actions { display:flex; justify-content:space-between; align-items:center; }
 .diary-char-count { font-size:var(--text-xs); color:var(--text-muted); }
 
-/* ---- Diary Timeline ---- */
-.diary-timeline-section { margin-top:4px; }
-.diary-timeline-title { font-size:.72rem; font-weight:700; color:var(--text); margin-bottom:8px; }
-.diary-timeline-list { display:flex; flex-direction:column; gap:6px; }
-.diary-timeline-item { background:var(--card); border-radius:var(--radius-sm); padding:14px; cursor:pointer; transition:all .15s; border:1px solid var(--border); position:relative; }
-.diary-timeline-item:hover { border-color:var(--love); box-shadow:var(--shadow-sm); }
+/* ---- Diary Timeline — refined ---- */
+.diary-timeline-section { margin-top:6px; }
+.diary-timeline-title { font-size:.72rem; font-weight:700; color:var(--text); margin-bottom:10px; }
+.diary-timeline-list { display:flex; flex-direction:column; gap:8px; }
+.diary-timeline-item { background:var(--gradient-card); border-radius:var(--radius-md); padding:16px; cursor:pointer; transition:all .2s; border:1px solid var(--border); position:relative; }
+.diary-timeline-item:hover { border-color:var(--love); box-shadow:var(--shadow-md); transform:translateY(-1px); }
 .diary-timeline-item:active { transform:scale(.98); }
-.diary-timeline-item .dti-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.diary-timeline-item .dti-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 .diary-timeline-item .dti-date { font-size:.7rem; font-weight:700; color:var(--text); }
-.diary-timeline-item .dti-mood { font-size:1rem; }
-.diary-timeline-item .dti-preview { font-size:.74rem; color:var(--text-muted); line-height:1.5; white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.diary-timeline-empty { text-align:center; padding:20px; font-size:.72rem; color:var(--text-muted); font-style:italic; }
-.diary-timeline-more { text-align:center; padding:8px; }
-.diary-timeline-more button { background:none; border:1px solid var(--border); border-radius:16px; padding:6px 20px; font-size:.65rem; color:var(--text-muted); cursor:pointer; font-family:var(--font); touch-action:manipulation; }
-.diary-timeline-more button:hover { border-color:var(--love); color:var(--love); }
+.diary-timeline-item .dti-mood { font-size:1.1rem; }
+.diary-timeline-item .dti-preview { font-size:.74rem; color:var(--text-muted); line-height:1.6; white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.diary-timeline-empty { text-align:center; padding:24px; font-size:.72rem; color:var(--text-muted); font-style:italic; }
+.diary-timeline-more { text-align:center; padding:10px; }
+.diary-timeline-more button { background:none; border:1px solid var(--border); border-radius:20px; padding:8px 24px; font-size:.65rem; color:var(--text-muted); cursor:pointer; font-family:var(--font); touch-action:manipulation; transition:all .2s; }
+.diary-timeline-more button:hover { border-color:var(--love); color:var(--love); background:var(--rose-light); }
 
 /* ================================================================
    LETTERS — Redesigned Diary Module (v8) — legacy section styles
@@ -137,11 +138,12 @@
 .mini-cal .mc-day .mc-dot.has-entry { background:var(--love); }
 .mini-cal .mc-day .mc-dot.both { background:var(--gold); }
 
-/* ---- Letter Card ---- */
-.letter-card { background:linear-gradient(175deg, #FFFDF9 0%, #FFF9F5 40%, #FFF5F0 100%); border:1px solid rgba(196,154,94,.2); border-radius:var(--radius); }
-[data-theme="dark"] .letter-card { background:linear-gradient(175deg, #1E1C18 0%, #1F1C1A 40%, #1C1A18 100%); border-color:rgba(196,154,94,.15); }
+/* ---- Letter Card — refined ---- */
+.letter-card { background:var(--gradient-card); border:1px solid rgba(196,154,94,.15); border-radius:var(--radius); position:relative; overflow:hidden; }
+.letter-card::before { content:'✉'; position:absolute; bottom:-10px; right:-5px; font-size:4rem; opacity:.03; pointer-events:none; transform:rotate(-15deg); }
+[data-theme="dark"] .letter-card { background:linear-gradient(175deg, #1E1C18 0%, #1F1C1A 40%, #1C1A18 100%); border-color:rgba(196,154,94,.12); }
 .letter-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-.letter-header h3 { margin:0; font-size:.8rem; color:var(--text); }
+.letter-header h3 { margin:0; font-size:.82rem; color:var(--text); }
 .letter-saved { display:inline-flex; align-items:center; gap:4px; font-size:var(--text-xs); color:var(--sage); font-weight:600; opacity:0; transform:translateY(-6px); transition:all .35s cubic-bezier(.34,1.56,.64,1); }
 .letter-saved.show { opacity:1; transform:translateY(0); }
 .letter-date-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:var(--text-xs); color:var(--gold); }
@@ -169,7 +171,8 @@
 .letter-char-count { font-size:var(--text-xs); color:var(--text-muted); }
 
 /* ---- Partner Letter ---- */
-.partner-letter { background:linear-gradient(175deg, #FFF5FA 0%, #FFF0F5 40%, #FFEFF5 100%); border-color:rgba(212,120,138,.2); }
+.partner-letter { background:var(--gradient-rose); border-color:rgba(212,120,138,.15); }
+.partner-letter::before { content:'🌸'; position:absolute; bottom:-8px; right:-4px; font-size:3.5rem; opacity:.04; pointer-events:none; }
 [data-theme="dark"] .partner-letter { background:linear-gradient(175deg, #1E1A1D 0%, #1F1A1E 40%, #1C1A1D 100%); }
 
 /* ---- Letter Locked State ---- */

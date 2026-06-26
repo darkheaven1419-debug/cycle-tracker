@@ -3,9 +3,9 @@
    dialog bubbles, practice, achievements, stats, review, etc.
    ================================================================ */
 
-.lrn-subnav { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:14px; }
-.lrn-subnav-btn { flex:1; padding:12px 4px; border:none; background:none; color:var(--text-muted); font-size:.68rem; font-weight:600; cursor:pointer; transition:all .2s; border-bottom:2px solid transparent; touch-action:manipulation; }
-.lrn-subnav-btn.active { color:var(--love); border-bottom-color:var(--love); }
+.lrn-subnav { display:flex; gap:4px; margin-bottom:16px; padding:4px; background:var(--card); border-radius:var(--radius-md); box-shadow:var(--shadow-xs); }
+.lrn-subnav-btn { flex:1; padding:10px 4px; border:none; background:none; color:var(--text-muted); font-size:.68rem; font-weight:600; cursor:pointer; transition:all .2s; border-radius:10px; touch-action:manipulation; }
+.lrn-subnav-btn.active { background:var(--rose-light); color:var(--love); box-shadow:0 1px 4px rgba(196,90,107,.08); }
 .lrn-sub-label { display:block; font-size:.58rem; margin-top:2px; }
 .lrn-view { display:none; }
 .lrn-view.active { display:block; animation:panelSlideIn .25s ease; }
@@ -70,10 +70,10 @@
 
 /* ---- Phase Path Card ---- */
 .lrn-phase-card {
-  padding: 16px 10px; border-radius: 16px; text-align: center; cursor: pointer;
-  transition: transform .2s, box-shadow .2s; touch-action: manipulation;
+  padding: 18px 12px; border-radius: 18px; text-align: center; cursor: pointer;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; touch-action: manipulation;
   position: relative; overflow: hidden;
-  background: var(--card); border: 2px solid var(--border);
+  background: var(--gradient-card); border: 2px solid var(--border);
 }
 .lrn-phase-card:active { transform: scale(.96); }
 .lrn-phase-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
@@ -85,7 +85,7 @@
 .lrn-phase-card.active::before,
 .lrn-phase-card.completed::before { opacity: 1; }
 .lrn-phase-card.completed { border-color: var(--sage); }
-.lrn-phase-card.active { box-shadow: 0 0 0 2px var(--rose-light), var(--shadow-sm); }
+.lrn-phase-card.active { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(196,90,107,.08), var(--shadow-sm); }
 .lrn-phase-card.locked { opacity: .45; pointer-events: none; filter: grayscale(.6); }
 .lrn-phase-card.locked .lrn-phase-lock-icon { opacity: 1; }
 

@@ -90,6 +90,41 @@
 /* ---- Login Ambient ---- */
 @keyframes loginAmbient { 0%{opacity:.6} 100%{opacity:1} }
 
+/* ================================================================
+   v3 NEW ANIMATIONS — Micro-interactions & page transitions
+   ================================================================ */
+
+/* ---- Page Transition ---- */
+@keyframes pageEnter { from{opacity:0;transform:translateY(12px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes pageExit { to{opacity:0;transform:translateY(-12px) scale(.98)} }
+
+/* ---- Scale Pulse ---- */
+@keyframes scalePulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+/* ---- Smooth expand ---- */
+@keyframes expandIn { from{opacity:0;transform:scale(.95);max-height:0} to{opacity:1;transform:scale(1);max-height:500px} }
+
+/* ---- Subtle shimmer for loading ---- */
+@keyframes shimmerPulse { 0%,100%{opacity:.4} 50%{opacity:.7} }
+
+/* ---- Card enter slide up ---- */
+@keyframes cardEnter { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ---- Gentle bounce for notifications ---- */
+@keyframes gentleBounce { 0%{transform:scale(.8);opacity:0} 50%{transform:scale(1.05)} 70%{transform:scale(.97)} 100%{transform:scale(1);opacity:1} }
+
+/* ---- Icon rotate ---- */
+@keyframes iconRotate { from{transform:rotate(0deg)} to{transform:rotate(180deg)} }
+
+/* ---- Success checkmark pop ---- */
+@keyframes checkPop { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+
+/* ---- Heartbeat ---- */
+@keyframes heartbeat { 0%,100%{transform:scale(1)} 14%{transform:scale(1.15)} 28%{transform:scale(1)} 42%{transform:scale(1.1)} 56%{transform:scale(1)} }
+
+/* ---- Count up number ---- */
+@keyframes countUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
 /* ---- Shake ---- */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }

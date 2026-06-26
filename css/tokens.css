@@ -1,46 +1,66 @@
 /* ================================================================
-   DESIGN TOKENS — Rose Petal × Warm Clay
+   DESIGN TOKENS — Rose Petal × Warm Clay v3
    Warm rose-beige canvas, rich rose accents, chocolate text
+   Refined for Anđelin Ciklus — softer, more elegant, more premium
    ================================================================ */
 :root {
   --primary: #c45a6b; --primary-hover: #a34455; --primary-light: #f2d5db;
   --rose: #c45a6b; --rose-dark: #a34455; --rose-light: #fdf0f3; --rose-mist: #f5e0e6;
   --love: #c45a6b; --lipa: #7a9e7e; --dust: #d4bfb5; --gold: #c49a5e; --gold-light: #FFF8E1;
+  --gold-muted: #d4b88a;
+  --coral: #e88a8a; --coral-light: #fde8e8;
+  --amber: #d4a85a; --amber-light: #f8f0da;
+  --mint: #7ab8a0; --mint-light: #e0f5ee;
   --teal: #5e8b7a; --teal-light: #e0efe8; --teal-dark: #3d6b55;
   --sage: #80a590; --sage-light: #e4f0ea; --sage-dark: #5a8068;
   --lavender: #b8a0c8; --lavender-dark: #9078a8; --lavender-light: #efe8f5;
   --error: #E53935; --warm-bg: #FFF3E0; --warm-text: #E65100; --dot-short: #FFCDD2;
   --bg: #ede0da; --card: #faf3ef; --text: #3d2828; --text-muted: #6d5b58;
   --border: #dccfc8; --border-soft: #e5dad4;
-  --radius: 16px; --radius-sm: 10px; --radius-lg: 22px; --radius-full: 9999px;
-  --shadow-xs: 0 0 0.5px rgba(80,40,40,0.06);
-  --shadow-sm: 0 0 0.5px rgba(80,40,40,0.10), 0 1px 2px rgba(80,40,40,0.12);
-  --shadow-md: 0 2px 8px rgba(80,40,40,0.08), 0 4px 16px rgba(80,40,40,0.05);
-  --shadow-lg: 0 4px 16px rgba(80,40,40,0.12), 0 8px 32px rgba(80,40,40,0.06);
+  --radius: 16px; --radius-sm: 10px; --radius-md: 14px; --radius-lg: 22px; --radius-full: 9999px;
+  /* Refined shadow system — 4 tiers with better depth */
+  --shadow-xs: 0 0 0.5px rgba(80,40,40,0.06), 0 1px 1px rgba(80,40,40,0.04);
+  --shadow-sm: 0 1px 3px rgba(80,40,40,0.07), 0 1px 2px rgba(80,40,40,0.04);
+  --shadow-md: 0 4px 12px rgba(80,40,40,0.06), 0 2px 6px rgba(80,40,40,0.04);
+  --shadow-lg: 0 8px 24px rgba(80,40,40,0.08), 0 4px 12px rgba(80,40,40,0.04);
+  --shadow-xl: 0 16px 40px rgba(80,40,40,0.10), 0 8px 20px rgba(80,40,40,0.05);
+  --shadow-glow: 0 0 20px rgba(196,90,107,0.08);
   --fab-shadow: 0 6px 22px rgba(196,90,107,0.28);
   --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --blur: blur(14px) saturate(1.05);
-  /* Type scale — 7 discrete steps */
-  --text-xs: 0.625rem; --text-sm: 0.7rem; --text-base: 0.82rem;
-  --text-md: 1rem; --text-lg: 1.2rem; --text-xl: 1.5rem; --text-2xl: 2rem;
+  --blur-heavy: blur(24px) saturate(1.08);
+  /* Type scale */
+  --text-xs: 0.65rem; --text-sm: 0.72rem; --text-base: 0.85rem;
+  --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.6rem; --text-2xl: 2.2rem;
+  /* Decorative gradients */
+  --gradient-rose: linear-gradient(135deg, #fdf0f3, #faf0f2);
+  --gradient-card: linear-gradient(145deg, #faf3ef 0%, #fdf8f6 100%);
+  --gradient-warm: linear-gradient(135deg, #fdf0f3, #f5ede8);
+  --gradient-gold: linear-gradient(145deg, #faf3ef 0%, #fdf0f3 150%);
+  --gradient-teal: linear-gradient(135deg, #e0efe8, #d4eae0);
+  --gradient-love: linear-gradient(135deg, #c45a6b, #a34455);
 }
 
 [data-theme="dark"] {
   --primary: #d47888; --primary-hover: #c45a6b; --primary-light: #352028;
   --rose: #d47888; --rose-dark: #c45a6b; --rose-light: #2a1c20; --rose-mist: #302228;
-  --love: #d47888; --lipa: #8fc7b0; --dust: #3d302c; --gold: #c49a5e; --gold-light: #3d3020;
+  --love: #d47888; --lipa: #8fc7b0; --dust: #3d302c; --gold: #c49a5e;
+  --gold-light: #3d3020; --gold-muted: #8a7a5e;
   --teal: #7ab5a0; --teal-light: #182822;
   --sage: #8fc7b0; --sage-light: #182820;
   --lavender: #c8a8d8; --lavender-dark: #a080b8; --lavender-light: #261e2a;
   --error: #EF5350; --warm-bg: #3D2000; --warm-text: #FFB74D; --dot-short: #5A3030;
   --bg: #1a1516; --card: #241e20; --text: #e8dcd8; --text-muted: #a09896;
   --border: #30282a; --border-soft: #282022;
-  --shadow-xs: 0 0 0.5px rgba(0,0,0,0.35);
-  --shadow-sm: 0 0 0.5px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.30);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.20);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.40), 0 16px 40px rgba(0,0,0,0.25);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.20);
+  --shadow-sm: 0 2px 6px rgba(0,0,0,0.22);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.30), 0 8px 28px rgba(0,0,0,0.18);
+  --shadow-lg: 0 8px 28px rgba(0,0,0,0.35), 0 16px 44px rgba(0,0,0,0.22);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.40), 0 24px 60px rgba(0,0,0,0.25);
+  --shadow-glow: 0 0 24px rgba(212,120,136,0.15);
   --fab-shadow: 0 6px 22px rgba(212,120,136,0.26);
   --blur: blur(14px) saturate(1.1);
+  --blur-heavy: blur(24px) saturate(1.15);
 }
 
 /* ---- Phase Color Variables ---- */
@@ -52,7 +72,6 @@
   --phase5: #9B7EC4; --phase5-light: #EDE6F6; --phase5-dark: #7E61B0; --phase5-grad: linear-gradient(135deg, #9B7EC4, #8568B8);
   --phase6: #D4A843; --phase6-light: #F8F0DA; --phase6-dark: #B88E2E; --phase6-grad: linear-gradient(135deg, #D4A843, #C49A35);
 }
-
 [data-theme="dark"] {
   --phase1: #E8877B; --phase1-light: #3A201E; --phase1-dark: #E8877B;
   --phase2: #F0985C; --phase2-light: #3A2816; --phase2-dark: #F0985C;
@@ -60,6 +79,13 @@
   --phase4: #E8919C; --phase4-light: #362024; --phase4-dark: #E8919C;
   --phase5: #9B7EC4; --phase5-light: #221E2E; --phase5-dark: #9B7EC4;
   --phase6: #D4A843; --phase6-light: #2E2412; --phase6-dark: #D4A843;
+  /* Dark theme gradients */
+  --gradient-rose: linear-gradient(135deg, #2a1c20, #1e181a);
+  --gradient-card: linear-gradient(145deg, #241e20 0%, #1f1a1c 100%);
+  --gradient-warm: linear-gradient(135deg, #2a1c20, #2a221e);
+  --gradient-gold: linear-gradient(145deg, #302520 0%, #2e2824 100%);
+  --gradient-teal: linear-gradient(135deg, #182822, #142e28);
+  --gradient-love: linear-gradient(135deg, #d47888, #c45a6b);
 }
 
 /* ---- Phase utility classes ---- */
@@ -71,11 +97,11 @@
 .phase-clr-6 { --phase-clr: var(--phase6); --phase-clr-light: var(--phase6-light); --phase-clr-dark: var(--phase6-dark); --phase-grad: var(--phase6-grad); }
 
 /* FESTIVAL THEME CLASSES */
-body.festival-spring{--love:#d32f2f;--rose:#d32f2f;--rose-dark:#b71c1c;--gold:#ff6f00}
-body.festival-midautumn{--gold:#f39c12;--love:#e67e22;--rose:#f39c12}
-body.festival-valentine{--love:#ff69b4;--rose:#ff69b4;--rose-light:#fff0f5;--gold:#ff1493}
-body.festival-newyear{--gold:#ffd700;--love:#c0c0c0}
-body.festival-sava{--love:#0C4076;--rose:#C62828;--gold:#FFFFFF;--rose-light:#e8eaf6}
-body.festival-orthodoxmas{--love:#FFFFFF;--rose:#FFD700;--rose-light:#fff8e1;--gold:#FFD700}
-body.festival-easter{--love:#FF69B4;--rose:#90EE90;--rose-light:#f0fff0;--gold:#FFD700}
-body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:#FFD700}
+body.festival-spring{--love:#d32f2f;--rose:#d32f2f;--rose-dark:#b71c1c;--gold:#ff6f00;--gradient-love:linear-gradient(135deg,#d32f2f,#b71c1c)}
+body.festival-midautumn{--gold:#f39c12;--love:#e67e22;--rose:#f39c12;--gradient-love:linear-gradient(135deg,#e67e22,#d35400)}
+body.festival-valentine{--love:#ff69b4;--rose:#ff69b4;--rose-light:#fff0f5;--gold:#ff1493;--gradient-love:linear-gradient(135deg,#ff69b4,#e91e90)}
+body.festival-newyear{--gold:#ffd700;--love:#c0c0c0;--gradient-love:linear-gradient(135deg,#c0c0c0,#a0a0a0)}
+body.festival-sava{--love:#0C4076;--rose:#C62828;--gold:#FFFFFF;--rose-light:#e8eaf6;--gradient-love:linear-gradient(135deg,#0C4076,#1a237e)}
+body.festival-orthodoxmas{--love:#FFFFFF;--rose:#FFD700;--rose-light:#fff8e1;--gold:#FFD700;--gradient-love:linear-gradient(135deg,#FFD700,#FFA000)}
+body.festival-easter{--love:#FF69B4;--rose:#90EE90;--rose-light:#f0fff0;--gold:#FFD700;--gradient-love:linear-gradient(135deg,#FF69B4,#4CAF50)}
+body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:#FFD700;--gradient-love:linear-gradient(135deg,#E53935,#BF360C)}
