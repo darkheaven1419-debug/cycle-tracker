@@ -4039,6 +4039,50 @@ function renderSleepCard() {
       lateMsg;
   }
 }
+/* ================================================================
+   BIRTHDAY — check date & render countdown card
+   Birthdays stored in localStorage: cycle-bday-andjela, cycle-bday-barry
+   Defaults: 13. oktobar (Anđela), 27. avgust (Barry)
+   ================================================================ */
+function getBirthday(d) {
+  const aBday = localStorage.getItem('cycle-bday-andjela') || '10-13';
+  const bBday = localStorage.getItem('cycle-bday-barry') || '08-27';
+  const mmdd = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  return mmdd === aBday || mmdd === bBday;
+}
+function renderBirthdayCard() {
+  const card = document.getElementById('birthdayCard');
+  const title = document.getElementById('birthday-title');
+  const content = document.getElementById('birthday-content');
+  if (!card || !title || !content) return;
+  const aBday = localStorage.getItem('cycle-bday-andjela') || '10-13';
+  const bBday = localStorage.getItem('cycle-bday-barry') || '08-27';
+  const td = today();
+  const aDate = new Date(td.getFullYear(), parseInt(aBday.split('-')[0]) - 1, parseInt(aBday.split('-')[1]));
+  const bDate = new Date(td.getFullYear(), parseInt(bBday.split('-')[0]) - 1, parseInt(bBday.split('-')[1]));
+  if (aDate < td) aDate.setFullYear(aDate.getFullYear() + 1);
+  if (bDate < td) bDate.setFullYear(bDate.getFullYear() + 1);
+  const aDays = Math.ceil((aDate - td) / 86400000);
+  const bDays = Math.ceil((bDate - td) / 86400000);
+  const closeDays = Math.min(aDays, bDays);
+  const isAnyToday = aDays === 365 || aDays === 0 || bDays === 365 || bDays === 0;
+  if (isAnyToday) {
+    card.style.display = '';
+    const who = aDays === 365 || aDays === 0 ? '🎂 Anđela' : '🎂 Barry';
+    title.textContent = '🎉 ' + (lang === 'sr' ? 'Rođendan!' : lang === 'en' ? 'Birthday!' : '生日！');
+    content.innerHTML = '<div class="text-center" style="font-size:1.2rem;line-height:2">' + who + ' 🎉🎉🎉</div>';
+    return;
+  }
+  if (closeDays <= 30) {
+    card.style.display = '';
+    const who = aDays < bDays ? '🌸 Anđela' : '👦 Barry';
+    title.textContent = '🎂 ' + (lang === 'sr' ? 'Rođendan' : lang === 'en' ? 'Birthday' : '生日');
+    content.innerHTML = '<div class="text-center" style="font-size:.82rem">' + who + ' — ' + closeDays + ' ' + (lang === 'sr' ? 'dana' : lang === 'en' ? 'days' : '天') + '</div>';
+  } else {
+    card.style.display = 'none';
+  }
+}
+
 function renderSpecialBadge() {
   const badge = document.getElementById('specialBadge');
   if (activeProfile !== 'andjela') {
