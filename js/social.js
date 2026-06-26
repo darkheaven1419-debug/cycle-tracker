@@ -750,10 +750,8 @@ const SocialModule = (function () {
 // ====================================================================
 // Global backward compat — delegate to SocialModule
 // ====================================================================
-const HUG_EXPIRY_MS = SocialModule.HUG_EXPIRY_MS;
-const REL_TIPS = SocialModule.REL_TIPS;
-const CHECKIN_QUESTIONS = SocialModule.CHECKIN_QUESTIONS;
-const KNOW_ME_QUESTIONS = SocialModule.KNOW_ME_QUESTIONS;
+// NOTE: HUG_EXPIRY_MS, CHECKIN_QUESTIONS, KNOW_ME_QUESTIONS
+// are now defined in js/render-love.js (extracted module).
 
 function spawnFloatingHearts(container) {
   return SocialModule.spawnFloatingHearts(container);

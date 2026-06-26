@@ -435,8 +435,8 @@ const weatherIcon = WeatherModule.weatherIcon;
 const clickSunCounter = WeatherModule.clickSunCounter;
 const renderSunCounter = WeatherModule.renderSunCounter;
 const updateWeatherTimes = WeatherModule.updateWeatherTimes;
-const updateLoveCounter = WeatherModule.updateLoveCounter;
-const randomThinkingOfYou = WeatherModule.randomThinkingOfYou;
+// NOTE: updateLoveCounter and randomThinkingOfYou are declared
+// in js/render-misc.js and app.js (later in load order).
 const getTodaysLoveMessage = WeatherModule.getTodaysLoveMessage;
 
 /* ── Keep global DAILY_LOVE_MESSAGES for any remaining references ── */
