@@ -10,13 +10,9 @@
 /* ================================================================
    VERSION
    ================================================================ */
-const APP_VERSION = 'v7.2';
-
 /* ================================================================
    SHARED CONSTANTS
    ================================================================ */
-const SYMPTOM_TYPES = ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'];
-const SYMPTOM_EMOJIS = { cramps: '🔴', mood: '😤', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' };
 const MOOD_EMOJIS = ['😊', '🥰', '😤', '😴', '😢', '🤩', '😰', '😐'];
 const MOOD_KEYS = ['happy', 'loved', 'frustrated', 'tired', 'sad', 'excited', 'anxious', 'meh'];
 
@@ -24,31 +20,6 @@ const MOOD_KEYS = ['happy', 'loved', 'frustrated', 'tired', 'sad', 'excited', 'a
    EXTRACTED to js/ui-core.js
    safeParse(), $(), clearElCache(), debounce()
    ================================================================ */
-// Safe localStorage.getItem — returns default on failure
-function safeGetItem(key, defaultVal) {
-  try {
-    const v = localStorage.getItem(key);
-    return v != null ? v : defaultVal;
-  } catch (e) {
-    return defaultVal;
-  }
-}
-// Safe localStorage.setItem
-function safeSetItem(key, val) {
-  try {
-    localStorage.setItem(key, val);
-  } catch (e) {
-    /* Storage full or disabled */
-  }
-}
-// Safe localStorage.removeItem
-function safeRemoveItem(key) {
-  try {
-    localStorage.removeItem(key);
-  } catch (e) {
-    /* Storage error, non-critical */
-  }
-}
 // On DOM mutations that add/remove elements, clear cache
 
 /* ================================================================
@@ -240,23 +211,6 @@ function saveState() {
     }, 1500);
   }, 200);
 }
-function saveStateNow() {
-  clearTimeout(_saveTimer);
-  clearTimeout(_pushTimer);
-  localStorage.setItem(
-    profileKey(STORAGE_KEY_BASE),
-    JSON.stringify({
-      records: state.records.map(fmtDate),
-      periodEnds: state.periodEnds || {},
-      symptoms: state.symptoms,
-      moods: state.moods,
-      diaries: state.diaries,
-      settings: state.settings,
-      _migrated: true,
-    })
-  );
-  pushAllSharedData();
-}
 let state = loadState();
 
 /* ================================================================
@@ -315,7 +269,7 @@ function renderGarden() {
 const SD_KEY = 'shared-diary';
 const GITHUB_REPO = 'darkheaven1419-debug/cycle-tracker';
 const GITHUB_FILE = 'shared-diary.json';
-const sharedDiaryViewDate = new Date();
+let sharedDiaryViewDate = new Date();
 const DATE_STRIP_DAYS = 14; // show 14 days in date strip
 
 function getGitHubToken() {
