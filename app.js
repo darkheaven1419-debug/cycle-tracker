@@ -636,8 +636,9 @@ function importAllData() {
           '⚠️ 此操作将覆盖所有当前数据，是否继续？'
         )
       )
-    )
-      {return;}
+    ) {
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function (ev) {
       try {
@@ -1709,10 +1710,11 @@ function renderTea() {
   let candidates = TEA_PAIRS.filter(function (t) {
     return t.phase === phase;
   });
-  if (candidates.length === 0)
-    {candidates = TEA_PAIRS.filter(function (t) {
+  if (candidates.length === 0) {
+    candidates = TEA_PAIRS.filter(function (t) {
       return t.phase === 'general';
-    });}
+    });
+  }
   const tea = candidates[Math.floor(Math.random() * candidates.length)];
   teaIcon.textContent = tea.emoji;
   teaName.textContent = tea.name[lang] || tea.name['sr'];
@@ -1793,13 +1795,14 @@ function updateLoveCounter() {
   }
   if (annDateLove) {
     var d = daysDiff(new Date(annDateLove), today());
-    if (d >= 0)
-      {parts.push(
+    if (d >= 0) {
+      parts.push(
         '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
           d +
           (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起') +
           '</div>'
-      );}
+      );
+    }
   }
   card.innerHTML = parts.join('<div style="height:4px"></div>');
   document.getElementById('love-days-title').textContent = t('loveDaysTitle');
@@ -1929,7 +1932,6 @@ function spawnPetals() {
 /* ================================================================
    CYCLE CELEBRATION
    ================================================================ */
-let lastCycleCount = 0;
 function checkCycleCelebration() {
   const cycles = predict().cycles.length;
   if (cycles > lastCycleCount && cycles >= 1 && state.records.length >= 2) {
@@ -2644,14 +2646,15 @@ function updateStats(pred) {
     const sr = document.getElementById('st-range');
     if (sr) sr.textContent = pred.minCycle + ' / ' + pred.maxCycle + t('day');
     const sreg = document.getElementById('st-regularity');
-    if (sreg)
-      {sreg.innerHTML =
+    if (sreg) {
+      sreg.innerHTML =
         regL[pred.confidence] +
         ' <span class="cycle-badge ' +
         { high: 'high', medium: 'medium', low: 'low' }[pred.confidence] +
         '">±' +
         pred.stdDev +
-        '</span>';}
+        '</span>';
+    }
   } else {
     const hint = t('statsHintCycles');
     const sa = document.getElementById('st-avg');
@@ -2673,12 +2676,13 @@ function updateStats(pred) {
     const fr = document.getElementById('futurePredRow');
     if (fr) fr.style.display = '';
     const sfu = document.getElementById('st-future');
-    if (sfu)
-      {sfu.textContent = pred.futurePeriods
+    if (sfu) {
+      sfu.textContent = pred.futurePeriods
         .map(function (fp) {
           return fmtDate(fp.start);
         })
-        .join(', ');}
+        .join(', ');
+    }
   } else {
     const fr2 = document.getElementById('futurePredRow');
     if (fr2) fr2.style.display = 'none';
@@ -2958,11 +2962,12 @@ function openModal(date, pred) {
       }
       if (daysOffInfo && h.country === 'rs') {
         var off = daysOffInfo.sr || daysOffInfo.rs || '';
-        if (off && off !== '—')
-          {offHtml =
+        if (off && off !== '—') {
+          offHtml =
             '<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ ' +
             (lang === 'sr' ? 'Odmor: ' + off : lang === 'en' ? 'Days off: ' + off : '放假' + off) +
-            '</div>';}
+            '</div>';
+        }
       }
       return (
         flagEmoji +
@@ -3316,8 +3321,9 @@ function clearGitHubToken() {
           ? 'Clear GitHub token? Sync will stop.'
           : '清除 GitHub Token？同步将停止。'
     )
-  )
-    {return;}
+  ) {
+    return;
+  }
   sessionStorage.removeItem('gh-token');
   document.getElementById('set-gh-token').value = '';
   const warning = document.getElementById('tokenSecurityWarning');
@@ -4054,11 +4060,12 @@ function renderBarrySymptomView() {
   h += '<div style="font-size:2.5rem;margin-bottom:4px">' + pe[phaseKey] + '</div>';
   h += '<div style="font-size:.95rem;font-weight:800;color:var(--text)">' + (pa.name[l] || pa.name['sr']) + '</div>';
   h += '<div style="font-size:.65rem;color:var(--text-muted)">' + (pa.days[l] || pa.days['sr']) + '</div>';
-  if (shared && shared.nextStart)
-    {h +=
+  if (shared && shared.nextStart) {
+    h +=
       '<div style="font-size:.62rem;color:var(--gold);margin-top:2px">📅 ' +
       (l === 'sr' ? 'Sledeća: ' + shared.nextStart : l === 'en' ? 'Next: ' + shared.nextStart : '下次: ' + shared.nextStart) +
-      '</div>';}
+      '</div>';
+  }
   h += '</div>';
 
   h += '<div class="card" style="padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-around;text-align:center">';

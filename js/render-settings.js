@@ -15,10 +15,14 @@ function applyTheme(th) {
   const sel = document.getElementById('set-theme');
   if (sel) sel.value = th;
 }
-function switchTheme(th) { applyTheme(th); }
+function switchTheme(th) {
+  applyTheme(th);
+}
 function exportAllData() {
   const backup = {
-    version: 1, exportedAt: new Date().toISOString(), exportedBy: activeProfile,
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    exportedBy: activeProfile,
     diary: JSON.parse(localStorage.getItem('shared-diary') || '{}'),
     learningProgress: JSON.parse(localStorage.getItem('shared-learning-progress') || '{}'),
     learningComments: JSON.parse(localStorage.getItem('shared-learning-comments') || '[]'),
@@ -37,11 +41,17 @@ function exportAllData() {
 }
 function importAllData() {
   const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.json';
+  input.type = 'file';
+  input.accept = '.json';
   input.onchange = function (e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (!confirm(L('Ovo ce PREBRISATI sve trenutne podatke. Nastaviti?', 'This will OVERWRITE all current data. Continue?', '此操作将覆盖所有当前数据，是否继续？'))) return;
+    if (
+      !confirm(
+        L('Ovo ce PREBRISATI sve trenutne podatke. Nastaviti?', 'This will OVERWRITE all current data. Continue?', '此操作将覆盖所有当前数据，是否继续？')
+      )
+    )
+      return;
     const reader = new FileReader();
     reader.onload = function (ev) {
       try {
@@ -52,13 +62,23 @@ function importAllData() {
         if (backup.learningPoints) localStorage.setItem('shared-learning-points', JSON.stringify(backup.learningPoints));
         if (backup.voiceData) localStorage.setItem('shared-voice-data', JSON.stringify(backup.voiceData));
         if (backup.settings) {
-          if (backup.settings.lang) { lang = backup.settings.lang; setLang(lang); }
-          if (backup.settings.theme) { theme = backup.settings.theme; applyTheme(theme); }
+          if (backup.settings.lang) {
+            lang = backup.settings.lang;
+            setLang(lang);
+          }
+          if (backup.settings.theme) {
+            theme = backup.settings.theme;
+            applyTheme(theme);
+          }
         }
         pushAllSharedData();
         toast('✅ ' + L('Podaci vraceni! Osvezavanje...', 'Data restored! Refreshing...', '数据已恢复！刷新中...'));
-        setTimeout(function () { location.reload(); }, 1500);
-      } catch (e) { toast('❌ ' + L('Neispravan fajl', 'Invalid file', '无效文件')); }
+        setTimeout(function () {
+          location.reload();
+        }, 1500);
+      } catch (e) {
+        toast('❌ ' + L('Neispravan fajl', 'Invalid file', '无效文件'));
+      }
     };
     reader.readAsText(file);
   };
@@ -69,7 +89,9 @@ function switchLanguage(l) {
   applyAllUI();
   loadSettingsUI();
   document.getElementById('set-language').value = l;
-  try { if (typeof renderChineseHome === 'function') renderChineseHome(); } catch (e) {}
+  try {
+    if (typeof renderChineseHome === 'function') renderChineseHome();
+  } catch (e) {}
   renderLunarInfo();
   renderSeasonalPoemCard();
 }
@@ -88,7 +110,10 @@ function saveGitHubToken() {
     sessionStorage.setItem('gh-token', t);
     toast('🔑 Token sacuvan');
     if (warning) warning.style.display = '';
-    pullAllSharedData().then(function () { updateSyncStatusBadge(); renderAll(); });
+    pullAllSharedData().then(function () {
+      updateSyncStatusBadge();
+      renderAll();
+    });
   } else {
     sessionStorage.removeItem('gh-token');
     if (warning) warning.style.display = 'none';
@@ -102,20 +127,39 @@ async function testGitHubToken() {
   btn.disabled = true;
   btn.textContent = '⏳ Testiranje...';
   const token = getGitHubToken();
-  if (!token) { toast('🔑 ' + L('Prvo unesi token', 'Enter a token first', '请先输入 Token')); btn.textContent = origText; btn.disabled = false; return; }
+  if (!token) {
+    toast('🔑 ' + L('Prvo unesi token', 'Enter a token first', '请先输入 Token'));
+    btn.textContent = origText;
+    btn.disabled = false;
+    return;
+  }
   try {
     const resp = await fetch('https://api.github.com/user', { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' } });
     if (resp.ok) {
       const user = await resp.json();
       toast('✅ ' + L('Token vazi - ' + user.login, 'Token valid - ' + user.login, 'Token 有效 - ' + user.login));
       btn.textContent = '✅ Vazi';
-      setTimeout(function () { btn.textContent = origText; btn.disabled = false; }, 3000);
+      setTimeout(function () {
+        btn.textContent = origText;
+        btn.disabled = false;
+      }, 3000);
     } else if (resp.status === 401) {
       toast('❌ ' + L('Token nevazeci - generisi novi', 'Token invalid - generate a new one', 'Token 无效 - 请重新生成'));
       btn.textContent = '❌ Nevazeci';
-      setTimeout(function () { btn.textContent = origText; btn.disabled = false; }, 3000);
-    } else { toast('⚠️ ' + L('Greska: ' + resp.status, 'Error: ' + resp.status, '错误: ' + resp.status)); btn.textContent = origText; btn.disabled = false; }
-  } catch (e) { toast('⚠️ ' + L('Mrezna greska', 'Network error', '网络错误')); btn.textContent = origText; btn.disabled = false; }
+      setTimeout(function () {
+        btn.textContent = origText;
+        btn.disabled = false;
+      }, 3000);
+    } else {
+      toast('⚠️ ' + L('Greska: ' + resp.status, 'Error: ' + resp.status, '错误: ' + resp.status));
+      btn.textContent = origText;
+      btn.disabled = false;
+    }
+  } catch (e) {
+    toast('⚠️ ' + L('Mrezna greska', 'Network error', '网络错误'));
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
 }
 function clearGitHubToken() {
   if (!getGitHubToken()) return;
@@ -151,7 +195,16 @@ function saveSettings() {
   toast(t('toast.saved'));
 }
 function exportData() {
-  const blob = new Blob([JSON.stringify({ records: state.records.map(fmtDate), symptoms: state.symptoms, moods: state.moods || {}, diaries: state.diaries || {}, settings: state.settings }, null, 2)], { type: 'application/json' });
+  const blob = new Blob(
+    [
+      JSON.stringify(
+        { records: state.records.map(fmtDate), symptoms: state.symptoms, moods: state.moods || {}, diaries: state.diaries || {}, settings: state.settings },
+        null,
+        2
+      ),
+    ],
+    { type: 'application/json' }
+  );
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'andjelin-ciklus-' + activeProfile + '-' + fmtDate(new Date()) + '.json';
@@ -167,16 +220,29 @@ function importData(e) {
     try {
       const d = JSON.parse(reader.result);
       if (!d.records || !Array.isArray(d.records)) throw new Error('Invalid format');
-      state.records = d.records.map(function (r) { const dt = new Date(r); return isNaN(dt.getTime()) ? null : dt; }).filter(Boolean);
+      state.records = d.records
+        .map(function (r) {
+          const dt = new Date(r);
+          return isNaN(dt.getTime()) ? null : dt;
+        })
+        .filter(Boolean);
       if (state.records.length === 0 && d.records.length > 0) throw new Error('No valid dates');
       state.symptoms = d.symptoms || {};
       state.moods = d.moods || {};
       state.diaries = d.diaries || {};
       state.settings = { cycleLength: 28, periodLength: 7, manualOverride: false };
-      if (d.settings) { Object.keys(d.settings).forEach(function (k) { state.settings[k] = d.settings[k]; }); }
-      saveState(); renderAll(); updateFab();
+      if (d.settings) {
+        Object.keys(d.settings).forEach(function (k) {
+          state.settings[k] = d.settings[k];
+        });
+      }
+      saveState();
+      renderAll();
+      updateFab();
       toast(t('toast.imported'));
-    } catch (err) { toast(t('toast.importError')); }
+    } catch (err) {
+      toast(t('toast.importError'));
+    }
   };
   reader.readAsText(file);
   e.target.value = '';
@@ -184,7 +250,9 @@ function importData(e) {
 function clearAllData() {
   if (!confirm(t('settings.clearConfirm'))) return;
   state = { records: [], symptoms: {}, moods: {}, diaries: {}, settings: { cycleLength: 28, periodLength: 7, manualOverride: false }, _migrated: true };
-  saveState(); renderAll(); updateFab();
+  saveState();
+  renderAll();
+  updateFab();
   toast(t('toast.cleared'));
 }
 function dismissOnboarding() {

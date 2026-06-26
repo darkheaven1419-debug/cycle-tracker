@@ -17,8 +17,14 @@ function updateLoveCounter() {
   }
   if (annDateLove) {
     var d = daysDiff(new Date(annDateLove), today());
-    if (d >= 0)
-      {parts.push('<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' + d + (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起') + '</div>');}
+    if (d >= 0) {
+      parts.push(
+        '<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ ' +
+          d +
+          (lang === 'sr' ? ' dana zajedno' : lang === 'en' ? ' days together' : ' 天在一起') +
+          '</div>'
+      );
+    }
   }
   card.innerHTML = parts.join('<div style="height:4px"></div>');
   document.getElementById('love-days-title').textContent = t('loveDaysTitle');
@@ -26,13 +32,28 @@ function updateLoveCounter() {
 function randomThinkingOfYou() {
   if (activeProfile !== 'andjela') return;
   if (Math.random() > 0.18) return;
-  const msgs = lang === 'sr'
-    ? ['Upravo sam pomislio na tebe ♥', 'Nadam se da se osećaš dobro danas ✨', 'Tvoj osmeh mi je najdraža stvar 🌸', 'Mislim na tebe... uvek 💫', 'Barry je upravo pomislio na tebe 💝']
-    : lang === 'en'
-    ? ['Just thought of you ♥', 'Hope you are feeling good today ✨', 'Your smile is my favorite thing 🌸', 'Thinking of you... always 💫', 'Barry was just thinking of you 💝']
-    : ['刚刚在想你 ♥', '希望你今天心情好 ✨', '你的笑容是我最喜欢的 🌸', '一直在想你 💫', 'Barry 刚刚想到了你 💝'];
+  const msgs =
+    lang === 'sr'
+      ? [
+          'Upravo sam pomislio na tebe ♥',
+          'Nadam se da se osećaš dobro danas ✨',
+          'Tvoj osmeh mi je najdraža stvar 🌸',
+          'Mislim na tebe... uvek 💫',
+          'Barry je upravo pomislio na tebe 💝',
+        ]
+      : lang === 'en'
+        ? [
+            'Just thought of you ♥',
+            'Hope you are feeling good today ✨',
+            'Your smile is my favorite thing 🌸',
+            'Thinking of you... always 💫',
+            'Barry was just thinking of you 💝',
+          ]
+        : ['刚刚在想你 ♥', '希望你今天心情好 ✨', '你的笑容是我最喜欢的 🌸', '一直在想你 💫', 'Barry 刚刚想到了你 💝'];
   const msg = msgs[Math.floor(Math.random() * msgs.length)];
-  setTimeout(function () { toast(msg); }, 3000);
+  setTimeout(function () {
+    toast(msg);
+  }, 3000);
 }
 function showGreeting() {
   if (sessionStorage.getItem('_greetingShown')) return;
@@ -57,7 +78,11 @@ function showGreeting() {
   clearTimeout(window._greetingTimer);
   window._greetingTimer = setTimeout(function () {
     overlay.classList.add('hiding');
-    setTimeout(function () { overlay.style.display = 'none'; overlay.classList.add('hidden'); overlay.classList.remove('hiding'); }, 400);
+    setTimeout(function () {
+      overlay.style.display = 'none';
+      overlay.classList.add('hidden');
+      overlay.classList.remove('hiding');
+    }, 400);
   }, 2800);
 }
 function spawnFeathers() {
@@ -85,8 +110,13 @@ function updateMoonPhase() {
 }
 function handleTitleClick() {
   titleClicks++;
-  if (titleClicks >= 5) { titleClicks = 0; spawnPetals(); }
-  setTimeout(function () { if (titleClicks < 5 && titleClicks > 0) titleClicks = 0; }, 2000);
+  if (titleClicks >= 5) {
+    titleClicks = 0;
+    spawnPetals();
+  }
+  setTimeout(function () {
+    if (titleClicks < 5 && titleClicks > 0) titleClicks = 0;
+  }, 2000);
 }
 function spawnPetals() {
   const petals = ['🌸', '💮', '🌺', '🩷', '✿', '🌷'];
@@ -100,7 +130,9 @@ function spawnPetals() {
     petal.style.animationDuration = 3 + Math.random() * 3 + 's';
     petal.style.fontSize = 0.8 + Math.random() * 1.5 + 'rem';
     document.body.appendChild(petal);
-    setTimeout(function () { petal.remove(); }, 5000);
+    setTimeout(function () {
+      petal.remove();
+    }, 5000);
   }
 }
 function checkCycleCelebration() {
@@ -111,23 +143,37 @@ function checkCycleCelebration() {
     el.className = 'cycle-celebration';
     el.innerHTML = '<span class="celeb-icon">💝</span><span class="celeb-text">' + t('cycleCounter').replace('{n}', cycles) + '</span>';
     document.body.appendChild(el);
-    setTimeout(function () { el.style.opacity = '0'; el.style.transition = 'opacity .6s'; }, 3000);
-    setTimeout(function () { el.remove(); }, 4000);
+    setTimeout(function () {
+      el.style.opacity = '0';
+      el.style.transition = 'opacity .6s';
+    }, 3000);
+    setTimeout(function () {
+      el.remove();
+    }, 4000);
     updateCycleCounter(cycles);
   }
 }
 function updateCycleCounter(n) {
   const card = document.getElementById('cycleCounterCard');
   if (!card) return;
-  if (n > 0) { card.style.display = ''; document.getElementById('cc-count').textContent = n; document.getElementById('cc-subtitle').textContent = t('cycleCounterSub'); }
-  else card.style.display = 'none';
+  if (n > 0) {
+    card.style.display = '';
+    document.getElementById('cc-count').textContent = n;
+    document.getElementById('cc-subtitle').textContent = t('cycleCounterSub');
+  } else card.style.display = 'none';
 }
 function renderSpecialBadge() {
   const badge = document.getElementById('specialBadge');
-  if (activeProfile !== 'andjela') { badge.style.display = 'none'; return; }
+  if (activeProfile !== 'andjela') {
+    badge.style.display = 'none';
+    return;
+  }
   badge.style.display = '';
-  const texts = lang === 'sr' ? ['Ti si jedinstvena ✨', 'Najlepša na svetu 🌸', 'Barryjeva ljubav 💝', 'Jedna jedina 💫']
-    : lang === 'en' ? ['You are unique ✨', 'Most beautiful 🌸', "Barry's love 💝", 'One and only 💫']
-    : ['独一无二的你 ✨', '最美的人 🌸', 'Barry 的爱 💝', '世界上唯一的你 💫'];
+  const texts =
+    lang === 'sr'
+      ? ['Ti si jedinstvena ✨', 'Najlepša na svetu 🌸', 'Barryjeva ljubav 💝', 'Jedna jedina 💫']
+      : lang === 'en'
+        ? ['You are unique ✨', 'Most beautiful 🌸', "Barry's love 💝", 'One and only 💫']
+        : ['独一无二的你 ✨', '最美的人 🌸', 'Barry 的爱 💝', '世界上唯一的你 💫'];
   document.getElementById('specialBadgeText').textContent = texts[Math.floor(Math.random() * texts.length)];
 }

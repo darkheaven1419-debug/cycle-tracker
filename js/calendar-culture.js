@@ -138,17 +138,18 @@ function _ganZhiTranslated(tgd) {
   const g = tgd[0], z = tgd[1];
   const gi = Lunar.GAN.indexOf(g), zi = Lunar.ZHI.indexOf(z);
   if (gi < 0 || zi < 0) return tgd;
-  if (lang === 'sr' || lang === 'sr-RS') return GAN_SR[gi] + ZHI_SR[zi] + ' (' + GAN_ELEM_SR[gi] + ' ' + ZOO_SR[zi] + ')';
-  if (lang === 'en') return GAN_EN[gi] + ZHI_EN[zi] + ' (' + GAN_ELEM_EN[gi] + ' ' + ZOO_EN[zi] + ')';
+  const _l = typeof lang !== 'undefined' ? lang : 'sr';
+  if (_l === 'sr' || _l === 'sr-RS') return GAN_SR[gi] + ZHI_SR[zi] + ' (' + GAN_ELEM_SR[gi] + ' ' + ZOO_SR[zi] + ')';
+  if (_l === 'en') return GAN_EN[gi] + ZHI_EN[zi] + ' (' + GAN_ELEM_EN[gi] + ' ' + ZOO_EN[zi] + ')';
   return tgd;
 }
 
 function _shengxiaoTranslated(sx) {
-  // sx is like "马"
   const si = Lunar.SHENGXIAO.indexOf(sx);
   if (si < 0) return sx;
-  if (lang === 'sr' || lang === 'sr-RS') return ZOO_SR[si];
-  if (lang === 'en') return ZOO_EN[si];
+  const _l = typeof lang !== 'undefined' ? lang : 'sr';
+  if (_l === 'sr' || _l === 'sr-RS') return ZOO_SR[si];
+  if (_l === 'en') return ZOO_EN[si];
   return sx;
 }
 
@@ -160,7 +161,8 @@ function _zooEmoji(sx) {
 // ── Helper: pick text by current language ──────────────────────
 function _CL(map) {
   if (!map) return '';
-  return map[lang] || map[lang.split('-')[0]] || map['sr'] || '';
+  const _l = typeof lang !== 'undefined' ? lang : 'sr';
+  return map[_l] || map[_l.split('-')[0]] || map['sr'] || '';
 }
 
 // ── Lunar info row (fully translated) ──────────────────────────
@@ -196,8 +198,9 @@ function renderSeasonalPoemCard() {
   el.style.display = '';
   const color = TRADITIONAL_COLORS[m];
   const info = Lunar.getYearInfo(today());
-  const lines = (poem.lines[lang] || poem.lines[lang.split('-')[0]] || poem.lines['zh']).replace(/\n/g, '<br>');
-  const title = poem.title[lang] || poem.title[lang.split('-')[0]] || poem.title['zh'];
+  const _l = typeof lang !== 'undefined' ? lang : 'zh';
+  const lines = (poem.lines[_l] || poem.lines[_l.split('-')[0]] || poem.lines['zh']).replace(/\n/g, '<br>');
+  const title = poem.title[_l] || poem.title[_l.split('-')[0]] || poem.title['zh'];
   el.innerHTML =
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
       '<span style="font-size:1.2rem">📜</span>' +
@@ -261,8 +264,9 @@ function getLunarCellText(date) {
   const lunar = Lunar.toLunar(date);
   if (!lunar) return '';
   // ZH mode: Chinese day names (初三, 十五...); SR/EN: numeric (L3, L15...)
-  if (lang === 'sr' || lang === 'sr-RS') return lunar.day;
-  if (lang === 'en') return lunar.day;
+  const _l = typeof lang !== 'undefined' ? lang : 'sr';
+  if (_l === 'sr' || _l === 'sr-RS') return lunar.day;
+  if (_l === 'en') return lunar.day;
   return Lunar.getLunarDayName(date);
 }
 
@@ -281,9 +285,9 @@ function initExtraHolidays() {
 // ── Auto-init ──────────────────────────────────────────────────
 (function _cultureInit(attempt) {
   attempt = attempt || 0;
-  if (typeof today === 'undefined') {
+  if (typeof today === 'undefined' || typeof lang === 'undefined') {
     if (attempt < 50) { setTimeout(function() { _cultureInit(attempt + 1); }, 200); return; }
-    console.warn('[culture] today() not available after 50 retries — skipping culture init');
+    console.warn('[culture] today/lang not available after 50 retries — skipping');
     return;
   }
   initExtraHolidays();

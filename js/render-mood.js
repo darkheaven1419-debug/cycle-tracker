@@ -104,10 +104,15 @@ function renderForecast() {
   let text = '';
   if (phase === 'period-on' || phase === 'period-mid' || phase === 'period-pred-first' || phase === 'period-pred') {
     text = t('forecastPeriod');
-  } else if (phase === 'ovulation') { text = t('forecastOvulation'); }
-  else if (phase === 'follicular') { text = t('forecastFollicular'); }
-  else if (phase === 'luteal' || phase === 'fertile') { text = t('forecastLuteal'); }
-  else { text = t('forecastNormal'); }
+  } else if (phase === 'ovulation') {
+    text = t('forecastOvulation');
+  } else if (phase === 'follicular') {
+    text = t('forecastFollicular');
+  } else if (phase === 'luteal' || phase === 'fertile') {
+    text = t('forecastLuteal');
+  } else {
+    text = t('forecastNormal');
+  }
   document.getElementById('forecastText').textContent = text;
   document.getElementById('forecastCard').style.display = '';
 }
@@ -125,7 +130,9 @@ function animateWatering() {
       drop.style.left = 30 + Math.random() * 40 + '%';
       drop.style.top = '-10px';
       document.getElementById('gardenCard').appendChild(drop);
-      setTimeout(function () { drop.remove(); }, 1000);
+      setTimeout(function () {
+        drop.remove();
+      }, 1000);
     }, i * 150);
   });
   setTimeout(function () {
@@ -142,11 +149,27 @@ function renderGarden() {
   document.getElementById('garden-title').textContent = t('gardenTitle');
   const streak = calculateStreak();
   let p, msg, hint;
-  if (streak === 0) { p = '🌰'; msg = t('gardenState0'); hint = ''; }
-  else if (streak === 1) { p = '🌱'; msg = t('gardenState1'); hint = ''; }
-  else if (streak <= 3) { p = '🌿'; msg = t('gardenState3'); hint = ''; }
-  else if (streak <= 7) { p = '🌷'; msg = t('gardenState7'); hint = ''; }
-  else { p = '🌸'; msg = t('gardenStateBloom'); hint = ''; }
+  if (streak === 0) {
+    p = '🌰';
+    msg = t('gardenState0');
+    hint = '';
+  } else if (streak === 1) {
+    p = '🌱';
+    msg = t('gardenState1');
+    hint = '';
+  } else if (streak <= 3) {
+    p = '🌿';
+    msg = t('gardenState3');
+    hint = '';
+  } else if (streak <= 7) {
+    p = '🌷';
+    msg = t('gardenState7');
+    hint = '';
+  } else {
+    p = '🌸';
+    msg = t('gardenStateBloom');
+    hint = '';
+  }
   if (activeProfile === 'andjela' && streak > 0) {
     const phase = getPhase(today(), predict());
     if (phase && phase.startsWith('period')) p = '🌹';

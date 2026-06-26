@@ -969,8 +969,9 @@ function clearAllDiaries() {
     !confirm(
       L('Obrisati SVE zajedničke dnevnike? Ovo se ne može vratiti.', 'Delete ALL shared diaries? This cannot be undone.', '删除所有共享日记？此操作不可撤销。')
     )
-  )
-    {return;}
+  ) {
+    return;
+  }
   localStorage.setItem('shared-diary', '{}');
   saveSharedDiaryData({});
   pushAllSharedData().then(function () {

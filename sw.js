@@ -84,7 +84,7 @@ self.addEventListener('fetch', function (event) {
           fetch(request).then(function (response) {
             const clone = response.clone();
             caches.open(CACHE_FONTS).then(function (cache) {
-              cache.put(request, clone);
+              cache.put(request, clone).catch(function () {});
             });
             return response;
           })
