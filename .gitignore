@@ -27,3 +27,8 @@ _build_*
 
 # CSS source maps
 *.min.css.map
+
+# Development tools (Claude Code / Agents)
+.agents/
+.claude/
+skills-lock.json
