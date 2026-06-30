@@ -279,7 +279,7 @@ function renderGarden() {
 
 const SD_KEY = 'shared-diary';
 const DATE_STRIP_DAYS = 14; // used by render-diary.js
-let sharedDiaryViewDate = new Date(); // used by render-diary.js
+const sharedDiaryViewDate = new Date(); // used by render-diary.js
 
 function getGitHubToken() {
   return sessionStorage.getItem('gh-token') || '';
@@ -919,7 +919,7 @@ async function bootApp() {
   }
 
   // Build mood name lookup map (O(1) — replaces indexOf scans)
-  let moodNamesArr = t('moodNames');
+  const moodNamesArr = t('moodNames');
   if (moodNamesArr && moodNamesArr.length === MOOD_KEYS.length) {
     MOOD_NAME_MAP = Object.fromEntries(
       MOOD_KEYS.map(function (k, i) {

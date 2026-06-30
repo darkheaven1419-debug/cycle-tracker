@@ -24,7 +24,7 @@ const CalendarAnimations = (function () {
 
   // ── 依赖检测 ──────────────────────────────────────────────────
   // HAS_GSAP 由 gsap-animations.js 在启动时设置
-  let HAS_GSAP = typeof window !== 'undefined' && window.HAS_GSAP === true;
+  const HAS_GSAP = typeof window !== 'undefined' && window.HAS_GSAP === true;
 
   // ── 匹配媒体：prefers-reduced-motion ─────────────────────────
   let _mm = null;

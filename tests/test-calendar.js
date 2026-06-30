@@ -6,7 +6,7 @@
  */
 
 // ── Test Framework ────────────────────────────────────────────────
-var passed = 0, failed = 0, asserted = 0;
+let passed = 0, failed = 0, asserted = 0;
 function assert(condition, msg) { asserted++; if (condition) { passed++; } else { console.error('FAIL:', msg); failed++; } }
 function assertEqual(actual, expected, msg) { asserted++; if (actual === expected) { passed++; } else { console.error('FAIL:', msg, 'expected:', JSON.stringify(expected), 'got:', JSON.stringify(actual)); failed++; } }
 
@@ -16,8 +16,8 @@ function assertEqual(actual, expected, msg) { asserted++; if (actual === expecte
 const CacheCore = (function() {
   const _cache = {}, _ORDER = []; const MAX = 400;
   function get(key) { return _cache[key] || null; }
-  function set(key, data) { if (_cache[key]) return; if (_ORDER.length >= MAX) { var o = _ORDER.shift(); delete _cache[o]; } _cache[key] = data; _ORDER.push(key); }
-  function invalidate(key) { delete _cache[key]; var i = _ORDER.indexOf(key); if (i >= 0) _ORDER.splice(i, 1); }
+  function set(key, data) { if (_cache[key]) return; if (_ORDER.length >= MAX) { const o = _ORDER.shift(); delete _cache[o]; } _cache[key] = data; _ORDER.push(key); }
+  function invalidate(key) { delete _cache[key]; const i = _ORDER.indexOf(key); if (i >= 0) _ORDER.splice(i, 1); }
   function invalidateAll() { Object.keys(_cache).forEach(function(k) { delete _cache[k]; }); _ORDER.length = 0; }
   function size() { return _ORDER.length; }
   return { get: get, set: set, invalidate: invalidate, invalidateAll: invalidateAll, size: size };
@@ -34,7 +34,7 @@ CacheCore.invalidate('2026-06-15');
 assertEqual(CacheCore.get('2026-06-15'), null, 'invalidate removes key');
 CacheCore.set('a', {}); CacheCore.set('b', {}); CacheCore.invalidateAll();
 assertEqual(CacheCore.size(), 0, 'invalidateAll clears all');
-for (var i = 0; i < 420; i++) CacheCore.set('key-' + i, { idx: i });
+for (let i = 0; i < 420; i++) CacheCore.set('key-' + i, { idx: i });
 assertEqual(CacheCore.size(), 400, 'LRU caps at 400 entries');
 assertEqual(CacheCore.get('key-0'), null, 'LRU evicts oldest');
 assertEqual(CacheCore.get('key-419').idx, 419, 'LRU keeps newest');
