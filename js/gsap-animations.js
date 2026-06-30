@@ -9,26 +9,17 @@
    - gsap-utils: random(), clamp() for dynamic values
    ================================================================ */
 
-// --- Register plugins ---
-if (typeof gsap !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Global defaults for all animations (gsap-core best practice)
-  gsap.defaults({
-    ease: 'power2.out',
-    duration: 0.4,
-  });
-
-  // Responsive + reduced-motion handling (gsap-core: matchMedia)
-  const mm = gsap.matchMedia();
-  mm.add('(prefers-reduced-motion: reduce)', () => {
-    // Kill all animations when user prefers reduced motion
-    gsap.set('.gsap-animate', { clearProps: 'all' });
-    return () => {}; // cleanup
-  });
-}
-
-const HAS_GSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+// --- Register plugins (wrapped so failures don't break the app) ---
+let HAS_GSAP = false;
+try {
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.defaults({ ease: 'power2.out', duration: 0.4 });
+    const mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: reduce)', () => { gsap.set('.gsap-animate', { clearProps: 'all' }); return () => {}; });
+    HAS_GSAP = true;
+  }
+} catch (_) { /* GSAP is optional — app works without animations */ }
 
 /* ================================================================
    LOGIN — stagger entrance with timeline (gsap-timeline pattern)
@@ -106,7 +97,9 @@ function animateModalIn(modalEl) {
     modalEl.classList.remove('hidden');
     gsap.set(modalEl, { display: 'flex', autoAlpha: 1 });
     gsap.from(inner, { scale: 0.88, autoAlpha: 0, y: 15, duration: 0.35, ease: 'back.out(1.3)', clearProps: 'all' });
-  } catch (e) { /* GSAP animation is optional — modal works without it */ }
+  } catch (e) {
+    /* GSAP animation is optional — modal works without it */
+  }
 }
 
 function animateModalOut(modalEl) {

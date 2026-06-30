@@ -76,12 +76,16 @@ function closeModal() {
     } else {
       modalEl.classList.add('closing');
       overlay.classList.add('closing');
-      modalEl.addEventListener('animationend', function h() {
-        modalEl.removeEventListener('animationend', h);
-        overlay.classList.add('hidden');
-        overlay.classList.remove('closing');
-        modalEl.classList.remove('closing');
-      }, { once: true });
+      modalEl.addEventListener(
+        'animationend',
+        function h() {
+          modalEl.removeEventListener('animationend', h);
+          overlay.classList.add('hidden');
+          overlay.classList.remove('closing');
+          modalEl.classList.remove('closing');
+        },
+        { once: true }
+      );
     }
   } else {
     overlay.classList.add('hidden');

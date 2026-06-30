@@ -2598,7 +2598,7 @@ function openModal(date, pred) {
   }
   window._lastFocusedBeforeModal = document.activeElement;
   document.getElementById('modal').classList.remove('hidden');
-  animateModalIn();
+  if (typeof animateModalIn === 'function') animateModalIn();
   document.getElementById('modal-title').focus();
 }
 // closeModal() extracted to js/ui-core.js
