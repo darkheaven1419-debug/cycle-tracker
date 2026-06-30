@@ -17,7 +17,7 @@ const DIST = path.join(ROOT, 'dist');
 const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 const VERSION = 'v' + PKG.version;
 
-const COPY_DIRS = ['js', 'data', 'libs'];
+const COPY_DIRS = ['js', 'data', 'libs']; // libs/ contains gsap.min.js + ScrollTrigger.min.js
 const COPY_FILES = [
   // index.html is handled separately (minified by html-minifier)
   'app.js',

@@ -45,6 +45,8 @@ const STATIC_ASSETS = [
   './js/render-settings.js',
   './js/render-diary.js',
   './js/gsap-animations.js',
+  './libs/gsap.min.js',
+  './libs/ScrollTrigger.min.js',
 
   './calendar-data.json',
   './data/quotes.json',

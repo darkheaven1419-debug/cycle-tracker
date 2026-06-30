@@ -6,21 +6,24 @@
   "scripts": {
     "start": "npx serve .",
     "build": "node build.js",
-    "lint": "npx eslint .",
+    "lint": "npx eslint . --ignore-pattern 'libs/**' --ignore-pattern 'dist/**'",
     "format": "npx prettier --write .",
     "check": "node tests/test-core.js"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.0",
-    "html-minifier": "^4.0.0",
-    "serve": "^14.2.0",
     "eslint": "^8.56.0",
+    "html-minifier": "^4.0.0",
     "prettier": "^3.2.0",
+    "serve": "^14.2.0",
     "terser": "^5.30.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darkheaven1419-debug/cycle-tracker.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "gsap": "^3.15.0"
+  }
 }

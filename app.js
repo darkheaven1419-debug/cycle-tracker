@@ -1050,8 +1050,8 @@ async function bootApp() {
     switchToTab(initTab);
   }
 
-  // GSAP animations
-  animateFloatingStars();
+  // GSAP animations (deep gsap-skills integration)
+  initGsapAnimations();
   setTimeout(function () {
     animateLoginEntrance();
   }, 100);
