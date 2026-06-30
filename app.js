@@ -649,6 +649,7 @@ function renderDashboard() {
     dl('goCalendar') +
     '</button></div></div>';
   panel.innerHTML = h;
+  animateDashboardCards();
 }
 function switchToTab(tabId) {
   const btn = document.querySelector('.tab[data-panel="' + tabId + '"]');
@@ -1048,6 +1049,10 @@ async function bootApp() {
   if (document.getElementById('panel-' + initTab)) {
     switchToTab(initTab);
   }
+
+  // GSAP animations
+  animateFloatingStars();
+  setTimeout(function () { animateLoginEntrance(); }, 100);
 }
 
 // Hash change handler for forward/back navigation
@@ -1445,6 +1450,7 @@ function showGreeting() {
   overlay.style.display = 'flex';
   overlay.classList.remove('hidden');
   spawnFeathers();
+  animateGreetingIn();
   // Auto-dismiss after 2.8 seconds
   clearTimeout(window._greetingTimer);
   window._greetingTimer = setTimeout(function () {
@@ -2104,6 +2110,7 @@ function renderCalendar() {
   updateReminder(pred);
   renderMonthHolidaySummary();
   renderUpcomingHoliday();
+  animateCalendarDays();
 }
 
 function updateProgress(pred) {
@@ -2197,7 +2204,7 @@ function updateProgress(pred) {
     }
     subEl.textContent = remain >= 0 ? t('daysUntil').replace('{n}', remain) : `${t('expected')} ${fmtDate(pred.nextStart)}`;
   }
-  fillEl.style.transform = 'scaleX(' + pct / 100 + ')';
+  animateProgressBar(fillEl, pct);
   fillEl.setAttribute('role', 'progressbar');
   fillEl.setAttribute('aria-valuenow', Math.round(pct));
   fillEl.setAttribute('aria-valuemin', '0');
@@ -2276,6 +2283,7 @@ function updateStats(pred) {
     const fr2 = document.getElementById('futurePredRow');
     if (fr2) fr2.style.display = 'none';
   }
+  animateStatsPanel();
 }
 
 function updateHistoryDots(pred) {
@@ -2588,6 +2596,7 @@ function openModal(date, pred) {
   }
   window._lastFocusedBeforeModal = document.activeElement;
   document.getElementById('modal').classList.remove('hidden');
+  animateModalIn();
   document.getElementById('modal-title').focus();
 }
 // closeModal() extracted to js/ui-core.js
@@ -3139,22 +3148,14 @@ document.querySelectorAll('.tab').forEach((btn) => {
     btn.setAttribute('aria-selected', 'true');
     const oldPanel = document.querySelector('.panel.active');
     if (oldPanel) {
-      oldPanel.classList.add(dir);
-      oldPanel.addEventListener(
-        'animationend',
-        function h() {
-          oldPanel.removeEventListener('animationend', h);
-          oldPanel.classList.remove('active', dir);
-        },
-        { once: true }
-      );
+      oldPanel.classList.remove('active');
     } else {
       document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
     }
-    // Activate new
+    // Activate new panel with GSAP transition
     const newPanel = document.getElementById('panel-' + id);
-    newPanel.classList.remove('slide-out-left', 'slide-out-right');
     newPanel.classList.add('active');
+    animatePanelIn(newPanel, oldPanel);
     // Scroll to top on mobile when switching tabs
     const app = document.querySelector('.app');
     if (app) app.scrollTop = 0;

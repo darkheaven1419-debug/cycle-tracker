@@ -67,25 +67,12 @@ function esc(s) {
    ================================================================ */
 function closeModal() {
   const overlay = document.getElementById('modal');
-  const modalEl = overlay.querySelector('.modal');
-  if (modalEl) {
-    modalEl.classList.add('closing');
-    overlay.classList.add('closing');
-    modalEl.addEventListener(
-      'animationend',
-      function h() {
-        modalEl.removeEventListener('animationend', h);
-        overlay.classList.add('hidden');
-        overlay.classList.remove('closing');
-        modalEl.classList.remove('closing');
-        selectedDate = null;
-        knowledgeOpen = false;
-        if (window._lastFocusedBeforeModal) {
-          window._lastFocusedBeforeModal.focus();
-        }
-      },
-      { once: true }
-    );
+  if (!overlay) return;
+  animateModalOut(overlay);
+  selectedDate = null;
+  knowledgeOpen = false;
+  if (window._lastFocusedBeforeModal) {
+    window._lastFocusedBeforeModal.focus();
   }
 }
 
