@@ -30,7 +30,7 @@ const CalendarAccessibility = (function () {
    */
   function init() {
     if (document.getElementById('cal-announce')) return;
-    let el = document.createElement('div');
+    const el = document.createElement('div');
     el.id = 'cal-announce';
     el.setAttribute('aria-live', 'polite');
     el.setAttribute('aria-atomic', 'true');
@@ -64,7 +64,7 @@ const CalendarAccessibility = (function () {
     gridEl.setAttribute('role', 'grid');
     gridEl.setAttribute('aria-label', _getGridLabel());
 
-    let dayCells = gridEl.querySelectorAll('.day:not(.other-month)');
+    const dayCells = gridEl.querySelectorAll('.day:not(.other-month)');
     dayCells.forEach(function (cell) {
       if (!cell.hasAttribute('role') || cell.getAttribute('role') !== 'gridcell') {
         cell.setAttribute('role', 'gridcell');
@@ -79,8 +79,8 @@ const CalendarAccessibility = (function () {
    */
   function setCellLabel(cell, info) {
     if (!cell || !info) return;
-    let parts = [];
-    let d = info.date;
+    const parts = [];
+    const d = info.date;
 
     parts.push(d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日');
 
@@ -130,7 +130,7 @@ const CalendarAccessibility = (function () {
    */
   function moveFocus(direction, currentDate) {
     if (!currentDate) return null;
-    let d = new Date(currentDate);
+    const d = new Date(currentDate);
     switch (direction) {
       case 'left':
         d.setDate(d.getDate() - 1);

@@ -90,7 +90,7 @@ assert(CacheCore.get('x') !== null, 'x remains after y invalidated');
 assertEqual(CacheCore.get('y'), null, 'y invalidated');
 assert(CacheCore.get('z') !== null, 'z remains after y invalidated');
 
-var d1Passed = passed;
+const d1Passed = passed;
 
 // ══════════════════════════════════════════════════════════════════
 // SECTION 2 — _computeCellHash (pure function)
@@ -111,7 +111,7 @@ function computeCellHash(dateKey, data) {
 
 console.log('\n=== Cell Hash ===');
 
-var h1 = computeCellHash('2026-06-15', {
+const h1 = computeCellHash('2026-06-15', {
   phase: 'period-on',
   annType: 0,
   isBirthday: false,
@@ -123,7 +123,7 @@ var h1 = computeCellHash('2026-06-15', {
 });
 assert(typeof h1 === 'string', 'hash is string');
 assert(h1.length > 5, 'hash has content');
-var h2 = computeCellHash('2026-06-15', {
+const h2 = computeCellHash('2026-06-15', {
   phase: 'period-on',
   annType: 0,
   isBirthday: false,
@@ -134,7 +134,7 @@ var h2 = computeCellHash('2026-06-15', {
   lunar: null,
 });
 assertEqual(h1, h2, 'same data -> same hash');
-var h3 = computeCellHash('2026-06-15', {
+const h3 = computeCellHash('2026-06-15', {
   phase: 'luteal',
   annType: 0,
   isBirthday: false,
@@ -145,7 +145,7 @@ var h3 = computeCellHash('2026-06-15', {
   lunar: null,
 });
 assert(h1 !== h3, 'different phase -> different hash');
-var h5 = computeCellHash('2026-06-15', {
+const h5 = computeCellHash('2026-06-15', {
   phase: 'period-on',
   annType: 0,
   isBirthday: false,
@@ -156,7 +156,7 @@ var h5 = computeCellHash('2026-06-15', {
   lunar: null,
 });
 assert(h1 !== h5, 'marker count -> different hash');
-var h6 = computeCellHash('2026-06-15', {
+const h6 = computeCellHash('2026-06-15', {
   phase: 'period-on',
   annType: 0,
   isBirthday: false,
@@ -167,7 +167,7 @@ var h6 = computeCellHash('2026-06-15', {
   lunar: null,
 });
 assert(h1 !== h6, 'diary -> different hash');
-var h7 = computeCellHash('2026-06-15', {
+const h7 = computeCellHash('2026-06-15', {
   phase: 'period-on',
   annType: 0,
   isBirthday: true,
@@ -179,16 +179,16 @@ var h7 = computeCellHash('2026-06-15', {
 });
 assert(h1 !== h7, 'birthday -> different hash');
 
-var d2Passed = passed - d1Passed;
+const d2Passed = passed - d1Passed;
 
 // ══════════════════════════════════════════════════════════════════
 // SECTION 3 — CalendarState (in-memory state manager)
 // ══════════════════════════════════════════════════════════════════
 console.log('\n=== CalendarState ===');
 
-var CalendarState = (function () {
-  var _state = { viewMonth: 5, viewYear: 2026, selectedDate: null, knowledgeOpen: false, initialized: false };
-  var _listeners = {};
+const CalendarState = (function () {
+  let _state = { viewMonth: 5, viewYear: 2026, selectedDate: null, knowledgeOpen: false, initialized: false };
+  let _listeners = {};
   function get(k) {
     return _state[k];
   }
@@ -203,11 +203,11 @@ var CalendarState = (function () {
   }
   function set(k, v, silent) {
     if (!(k in _state)) return;
-    var old = _state[k];
+    let old = _state[k];
     if (old === v) return;
     _state[k] = v;
     if (!silent) {
-      var s = _listeners[k];
+      let s = _listeners[k];
       if (s)
         s.forEach(function (fn) {
           fn(v, old);
@@ -215,13 +215,13 @@ var CalendarState = (function () {
     }
   }
   function batch(updates, silent) {
-    var keys = Object.keys(updates);
+    let keys = Object.keys(updates);
     keys.forEach(function (k) {
       if (k in _state) _state[k] = updates[k];
     });
     if (!silent)
       keys.forEach(function (k) {
-        var s = _listeners[k];
+        let s = _listeners[k];
         if (s)
           s.forEach(function (fn) {
             fn(_state[k], undefined);
@@ -247,11 +247,11 @@ assertEqual(CalendarState.get('nonexistent'), undefined, 'get returns undefined 
 CalendarState.set('viewMonth', 6);
 assertEqual(CalendarState.get('viewMonth'), 6, 'set changes viewMonth');
 CalendarState.set('viewMonth', 5); // reset
-var all = CalendarState.getAll();
+const all = CalendarState.getAll();
 assertEqual(all.viewMonth, 5, 'getAll returns viewMonth');
 assertEqual(all.initialized, false, 'getAll returns initialized');
-var notified = [];
-var unsub = CalendarState.subscribe('viewMonth', function (n, o) {
+const notified = [];
+const unsub = CalendarState.subscribe('viewMonth', function (n, o) {
   notified.push({ newVal: n, oldVal: o });
 });
 CalendarState.set('viewMonth', 8);
@@ -263,7 +263,7 @@ CalendarState.set('viewMonth', 9);
 assertEqual(notified.length, 1, 'unsubscribed listener not called again');
 CalendarState.set('viewMonth', 5);
 CalendarState.set('knowledgeOpen', false);
-var bn = [];
+const bn = [];
 CalendarState.subscribe('viewMonth', function (n) {
   bn.push('m:' + n);
 });
@@ -274,14 +274,14 @@ CalendarState.batch({ viewMonth: 10, knowledgeOpen: true });
 assertEqual(bn.length, 2, 'batch fires both listeners');
 assert(bn.indexOf('m:10') >= 0, 'batch fires viewMonth listener');
 assert(bn.indexOf('k:true') >= 0, 'batch fires knowledgeOpen listener');
-var sn = [];
+const sn = [];
 CalendarState.subscribe('viewMonth', function () {
   sn.push('x');
 });
 CalendarState.set('viewMonth', 10); // already 10
 assertEqual(sn.length, 0, 'no notification for same value');
 
-var total = 12 + 6 + 13;
+const total = 12 + 6 + 13;
 
 console.log('\n' + '='.repeat(50));
 console.log('  Calendar Module Tests');
