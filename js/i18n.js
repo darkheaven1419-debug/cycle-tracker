@@ -1255,6 +1255,32 @@ const I18N_EXT = {
     phaseLuteal: 'Luteal',
   },
 };
+
+/* ================================================================
+   t() — Translation helper (moved from app.js for load order)
+   ================================================================ */
+function t(key, fallback) {
+  const keys = key.split('.');
+  let val = I18N_EXT[lang] || I18N_EXT['sr'];
+  let found = false;
+  for (const k of keys) {
+    if (val && val[k] !== undefined) {
+      val = val[k];
+      found = true;
+    } else {
+      found = false;
+      break;
+    }
+  }
+  if (found) return val;
+  val = I18N[lang] || I18N['sr'];
+  for (const k of keys) {
+    if (val && val[k] !== undefined) val = val[k];
+    else return fallback || key;
+  }
+  return val;
+}
+
 // Love Notes Pool (60 entries per language)
 const LOVE_NOTES = (function () {
   const sr = [
