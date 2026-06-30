@@ -1892,7 +1892,23 @@ function renderCalendar() {
     if (!inMonth) el.classList.add('other-month');
     if (isToday) el.classList.add('today');
     if (isToday) el.setAttribute('aria-current', 'date');
-    if (phase) el.classList.add(phase);
+    if (phase) {
+      el.classList.add(phase);
+      // Inline style fallback — ensures phase colors ALWAYS show
+      const phaseStyles = {
+        'period-on': 'background:linear-gradient(135deg,#E8877B,#D46B5E);color:#fff;border-radius:50%;font-weight:700',
+        'period-mid': 'background:linear-gradient(135deg,var(--rose-light,#fdf0f3),rgba(253,240,243,0.6));color:var(--rose-dark,#b3535a);font-weight:600;border-radius:10px',
+        'period-pred-first': 'background:linear-gradient(135deg,#E8877B,#D46B5E);color:#fff;opacity:.55;border-radius:50%;font-weight:700',
+        'period-pred': 'background:linear-gradient(135deg,rgba(253,240,243,0.8),rgba(245,224,230,0.4));color:var(--rose-dark,#b3535a);opacity:.75;border-radius:10px',
+        'period-future-first': 'background:linear-gradient(135deg,#E8877B,#D46B5E);color:#fff;opacity:.25;border-radius:50%',
+        'period-future': 'background:linear-gradient(135deg,rgba(253,240,243,0.5),rgba(245,224,230,0.2));color:var(--rose-dark,#b3535a);opacity:.35;border-radius:10px',
+        ovulation: 'background:#5E9BAA;color:#fff;font-weight:700;border-radius:50%',
+        fertile: 'background:var(--teal-light,#d4ede6);color:#2d5f6e;font-weight:600;border-radius:10px',
+        luteal: 'background:var(--lavender-light,#e8ddf0);color:var(--lavender-dark,#6b5b7a);font-weight:500;border-radius:10px',
+        follicular: 'background:var(--sage-light,#e0efe6);color:#3d6b55;font-weight:500;border-radius:10px',
+      };
+      if (phaseStyles[phase]) el.style.cssText = (el.style.cssText || '') + ';' + phaseStyles[phase];
+    }
     if (phase === 'period-on' && recordedStarts.has(key)) el.classList.add('recorded');
     if (annType > 0) el.classList.add('anniversary');
     if (getBirthday(d)) el.classList.add('birthday');
