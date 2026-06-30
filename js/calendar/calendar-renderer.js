@@ -13,7 +13,7 @@
    - calendar-main.js（新文件）— refresh() 时调用 renderCalendarRenderer()
    - app.js — renderCalendar() 逐步委托至此
 
-   现有文件验证：无重复（Glob "js/**/*render*" → 无匹配）
+   现有文件验证：无重复（Glob pattern 无匹配）
    数据文件：本文件不读写外部 JSON，仅通过 DayDataCache.compute() 调用
      getHoliday(), getSolarTerm(), getPhase() 等全局函数
    用户指令："我要完整版，开始吧"
