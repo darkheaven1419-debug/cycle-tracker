@@ -16,7 +16,7 @@ if (typeof gsap !== 'undefined') {
   // Global defaults for all animations (gsap-core best practice)
   gsap.defaults({
     ease: 'power2.out',
-    duration: 0.4
+    duration: 0.4,
   });
 
   // Responsive + reduced-motion handling (gsap-core: matchMedia)
@@ -59,10 +59,18 @@ function animateGreetingIn() {
 }
 
 function animateGreetingOut(el) {
-  if (!HAS_GSAP || !el) { if (el) el.classList.add('hidden'); return; }
+  if (!HAS_GSAP || !el) {
+    if (el) el.classList.add('hidden');
+    return;
+  }
   gsap.to(el, {
-    autoAlpha: 0, scale: 0.95, duration: 0.25, ease: 'power2.in',
-    onComplete() { el.classList.add('hidden'); }
+    autoAlpha: 0,
+    scale: 0.95,
+    duration: 0.25,
+    ease: 'power2.in',
+    onComplete() {
+      el.classList.add('hidden');
+    },
   });
 }
 
@@ -75,10 +83,12 @@ function animateCalendarDays() {
   if (!cells.length) return;
   gsap.killTweensOf(cells);
   gsap.from(cells, {
-    autoAlpha: 0, y: 10,
-    duration: 0.35, stagger: { amount: 0.35, from: 'center' },
+    autoAlpha: 0,
+    y: 10,
+    duration: 0.35,
+    stagger: { amount: 0.35, from: 'center' },
     ease: 'power1.out',
-    clearProps: 'all' // remove inline styles after animation so CSS phase colors work
+    clearProps: 'all', // remove inline styles after animation so CSS phase colors work
   });
 }
 
@@ -102,15 +112,26 @@ function animateModalIn(modalEl) {
 }
 
 function animateModalOut(modalEl) {
-  if (!HAS_GSAP || !modalEl) { if (modalEl) modalEl.classList.add('hidden'); return; }
+  if (!HAS_GSAP || !modalEl) {
+    if (modalEl) modalEl.classList.add('hidden');
+    return;
+  }
   const inner = modalEl.querySelector('.modal');
-  if (!inner) { modalEl.classList.add('hidden'); return; }
+  if (!inner) {
+    modalEl.classList.add('hidden');
+    return;
+  }
   gsap.to(inner, {
-    scale: 0.9, autoAlpha: 0, y: 10, duration: 0.2, ease: 'power2.in',
+    scale: 0.9,
+    autoAlpha: 0,
+    y: 10,
+    duration: 0.2,
+    ease: 'power2.in',
     onComplete() {
       modalEl.classList.add('hidden');
       gsap.set(inner, { clearProps: 'all' });
-    }
+      gsap.set(modalEl, { clearProps: 'all' }); // remove inline styles so .hidden class works
+    },
   });
 }
 
@@ -123,9 +144,12 @@ function animateDashboardCards() {
   if (!cards.length) return;
   gsap.killTweensOf(cards);
   gsap.from(cards, {
-    autoAlpha: 0, y: 20,
-    duration: 0.45, stagger: 0.1, ease: 'power2.out',
-    clearProps: 'all'
+    autoAlpha: 0,
+    y: 20,
+    duration: 0.45,
+    stagger: 0.1,
+    ease: 'power2.out',
+    clearProps: 'all',
   });
 }
 
@@ -143,14 +167,21 @@ function showToast(msg, type) {
   container.appendChild(toast);
 
   if (HAS_GSAP) {
-    gsap.fromTo(toast, { y: 40, autoAlpha: 0, scale: 0.95 },
-      { y: 0, autoAlpha: 1, scale: 1, duration: 0.35, ease: 'back.out(1.2)' });
+    gsap.fromTo(toast, { y: 40, autoAlpha: 0, scale: 0.95 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.35, ease: 'back.out(1.2)' });
     gsap.to(toast, {
-      autoAlpha: 0, y: -10, duration: 0.3, delay: 2.5, ease: 'power2.in',
-      onComplete() { if (toast.parentNode) toast.parentNode.removeChild(toast); }
+      autoAlpha: 0,
+      y: -10,
+      duration: 0.3,
+      delay: 2.5,
+      ease: 'power2.in',
+      onComplete() {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      },
     });
   } else {
-    setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3000);
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 3000);
   }
 }
 
@@ -159,11 +190,16 @@ function showToast(msg, type) {
    ================================================================ */
 function animateProgressBar(fillEl, pct) {
   if (!fillEl) return;
-  if (!HAS_GSAP) { fillEl.style.transform = 'scaleX(' + (pct / 100) + ')'; return; }
+  if (!HAS_GSAP) {
+    fillEl.style.transform = 'scaleX(' + pct / 100 + ')';
+    return;
+  }
   gsap.killTweensOf(fillEl);
   gsap.to(fillEl, {
-    scaleX: pct / 100, duration: 0.7, ease: 'power2.out',
-    transformOrigin: 'left center'
+    scaleX: pct / 100,
+    duration: 0.7,
+    ease: 'power2.out',
+    transformOrigin: 'left center',
   });
 }
 
@@ -176,8 +212,12 @@ function animateMoodPicker(container) {
   if (!btns.length) return;
   gsap.killTweensOf(btns);
   gsap.from(btns, {
-    scale: 0, autoAlpha: 0, duration: 0.35, stagger: 0.05, ease: 'back.out(2.5)',
-    clearProps: 'all'
+    scale: 0,
+    autoAlpha: 0,
+    duration: 0.35,
+    stagger: 0.05,
+    ease: 'back.out(2.5)',
+    clearProps: 'all',
   });
 }
 
@@ -199,8 +239,10 @@ function animateFloatingStars() {
       x: gsap.utils.random(-8, 8),
       rotation: gsap.utils.random(-8, 8),
       duration: gsap.utils.random(2, 4),
-      repeat: -1, yoyo: true, ease: 'sine.inOut',
-      delay: i * 0.25
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      delay: i * 0.25,
     });
   });
 }
@@ -214,8 +256,12 @@ function animateStatsPanel() {
   if (!cards.length) return;
   gsap.killTweensOf(cards);
   gsap.from(cards, {
-    autoAlpha: 0, y: 16, duration: 0.4, stagger: 0.08, ease: 'power2.out',
-    clearProps: 'all'
+    autoAlpha: 0,
+    y: 16,
+    duration: 0.4,
+    stagger: 0.08,
+    ease: 'power2.out',
+    clearProps: 'all',
   });
 }
 
@@ -224,12 +270,19 @@ function animateStatsPanel() {
    ================================================================ */
 function animateCountUp(el, target, suffix) {
   suffix = suffix || '';
-  if (!HAS_GSAP || !el) { el.textContent = target + suffix; return; }
+  if (!HAS_GSAP || !el) {
+    el.textContent = target + suffix;
+    return;
+  }
   const obj = { val: 0 };
   gsap.killTweensOf(obj);
   gsap.to(obj, {
-    val: target, duration: 1.2, ease: 'power2.out',
-    onUpdate() { el.textContent = Math.round(obj.val) + suffix; }
+    val: target,
+    duration: 1.2,
+    ease: 'power2.out',
+    onUpdate() {
+      el.textContent = Math.round(obj.val) + suffix;
+    },
   });
 }
 
@@ -243,24 +296,18 @@ function setupScrollReveals() {
   ScrollTrigger.batch('.card, .stats-mini-card, .chart-card, .love-note-card, .garden-card', {
     interval: 0.1,
     batchMax: 6,
-    onEnter: (batch) => gsap.fromTo(batch,
-      { autoAlpha: 0, y: 24 },
-      { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out', overwrite: true }
-    ),
+    onEnter: (batch) => gsap.fromTo(batch, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out', overwrite: true }),
     start: 'top 90%',
-    once: true  // only animate once
+    once: true, // only animate once
   });
 
   // Reveal diary entries in the timeline
   ScrollTrigger.batch('.diary-entry, .letter-card, .timeline-item', {
     interval: 0.1,
     batchMax: 5,
-    onEnter: (batch) => gsap.fromTo(batch,
-      { autoAlpha: 0, x: -20 },
-      { autoAlpha: 1, x: 0, duration: 0.4, stagger: 0.06, ease: 'power2.out', overwrite: true }
-    ),
+    onEnter: (batch) => gsap.fromTo(batch, { autoAlpha: 0, x: -20 }, { autoAlpha: 1, x: 0, duration: 0.4, stagger: 0.06, ease: 'power2.out', overwrite: true }),
     start: 'top 88%',
-    once: true
+    once: true,
   });
 }
 
