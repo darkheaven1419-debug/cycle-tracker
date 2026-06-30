@@ -68,7 +68,24 @@ function esc(s) {
 function closeModal() {
   const overlay = document.getElementById('modal');
   if (!overlay) return;
-  animateModalOut(overlay);
+  const modalEl = overlay.querySelector('.modal');
+  if (modalEl) {
+    // Fallback: try GSAP close, otherwise use CSS animation
+    if (typeof animateModalOut === 'function') {
+      animateModalOut(overlay);
+    } else {
+      modalEl.classList.add('closing');
+      overlay.classList.add('closing');
+      modalEl.addEventListener('animationend', function h() {
+        modalEl.removeEventListener('animationend', h);
+        overlay.classList.add('hidden');
+        overlay.classList.remove('closing');
+        modalEl.classList.remove('closing');
+      }, { once: true });
+    }
+  } else {
+    overlay.classList.add('hidden');
+  }
   selectedDate = null;
   knowledgeOpen = false;
   if (window._lastFocusedBeforeModal) {

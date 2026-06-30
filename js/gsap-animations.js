@@ -101,14 +101,12 @@ function animateModalIn(modalEl) {
   if (!modalEl) return;
   const inner = modalEl.querySelector('.modal');
   if (!inner) return;
-  gsap.killTweensOf([modalEl, inner]);
-  modalEl.classList.remove('hidden');
-  gsap.set(modalEl, { display: 'flex', autoAlpha: 1 });
-
-  const tl = gsap.timeline({ defaults: { ease: 'back.out(1.4)', duration: 0.4 } });
-  tl.from(inner, { scale: 0.85, autoAlpha: 0, y: 20 })
-    .from('.modal h2', { y: -8, autoAlpha: 0, duration: 0.25 }, '-=0.2')
-    .from('.info-row', { y: 6, autoAlpha: 0, stagger: 0.05, duration: 0.2 }, '-=0.1');
+  try {
+    gsap.killTweensOf([modalEl, inner]);
+    modalEl.classList.remove('hidden');
+    gsap.set(modalEl, { display: 'flex', autoAlpha: 1 });
+    gsap.from(inner, { scale: 0.88, autoAlpha: 0, y: 15, duration: 0.35, ease: 'back.out(1.3)', clearProps: 'all' });
+  } catch (e) { /* GSAP animation is optional — modal works without it */ }
 }
 
 function animateModalOut(modalEl) {
