@@ -216,7 +216,7 @@ if (terserAvailable) {
         } else {
           Terser.minify(content, {
             compress: { passes: 2, drop_console: false },
-            mangle: { reserved: ['Lunar', 'AuthModule', 'ChartRenderer', 'CultureCardsModule', 'syncDiaryData'] },
+            mangle: { reserved: ['Lunar', 'AuthModule', 'ChartRenderer', 'CultureCardsModule', 'syncDiaryData', 'lang', 'theme', 'activeProfile', 'state'] },
             output: { comments: false },
           })
             .then(function (result) {
