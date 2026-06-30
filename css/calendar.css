@@ -401,23 +401,23 @@
   background: linear-gradient(135deg, rgba(42, 28, 32, 0.5), rgba(48, 34, 40, 0.2));
 }
 
-/* ---- Ovulation — warm gold/amber celebration ---- */
+/* ---- Ovulation — vibrant teal circle ---- */
 .day.ovulation {
-  background: linear-gradient(135deg, #F0985C, #E88340);
+  background: var(--teal);
   color: #fff !important;
   font-weight: 700;
   border-radius: 50%;
   box-shadow:
-    0 0 0 4px rgba(240, 152, 92, 0.25),
-    0 4px 16px rgba(240, 152, 92, 0.3);
+    0 0 0 4px rgba(94, 155, 170, 0.25),
+    0 4px 16px rgba(94, 155, 170, 0.2);
   z-index: 2;
   border-color: transparent;
 }
 .day.ovulation:hover {
   transform: scale(1.1);
   box-shadow:
-    0 0 0 4px rgba(240, 152, 92, 0.35),
-    0 6px 24px rgba(240, 152, 92, 0.4);
+    0 0 0 4px rgba(94, 155, 170, 0.35),
+    0 6px 24px rgba(94, 155, 170, 0.3);
 }
 .day.ovulation .day-num {
   background: transparent;
@@ -428,62 +428,53 @@
   box-shadow: none;
 }
 
-/* ---- Fertile Window — soft teal with inner glow ---- */
+/* ---- Fertile Window — soft teal ---- */
 .day.fertile {
-  background: linear-gradient(135deg, var(--teal-light), rgba(224, 239, 232, 0.5));
+  background: var(--teal-light);
   color: #2d5f6e;
   font-weight: 600;
   border-radius: 10px;
   border-color: rgba(94, 155, 170, 0.15);
-  box-shadow:
-    inset 0 0 20px rgba(94, 155, 170, 0.06),
-    0 0 12px rgba(94, 155, 170, 0.03);
 }
 .day.fertile:hover {
-  box-shadow:
-    inset 0 0 24px rgba(94, 155, 170, 0.1),
-    0 0 20px rgba(94, 155, 170, 0.06);
+  background: #c5e6dc;
 }
 [data-theme="dark"] .day.fertile {
-  background: linear-gradient(135deg, #182822, rgba(24, 40, 34, 0.5));
+  background: #182822;
   color: var(--teal);
   border-color: rgba(122, 181, 160, 0.15);
 }
 
-/* ---- Luteal Phase — soft purple/lavender with warmth ---- */
+/* ---- Luteal Phase — soft purple/lavender ---- */
 .day.luteal {
-  background: linear-gradient(135deg, var(--lavender-light), rgba(239, 232, 245, 0.4));
+  background: var(--lavender-light);
   color: var(--lavender-dark);
   font-weight: 500;
   border-radius: 10px;
   border-color: rgba(184, 160, 200, 0.15);
-  box-shadow: inset 0 1px 2px rgba(184, 160, 200, 0.04);
 }
 .day.luteal:hover {
-  background: linear-gradient(135deg, var(--lavender-light), rgba(239, 232, 245, 0.7));
-  border-color: rgba(184, 160, 200, 0.25);
+  background: #dbcce8;
 }
 [data-theme="dark"] .day.luteal {
-  background: linear-gradient(135deg, #261e2a, rgba(30, 24, 34, 0.4));
+  background: #261e2a;
   color: var(--lavender);
   border-color: rgba(200, 168, 216, 0.15);
 }
 
 /* ---- Follicular Phase — fresh sage green ---- */
 .day.follicular {
-  background: linear-gradient(135deg, var(--sage-light), rgba(228, 240, 234, 0.4));
+  background: var(--sage-light);
   color: #3d6b55;
   font-weight: 500;
   border-radius: 10px;
   border-color: rgba(128, 165, 144, 0.15);
-  box-shadow: inset 0 1px 2px rgba(128, 165, 144, 0.04);
 }
 .day.follicular:hover {
-  background: linear-gradient(135deg, var(--sage-light), rgba(228, 240, 234, 0.7));
-  border-color: rgba(128, 165, 144, 0.25);
+  background: #cfe6d8;
 }
 [data-theme="dark"] .day.follicular {
-  background: linear-gradient(135deg, #182820, rgba(24, 40, 32, 0.4));
+  background: #182820;
   color: var(--sage);
   border-color: rgba(143, 199, 176, 0.15);
 }
