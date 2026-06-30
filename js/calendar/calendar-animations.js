@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /* ================================================================
    CalendarAnimations — 日历动画模块
@@ -24,10 +24,10 @@ const CalendarAnimations = (function () {
 
   // ── 依赖检测 ──────────────────────────────────────────────────
   // HAS_GSAP 由 gsap-animations.js 在启动时设置
-  var HAS_GSAP = typeof window !== 'undefined' && window.HAS_GSAP === true;
+  let HAS_GSAP = typeof window !== 'undefined' && window.HAS_GSAP === true;
 
   // ── 匹配媒体：prefers-reduced-motion ─────────────────────────
-  var _mm = null;
+  let _mm = null;
 
   if (HAS_GSAP && typeof gsap !== 'undefined' && gsap.matchMedia) {
     _mm = gsap.matchMedia();
@@ -58,8 +58,7 @@ const CalendarAnimations = (function () {
     }
 
     try {
-      var cells = gridEl.querySelectorAll('.day');
-      var tl = gsap.timeline({
+      let tl = gsap.timeline({
         onComplete: function () {
           gsap.set(gridEl, { clearProps: 'all' });
         },
@@ -93,7 +92,7 @@ const CalendarAnimations = (function () {
       );
 
       // 第 4 步：从中心 stagger 入场
-      var newCells = gridEl.querySelectorAll('.day:not(.other-month)');
+      let newCells = gridEl.querySelectorAll('.day:not(.other-month)');
       if (newCells.length) {
         tl.from(
           newCells,
@@ -156,7 +155,7 @@ const CalendarAnimations = (function () {
 
     try {
       // 选出刚新增的 cell（通过 data-new 标记）
-      var newCells = container.querySelectorAll('.day[data-new]');
+      let newCells = container.querySelectorAll('.day[data-new]');
       if (!newCells.length) return;
 
       gsap.killTweensOf(newCells);
@@ -169,7 +168,8 @@ const CalendarAnimations = (function () {
         clearProps: 'all',
         onComplete: function () {
           // 清除 data-new 标记
-          var i, len = newCells.length;
+          let i,
+            len = newCells.length;
           for (i = 0; i < len; i++) {
             newCells[i].removeAttribute('data-new');
           }
@@ -177,8 +177,9 @@ const CalendarAnimations = (function () {
       });
     } catch (e) {
       // GSAP 动画失败时直接清除标记
-      var all = container.querySelectorAll('.day[data-new]');
-      var i, len = all.length;
+      let all = container.querySelectorAll('.day[data-new]');
+      let i,
+        len = all.length;
       for (i = 0; i < len; i++) {
         all[i].removeAttribute('data-new');
       }
@@ -239,7 +240,7 @@ const CalendarAnimations = (function () {
     }
 
     try {
-      var inner = modalEl.querySelector('.modal');
+      let inner = modalEl.querySelector('.modal');
       if (!inner) {
         modalEl.classList.remove('hidden');
         return;
@@ -262,12 +263,12 @@ const CalendarAnimations = (function () {
       });
 
       // 内部元素分层 stagger 入场
-      var title = inner.querySelector('.modal-title, h2, h3');
-      var phase = inner.querySelector('.modal-phase, .phase-badge');
-      var details = inner.querySelectorAll('.modal-body, .modal-details, .modal-content > p, .modal-content > div');
-      var actions = inner.querySelector('.modal-actions, .modal-footer');
+      let title = inner.querySelector('.modal-title, h2, h3');
+      let phase = inner.querySelector('.modal-phase, .phase-badge');
+      let details = inner.querySelectorAll('.modal-body, .modal-details, .modal-content > p, .modal-content > div');
+      let actions = inner.querySelector('.modal-actions, .modal-footer');
 
-      var infoTl = gsap.timeline({ defaults: { duration: 0.3, ease: 'power2.out' } });
+      let infoTl = gsap.timeline({ defaults: { duration: 0.3, ease: 'power2.out' } });
 
       if (title) infoTl.from(title, { y: -6, autoAlpha: 0 }, 0);
       if (phase) infoTl.from(phase, { y: -4, autoAlpha: 0 }, '+=0.1');
@@ -291,7 +292,7 @@ const CalendarAnimations = (function () {
     }
 
     try {
-      var inner = modalEl.querySelector('.modal');
+      let inner = modalEl.querySelector('.modal');
       if (!inner) {
         modalEl.classList.add('hidden');
         return;
@@ -339,28 +340,27 @@ const CalendarAnimations = (function () {
   }
 
   function _onHoverEnter(e) {
-    var cell = e.currentTarget;
+    let cell = e.currentTarget;
     cell.style.willChange = 'transform';
   }
 
   function _onHoverMove(e) {
-    var cell = e.currentTarget;
-    var rect = cell.getBoundingClientRect();
-    var x = e.clientX - rect.left;
-    var y = e.clientY - rect.top;
-    var halfW = rect.width / 2;
-    var halfH = rect.height / 2;
+    let cell = e.currentTarget;
+    let rect = cell.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+    let halfW = rect.width / 2;
+    let halfH = rect.height / 2;
 
     // 最大 3 度旋转，通过比例控制
-    var rotY = ((x - halfW) / halfW) * 3;
-    var rotX = ((halfH - y) / halfH) * 3;
+    let rotY = ((x - halfW) / halfW) * 3;
+    let rotX = ((halfH - y) / halfH) * 3;
 
-    cell.style.transform =
-      'perspective(300px) rotateX(' + rotX.toFixed(1) + 'deg) rotateY(' + rotY.toFixed(1) + 'deg)';
+    cell.style.transform = 'perspective(300px) rotateX(' + rotX.toFixed(1) + 'deg) rotateY(' + rotY.toFixed(1) + 'deg)';
   }
 
   function _onHoverLeave(e) {
-    var cell = e.currentTarget;
+    let cell = e.currentTarget;
     cell.style.transform = '';
     cell.style.willChange = '';
   }
@@ -375,20 +375,21 @@ const CalendarAnimations = (function () {
   function killCalendarAnimations() {
     if (!HAS_GSAP || typeof gsap === 'undefined') return;
 
-    var gridEl = document.getElementById('daysGrid');
-    var modalEl = document.getElementById('modal');
-    var fillEl = document.getElementById('pg-fill');
-    var targets = [];
+    let gridEl = document.getElementById('daysGrid');
+    let modalEl = document.getElementById('modal');
+    let fillEl = document.getElementById('pg-fill');
+    let targets = [];
 
     if (gridEl) targets.push(gridEl);
     if (modalEl) targets.push(modalEl, modalEl.querySelector('.modal'));
     if (fillEl) targets.push(fillEl);
 
     // 清理所有 day cell 的 hover 监听
-    var allCells = document.querySelectorAll('.day');
-    var i, len = allCells.length;
+    let allCells = document.querySelectorAll('.day');
+    let i,
+      len = allCells.length;
     for (i = 0; i < len; i++) {
-      var c = allCells[i];
+      let c = allCells[i];
       if (c._hoverEnhanced) {
         c.removeEventListener('mouseenter', _onHoverEnter);
         c.removeEventListener('mousemove', _onHoverMove);

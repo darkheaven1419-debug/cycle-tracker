@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /* ================================================================
    CalendarInteraction — 日历交互层（事件委托）
@@ -28,7 +28,7 @@ const CalendarInteraction = (function () {
   let _boundKeyDown = null;
 
   // 轻触/双击检测
-  const _lastTap = new WeakMap();   // WeakMap<cell, timestamp>
+  const _lastTap = new WeakMap(); // WeakMap<cell, timestamp>
   let _tapTimer = null;
   let _tapCell = null;
 
@@ -98,12 +98,11 @@ const CalendarInteraction = (function () {
     if (!dateKey || !cell) return;
     hideQuickDateInfo();
 
-    var d = new Date(dateKey + 'T00:00:00');
-    var pred = typeof predict === 'function' ? predict() : null;
-    var data = typeof DayDataCache !== 'undefined' && DayDataCache.compute ?
-      DayDataCache.compute(dateKey, d, pred) : null;
+    let d = new Date(dateKey + 'T00:00:00');
+    let pred = typeof predict === 'function' ? predict() : null;
+    let data = typeof DayDataCache !== 'undefined' && DayDataCache.compute ? DayDataCache.compute(dateKey, d, pred) : null;
 
-    var el = document.createElement('div');
+    let el = document.createElement('div');
     el.className = 'quick-date-info';
     el.setAttribute('role', 'tooltip');
     el.style.cssText = [
@@ -122,19 +121,24 @@ const CalendarInteraction = (function () {
       'max-width:220px',
     ].join(';');
 
-    var parts = [];
-    var weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-    var month = d.getMonth() + 1;
+    let parts = [];
+    let weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    let month = d.getMonth() + 1;
     parts.push(d.getFullYear() + '/' + month + '/' + d.getDate() + ' 周' + weekdays[d.getDay()]);
 
     if (data) {
       if (data.phase) {
-        var phaseLabels = {
-          'period-on': '经期第1天', 'period-mid': '经期',
-          'period-pred-first': '预计经期', 'period-pred': '预计经期',
-          'period-future-first': '未来经期', 'period-future': '未来经期',
-          'ovulation': '排卵日', 'fertile': '易孕期',
-          'luteal': '黄体期', 'follicular': '卵泡期',
+        let phaseLabels = {
+          'period-on': '经期第1天',
+          'period-mid': '经期',
+          'period-pred-first': '预计经期',
+          'period-pred': '预计经期',
+          'period-future-first': '未来经期',
+          'period-future': '未来经期',
+          ovulation: '排卵日',
+          fertile: '易孕期',
+          luteal: '黄体期',
+          follicular: '卵泡期',
         };
         parts.push('· ' + (phaseLabels[data.phase] || data.phase));
       }
@@ -155,10 +159,10 @@ const CalendarInteraction = (function () {
 
     // 定位到 cell 附近
     requestAnimationFrame(function () {
-      var rect = cell.getBoundingClientRect();
-      var tipRect = el.getBoundingClientRect();
-      var top = rect.top - tipRect.height - 8;
-      var left = rect.left + (rect.width - tipRect.width) / 2;
+      let rect = cell.getBoundingClientRect();
+      let tipRect = el.getBoundingClientRect();
+      let top = rect.top - tipRect.height - 8;
+      let left = rect.left + (rect.width - tipRect.width) / 2;
       if (top < 4) top = rect.bottom + 8;
       if (left < 4) left = 4;
       if (left + tipRect.width > window.innerWidth - 4) {
@@ -203,15 +207,15 @@ const CalendarInteraction = (function () {
   // ── 点击处理器 ────────────────────────────────────────────────
 
   function _onClick(e) {
-    var cell = e.target.closest('.day');
+    let cell = e.target.closest('.day');
     if (!cell) return;
-    var dateKey = cell.getAttribute('data-date');
+    let dateKey = cell.getAttribute('data-date');
     if (!dateKey) return;
-    var isOther = cell.classList.contains('other-month');
+    let isOther = cell.classList.contains('other-month');
 
     // 双击检测
-    var now = Date.now();
-    var last = _lastTap.get(cell) || 0;
+    let now = Date.now();
+    let last = _lastTap.get(cell) || 0;
     _lastTap.set(cell, now);
 
     if (now - last < 350 && now - last > 0) {
@@ -250,12 +254,12 @@ const CalendarInteraction = (function () {
     _touchStartTime = Date.now();
 
     // 长按检测
-    var cell = e.target.closest('.day');
+    let cell = e.target.closest('.day');
     if (cell && !cell.classList.contains('other-month')) {
       _longPressCell = cell;
       _longPressTimer = setTimeout(function () {
         if (_longPressCell) {
-          var key = _longPressCell.getAttribute('data-date');
+          let key = _longPressCell.getAttribute('data-date');
           if (key) {
             _clearTapState();
             _handleLongPress(key, _longPressCell);
@@ -268,15 +272,15 @@ const CalendarInteraction = (function () {
   }
 
   function _onTouchEnd(e) {
-    var dx = e.changedTouches[0].clientX - _touchStartX;
-    var dy = e.changedTouches[0].clientY - _touchStartY;
+    let dx = e.changedTouches[0].clientX - _touchStartX;
+    let dy = e.changedTouches[0].clientY - _touchStartY;
 
     // 取消长按
     _clearLongPress();
 
     // 滑动手势检测（横向、距离足够、垂直偏移小）
     if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_MAX_Y_OFFSET) {
-      var direction = dx > 0 ? 'right' : 'left';
+      let direction = dx > 0 ? 'right' : 'left';
       // 滑动时才发射 swipe 事件，不做其他操作（由订阅者处理）
       if (typeof CalendarModule !== 'undefined' && CalendarModule.emit) {
         CalendarModule.emit('swipe', { direction: direction });
@@ -293,9 +297,9 @@ const CalendarInteraction = (function () {
     }
 
     // 如果触摸时间很短（<100ms），模拟 click（辅助移动端快速双击）
-    var elapsed = Date.now() - _touchStartTime;
+    let elapsed = Date.now() - _touchStartTime;
     if (elapsed < 100) {
-      var cell = e.target.closest('.day');
+      let cell = e.target.closest('.day');
       if (cell) {
         // touchend 的 click 模拟会自然触发 _onClick
       }
@@ -307,16 +311,16 @@ const CalendarInteraction = (function () {
   function _onKeyDown(e) {
     if (!_gridEl) return;
     // 仅在焦点在网格内时处理
-    var active = document.activeElement;
+    let active = document.activeElement;
     if (!active || !_gridEl.contains(active)) return;
-    var cell = active.closest('.day');
+    let cell = active.closest('.day');
     if (!cell) return;
 
-    var key = e.key;
-    var handled = false;
-    var dateKey = cell.getAttribute('data-date');
+    let key = e.key;
+    let handled = false;
+    let dateKey = cell.getAttribute('data-date');
     if (!dateKey) return;
-    var d = new Date(dateKey + 'T00:00:00');
+    let d = new Date(dateKey + 'T00:00:00');
 
     switch (key) {
       case 'ArrowLeft':
@@ -378,8 +382,8 @@ const CalendarInteraction = (function () {
 
     // 箭头键：聚焦并发射事件
     if (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowDown') {
-      var newKey = fmtDate(d);
-      var newCell = _gridEl.querySelector('.day[data-date="' + newKey + '"]');
+      let newKey = fmtDate(d);
+      let newCell = _gridEl.querySelector('.day[data-date="' + newKey + '"]');
       if (newCell && !newCell.classList.contains('other-month')) {
         newCell.focus();
         if (typeof CalendarModule !== 'undefined' && CalendarModule.emit) {
@@ -393,8 +397,8 @@ const CalendarInteraction = (function () {
 
   function _handleSingleTap(dateKey, cell) {
     if (!dateKey || !cell) return;
-    var d = new Date(dateKey + 'T00:00:00');
-    var pred = typeof predict === 'function' ? predict() : null;
+    let d = new Date(dateKey + 'T00:00:00');
+    let pred = typeof predict === 'function' ? predict() : null;
 
     // 高亮日期
     _clearSelection();
@@ -419,7 +423,7 @@ const CalendarInteraction = (function () {
     _clearSelection();
     cell.classList.add('selected');
 
-    var idx = state.records.findIndex(function (r) {
+    let idx = state.records.findIndex(function (r) {
       return sameDay(r, new Date(dateKey + 'T00:00:00'));
     });
 
@@ -428,9 +432,13 @@ const CalendarInteraction = (function () {
       if (typeof toast === 'function') toast('🚫 ' + (typeof t === 'function' ? t('toast.unmarked') : '已取消'));
     } else {
       state.records.push(new Date(dateKey + 'T00:00:00'));
-      state.records.sort(function (a, b) { return a - b; });
+      state.records.sort(function (a, b) {
+        return a - b;
+      });
       cell.classList.add('celebrate');
-      setTimeout(function () { cell.classList.remove('celebrate'); }, 500);
+      setTimeout(function () {
+        cell.classList.remove('celebrate');
+      }, 500);
       if (typeof toast === 'function') toast('🩸 ' + (typeof t === 'function' ? t('toast.marked') : '已标记'));
       if (typeof checkCycleCelebration === 'function') checkCycleCelebration();
     }
@@ -449,8 +457,8 @@ const CalendarInteraction = (function () {
 
   function _handleLongPress(dateKey, cell) {
     // 长按 500ms+ 打开 Modal
-    var d = new Date(dateKey + 'T00:00:00');
-    var pred = typeof predict === 'function' ? predict() : null;
+    let d = new Date(dateKey + 'T00:00:00');
+    let pred = typeof predict === 'function' ? predict() : null;
     _clearSelection();
     cell.classList.add('selected');
 
@@ -464,9 +472,9 @@ const CalendarInteraction = (function () {
   // ── 其他月份导航 ──────────────────────────────────────────────
 
   function _navigateToOtherMonth(cell, dateKey) {
-    var d = new Date(dateKey + 'T00:00:00');
-    var targetMonth = d.getMonth();
-    var targetYear = d.getFullYear();
+    let d = new Date(dateKey + 'T00:00:00');
+    let targetMonth = d.getMonth();
+    let targetYear = d.getFullYear();
 
     if (typeof CalendarState !== 'undefined') {
       CalendarState.batch({ viewMonth: targetMonth, viewYear: targetYear });
@@ -480,13 +488,13 @@ const CalendarInteraction = (function () {
 
   function _focusFirstDay() {
     if (!_gridEl) return;
-    var first = _gridEl.querySelector('.day:not(.other-month)');
+    let first = _gridEl.querySelector('.day:not(.other-month)');
     if (first) first.focus();
   }
 
   function _focusLastDay() {
     if (!_gridEl) return;
-    var days = _gridEl.querySelectorAll('.day:not(.other-month)');
+    let days = _gridEl.querySelectorAll('.day:not(.other-month)');
     if (days.length > 0) days[days.length - 1].focus();
   }
 
@@ -494,7 +502,7 @@ const CalendarInteraction = (function () {
 
   function _clearSelection() {
     if (!_gridEl) return;
-    var sel = _gridEl.querySelector('.day.selected');
+    let sel = _gridEl.querySelector('.day.selected');
     if (sel) sel.classList.remove('selected');
   }
 

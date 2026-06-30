@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /* ================================================================
    CalendarModule — 日历核心引擎
@@ -34,14 +34,20 @@ const CalendarModule = (function () {
     if (!_events[event]) _events[event] = [];
     _events[event].push(fn);
     return function () {
-      _events[event] = (_events[event] || []).filter(function (f) { return f !== fn; });
+      _events[event] = (_events[event] || []).filter(function (f) {
+        return f !== fn;
+      });
     };
   }
 
   function emit(event, data) {
-    var handlers = _events[event] || [];
-    for (var i = 0; i < handlers.length; i++) {
-      try { handlers[i](data); } catch (e) { /* silent */ }
+    let handlers = _events[event] || [];
+    for (let i = 0; i < handlers.length; i++) {
+      try {
+        handlers[i](data);
+      } catch (e) {
+        /* silent */
+      }
     }
   }
 
@@ -62,7 +68,7 @@ const CalendarModule = (function () {
 
   function _setupInteraction() {
     if (typeof CalendarInteraction === 'undefined') return;
-    var gridEl = document.getElementById('daysGrid');
+    let gridEl = document.getElementById('daysGrid');
     if (gridEl) CalendarInteraction.setupInteraction(gridEl);
   }
 
@@ -70,7 +76,7 @@ const CalendarModule = (function () {
     if (typeof CalendarAnimations === 'undefined') return;
     on('afterRender', function (data) {
       if (!data || data.opts === 'progress' || data.opts === 'holidays') return;
-      var gridEl = document.getElementById('daysGrid');
+      let gridEl = document.getElementById('daysGrid');
       if (gridEl && typeof CalendarAnimations.animateNewCells === 'function') CalendarAnimations.animateNewCells(gridEl);
     });
   }
@@ -78,11 +84,11 @@ const CalendarModule = (function () {
   function refresh(opts) {
     if (_destroyed) return;
     opts = opts || 'all';
-    var full = opts === 'all';
+    let full = opts === 'all';
 
-    var pred = typeof predict === 'function' ? predict() : null;
-    var vm = CalendarState.get('viewMonth');
-    var vy = CalendarState.get('viewYear');
+    let pred = typeof predict === 'function' ? predict() : null;
+    let vm = CalendarState.get('viewMonth');
+    let vy = CalendarState.get('viewYear');
 
     if (full || opts === 'all') {
       _renderFull(pred, vm, vy);
@@ -132,17 +138,23 @@ const CalendarModule = (function () {
   // ── 对外 API ──────────────────────────────────────────────────
 
   function changeMonth(delta) {
-    var cur = CalendarState.get('viewMonth');
-    var year = CalendarState.get('viewYear');
-    var newMonth = cur + delta;
-    var newYear = year;
-    if (newMonth < 0) { newMonth = 11; newYear--; }
-    if (newMonth > 11) { newMonth = 0; newYear++; }
+    let cur = CalendarState.get('viewMonth');
+    let year = CalendarState.get('viewYear');
+    let newMonth = cur + delta;
+    let newYear = year;
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear--;
+    }
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear++;
+    }
     CalendarState.batch({ viewMonth: newMonth, viewYear: newYear });
   }
 
   function goToday() {
-    var td = new Date();
+    let td = new Date();
     td.setHours(0, 0, 0, 0);
     CalendarState.batch({ viewMonth: td.getMonth(), viewYear: td.getFullYear() });
   }
@@ -154,8 +166,12 @@ const CalendarModule = (function () {
     }
   }
 
-  function setHashes(hashes) { _prevHashes = hashes || {}; }
-  function getHashes() { return _prevHashes; }
+  function setHashes(hashes) {
+    _prevHashes = hashes || {};
+  }
+  function getHashes() {
+    return _prevHashes;
+  }
 
   return {
     init: init,
@@ -164,7 +180,8 @@ const CalendarModule = (function () {
     changeMonth: changeMonth,
     goToday: goToday,
     openModal: openModal,
-    on: on, emit: emit,
+    on: on,
+    emit: emit,
     EventBus: EventBus,
     setHashes: setHashes,
     getHashes: getHashes,
