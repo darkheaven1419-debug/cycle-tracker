@@ -371,7 +371,8 @@ function setLang(l) {
    MODIFIED: init
    ================================================================ */
 // loadPerProfileSettings() is called in the INIT section below
-let lang = localStorage.getItem('cycle-lang') || 'sr';
+// lang is a global var declared in i18n.js (loaded before app.js)
+lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
 let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
 let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
