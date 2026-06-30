@@ -58,7 +58,7 @@ const CalendarAnimations = (function () {
     }
 
     try {
-      let tl = gsap.timeline({
+      const tl = gsap.timeline({
         onComplete: function () {
           gsap.set(gridEl, { clearProps: 'all' });
         },
@@ -92,7 +92,7 @@ const CalendarAnimations = (function () {
       );
 
       // 第 4 步：从中心 stagger 入场
-      let newCells = gridEl.querySelectorAll('.day:not(.other-month)');
+      const newCells = gridEl.querySelectorAll('.day:not(.other-month)');
       if (newCells.length) {
         tl.from(
           newCells,
@@ -155,7 +155,7 @@ const CalendarAnimations = (function () {
 
     try {
       // 选出刚新增的 cell（通过 data-new 标记）
-      let newCells = container.querySelectorAll('.day[data-new]');
+      const newCells = container.querySelectorAll('.day[data-new]');
       if (!newCells.length) return;
 
       gsap.killTweensOf(newCells);

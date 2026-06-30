@@ -30,7 +30,7 @@ const CalendarAccessibility = (function () {
    */
   function init() {
     if (document.getElementById('cal-announce')) return;
-    var el = document.createElement('div');
+    let el = document.createElement('div');
     el.id = 'cal-announce';
     el.setAttribute('aria-live', 'polite');
     el.setAttribute('aria-atomic', 'true');
@@ -64,7 +64,7 @@ const CalendarAccessibility = (function () {
     gridEl.setAttribute('role', 'grid');
     gridEl.setAttribute('aria-label', _getGridLabel());
 
-    var dayCells = gridEl.querySelectorAll('.day:not(.other-month)');
+    let dayCells = gridEl.querySelectorAll('.day:not(.other-month)');
     dayCells.forEach(function (cell) {
       if (!cell.hasAttribute('role') || cell.getAttribute('role') !== 'gridcell') {
         cell.setAttribute('role', 'gridcell');
@@ -79,12 +79,12 @@ const CalendarAccessibility = (function () {
    */
   function setCellLabel(cell, info) {
     if (!cell || !info) return;
-    var parts = [];
-    var d = info.date;
+    let parts = [];
+    let d = info.date;
 
     parts.push(d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日');
 
-    var weekdays = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    let weekdays = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     parts.push(weekdays[d.getDay()]);
 
     if (info.lunarInfo) {
@@ -92,12 +92,17 @@ const CalendarAccessibility = (function () {
     }
 
     if (info.phase) {
-      var labels = {
-        'period-on': '经期第一天', 'period-mid': '经期',
-        'period-pred-first': '预计经期第一天', 'period-pred': '预计经期',
-        'period-future-first': '未来经期第一天', 'period-future': '未来经期',
-        'ovulation': '排卵日', 'fertile': '易孕期',
-        'luteal': '黄体期', 'follicular': '卵泡期',
+      let labels = {
+        'period-on': '经期第一天',
+        'period-mid': '经期',
+        'period-pred-first': '预计经期第一天',
+        'period-pred': '预计经期',
+        'period-future-first': '未来经期第一天',
+        'period-future': '未来经期',
+        ovulation: '排卵日',
+        fertile: '易孕期',
+        luteal: '黄体期',
+        follicular: '卵泡期',
       };
       if (labels[info.phase]) parts.push(labels[info.phase]);
     }
@@ -125,16 +130,25 @@ const CalendarAccessibility = (function () {
    */
   function moveFocus(direction, currentDate) {
     if (!currentDate) return null;
-    var d = new Date(currentDate);
+    let d = new Date(currentDate);
     switch (direction) {
-      case 'left':  d.setDate(d.getDate() - 1); break;
-      case 'right': d.setDate(d.getDate() + 1); break;
-      case 'up':    d.setDate(d.getDate() - 7); break;
-      case 'down':  d.setDate(d.getDate() + 7); break;
-      default: return null;
+      case 'left':
+        d.setDate(d.getDate() - 1);
+        break;
+      case 'right':
+        d.setDate(d.getDate() + 1);
+        break;
+      case 'up':
+        d.setDate(d.getDate() - 7);
+        break;
+      case 'down':
+        d.setDate(d.getDate() + 7);
+        break;
+      default:
+        return null;
     }
-    var key = fmtDate(d);
-    var cell = document.querySelector('.day[data-date="' + key + '"]');
+    let key = fmtDate(d);
+    let cell = document.querySelector('.day[data-date="' + key + '"]');
     if (cell && !cell.classList.contains('other-month')) {
       cell.focus();
       return d;
@@ -146,8 +160,8 @@ const CalendarAccessibility = (function () {
    * 聚焦到特定日期
    */
   function focusDate(date) {
-    var key = fmtDate(date);
-    var cell = document.querySelector('.day[data-date="' + key + '"]');
+    let key = fmtDate(date);
+    let cell = document.querySelector('.day[data-date="' + key + '"]');
     if (cell && !cell.classList.contains('other-month')) {
       cell.focus();
       cell.setAttribute('tabindex', '0');
@@ -159,9 +173,9 @@ const CalendarAccessibility = (function () {
   // ── 内部工具 ──────────────────────────────────────────────────
 
   function _getGridLabel() {
-    var y = CalendarState.get('viewYear');
-    var m = CalendarState.get('viewMonth');
-    return (y + '年' + (m + 1) + '月' + '日历');
+    let y = CalendarState.get('viewYear');
+    let m = CalendarState.get('viewMonth');
+    return y + '年' + (m + 1) + '月' + '日历';
   }
 
   // ── 导出 ──────────────────────────────────────────────────────
