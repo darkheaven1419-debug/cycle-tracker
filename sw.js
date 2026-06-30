@@ -38,6 +38,7 @@ const STATIC_ASSETS = [
   './js/social.js',
   './js/culture-cards.js',
   './js/calendar.js',
+  './js/shared-calendar.js',
   './js/barry.js',
   './js/render-mood.js',
   './js/render-love.js',

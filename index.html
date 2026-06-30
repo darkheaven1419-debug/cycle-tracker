@@ -70,6 +70,7 @@
 	<script src="js/social.js?v=1" defer></script>
 	<script src="js/culture-cards.js?v=1" defer></script>
 	<script src="js/calendar.js?v=1" defer></script>
+	<script src="js/shared-calendar.js?v=1" defer></script>
 	<script src="js/barry.js?v=1" defer></script>
 	<script src="js/render-mood.js?v=1" defer></script>
 	<script src="js/render-love.js?v=1" defer></script>
@@ -666,6 +667,19 @@
     <div class="knowledge-panel" id="knowledgePanel"></div>
     <div class="divider" id="m-divider"></div>
     <div class="symptom-mini" id="modal-symptoms"></div>
+    <!-- Shared Calendar Markers -->
+    <div class="modal-markers" id="modalMarkers">
+      <div class="modal-markers-title" id="modalMarkersTitle">📌 Oznake</div>
+      <div class="modal-markers-list" id="modalMarkersList"></div>
+      <button class="btn btn-ghost fs-xs" onclick="openEmojiPickerForModal()" id="modalAddMarkerBtn" style="padding:2px 10px;margin-top:4px;font-size:.65rem">➕ <span id="modalAddMarkerText">Dodaj oznaku</span></button>
+    </div>
+    <!-- Diary Preview -->
+    <div class="modal-diary-preview" id="modalDiaryPreview" style="display:none">
+      <div class="modal-diary-divider"></div>
+      <div class="modal-diary-header" id="modalDiaryHeader">💌 Dnevnik</div>
+      <div class="modal-diary-body" id="modalDiaryBody"></div>
+      <button class="btn btn-ghost fs-xs" onclick="jumpToDiaryFromCalendar()" id="modalDiaryBtn" style="padding:2px 10px;margin-top:2px;font-size:.65rem">✏️ <span id="modalDiaryEditText">Uredi</span></button>
+    </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="modal-mark-btn" onclick="togglePeriodRecord()"></button>
       <button class="btn btn-danger" id="modal-unmark-btn" style="display:none" onclick="removePeriodRecord()"></button>
@@ -675,7 +689,28 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-	<script src="app.js?v=53" defer></script>
+
+<!-- Emoji Quick-Marker Picker -->
+<div class="emoji-picker-overlay hidden" id="emojiPickerOverlay" onclick="if(event.target===this)closeEmojiPicker()">
+  <div class="emoji-picker" id="emojiPicker">
+    <div class="emoji-picker-header">
+      <span id="ep-title">📌 Dodaj oznaku</span>
+      <span class="emoji-picker-close" onclick="closeEmojiPicker()">✕</span>
+    </div>
+    <div class="emoji-picker-grid" id="emojiPickerGrid"></div>
+    <div class="emoji-picker-footer">
+      <span class="ep-date-label" id="epDateLabel"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Action Menu for Calendar (shown on date click) -->
+<div class="cal-quick-menu hidden" id="calQuickMenu">
+  <div class="cal-quick-header" id="calQuickDate"></div>
+  <div class="cal-quick-actions" id="calQuickActions"></div>
+</div>
+
+	<script src="app.js?v=54" defer></script>
 </body>
 </html>
 

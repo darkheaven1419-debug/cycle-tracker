@@ -77,6 +77,7 @@ const SyncModule = (function () {
       voiceData: _safeGet('shared-voice-data', {}),
       sunCounter: _safeGet('shared-sun-counter', {}),
       knowme: _safeGet('shared-knowme', {}),
+      calendarMarkers: _safeGet('shared-calendar-markers', {}),
       updated: Date.now(),
     };
   }
@@ -157,6 +158,11 @@ const SyncModule = (function () {
     }
     if (shared.knowme) {
       localStorage.setItem('shared-knowme', JSON.stringify(shared.knowme));
+    }
+    if (shared.calendarMarkers) {
+      localStorage.setItem('shared-calendar-markers', JSON.stringify(shared.calendarMarkers));
+      // Also update SharedCalendarModule's in-memory cache by triggering calendar re-render
+      if (typeof renderCalendar === 'function') renderCalendar();
     }
   }
 

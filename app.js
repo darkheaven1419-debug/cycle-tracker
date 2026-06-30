@@ -1976,12 +1976,71 @@ function renderCalendar() {
       });
       if (miniDiv.children.length > 0) el.appendChild(miniDiv);
     }
-    // Diary entry dot
+    // Diary entry dot — per-user colors
     if (sharedDiaryIdx[key]) {
-      const diaryDot = document.createElement('span');
-      diaryDot.className = 'mini-dot gold';
-      diaryDot.style.cssText = 'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
-      el.appendChild(diaryDot);
+      // Check who wrote diary for more precise dot
+      var sdEntry = sd[key] || {};
+      var hasA = !!sdEntry.andjela;
+      var hasB = !!sdEntry.barry;
+      var diaryTooltip = '';
+      if (hasA && hasB) {
+        diaryTooltip = '💕 Oboje';
+        // Both wrote — use the gold dot (existing behavior)
+        var diaryDot = document.createElement('span');
+        diaryDot.className = 'mini-dot gold';
+        diaryDot.style.cssText = 'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
+        diaryDot.title = diaryTooltip;
+        el.appendChild(diaryDot);
+      } else if (hasA) {
+        diaryTooltip = '🌸 Anđela';
+        // Only Anđela
+        var diaryDotA = document.createElement('span');
+        diaryDotA.className = 'mini-dot';
+        diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#c45a6b;opacity:.7';
+        diaryDotA.title = diaryTooltip;
+        el.appendChild(diaryDotA);
+      } else if (hasB) {
+        diaryTooltip = '👦 Barry';
+        // Only Barry
+        var diaryDotB = document.createElement('span');
+        diaryDotB.className = 'mini-dot';
+        diaryDotB.style.cssText = 'position:absolute;bottom:8px;left:calc(50% + 4px);width:4px;height:4px;border-radius:50%;background:#4A90D9;opacity:.7';
+        diaryDotB.title = diaryTooltip;
+        el.appendChild(diaryDotB);
+      }
+      // Add diary preview text as data attribute for tooltip on desktop
+      if (inMonth && diaryTooltip) {
+        var diaryPreviewText = '';
+        try {
+          var entryA = sdEntry.andjela;
+          var entryB = sdEntry.barry;
+          if (hasA && entryA) diaryPreviewText += '🌸 ' + (entryA.text || entryA.happy || '').substring(0, 40);
+          if (hasB && entryB) diaryPreviewText += (diaryPreviewText ? ' | ' : '') + '👦 ' + (entryB.text || entryB.happy || '').substring(0, 40);
+        } catch (e) { /* ignore */ }
+        if (diaryPreviewText) {
+          el.setAttribute('data-diary', diaryPreviewText);
+        }
+      }
+    }
+    // Shared calendar markers (emoji from both users)
+    if (typeof getCalendarSummary === 'function' && inMonth) {
+      var calSummary = getCalendarSummary(key);
+      var hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
+      if (hasUserMarkers) {
+        var markerRow = document.createElement('div');
+        markerRow.className = 'day-marker-row';
+        var allMarkers = [];
+        calSummary.barry.forEach(function (m) { allMarkers.push(m); });
+        calSummary.andjela.forEach(function (m) { allMarkers.push(m); });
+        for (var mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
+          var mSpan = document.createElement('span');
+          mSpan.className = 'cal-marker-emoji';
+          mSpan.textContent = allMarkers[mi2].emoji;
+          mSpan.title = (allMarkers[mi2].author === 'andjela' ? '🌸 Anđela' : '👦 Barry') + ': ' + (allMarkers[mi2].note || '');
+          markerRow.appendChild(mSpan);
+        }
+        el.appendChild(markerRow);
+      }
     }
     // Anniversary dot
     if (annType === 2 && !phase) {
@@ -2596,11 +2655,156 @@ function openModal(date, pred) {
   } else {
     holidayRow.style.display = 'none';
   }
+  // Render shared calendar markers
+  if (typeof getCalendarSummary === 'function') {
+    var calMarkersSummary = getCalendarSummary(key);
+    var markersList = document.getElementById('modalMarkersList');
+    var markersContainer = document.getElementById('modalMarkers');
+    if (markersList && markersContainer) {
+      var allMarkerItems = [];
+      calMarkersSummary.barry.forEach(function (m) { allMarkerItems.push(m); });
+      calMarkersSummary.andjela.forEach(function (m) { allMarkerItems.push(m); });
+      if (allMarkerItems.length > 0) {
+        markersContainer.style.display = '';
+        markersList.innerHTML = allMarkerItems.map(function (m) {
+          var authorName = m.author === 'andjela' ? '🌸' : '👦';
+          var timeStr = m.time ? (function (t) { var d = new Date(t); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); })(m.time) : '';
+          var canRemove = m.author === activeProfile ? ' <span class="marker-remove" data-id="' + m.id + '" onclick="removeCalendarMarker(\'' + m.id + '\')">✕</span>' : '';
+          return '<span class="modal-marker-item" title="' + authorName + ' ' + timeStr + '">' + m.emoji + ' ' + esc(m.note || '') + canRemove + '</span>';
+        }).join(' ');
+      } else {
+        markersList.innerHTML = '<span class="marker-empty">' + (activeProfile === 'barry' ? '还没有标记 📌' : 'Još nema oznaka 📌') + '</span>';
+      }
+    }
+  }
+  // Render diary preview in modal
+  var diaryPreviewEl = document.getElementById('modalDiaryPreview');
+  var diaryBodyEl = document.getElementById('modalDiaryBody');
+  if (diaryPreviewEl && diaryBodyEl) {
+    try {
+      var sdModal = JSON.parse(localStorage.getItem('shared-diary')) || {};
+      var dayDiary = sdModal[key] || {};
+      var myDiaryEntry = dayDiary[activeProfile];
+      var partnerProfile2 = activeProfile === 'andjela' ? 'barry' : 'andjela';
+      var partnerDiaryEntry = dayDiary[partnerProfile2];
+      if (myDiaryEntry || partnerDiaryEntry) {
+        diaryPreviewEl.style.display = '';
+        var diaryText = '';
+        if (myDiaryEntry) {
+          var myText = myDiaryEntry.text || myDiaryEntry.happy || '';
+          diaryText += '<div class="modal-diary-mine"><span class="modal-diary-author">' + (activeProfile === 'andjela' ? '🌸' : '👦') + '</span> ' + esc(myText.substring(0, 100)) + (myText.length > 100 ? '...' : '') + '</div>';
+        }
+        if (partnerDiaryEntry) {
+          var partnerText = partnerDiaryEntry.text || partnerDiaryEntry.happy || '';
+          diaryText += '<div class="modal-diary-partner"><span class="modal-diary-author">' + (partnerProfile2 === 'andjela' ? '🌸' : '👦') + '</span> ' + esc(partnerText.substring(0, 100)) + (partnerText.length > 100 ? '...' : '') + '</div>';
+        }
+        diaryBodyEl.innerHTML = diaryText;
+        document.getElementById('modalDiaryHeader').textContent = (activeProfile === 'barry' ? '💌 日记' : '💌 Dnevnik');
+        document.getElementById('modalDiaryEditText').textContent = (activeProfile === 'barry' ? '编辑' : 'Uredi');
+      } else {
+        diaryPreviewEl.style.display = 'none';
+      }
+    } catch (e) {
+      diaryPreviewEl.style.display = 'none';
+    }
+  }
   window._lastFocusedBeforeModal = document.activeElement;
   document.getElementById('modal').classList.remove('hidden');
   if (typeof animateModalIn === 'function') animateModalIn();
   document.getElementById('modal-title').focus();
 }
+
+/* ================================================================
+   Shared Calendar Actions — emoji picker, diary jump
+   ================================================================ */
+
+/**
+ * Close the emoji picker overlay.
+ */
+function closeEmojiPicker() {
+  var overlay = document.getElementById('emojiPickerOverlay');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+/**
+ * Open the emoji picker and attach it to a specific date.
+ * @param {string} dateKey - 'YYYY-MM-DD'
+ */
+function openEmojiPicker(dateKey) {
+  var overlay = document.getElementById('emojiPickerOverlay');
+  var grid = document.getElementById('emojiPickerGrid');
+  var dateLabel = document.getElementById('epDateLabel');
+  if (!overlay || !grid) return;
+  overlay.classList.remove('hidden');
+  overlay._targetDate = dateKey;
+  if (dateLabel) dateLabel.textContent = dateKey;
+  if (grid.children.length === 0) {
+    // Populate once
+    var emojis = [];
+    if (typeof getQuickEmojis === 'function') {
+      emojis = getQuickEmojis();
+    } else {
+      emojis = [
+        { emoji: '💕' }, { emoji: '🌸' }, { emoji: '🌙' }, { emoji: '☀️' },
+        { emoji: '🍵' }, { emoji: '🎵' }, { emoji: '📖' }, { emoji: '💪' },
+        { emoji: '😊' }, { emoji: '😢' }, { emoji: '🤗' }, { emoji: '🎂' },
+        { emoji: '✈️' }, { emoji: '🏠' }, { emoji: '💼' }, { emoji: '🎮' },
+        { emoji: '🍜' }, { emoji: '🥰' },
+      ];
+    }
+    emojis.forEach(function (e) {
+      var cell = document.createElement('span');
+      cell.className = 'emoji-picker-cell';
+      cell.textContent = e.emoji;
+      cell.title = e.label_sr || e.emoji;
+      cell.addEventListener('click', function () {
+        var targetDate = overlay._targetDate || fmtDate(new Date());
+        var marker = addCalendarMarker(targetDate, { emoji: e.emoji, type: 'custom', note: '' });
+        if (marker) {
+          closeEmojiPicker();
+          // Refresh calendar and modal if open
+          renderCalendar();
+          if (!document.getElementById('modal').classList.contains('hidden')) {
+            if (selectedDate) openModal(selectedDate, predict());
+          }
+          var label = lang === 'sr' ? 'Oznaka dodana' : lang === 'en' ? 'Marker added' : '标记已添加';
+          toast(e.emoji + ' ' + label);
+          // Auto-push sync
+          if (typeof pushAllSharedData === 'function') pushAllSharedData();
+        }
+      });
+      grid.appendChild(cell);
+    });
+  }
+}
+
+/**
+ * Open emoji picker from the modal (uses selectedDate global).
+ */
+function openEmojiPickerForModal() {
+  if (!selectedDate) return;
+  var key = fmtDate(selectedDate);
+  openEmojiPicker(key);
+}
+
+/**
+ * Jump from calendar modal to diary panel for the selected date.
+ */
+function jumpToDiaryFromCalendar() {
+  if (!selectedDate) return;
+  var key = fmtDate(selectedDate);
+  closeModal();
+  // Set diary view date and switch tab
+  if (typeof _diaryViewDate !== 'undefined') {
+    _diaryViewDate = new Date(key + 'T00:00:00');
+    _diaryMood = '';
+    if (typeof renderDiaryPanel === 'function') renderDiaryPanel();
+  }
+  // Switch to diary tab
+  var diaryTab = document.querySelector('.tab[data-panel="diary"]');
+  if (diaryTab) diaryTab.click();
+}
+
 // closeModal() extracted to js/ui-core.js
 function renderKnowledge(phase, dateKey) {
   const panel = document.getElementById('knowledgePanel');

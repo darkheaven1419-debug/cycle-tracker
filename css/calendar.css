@@ -827,3 +827,212 @@
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
 }
+
+/* ================================================================
+   Shared Calendar Markers (dual-user) — v8.0
+   ================================================================ */
+
+/* Emoji marker row on calendar cell */
+.day .day-marker-row {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1px;
+  z-index: 1;
+  pointer-events: none;
+  max-width: calc(100% - 6px);
+  overflow: hidden;
+}
+.day .cal-marker-emoji {
+  font-size: 0.45rem;
+  line-height: 1;
+  filter: drop-shadow(0 0.5px 0.5px rgba(0,0,0,0.05));
+}
+.day[class*="period"] .cal-marker-emoji,
+.day.ovulation .cal-marker-emoji {
+  filter: brightness(10);
+}
+
+/* Modal Markers Section */
+.modal-markers {
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border-light, rgba(200,180,170,0.12));
+}
+.modal-markers-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.modal-markers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 24px;
+}
+.modal-marker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  background: var(--rose-light);
+  border-radius: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.modal-marker-item .marker-remove {
+  cursor: pointer;
+  font-size: 0.55rem;
+  opacity: 0.5;
+  margin-left: 2px;
+  color: var(--rose);
+}
+.modal-marker-item .marker-remove:hover {
+  opacity: 1;
+}
+.marker-empty {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Emoji Picker Overlay */
+.emoji-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+.emoji-picker-overlay.hidden {
+  display: none;
+}
+.emoji-picker {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+  animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.emoji-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.emoji-picker-close {
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.5;
+  padding: 4px;
+}
+.emoji-picker-close:hover { opacity: 1; }
+.emoji-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.emoji-picker-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  font-size: 1.3rem;
+  cursor: pointer;
+  border-radius: 12px;
+  background: transparent;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+.emoji-picker-cell:hover {
+  background: var(--rose-light);
+  transform: scale(1.2);
+}
+.emoji-picker-cell:active {
+  transform: scale(0.85);
+}
+.emoji-picker-footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Modal Diary Preview */
+.modal-diary-preview {
+  margin: 6px 0 4px;
+  padding: 8px 12px;
+  background: var(--rose-light);
+  border-radius: 12px;
+  border: 1px solid rgba(196, 90, 107, 0.08);
+}
+.modal-diary-divider {
+  display: none;
+}
+.modal-diary-header {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--love);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+.modal-diary-body {
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.modal-diary-mine {
+  margin-bottom: 4px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 8px;
+}
+.modal-diary-partner {
+  margin-bottom: 4px;
+  padding: 4px 8px;
+  background: rgba(74, 144, 217, 0.06);
+  border-radius: 8px;
+}
+.modal-diary-author {
+  font-weight: 600;
+  margin-right: 4px;
+}
+[data-theme="dark"] .modal-diary-mine {
+  background: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .modal-diary-partner {
+  background: rgba(74, 144, 217, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
