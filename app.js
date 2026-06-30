@@ -2039,8 +2039,8 @@ function renderCalendar() {
         calSummary.andjela.forEach(function (m) {
           allMarkers.push(m);
         });
-        for (var mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
-          var mSpan = document.createElement('span');
+        for (let mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
+          const mSpan = document.createElement('span');
           mSpan.className = 'cal-marker-emoji';
           mSpan.textContent = allMarkers[mi2].emoji;
           mSpan.title = (allMarkers[mi2].author === 'andjela' ? '🌸 Anđela' : '👦 Barry') + ': ' + (allMarkers[mi2].note || '');
@@ -2682,7 +2682,7 @@ function openModal(date, pred) {
             const authorName = m.author === 'andjela' ? '🌸' : '👦';
             const timeStr = m.time
               ? (function (t) {
-                  var d = new Date(t);
+                  const d = new Date(t);
                   return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
                 })(m.time)
               : '';
@@ -2811,7 +2811,7 @@ function openEmojiPicker(dateKey) {
           if (!document.getElementById('modal').classList.contains('hidden')) {
             if (selectedDate) openModal(selectedDate, predict());
           }
-          var label = lang === 'sr' ? 'Oznaka dodana' : lang === 'en' ? 'Marker added' : '标记已添加';
+          const label = lang === 'sr' ? 'Oznaka dodana' : lang === 'en' ? 'Marker added' : '标记已添加';
           toast(e.emoji + ' ' + label);
           // Auto-push sync
           if (typeof pushAllSharedData === 'function') pushAllSharedData();
@@ -2827,7 +2827,7 @@ function openEmojiPicker(dateKey) {
  */
 function openEmojiPickerForModal() {
   if (!selectedDate) return;
-  var key = fmtDate(selectedDate);
+  const key = fmtDate(selectedDate);
   openEmojiPicker(key);
 }
 
@@ -2836,7 +2836,7 @@ function openEmojiPickerForModal() {
  */
 function jumpToDiaryFromCalendar() {
   if (!selectedDate) return;
-  var key = fmtDate(selectedDate);
+  const key = fmtDate(selectedDate);
   closeModal();
   // Set diary view date and switch tab
   if (typeof _diaryViewDate !== 'undefined') {
@@ -2845,7 +2845,7 @@ function jumpToDiaryFromCalendar() {
     if (typeof renderDiaryPanel === 'function') renderDiaryPanel();
   }
   // Switch to diary tab
-  var diaryTab = document.querySelector('.tab[data-panel="diary"]');
+  const diaryTab = document.querySelector('.tab[data-panel="diary"]');
   if (diaryTab) diaryTab.click();
 }
 

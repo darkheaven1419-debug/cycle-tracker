@@ -22,10 +22,10 @@ const SharedCalendarModule = (function () {
   'use strict';
 
   // ── Constants ──────────────────────────────────────────────────
-  var STORAGE_KEY = 'shared-calendar-markers';
+  const STORAGE_KEY = 'shared-calendar-markers';
 
   // Available quick emoji markers (shown in emoji picker)
-  var QUICK_EMOJIS = [
+  const QUICK_EMOJIS = [
     { emoji: '💕', label_sr: 'Ljubav', label_zh: '爱', label_en: 'Love' },
     { emoji: '🌸', label_sr: 'Cvet', label_zh: '花', label_en: 'Flower' },
     { emoji: '🌙', label_sr: 'Noć', label_zh: '夜晚', label_en: 'Night' },
@@ -71,7 +71,7 @@ const SharedCalendarModule = (function () {
    * @returns {Array}
    */
   function getMarkers(dateKey) {
-    var all = _load();
+    const all = _load();
     return all[dateKey] || [];
   }
 
@@ -87,9 +87,9 @@ const SharedCalendarModule = (function () {
   function addMarker(dateKey, opts) {
     opts = opts || {};
     if (!dateKey || !opts.emoji) return null;
-    var all = _load();
+    const all = _load();
     if (!all[dateKey]) all[dateKey] = [];
-    var marker = {
+    const marker = {
       id: Date.now().toString(36) + Math.random().toString(36).substr(2, 6),
       author: typeof activeProfile !== 'undefined' ? activeProfile : 'unknown',
       emoji: opts.emoji,
@@ -109,11 +109,11 @@ const SharedCalendarModule = (function () {
    */
   function removeMarker(markerId) {
     if (!markerId) return false;
-    var all = _load();
-    for (var dateKey in all) {
+    const all = _load();
+    for (const dateKey in all) {
       if (!all.hasOwnProperty(dateKey)) continue;
-      var markers = all[dateKey];
-      for (var i = 0; i < markers.length; i++) {
+      const markers = all[dateKey];
+      for (let i = 0; i < markers.length; i++) {
         if (markers[i].id === markerId && markers[i].author === activeProfile) {
           markers.splice(i, 1);
           if (markers.length === 0) delete all[dateKey];
@@ -139,21 +139,21 @@ const SharedCalendarModule = (function () {
    * @returns {{ andjela: Array, barry: Array, andjelaDiary: boolean, barryDiary: boolean }}
    */
   function getSummary(dateKey) {
-    var markers = getMarkers(dateKey);
-    var summary = {
+    const markers = getMarkers(dateKey);
+    const summary = {
       andjela: [],
       barry: [],
       andjelaDiary: false,
       barryDiary: false,
     };
-    for (var i = 0; i < markers.length; i++) {
-      var m = markers[i];
+    for (let i = 0; i < markers.length; i++) {
+      const m = markers[i];
       if (m.author === 'andjela') summary.andjela.push(m);
       else summary.barry.push(m);
     }
     // Check diary entries from shared-diary
     try {
-      var sd = JSON.parse(localStorage.getItem('shared-diary')) || {};
+      const sd = JSON.parse(localStorage.getItem('shared-diary')) || {};
       if (sd[dateKey]) {
         if (sd[dateKey].andjela) summary.andjelaDiary = true;
         if (sd[dateKey].barry) summary.barryDiary = true;
@@ -168,10 +168,10 @@ const SharedCalendarModule = (function () {
    * Check if a date has ANY markers or diary from either user.
    */
   function hasAnyActivity(dateKey) {
-    var markers = getMarkers(dateKey);
+    const markers = getMarkers(dateKey);
     if (markers.length > 0) return true;
     try {
-      var sd = JSON.parse(localStorage.getItem('shared-diary')) || {};
+      const sd = JSON.parse(localStorage.getItem('shared-diary')) || {};
       if (sd[dateKey] && (sd[dateKey].barry || sd[dateKey].andjela)) return true;
     } catch (e) {
       /* ignore */
@@ -218,7 +218,7 @@ const SharedCalendarModule = (function () {
 })();
 
 /* Global aliases for inline use */
-var getCalendarMarkers = SharedCalendarModule.getMarkers;
-var addCalendarMarker = SharedCalendarModule.addMarker;
-var removeCalendarMarker = SharedCalendarModule.removeMarker;
-var getCalendarSummary = SharedCalendarModule.getSummary;
+const getCalendarMarkers = SharedCalendarModule.getMarkers;
+const addCalendarMarker = SharedCalendarModule.addMarker;
+const removeCalendarMarker = SharedCalendarModule.removeMarker;
+const getCalendarSummary = SharedCalendarModule.getSummary;
