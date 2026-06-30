@@ -41,7 +41,7 @@ const CalendarModule = (function () {
   }
 
   function emit(event, data) {
-    let handlers = _events[event] || [];
+    const handlers = _events[event] || [];
     for (let i = 0; i < handlers.length; i++) {
       try {
         handlers[i](data);
@@ -84,11 +84,11 @@ const CalendarModule = (function () {
   function refresh(opts) {
     if (_destroyed) return;
     opts = opts || 'all';
-    let full = opts === 'all';
+    const full = opts === 'all';
 
-    let pred = typeof predict === 'function' ? predict() : null;
-    let vm = CalendarState.get('viewMonth');
-    let vy = CalendarState.get('viewYear');
+    const pred = typeof predict === 'function' ? predict() : null;
+    const vm = CalendarState.get('viewMonth');
+    const vy = CalendarState.get('viewYear');
 
     if (full || opts === 'all') {
       _renderFull(pred, vm, vy);
@@ -138,10 +138,10 @@ const CalendarModule = (function () {
   // ── 对外 API ──────────────────────────────────────────────────
 
   function changeMonth(delta) {
-    let cur = CalendarState.get('viewMonth');
-    let year = CalendarState.get('viewYear');
+    const cur = CalendarState.get('viewMonth');
+    const year = CalendarState.get('viewYear');
     let newMonth = cur + delta;
-    let newYear = year;
+    const newYear = year;
     if (newMonth < 0) {
       newMonth = 11;
       newYear--;
@@ -154,7 +154,7 @@ const CalendarModule = (function () {
   }
 
   function goToday() {
-    let td = new Date();
+    const td = new Date();
     td.setHours(0, 0, 0, 0);
     CalendarState.batch({ viewMonth: td.getMonth(), viewYear: td.getFullYear() });
   }

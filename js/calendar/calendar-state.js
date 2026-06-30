@@ -102,15 +102,15 @@ const CalendarState = (function () {
    * @param {boolean} [silent=false]
    */
   function batch(updates, silent) {
-    let keys = Object.keys(updates);
-    for (var i = 0; i < keys.length; i++) {
-      let k = keys[i];
+    const keys = Object.keys(updates);
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
       if (k in _state) {
         _state[k] = updates[k];
       }
     }
     if (!silent) {
-      for (var j = 0; j < keys.length; j++) {
+      for (let j = 0; j < keys.length; j++) {
         _notify(keys[j], _state[keys[j]], undefined);
       }
     }
@@ -139,12 +139,12 @@ const CalendarState = (function () {
    * @returns {function} unsubscribe
    */
   function subscribeAny(fn) {
-    let wrapper = function (key) {
+    const wrapper = function (key) {
       return function (newVal, oldVal) {
         fn(key, newVal, oldVal);
       };
     };
-    let unsubs = [];
+    const unsubs = [];
     Object.keys(_state).forEach(function (k) {
       unsubs.push(subscribe(k, wrapper(k)));
     });

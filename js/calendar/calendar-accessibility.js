@@ -173,8 +173,8 @@ const CalendarAccessibility = (function () {
   // ── 内部工具 ──────────────────────────────────────────────────
 
   function _getGridLabel() {
-    let y = CalendarState.get('viewYear');
-    let m = CalendarState.get('viewMonth');
+    const y = CalendarState.get('viewYear');
+    const m = CalendarState.get('viewMonth');
     return y + '年' + (m + 1) + '月' + '日历';
   }
 

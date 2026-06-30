@@ -177,7 +177,7 @@ const CalendarAnimations = (function () {
       });
     } catch (e) {
       // GSAP 动画失败时直接清除标记
-      let all = container.querySelectorAll('.day[data-new]');
+      const all = container.querySelectorAll('.day[data-new]');
       let i,
         len = all.length;
       for (i = 0; i < len; i++) {
@@ -263,12 +263,12 @@ const CalendarAnimations = (function () {
       });
 
       // 内部元素分层 stagger 入场
-      let title = inner.querySelector('.modal-title, h2, h3');
-      let phase = inner.querySelector('.modal-phase, .phase-badge');
-      let details = inner.querySelectorAll('.modal-body, .modal-details, .modal-content > p, .modal-content > div');
-      let actions = inner.querySelector('.modal-actions, .modal-footer');
+      const title = inner.querySelector('.modal-title, h2, h3');
+      const phase = inner.querySelector('.modal-phase, .phase-badge');
+      const details = inner.querySelectorAll('.modal-body, .modal-details, .modal-content > p, .modal-content > div');
+      const actions = inner.querySelector('.modal-actions, .modal-footer');
 
-      let infoTl = gsap.timeline({ defaults: { duration: 0.3, ease: 'power2.out' } });
+      const infoTl = gsap.timeline({ defaults: { duration: 0.3, ease: 'power2.out' } });
 
       if (title) infoTl.from(title, { y: -6, autoAlpha: 0 }, 0);
       if (phase) infoTl.from(phase, { y: -4, autoAlpha: 0 }, '+=0.1');
@@ -346,15 +346,15 @@ const CalendarAnimations = (function () {
 
   function _onHoverMove(e) {
     let cell = e.currentTarget;
-    let rect = cell.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
-    let halfW = rect.width / 2;
-    let halfH = rect.height / 2;
+    const rect = cell.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const halfW = rect.width / 2;
+    const halfH = rect.height / 2;
 
     // 最大 3 度旋转，通过比例控制
-    let rotY = ((x - halfW) / halfW) * 3;
-    let rotX = ((halfH - y) / halfH) * 3;
+    const rotY = ((x - halfW) / halfW) * 3;
+    const rotX = ((halfH - y) / halfH) * 3;
 
     cell.style.transform = 'perspective(300px) rotateX(' + rotX.toFixed(1) + 'deg) rotateY(' + rotY.toFixed(1) + 'deg)';
   }
@@ -375,21 +375,21 @@ const CalendarAnimations = (function () {
   function killCalendarAnimations() {
     if (!HAS_GSAP || typeof gsap === 'undefined') return;
 
-    let gridEl = document.getElementById('daysGrid');
-    let modalEl = document.getElementById('modal');
-    let fillEl = document.getElementById('pg-fill');
-    let targets = [];
+    const gridEl = document.getElementById('daysGrid');
+    const modalEl = document.getElementById('modal');
+    const fillEl = document.getElementById('pg-fill');
+    const targets = [];
 
     if (gridEl) targets.push(gridEl);
     if (modalEl) targets.push(modalEl, modalEl.querySelector('.modal'));
     if (fillEl) targets.push(fillEl);
 
     // 清理所有 day cell 的 hover 监听
-    let allCells = document.querySelectorAll('.day');
+    const allCells = document.querySelectorAll('.day');
     let i,
       len = allCells.length;
     for (i = 0; i < len; i++) {
-      let c = allCells[i];
+      const c = allCells[i];
       if (c._hoverEnhanced) {
         c.removeEventListener('mouseenter', _onHoverEnter);
         c.removeEventListener('mousemove', _onHoverMove);

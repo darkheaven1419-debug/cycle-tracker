@@ -187,8 +187,8 @@ const d2Passed = passed - d1Passed;
 console.log('\n=== CalendarState ===');
 
 const CalendarState = (function () {
-  let _state = { viewMonth: 5, viewYear: 2026, selectedDate: null, knowledgeOpen: false, initialized: false };
-  let _listeners = {};
+  const _state = { viewMonth: 5, viewYear: 2026, selectedDate: null, knowledgeOpen: false, initialized: false };
+  const _listeners = {};
   function get(k) {
     return _state[k];
   }
@@ -203,7 +203,7 @@ const CalendarState = (function () {
   }
   function set(k, v, silent) {
     if (!(k in _state)) return;
-    let old = _state[k];
+    const old = _state[k];
     if (old === v) return;
     _state[k] = v;
     if (!silent) {
@@ -215,7 +215,7 @@ const CalendarState = (function () {
     }
   }
   function batch(updates, silent) {
-    let keys = Object.keys(updates);
+    const keys = Object.keys(updates);
     keys.forEach(function (k) {
       if (k in _state) _state[k] = updates[k];
     });

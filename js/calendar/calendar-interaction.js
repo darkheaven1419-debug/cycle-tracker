@@ -45,7 +45,7 @@ const CalendarInteraction = (function () {
 
   // 快捷浮窗
   let _tooltipEl = null;
-  let _tooltipTimer = null;
+  const _tooltipTimer = null;
   let _tooltipHideTimer = null;
 
   // ── 公共 API ──────────────────────────────────────────────────
@@ -100,9 +100,9 @@ const CalendarInteraction = (function () {
 
     let d = new Date(dateKey + 'T00:00:00');
     let pred = typeof predict === 'function' ? predict() : null;
-    let data = typeof DayDataCache !== 'undefined' && DayDataCache.compute ? DayDataCache.compute(dateKey, d, pred) : null;
+    const data = typeof DayDataCache !== 'undefined' && DayDataCache.compute ? DayDataCache.compute(dateKey, d, pred) : null;
 
-    let el = document.createElement('div');
+    const el = document.createElement('div');
     el.className = 'quick-date-info';
     el.setAttribute('role', 'tooltip');
     el.style.cssText = [
@@ -121,14 +121,14 @@ const CalendarInteraction = (function () {
       'max-width:220px',
     ].join(';');
 
-    let parts = [];
-    let weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-    let month = d.getMonth() + 1;
+    const parts = [];
+    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    const month = d.getMonth() + 1;
     parts.push(d.getFullYear() + '/' + month + '/' + d.getDate() + ' 周' + weekdays[d.getDay()]);
 
     if (data) {
       if (data.phase) {
-        let phaseLabels = {
+        const phaseLabels = {
           'period-on': '经期第1天',
           'period-mid': '经期',
           'period-pred-first': '预计经期',
@@ -159,8 +159,8 @@ const CalendarInteraction = (function () {
 
     // 定位到 cell 附近
     requestAnimationFrame(function () {
-      let rect = cell.getBoundingClientRect();
-      let tipRect = el.getBoundingClientRect();
+      const rect = cell.getBoundingClientRect();
+      const tipRect = el.getBoundingClientRect();
       let top = rect.top - tipRect.height - 8;
       let left = rect.left + (rect.width - tipRect.width) / 2;
       if (top < 4) top = rect.bottom + 8;
@@ -211,11 +211,11 @@ const CalendarInteraction = (function () {
     if (!cell) return;
     let dateKey = cell.getAttribute('data-date');
     if (!dateKey) return;
-    let isOther = cell.classList.contains('other-month');
+    const isOther = cell.classList.contains('other-month');
 
     // 双击检测
-    let now = Date.now();
-    let last = _lastTap.get(cell) || 0;
+    const now = Date.now();
+    const last = _lastTap.get(cell) || 0;
     _lastTap.set(cell, now);
 
     if (now - last < 350 && now - last > 0) {
@@ -272,15 +272,15 @@ const CalendarInteraction = (function () {
   }
 
   function _onTouchEnd(e) {
-    let dx = e.changedTouches[0].clientX - _touchStartX;
-    let dy = e.changedTouches[0].clientY - _touchStartY;
+    const dx = e.changedTouches[0].clientX - _touchStartX;
+    const dy = e.changedTouches[0].clientY - _touchStartY;
 
     // 取消长按
     _clearLongPress();
 
     // 滑动手势检测（横向、距离足够、垂直偏移小）
     if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_MAX_Y_OFFSET) {
-      let direction = dx > 0 ? 'right' : 'left';
+      const direction = dx > 0 ? 'right' : 'left';
       // 滑动时才发射 swipe 事件，不做其他操作（由订阅者处理）
       if (typeof CalendarModule !== 'undefined' && CalendarModule.emit) {
         CalendarModule.emit('swipe', { direction: direction });
@@ -297,7 +297,7 @@ const CalendarInteraction = (function () {
     }
 
     // 如果触摸时间很短（<100ms），模拟 click（辅助移动端快速双击）
-    let elapsed = Date.now() - _touchStartTime;
+    const elapsed = Date.now() - _touchStartTime;
     if (elapsed < 100) {
       let cell = e.target.closest('.day');
       if (cell) {
@@ -311,7 +311,7 @@ const CalendarInteraction = (function () {
   function _onKeyDown(e) {
     if (!_gridEl) return;
     // 仅在焦点在网格内时处理
-    let active = document.activeElement;
+    const active = document.activeElement;
     if (!active || !_gridEl.contains(active)) return;
     let cell = active.closest('.day');
     if (!cell) return;
@@ -382,8 +382,8 @@ const CalendarInteraction = (function () {
 
     // 箭头键：聚焦并发射事件
     if (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowDown') {
-      let newKey = fmtDate(d);
-      let newCell = _gridEl.querySelector('.day[data-date="' + newKey + '"]');
+      const newKey = fmtDate(d);
+      const newCell = _gridEl.querySelector('.day[data-date="' + newKey + '"]');
       if (newCell && !newCell.classList.contains('other-month')) {
         newCell.focus();
         if (typeof CalendarModule !== 'undefined' && CalendarModule.emit) {
@@ -423,7 +423,7 @@ const CalendarInteraction = (function () {
     _clearSelection();
     cell.classList.add('selected');
 
-    let idx = state.records.findIndex(function (r) {
+    const idx = state.records.findIndex(function (r) {
       return sameDay(r, new Date(dateKey + 'T00:00:00'));
     });
 
@@ -473,8 +473,8 @@ const CalendarInteraction = (function () {
 
   function _navigateToOtherMonth(cell, dateKey) {
     let d = new Date(dateKey + 'T00:00:00');
-    let targetMonth = d.getMonth();
-    let targetYear = d.getFullYear();
+    const targetMonth = d.getMonth();
+    const targetYear = d.getFullYear();
 
     if (typeof CalendarState !== 'undefined') {
       CalendarState.batch({ viewMonth: targetMonth, viewYear: targetYear });
@@ -488,13 +488,13 @@ const CalendarInteraction = (function () {
 
   function _focusFirstDay() {
     if (!_gridEl) return;
-    let first = _gridEl.querySelector('.day:not(.other-month)');
+    const first = _gridEl.querySelector('.day:not(.other-month)');
     if (first) first.focus();
   }
 
   function _focusLastDay() {
     if (!_gridEl) return;
-    let days = _gridEl.querySelectorAll('.day:not(.other-month)');
+    const days = _gridEl.querySelectorAll('.day:not(.other-month)');
     if (days.length > 0) days[days.length - 1].focus();
   }
 
@@ -502,7 +502,7 @@ const CalendarInteraction = (function () {
 
   function _clearSelection() {
     if (!_gridEl) return;
-    let sel = _gridEl.querySelector('.day.selected');
+    const sel = _gridEl.querySelector('.day.selected');
     if (sel) sel.classList.remove('selected');
   }
 
