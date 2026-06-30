@@ -88,6 +88,7 @@ function animateCalendarDays() {
     duration: 0.3,
     stagger: { amount: 0.3, from: 'center' },
     ease: 'power1.out',
+    clearProps: 'all',  // remove inline styles so CSS phase colors work
   });
 }
 
@@ -237,7 +238,7 @@ function animateFloatingStars() {
 
 function animateStatsPanel() {
   if (!GSAP_ENABLED) return;
-  letcards = document.querySelectorAll('#panel-stats .card');
+  let cards = document.querySelectorAll('#panel-stats .card');
   if (!cards.length) return;
   gsap.killTweensOf(cards);
   gsap.fromTo(cards, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.06, ease: 'power2.out' });
