@@ -44,9 +44,9 @@ const AuthModule = (function () {
 
     // Set language based on profile: Andjela -> sr, Barry -> zh-CN
     const profileLang = profile === 'barry' ? 'zh-CN' : 'sr';
-    lang = profileLang;
+    window.lang = profileLang;
     document.querySelectorAll('.lang-btn').forEach(function (b) {
-      b.classList.toggle('active', b.dataset.lang === lang);
+      b.classList.toggle('active', b.dataset.lang === window.lang);
     });
 
     // Update card selection visuals
@@ -156,7 +156,7 @@ const AuthModule = (function () {
 
     localStorage.removeItem('cycle-active-profile');
     localStorage.removeItem('cycle-login-day');
-    lang = 'sr';
+    window.lang = 'sr';
 
     // Show login overlay and reset its UI
     const overlay = document.getElementById('loginOverlay');
