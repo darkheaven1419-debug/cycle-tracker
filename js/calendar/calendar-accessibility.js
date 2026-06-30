@@ -84,7 +84,7 @@ const CalendarAccessibility = (function () {
 
     parts.push(d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日');
 
-    let weekdays = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekdays = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     parts.push(weekdays[d.getDay()]);
 
     if (info.lunarInfo) {
@@ -92,7 +92,7 @@ const CalendarAccessibility = (function () {
     }
 
     if (info.phase) {
-      let labels = {
+      const labels = {
         'period-on': '经期第一天',
         'period-mid': '经期',
         'period-pred-first': '预计经期第一天',
@@ -147,8 +147,8 @@ const CalendarAccessibility = (function () {
       default:
         return null;
     }
-    let key = fmtDate(d);
-    let cell = document.querySelector('.day[data-date="' + key + '"]');
+    const key = fmtDate(d);
+    const cell = document.querySelector('.day[data-date="' + key + '"]');
     if (cell && !cell.classList.contains('other-month')) {
       cell.focus();
       return d;
@@ -160,8 +160,8 @@ const CalendarAccessibility = (function () {
    * 聚焦到特定日期
    */
   function focusDate(date) {
-    let key = fmtDate(date);
-    let cell = document.querySelector('.day[data-date="' + key + '"]');
+    const key = fmtDate(date);
+    const cell = document.querySelector('.day[data-date="' + key + '"]');
     if (cell && !cell.classList.contains('other-month')) {
       cell.focus();
       cell.setAttribute('tabindex', '0');
