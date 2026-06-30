@@ -1052,7 +1052,9 @@ async function bootApp() {
 
   // GSAP animations
   animateFloatingStars();
-  setTimeout(function () { animateLoginEntrance(); }, 100);
+  setTimeout(function () {
+    animateLoginEntrance();
+  }, 100);
 }
 
 // Hash change handler for forward/back navigation
@@ -3148,14 +3150,22 @@ document.querySelectorAll('.tab').forEach((btn) => {
     btn.setAttribute('aria-selected', 'true');
     const oldPanel = document.querySelector('.panel.active');
     if (oldPanel) {
-      oldPanel.classList.remove('active');
+      oldPanel.classList.add(dir);
+      oldPanel.addEventListener(
+        'animationend',
+        function h() {
+          oldPanel.removeEventListener('animationend', h);
+          oldPanel.classList.remove('active', dir);
+        },
+        { once: true }
+      );
     } else {
       document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
     }
-    // Activate new panel with GSAP transition
+    // Activate new
     const newPanel = document.getElementById('panel-' + id);
+    newPanel.classList.remove('slide-out-left', 'slide-out-right');
     newPanel.classList.add('active');
-    animatePanelIn(newPanel, oldPanel);
     // Scroll to top on mobile when switching tabs
     const app = document.querySelector('.app');
     if (app) app.scrollTop = 0;
