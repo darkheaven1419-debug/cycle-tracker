@@ -11,6 +11,7 @@
 
 // --- Register plugins (wrapped so failures don't break the app) ---
 let HAS_GSAP = false;
+window.HAS_GSAP = false; // Global export for submodules
 try {
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
@@ -21,6 +22,7 @@ try {
       return () => {};
     });
     HAS_GSAP = true;
+    window.HAS_GSAP = true;
   }
 } catch (_) {
   /* GSAP is optional — app works without animations */

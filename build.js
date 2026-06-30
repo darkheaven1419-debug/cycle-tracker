@@ -207,7 +207,13 @@ if (terserAvailable) {
       const destPath = path.join(destDir, entry.name);
 
       if (entry.isDirectory()) {
-        cp(srcPath, destPath);
+        // Recursive copy for subdirectories (e.g. js/calendar/)
+        const subEntries = fs.readdirSync(srcPath, { withFileTypes: true });
+        subEntries.forEach(function (subEntry) {
+          if (subEntry.isFile()) {
+            cp(path.join(srcPath, subEntry.name), path.join(destPath, subEntry.name));
+          }
+        });
       } else {
         let content = fs.readFileSync(srcPath, 'utf8');
         // Only replace ?v=NN version markers in JS files (NOT API URLs like /v1/)

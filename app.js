@@ -1832,6 +1832,16 @@ function getSeasonLabel(month) {
   return SEASON_LABEL[lang] ? SEASON_LABEL[lang][month] : SEASON_LABEL['sr'][month];
 }
 function renderCalendar() {
+  // REFACTORED v2: Delegate to CalendarModule
+  if (typeof CalendarModule !== 'undefined' && CalendarModule.refresh) {
+    CalendarModule.refresh('all');
+    return;
+  }
+  // Fallback: original inline renderCalendar
+  _legacyRenderCalendar();
+}
+
+function _legacyRenderCalendar() {
   const pred = predict();
   const td = today();
   document.getElementById('monthLabel').textContent =
