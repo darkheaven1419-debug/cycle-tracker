@@ -142,7 +142,7 @@ if (fs.existsSync(htmlSrc)) {
 
   // Production optimization: replace all individual CSS <link> tags
   // with a single link to the concatenated+minified styles.min.css
-  var cssMatchCount = (html.match(/<link rel="stylesheet" href="css\/[^"]+">/g) || []).length;
+  let cssMatchCount = (html.match(/<link rel="stylesheet" href="css\/[^"]+">/g) || []).length;
   html = html.replace(/(?:\s*<link rel="stylesheet" href="css\/[^"]+">)+/, '\n<link rel="stylesheet" href="styles.min.css">');
   console.info('  CSS links: ' + cssMatchCount + ' → ' + (html.match(/styles\.min\.css/g) || []).length + ' (prod bundle)');
 

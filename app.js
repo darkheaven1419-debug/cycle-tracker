@@ -918,7 +918,7 @@ async function bootApp() {
   }
 
   // Build mood name lookup map (O(1) — replaces indexOf scans)
-  var moodNamesArr = t('moodNames');
+  let moodNamesArr = t('moodNames');
   if (moodNamesArr && moodNamesArr.length === MOOD_KEYS.length) {
     MOOD_NAME_MAP = Object.fromEntries(
       MOOD_KEYS.map(function (k, i) {
