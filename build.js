@@ -138,7 +138,7 @@ if (fs.existsSync(htmlSrc)) {
   let html = fs.readFileSync(htmlSrc, 'utf8');
 
   // Update version references in HTML
-  html = html.replace(/v\d+(?:\.\d+)?/g, VERSION);
+  html = html.replace(/\?v=\d+(?:\.\d+)?/g, '?v=' + VERSION.substring(1));
 
   // Production optimization: replace all individual CSS <link> tags
   // with a single link to the concatenated+minified styles.min.css
@@ -210,7 +210,8 @@ if (terserAvailable) {
         cp(srcPath, destPath);
       } else {
         let content = fs.readFileSync(srcPath, 'utf8');
-        content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
+        // Only replace ?v=NN version markers in JS files (NOT API URLs like /v1/)
+        content = content.replace(/\?v=\d+(?:\.\d+)?/g, '?v=' + VERSION.substring(1));
         if (entry.name.endsWith('.min.js')) {
           fs.writeFileSync(destPath, content, 'utf8');
         } else {
@@ -254,7 +255,7 @@ if (terserAvailable) {
         return;
       }
       let content = fs.readFileSync(srcPath, 'utf8');
-      content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
+      content = content.replace(/\?v=\d+(?:\.\d+)?/g, '?v=' + VERSION.substring(1));
       fs.writeFileSync(destPath, content, 'utf8');
     });
     const cnt = entries.filter(function (e) {
@@ -275,7 +276,7 @@ COPY_FILES.forEach((file) => {
   if (!fs.existsSync(srcPath)) return;
 
   let content = fs.readFileSync(srcPath, 'utf8');
-  content = content.replace(/v\d+(?:\.\d+)?/g, VERSION);
+  content = content.replace(/\?v=\d+(?:\.\d+)?/g, '?v=' + VERSION.substring(1));
   fs.writeFileSync(path.join(DIST, file), content, 'utf8');
   console.info('  ' + file);
 });
