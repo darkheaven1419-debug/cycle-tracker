@@ -23,7 +23,7 @@ const MOOD_EMOJI_MAP = Object.fromEntries(
     return [k, MOOD_EMOJIS[i]];
   })
 );
-var MOOD_NAME_MAP = {}; // populated lazily after i18n loads
+let MOOD_NAME_MAP = {}; // populated lazily after i18n loads
 
 /* ================================================================
    EXTRACTED to js/ui-core.js

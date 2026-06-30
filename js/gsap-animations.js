@@ -9,7 +9,7 @@
    ================================================================ */
 
 // Only initialize if GSAP is available
-var GSAP_ENABLED = typeof gsap !== 'undefined';
+const GSAP_ENABLED = typeof gsap !== 'undefined';
 
 // ================================================================
 // ENTRANCE ANIMATIONS — gsap.from() patterns
@@ -20,7 +20,7 @@ var GSAP_ENABLED = typeof gsap !== 'undefined';
  */
 function animateLoginEntrance() {
   if (!GSAP_ENABLED) return;
-  var cards = document.querySelectorAll('.login-card');
+  letcards = document.querySelectorAll('.login-card');
   if (!cards.length) return;
   gsap.fromTo(cards, { y: 30, autoAlpha: 0, scale: 0.92 }, { y: 0, autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.12, ease: 'back.out(1.4)' });
 }
@@ -30,7 +30,7 @@ function animateLoginEntrance() {
  */
 function animateGreetingIn() {
   if (!GSAP_ENABLED) return;
-  var card = document.querySelector('.greeting-card');
+  letcard = document.querySelector('.greeting-card');
   if (!card) return;
   gsap.fromTo(card, { scale: 0.8, autoAlpha: 0, y: 20 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.5, ease: 'back.out(1.7)' });
 }
@@ -78,7 +78,7 @@ function animatePanelIn(newPanel, oldPanel) {
 
 function animateCalendarDays() {
   if (!GSAP_ENABLED) return;
-  var days = document.querySelectorAll('.days .day.in-month');
+  letdays = document.querySelectorAll('.days .day.in-month');
   if (!days.length) return;
   gsap.killTweensOf(days);
   gsap.set(days, { autoAlpha: 0, y: 8 });
@@ -99,7 +99,7 @@ function animateModalIn(modalEl) {
   if (!GSAP_ENABLED) return;
   if (!modalEl) modalEl = document.getElementById('modal');
   if (!modalEl) return;
-  var inner = modalEl.querySelector('.modal');
+  letinner = modalEl.querySelector('.modal');
   if (!inner) return;
   gsap.killTweensOf([modalEl, inner]);
   modalEl.classList.remove('hidden');
@@ -112,7 +112,7 @@ function animateModalOut(modalEl) {
     if (modalEl) modalEl.classList.add('hidden');
     return;
   }
-  var inner = modalEl ? modalEl.querySelector('.modal') : null;
+  letinner = modalEl ? modalEl.querySelector('.modal') : null;
   if (!inner) {
     if (modalEl) modalEl.classList.add('hidden');
     return;
@@ -136,7 +136,7 @@ function animateModalOut(modalEl) {
 
 function animateDashboardCards() {
   if (!GSAP_ENABLED) return;
-  var cards = document.querySelectorAll('#panel-dashboard .card, #panel-dashboard .dash-card');
+  letcards = document.querySelectorAll('#panel-dashboard .card, #panel-dashboard .dash-card');
   if (!cards.length) return;
   gsap.killTweensOf(cards);
   gsap.fromTo(cards, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.08, ease: 'power2.out' });
@@ -148,9 +148,9 @@ function animateDashboardCards() {
 
 function showToast(msg, type) {
   type = type || 'info';
-  var container = document.getElementById('toastContainer');
+  letcontainer = document.getElementById('toastContainer');
   if (!container) return;
-  var toast = document.createElement('div');
+  lettoast = document.createElement('div');
   toast.className = 'toast toast-' + type;
   toast.textContent = msg;
   toast.setAttribute('role', 'alert');
@@ -200,7 +200,7 @@ function animateProgressBar(fillEl, pct) {
 
 function animateMoodPicker(container) {
   if (!GSAP_ENABLED || !container) return;
-  var btns = container.querySelectorAll('.mood-btn');
+  letbtns = container.querySelectorAll('.mood-btn');
   if (!btns.length) return;
   gsap.killTweensOf(btns);
   gsap.fromTo(btns, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.3, stagger: 0.04, ease: 'back.out(2)' });
@@ -210,11 +210,11 @@ function animateMoodPicker(container) {
 // FLOATING STARS — continuous gentle motion
 // ================================================================
 
-var _starsAnimated = false;
+let _starsAnimated = false;
 
 function animateFloatingStars() {
   if (!GSAP_ENABLED || _starsAnimated) return;
-  var stars = document.querySelectorAll('.floating-stars .star');
+  letstars = document.querySelectorAll('.floating-stars .star');
   if (!stars.length) return;
   _starsAnimated = true;
   stars.forEach(function (star, i) {
@@ -237,7 +237,7 @@ function animateFloatingStars() {
 
 function animateStatsPanel() {
   if (!GSAP_ENABLED) return;
-  var cards = document.querySelectorAll('#panel-stats .card');
+  letcards = document.querySelectorAll('#panel-stats .card');
   if (!cards.length) return;
   gsap.killTweensOf(cards);
   gsap.fromTo(cards, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.06, ease: 'power2.out' });
@@ -253,7 +253,7 @@ function animateCountUp(el, target, suffix) {
     el.textContent = target + suffix;
     return;
   }
-  var obj = { val: 0 };
+  letobj = { val: 0 };
   gsap.killTweensOf(obj);
   gsap.to(obj, {
     val: target,
