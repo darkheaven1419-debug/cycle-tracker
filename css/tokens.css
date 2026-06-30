@@ -31,7 +31,7 @@
   --shadow-xl: 0 16px 40px rgba(80,40,40,0.10), 0 8px 20px rgba(80,40,40,0.05);
   --shadow-glow: 0 0 20px rgba(196,90,107,0.08);
   --fab-shadow: 0 6px 22px rgba(196,90,107,0.28);
-  --font: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --blur: blur(14px) saturate(1.05);
   --blur-heavy: blur(24px) saturate(1.08);
   /* Type scale */
