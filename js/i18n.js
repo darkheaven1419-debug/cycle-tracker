@@ -1259,7 +1259,7 @@ const I18N_EXT = {
 /* ================================================================
    Global lang variable — must be var (not let/const) for cross-script access
    ================================================================ */
-var lang = localStorage.getItem('cycle-lang') || 'sr';
+window.lang = localStorage.getItem('cycle-lang') || 'sr';
 
 /* ================================================================
    t() — Translation helper (moved from app.js for load order)

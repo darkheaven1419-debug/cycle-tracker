@@ -346,7 +346,7 @@ function loadPerProfileSettings() {
   if (activeProfile === 'barry' && savedLang === 'sr') savedLang = null;
   if (activeProfile === 'andjela' && savedLang === 'zh-CN') savedLang = null;
   const validLangs = { sr: 1, 'zh-CN': 1, en: 1 };
-  lang = savedLang && validLangs[savedLang] ? savedLang : defaultLang;
+  window.lang = savedLang && validLangs[savedLang] ? savedLang : defaultLang;
   // ALWAYS save the corrected lang
   if (!savedLang) localStorage.setItem(profileKey('cycle-lang'), lang);
   theme = localStorage.getItem(profileKey('cycle-theme')) || 'light';
@@ -354,7 +354,7 @@ function loadPerProfileSettings() {
   annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
 }
 function setLang(l) {
-  lang = l;
+  window.lang = l;
   document.documentElement.setAttribute('lang', l);
   localStorage.setItem(profileKey('cycle-lang'), l);
   localStorage.setItem('cycle-lang', l);
@@ -371,8 +371,8 @@ function setLang(l) {
    MODIFIED: init
    ================================================================ */
 // loadPerProfileSettings() is called in the INIT section below
-// lang is a global var declared in i18n.js (loaded before app.js)
-lang = localStorage.getItem('cycle-lang') || 'sr';
+// window.lang is set in i18n.js (loaded before app.js)
+window.lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
 let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
 let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
