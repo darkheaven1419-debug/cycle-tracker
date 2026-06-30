@@ -16,10 +16,15 @@ try {
     gsap.registerPlugin(ScrollTrigger);
     gsap.defaults({ ease: 'power2.out', duration: 0.4 });
     const mm = gsap.matchMedia();
-    mm.add('(prefers-reduced-motion: reduce)', () => { gsap.set('.gsap-animate', { clearProps: 'all' }); return () => {}; });
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set('.gsap-animate', { clearProps: 'all' });
+      return () => {};
+    });
     HAS_GSAP = true;
   }
-} catch (_) { /* GSAP is optional — app works without animations */ }
+} catch (_) {
+  /* GSAP is optional — app works without animations */
+}
 
 /* ================================================================
    LOGIN — stagger entrance with timeline (gsap-timeline pattern)

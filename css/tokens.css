@@ -18,6 +18,11 @@
   --bg: #ede0da; --card: #faf3ef; --text: #3d2828; --text-muted: #6d5b58;
   --border: #dccfc8; --border-soft: #e5dad4;
   --radius: 16px; --radius-sm: 10px; --radius-md: 14px; --radius-lg: 22px; --radius-full: 9999px;
+  --calendar-cell-radius: 16px;
+  --calendar-glow-period: 0 0 20px rgba(196, 90, 107, 0.25);
+  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.25);
+  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.3);
+  --calendar-hover-lift: 0 4px 12px rgba(196, 90, 107, 0.12);
   /* Refined shadow system — 4 tiers with better depth */
   --shadow-xs: 0 0 0.5px rgba(80,40,40,0.06), 0 1px 1px rgba(80,40,40,0.04);
   --shadow-sm: 0 1px 3px rgba(80,40,40,0.07), 0 1px 2px rgba(80,40,40,0.04);
@@ -59,6 +64,10 @@
   --shadow-xl: 0 16px 48px rgba(0,0,0,0.40), 0 24px 60px rgba(0,0,0,0.25);
   --shadow-glow: 0 0 24px rgba(212,120,136,0.15);
   --fab-shadow: 0 6px 22px rgba(212,120,136,0.26);
+  --calendar-glow-period: 0 0 20px rgba(212, 122, 138, 0.2);
+  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.15);
+  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.2);
+  --calendar-hover-lift: 0 4px 12px rgba(212, 122, 138, 0.1);
   --blur: blur(14px) saturate(1.1);
   --blur-heavy: blur(24px) saturate(1.15);
 }

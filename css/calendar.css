@@ -1,97 +1,104 @@
-/* ================================================================
-   CALENDAR — Redesigned v2: Soft, Elegant, Refined
-   Hand-crafted for Anđelin Ciklus — warm rose × clay palette
-   ================================================================ */
+/* Calendar v3 — Stunning, Premium */
 
-/* ---- Calendar Navigation — refined ---- */
+/* ---- Calendar Navigation — polished ---- */
 .cal-nav {
   display: flex;
   align-items: center;
-  margin-bottom: 14px;
-  gap: 8px;
+  margin-bottom: 18px;
+  gap: 10px;
   padding: 0 4px;
 }
 .cal-nav .nav-btn {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
   background: var(--card);
-  font-size: 1rem;
+  font-size: 1.05rem;
   cursor: pointer;
   color: var(--text);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   touch-action: manipulation;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(200,180,170,0.06);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(200,180,170,0.08);
+  backdrop-filter: blur(4px);
 }
 .cal-nav .nav-btn:hover {
   background: var(--rose-light);
   color: var(--love);
-  box-shadow: 0 2px 10px rgba(196, 90, 107, 0.12);
-  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(196, 90, 107, 0.18);
+  transform: scale(1.1) translateY(-1px);
+  border-color: rgba(196, 90, 107, 0.15);
 }
 .cal-nav .nav-btn:active {
-  transform: scale(0.88);
-  background: var(--border);
+  transform: scale(0.85);
+  background: var(--border-soft);
+  box-shadow: var(--shadow-xs);
+  transition-duration: 0.08s;
 }
 .cal-nav .month-label {
   flex: 1;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--text);
   position: relative;
-}
-.cal-nav .month-label .season-tag {
-  font-size: 0.6rem;
-  opacity: 0.5;
-  font-weight: 500;
-  margin-left: 6px;
-  vertical-align: middle;
+  text-shadow: 0 1px 2px rgba(80,40,40,0.04);
 }
 .cal-nav .today-pill {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--love);
-  padding: 8px 18px;
-  border-radius: 22px;
+  padding: 8px 20px;
+  border-radius: 24px;
   background: var(--rose-light);
   min-width: 44px;
   min-height: 42px;
-  border: 1px solid transparent;
+  border: 1.5px solid rgba(196, 90, 107, 0.1);
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   touch-action: manipulation;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.02em;
 }
 .cal-nav .today-pill:hover {
-  background: var(--love);
+  background: var(--gradient-love);
   color: #fff;
-  box-shadow: 0 3px 14px rgba(196, 90, 107, 0.22);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(196, 90, 107, 0.3);
+  transform: translateY(-2px) scale(1.02);
+  border-color: transparent;
 }
 .cal-nav .today-pill:active {
-  transform: scale(0.92);
+  transform: scale(0.92) translateY(0);
+  transition-duration: 0.08s;
 }
 
-/* ---- Calendar Grid Container — refined ---- */
+/* ---- Calendar Grid Container — elevated ---- */
 .calendar {
-  padding: 10px 8px 14px;
-  margin-bottom: 10px;
+  padding: 14px 10px 18px;
+  margin-bottom: 12px;
   touch-action: pan-y;
   user-select: none;
   contain: layout style;
-  border-radius: var(--radius);
+  border-radius: calc(var(--radius) + 2px);
   background: var(--gradient-card);
-  border: 1px solid rgba(200, 180, 170, 0.06);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.3s ease;
+  border: 1px solid rgba(200, 180, 170, 0.08);
+  box-shadow:
+    var(--shadow-md),
+    0 1px 0 rgba(255,255,255,0.5) inset;
+  transition: box-shadow 0.35s ease, border-color 0.3s ease;
+}
+.calendar:hover {
+  border-color: rgba(200, 180, 170, 0.14);
+  box-shadow:
+    var(--shadow-lg),
+    0 1px 0 rgba(255,255,255,0.5) inset;
 }
 
 /* ---- Weekdays ---- */
@@ -99,45 +106,52 @@
   display: grid;
   grid-template-columns: 28px repeat(7, 1fr);
   text-align: center;
-  font-size: 0.65rem;
+  font-size: 0.66rem;
   font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   padding: 0 2px;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  opacity: 0.8;
 }
 .weekdays span:nth-child(7),
 .weekdays span:nth-child(8) {
   color: var(--rose);
-  opacity: 0.7;
+  opacity: 0.8;
+  font-weight: 700;
 }
 
 /* ---- Days Grid ---- */
 .days {
   display: grid;
   grid-template-columns: 28px repeat(7, 1fr);
-  gap: 4px;
+  gap: 5px;
 }
 .week-num {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   color: var(--text-muted);
-  opacity: 0.3;
-  font-weight: 600;
+  opacity: 0.22;
+  font-weight: 500;
   font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
+  transition: opacity 0.2s;
+}
+.calendar:hover .week-num {
+  opacity: 0.35;
 }
 
-/* ---- Day Cell Base — refined ---- */
+/* ---- Day Cell Base — stunning ---- */
 .day {
   aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  font-size: 0.84rem;
+  border-radius: 16px;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   position: relative;
@@ -147,91 +161,173 @@
   min-height: 44px;
   touch-action: manipulation;
   transition:
-    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
     background 0.25s ease,
     box-shadow 0.25s ease,
     border-color 0.25s ease;
   border: 1.5px solid transparent;
   background: transparent;
+  will-change: transform;
+  text-shadow: 0 0.5px 1px rgba(80,40,40,0.03);
+}
+.day:not(.other-month)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  box-shadow:
+    inset 0 1px 3px rgba(80,40,40,0.03),
+    inset 0 -1px 2px rgba(255,255,255,0.5);
+  pointer-events: none;
 }
 .day:hover:not(.other-month) {
   background: rgba(196, 90, 107, 0.06);
-  transform: scale(1.08);
-  z-index: 2;
+  transform: scale(1.1);
+  z-index: 3;
+  box-shadow:
+    0 4px 16px rgba(80,40,40,0.08),
+    0 2px 4px rgba(80,40,40,0.04);
+  border-color: rgba(196, 90, 107, 0.12);
 }
-.day:active {
-  transform: scale(0.9);
+.day:active:not(.other-month) {
+  transform: scale(0.88);
+  transition-duration: 0.08s;
 }
 
-/* ---- Weekend tint ---- */
+/* ---- Selected state ---- */
+.day.selected {
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 2px var(--gold-muted),
+    0 0 24px rgba(196, 154, 94, 0.2),
+    inset 0 0 0 1px rgba(196, 154, 94, 0.08);
+  background: rgba(196, 154, 94, 0.06);
+  z-index: 2;
+}
+.day.selected .day-num {
+  color: var(--gold-dark, #8a6e3a);
+}
+[data-theme="dark"] .day.selected {
+  box-shadow:
+    0 0 0 2px var(--gold-muted),
+    0 0 28px rgba(196, 154, 94, 0.25),
+    inset 0 0 0 1px rgba(196, 154, 94, 0.1);
+  background: rgba(196, 154, 94, 0.1);
+}
+.day.selected::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: 0 0 30px rgba(196, 154, 94, 0.08);
+  animation: selectedGlow 2.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ---- Weekend tint — warmer ---- */
 .day:nth-child(8n + 7),
 .day:nth-child(8n + 8) {
-  background: rgba(212, 122, 138, 0.03);
+  background: rgba(212, 122, 138, 0.05);
+  border-color: rgba(212, 122, 138, 0.04);
+}
+.day:nth-child(8n + 7):hover,
+.day:nth-child(8n + 8):hover {
+  background: rgba(212, 122, 138, 0.1);
+  border-color: rgba(212, 122, 138, 0.1);
 }
 [data-theme="dark"] .day:nth-child(8n + 7),
 [data-theme="dark"] .day:nth-child(8n + 8) {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.02);
+}
+[data-theme="dark"] .day:nth-child(8n + 7):hover,
+[data-theme="dark"] .day:nth-child(8n + 8):hover {
+  background: rgba(255, 255, 255, 0.045);
 }
 
 /* ---- Other Month ---- */
 .day.other-month {
   color: var(--text-muted);
-  opacity: 0.25;
+  opacity: 0.2;
   pointer-events: none;
 }
 
-/* ---- Today — refined ---- */
+/* ---- Today — spectacular ---- */
 .day.today {
   font-weight: 700;
   border-color: var(--love);
+  border-width: 2px;
   box-shadow:
-    0 0 0 2px var(--love),
-    0 0 24px rgba(212, 122, 138, 0.18);
+    0 0 0 3px rgba(196, 90, 107, 0.15),
+    0 0 28px rgba(212, 122, 138, 0.2);
   position: relative;
-  z-index: 1;
-  background: rgba(196, 90, 107, 0.04);
+  z-index: 2;
+  background: rgba(196, 90, 107, 0.06);
+}
+.day.today:hover {
+  box-shadow:
+    0 0 0 3px rgba(196, 90, 107, 0.2),
+    0 0 36px rgba(212, 122, 138, 0.3),
+    0 4px 20px rgba(80,40,40,0.1);
 }
 .day.today .day-num {
-  background: var(--love);
+  background: var(--gradient-love);
   color: #fff;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(196, 90, 107, 0.25);
+  box-shadow: 0 3px 12px rgba(196, 90, 107, 0.3);
+  transition: all 0.3s ease;
+}
+.day.today:hover .day-num {
+  box-shadow: 0 4px 18px rgba(196, 90, 107, 0.4);
+  transform: scale(1.05);
 }
 .day.today::after {
   content: "";
   position: absolute;
-  inset: -3px;
-  border-radius: 16px;
+  inset: -4px;
+  border-radius: 20px;
   background: transparent;
-  box-shadow: 0 0 20px rgba(212, 122, 138, 0.2);
+  box-shadow: 0 0 24px rgba(212, 122, 138, 0.2);
   animation: todayGlow 3s ease-in-out infinite;
   pointer-events: none;
   z-index: -1;
 }
 
-/* ================================================================
-   PERIOD STATES — Soft, layered indicators
-   ================================================================ */
+/* Period States — gradient-infused */
 
-/* Active period start */
+/* Active period start — rose gradient burst */
 .day.period-on {
-  background: var(--love);
+  background: var(--phase1-grad, linear-gradient(135deg, #E8877B, #D46B5E));
   color: #fff !important;
   font-weight: 700;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(196, 90, 107, 0.2);
-  z-index: 1;
+  box-shadow:
+    0 0 0 4px rgba(232, 135, 123, 0.25),
+    0 4px 16px rgba(232, 135, 123, 0.3);
+  z-index: 2;
+  border-color: transparent;
+}
+.day.period-on:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 4px rgba(232, 135, 123, 0.35),
+    0 6px 24px rgba(232, 135, 123, 0.4);
 }
 .day.period-on.recorded {
   box-shadow:
-    0 0 0 4px rgba(196, 90, 107, 0.2),
-    0 0 0 7px rgba(196, 90, 107, 0.08);
+    0 0 0 4px rgba(232, 135, 123, 0.25),
+    0 0 0 8px rgba(232, 135, 123, 0.1),
+    0 4px 16px rgba(232, 135, 123, 0.3);
 }
 .day.period-on .day-num {
   background: transparent;
@@ -239,60 +335,89 @@
   width: auto;
   height: auto;
   border-radius: 0;
+  box-shadow: none;
 }
 
-/* Active period middle days */
+/* Active period middle days — soft rose gradient */
 .day.period-mid {
-  background: var(--rose-light);
+  background: linear-gradient(135deg, var(--rose-light), rgba(253, 240, 243, 0.6));
   color: var(--rose-dark);
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 10px;
   border-color: rgba(196, 90, 107, 0.12);
+  box-shadow: inset 0 1px 2px rgba(196, 90, 107, 0.04);
+}
+[data-theme="dark"] .day.period-mid {
+  background: linear-gradient(135deg, #3a1e22, rgba(42, 28, 32, 0.6));
+  color: var(--rose);
+  border-color: rgba(212, 120, 136, 0.15);
+  box-shadow: inset 0 1px 2px rgba(212, 120, 136, 0.04);
 }
 
 /* Predicted period start */
 .day.period-pred-first {
-  background: var(--love);
+  background: var(--phase1-grad, linear-gradient(135deg, #E8877B, #D46B5E));
   color: #fff;
   font-weight: 700;
   opacity: 0.55;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(196, 90, 107, 0.12);
+  box-shadow: 0 0 0 3px rgba(232, 135, 123, 0.12);
+  border-color: transparent;
 }
 
 /* Predicted period middle */
 .day.period-pred {
-  background: var(--rose-mist);
+  background: linear-gradient(135deg, rgba(253, 240, 243, 0.8), rgba(245, 224, 230, 0.4));
   color: var(--rose-dark);
-  opacity: 0.7;
-  border-radius: 6px;
+  opacity: 0.75;
+  border-radius: 10px;
+  border-color: rgba(196, 90, 107, 0.08);
+}
+[data-theme="dark"] .day.period-pred {
+  background: linear-gradient(135deg, rgba(42, 28, 32, 0.8), rgba(48, 34, 40, 0.4));
+  color: var(--rose);
+  border-color: rgba(212, 120, 136, 0.1);
 }
 
 /* Future predicted period start (2-3 cycles ahead) */
 .day.period-future-first {
-  background: var(--love);
+  background: var(--phase1-grad, linear-gradient(135deg, #E8877B, #D46B5E));
   color: #fff;
   font-weight: 700;
   opacity: 0.25;
   border-radius: 50%;
+  border-color: transparent;
 }
 
 /* Future predicted period middle */
 .day.period-future {
-  background: var(--rose-mist);
+  background: linear-gradient(135deg, rgba(253, 240, 243, 0.5), rgba(245, 224, 230, 0.2));
   color: var(--rose-dark);
-  opacity: 0.3;
-  border-radius: 6px;
+  opacity: 0.35;
+  border-radius: 10px;
+  border-color: rgba(196, 90, 107, 0.04);
+}
+[data-theme="dark"] .day.period-future {
+  background: linear-gradient(135deg, rgba(42, 28, 32, 0.5), rgba(48, 34, 40, 0.2));
 }
 
-/* ---- Ovulation ---- */
+/* ---- Ovulation — warm gold/amber celebration ---- */
 .day.ovulation {
-  background: var(--teal);
+  background: linear-gradient(135deg, #F0985C, #E88340);
   color: #fff !important;
   font-weight: 700;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(94, 155, 170, 0.2);
-  z-index: 1;
+  box-shadow:
+    0 0 0 4px rgba(240, 152, 92, 0.25),
+    0 4px 16px rgba(240, 152, 92, 0.3);
+  z-index: 2;
+  border-color: transparent;
+}
+.day.ovulation:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 4px rgba(240, 152, 92, 0.35),
+    0 6px 24px rgba(240, 152, 92, 0.4);
 }
 .day.ovulation .day-num {
   background: transparent;
@@ -300,77 +425,102 @@
   width: auto;
   height: auto;
   border-radius: 0;
+  box-shadow: none;
 }
 
-/* ---- Fertile Window ---- */
+/* ---- Fertile Window — soft teal with inner glow ---- */
 .day.fertile {
-  background: var(--teal-light);
+  background: linear-gradient(135deg, var(--teal-light), rgba(224, 239, 232, 0.5));
   color: #2d5f6e;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 10px;
   border-color: rgba(94, 155, 170, 0.15);
+  box-shadow:
+    inset 0 0 20px rgba(94, 155, 170, 0.06),
+    0 0 12px rgba(94, 155, 170, 0.03);
+}
+.day.fertile:hover {
+  box-shadow:
+    inset 0 0 24px rgba(94, 155, 170, 0.1),
+    0 0 20px rgba(94, 155, 170, 0.06);
 }
 [data-theme="dark"] .day.fertile {
-  background: #182822;
+  background: linear-gradient(135deg, #182822, rgba(24, 40, 34, 0.5));
   color: var(--teal);
+  border-color: rgba(122, 181, 160, 0.15);
 }
 
-/* ---- Luteal Phase ---- */
+/* ---- Luteal Phase — soft purple/lavender with warmth ---- */
 .day.luteal {
-  background: var(--lavender-light);
+  background: linear-gradient(135deg, var(--lavender-light), rgba(239, 232, 245, 0.4));
   color: var(--lavender-dark);
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 10px;
   border-color: rgba(184, 160, 200, 0.15);
+  box-shadow: inset 0 1px 2px rgba(184, 160, 200, 0.04);
+}
+.day.luteal:hover {
+  background: linear-gradient(135deg, var(--lavender-light), rgba(239, 232, 245, 0.7));
+  border-color: rgba(184, 160, 200, 0.25);
 }
 [data-theme="dark"] .day.luteal {
-  background: #1e1822;
+  background: linear-gradient(135deg, #261e2a, rgba(30, 24, 34, 0.4));
   color: var(--lavender);
+  border-color: rgba(200, 168, 216, 0.15);
 }
 
-/* ---- Follicular Phase ---- */
+/* ---- Follicular Phase — fresh sage green ---- */
 .day.follicular {
-  background: var(--sage-light);
+  background: linear-gradient(135deg, var(--sage-light), rgba(228, 240, 234, 0.4));
   color: #3d6b55;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 10px;
   border-color: rgba(128, 165, 144, 0.15);
+  box-shadow: inset 0 1px 2px rgba(128, 165, 144, 0.04);
+}
+.day.follicular:hover {
+  background: linear-gradient(135deg, var(--sage-light), rgba(228, 240, 234, 0.7));
+  border-color: rgba(128, 165, 144, 0.25);
 }
 [data-theme="dark"] .day.follicular {
-  background: #182820;
+  background: linear-gradient(135deg, #182820, rgba(24, 40, 32, 0.4));
   color: var(--sage);
+  border-color: rgba(143, 199, 176, 0.15);
 }
 
-/* ================================================================
-   SPECIAL DAYS — Anniversary, Birthday, First Meet
-   ================================================================ */
+/* Special Days */
 
 /* Anniversary */
 .day.anniversary {
   border-color: var(--gold);
-  box-shadow: inset 0 0 0 1.5px var(--gold);
+  border-width: 1.5px;
+  box-shadow:
+    inset 0 0 0 1.5px var(--gold),
+    0 0 16px rgba(196, 154, 94, 0.08);
 }
 .day.anniversary::after {
   content: "♥";
   position: absolute;
   top: 1px;
   right: 3px;
-  font-size: 0.4rem;
+  font-size: 0.42rem;
   color: var(--love);
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 /* Birthday */
 .day.birthday {
   background: linear-gradient(135deg, var(--rose-light), #fff8e7);
   border-color: var(--gold);
+  border-width: 1.5px;
+  box-shadow: 0 0 16px rgba(196, 154, 94, 0.06);
 }
 .day.birthday::after {
   content: "🎂";
   position: absolute;
   top: 0;
   right: 2px;
-  font-size: 0.48rem;
+  font-size: 0.5rem;
 }
 [data-theme="dark"] .day.birthday {
   background: linear-gradient(135deg, #2a1e22, #2a2218);
@@ -379,8 +529,11 @@
 /* First Meet */
 .day.first-meet {
   border-color: var(--love);
+  border-width: 1.5px;
   background: linear-gradient(135deg, var(--rose-light), #fff8e7);
-  box-shadow: inset 0 0 0 1.5px var(--love);
+  box-shadow:
+    inset 0 0 0 1.5px var(--love),
+    0 0 16px rgba(196, 90, 107, 0.08);
 }
 [data-theme="dark"] .day.first-meet {
   background: linear-gradient(135deg, #2a1e22, #2a2218);
@@ -389,23 +542,22 @@
 /* Monthly Anniversary */
 .day.monthly-anni {
   background: linear-gradient(135deg, var(--rose-light), var(--dust));
+  border-color: rgba(196, 90, 107, 0.08);
 }
 [data-theme="dark"] .day.monthly-anni {
   background: linear-gradient(135deg, #2a1e22, #2a2218);
 }
 
-/* ================================================================
-   MINI INDICATORS — Dots, icons, badges on day cells
-   ================================================================ */
+/* Mini Indicators */
 
 /* Mini dots */
 .day .mini-dot {
   position: absolute;
   bottom: 4px;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  transition: transform 0.2s;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
 }
 .day .mini-dot.bottom-left {
   left: 6px;
@@ -415,23 +567,26 @@
 }
 .day .mini-dot.pink {
   background: var(--rose);
+  box-shadow: 0 0 4px rgba(196, 90, 107, 0.2);
 }
 .day .mini-dot.gold {
   background: var(--gold);
+  box-shadow: 0 0 4px rgba(196, 154, 94, 0.2);
 }
 .day:hover .mini-dot {
-  transform: scale(1.5);
+  transform: scale(1.6);
+  box-shadow: 0 0 8px currentColor;
 }
 
 /* Holiday emoji icons */
 .day .holiday-icon {
   position: absolute;
   top: 0;
-  font-size: 0.5rem;
+  font-size: 0.52rem;
   line-height: 1;
   pointer-events: none;
   z-index: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.06));
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
 }
 .day .holiday-cn {
   right: 2px;
@@ -449,7 +604,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 /* Cycle day number (small index top-right) */
@@ -457,17 +612,21 @@
   position: absolute;
   top: 0;
   right: 3px;
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   font-weight: 700;
   color: var(--text-muted);
-  opacity: 0.5;
+  opacity: 0.4;
   z-index: 1;
   pointer-events: none;
   letter-spacing: -0.02em;
+  transition: opacity 0.2s;
+}
+.day:hover .day-cycle-num {
+  opacity: 0.65;
 }
 .day.today .day-cycle-num {
   color: var(--text);
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 /* Symptom mini icons */
@@ -482,8 +641,9 @@
   pointer-events: none;
 }
 .day .day-sym-icon {
-  font-size: 0.4rem;
+  font-size: 0.42rem;
   line-height: 1;
+  filter: drop-shadow(0 0.5px 0.5px rgba(0,0,0,0.05));
 }
 .day[class*="period"] .day-sym-icon,
 .day.ovulation .day-sym-icon {
@@ -495,31 +655,35 @@
   position: absolute;
   bottom: 1px;
   right: 3px;
-  font-size: 0.48rem;
+  font-size: 0.46rem;
   color: var(--text-muted);
-  opacity: 0.55;
+  opacity: 0.5;
   z-index: 1;
   pointer-events: none;
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1;
+  transition: opacity 0.2s;
+}
+.day:hover .lunar-date {
+  opacity: 0.75;
 }
 .day .lunar-date.lunar-first {
   color: var(--love);
-  opacity: 0.85;
+  opacity: 0.8;
   font-weight: 700;
 }
 .day .lunar-date.lunar-fifteen {
   color: var(--gold);
-  opacity: 0.75;
+  opacity: 0.7;
   font-weight: 600;
 }
 .day .lunar-date.lunar-newyear {
   color: var(--error);
   opacity: 1;
   font-weight: 700;
-  font-size: 0.42rem;
-  text-shadow: 0 0 4px rgba(229, 57, 53, 0.25);
+  font-size: 0.44rem;
+  text-shadow: 0 0 6px rgba(229, 57, 53, 0.3);
 }
 .day[class*="period"] .lunar-date,
 .day.ovulation .lunar-date {
@@ -532,28 +696,31 @@
   bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.48rem;
+  font-size: 0.46rem;
   font-weight: 600;
   color: var(--sage);
   white-space: nowrap;
   pointer-events: none;
   letter-spacing: -0.02em;
-  opacity: 0.8;
+  opacity: 0.75;
   z-index: 1;
   max-width: calc(100% - 8px);
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1;
+  text-shadow: 0 0.5px 1px rgba(0,0,0,0.03);
 }
 .solar-term-day {
   background: linear-gradient(
     180deg,
-    rgba(129, 178, 107, 0.06) 0%,
+    rgba(129, 178, 107, 0.08) 0%,
     rgba(129, 178, 107, 0.02) 100%
   );
+  border-color: rgba(129, 178, 107, 0.06);
 }
 .day.solar-term-day:hover {
-  background: rgba(129, 178, 107, 0.12);
+  background: rgba(129, 178, 107, 0.15);
+  border-color: rgba(129, 178, 107, 0.12);
 }
 
 /* Special date icon (top-left small emoji) */
@@ -561,92 +728,111 @@
   position: absolute;
   top: 1px;
   right: 4px;
-  font-size: 0.5rem;
+  font-size: 0.52rem;
   pointer-events: none;
   z-index: 1;
   line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.06));
 }
 
-/* ================================================================
-   LEGEND
-   ================================================================ */
+/* Legend */
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-bottom: 14px;
-  font-size: 0.68rem;
+  gap: 6px 16px;
+  margin-bottom: 16px;
+  font-size: 0.7rem;
   color: var(--text-muted);
   justify-content: center;
-  padding: 8px 12px;
+  padding: 12px 18px;
   background: var(--card);
-  border-radius: 14px;
-  border: 1px solid rgba(200, 180, 170, 0.06);
-  box-shadow: var(--shadow-xs);
+  border-radius: 16px;
+  border: 1px solid rgba(200, 180, 170, 0.08);
+  box-shadow:
+    var(--shadow-xs),
+    0 1px 0 rgba(255,255,255,0.3) inset;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.01em;
 }
 .legend span {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.legend span:hover {
+  background: rgba(200, 180, 170, 0.06);
 }
 .legend span::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
 }
 .legend span:hover::before {
-  transform: scale(1.3);
+  transform: scale(1.4);
+  box-shadow: 0 0 10px currentColor;
 }
 .legend .l-period::before {
-  background: var(--love);
-  box-shadow: 0 0 0 2px rgba(196, 90, 107, 0.2);
+  background: linear-gradient(135deg, #E8877B, #D46B5E);
+  box-shadow: 0 0 0 2px rgba(232, 135, 123, 0.25);
 }
 .legend .l-fertile::before {
-  background: var(--teal);
-  box-shadow: 0 0 0 2px rgba(94, 155, 170, 0.2);
+  background: linear-gradient(135deg, #4EB8B0, #3AA59C);
+  box-shadow: 0 0 0 2px rgba(78, 184, 176, 0.25);
 }
 .legend .l-follicular::before {
   background: var(--sage);
+  box-shadow: 0 0 0 2px rgba(128, 165, 144, 0.2);
 }
 .legend .l-luteal::before {
   background: var(--lavender);
+  box-shadow: 0 0 0 2px rgba(184, 160, 200, 0.2);
 }
 .legend .l-heart::before {
   content: "♥";
   background: none;
   color: var(--love);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   line-height: 1;
   width: auto;
   height: auto;
+  box-shadow: none;
 }
 
-/* ================================================================
-   PREDICTION LEGEND
-   ================================================================ */
+/* Prediction Legend */
 .pred-legend {
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   color: var(--text-muted);
   text-align: center;
-  margin-top: 6px;
-  opacity: 0.7;
-  padding: 4px 0;
+  margin-top: 8px;
+  opacity: 0.65;
+  padding: 6px 0;
   font-style: italic;
+  letter-spacing: 0.02em;
 }
 
-/* ================================================================
-   SEASON TAG IN MONTH LABEL
-   ================================================================ */
+/* Season Tag */
 .cal-nav .month-label .season-tag {
   display: inline-block;
   background: var(--rose-light);
-  padding: 1px 8px;
-  border-radius: 10px;
-  margin-left: 4px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-left: 6px;
   font-size: 0.58rem;
   font-weight: 600;
+  opacity: 0.55;
+  vertical-align: middle;
+  border: 1px solid rgba(196, 90, 107, 0.06);
+}
+
+/* Selected Glow Animation */
+@keyframes selectedGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
 }
