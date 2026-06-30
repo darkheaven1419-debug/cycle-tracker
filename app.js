@@ -1979,22 +1979,23 @@ function renderCalendar() {
     // Diary entry dot — per-user colors
     if (sharedDiaryIdx[key]) {
       // Check who wrote diary for more precise dot
-      var sdEntry = sd[key] || {};
-      var hasA = !!sdEntry.andjela;
-      var hasB = !!sdEntry.barry;
-      var diaryTooltip = '';
+      const sdEntry = sd[key] || {};
+      const hasA = !!sdEntry.andjela;
+      const hasB = !!sdEntry.barry;
+      let diaryTooltip = '';
       if (hasA && hasB) {
         diaryTooltip = '💕 Oboje';
         // Both wrote — use the gold dot (existing behavior)
-        var diaryDot = document.createElement('span');
+        const diaryDot = document.createElement('span');
         diaryDot.className = 'mini-dot gold';
-        diaryDot.style.cssText = 'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
+        diaryDot.style.cssText =
+          'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
         diaryDot.title = diaryTooltip;
         el.appendChild(diaryDot);
       } else if (hasA) {
         diaryTooltip = '🌸 Anđela';
         // Only Anđela
-        var diaryDotA = document.createElement('span');
+        const diaryDotA = document.createElement('span');
         diaryDotA.className = 'mini-dot';
         diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#c45a6b;opacity:.7';
         diaryDotA.title = diaryTooltip;
@@ -2002,7 +2003,7 @@ function renderCalendar() {
       } else if (hasB) {
         diaryTooltip = '👦 Barry';
         // Only Barry
-        var diaryDotB = document.createElement('span');
+        const diaryDotB = document.createElement('span');
         diaryDotB.className = 'mini-dot';
         diaryDotB.style.cssText = 'position:absolute;bottom:8px;left:calc(50% + 4px);width:4px;height:4px;border-radius:50%;background:#4A90D9;opacity:.7';
         diaryDotB.title = diaryTooltip;
@@ -2010,13 +2011,15 @@ function renderCalendar() {
       }
       // Add diary preview text as data attribute for tooltip on desktop
       if (inMonth && diaryTooltip) {
-        var diaryPreviewText = '';
+        let diaryPreviewText = '';
         try {
-          var entryA = sdEntry.andjela;
-          var entryB = sdEntry.barry;
+          const entryA = sdEntry.andjela;
+          const entryB = sdEntry.barry;
           if (hasA && entryA) diaryPreviewText += '🌸 ' + (entryA.text || entryA.happy || '').substring(0, 40);
           if (hasB && entryB) diaryPreviewText += (diaryPreviewText ? ' | ' : '') + '👦 ' + (entryB.text || entryB.happy || '').substring(0, 40);
-        } catch (e) { /* ignore */ }
+        } catch (e) {
+          /* ignore */
+        }
         if (diaryPreviewText) {
           el.setAttribute('data-diary', diaryPreviewText);
         }
@@ -2024,14 +2027,18 @@ function renderCalendar() {
     }
     // Shared calendar markers (emoji from both users)
     if (typeof getCalendarSummary === 'function' && inMonth) {
-      var calSummary = getCalendarSummary(key);
-      var hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
+      const calSummary = getCalendarSummary(key);
+      const hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
       if (hasUserMarkers) {
-        var markerRow = document.createElement('div');
+        const markerRow = document.createElement('div');
         markerRow.className = 'day-marker-row';
-        var allMarkers = [];
-        calSummary.barry.forEach(function (m) { allMarkers.push(m); });
-        calSummary.andjela.forEach(function (m) { allMarkers.push(m); });
+        const allMarkers = [];
+        calSummary.barry.forEach(function (m) {
+          allMarkers.push(m);
+        });
+        calSummary.andjela.forEach(function (m) {
+          allMarkers.push(m);
+        });
         for (var mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
           var mSpan = document.createElement('span');
           mSpan.className = 'cal-marker-emoji';
@@ -2657,50 +2664,74 @@ function openModal(date, pred) {
   }
   // Render shared calendar markers
   if (typeof getCalendarSummary === 'function') {
-    var calMarkersSummary = getCalendarSummary(key);
-    var markersList = document.getElementById('modalMarkersList');
-    var markersContainer = document.getElementById('modalMarkers');
+    const calMarkersSummary = getCalendarSummary(key);
+    const markersList = document.getElementById('modalMarkersList');
+    const markersContainer = document.getElementById('modalMarkers');
     if (markersList && markersContainer) {
-      var allMarkerItems = [];
-      calMarkersSummary.barry.forEach(function (m) { allMarkerItems.push(m); });
-      calMarkersSummary.andjela.forEach(function (m) { allMarkerItems.push(m); });
+      const allMarkerItems = [];
+      calMarkersSummary.barry.forEach(function (m) {
+        allMarkerItems.push(m);
+      });
+      calMarkersSummary.andjela.forEach(function (m) {
+        allMarkerItems.push(m);
+      });
       if (allMarkerItems.length > 0) {
         markersContainer.style.display = '';
-        markersList.innerHTML = allMarkerItems.map(function (m) {
-          var authorName = m.author === 'andjela' ? '🌸' : '👦';
-          var timeStr = m.time ? (function (t) { var d = new Date(t); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); })(m.time) : '';
-          var canRemove = m.author === activeProfile ? ' <span class="marker-remove" data-id="' + m.id + '" onclick="removeCalendarMarker(\'' + m.id + '\')">✕</span>' : '';
-          return '<span class="modal-marker-item" title="' + authorName + ' ' + timeStr + '">' + m.emoji + ' ' + esc(m.note || '') + canRemove + '</span>';
-        }).join(' ');
+        markersList.innerHTML = allMarkerItems
+          .map(function (m) {
+            const authorName = m.author === 'andjela' ? '🌸' : '👦';
+            const timeStr = m.time
+              ? (function (t) {
+                  var d = new Date(t);
+                  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+                })(m.time)
+              : '';
+            const canRemove =
+              m.author === activeProfile ? ' <span class="marker-remove" data-id="' + m.id + '" onclick="removeCalendarMarker(\'' + m.id + '\')">✕</span>' : '';
+            return '<span class="modal-marker-item" title="' + authorName + ' ' + timeStr + '">' + m.emoji + ' ' + esc(m.note || '') + canRemove + '</span>';
+          })
+          .join(' ');
       } else {
         markersList.innerHTML = '<span class="marker-empty">' + (activeProfile === 'barry' ? '还没有标记 📌' : 'Još nema oznaka 📌') + '</span>';
       }
     }
   }
   // Render diary preview in modal
-  var diaryPreviewEl = document.getElementById('modalDiaryPreview');
-  var diaryBodyEl = document.getElementById('modalDiaryBody');
+  const diaryPreviewEl = document.getElementById('modalDiaryPreview');
+  const diaryBodyEl = document.getElementById('modalDiaryBody');
   if (diaryPreviewEl && diaryBodyEl) {
     try {
-      var sdModal = JSON.parse(localStorage.getItem('shared-diary')) || {};
-      var dayDiary = sdModal[key] || {};
-      var myDiaryEntry = dayDiary[activeProfile];
-      var partnerProfile2 = activeProfile === 'andjela' ? 'barry' : 'andjela';
-      var partnerDiaryEntry = dayDiary[partnerProfile2];
+      const sdModal = JSON.parse(localStorage.getItem('shared-diary')) || {};
+      const dayDiary = sdModal[key] || {};
+      const myDiaryEntry = dayDiary[activeProfile];
+      const partnerProfile2 = activeProfile === 'andjela' ? 'barry' : 'andjela';
+      const partnerDiaryEntry = dayDiary[partnerProfile2];
       if (myDiaryEntry || partnerDiaryEntry) {
         diaryPreviewEl.style.display = '';
-        var diaryText = '';
+        let diaryText = '';
         if (myDiaryEntry) {
-          var myText = myDiaryEntry.text || myDiaryEntry.happy || '';
-          diaryText += '<div class="modal-diary-mine"><span class="modal-diary-author">' + (activeProfile === 'andjela' ? '🌸' : '👦') + '</span> ' + esc(myText.substring(0, 100)) + (myText.length > 100 ? '...' : '') + '</div>';
+          const myText = myDiaryEntry.text || myDiaryEntry.happy || '';
+          diaryText +=
+            '<div class="modal-diary-mine"><span class="modal-diary-author">' +
+            (activeProfile === 'andjela' ? '🌸' : '👦') +
+            '</span> ' +
+            esc(myText.substring(0, 100)) +
+            (myText.length > 100 ? '...' : '') +
+            '</div>';
         }
         if (partnerDiaryEntry) {
-          var partnerText = partnerDiaryEntry.text || partnerDiaryEntry.happy || '';
-          diaryText += '<div class="modal-diary-partner"><span class="modal-diary-author">' + (partnerProfile2 === 'andjela' ? '🌸' : '👦') + '</span> ' + esc(partnerText.substring(0, 100)) + (partnerText.length > 100 ? '...' : '') + '</div>';
+          const partnerText = partnerDiaryEntry.text || partnerDiaryEntry.happy || '';
+          diaryText +=
+            '<div class="modal-diary-partner"><span class="modal-diary-author">' +
+            (partnerProfile2 === 'andjela' ? '🌸' : '👦') +
+            '</span> ' +
+            esc(partnerText.substring(0, 100)) +
+            (partnerText.length > 100 ? '...' : '') +
+            '</div>';
         }
         diaryBodyEl.innerHTML = diaryText;
-        document.getElementById('modalDiaryHeader').textContent = (activeProfile === 'barry' ? '💌 日记' : '💌 Dnevnik');
-        document.getElementById('modalDiaryEditText').textContent = (activeProfile === 'barry' ? '编辑' : 'Uredi');
+        document.getElementById('modalDiaryHeader').textContent = activeProfile === 'barry' ? '💌 日记' : '💌 Dnevnik';
+        document.getElementById('modalDiaryEditText').textContent = activeProfile === 'barry' ? '编辑' : 'Uredi';
       } else {
         diaryPreviewEl.style.display = 'none';
       }
@@ -2722,7 +2753,7 @@ function openModal(date, pred) {
  * Close the emoji picker overlay.
  */
 function closeEmojiPicker() {
-  var overlay = document.getElementById('emojiPickerOverlay');
+  const overlay = document.getElementById('emojiPickerOverlay');
   if (overlay) overlay.classList.add('hidden');
 }
 
@@ -2731,35 +2762,48 @@ function closeEmojiPicker() {
  * @param {string} dateKey - 'YYYY-MM-DD'
  */
 function openEmojiPicker(dateKey) {
-  var overlay = document.getElementById('emojiPickerOverlay');
-  var grid = document.getElementById('emojiPickerGrid');
-  var dateLabel = document.getElementById('epDateLabel');
+  const overlay = document.getElementById('emojiPickerOverlay');
+  const grid = document.getElementById('emojiPickerGrid');
+  const dateLabel = document.getElementById('epDateLabel');
   if (!overlay || !grid) return;
   overlay.classList.remove('hidden');
   overlay._targetDate = dateKey;
   if (dateLabel) dateLabel.textContent = dateKey;
   if (grid.children.length === 0) {
     // Populate once
-    var emojis = [];
+    let emojis = [];
     if (typeof getQuickEmojis === 'function') {
       emojis = getQuickEmojis();
     } else {
       emojis = [
-        { emoji: '💕' }, { emoji: '🌸' }, { emoji: '🌙' }, { emoji: '☀️' },
-        { emoji: '🍵' }, { emoji: '🎵' }, { emoji: '📖' }, { emoji: '💪' },
-        { emoji: '😊' }, { emoji: '😢' }, { emoji: '🤗' }, { emoji: '🎂' },
-        { emoji: '✈️' }, { emoji: '🏠' }, { emoji: '💼' }, { emoji: '🎮' },
-        { emoji: '🍜' }, { emoji: '🥰' },
+        { emoji: '💕' },
+        { emoji: '🌸' },
+        { emoji: '🌙' },
+        { emoji: '☀️' },
+        { emoji: '🍵' },
+        { emoji: '🎵' },
+        { emoji: '📖' },
+        { emoji: '💪' },
+        { emoji: '😊' },
+        { emoji: '😢' },
+        { emoji: '🤗' },
+        { emoji: '🎂' },
+        { emoji: '✈️' },
+        { emoji: '🏠' },
+        { emoji: '💼' },
+        { emoji: '🎮' },
+        { emoji: '🍜' },
+        { emoji: '🥰' },
       ];
     }
     emojis.forEach(function (e) {
-      var cell = document.createElement('span');
+      const cell = document.createElement('span');
       cell.className = 'emoji-picker-cell';
       cell.textContent = e.emoji;
       cell.title = e.label_sr || e.emoji;
       cell.addEventListener('click', function () {
-        var targetDate = overlay._targetDate || fmtDate(new Date());
-        var marker = addCalendarMarker(targetDate, { emoji: e.emoji, type: 'custom', note: '' });
+        const targetDate = overlay._targetDate || fmtDate(new Date());
+        const marker = addCalendarMarker(targetDate, { emoji: e.emoji, type: 'custom', note: '' });
         if (marker) {
           closeEmojiPicker();
           // Refresh calendar and modal if open
