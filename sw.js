@@ -1,8 +1,8 @@
-// Service Worker — Anđelin Ciklus v9 (offline.html, auto-clean caches)
+// Service Worker — Anđelin Ciklus v10 (offline.html, auto-clean caches, full CSS+JS cache)
 // Network-First for all dynamic assets, Cache-First for static
 // Features: Background Sync for offline diary saves, cache-first for fonts
 
-const CACHE_STATIC = 'ciklus-static-v24';
+const CACHE_STATIC = 'ciklus-static-v25';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 const STATIC_ASSETS = [
@@ -11,10 +11,19 @@ const STATIC_ASSETS = [
   './offline.html',
   './styles.css',
   './app.js',
+  './css/tokens.css',
+  './css/base.css',
+  './css/components.css',
+  './css/calendar.css',
+  './css/diary.css',
+  './css/learning.css',
+  './css/animations.css',
+  './css/responsive.css',
   './js/i18n.js',
   './js/auth.js',
   './js/weather.js',
   './js/sync.js',
+  './js/ui-core.js',
   './js/chart-renderer.js',
   './js/cycle-core.js',
   './js/lunar.js',
@@ -26,6 +35,15 @@ const STATIC_ASSETS = [
   './js/chinese-listen.js',
   './js/translate.js',
   './js/theme.js',
+  './js/social.js',
+  './js/culture-cards.js',
+  './js/calendar.js',
+  './js/barry.js',
+  './js/render-mood.js',
+  './js/render-love.js',
+  './js/render-misc.js',
+  './js/render-settings.js',
+  './js/render-diary.js',
 
   './calendar-data.json',
   './data/quotes.json',
@@ -33,6 +51,9 @@ const STATIC_ASSETS = [
   './data/culture-knowledge.json',
   './data/lessons.json',
   './data/achievements.json',
+  './data/data.json',
+  './data/solar-terms.json',
+  './data/holidays.json',
   './manifest.json',
 ];
 

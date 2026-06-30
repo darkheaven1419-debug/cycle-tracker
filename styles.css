@@ -1,14 +1,19 @@
 /* ================================================================
-   Anđelin Ciklus — CSS Split Bundle
-   Original monolithic file refactored into css/ directory.
-   Each sub-file covers one concern; see css/ for the parts.
-   ================================================================ */
+   Anđelin Ciklus — CSS Entry Point
+   ================================================================
+   CSS files are now loaded directly via <link> tags in index.html
+   for better reliability across all browsers and protocols.
 
-@import url("css/tokens.css");
-@import url("css/base.css");
-@import url("css/components.css");
-@import url("css/calendar.css");
-@import url("css/diary.css");
-@import url("css/learning.css");
-@import url("css/animations.css");
-@import url("css/responsive.css");
+   Individual files in css/:
+     tokens.css      — Design Tokens (CSS custom properties)
+     base.css        — Reset, typography, global styles
+     components.css  — Cards, buttons, modals, forms
+     calendar.css    — Calendar grid, progress, navigation
+     diary.css       — Diary editor, timeline, mailbox
+     learning.css    — Chinese learning module
+     animations.css  — @keyframes and transitions
+     responsive.css  — Media queries and breakpoints
+
+   For production builds, run: npm run build
+   This concatenates all css/*.css into dist/styles.min.css
+   ================================================================ */

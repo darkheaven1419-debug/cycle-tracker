@@ -23,18 +23,12 @@
   .profile-pill { padding:2px 3px; }
   .profile-pill .pf-avatar { width:24px; height:24px; font-size:.75rem; }
   .profile-pill .pf-name { font-size:.58rem; }
-}
-@media(max-width:420px) {
   .day { min-width:44px; min-height:44px; border-radius:10px; font-size:.78rem; }
   .day .lunar-date { font-size:.48rem; }
   .day-num { font-size:.75rem; }
-}
-@media(max-width:420px) {
   .diary-date-pill { min-width:38px; padding:6px 2px; }
   .diary-date-pill .dd-day { font-size:.72rem; }
   .diary-textarea { font-size:.76rem; padding:10px 12px; min-height:80px; }
-}
-@media(max-width:420px) {
   .lrn-phase-grid { grid-template-columns: repeat(2, 1fr); }
   .lrn-phase-card { padding: 12px 8px; }
   .lrn-phase-icon-wrap { width: 40px; height: 40px; font-size: 1.2rem; }
@@ -46,25 +40,16 @@
   .lrn-quiz-score-icon { font-size: 2.8rem; }
   .lrn-ach-badge { padding: 10px 6px; }
   .lrn-ach-icon { font-size: 1.6rem; }
-}
-@media(max-width:420px) {
   .lrn-stats-cards { grid-template-columns: 1fr 1fr; gap: 6px; }
   .lrn-stat-card { padding: 12px 8px; }
   .lrn-stat-val { font-size: 1.1rem; }
-}
-@media(max-width:420px) {
   .stats-mini-card { padding: 10px 8px; }
   .stats-mini-card .mini-value { font-size: 1.2rem; }
   .chart-card { padding: 10px 8px; }
 }
 
-/* ---- <= 400px: tabs, stats ---- */
+/* ---- <= 400px: tabs ---- */
 @media(max-width:400px){.tab{font-size:.68rem;padding:6px 0}.tab .tb-label{font-size:.6rem}}
-@media(max-width:400px) {
-  .stats-mini-card { padding: 10px 8px; }
-  .stats-mini-card .mini-value { font-size: 1.2rem; }
-  .chart-card { padding: 10px 8px; }
-}
 
 /* ---- <= 380px: fab label position ---- */
 @media (max-width: 380px) {

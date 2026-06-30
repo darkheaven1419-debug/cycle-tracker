@@ -19,7 +19,7 @@ const VERSION = 'v' + PKG.version;
 
 const COPY_DIRS = ['js', 'data', 'libs'];
 const COPY_FILES = [
-  'index.html',
+  // index.html is handled separately (minified by html-minifier)
   'app.js',
   'styles.css',
   'manifest.json',
@@ -139,6 +139,12 @@ if (fs.existsSync(htmlSrc)) {
 
   // Update version references in HTML
   html = html.replace(/v\d+(?:\.\d+)?/g, VERSION);
+
+  // Production optimization: replace all individual CSS <link> tags
+  // with a single link to the concatenated+minified styles.min.css
+  var cssMatchCount = (html.match(/<link rel="stylesheet" href="css\/[^"]+">/g) || []).length;
+  html = html.replace(/(?:\s*<link rel="stylesheet" href="css\/[^"]+">)+/, '\n<link rel="stylesheet" href="styles.min.css">');
+  console.info('  CSS links: ' + cssMatchCount + ' → ' + (html.match(/styles\.min\.css/g) || []).length + ' (prod bundle)');
 
   // Write unminified copy
   fs.writeFileSync(path.join(DIST, 'index.html'), html, 'utf8');

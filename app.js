@@ -17,6 +17,13 @@
    ================================================================ */
 const MOOD_EMOJIS = ['😊', '🥰', '😤', '😴', '😢', '🤩', '😰', '😐'];
 const MOOD_KEYS = ['happy', 'loved', 'frustrated', 'tired', 'sad', 'excited', 'anxious', 'meh'];
+// Pre-computed O(1) lookup maps (replaces O(n) indexOf calls)
+const MOOD_EMOJI_MAP = Object.fromEntries(
+  MOOD_KEYS.map(function (k, i) {
+    return [k, MOOD_EMOJIS[i]];
+  })
+);
+var MOOD_NAME_MAP = {}; // populated lazily after i18n loads
 
 /* ================================================================
    EXTRACTED to js/ui-core.js
@@ -555,11 +562,11 @@ function renderDashboard() {
     '</div></div>';
   h +=
     '<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">' +
-    (tm ? MOOD_EMOJIS[MOOD_KEYS.indexOf(tm)] : '🌤️') +
+    (tm ? MOOD_EMOJI_MAP[tm] : '🌤️') +
     '</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">' +
     dl('todayMoodDash') +
     '</div><div style=\"font-size:.58rem;color:var(--text-muted)\">' +
-    (tm ? t('moodNames')[MOOD_KEYS.indexOf(tm)] : lang === 'sr' ? 'Nije uneto' : lang === 'en' ? 'Not set' : '未记录') +
+    (tm ? MOOD_NAME_MAP[tm] || t('moodNames')[MOOD_KEYS.indexOf(tm)] : lang === 'sr' ? 'Nije uneto' : lang === 'en' ? 'Not set' : '未记录') +
     '</div></div>';
   h +=
     '<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">🔥</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">' +
@@ -644,8 +651,10 @@ function renderDashboard() {
   panel.innerHTML = h;
 }
 function switchToTab(tabId) {
-  const btn = document.querySelector('.tab[data-panel=\"' + tabId + '\"]');
+  const btn = document.querySelector('.tab[data-panel="' + tabId + '"]');
   if (btn) btn.click();
+  // Persist tab in URL hash for SPA navigation
+  if (history.replaceState) history.replaceState(null, '', '#' + tabId);
 }
 
 /* ================================================================
@@ -907,6 +916,16 @@ async function bootApp() {
     if (loader.parentNode) loader.parentNode.removeChild(loader);
   }
 
+  // Build mood name lookup map (O(1) — replaces indexOf scans)
+  var moodNamesArr = t('moodNames');
+  if (moodNamesArr && moodNamesArr.length === MOOD_KEYS.length) {
+    MOOD_NAME_MAP = Object.fromEntries(
+      MOOD_KEYS.map(function (k, i) {
+        return [k, moodNamesArr[i]];
+      })
+    );
+  }
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js?v=8').catch(function () {});
   }
@@ -1023,7 +1042,19 @@ async function bootApp() {
     }
   };
   document.addEventListener('keydown', modalKeydown);
+
+  // Restore tab from URL hash on load
+  const initTab = location.hash.replace('#', '') || 'dashboard';
+  if (document.getElementById('panel-' + initTab)) {
+    switchToTab(initTab);
+  }
 }
+
+// Hash change handler for forward/back navigation
+window.addEventListener('hashchange', function () {
+  const tab = location.hash.replace('#', '') || 'dashboard';
+  if (document.getElementById('panel-' + tab)) switchToTab(tab);
+});
 
 // Profile-aware overrides happen in loadPerProfileSettings() below
 
@@ -2083,6 +2114,8 @@ function updateProgress(pred) {
   const fillEl = document.getElementById('pg-fill');
   const badgeEl = document.getElementById('pg-badge');
   const badges = t('phaseBadges');
+  // Cache phase label elements (used up to 3× per call)
+  const phaseLabels = document.querySelectorAll('.progress-labels span');
   if (state.records.length === 0) {
     numEl.textContent = '--';
     unitEl.textContent = '';
@@ -2090,14 +2123,14 @@ function updateProgress(pred) {
     fillEl.style.width = '0%';
     badgeEl.textContent = '';
     badgeEl.className = 'phase-badge';
-    document.querySelectorAll('.progress-labels span').forEach((s) => s.classList.remove('current'));
+    phaseLabels.forEach((s) => s.classList.remove('current'));
     return;
   }
   const phase = getPhase(td, pred);
   let pct = 0,
     label = '',
     bCls = '';
-  document.querySelectorAll('.progress-labels span').forEach((s) => s.classList.remove('current'));
+  phaseLabels.forEach((s) => s.classList.remove('current'));
   if (phase === 'period-on' || phase === 'period-mid') {
     const cur = state.records.find((r) => {
       const s = d0(r);
@@ -2164,7 +2197,7 @@ function updateProgress(pred) {
     }
     subEl.textContent = remain >= 0 ? t('daysUntil').replace('{n}', remain) : `${t('expected')} ${fmtDate(pred.nextStart)}`;
   }
-  fillEl.style.width = pct + '%';
+  fillEl.style.transform = 'scaleX(' + pct / 100 + ')';
   fillEl.setAttribute('role', 'progressbar');
   fillEl.setAttribute('aria-valuenow', Math.round(pct));
   fillEl.setAttribute('aria-valuemin', '0');

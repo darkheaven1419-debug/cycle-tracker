@@ -13,7 +13,6 @@
 'use strict';
 
 const BarryModule = (function () {
-
   /* ================================================================
      SYMPTOM HELP — cause & support explanations for Barry's view
      (Unique to this module — not duplicated in app.js)
@@ -41,7 +40,7 @@ const BarryModule = (function () {
       },
     },
     fatigue: {
-      cause: { sr: 'Telo trosi mnogo energije — grozde je nisko', zh: '身体消耗大量能量——铁含量低', en: "Body uses lots of energy — iron is low" },
+      cause: { sr: 'Telo trosi mnogo energije — grozde je nisko', zh: '身体消耗大量能量——铁含量低', en: 'Body uses lots of energy — iron is low' },
       help: {
         sr: 'Pusti je da spava • Uradi nesto po kuci umesto nje • Skoro joj hranu bogatu grozdem',
         zh: '让她睡 • 帮她做家务 • 做含铁丰富的食物',
@@ -77,7 +76,7 @@ const BarryModule = (function () {
       help: {
         sr: 'Donesi joj ono sto zeli bez komentara • Naruci njenu omiljenu hranu • Ne komentari njene izbore',
         zh: '给她想吃的不要评论 • 点她最爱吃的 • 别评论她的食物选择',
-        en: "Get her what she wants, no comments • Order her favorite food • Dont comment on her choices",
+        en: 'Get her what she wants, no comments • Order her favorite food • Dont comment on her choices',
       },
     },
   };
