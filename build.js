@@ -217,7 +217,25 @@ if (terserAvailable) {
         } else {
           Terser.minify(content, {
             compress: { passes: 2, drop_console: false },
-            mangle: { reserved: ['Lunar', 'AuthModule', 'ChartRenderer', 'CultureCardsModule', 'syncDiaryData', 'lang', 'theme', 'activeProfile', 'state', 'bootApp', 'saveSymptom', 'loadCalendarData', 'renderChart', 'updateStats', 'updateLangUI'] },
+            mangle: {
+              reserved: [
+                'Lunar',
+                'AuthModule',
+                'ChartRenderer',
+                'CultureCardsModule',
+                'syncDiaryData',
+                'lang',
+                'theme',
+                'activeProfile',
+                'state',
+                'bootApp',
+                'saveSymptom',
+                'loadCalendarData',
+                'renderChart',
+                'updateStats',
+                'updateLangUI',
+              ],
+            },
             output: { comments: false },
           })
             .then(function (result) {
