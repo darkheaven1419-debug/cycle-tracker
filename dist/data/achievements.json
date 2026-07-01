@@ -1,0 +1,402 @@
+[
+  {
+    "id": "first_lesson",
+    "type": "milestone",
+    "icon": "🎯",
+    "name": {
+      "zh": "第一步",
+      "sr": "Prvi korak",
+      "en": "First Step"
+    },
+    "description": {
+      "zh": "完成第1课",
+      "sr": "Završite prvu lekciju",
+      "en": "Complete the first lesson"
+    },
+    "condition": {
+      "type": "lessonsCompleted",
+      "value": 1
+    },
+    "points": 10
+  },
+  {
+    "id": "phase1_complete",
+    "type": "phase",
+    "icon": "🏛️",
+    "name": {
+      "zh": "拼音毕业",
+      "sr": "Diplomirao pinyin",
+      "en": "Pinyin Graduate"
+    },
+    "description": {
+      "zh": "完成阶段1（拼音基础）",
+      "sr": "Završite fazu 1 (Pinyin osnove)",
+      "en": "Complete phase 1 (Pinyin basics)"
+    },
+    "condition": {
+      "type": "phaseComplete",
+      "phaseId": 1
+    },
+    "points": 50
+  },
+  {
+    "id": "phase2_complete",
+    "type": "phase",
+    "icon": "🗣️",
+    "name": {
+      "zh": "会话达人",
+      "sr": "Majstor razgovora",
+      "en": "Conversation Master"
+    },
+    "description": {
+      "zh": "完成阶段2（日常会话）",
+      "sr": "Završite fazu 2 (Svakodnevni razgovori)",
+      "en": "Complete phase 2 (Daily conversations)"
+    },
+    "condition": {
+      "type": "phaseComplete",
+      "phaseId": 2
+    },
+    "points": 50
+  },
+  {
+    "id": "phase3_complete",
+    "type": "phase",
+    "icon": "🏆",
+    "name": {
+      "zh": "社交能手",
+      "sr": "Društveni veštak",
+      "en": "Social Expert"
+    },
+    "description": {
+      "zh": "完成阶段3（社交场景）",
+      "sr": "Završite fazu 3 (Društvene situacije)",
+      "en": "Complete phase 3 (Social situations)"
+    },
+    "condition": {
+      "type": "phaseComplete",
+      "phaseId": 3
+    },
+    "points": 50
+  },
+  {
+    "id": "phase4_complete",
+    "type": "phase",
+    "icon": "💬",
+    "name": {
+      "zh": "情感大师",
+      "sr": "Majstor emocija",
+      "en": "Emotion Master"
+    },
+    "description": {
+      "zh": "完成阶段4（情感表达）",
+      "sr": "Završite fazu 4 (Izražavanje emocija)",
+      "en": "Complete phase 4 (Emotional expression)"
+    },
+    "condition": {
+      "type": "phaseComplete",
+      "phaseId": 4
+    },
+    "points": 50
+  },
+  {
+    "id": "phase5_complete",
+    "type": "phase",
+    "icon": "📝",
+    "name": {
+      "zh": "读写高手",
+      "sr": "Čitanje i pisanje ekspert",
+      "en": "Reading & Writing Expert"
+    },
+    "description": {
+      "zh": "完成阶段5（读写提升）",
+      "sr": "Završite fazu 5 (Čitanje i pisanje)",
+      "en": "Complete phase 5 (Reading & writing)"
+    },
+    "condition": {
+      "type": "phaseComplete",
+      "phaseId": 5
+    },
+    "points": 50
+  },
+  {
+    "id": "phase6_complete",
+    "type": "phase",
+    "icon": "🎓",
+    "name": {
+      "zh": "中文毕业",
+      "sr": "Kineski diplomac",
+      "en": "Chinese Graduate"
+    },
+    "description": {
+      "zh": "完成阶段6（高级综合）",
+      "sr": "Završite fazu 6 (Napredni nivo)",
+      "en": "Complete phase 6 (Advanced level)"
+    },
+    "condition": {
+      "type": "phaseComplete",
+      "phaseId": 6
+    },
+    "points": 100
+  },
+  {
+    "id": "streak_3",
+    "type": "streak",
+    "icon": "🔥",
+    "name": {
+      "zh": "连续3天",
+      "sr": "3 dana za redom",
+      "en": "3-Day Streak"
+    },
+    "description": {
+      "zh": "连续3天学习",
+      "sr": "Učite 3 dana za redom",
+      "en": "Study for 3 consecutive days"
+    },
+    "condition": {
+      "type": "streak",
+      "value": 3
+    },
+    "points": 20
+  },
+  {
+    "id": "streak_7",
+    "type": "streak",
+    "icon": "⭐",
+    "name": {
+      "zh": "坚持一周",
+      "sr": "Sedmica upornosti",
+      "en": "One Week Strong"
+    },
+    "description": {
+      "zh": "连续7天学习",
+      "sr": "Učite 7 dana za redom",
+      "en": "Study for 7 consecutive days"
+    },
+    "condition": {
+      "type": "streak",
+      "value": 7
+    },
+    "points": 40
+  },
+  {
+    "id": "streak_30",
+    "type": "streak",
+    "icon": "💎",
+    "name": {
+      "zh": "一月坚持",
+      "sr": "Mjesec dana upornosti",
+      "en": "One Month Strong"
+    },
+    "description": {
+      "zh": "连续30天学习",
+      "sr": "Učite 30 dana za redom",
+      "en": "Study for 30 consecutive days"
+    },
+    "condition": {
+      "type": "streak",
+      "value": 30
+    },
+    "points": 100
+  },
+  {
+    "id": "words_50",
+    "type": "skill",
+    "icon": "💪",
+    "name": {
+      "zh": "50词突破",
+      "sr": "50 riječi",
+      "en": "50 Words"
+    },
+    "description": {
+      "zh": "掌握50个词",
+      "sr": "Savladajte 50 riječi",
+      "en": "Master 50 words"
+    },
+    "condition": {
+      "type": "totalPoints",
+      "value": 50
+    },
+    "points": 30
+  },
+  {
+    "id": "words_100",
+    "type": "skill",
+    "icon": "📚",
+    "name": {
+      "zh": "百词斩",
+      "sr": "100 riječi",
+      "en": "100 Words"
+    },
+    "description": {
+      "zh": "掌握100个词",
+      "sr": "Savladajte 100 riječi",
+      "en": "Master 100 words"
+    },
+    "condition": {
+      "type": "totalPoints",
+      "value": 100
+    },
+    "points": 50
+  },
+  {
+    "id": "words_500",
+    "type": "skill",
+    "icon": "🏆",
+    "name": {
+      "zh": "五百词",
+      "sr": "500 riječi",
+      "en": "500 Words"
+    },
+    "description": {
+      "zh": "掌握500个词",
+      "sr": "Savladajte 500 riječi",
+      "en": "Master 500 words"
+    },
+    "condition": {
+      "type": "totalPoints",
+      "value": 500
+    },
+    "points": 100
+  },
+  {
+    "id": "lessons_10",
+    "type": "milestone",
+    "icon": "🌱",
+    "name": {
+      "zh": "10课完成",
+      "sr": "10 lekcija",
+      "en": "10 Lessons"
+    },
+    "description": {
+      "zh": "完成10课",
+      "sr": "Završite 10 lekcija",
+      "en": "Complete 10 lessons"
+    },
+    "condition": {
+      "type": "lessonsCompleted",
+      "value": 10
+    },
+    "points": 20
+  },
+  {
+    "id": "lessons_50",
+    "type": "milestone",
+    "icon": "🌙",
+    "name": {
+      "zh": "50课完成",
+      "sr": "50 lekcija",
+      "en": "50 Lessons"
+    },
+    "description": {
+      "zh": "完成50课",
+      "sr": "Završite 50 lekcija",
+      "en": "Complete 50 lessons"
+    },
+    "condition": {
+      "type": "lessonsCompleted",
+      "value": 50
+    },
+    "points": 50
+  },
+  {
+    "id": "lessons_100",
+    "type": "milestone",
+    "icon": "☀️",
+    "name": {
+      "zh": "100课完成",
+      "sr": "100 lekcija",
+      "en": "100 Lessons"
+    },
+    "description": {
+      "zh": "完成100课",
+      "sr": "Završite 100 lekcija",
+      "en": "Complete 100 lessons"
+    },
+    "condition": {
+      "type": "lessonsCompleted",
+      "value": 100
+    },
+    "points": 100
+  },
+  {
+    "id": "perfect_1",
+    "type": "skill",
+    "icon": "💯",
+    "name": {
+      "zh": "满分初体验",
+      "sr": "Prva savršena ocena",
+      "en": "First Perfect Score"
+    },
+    "description": {
+      "zh": "首次测验满分",
+      "sr": "Prvi put osvojite savršen rezultat na testu",
+      "en": "Get a perfect score on a quiz for the first time"
+    },
+    "condition": {
+      "type": "perfectScore",
+      "value": 1
+    },
+    "points": 30
+  },
+  {
+    "id": "perfect_10",
+    "type": "skill",
+    "icon": "🏅",
+    "name": {
+      "zh": "满分达人",
+      "sr": "Majstor savršenih ocena",
+      "en": "Perfect Score Master"
+    },
+    "description": {
+      "zh": "10次测验满分",
+      "sr": "Osvojite savršen rezultat 10 puta",
+      "en": "Get a perfect score 10 times"
+    },
+    "condition": {
+      "type": "perfectScore",
+      "value": 10
+    },
+    "points": 80
+  },
+  {
+    "id": "time_10h",
+    "type": "skill",
+    "icon": "⏱️",
+    "name": {
+      "zh": "十小时",
+      "sr": "10 sati",
+      "en": "10 Hours"
+    },
+    "description": {
+      "zh": "累计学习10小时",
+      "sr": "Ukupno 10 sati učenja",
+      "en": "Accumulate 10 hours of study"
+    },
+    "condition": {
+      "type": "timeSpent",
+      "value": 600
+    },
+    "points": 50
+  },
+  {
+    "id": "all_complete",
+    "type": "milestone",
+    "icon": "🌈",
+    "name": {
+      "zh": "大圆满",
+      "sr": "Potpuni završetak",
+      "en": "Complete Mastery"
+    },
+    "description": {
+      "zh": "完成全逗180课",
+      "sr": "Završite svih 180 lekcija",
+      "en": "Complete all 180 lessons"
+    },
+    "condition": {
+      "type": "allLessons",
+      "value": 180
+    },
+    "points": 200
+  }
+]

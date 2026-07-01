@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 Anđelin Ciklus Lite</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#ede0da;color:#3d2828;padding:12px;max-width:420px;margin:0 auto}
+  .card{background:#faf3ef;border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(80,40,40,.06)}
+  h2{font-size:1.1rem;margin-bottom:6px;color:#c45a6b}
+  h3{font-size:.85rem;margin-bottom:8px}
+  textarea,input,select{width:100%;padding:8px 10px;border:1.5px solid #e5dad4;border-radius:10px;font-size:.78rem;background:#fff;color:#3d2828;margin-bottom:8px}
+  button{padding:10px 18px;border:none;border-radius:20px;background:#c45a6b;color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;margin-bottom:4px}
+  .history-item{font-size:.72rem;padding:6px 0;border-bottom:1px solid #f0e8e2}
+  .empty{font-size:.72rem;color:#8a7a78;font-style:italic;text-align:center;padding:16px}
+  .link{font-size:.7rem;color:#c45a6b;text-decoration:none;padding:6px 12px;background:#fdf0f3;border-radius:10px;display:inline-block;margin:3px}
+</style>
+</head>
+<body>
+
+<h2 style="padding:8px 0">🌸 Anđelin Ciklus Lite</h2>
+<div style="font-size:.65rem;color:#c49a5e;margin-bottom:12px;font-style:italic">— ES5 minimal · Offline · localStorage only</div>
+
+<div class="card">
+  <h3>📝 Dnevnik</h3>
+  <div style="font-size:.72rem;margin-bottom:6px">Datum: <b id="diaryDate"></b></div>
+  <textarea id="diaryInput" rows="3" placeholder="Napiši današnji dnevnik..."></textarea>
+  <button onclick="saveDiary()">💾 Sačuvaj</button>
+  <div id="diaryHistory" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <h3>💌 Poruka</h3>
+  <select id="msgAuthor" style="width:auto;margin-bottom:8px">
+    <option value="barry">👦 Barry</option>
+    <option value="andjela">🌸 Anđela</option>
+  </select>
+  <textarea id="msgInput" rows="2" placeholder="Napiši poruku..."></textarea>
+  <button onclick="saveMessage()">📨 Pošalji</button>
+  <div id="msgList" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <h3>🔗 Linkovi</h3>
+  <a href="index.html" class="link">🏠 Glavni sajt</a>
+  <a href="index.html?safe=1" class="link">🛡️ Safe Mode</a>
+  <a href="static.html" class="link">🔧 Test</a>
+  <a href="index.html?normal=1" class="link">🔄 Normal</a>
+</div>
+
+<div class="card" id="debugCard" style="display:none">
+  <h3>🐛 Debug</h3>
+  <pre id="debugOut" style="font-size:.55rem;color:#8a7a78;white-space:pre-wrap;max-height:120px;overflow-y:auto"></pre>
+</div>
+
+<script>
+var STORE_D = 'lite-diary';
+var STORE_M = 'lite-messages';
+
+function fd(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+function loadD(){try{return JSON.parse(localStorage.getItem(STORE_D))||{}}catch(e){return{}}}
+function loadM(){try{return JSON.parse(localStorage.getItem(STORE_M))||[]}catch(e){return[]}}
+
+function saveDiary(){
+  var t=document.getElementById('diaryInput').value.trim();if(!t)return;
+  var d=loadD();d[fd()]={text:t,time:Date.now()};
+  localStorage.setItem(STORE_D,JSON.stringify(d));
+  document.getElementById('diaryInput').value='';renderDiary();
+}
+
+function renderDiary(){
+  document.getElementById('diaryDate').textContent=fd();
+  var d=loadD(),k=Object.keys(d).sort().reverse(),h='';
+  if(k.length===0)h='<div class=empty>Jos nema unosa</div>';
+  else for(var i=0;i<Math.min(k.length,20);i++){var e=d[k[i]],ts=e.time?new Date(e.time).toLocaleTimeString('sr-Latn',{hour:'2-digit',minute:'2-digit'}):'';h+='<div class=history-item><b>'+k[i]+'</b> '+ts+'<br>'+e.text.substring(0,120)+'</div>';}
+  document.getElementById('diaryHistory').innerHTML=h;
+}
+
+function saveMessage(){
+  var t=document.getElementById('msgInput').value.trim();if(!t)return;
+  var a=document.getElementById('msgAuthor').value;
+  var m=loadM();m.push({author:a,text:t,time:Date.now()});
+  localStorage.setItem(STORE_M,JSON.stringify(m));
+  document.getElementById('msgInput').value='';renderMessages();
+}
+
+function renderMessages(){
+  var m=loadM(),h='';
+  if(m.length===0)h='<div class=empty>Nema poruka</div>';
+  else for(var i=m.length-1;i>=Math.max(0,m.length-20);i--){var msg=m[i],ic=msg.author==='barry'?'👦':'🌸',nm=msg.author==='barry'?'Barry':'Anđela',ts=new Date(msg.time).toLocaleTimeString('sr-Latn',{hour:'2-digit',minute:'2-digit'});h+='<div class=history-item>'+ic+' <b>'+nm+'</b> '+ts+'<br>'+msg.text.substring(0,120)+'</div>';}
+  document.getElementById('msgList').innerHTML=h;
+}
+
+document.getElementById('diaryDate').textContent=fd();
+renderDiary();renderMessages();
+
+if(location.search.indexOf('debug')>=0){
+  document.getElementById('debugCard').style.display='';
+  document.getElementById('debugOut').textContent='UA: '+navigator.userAgent.substring(0,100)+'\nLS: '+(!!window.localStorage)+'\nJSON: '+(typeof JSON!=='undefined')+'\nDate: '+fd();
+}
+</script>
+</body>
+</html>

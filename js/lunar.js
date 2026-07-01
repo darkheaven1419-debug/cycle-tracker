@@ -4,11 +4,11 @@
  * Includes: 天干地支, 生肖, 农历日期格式化
  */
 
-const Lunar = (function() {
+var Lunar = (function() {
   // ── Lunar year data (1900–2100) ──────────────────────────────
   // Encoding: high nibble(4bits) = leap month (0=none, 1-12=which month)
   // Low 12-16 bits: each bit = 1 month, 0=29days, 1=30days (left to right, month 1-12/13)
-  const LUNAR_INFO = [
+  var LUNAR_INFO = [
     0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
     0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
     0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
@@ -32,12 +32,12 @@ const Lunar = (function() {
     0x0d520
   ];
 
-  const GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
-  const ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-  const SHENGXIAO = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
-  const LUNAR_MONTHS = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+  var GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  var ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var SHENGXIAO = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+  var LUNAR_MONTHS = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
 
-  const LUNAR_DAYS = [
+  var LUNAR_DAYS = [
     '', '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
     '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
     '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'
@@ -50,18 +50,18 @@ const Lunar = (function() {
   }
 
   function monthDays(y, m) {
-    const info = LUNAR_INFO[y - 1900];
+    var info = LUNAR_INFO[y - 1900];
     return (info & (0x10000 >> m)) ? 30 : 29;
   }
 
   function yearDays(y) {
-    const info = LUNAR_INFO[y - 1900];
-    let sum = 348; // 12 * 29
-    for (let i = 0x8000; i > 0x8; i >>= 1) {
+    var info = LUNAR_INFO[y - 1900];
+    var sum = 348; // 12 * 29
+    for (var i = 0x8000; i > 0x8; i >>= 1) {
       if (info & i) sum += 1;
     }
     // Add leap month
-    const leap = leapMonth(y);
+    var leap = leapMonth(y);
     if (leap) sum += ((info & 0x10000) ? 30 : 29);
     return sum;
   }
@@ -77,24 +77,24 @@ const Lunar = (function() {
    */
   function toLunar(date) {
     // Base: 1900-01-31 = Chinese New Year 1900 (Lunar 1900-01-01)
-    const baseDate = new Date(1900, 0, 31);
-    let offset = Math.floor((date - baseDate) / 86400000);
+    var baseDate = new Date(1900, 0, 31);
+    var offset = Math.floor((date - baseDate) / 86400000);
     if (offset < 0) return null;
 
     // Find lunar year
-    let lunarYear;
+    var lunarYear;
     for (lunarYear = 1900; lunarYear <= 2100; lunarYear++) {
-      const yDays = yearDays(lunarYear);
+      var yDays = yearDays(lunarYear);
       if (offset < yDays) break;
       offset -= yDays;
     }
     if (lunarYear > 2100) return null;
 
     // Find lunar month
-    const leap = leapMonth(lunarYear);
-    let lunarMonth = 1, isLeap = false;
+    var leap = leapMonth(lunarYear);
+    var lunarMonth = 1, isLeap = false;
     for (; lunarMonth <= 12; lunarMonth++) {
-      let mDays = monthDays(lunarYear, lunarMonth);
+      var mDays = monthDays(lunarYear, lunarMonth);
       if (offset < mDays) break;
       offset -= mDays;
       // Check leap month
@@ -105,12 +105,12 @@ const Lunar = (function() {
       }
     }
 
-    const lunarDay = offset + 1;
-    let tgdIdx = (lunarYear - 4) % 60;
+    var lunarDay = offset + 1;
+    var tgdIdx = (lunarYear - 4) % 60;
     if (tgdIdx < 0) tgdIdx += 60;
-    const tianGanDiZhi = GAN[tgdIdx % 10] + ZHI[tgdIdx % 12];
-    const shengXiao = SHENGXIAO[tgdIdx % 12];
-    const monthName = (isLeap ? '闰' : '') + LUNAR_MONTHS[lunarMonth - 1] + '月';
+    var tianGanDiZhi = GAN[tgdIdx % 10] + ZHI[tgdIdx % 12];
+    var shengXiao = SHENGXIAO[tgdIdx % 12];
+    var monthName = (isLeap ? '闰' : '') + LUNAR_MONTHS[lunarMonth - 1] + '月';
 
     return {
       year: lunarYear, month: lunarMonth, day: lunarDay,
@@ -120,40 +120,40 @@ const Lunar = (function() {
   }
 
   function getShengXiao(year) {
-    let idx = (year - 4) % 12; if (idx < 0) idx += 12;
+    var idx = (year - 4) % 12; if (idx < 0) idx += 12;
     return SHENGXIAO[idx];
   }
 
   function getTianGanDiZhi(year) {
-    let idx = (year - 4) % 60; if (idx < 0) idx += 60;
+    var idx = (year - 4) % 60; if (idx < 0) idx += 60;
     return GAN[idx % 10] + ZHI[idx % 12];
   }
 
   function getLunarMonthDay(date) {
-    const lunar = toLunar(date);
+    var lunar = toLunar(date);
     return lunar ? lunar.monthName + lunar.dayName : '';
   }
 
   function getLunarDayName(date) {
-    const lunar = toLunar(date);
+    var lunar = toLunar(date);
     return lunar ? LUNAR_DAYS[lunar.day] : '';
   }
 
   /** Check if date is Chinese New Year (正月初一) */
   function isLunarNewYear(date) {
-    const lunar = toLunar(date);
+    var lunar = toLunar(date);
     return lunar && lunar.month === 1 && lunar.day === 1 && !lunar.isLeap;
   }
 
   /** Check if date is the 15th of a lunar month (full moon) */
   function isFullMoon(date) {
-    const lunar = toLunar(date);
+    var lunar = toLunar(date);
     return lunar && lunar.day === 15;
   }
 
   /** Get lunar year info for display */
   function getYearInfo(date) {
-    const lunar = toLunar(date);
+    var lunar = toLunar(date);
     if (!lunar) return null;
     return {
       yearName: lunar.yearName,
