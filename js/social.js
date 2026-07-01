@@ -71,6 +71,9 @@ const SocialModule = (function () {
     ],
   };
 
+  // Global export for other modules (render-love.js, etc.)
+  window.REL_TIPS = REL_TIPS;
+
   // ====================================================================
   // Weekly Check-in Questions
   // ====================================================================
