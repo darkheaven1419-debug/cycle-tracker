@@ -68,7 +68,7 @@
   .weekdays { grid-template-columns:repeat(7,1fr); }
   .days { grid-template-columns:repeat(7,1fr); }
   .day:nth-child(8n+7),.day:nth-child(8n+8){background:none}
-  .day:nth-child(7n+6),.day:nth-child(7n+7){background:rgba(212,122,138,.04)}
+  .day:nth-child(7n+6),.day:nth-child(7n+7){background:rgba(196,112,120,.04)}
   [data-theme="dark"] .day:nth-child(7n+6),[data-theme="dark"] .day:nth-child(7n+7){background:rgba(255,255,255,.02)}
 }
 @media(max-width:360px) {

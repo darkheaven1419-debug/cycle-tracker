@@ -87,7 +87,7 @@
 .diary-write-date { font-size:.82rem; font-weight:700; color:var(--text); }
 
 .diary-textarea { width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:16px; font-size:.85rem; font-family:var(--font); background:var(--card); color:var(--text); line-height:1.8; resize:vertical; min-height:120px; transition:border-color .25s, box-shadow .25s; }
-.diary-textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 4px rgba(196,90,107,.08); }
+.diary-textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 4px rgba(184,72,90,.08); }
 .diary-textarea::placeholder { color:var(--text-muted); opacity:.35; font-style:italic; }
 
 .diary-write-footer { margin-top:10px; }
@@ -95,7 +95,7 @@
 .diary-mood-chip { width:40px; height:40px; border-radius:50%; border:2px solid transparent; background:var(--card); font-size:1.15rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s cubic-bezier(.22, 1, .36, 1); touch-action:manipulation; box-shadow:var(--shadow-xs); }
 .diary-mood-chip:hover { transform:scale(1.08); background:var(--rose-light); }
 .diary-mood-chip:active { transform:scale(.85); }
-.diary-mood-chip.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.18); box-shadow:0 0 0 4px rgba(196,90,107,.12); }
+.diary-mood-chip.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.18); box-shadow:0 0 0 4px rgba(184,72,90,.12); }
 .diary-actions { display:flex; justify-content:space-between; align-items:center; }
 .diary-char-count { font-size:var(--text-xs); color:var(--text-muted); }
 
@@ -139,9 +139,9 @@
 .mini-cal .mc-day .mc-dot.both { background:var(--gold); }
 
 /* ---- Letter Card — refined ---- */
-.letter-card { background:var(--gradient-card); border:1px solid rgba(196,154,94,.15); border-radius:var(--radius); position:relative; overflow:hidden; }
+.letter-card { background:var(--gradient-card); border:1px solid rgba(184,145,71,.15); border-radius:var(--radius); position:relative; overflow:hidden; }
 .letter-card::before { content:'✉'; position:absolute; bottom:-10px; right:-5px; font-size:4rem; opacity:.03; pointer-events:none; transform:rotate(-15deg); }
-[data-theme="dark"] .letter-card { background:linear-gradient(175deg, #1E1C18 0%, #1F1C1A 40%, #1C1A18 100%); border-color:rgba(196,154,94,.12); }
+[data-theme="dark"] .letter-card { background:linear-gradient(175deg, #1E1C18 0%, #1F1C1A 40%, #1C1A18 100%); border-color:rgba(184,145,71,.12); }
 .letter-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 .letter-header h3 { margin:0; font-size:.82rem; color:var(--text); }
 .letter-saved { display:inline-flex; align-items:center; gap:4px; font-size:var(--text-xs); color:var(--sage); font-weight:600; opacity:0; transform:translateY(-6px); transition:all .35s cubic-bezier(.22, 1, .36, 1); }
@@ -171,7 +171,7 @@
 .letter-char-count { font-size:var(--text-xs); color:var(--text-muted); }
 
 /* ---- Partner Letter ---- */
-.partner-letter { background:var(--gradient-rose); border-color:rgba(212,120,138,.15); }
+.partner-letter { background:var(--gradient-rose); border-color:rgba(196,112,120,.15); }
 .partner-letter::before { content:'🌸'; position:absolute; bottom:-8px; right:-4px; font-size:3.5rem; opacity:.04; pointer-events:none; }
 [data-theme="dark"] .partner-letter { background:linear-gradient(175deg, #1E1A1D 0%, #1F1A1E 40%, #1C1A1D 100%); }
 
@@ -204,7 +204,7 @@
   font-size:.73rem; font-weight:600; color:var(--text); cursor:pointer;
   user-select:none; transition:background .15s;
 }
-.letter-section-label:hover { background:rgba(196,90,107,.05); }
+.letter-section-label:hover { background:rgba(184,72,90,.05); }
 .letter-section-label .ls-char-count { font-size:var(--text-xs); color:var(--text-muted); font-weight:400; margin-left:auto; }
 .letter-section-input {
   display:block; width:100%; border:none; background:transparent;

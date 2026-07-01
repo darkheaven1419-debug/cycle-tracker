@@ -1,129 +1,321 @@
 /* ================================================================
-   DESIGN TOKENS — Rose Petal × Warm Clay v3
-   Warm rose-beige canvas, rich rose accents, chocolate text
-   Refined for Anđelin Ciklus — softer, more elegant, more premium
+   DESIGN TOKENS — Warm Clay × Deep Rose v4
+   ================================================================
+   A complete color system redesign for Anđelin Ciklus.
+
+   Strategy:
+     Light mode — "Warm letter paper"
+       A warm rose-cream canvas with pure white cards for real
+       hierarchy. Deep chocolate text, rich rose accents, amber gold.
+       Warm without being generic beige.
+
+     Dark mode — "Midnight rose"
+       True near-black background (not muddy brown). Warm rose
+       accents glow against the dark. Warm-tinted light text for
+       readability. Jewel-toned secondary accents.
+
+   Surfaces (light):
+     bg (L 0.925) → card (L 0.985) → elevated (L ~1.0)
+     15+ points of lightness separation = real hierarchy
+
+   Surfaces (dark):
+     bg (L 0.10) → card (L 0.15) → elevated (L 0.18)
+     Clean steps, no muddiness
    ================================================================ */
+
 :root {
-  --primary: #c45a6b; --primary-hover: #a34455; --primary-light: #f2d5db;
-  --rose: #c45a6b; --rose-dark: #a34455; --rose-light: #fdf0f3; --rose-mist: #f5e0e6;
-  --love: #c45a6b; --lipa: #7a9e7e; --dust: #d4bfb5; --gold: #c49a5e; --gold-light: #FFF8E1;
-  --gold-muted: #d4b88a;
-  --coral: #e88a8a; --coral-light: #fde8e8;
-  --amber: #d4a85a; --amber-light: #f8f0da;
-  --mint: #7ab8a0; --mint-light: #e0f5ee;
-  --teal: #5e8b7a; --teal-light: #e0efe8; --teal-dark: #3d6b55;
-  --sage: #80a590; --sage-light: #e4f0ea; --sage-dark: #5a8068;
-  --lavender: #b8a0c8; --lavender-dark: #9078a8; --lavender-light: #efe8f5;
-  --error: #E53935; --warm-bg: #FFF3E0; --warm-text: #E65100; --dot-short: #FFCDD2;
-  --bg: #ede0da; --card: #fdf8f5; --elevated: #fffbf9;
-  --text: #3d2828; --text-muted: #6d5b58;
-  --border: #c9b4ac; --border-soft: #e3d5ce;
-  --radius: 16px; --radius-sm: 10px; --radius-md: 14px; --radius-lg: 22px; --radius-full: 9999px;
+  /* ---- Primary / Accent — Deep Rose ---- */
+  --primary: #b8485a;
+  --primary-hover: #9a3646;
+  --primary-light: #f7e4e8;
+
+  /* ---- Rose family — consolidated to 3 tiers ---- */
+  --rose: #b8485a;
+  --rose-dark: #9a3646;
+  --rose-light: #f9eef0;
+  --rose-mist: #f4e3e7;
+
+  /* ---- Semantic aliases ---- */
+  --love: #b8485a;
+  --love-dark: #9a3646;
+  --love-light: #fdf2f4;
+
+  /* ---- Secondary accents ---- */
+  --lipa: #7a9e7e;       /* Serbian linden — keep */
+  --dust: #cbb5ab;       /* Warm mid-tone for subtle surfaces */
+  --gold: #b89147;       /* Amber gold — richer, less yellow */
+  --gold-light: #f7efe2;
+  --gold-muted: #c4a67a;
+  --gold-dark: #8a6e3a;
+
+  /* ---- Complementary accents — tonal, not competing ---- */
+  --coral: #e07a7a;
+  --coral-light: #fce8e8;
+  --amber: #c49a50;
+  --amber-light: #f6ede0;
+  --mint: #7ab8a0;
+  --mint-light: #e0f5ee;
+  --teal: #5a8b78;
+  --teal-light: #e0efe8;
+  --teal-dark: #3d6b55;
+  --sage: #7a9e7e;
+  --sage-light: #e4f0ea;
+  --sage-dark: #5a8068;
+  --lavender: #b09cc4;
+  --lavender-dark: #8a74a0;
+  --lavender-light: #ede6f6;
+
+  /* ---- State colors ---- */
+  --error: #d32f2f;
+  --warm-bg: #fdf3e0;
+  --warm-text: #c44a00;
+
+  /* ---- Dots ---- */
+  --dot-short: #f5c6c6;
+
+  /* ---- SURFACE HIERARCHY — Light ---- */
+  --bg: oklch(0.925 0.014 50);           /* Warm rose-cream, not generic beige */
+  --card: oklch(0.985 0.005 48);         /* Near-white with whisper of warmth */
+  --elevated: oklch(0.998 0.002 48);     /* Purest white for modals */
+
+  /* ---- TEXT — Light ---- */
+  --text: oklch(0.16 0.022 30);          /* Deep warm chocolate — high contrast */
+  --text-muted: oklch(0.40 0.028 45);    /* Medium warm brown */
+
+  /* ---- BORDERS — Light ---- */
+  --border: oklch(0.72 0.015 48);        /* Visible warm border */
+  --border-soft: oklch(0.85 0.010 48);   /* Subtle border */
+  --border-light: oklch(0.90 0.008 48);  /* Very subtle border */
+
+  /* ---- Shape ---- */
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 9999px;
   --calendar-cell-radius: 16px;
-  --calendar-glow-period: 0 0 20px rgba(196, 90, 107, 0.25);
-  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.25);
-  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.3);
-  --calendar-hover-lift: 0 4px 12px rgba(196, 90, 107, 0.12);
-  /* Ring-based phase indicator colors (desaturated for borders) */
-  --ring-period: #d4787e;
-  --ring-ovulation: #5e9baa;
+
+  /* ---- Calendar glows (muted for light) ---- */
+  --calendar-glow-period: 0 0 20px rgba(184, 72, 90, 0.15);
+  --calendar-glow-ovulation: 0 0 20px rgba(90, 139, 120, 0.18);
+  --calendar-glow-selected: 0 0 20px rgba(184, 145, 71, 0.18);
+  --calendar-hover-lift: 0 4px 12px rgba(184, 72, 90, 0.08);
+
+  /* ---- Ring-based phase indicator colors ---- */
+  --ring-period: #c47078;
+  --ring-ovulation: #5a8b78;
   --ring-fertile: #7ab8a0;
-  --ring-luteal: #b8a0c8;
-  --ring-follicular: #80a590;
-  --ring-predicted: rgba(180, 150, 150, 0.35);
-  /* Seasonal accent colors */
-  --season-spring: #e8867c;
-  --season-summer: #c45a6b;
-  --season-autumn: #d49a5e;
+  --ring-luteal: #b09cc4;
+  --ring-follicular: #7a9e7e;
+  --ring-predicted: rgba(160, 130, 130, 0.30);
+
+  /* ---- Seasonal accent colors ---- */
+  --season-spring: #e07a7a;
+  --season-summer: #b8485a;
+  --season-autumn: #b89147;
   --season-winter: #9a7ab0;
-  /* Inner shadow for depth */
+
+  /* ---- Inner shadow for depth ---- */
   --shadow-inner-sm: inset 0 0 0 1px rgba(80, 40, 40, 0.04);
-  /* Refined shadow system — 4 tiers with better depth */
-  --shadow-xs: 0 0 0.5px rgba(80,40,40,0.06), 0 1px 1px rgba(80,40,40,0.04);
-  --shadow-sm: 0 1px 3px rgba(80,40,40,0.07), 0 1px 2px rgba(80,40,40,0.04);
-  --shadow-md: 0 4px 12px rgba(80,40,40,0.06), 0 2px 6px rgba(80,40,40,0.04);
-  --shadow-lg: 0 8px 24px rgba(80,40,40,0.08), 0 4px 12px rgba(80,40,40,0.04);
-  --shadow-xl: 0 16px 40px rgba(80,40,40,0.10), 0 8px 20px rgba(80,40,40,0.05);
-  --shadow-glow: 0 0 20px rgba(196,90,107,0.08);
-  --fab-shadow: 0 6px 22px rgba(196,90,107,0.28);
-  --font: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* ---- Shadow system — 4 tiers, warm-tinted ---- */
+  --shadow-xs: 0 0 0.5px rgba(50, 30, 30, 0.05), 0 1px 1px rgba(50, 30, 30, 0.03);
+  --shadow-sm: 0 1px 3px rgba(50, 30, 30, 0.05), 0 1px 2px rgba(50, 30, 30, 0.03);
+  --shadow-md: 0 4px 12px rgba(50, 30, 30, 0.05), 0 2px 6px rgba(50, 30, 30, 0.03);
+  --shadow-lg: 0 8px 24px rgba(50, 30, 30, 0.07), 0 4px 12px rgba(50, 30, 30, 0.04);
+  --shadow-xl: 0 16px 40px rgba(50, 30, 30, 0.09), 0 8px 20px rgba(50, 30, 30, 0.05);
+  --shadow-glow: 0 0 20px rgba(184, 72, 90, 0.06);
+  --fab-shadow: 0 6px 22px rgba(184, 72, 90, 0.25);
+
+  /* ---- Font ---- */
+  --font: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei",
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* ---- Blur ---- */
   --blur: blur(14px) saturate(1.05);
   --blur-heavy: blur(24px) saturate(1.08);
-  /* Type scale */
-  --text-xs: 0.65rem; --text-sm: 0.72rem; --text-base: 0.85rem;
-  --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.6rem; --text-2xl: 2.2rem;
-  /* Decorative gradients */
-  --gradient-rose: linear-gradient(135deg, #fdf0f3, #faf0f2);
-  --gradient-card: linear-gradient(145deg, #fdf8f5 0%, #fffbfa 100%);
-  --gradient-warm: linear-gradient(135deg, #fdf0f3, #f5ede8);
-  --gradient-gold: linear-gradient(145deg, #faf3ef 0%, #fdf0f3 150%);
+
+  /* ---- Type scale ---- */
+  --text-xs: 0.62rem;
+  --text-sm: 0.7rem;
+  --text-base: 0.82rem;
+  --text-md: 0.92rem;
+  --text-lg: 1.1rem;
+  --text-xl: 1.4rem;
+  --text-2xl: 1.9rem;
+
+  /* ---- Decorative gradients (updated for new palette) ---- */
+  --gradient-rose: linear-gradient(135deg, #f9eef0, #faf0f2);
+  --gradient-card: linear-gradient(145deg, oklch(0.985 0.005 48) 0%, oklch(0.995 0.003 50) 100%);
+  --gradient-warm: linear-gradient(135deg, #f9eef0, #f5ede8);
+  --gradient-gold: linear-gradient(145deg, #faf3ef 0%, #fdf2f4 150%);
   --gradient-teal: linear-gradient(135deg, #e0efe8, #d4eae0);
-  --gradient-love: linear-gradient(135deg, #c45a6b, #a34455);
+  --gradient-love: linear-gradient(135deg, #b8485a, #9a3646);
 }
 
+/* ================================================================
+   DARK THEME — Midnight Rose
+   ================================================================ */
 [data-theme="dark"] {
-  --primary: #d47888; --primary-hover: #c45a6b; --primary-light: #352028;
-  --rose: #d47888; --rose-dark: #c45a6b; --rose-light: #2a1c20; --rose-mist: #302228;
-  --love: #d47888; --lipa: #8fc7b0; --dust: #3d302c; --gold: #c49a5e;
-  --gold-light: #3d3020; --gold-muted: #8a7a5e;
-  --teal: #7ab5a0; --teal-light: #182822;
-  --sage: #8fc7b0; --sage-light: #182820;
-  --lavender: #c8a8d8; --lavender-dark: #a080b8; --lavender-light: #261e2a;
-  --error: #EF5350; --warm-bg: #3D2000; --warm-text: #FFB74D; --dot-short: #5A3030;
-  --bg: #1a1516; --card: #33292c; --elevated: #403538;
-  --text: #e8dcd8; --text-muted: #a09896;
-  --border: #514448; --border-soft: #332a2c;
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.20);
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.22);
-  --shadow-md: 0 4px 14px rgba(0,0,0,0.30), 0 8px 28px rgba(0,0,0,0.18);
-  --shadow-lg: 0 8px 28px rgba(0,0,0,0.35), 0 16px 44px rgba(0,0,0,0.22);
-  --shadow-xl: 0 16px 48px rgba(0,0,0,0.40), 0 24px 60px rgba(0,0,0,0.25);
-  --shadow-glow: 0 0 24px rgba(212,120,136,0.15);
-  --fab-shadow: 0 6px 22px rgba(212,120,136,0.26);
-  --calendar-glow-period: 0 0 20px rgba(212, 122, 138, 0.2);
-  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.15);
-  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.2);
-  --calendar-hover-lift: 0 4px 12px rgba(212, 122, 138, 0.1);
+  /* ---- Primary / Accent ---- */
+  --primary: #c47078;
+  --primary-hover: #b8485a;
+  --primary-light: #331c22;
+
+  /* ---- Rose family ---- */
+  --rose: #c47078;
+  --rose-dark: #b8485a;
+  --rose-light: #2a191d;
+  --rose-mist: #301e22;
+
+  /* ---- Semantic aliases ---- */
+  --love: #c47078;
+  --love-dark: #b8485a;
+  --love-light: #3a2024;
+
+  /* ---- Secondary accents ---- */
+  --lipa: #8fc7b0;
+  --dust: #3d302c;
+  --gold: #b89147;
+  --gold-light: #3d3122;
+  --gold-muted: #8a7a5e;
+  --gold-dark: #6a5a42;
+
+  /* ---- Complementary ---- */
+  --coral: #e07a7a;
+  --coral-light: #3a1e1e;
+  --amber: #c49a50;
+  --amber-light: #3a2e1e;
+  --mint: #7ab8a0;
+  --mint-light: #1a2e28;
+  --teal: #7ab5a0;
+  --teal-light: #182822;
+  --sage: #8fc7b0;
+  --sage-light: #182820;
+  --lavender: #c8a8d8;
+  --lavender-dark: #a080b8;
+  --lavender-light: #261e2a;
+
+  /* ---- State ---- */
+  --error: #e53935;
+  --warm-bg: #3a2410;
+  --warm-text: #ffb74d;
+  --dot-short: #5a3030;
+
+  /* ---- SURFACE HIERARCHY — Dark ---- */
+  --bg: oklch(0.10 0.006 30);            /* Near-black with warm cast */
+  --card: oklch(0.15 0.008 30);          /* Subtle lift from bg */
+  --elevated: oklch(0.18 0.010 30);      /* Modals, dropdowns, bottom nav */
+
+  /* ---- TEXT — Dark ---- */
+  --text: oklch(0.88 0.012 35);          /* Warm light — readable */
+  --text-muted: oklch(0.50 0.020 38);    /* Medium warm */
+
+  /* ---- BORDERS — Dark ---- */
+  --border: oklch(0.25 0.010 30);        /* Visible dark border */
+  --border-soft: oklch(0.20 0.008 30);   /* Subtle dark border */
+  --border-light: oklch(0.16 0.006 30);  /* Very subtle dark border */
+
+  /* ---- Shadows — Dark (deeper, cooler) ---- */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35), 0 8px 28px rgba(0, 0, 0, 0.20);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.40), 0 16px 44px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.45), 0 24px 60px rgba(0, 0, 0, 0.28);
+  --shadow-glow: 0 0 24px rgba(196, 112, 120, 0.12);
+  --fab-shadow: 0 6px 22px rgba(196, 112, 120, 0.22);
+
+  /* ---- Calendar glows (stronger in dark) ---- */
+  --calendar-glow-period: 0 0 20px rgba(196, 112, 120, 0.18);
+  --calendar-glow-ovulation: 0 0 20px rgba(122, 181, 160, 0.15);
+  --calendar-glow-selected: 0 0 20px rgba(184, 145, 71, 0.18);
+  --calendar-hover-lift: 0 4px 12px rgba(196, 112, 120, 0.08);
+
+  /* ---- Blur (slightly stronger in dark) ---- */
   --blur: blur(14px) saturate(1.1);
   --blur-heavy: blur(24px) saturate(1.15);
-  --ring-period: #d47888;
+
+  /* ---- Ring colors — dark mode ---- */
+  --ring-period: #c47078;
   --ring-ovulation: #7ab5a0;
   --ring-fertile: #8fc7b0;
   --ring-luteal: #c8a8d8;
   --ring-follicular: #8fc7b0;
-  --ring-predicted: rgba(200, 170, 170, 0.2);
-  --season-spring: #e8867c;
-  --season-summer: #d47888;
-  --season-autumn: #d49a5e;
-  --season-winter: #b89ad0;
-}
+  --ring-predicted: rgba(180, 150, 150, 0.18);
 
-/* ---- Phase Color Variables ---- */
-:root {
-  --phase1: #E8877B; --phase1-light: #FDE8E4; --phase1-dark: #D46B5E; --phase1-grad: linear-gradient(135deg, #E8877B, #D46B5E);
-  --phase2: #F0985C; --phase2-light: #FEF0E2; --phase2-dark: #D97D3E; --phase2-grad: linear-gradient(135deg, #F0985C, #E88340);
-  --phase3: #4EB8B0; --phase3-light: #E0F5F3; --phase3-dark: #3A9B94; --phase3-grad: linear-gradient(135deg, #4EB8B0, #3AA59C);
-  --phase4: #E8919C; --phase4-light: #FDE8EB; --phase4-dark: #D47280; --phase4-grad: linear-gradient(135deg, #E8919C, #D47786);
-  --phase5: #9B7EC4; --phase5-light: #EDE6F6; --phase5-dark: #7E61B0; --phase5-grad: linear-gradient(135deg, #9B7EC4, #8568B8);
-  --phase6: #D4A843; --phase6-light: #F8F0DA; --phase6-dark: #B88E2E; --phase6-grad: linear-gradient(135deg, #D4A843, #C49A35);
-}
-[data-theme="dark"] {
-  --phase1: #E8877B; --phase1-light: #3A201E; --phase1-dark: #E8877B;
-  --phase2: #F0985C; --phase2-light: #3A2816; --phase2-dark: #F0985C;
-  --phase3: #4EB8B0; --phase3-light: #142A28; --phase3-dark: #4EB8B0;
-  --phase4: #E8919C; --phase4-light: #362024; --phase4-dark: #E8919C;
-  --phase5: #9B7EC4; --phase5-light: #221E2E; --phase5-dark: #9B7EC4;
-  --phase6: #D4A843; --phase6-light: #2E2412; --phase6-dark: #D4A843;
-  /* Dark theme gradients */
-  --gradient-rose: linear-gradient(135deg, #2a1c20, #1e181a);
-  --gradient-card: linear-gradient(145deg, #241e20 0%, #1f1a1c 100%);
-  --gradient-warm: linear-gradient(135deg, #2a1c20, #2a221e);
+  /* ---- Seasonal accents ---- */
+  --season-spring: #e07a7a;
+  --season-summer: #c47078;
+  --season-autumn: #c49a5e;
+  --season-winter: #b89ad0;
+
+  /* ---- Gradients ---- */
+  --gradient-rose: linear-gradient(135deg, #2a191d, #1e181a);
+  --gradient-card: linear-gradient(145deg, oklch(0.15 0.008 30) 0%, oklch(0.14 0.006 32) 100%);
+  --gradient-warm: linear-gradient(135deg, #2a191d, #2a221e);
   --gradient-gold: linear-gradient(145deg, #302520 0%, #2e2824 100%);
   --gradient-teal: linear-gradient(135deg, #182822, #142e28);
-  --gradient-love: linear-gradient(135deg, #d47888, #c45a6b);
+  --gradient-love: linear-gradient(135deg, #c47078, #b8485a);
 }
 
-/* ---- Phase utility classes ---- */
+/* ================================================================
+   PHASE COLORS — Cycle phase indicator system
+   (unchanged structure, values adjusted for palette cohesion)
+   ================================================================ */
+:root {
+  --phase1: #e07a7a;
+  --phase1-light: #fce8e8;
+  --phase1-dark: #c45a5a;
+  --phase1-grad: linear-gradient(135deg, #e07a7a, #c45a5a);
+
+  --phase2: #e89a5a;
+  --phase2-light: #fef0e2;
+  --phase2-dark: #d07d3e;
+  --phase2-grad: linear-gradient(135deg, #e89a5a, #d07d3e);
+
+  --phase3: #4eb8b0;
+  --phase3-light: #e0f5f3;
+  --phase3-dark: #3a9b94;
+  --phase3-grad: linear-gradient(135deg, #4eb8b0, #3aa59c);
+
+  --phase4: #e07a8a;
+  --phase4-light: #fce8eb;
+  --phase4-dark: #c45a6a;
+  --phase4-grad: linear-gradient(135deg, #e07a8a, #c45a6a);
+
+  --phase5: #9b7ec4;
+  --phase5-light: #ede6f6;
+  --phase5-dark: #7e61b0;
+  --phase5-grad: linear-gradient(135deg, #9b7ec4, #8568b8);
+
+  --phase6: #d4a843;
+  --phase6-light: #f8f0da;
+  --phase6-dark: #b88e2e;
+  --phase6-grad: linear-gradient(135deg, #d4a843, #c49a35);
+}
+
+[data-theme="dark"] {
+  --phase1: #e07a7a;
+  --phase1-light: #3a1e1e;
+  --phase1-dark: #e07a7a;
+  --phase2: #e89a5a;
+  --phase2-light: #3a2816;
+  --phase2-dark: #e89a5a;
+  --phase3: #4eb8b0;
+  --phase3-light: #142a28;
+  --phase3-dark: #4eb8b0;
+  --phase4: #e07a8a;
+  --phase4-light: #361e22;
+  --phase4-dark: #e07a8a;
+  --phase5: #9b7ec4;
+  --phase5-light: #221e2e;
+  --phase5-dark: #9b7ec4;
+  --phase6: #d4a843;
+  --phase6-light: #2e2412;
+  --phase6-dark: #d4a843;
+}
+
+/* ---- Phase utility classes (unchanged structure) ---- */
 .phase-clr-1 { --phase-clr: var(--phase1); --phase-clr-light: var(--phase1-light); --phase-clr-dark: var(--phase1-dark); --phase-grad: var(--phase1-grad); }
 .phase-clr-2 { --phase-clr: var(--phase2); --phase-clr-light: var(--phase2-light); --phase-clr-dark: var(--phase2-dark); --phase-grad: var(--phase2-grad); }
 .phase-clr-3 { --phase-clr: var(--phase3); --phase-clr-light: var(--phase3-light); --phase-clr-dark: var(--phase3-dark); --phase-grad: var(--phase3-grad); }
@@ -131,12 +323,15 @@
 .phase-clr-5 { --phase-clr: var(--phase5); --phase-clr-light: var(--phase5-light); --phase-clr-dark: var(--phase5-dark); --phase-grad: var(--phase5-grad); }
 .phase-clr-6 { --phase-clr: var(--phase6); --phase-clr-light: var(--phase6-light); --phase-clr-dark: var(--phase6-dark); --phase-grad: var(--phase6-grad); }
 
-/* FESTIVAL THEME CLASSES */
-body.festival-spring{--love:#d32f2f;--rose:#d32f2f;--rose-dark:#b71c1c;--gold:#ff6f00;--gradient-love:linear-gradient(135deg,#d32f2f,#b71c1c)}
-body.festival-midautumn{--gold:#f39c12;--love:#e67e22;--rose:#f39c12;--gradient-love:linear-gradient(135deg,#e67e22,#d35400)}
-body.festival-valentine{--love:#ff69b4;--rose:#ff69b4;--rose-light:#fff0f5;--gold:#ff1493;--gradient-love:linear-gradient(135deg,#ff69b4,#e91e90)}
-body.festival-newyear{--gold:#ffd700;--love:#c0c0c0;--gradient-love:linear-gradient(135deg,#c0c0c0,#a0a0a0)}
-body.festival-sava{--love:#0C4076;--rose:#C62828;--gold:#FFFFFF;--rose-light:#e8eaf6;--gradient-love:linear-gradient(135deg,#0C4076,#1a237e)}
-body.festival-orthodoxmas{--love:#FFFFFF;--rose:#FFD700;--rose-light:#fff8e1;--gold:#FFD700;--gradient-love:linear-gradient(135deg,#FFD700,#FFA000)}
-body.festival-easter{--love:#FF69B4;--rose:#90EE90;--rose-light:#f0fff0;--gold:#FFD700;--gradient-love:linear-gradient(135deg,#FF69B4,#4CAF50)}
-body.festival-victory{--love:#E53935;--rose:#FF6F00;--rose-light:#fff3e0;--gold:#FFD700;--gradient-love:linear-gradient(135deg,#E53935,#BF360C)}
+/* ================================================================
+   FESTIVAL THEME CLASSES
+   (kept for compatibility, values adjusted for new palette)
+   ================================================================ */
+body.festival-spring { --love: #c62828; --rose: #c62828; --rose-dark: #b71c1c; --gold: #e65100; --gradient-love: linear-gradient(135deg, #c62828, #b71c1c); }
+body.festival-midautumn { --gold: #f39c12; --love: #e67e22; --rose: #f39c12; --gradient-love: linear-gradient(135deg, #e67e22, #d35400); }
+body.festival-valentine { --love: #ff69b4; --rose: #ff69b4; --rose-light: #fff0f5; --gold: #ff1493; --gradient-love: linear-gradient(135deg, #ff69b4, #e91e90); }
+body.festival-newyear { --gold: #ffd700; --love: #c0c0c0; --gradient-love: linear-gradient(135deg, #c0c0c0, #a0a0a0); }
+body.festival-sava { --love: #0C4076; --rose: #C62828; --gold: #FFFFFF; --rose-light: #e8eaf6; --gradient-love: linear-gradient(135deg, #0C4076, #1a237e); }
+body.festival-orthodoxmas { --love: #FFFFFF; --rose: #FFD700; --rose-light: #fff8e1; --gold: #FFD700; --gradient-love: linear-gradient(135deg, #FFD700, #FFA000); }
+body.festival-easter { --love: #FF69B4; --rose: #90EE90; --rose-light: #f0fff0; --gold: #FFD700; --gradient-love: linear-gradient(135deg, #FF69B4, #4CAF50); }
+body.festival-victory { --love: #E53935; --rose: #FF6F00; --rose-light: #fff3e0; --gold: #FFD700; --gradient-love: linear-gradient(135deg, #E53935, #BF360C); }
