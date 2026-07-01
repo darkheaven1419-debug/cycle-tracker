@@ -15,8 +15,9 @@
   --sage: #80a590; --sage-light: #e4f0ea; --sage-dark: #5a8068;
   --lavender: #b8a0c8; --lavender-dark: #9078a8; --lavender-light: #efe8f5;
   --error: #E53935; --warm-bg: #FFF3E0; --warm-text: #E65100; --dot-short: #FFCDD2;
-  --bg: #ede0da; --card: #faf3ef; --text: #3d2828; --text-muted: #6d5b58;
-  --border: #dccfc8; --border-soft: #e5dad4;
+  --bg: #ede0da; --card: #fdf8f5; --elevated: #fffbf9;
+  --text: #3d2828; --text-muted: #6d5b58;
+  --border: #c9b4ac; --border-soft: #e3d5ce;
   --radius: 16px; --radius-sm: 10px; --radius-md: 14px; --radius-lg: 22px; --radius-full: 9999px;
   --calendar-cell-radius: 16px;
   --calendar-glow-period: 0 0 20px rgba(196, 90, 107, 0.25);
@@ -53,7 +54,7 @@
   --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.6rem; --text-2xl: 2.2rem;
   /* Decorative gradients */
   --gradient-rose: linear-gradient(135deg, #fdf0f3, #faf0f2);
-  --gradient-card: linear-gradient(145deg, #faf3ef 0%, #fdf8f6 100%);
+  --gradient-card: linear-gradient(145deg, #fdf8f5 0%, #fffbfa 100%);
   --gradient-warm: linear-gradient(135deg, #fdf0f3, #f5ede8);
   --gradient-gold: linear-gradient(145deg, #faf3ef 0%, #fdf0f3 150%);
   --gradient-teal: linear-gradient(135deg, #e0efe8, #d4eae0);
@@ -69,8 +70,9 @@
   --sage: #8fc7b0; --sage-light: #182820;
   --lavender: #c8a8d8; --lavender-dark: #a080b8; --lavender-light: #261e2a;
   --error: #EF5350; --warm-bg: #3D2000; --warm-text: #FFB74D; --dot-short: #5A3030;
-  --bg: #1a1516; --card: #241e20; --text: #e8dcd8; --text-muted: #a09896;
-  --border: #30282a; --border-soft: #282022;
+  --bg: #1a1516; --card: #33292c; --elevated: #403538;
+  --text: #e8dcd8; --text-muted: #a09896;
+  --border: #514448; --border-soft: #332a2c;
   --shadow-xs: 0 1px 2px rgba(0,0,0,0.20);
   --shadow-sm: 0 2px 6px rgba(0,0,0,0.22);
   --shadow-md: 0 4px 14px rgba(0,0,0,0.30), 0 8px 28px rgba(0,0,0,0.18);

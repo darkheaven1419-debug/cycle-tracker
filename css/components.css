@@ -168,7 +168,7 @@
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; display:flex; align-items:flex-end; justify-content:center; backdrop-filter:blur(4px); }
 .modal-overlay.hidden { display:none; }
 .modal-overlay.closing { animation:overlayFadeOut .25s ease forwards; }
-.modal { background:var(--gradient-card); border-radius:var(--radius-lg) var(--radius-lg) 0 0; width:100%; max-width:420px; padding:28px 24px calc(36px + env(safe-area-inset-bottom, 0px)); animation:slideUp .35s cubic-bezier(.32,.72,0,1); max-height:85vh; overflow-y:auto; box-shadow:0 -8px 40px rgba(0,0,0,.12); -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+.modal { background:var(--elevated); border-radius:var(--radius-lg) var(--radius-lg) 0 0; width:100%; max-width:420px; padding:28px 24px calc(36px + env(safe-area-inset-bottom, 0px)); animation:slideUp .35s cubic-bezier(.32,.72,0,1); max-height:85vh; overflow-y:auto; box-shadow:0 -8px 40px rgba(0,0,0,.12); -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
 .modal.closing { animation:slideDown .25s cubic-bezier(.4,0,1,1) forwards; }
 .modal::-webkit-scrollbar { width:3px; }
 .modal h2 { font-size:1rem; margin-bottom:12px; text-align:center; font-weight:700; }
@@ -185,7 +185,7 @@
 
 /* ---- Import modal ---- */
 .import-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:999; display:flex; align-items:center; justify-content:center; animation:fadeIn .2s; backdrop-filter:blur(4px); }
-.import-modal { background:var(--card); border-radius:var(--radius); padding:24px; width:90%; max-width:400px; box-shadow:var(--shadow-lg); }
+.import-modal { background:var(--elevated); border-radius:var(--radius); padding:24px; width:90%; max-width:400px; box-shadow:var(--shadow-lg); }
 .import-modal h3 { font-size:.85rem; margin-bottom:12px; color:var(--text); }
 .import-modal textarea { width:100%; height:100px; border:1px solid var(--border); border-radius:12px; padding:12px; font-size:.72rem; font-family:var(--font); background:var(--bg); color:var(--text); resize:none; }
 .import-modal textarea:focus { outline:none; border-color:var(--love); }
@@ -382,7 +382,7 @@
 /* ---- Tabs — Fixed Bottom Navigation (Modern) ---- */
 .tabs-nav { position:fixed; bottom:0; left:0; right:0; margin:0 auto; width:100%; max-width:420px; z-index:60; pointer-events:none; }
 .tabs-nav h2 { display:none; }
-.tabs { display:flex; padding:6px 6px; box-shadow:0 -2px 20px rgba(80,40,40,0.08); gap:3px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--card); margin-bottom:0; pointer-events:auto; padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--border-soft); border-left:1px solid var(--border-soft); border-right:1px solid var(--border-soft); }
+.tabs { display:flex; padding:6px 6px; box-shadow:0 -2px 20px rgba(80,40,40,0.08); gap:3px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--elevated); margin-bottom:0; pointer-events:auto; padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--border-soft); border-left:1px solid var(--border-soft); border-right:1px solid var(--border-soft); }
 [data-theme="dark"] .tabs { border-top-color:var(--border); box-shadow:0 -2px 20px rgba(0,0,0,0.40); }
 .tab { flex:1; text-align:center; padding:10px 4px 8px; font-size:.72rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:14px; transition:background .2s cubic-bezier(.22,1,.36,1), color .2s cubic-bezier(.22,1,.36,1), box-shadow .2s cubic-bezier(.22,1,.36,1), transform .12s cubic-bezier(.22,1,.36,1); border:none; background:none; font-family:var(--font); touch-action:manipulation; min-width:0; position:relative; }
 .tab .tb-label { display:block; font-size:.6rem; margin-top:2px; line-height:1; letter-spacing:.01em; }
