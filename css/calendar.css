@@ -152,7 +152,7 @@
 .day .cal-marker-emoji { font-size: 0.42rem; line-height: 1; }
 
 /* ---- Legend ---- */
-.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; font-size: 0.62rem; color: var(--text-muted); justify-content: center; padding: 10px 16px; background: rgba(250, 243, 239, 0.5); border-radius: 14px; border: 1px solid rgba(200, 180, 170, 0.06); box-shadow: var(--shadow-xs); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; font-size: 0.62rem; color: var(--text-muted); justify-content: center; padding: 10px 16px; background: rgba(250, 243, 239, 0.5); border-radius: 14px; border: 1px solid var(--border-soft); box-shadow: var(--shadow-xs); }
 [data-theme="dark"] .legend { background: rgba(36, 30, 32, 0.5); }
 .legend span { display: inline-flex; align-items: center; gap: 5px; padding: 2px 4px; border-radius: 6px; }
 .legend span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; border: 1.5px solid transparent; box-sizing: border-box; }
@@ -161,7 +161,7 @@
 .legend .l-follicular::before { border-color: var(--ring-follicular); background: rgba(128, 165, 144, 0.05); border-bottom-width: 3px; }
 .legend .l-luteal::before { border-color: var(--ring-luteal); background: rgba(184, 160, 200, 0.05); border-top-width: 3px; }
 .legend .l-heart::before { content: "\2665"; background: none; color: var(--love); font-size: 0.55rem; line-height: 1; width: auto; height: auto; border: none; }
-.pred-legend { font-size: 0.58rem; color: var(--text-muted); text-align: center; margin-top: 6px; opacity: 0.55; padding: 4px 0; font-style: italic; }
+.pred-legend { font-size: 0.58rem; color: var(--text); text-align: center; margin-top: 6px; opacity: 0.55; padding: 4px 0; font-style: italic; }
 .cal-nav .month-label .season-tag { display: inline-block; font-size: 0.55rem; font-weight: 600; opacity: 0.4; margin-left: 6px; vertical-align: middle; }
 
 /* Keyframes */

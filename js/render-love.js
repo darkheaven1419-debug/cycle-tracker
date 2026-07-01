@@ -208,11 +208,12 @@ function renderHug() {
     const time = new Date(hug.time);
     const timeStr = String(time.getHours()).padStart(2, '0') + ':' + String(time.getMinutes()).padStart(2, '0');
     let html = '<div class="hug-received">';
-    if (streak > 1)
-      {html +=
+    if (streak > 1) {
+      html +=
         '<div class="hug-streak-badge">🔥 ' +
         (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') +
-        '</div>';}
+        '</div>';
+    }
     html += '<span class="hug-icon-wrap"><span class="hug-icon">🤗</span></span>';
     html += '<div class="hug-text">' + sender + ' ' + (lang === 'sr' ? 'te zagrlio/la! 💫' : lang === 'en' ? 'hugged you! 💫' : '抱了你！💫') + '</div>';
     html += '<div class="hug-time">' + timeStr + '</div>';
@@ -245,11 +246,12 @@ function renderHug() {
   } else {
     const label = t('hugSendBtn');
     let html = '';
-    if (streak > 1)
-      {html +=
+    if (streak > 1) {
+      html +=
         '<div style="text-align:center"><div class="hug-streak-badge">🔥 ' +
         (lang === 'sr' ? streak + ' dana zaredom!' : lang === 'en' ? streak + '-day streak!' : '连续 ' + streak + ' 天！') +
-        '</div></div>';}
+        '</div></div>';
+    }
     html += '<button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 ' + label + '</button>';
     card.innerHTML = html;
   }

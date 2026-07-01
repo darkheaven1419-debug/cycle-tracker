@@ -440,7 +440,7 @@ function initExtraHolidays() {
     if (!dup) HOLIDAYS.push(h);
   });
   HOLIDAYS._mergedExtra = true;
-  if (typeof _rebuildHolidayCache === "function") _rebuildHolidayCache();
+  if (typeof _rebuildHolidayCache === 'function') _rebuildHolidayCache();
 }
 
 // ── Auto-init ──────────────────────────────────────────────────
