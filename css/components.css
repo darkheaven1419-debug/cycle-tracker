@@ -6,7 +6,7 @@
 /* ---- Glass cards (shared card styling) — refined v3 ---- */
 .progress-section, .calendar, .card, .setting-row, .tip-card, .reminder-banner {
   background: var(--gradient-card);
-  border: 1px solid rgba(200,180,170,0.10);
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, border-color .3s ease;
@@ -15,19 +15,19 @@
 .progress-section:hover, .calendar:hover, .card:hover, .setting-row:hover, .tip-card:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
-  border-color: rgba(200,180,170,.15);
+  border-color: var(--border);
 }
 [data-theme="dark"] .progress-section,
 [data-theme="dark"] .calendar, [data-theme="dark"] .card,
 [data-theme="dark"] .setting-row, [data-theme="dark"] .tip-card {
   background: var(--gradient-card);
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
 }
 [data-theme="dark"] .progress-section:hover,
 [data-theme="dark"] .calendar:hover, [data-theme="dark"] .card:hover {
   box-shadow: var(--shadow-md);
-  border-color: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
 }
 [data-theme="dark"] .tabs { box-shadow: 0 -2px 20px rgba(0,0,0,0.40); }
 
@@ -43,7 +43,7 @@
 /* ---- Header — refined ---- */
 .header { display:flex; align-items:center; justify-content:space-between; padding:10px 6px 4px 6px; position:relative; min-height:48px; flex-wrap:wrap; }
 .header h1 { font-size:1.05rem; font-weight:700; letter-spacing:-.02em; cursor:default; user-select:none; flex:1; text-align:center; background:linear-gradient(135deg,var(--love),var(--rose-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.header-actions { display:flex; gap:4px; align-items:center; background:var(--card); border-radius:22px; padding:3px 4px; box-shadow:var(--shadow-xs); position:absolute; right:6px; top:8px; border:1px solid rgba(200,180,170,0.06); }
+.header-actions { display:flex; gap:4px; align-items:center; background:var(--card); border-radius:22px; padding:3px 4px; box-shadow:var(--shadow-xs); position:absolute; right:6px; top:8px; border:1px solid var(--border-soft); }
 .header-row2 { width:100%; display:flex; justify-content:center; align-items:center; gap:8px; padding:4px 0 4px 0; }
 
 .lang-switch { display:flex; gap:2px; background:var(--border); border-radius:14px; padding:2px; }
@@ -371,7 +371,7 @@
 /* ---- Tabs — Fixed Bottom Navigation (Modern) ---- */
 .tabs-nav { position:fixed; bottom:0; left:0; right:0; margin:0 auto; width:100%; max-width:420px; z-index:60; pointer-events:none; }
 .tabs-nav h2 { display:none; }
-.tabs { display:flex; padding:6px 6px; box-shadow:0 -2px 20px rgba(80,40,40,0.08); gap:3px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--card); margin-bottom:0; pointer-events:auto; padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(200,180,170,0.06); }
+.tabs { display:flex; padding:6px 6px; box-shadow:0 -2px 20px rgba(80,40,40,0.08); gap:3px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--card); margin-bottom:0; pointer-events:auto; padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--border-soft); }
 .tab { flex:1; text-align:center; padding:10px 4px 8px; font-size:.72rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-radius:14px; transition:background .25s cubic-bezier(.4,0,.2,1), color .25s cubic-bezier(.4,0,.2,1), box-shadow .25s cubic-bezier(.4,0,.2,1); border:none; background:none; font-family:var(--font); touch-action:manipulation; min-width:0; position:relative; }
 .tab .tb-label { display:block; font-size:.6rem; margin-top:2px; line-height:1; letter-spacing:.01em; }
 .tab.active { background:var(--gradient-love); color:#fff; box-shadow:0 2px 12px rgba(196,90,107,.25); }
