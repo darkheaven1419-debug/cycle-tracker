@@ -4266,3 +4266,8 @@ saveSymptom = function () {
 };
 
 // (self-test suite removed in cleanup)
+
+/* ── BOOT: Initialize auth and start the app ─────────────────── */
+if (typeof AuthModule !== 'undefined') {
+  AuthModule.init();
+}

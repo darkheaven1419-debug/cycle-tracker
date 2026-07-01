@@ -448,7 +448,7 @@
 .login-overlay {
   position:fixed; inset:0; z-index:1000; display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  background: var(--bg);
+  background: var(--bg, #ede0da);
   background-image:
     radial-gradient(ellipse at 30% 20%, rgba(212,122,138,.08) 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, rgba(196,154,94,.06) 0%, transparent 50%);
@@ -461,7 +461,7 @@
     radial-gradient(circle at 80% 70%, rgba(196,154,94,.04) 0%, transparent 50%);
   animation:loginAmbient 8s ease-in-out infinite alternate;
 }
-.login-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+.login-overlay.hidden { display:none; }
 .login-title { font-size:1.3rem; font-weight:700; color:var(--text); margin-bottom:6px; text-align:center; background:linear-gradient(135deg,var(--love),var(--rose-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .login-subtitle { font-size:.72rem; color:var(--gold); font-style:italic; margin-bottom:28px; text-align:center; }
 .login-cards { display:flex; gap:12px; justify-content:center; }

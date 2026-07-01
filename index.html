@@ -9,9 +9,9 @@
 <link rel="dns-prefetch" href="https://api.open-meteo.com">
 <link rel="dns-prefetch" href="https://api.github.com">
 <!-- System font stack (Google Fonts blocked in China, use local fonts for PWA offline) -->
-<link rel="stylesheet" href="css/base.css?v=1">
-<link rel="stylesheet" href="css/components.css?v=1">
-<link rel="stylesheet" href="css/calendar.css?v=2">
+<link rel="stylesheet" href="css/base.css?v=2">
+<link rel="stylesheet" href="css/components.css?v=2">
+<link rel="stylesheet" href="css/calendar.css?v=3">
 <link rel="stylesheet" href="css/diary.css?v=1">
 <link rel="stylesheet" href="css/learning.css?v=1">
 <link rel="stylesheet" href="css/animations.css?v=1">
@@ -710,7 +710,19 @@
   <div class="cal-quick-actions" id="calQuickActions"></div>
 </div>
 
-	<script src="app.js?v=56" defer></script>
+	<script src="app.js?v=57" defer></script>
+
+	<!-- Fallback: hide the loader if auth boot fails (Edge/Safari safety net) -->
+	<script>
+	setTimeout(function() {
+	  var loader = document.getElementById('appLoader');
+	  if (loader && loader.style.display !== 'none') {
+	    loader.style.display = 'none';
+	  }
+	  // Edge fallback: ensure body is never transparent white
+	  document.body.style.setProperty('background', 'var(--bg, #ede0da)', 'important');
+	}, 3000);
+	</script>
 </body>
 </html>
 
