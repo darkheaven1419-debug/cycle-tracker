@@ -87,7 +87,7 @@
 .diary-write-date { font-size:.82rem; font-weight:700; color:var(--text); }
 
 .diary-textarea { width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md); padding:16px; font-size:.85rem; font-family:var(--font); background:var(--card); color:var(--text); line-height:1.8; resize:vertical; min-height:120px; transition:border-color .25s, box-shadow .25s; }
-.diary-textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 4px rgba(184,72,90,.08); }
+.diary-textarea:focus { outline:none; border-color:var(--love); box-shadow:0 0 0 4px rgba(196,90,107,.08); }
 .diary-textarea::placeholder { color:var(--text-muted); opacity:.35; font-style:italic; }
 
 .diary-write-footer { margin-top:10px; }
@@ -95,7 +95,7 @@
 .diary-mood-chip { width:40px; height:40px; border-radius:50%; border:2px solid transparent; background:var(--card); font-size:1.15rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s cubic-bezier(.22, 1, .36, 1); touch-action:manipulation; box-shadow:var(--shadow-xs); }
 .diary-mood-chip:hover { transform:scale(1.08); background:var(--rose-light); }
 .diary-mood-chip:active { transform:scale(.85); }
-.diary-mood-chip.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.18); box-shadow:0 0 0 4px rgba(184,72,90,.12); }
+.diary-mood-chip.picked { border-color:var(--love); background:var(--rose-light); transform:scale(1.18); box-shadow:0 0 0 4px rgba(196,90,107,.12); }
 .diary-actions { display:flex; justify-content:space-between; align-items:center; }
 .diary-char-count { font-size:var(--text-xs); color:var(--text-muted); }
 
@@ -204,7 +204,7 @@
   font-size:.73rem; font-weight:600; color:var(--text); cursor:pointer;
   user-select:none; transition:background .15s;
 }
-.letter-section-label:hover { background:rgba(184,72,90,.05); }
+.letter-section-label:hover { background:rgba(196,90,107,.05); }
 .letter-section-label .ls-char-count { font-size:var(--text-xs); color:var(--text-muted); font-weight:400; margin-left:auto; }
 .letter-section-input {
   display:block; width:100%; border:none; background:transparent;

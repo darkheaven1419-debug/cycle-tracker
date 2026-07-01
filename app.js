@@ -752,7 +752,7 @@ function renderStatsPanel() {
       moodCounts[mk] = (moodCounts[mk] || 0) + 1;
     }
     const segments = [];
-    const moodColors = ['#b8485a', '#d4bfb5', '#E57373', '#b8a0c8', '#5e8b7a', '#FFB74D', '#80a590', '#bdbdbd'];
+    const moodColors = ['#c45a6b', '#d4bfb5', '#E57373', '#b8a0c8', '#5e8b7a', '#FFB74D', '#80a590', '#bdbdbd'];
     for (let mj = 0; mj < MOOD_KEYS.length; mj++) {
       if (moodCounts[MOOD_KEYS[mj]]) {
         segments.push({ label: t('moodNames')[mj], value: moodCounts[MOOD_KEYS[mj]], color: moodColors[mj] });
@@ -800,7 +800,7 @@ function renderStatsPanel() {
     }
     const sympNames = t('symptoms');
     const sympOrder = ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'];
-    const sympBarColors = ['#b8485a', '#FFB74D', '#5e8b7a', '#b8a0c8', '#a0b0c0', '#d4bfb5'];
+    const sympBarColors = ['#c45a6b', '#FFB74D', '#5e8b7a', '#b8a0c8', '#a0b0c0', '#d4bfb5'];
     const barData = [];
     for (let sn2 = 0; sn2 < sympOrder.length; sn2++) {
       const k = sympOrder[sn2];
@@ -2072,7 +2072,7 @@ function buildCalendarGrid(grid, pred, td) {
         diaryTooltip = '🌸 Anđela';
         let diaryDotA = document.createElement('span');
         diaryDotA.className = 'mini-dot';
-        diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#b8485a;opacity:.7';
+        diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#c45a6b;opacity:.7';
         diaryDotA.title = diaryTooltip;
         el.appendChild(diaryDotA);
       } else if (hasB) {

@@ -6,7 +6,7 @@
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 html { scroll-behavior:smooth; }
 body {
-  font-family: var(--font, -apple-system, sans-serif); background: var(--bg, #f0e6e0); color: var(--text, #2d2323);
+  font-family: var(--font, -apple-system, sans-serif); background: var(--bg, #ede0da); color: var(--text, #3d2828);
   min-height: 100vh; display:flex; justify-content:center;
   -webkit-tap-highlight-color: transparent; transition: background .3s, color .3s;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
