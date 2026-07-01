@@ -1124,11 +1124,11 @@ function loadHolidays() {
 loadHolidays();
 
 /** Holiday lookup with O(1) cache — replaces O(n) .filter() per cell */
-var _holidayCache = null;
+let _holidayCache = null;
 function _buildHolidayCache() {
   _holidayCache = {};
-  for (var hi = 0; hi < HOLIDAYS.length; hi++) {
-    var h = HOLIDAYS[hi];
+  for (let hi = 0; hi < HOLIDAYS.length; hi++) {
+    let h = HOLIDAYS[hi];
     if (!_holidayCache[h.d]) _holidayCache[h.d] = [];
     _holidayCache[h.d].push(h);
   }
@@ -1138,7 +1138,7 @@ function getHoliday(dateKey) {
   return _holidayCache[dateKey] || [];
 }
 // Rebuild cache when holidays are loaded or merged
-var _origHolidayPush = null;
+let _origHolidayPush = null;
 function _rebuildHolidayCache() {
   _holidayCache = null;
 }
@@ -1567,7 +1567,7 @@ function updateCycleCounter(n) {
 let viewYear = today().getFullYear(),
   viewMonth = today().getMonth();
 let calView = 'month'; // 'month' | 'week'
-var _weekOffset = 0; // weeks offset from today when in week view
+let _weekOffset = 0; // weeks offset from today when in week view
 let selectedDate = null,
   symptomDate = null,
   knowledgeOpen = false;
@@ -1585,8 +1585,8 @@ function updateLangUI() {
   document.querySelectorAll('.lang-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.lang === lang);
   });
-  var wd = t('weekdays');
-  var weekdaysEl = document.getElementById('weekdaysRow');
+  let wd = t('weekdays');
+  let weekdaysEl = document.getElementById('weekdaysRow');
   weekdaysEl.setAttribute('role', 'row');
   weekdaysEl.innerHTML =
     '<span role="gridcell" aria-hidden="true"></span>' +
@@ -1834,10 +1834,10 @@ const renderAll = applyAllUI;
    ================================================================ */
 /** Toggle a period record for a date (immutable state update) */
 function togglePeriodRecord(date) {
-  var idx = state.records.findIndex(function (r) {
+  let idx = state.records.findIndex(function (r) {
     return sameDay(r, date);
   });
-  var wasAdded = false;
+  let wasAdded = false;
   if (idx >= 0) {
     state = Object.assign({}, state, {
       records: state.records.filter(function (_, i) {
@@ -1846,7 +1846,7 @@ function togglePeriodRecord(date) {
     });
     toast('🚫 ' + t('toast.unmarked'));
   } else {
-    var newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
+    let newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
       return a - b;
     });
     state = Object.assign({}, state, { records: newRecords });
@@ -1887,12 +1887,12 @@ function getSeasonLabel(month) {
 }
 function renderCalendar() {
   // Orchestrator: delegates to specialized sub-functions
-  var pred = predict();
-  var td = today();
-  var monthLabel = document.getElementById('monthLabel');
+  let pred = predict();
+  let td = today();
+  let monthLabel = document.getElementById('monthLabel');
   if (calView === 'week') {
-    var monday = getWeekStart();
-    var sunday = addDays(monday, 6);
+    let monday = getWeekStart();
+    let sunday = addDays(monday, 6);
     if (lang === 'sr') {
       monthLabel.textContent = monday.getDate() + '. ' + t('months')[monday.getMonth()] + ' — ' + sunday.getDate() + '. ' + t('months')[sunday.getMonth()];
     } else if (lang === 'en') {
@@ -1908,7 +1908,7 @@ function renderCalendar() {
           ? t('months')[viewMonth] + ' ' + viewYear
           : viewYear + '年' + (viewMonth + 1) + '月';
   }
-  var grid = document.getElementById('daysGrid');
+  let grid = document.getElementById('daysGrid');
   buildCalendarGrid(grid, pred, td);
   updateCalendarSeason();
   updateProgress(pred);
@@ -1922,33 +1922,33 @@ function renderCalendar() {
 
 /** Build the day grid DOM fragment (supports month and week view) */
 function buildCalendarGrid(grid, pred, td) {
-  var isWeekView = calView === 'week';
-  var numDays = isWeekView ? 7 : 42;
-  var gridStart;
+  let isWeekView = calView === 'week';
+  let numDays = isWeekView ? 7 : 42;
+  let gridStart;
 
   if (isWeekView) {
     // Week view: Monday of the week containing today
-    var refDay = new Date(viewYear, viewMonth, 1);
+    let refDay = new Date(viewYear, viewMonth, 1);
     // Use current view position to find which week
-    var monday = getWeekStart();
+    let monday = getWeekStart();
     gridStart = monday;
     viewYear = monday.getFullYear();
     viewMonth = monday.getMonth();
   } else {
-    var first = new Date(viewYear, viewMonth, 1);
-    var dow = first.getDay();
+    let first = new Date(viewYear, viewMonth, 1);
+    let dow = first.getDay();
     dow = dow === 0 ? 6 : dow - 1;
     gridStart = addDays(first, -dow);
   }
-  var frag = document.createDocumentFragment();
-  var recordedStarts = new Set(state.records.map(fmtDate));
-  var plEl = document.getElementById('predLegend');
+  let frag = document.createDocumentFragment();
+  let recordedStarts = new Set(state.records.map(fmtDate));
+  let plEl = document.getElementById('predLegend');
   if (pred.futurePeriods.length > 0) {
     plEl.style.display = '';
     plEl.textContent = t('calendarPredLegend');
   } else plEl.style.display = 'none';
-  var sharedDiaryIdx = {};
-  var sd = safeParse(localStorage.getItem('shared-diary'), {});
+  let sharedDiaryIdx = {};
+  let sd = safeParse(localStorage.getItem('shared-diary'), {});
   Object.keys(sd).forEach(function (k) {
     if (sd[k] && (sd[k].barry || sd[k].andjela)) sharedDiaryIdx[k] = true;
   });
@@ -1959,39 +1959,39 @@ function buildCalendarGrid(grid, pred, td) {
   grid.classList.toggle('week-view', isWeekView);
   // Hide prediction legend in week view (no room)
   if (isWeekView) {
-    var plEl2 = document.getElementById('predLegend');
+    let plEl2 = document.getElementById('predLegend');
     if (plEl2) plEl2.style.display = 'none';
   }
 
-  for (var i = 0; i < numDays; i++) {
+  for (let i = 0; i < numDays; i++) {
     if (!isWeekView && i % 7 === 0) {
-      var wkCell = document.createElement('div');
+      let wkCell = document.createElement('div');
       wkCell.className = 'week-num';
-      var wkDate = addDays(gridStart, i);
-      var jan1 = new Date(wkDate.getFullYear(), 0, 1);
-      var wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+      let wkDate = addDays(gridStart, i);
+      let jan1 = new Date(wkDate.getFullYear(), 0, 1);
+      let wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
       wkCell.textContent = wkNum;
       wkCell.setAttribute('aria-hidden', 'true');
       frag.appendChild(wkCell);
     }
-    var d = addDays(gridStart, i);
-    var inMonth = d.getMonth() === viewMonth;
-    var isToday = sameDay(d, td);
-    var phase = inMonth ? getPhase(d, pred) : null;
-    var key = fmtDate(d);
-    var symptoms = state.symptoms[key];
-    var hasSymptom =
+    let d = addDays(gridStart, i);
+    let inMonth = d.getMonth() === viewMonth;
+    let isToday = sameDay(d, td);
+    let phase = inMonth ? getPhase(d, pred) : null;
+    let key = fmtDate(d);
+    let symptoms = state.symptoms[key];
+    let hasSymptom =
       symptoms &&
       Object.entries(symptoms).some(function (kv) {
         return kv[0] !== 'notes' && kv[1] > 0;
       });
-    var cycleDay = '';
+    let cycleDay = '';
     if (activeProfile === 'andjela' && pred.lastStart) {
-      var cd = daysDiff(d0(pred.lastStart), d0(d));
+      let cd = daysDiff(d0(pred.lastStart), d0(d));
       if (cd >= 0 && cd < pred.cycleLen) cycleDay = String(cd + 1);
     }
-    var annType = isAnniversary(d);
-    var el = document.createElement('div');
+    let annType = isAnniversary(d);
+    let el = document.createElement('div');
     el.className = 'day';
     if (!inMonth) el.classList.add('other-month');
     if (isToday) el.classList.add('today');
@@ -2000,9 +2000,9 @@ function buildCalendarGrid(grid, pred, td) {
     if (phase === 'period-on' && recordedStarts.has(key)) el.classList.add('recorded');
     if (annType > 0) el.classList.add('anniversary');
     if (getBirthday(d)) el.classList.add('birthday');
-    var special = getSpecialDate(d);
+    let special = getSpecialDate(d);
     if (special) {
-      var spIcon = document.createElement('span');
+      let spIcon = document.createElement('span');
       spIcon.className = 'special-date-icon';
       spIcon.textContent = special.icon;
       spIcon.title = activeProfile === 'barry' ? special.title_zh : special.title_sr;
@@ -2019,20 +2019,20 @@ function buildCalendarGrid(grid, pred, td) {
         }
       });
     }
-    var daySpan = document.createElement('span');
+    let daySpan = document.createElement('span');
     daySpan.className = 'day-num';
     daySpan.textContent = d.getDate();
     el.appendChild(daySpan);
     if (cycleDay && inMonth && !phase) {
-      var cdSpan = document.createElement('span');
+      let cdSpan = document.createElement('span');
       cdSpan.className = 'day-cycle-num';
       cdSpan.textContent = cycleDay;
       el.appendChild(cdSpan);
     }
     if (inMonth && typeof Lunar !== 'undefined') {
-      var lunarDayName = getLunarCellText(d);
+      let lunarDayName = getLunarCellText(d);
       if (lunarDayName) {
-        var lunarSpan = document.createElement('span');
+        let lunarSpan = document.createElement('span');
         lunarSpan.className = 'lunar-date ' + getLunarCellClass(d);
         lunarSpan.textContent = lunarDayName;
         el.appendChild(lunarSpan);
@@ -2041,11 +2041,11 @@ function buildCalendarGrid(grid, pred, td) {
     el.setAttribute('role', 'button');
     el.setAttribute('aria-label', fmtDate(d));
     if (hasSymptom && !phase && symptoms) {
-      var miniDiv = document.createElement('div');
+      let miniDiv = document.createElement('div');
       miniDiv.className = 'day-symptoms';
       ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
         if (symptoms[sym] && symptoms[sym] > 0) {
-          var symEl = document.createElement('span');
+          let symEl = document.createElement('span');
           symEl.className = 'day-sym-icon';
           symEl.textContent = { cramps: '😣', mood: '😊', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' }[sym];
           symEl.title = sym;
@@ -2055,13 +2055,13 @@ function buildCalendarGrid(grid, pred, td) {
       if (miniDiv.children.length > 0) el.appendChild(miniDiv);
     }
     if (sharedDiaryIdx[key]) {
-      var sdEntry = sd[key] || {};
-      var hasA = !!sdEntry.andjela;
-      var hasB = !!sdEntry.barry;
-      var diaryTooltip = '';
+      let sdEntry = sd[key] || {};
+      let hasA = !!sdEntry.andjela;
+      let hasB = !!sdEntry.barry;
+      let diaryTooltip = '';
       if (hasA && hasB) {
         diaryTooltip = '💕 Oboje';
-        var diaryDot = document.createElement('span');
+        let diaryDot = document.createElement('span');
         diaryDot.className = 'mini-dot gold';
         diaryDot.style.cssText =
           'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
@@ -2069,24 +2069,24 @@ function buildCalendarGrid(grid, pred, td) {
         el.appendChild(diaryDot);
       } else if (hasA) {
         diaryTooltip = '🌸 Anđela';
-        var diaryDotA = document.createElement('span');
+        let diaryDotA = document.createElement('span');
         diaryDotA.className = 'mini-dot';
         diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#c45a6b;opacity:.7';
         diaryDotA.title = diaryTooltip;
         el.appendChild(diaryDotA);
       } else if (hasB) {
         diaryTooltip = '👦 Barry';
-        var diaryDotB = document.createElement('span');
+        let diaryDotB = document.createElement('span');
         diaryDotB.className = 'mini-dot';
         diaryDotB.style.cssText = 'position:absolute;bottom:8px;left:calc(50% + 4px);width:4px;height:4px;border-radius:50%;background:#4A90D9;opacity:.7';
         diaryDotB.title = diaryTooltip;
         el.appendChild(diaryDotB);
       }
       if (inMonth && diaryTooltip) {
-        var diaryPreviewText = '';
+        let diaryPreviewText = '';
         try {
-          var entryA = sdEntry.andjela;
-          var entryB = sdEntry.barry;
+          let entryA = sdEntry.andjela;
+          let entryB = sdEntry.barry;
           if (hasA && entryA) diaryPreviewText += '🌸 ' + (entryA.text || entryA.happy || '').substring(0, 40);
           if (hasB && entryB) diaryPreviewText += (diaryPreviewText ? ' | ' : '') + '👦 ' + (entryB.text || entryB.happy || '').substring(0, 40);
         } catch (e) {
@@ -2096,14 +2096,14 @@ function buildCalendarGrid(grid, pred, td) {
       }
     }
     if (typeof getCalendarSummary === 'function' && inMonth) {
-      var calSummary = getCalendarSummary(key);
-      var hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
+      let calSummary = getCalendarSummary(key);
+      let hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
       if (hasUserMarkers) {
-        var markerRow = document.createElement('div');
+        let markerRow = document.createElement('div');
         markerRow.className = 'day-marker-row';
-        var allMarkers = calSummary.barry.concat(calSummary.andjela);
-        for (var mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
-          var mSpan = document.createElement('span');
+        let allMarkers = calSummary.barry.concat(calSummary.andjela);
+        for (let mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
+          let mSpan = document.createElement('span');
           mSpan.className = 'cal-marker-emoji';
           mSpan.textContent = allMarkers[mi2].emoji;
           mSpan.title = (allMarkers[mi2].author === 'andjela' ? '🌸 Anđela' : '👦 Barry') + ': ' + (allMarkers[mi2].note || '');
@@ -2113,14 +2113,14 @@ function buildCalendarGrid(grid, pred, td) {
       }
     }
     if (annType === 2 && !phase) {
-      var dot = document.createElement('span');
+      let dot = document.createElement('span');
       dot.className = 'mini-dot gold';
       el.appendChild(dot);
     }
-    var solarTerm = getSolarTerm(key);
+    let solarTerm = getSolarTerm(key);
     if (solarTerm && inMonth) {
-      var stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
-      var stLabel = document.createElement('span');
+      let stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
+      let stLabel = document.createElement('span');
       stLabel.className = 'solar-term-label';
       stLabel.textContent = stName;
       stLabel.title = stName;
@@ -2128,16 +2128,16 @@ function buildCalendarGrid(grid, pred, td) {
       el.classList.add('solar-term-day');
       if (!solarTerm.story) ensureSolarTermData();
     }
-    var holidays = getHoliday(key);
+    let holidays = getHoliday(key);
     holidays.forEach(function (h) {
-      var icon = document.createElement('span');
+      let icon = document.createElement('span');
       icon.className = 'holiday-icon holiday-' + h.country;
       icon.textContent = h.icon || (h.country === 'cn' ? '🎉' : '🇷🇸');
       icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
       el.appendChild(icon);
     });
     // Double-tap detection
-    var tapTimer = null;
+    let tapTimer = null;
     if (inMonth) {
       el.addEventListener('click', function (e) {
         if (tapTimer) {
@@ -2156,7 +2156,7 @@ function buildCalendarGrid(grid, pred, td) {
           }, 280);
         }
       });
-      var touchCount = 0,
+      let touchCount = 0,
         touchTimer = null;
       el.addEventListener('touchend', function (e) {
         touchCount++;
@@ -2184,24 +2184,24 @@ function buildCalendarGrid(grid, pred, td) {
 
 /** Update month season tag after grid render */
 function updateCalendarSeason() {
-  var ml = document.getElementById('monthLabel');
+  let ml = document.getElementById('monthLabel');
   if (!ml) return;
-  var existingTag = ml.querySelector('.season-tag');
+  let existingTag = ml.querySelector('.season-tag');
   if (existingTag) existingTag.remove();
   ml.innerHTML = ml.textContent + ' <span class="season-tag">' + SEASON_EMOJI[viewMonth] + ' ' + getSeasonLabel(viewMonth) + '</span>';
   // Add seasonal data attribute to calendar container for CSS styling
-  var container = document.getElementById('calendarContainer');
+  let container = document.getElementById('calendarContainer');
   if (container) {
-    var seasons = ['spring', 'spring', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
+    let seasons = ['spring', 'spring', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
     container.dataset.season = seasons[viewMonth] || 'spring';
   }
 }
 
 /** Initialize swipe gesture on calendar container */
 function initCalendarSwipe() {
-  var container = document.getElementById('calendarContainer');
+  let container = document.getElementById('calendarContainer');
   if (!container) return;
-  var startX = 0,
+  let startX = 0,
     startY = 0;
   container.addEventListener(
     'touchstart',
@@ -2214,10 +2214,10 @@ function initCalendarSwipe() {
   container.addEventListener(
     'touchend',
     function (e) {
-      var endX = e.changedTouches[0].clientX;
-      var endY = e.changedTouches[0].clientY;
-      var diffX = endX - startX;
-      var diffY = endY - startY;
+      let endX = e.changedTouches[0].clientX;
+      let endY = e.changedTouches[0].clientY;
+      let diffX = endX - startX;
+      let diffY = endY - startY;
       if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
         if (diffX > 0) changeMonth(-1);
         else changeMonth(1);
@@ -2229,7 +2229,7 @@ function initCalendarSwipe() {
 
 /** Setup month label click — shows year/month picker overlay */
 function setupMonthPicker() {
-  var ml = document.getElementById('monthLabel');
+  let ml = document.getElementById('monthLabel');
   if (!ml) return;
   ml.style.cursor = 'pointer';
   ml.title = ml.title || t('monthPickerHint') || 'Click to jump';
@@ -2246,33 +2246,33 @@ function setupMonthPicker() {
 }
 
 /** Show year/month picker overlay */
-var _mpickerEl = null;
+let _mpickerEl = null;
 function showMonthPicker() {
   closeMonthPicker();
-  var overlay = document.createElement('div');
+  let overlay = document.createElement('div');
   overlay.className = 'month-picker-overlay';
   overlay.id = 'monthPickerOverlay';
   overlay.addEventListener('click', function (e) {
     if (e.target === overlay) closeMonthPicker();
   });
 
-  var box = document.createElement('div');
+  let box = document.createElement('div');
   box.className = 'month-picker-box';
 
   // Year nav
-  var yearRow = document.createElement('div');
+  let yearRow = document.createElement('div');
   yearRow.className = 'mp-year-row';
-  var prevBtn = document.createElement('button');
+  let prevBtn = document.createElement('button');
   prevBtn.className = 'mp-nav-btn';
   prevBtn.textContent = '◂';
   prevBtn.addEventListener('click', function () {
     _mpYear--;
     renderMPicker(box);
   });
-  var yearLabel = document.createElement('span');
+  let yearLabel = document.createElement('span');
   yearLabel.className = 'mp-year-label';
   yearLabel.id = 'mpYearLabel';
-  var nextBtn = document.createElement('button');
+  let nextBtn = document.createElement('button');
   nextBtn.className = 'mp-nav-btn';
   nextBtn.textContent = '▸';
   nextBtn.addEventListener('click', function () {
@@ -2285,7 +2285,7 @@ function showMonthPicker() {
   box.appendChild(yearRow);
 
   // Month grid
-  var grid = document.createElement('div');
+  let grid = document.createElement('div');
   grid.className = 'mp-month-grid';
   grid.id = 'mpMonthGrid';
   box.appendChild(grid);
@@ -2297,15 +2297,15 @@ function showMonthPicker() {
   renderMPicker(box);
 }
 
-var _mpYear = 0;
+let _mpYear = 0;
 function renderMPicker(box) {
-  var yearLabel = document.getElementById('mpYearLabel');
-  var grid = document.getElementById('mpMonthGrid');
+  let yearLabel = document.getElementById('mpYearLabel');
+  let grid = document.getElementById('mpMonthGrid');
   if (!yearLabel || !grid) return;
   yearLabel.textContent = String(_mpYear);
   grid.innerHTML = '';
-  for (var i = 0; i < 12; i++) {
-    var cell = document.createElement('button');
+  for (let i = 0; i < 12; i++) {
+    let cell = document.createElement('button');
     cell.className = 'mp-month-cell';
     cell.textContent = t('months')[i] || (lang === 'zh-CN' ? i + 1 + '月' : i + 1);
     if (_mpYear === viewYear && i === viewMonth) cell.classList.add('mp-current');
@@ -3433,7 +3433,7 @@ function changeMonth(d) {
   if (calView === 'week') {
     // In week view, shift by weeks using offset
     _weekOffset += d;
-    var newMonday = getWeekStart();
+    let newMonday = getWeekStart();
     viewYear = newMonday.getFullYear();
     viewMonth = newMonday.getMonth();
   } else {
@@ -3448,7 +3448,7 @@ function changeMonth(d) {
     }
   }
 
-  var grid = document.getElementById('daysGrid');
+  let grid = document.getElementById('daysGrid');
   grid.style.transition = 'opacity 0.08s ease-out';
   grid.style.opacity = '0';
 
@@ -3462,10 +3462,10 @@ function changeMonth(d) {
 /** Get the Monday of the current view week */
 function getWeekStart() {
   // Always compute from today, then apply week offset
-  var td = today();
-  var day = td.getDay();
-  var diff = td.getDate() - (day === 0 ? 6 : day - 1);
-  var thisMonday = new Date(td.getFullYear(), td.getMonth(), diff);
+  let td = today();
+  let day = td.getDay();
+  let diff = td.getDate() - (day === 0 ? 6 : day - 1);
+  let thisMonday = new Date(td.getFullYear(), td.getMonth(), diff);
   if (calView === 'week' && _weekOffset !== 0) {
     return addDays(thisMonday, _weekOffset * 7);
   }
@@ -3479,7 +3479,7 @@ function setCalView(view) {
   document.getElementById('viewBtnMonth').classList.toggle('active', view === 'month');
   document.getElementById('viewBtnWeek').classList.toggle('active', view === 'week');
   if (view === 'week') {
-    var monday = getWeekStart();
+    let monday = getWeekStart();
     viewYear = monday.getFullYear();
     viewMonth = monday.getMonth();
   }
