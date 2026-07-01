@@ -1,6 +1,10 @@
-/* Calendar v4 -- Premium Redesign (ring-based phases, editorial aesthetic) */
+/* ================================================================
+   Calendar v5 — Bold Phase Colors, Visible Hierarchy
+   Replaces subtle ring-borders with warm background fills so the
+   calendar actually shows you what phase you're in at a glance.
+   ================================================================ */
 
-/* ---- Calendar Navigation -- refined ---- */
+/* ---- Calendar Navigation ---- */
 .cal-nav {
   display: flex; align-items: center; margin-bottom: 16px; gap: 8px; padding: 0 2px;
 }
@@ -35,11 +39,12 @@
 .cal-nav .today-pill:hover { background: var(--gradient-love); color: #fff; box-shadow: 0 4px 16px rgba(184, 72, 90, 0.25); transform: translateY(-1px); border-color: transparent; }
 .cal-nav .today-pill:active { transform: scale(0.95); transition-duration: 0.08s; }
 
-/* ---- Calendar Grid Container ---- */
+/* ---- Calendar Grid Container (warm-tinted, not pure white) ---- */
 .calendar {
   padding: 16px 10px 14px; margin-bottom: 10px;
   touch-action: pan-y; user-select: none; contain: layout style;
-  border-radius: 20px; background: var(--card);
+  border-radius: 20px;
+  background: var(--gradient-card, linear-gradient(145deg, oklch(0.985 0.005 48), oklch(0.995 0.003 50)));
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-md);
   transition: box-shadow 0.35s ease, border-color 0.3s ease;
@@ -55,14 +60,20 @@
   color: var(--text-muted); margin-bottom: 10px; padding: 0 2px;
   letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.7;
 }
-.weekdays span:nth-child(7), .weekdays span:nth-child(8) { color: var(--rose); opacity: 0.7; font-weight: 700; }
+.weekdays span:nth-child(7), .weekdays span:nth-child(8) {
+  color: var(--rose); opacity: 0.75; font-weight: 700;
+}
 
 /* ---- Days Grid ---- */
 .days { display: grid; grid-template-columns: 28px repeat(7, 1fr); gap: 5px; }
-.week-num { display: flex; align-items: center; justify-content: center; font-size: 0.45rem; color: var(--text-muted); opacity: 0.18; font-weight: 500; font-feature-settings: "tnum"; }
+.week-num {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.45rem; color: var(--text-muted); opacity: 0.18;
+  font-weight: 500; font-feature-settings: "tnum";
+}
 .calendar:hover .week-num { opacity: 0.3; }
 
-/* ---- Day Cell Base -- editorial, clean ---- */
+/* ---- Day Cell Base ---- */
 .day {
   aspect-ratio: 1 / 1; min-height: 44px;
   display: flex; align-items: center; justify-content: center;
@@ -72,219 +83,378 @@
   transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   border: 1.5px solid transparent; background: transparent; padding: 2px;
 }
-.day:hover:not(.other-month) { background: rgba(184, 72, 90, 0.04); transform: translateY(-2px); z-index: 3; box-shadow: 0 4px 12px rgba(50, 30, 30, 0.06); border-color: rgba(184, 72, 90, 0.1); }
+.day:hover:not(.other-month) {
+  background: rgba(184, 72, 90, 0.06);
+  transform: translateY(-2px); z-index: 3;
+  box-shadow: 0 4px 12px rgba(50, 30, 30, 0.08);
+  border-color: rgba(184, 72, 90, 0.12);
+}
 .day:active:not(.other-month) { transform: scale(0.95); transition-duration: 0.08s; }
-.day:nth-child(8n + 7), .day:nth-child(8n + 8) { background: rgba(212, 122, 138, 0.03); }
-.day:nth-child(8n + 7):hover, .day:nth-child(8n + 8):hover { background: rgba(212, 122, 138, 0.07); }
-[data-theme="dark"] .day:nth-child(8n + 7), [data-theme="dark"] .day:nth-child(8n + 8) { background: rgba(255, 255, 255, 0.015); }
-[data-theme="dark"] .day:nth-child(8n + 7):hover, [data-theme="dark"] .day:nth-child(8n + 8):hover { background: rgba(255, 255, 255, 0.03); }
 .day.other-month { color: var(--text-muted); opacity: 0.15; pointer-events: none; }
 
-/* ---- Today -- refined indicator ---- */
-.day.today { font-weight: 600; border-color: var(--love); border-width: 2px; box-shadow: inset 0 0 0 1px rgba(184, 72, 90, 0.1); position: relative; z-index: 2; background: rgba(184, 72, 90, 0.04); }
-.day.today:hover { box-shadow: inset 0 0 0 1px rgba(184, 72, 90, 0.15), 0 4px 16px rgba(50, 30, 30, 0.08); }
-.day.today .day-num { background: rgba(184, 72, 90, 0.1); color: var(--love); border-radius: 6px; font-weight: 600; }
-.day.today:hover .day-num { background: rgba(184, 72, 90, 0.16); }
-.day.today::after { content: ""; position: absolute; inset: -2px; border-radius: 10px; border: 1.5px solid rgba(184, 72, 90, 0.2); animation: todayPulse 2.5s ease-in-out infinite; pointer-events: none; z-index: -1; }
+/* ---- Weekend tint — more visible ---- */
+.day.weekend { background: rgba(184, 72, 90, 0.04); }
+.day.weekend:hover { background: rgba(184, 72, 90, 0.08); }
+[data-theme="dark"] .day.weekend { background: rgba(255, 255, 255, 0.025); }
+[data-theme="dark"] .day.weekend:hover { background: rgba(255, 255, 255, 0.05); }
 
-/* ---- Selected state ---- */
-.day.selected { border-color: var(--gold); box-shadow: inset 0 0 0 1.5px var(--gold-muted); background: rgba(196, 154, 94, 0.04); z-index: 2; }
-.day.selected .day-num { color: var(--gold-dark, #8a6e3a); }
-[data-theme="dark"] .day.selected { box-shadow: inset 0 0 0 1.5px var(--gold-muted); background: rgba(196, 154, 94, 0.08); }
+/* ---- Today — prominent rose highlight ---- */
+.day.today {
+  font-weight: 700; border-color: var(--love);
+  background: rgba(184, 72, 90, 0.08);
+  box-shadow: 0 0 0 2px rgba(184, 72, 90, 0.12);
+  position: relative; z-index: 2;
+}
+.day.today:hover {
+  background: rgba(184, 72, 90, 0.12);
+  box-shadow: 0 0 0 2px rgba(184, 72, 90, 0.18), 0 4px 16px rgba(50, 30, 30, 0.08);
+}
+.day.today .day-num { background: var(--love); color: #fff; border-radius: 6px; font-weight: 700; }
+.day.today:hover .day-num { background: var(--rose-dark); }
 
-/* ---- Ring-Based Phase Indicators ---- */
-.day.period-on { border: 2px solid var(--ring-period); box-shadow: 0 0 0 1px rgba(196, 112, 120, 0.15); z-index: 2; }
-.day.period-on::after { content: ""; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--ring-period); opacity: 0.6; }
-.day.period-on:hover { box-shadow: 0 0 0 1px rgba(196, 112, 120, 0.25), 0 4px 12px rgba(196, 112, 120, 0.12); }
-.day.period-on.recorded { box-shadow: 0 0 0 1px rgba(196, 112, 120, 0.15), 0 0 0 3px rgba(196, 112, 120, 0.06); }
-.day.period-mid { border-left: 2px solid var(--ring-period); border-radius: 4px 8px 8px 4px; background: rgba(196, 112, 120, 0.03); }
-.day.period-pred-first { border: 2px solid var(--ring-predicted); border-color: rgba(196, 112, 120, 0.5); opacity: 0.6; }
-.day.period-pred-first::after { content: ""; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--ring-predicted); opacity: 0.4; }
-.day.period-pred { border-left: 2px solid var(--ring-predicted); border-radius: 4px 8px 8px 4px; opacity: 0.65; }
-.day.period-future-first { border: 2px solid rgba(180, 150, 150, 0.2); opacity: 0.3; }
-.day.period-future { border-left: 2px solid rgba(180, 150, 150, 0.15); border-radius: 4px 8px 8px 4px; opacity: 0.3; }
-.day.ovulation { border: 2px solid var(--ring-ovulation); box-shadow: 0 0 0 1px rgba(94, 155, 170, 0.15); z-index: 2; }
-.day.ovulation::after { content: "\2605"; position: absolute; top: 1px; right: 3px; font-size: 0.38rem; color: var(--ring-ovulation); opacity: 0.7; }
-.day.ovulation:hover { box-shadow: 0 0 0 1px rgba(94, 155, 170, 0.25), 0 4px 12px rgba(94, 155, 170, 0.12); }
-.day.fertile { border: 1.5px dashed var(--ring-fertile); background: rgba(122, 184, 160, 0.03); }
-.day.luteal { border-top: 2px solid var(--ring-luteal); border-radius: 8px 8px 4px 4px; background: rgba(184, 160, 200, 0.03); }
-.day.follicular { border-bottom: 2px solid var(--ring-follicular); border-radius: 4px 4px 8px 8px; background: rgba(128, 165, 144, 0.03); }
-[data-theme="dark"] .day.period-on { border-color: var(--ring-period); }
-[data-theme="dark"] .day.period-mid { border-left-color: var(--ring-period); }
-[data-theme="dark"] .day.ovulation { border-color: var(--ring-ovulation); }
-[data-theme="dark"] .day.fertile { border-color: var(--ring-fertile); }
-[data-theme="dark"] .day.luteal { border-top-color: var(--ring-luteal); }
-[data-theme="dark"] .day.follicular { border-bottom-color: var(--ring-follicular); }
+/* ---- Selected — warm gold ---- */
+.day.selected {
+  border-color: var(--gold);
+  background: rgba(184, 145, 71, 0.08);
+  box-shadow: 0 0 0 2px rgba(184, 145, 71, 0.12);
+  z-index: 2;
+}
+.day.selected .day-num { color: var(--gold-dark, #8a6e3a); font-weight: 700; }
+[data-theme="dark"] .day.selected { background: rgba(184, 145, 71, 0.12); }
 
-/* ---- Special Days ---- */
-.day.anniversary { border-color: var(--gold); border-width: 1.5px; box-shadow: inset 0 0 0 1.5px var(--gold); }
-.day.anniversary::after { content: "\2665"; position: absolute; top: 0; right: 2px; font-size: 0.4rem; color: var(--love); opacity: 0.7; }
-.day.birthday { background: linear-gradient(135deg, var(--rose-light), #fff8e7); border-color: var(--gold); border-width: 1.5px; }
-.day.birthday::after { content: "\U0001F382"; position: absolute; top: 0; right: 2px; font-size: 0.45rem; }
+/* ================================================================
+   PHASE INDICATORS — Bold Background Fills
+   Replaced thin border-only indicators with warm tinted backgrounds
+   that are actually visible at a glance.
+   ================================================================ */
+
+/* ---- Period (Phase 1 — Rose) ---- */
+.day.period-on {
+  background: rgba(196, 112, 120, 0.12);
+  border-color: var(--ring-period);
+  border-width: 2px;
+  font-weight: 600;
+}
+.day.period-on .day-num { color: var(--rose-dark); }
+.day.period-on:hover {
+  background: rgba(196, 112, 120, 0.18);
+  box-shadow: 0 0 0 2px rgba(196, 112, 120, 0.15);
+}
+.day.period-mid {
+  background: rgba(196, 112, 120, 0.06);
+  border-left: 2px solid var(--ring-period);
+  border-radius: 4px 10px 10px 4px;
+}
+.day.period-pred-first {
+  background: rgba(196, 112, 120, 0.05);
+  border: 2px dashed rgba(196, 112, 120, 0.35);
+  opacity: 0.65;
+}
+.day.period-pred {
+  background: rgba(196, 112, 120, 0.03);
+  border-left: 2px dashed rgba(196, 112, 120, 0.25);
+  border-radius: 4px 10px 10px 4px;
+  opacity: 0.65;
+}
+.day.period-pred-first .day-num { opacity: 0.7; }
+.day.period-future-first {
+  background: rgba(160, 130, 130, 0.03);
+  border: 2px dashed rgba(160, 130, 130, 0.15);
+  opacity: 0.35;
+}
+.day.period-future {
+  border-left: 2px dashed rgba(160, 130, 130, 0.12);
+  border-radius: 4px 10px 10px 4px;
+  opacity: 0.35;
+}
+
+[data-theme="dark"] .day.period-on { background: rgba(196, 112, 120, 0.15); }
+[data-theme="dark"] .day.period-mid { background: rgba(196, 112, 120, 0.08); }
+[data-theme="dark"] .day.period-pred-first { background: rgba(196, 112, 120, 0.06); }
+
+/* ---- Ovulation (Teal) ---- */
+.day.ovulation {
+  background: rgba(90, 139, 120, 0.10);
+  border-color: var(--ring-ovulation);
+  border-width: 2px;
+}
+.day.ovulation .day-num { color: #3a6b55; font-weight: 700; }
+.day.ovulation::after {
+  content: "\2605"; position: absolute; top: 1px; right: 3px;
+  font-size: 0.45rem; color: var(--ring-ovulation); opacity: 0.8;
+}
+.day.ovulation:hover {
+  background: rgba(90, 139, 120, 0.15);
+  box-shadow: 0 0 0 2px rgba(90, 139, 120, 0.12);
+}
+[data-theme="dark"] .day.ovulation { background: rgba(122, 181, 160, 0.12); }
+[data-theme="dark"] .day.ovulation .day-num { color: #8fc7b0; }
+
+/* ---- Fertile (Sage) ---- */
+.day.fertile {
+  background: rgba(122, 184, 160, 0.07);
+  border: 2px dashed var(--ring-fertile);
+}
+.day.fertile .day-num { color: #4a7a5a; }
+.day.fertile:hover { background: rgba(122, 184, 160, 0.12); }
+[data-theme="dark"] .day.fertile { background: rgba(143, 199, 176, 0.08); }
+[data-theme="dark"] .day.fertile .day-num { color: #8fc7b0; }
+
+/* ---- Luteal (Lavender top border) ---- */
+.day.luteal {
+  background: rgba(176, 156, 196, 0.07);
+  border-top: 3px solid var(--ring-luteal);
+  border-radius: 10px 10px 4px 4px;
+}
+.day.luteal:hover { background: rgba(176, 156, 196, 0.12); }
+[data-theme="dark"] .day.luteal { background: rgba(200, 168, 216, 0.08); }
+
+/* ---- Follicular (Sage bottom border) ---- */
+.day.follicular {
+  background: rgba(122, 158, 126, 0.06);
+  border-bottom: 3px solid var(--ring-follicular);
+  border-radius: 4px 4px 10px 10px;
+}
+.day.follicular:hover { background: rgba(122, 158, 126, 0.10); }
+[data-theme="dark"] .day.follicular { background: rgba(143, 199, 176, 0.06); }
+
+/* ---- Phase day number overrides ---- */
+.day.period-on .day-num,
+.day.ovulation .day-num,
+.day.fertile .day-num,
+.day.luteal .day-num,
+.day.follicular .day-num {
+  position: relative; z-index: 1;
+}
+
+/* ---- Recorded period dot ---- */
+.day.period-on.recorded {
+  box-shadow: 0 0 0 1px rgba(196, 112, 120, 0.12), 0 0 0 3px rgba(196, 112, 120, 0.06);
+}
+
+/* ---- Combined today + phase ---- */
+.day.today.period-on {
+  box-shadow: 0 0 0 2px var(--love), 0 0 0 4px rgba(196, 112, 120, 0.08);
+}
+.day.today.ovulation {
+  box-shadow: 0 0 0 2px var(--love), 0 0 0 4px rgba(90, 139, 120, 0.08);
+}
+
+/* ================================================================
+   SPECIAL DAYS
+   ================================================================ */
+.day.anniversary {
+  border-color: var(--gold); border-width: 1.5px;
+  background: rgba(184, 145, 71, 0.06);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.day.anniversary::after {
+  content: "\2665"; position: absolute; top: 0; right: 2px;
+  font-size: 0.45rem; color: var(--love); opacity: 0.7;
+}
+.day.birthday {
+  background: linear-gradient(135deg, var(--rose-light), #fff8e7);
+  border-color: var(--gold); border-width: 1.5px;
+}
+.day.birthday::after {
+  content: "\U0001F382"; position: absolute; top: 0; right: 2px; font-size: 0.45rem;
+}
 [data-theme="dark"] .day.birthday { background: linear-gradient(135deg, #2a1e22, #2a2218); }
-.day.first-meet { border-color: var(--love); border-width: 1.5px; background: linear-gradient(135deg, var(--rose-light), #fff8e7); box-shadow: inset 0 0 0 1.5px var(--love); }
+.day.first-meet {
+  border-color: var(--love); border-width: 1.5px;
+  background: linear-gradient(135deg, var(--rose-light), #fff8e7);
+  box-shadow: inset 0 0 0 1.5px var(--love);
+}
 [data-theme="dark"] .day.first-meet { background: linear-gradient(135deg, #2a1e22, #2a2218); }
-.day.monthly-anni { background: linear-gradient(135deg, var(--rose-light), var(--dust)); border-color: rgba(184, 72, 90, 0.08); }
+.day.monthly-anni {
+  background: linear-gradient(135deg, var(--rose-light), var(--dust));
+  border-color: rgba(184, 72, 90, 0.08);
+}
 [data-theme="dark"] .day.monthly-anni { background: linear-gradient(135deg, #2a1e22, #2a2218); }
 
 /* ---- Mini Indicators ---- */
-.day .mini-dot { position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 2px; transition: transform 0.2s ease, box-shadow 0.2s; }
-.day .mini-dot.gold { background: var(--gold); box-shadow: 0 0 4px rgba(196, 154, 94, 0.2); }
+.day .mini-dot {
+  position: absolute; bottom: 3px; width: 4px; height: 4px;
+  border-radius: 2px; transition: transform 0.2s ease, box-shadow 0.2s;
+}
+.day .mini-dot.gold { background: var(--gold); box-shadow: 0 0 4px rgba(184, 145, 71, 0.3); }
 .day:hover .mini-dot { transform: scale(1.8); box-shadow: 0 0 6px currentColor; }
-.day .holiday-icon { position: absolute; bottom: 1px; font-size: 0.48rem; line-height: 1; pointer-events: none; z-index: 1; }
+.day .holiday-icon {
+  position: absolute; bottom: 1px; font-size: 0.48rem;
+  line-height: 1; pointer-events: none; z-index: 1;
+}
 .day .holiday-cn { right: 2px; }
 .day .holiday-rs { left: 2px; }
-.day .day-num { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 1rem; font-weight: 500; }
-.day .day-cycle-num { position: absolute; top: 0; right: 2px; font-size: 0.44rem; font-weight: 700; color: var(--text-muted); opacity: 0.3; z-index: 1; pointer-events: none; }
+.day .day-num {
+  position: relative; z-index: 1; display: flex;
+  align-items: center; justify-content: center;
+  width: 100%; height: 100%; font-size: 1rem; font-weight: 500;
+}
+.day .day-cycle-num {
+  position: absolute; top: 0; right: 2px; font-size: 0.44rem;
+  font-weight: 700; color: var(--text-muted); opacity: 0.3;
+  z-index: 1; pointer-events: none;
+}
 .day:hover .day-cycle-num { opacity: 0.5; }
-.day .day-symptoms { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); display: flex; gap: 1px; z-index: 1; pointer-events: none; }
+.day .day-symptoms {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 1px; z-index: 1; pointer-events: none;
+}
 .day .day-sym-icon { font-size: 0.4rem; line-height: 1; }
-.day .lunar-date { position: absolute; bottom: 0; right: 2px; font-size: 0.44rem; color: var(--text-muted); opacity: 0.4; z-index: 1; pointer-events: none; font-weight: 500; }
+.day .lunar-date {
+  position: absolute; bottom: 0; right: 2px; font-size: 0.44rem;
+  color: var(--text-muted); opacity: 0.4; z-index: 1;
+  pointer-events: none; font-weight: 500;
+}
 .day:hover .lunar-date { opacity: 0.65; }
 .day .lunar-date.lunar-first { color: var(--love); opacity: 0.7; font-weight: 700; }
 .day .lunar-date.lunar-fifteen { color: var(--gold); opacity: 0.6; font-weight: 600; }
-.day .lunar-date.lunar-newyear { color: var(--error); opacity: 1; font-weight: 700; text-shadow: 0 0 4px rgba(229, 57, 53, 0.2); }
-.solar-term-label { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 0.44rem; font-weight: 600; color: var(--sage); white-space: nowrap; pointer-events: none; opacity: 0.6; z-index: 1; max-width: calc(100% - 10px); overflow: hidden; text-overflow: ellipsis; line-height: 1; }
+.day .lunar-date.lunar-newyear {
+  color: var(--error); opacity: 1; font-weight: 700;
+  text-shadow: 0 0 4px rgba(229, 57, 53, 0.2);
+}
+.solar-term-label {
+  position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  font-size: 0.44rem; font-weight: 600; color: var(--sage);
+  white-space: nowrap; pointer-events: none; opacity: 0.6;
+  z-index: 1; max-width: calc(100% - 10px); overflow: hidden;
+  text-overflow: ellipsis; line-height: 1;
+}
 .solar-term-day { background: linear-gradient(180deg, rgba(129, 178, 107, 0.05) 0%, transparent 100%); }
 .day.solar-term-day:hover { background: rgba(129, 178, 107, 0.1); }
-.special-date-icon { position: absolute; top: 0; right: 3px; font-size: 0.48rem; pointer-events: none; z-index: 1; line-height: 1; }
-.day .day-marker-row { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); display: flex; gap: 1px; z-index: 1; pointer-events: none; max-width: calc(100% - 4px); overflow: hidden; }
+.special-date-icon {
+  position: absolute; top: 0; right: 3px; font-size: 0.48rem;
+  pointer-events: none; z-index: 1; line-height: 1;
+}
+.day .day-marker-row {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 1px; z-index: 1; pointer-events: none;
+  max-width: calc(100% - 4px); overflow: hidden;
+}
 .day .cal-marker-emoji { font-size: 0.42rem; line-height: 1; }
 
-/* ---- Legend ---- */
-.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; font-size: 0.62rem; color: var(--text-muted); justify-content: center; padding: 10px 16px; background: rgba(250, 243, 239, 0.5); border-radius: 14px; border: 1px solid var(--border-soft); box-shadow: var(--shadow-xs); }
-[data-theme="dark"] .legend { background: rgba(36, 30, 32, 0.5); }
-.legend span { display: inline-flex; align-items: center; gap: 5px; padding: 2px 4px; border-radius: 6px; }
-.legend span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; border: 1.5px solid transparent; box-sizing: border-box; }
-.legend .l-period::before { border-color: var(--ring-period); background: rgba(196, 112, 120, 0.1); }
-.legend .l-fertile::before { border-color: var(--ring-fertile); border-style: dashed; background: rgba(122, 184, 160, 0.05); }
-.legend .l-follicular::before { border-color: var(--ring-follicular); background: rgba(128, 165, 144, 0.05); border-bottom-width: 3px; }
-.legend .l-luteal::before { border-color: var(--ring-luteal); background: rgba(184, 160, 200, 0.05); border-top-width: 3px; }
-.legend .l-heart::before { content: "\2665"; background: none; color: var(--love); font-size: 0.55rem; line-height: 1; width: auto; height: auto; border: none; }
-.pred-legend { font-size: 0.58rem; color: var(--text); text-align: center; margin-top: 6px; opacity: 0.55; padding: 4px 0; font-style: italic; }
-.cal-nav .month-label .season-tag { display: inline-block; font-size: 0.55rem; font-weight: 600; opacity: 0.4; margin-left: 6px; vertical-align: middle; }
+/* ================================================================
+   LEGEND — Bold Color Swatches, Visible Labels
+   ================================================================ */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 6px 16px;
+  margin-bottom: 12px; font-size: 0.62rem; color: var(--text-muted);
+  justify-content: center; padding: 10px 16px;
+  background: var(--gradient-warm, linear-gradient(135deg, #f9eef0, #f5ede8));
+  border-radius: 14px; border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-xs);
+}
+[data-theme="dark"] .legend { background: rgba(42, 25, 29, 0.5); }
+.legend span {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 8px; border-radius: 20px;
+}
+.legend span::before {
+  content: ""; width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; flex-shrink: 0; box-sizing: border-box;
+}
+.legend .l-period::before {
+  background: var(--ring-period);
+  box-shadow: 0 0 0 1px rgba(196, 112, 120, 0.3);
+}
+.legend .l-fertile::before {
+  background: var(--ring-fertile);
+  box-shadow: 0 0 0 1px rgba(122, 184, 160, 0.3);
+}
+.legend .l-ovulation::before {
+  background: var(--ring-ovulation);
+  box-shadow: 0 0 0 1px rgba(90, 139, 120, 0.3);
+}
+.legend .l-follicular::before {
+  background: var(--ring-follicular);
+  box-shadow: 0 0 0 1px rgba(122, 158, 126, 0.3);
+}
+.legend .l-luteal::before {
+  background: var(--ring-luteal);
+  box-shadow: 0 0 0 1px rgba(176, 156, 196, 0.3);
+}
+.legend .l-heart::before {
+  content: "\2665"; background: none; color: var(--love);
+  font-size: 0.6rem; line-height: 1; width: auto; height: auto; border: none;
+  box-shadow: none;
+}
+.pred-legend {
+  font-size: 0.58rem; color: var(--text); text-align: center;
+  margin-top: 6px; opacity: 0.55; padding: 4px 0; font-style: italic;
+}
+.cal-nav .month-label .season-tag {
+  display: inline-block; font-size: 0.55rem; font-weight: 600;
+  opacity: 0.4; margin-left: 6px; vertical-align: middle;
+}
 
 /* Keyframes */
 @keyframes todayPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
-
 
 /* ================================================================
    Month Picker (year/month quick nav)
    ================================================================ */
 .month-picker-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(4px);
+  position: fixed; inset: 0; z-index: 9000;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.25); backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease;
 }
 .month-picker-overlay.hidden { display: none; }
 .month-picker-box {
-  background: var(--card);
-  border-radius: 20px;
-  padding: 20px 24px;
-  max-width: 300px;
-  width: 85%;
+  background: var(--card); border-radius: 20px;
+  padding: 20px 24px; max-width: 300px; width: 85%;
   box-shadow: 0 16px 48px rgba(0,0,0,0.15);
   animation: scaleIn 0.25s cubic-bezier(.22, 1, .36, 1);
 }
 .mp-year-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 16px;
 }
 .mp-nav-btn {
-  width: 40px; height: 40px;
-  border: none; border-radius: 50%;
-  background: var(--rose-light);
-  font-size: 1rem; cursor: pointer;
-  color: var(--text);
-  transition: all 0.2s;
+  width: 40px; height: 40px; border: none; border-radius: 50%;
+  background: var(--rose-light); font-size: 1rem; cursor: pointer;
+  color: var(--text); transition: all 0.2s;
 }
 .mp-nav-btn:hover { background: var(--love); color: #fff; transform: scale(1.1); }
-.mp-year-label {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text);
-}
+.mp-year-label { font-size: 1.2rem; font-weight: 700; color: var(--text); }
 .mp-month-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
 }
 .mp-month-cell {
   padding: 12px 8px;
   border: 1px solid var(--border-light, rgba(200,180,170,0.12));
-  border-radius: 12px;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(.22, 1, .36, 1);
-  text-align: center;
+  border-radius: 12px; background: var(--bg); color: var(--text);
+  font-size: 0.82rem; font-weight: 500; cursor: pointer;
+  transition: all 0.2s cubic-bezier(.22, 1, .36, 1); text-align: center;
 }
 .mp-month-cell:hover {
-  background: var(--rose-light);
-  transform: scale(1.05);
-  border-color: var(--love);
+  background: var(--rose-light); transform: scale(1.05); border-color: var(--love);
 }
 .mp-month-cell.mp-current {
-  background: var(--love);
-  color: #fff;
-  border-color: transparent;
-  font-weight: 700;
-  box-shadow: 0 4px 16px rgba(184, 72, 90, 0.3);
+  background: var(--love); color: #fff; border-color: transparent;
+  font-weight: 700; box-shadow: 0 4px 16px rgba(184, 72, 90, 0.3);
 }
 
 /* ================================================================
    Week View Toggle
    ================================================================ */
 .cal-view-toggle {
-  display: flex;
-  margin-left: auto;
-  gap: 2px;
-  background: var(--bg);
-  border-radius: 10px;
-  padding: 2px;
+  display: flex; margin-left: auto; gap: 2px;
+  background: var(--bg); border-radius: 10px; padding: 2px;
   border: 1px solid var(--border-light, rgba(200,180,170,0.08));
 }
 .cal-view-btn {
-  padding: 4px 10px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.6rem;
-  font-weight: 600;
-  cursor: pointer;
+  padding: 4px 10px; border: none; border-radius: 8px;
+  background: transparent; color: var(--text-muted);
+  font-size: 0.6rem; font-weight: 600; cursor: pointer;
   transition: all 0.2s;
 }
-.cal-view-btn.active {
-  background: var(--rose-light);
-  color: var(--love);
-  font-weight: 700;
-}
-.cal-view-btn:hover:not(.active) {
-  color: var(--text);
-}
-.days.week-view {
-  grid-template-columns: 28px repeat(7, 1fr);
-  gap: 4px;
-}
+.cal-view-btn.active { background: var(--rose-light); color: var(--love); font-weight: 700; }
+.cal-view-btn:hover:not(.active) { color: var(--text); }
+.days.week-view { grid-template-columns: 28px repeat(7, 1fr); gap: 4px; }
 .days.week-view .day:not(.other-month) .day-num {
-  background: transparent;
-  border-radius: 0;
-  font-size: 0.88rem;
+  background: transparent; border-radius: 0; font-size: 0.88rem;
 }
 .days.week-view .day:not(.other-month) {
-  min-height: 80px;
-  align-items: flex-start;
-  padding-top: 6px;
-  border-radius: 10px;
+  min-height: 80px; align-items: flex-start; padding-top: 6px; border-radius: 10px;
 }
