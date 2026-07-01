@@ -106,7 +106,7 @@ const AuthModule = (function () {
     hashPIN(pin).then(function (hashed) {
       if (hashed === LOGIN_PINS[_selectedLoginProfile]) {
         // Correct PIN
-        activeProfile = _selectedLoginProfile;
+        window.activeProfile = _selectedLoginProfile;
         localStorage.setItem('cycle-active-profile', activeProfile);
         sessionStorage.setItem('cycle-logged-in', '1');
         _isLoggedIn = true;
@@ -142,7 +142,7 @@ const AuthModule = (function () {
 
     _isLoggedIn = false;
     _selectedLoginProfile = null;
-    activeProfile = null;
+    window.activeProfile = null;
 
     // Reset global state
     state = {
@@ -205,7 +205,7 @@ const AuthModule = (function () {
     const savedProfile = localStorage.getItem('cycle-active-profile');
 
     if (savedProfile && sessionLoggedIn === '1') {
-      activeProfile = savedProfile;
+      window.activeProfile = savedProfile;
       _isLoggedIn = true;
       const overlay = document.getElementById('loginOverlay');
       if (overlay) overlay.classList.add('hidden');
