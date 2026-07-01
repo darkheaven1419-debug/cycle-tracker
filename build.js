@@ -142,7 +142,7 @@ if (fs.existsSync(htmlSrc)) {
 
   // Production optimization: replace all individual CSS <link> tags
   // with a single link to the concatenated+minified styles.min.css
-  const cssMatchCount = (html.match(/<link rel="stylesheet" href="css\/[^"]+">/g) || []).length;
+  let cssMatchCount = (html.match(/<link rel="stylesheet" href="css\/[^"]+">/g) || []).length;
   html = html.replace(/(?:\s*<link rel="stylesheet" href="css\/[^"]+">)+/, '\n<link rel="stylesheet" href="styles.min.css">');
   console.info('  CSS links: ' + cssMatchCount + ' → ' + (html.match(/styles\.min\.css/g) || []).length + ' (prod bundle)');
 
@@ -207,13 +207,7 @@ if (terserAvailable) {
       const destPath = path.join(destDir, entry.name);
 
       if (entry.isDirectory()) {
-        // Recursive copy for subdirectories (e.g. js/calendar/)
-        const subEntries = fs.readdirSync(srcPath, { withFileTypes: true });
-        subEntries.forEach(function (subEntry) {
-          if (subEntry.isFile()) {
-            cp(path.join(srcPath, subEntry.name), path.join(destPath, subEntry.name));
-          }
-        });
+        cp(srcPath, destPath);
       } else {
         let content = fs.readFileSync(srcPath, 'utf8');
         // Only replace ?v=NN version markers in JS files (NOT API URLs like /v1/)

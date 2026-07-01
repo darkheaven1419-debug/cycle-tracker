@@ -279,7 +279,7 @@ function renderGarden() {
 
 const SD_KEY = 'shared-diary';
 const DATE_STRIP_DAYS = 14; // used by render-diary.js
-const sharedDiaryViewDate = new Date(); // used by render-diary.js
+let sharedDiaryViewDate = new Date(); // used by render-diary.js
 
 function getGitHubToken() {
   return sessionStorage.getItem('gh-token') || '';
@@ -919,7 +919,7 @@ async function bootApp() {
   }
 
   // Build mood name lookup map (O(1) — replaces indexOf scans)
-  const moodNamesArr = t('moodNames');
+  let moodNamesArr = t('moodNames');
   if (moodNamesArr && moodNamesArr.length === MOOD_KEYS.length) {
     MOOD_NAME_MAP = Object.fromEntries(
       MOOD_KEYS.map(function (k, i) {
@@ -1832,16 +1832,6 @@ function getSeasonLabel(month) {
   return SEASON_LABEL[lang] ? SEASON_LABEL[lang][month] : SEASON_LABEL['sr'][month];
 }
 function renderCalendar() {
-  // REFACTORED v2: Delegate to CalendarModule
-  if (typeof CalendarModule !== 'undefined' && CalendarModule.refresh) {
-    CalendarModule.refresh('all');
-    return;
-  }
-  // Fallback: original inline renderCalendar
-  _legacyRenderCalendar();
-}
-
-function _legacyRenderCalendar() {
   const pred = predict();
   const td = today();
   document.getElementById('monthLabel').textContent =
