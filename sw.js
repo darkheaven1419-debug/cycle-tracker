@@ -2,7 +2,7 @@
 // Network-First for all dynamic assets, Cache-First for static
 // Features: Background Sync for offline diary saves, cache-first for fonts
 
-const CACHE_STATIC = 'ciklus-static-v26';
+const CACHE_STATIC = 'ciklus-static-v27';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 const STATIC_ASSETS = [
