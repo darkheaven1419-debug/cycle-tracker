@@ -911,6 +911,7 @@ function loadDataFiles() {
 }
 
 async function bootApp() {
+  window.bootApp = bootApp; // Export to global scope for auth.js
   // Hide loader IMMEDIATELY
   const loader = document.getElementById('appLoader');
   if (loader) {
