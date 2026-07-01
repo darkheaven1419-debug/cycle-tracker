@@ -120,7 +120,7 @@ function animateWatering() {
   const plant = document.getElementById('gardenPlant');
   if (!plant) return;
   plant.style.transform = 'scale(1.3) rotate(10deg)';
-  plant.style.transition = 'transform .3s cubic-bezier(.34,1.56,.64,1)';
+  plant.style.transition = 'transform .3s cubic-bezier(.22, 1, .36, 1)';
   const drops = ['💧', '💧', '💧'];
   drops.forEach(function (d, i) {
     setTimeout(function () {
@@ -144,7 +144,7 @@ function renderGarden() {
   const plantEl = document.getElementById('gardenPlant');
   if (plantEl) {
     plantEl.style.transform = '';
-    plantEl.style.transition = 'all .5s cubic-bezier(.34,1.56,.64,1)';
+    plantEl.style.transition = 'all .5s cubic-bezier(.22, 1, .36, 1)';
   }
   document.getElementById('garden-title').textContent = t('gardenTitle');
   const streak = calculateStreak();

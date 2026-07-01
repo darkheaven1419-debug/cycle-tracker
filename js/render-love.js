@@ -443,7 +443,7 @@ function renderKnowMe() {
       '</div></div>';
     if (myAns && partnerAns && myAns.answer.trim().toLowerCase() === partnerAns.answer.trim().toLowerCase()) {
       html +=
-        '<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:bounce-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">' +
+        '<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:float-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">' +
         t('knowMeMatch') +
         '</div>';
     }

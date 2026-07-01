@@ -231,7 +231,7 @@ function renderGarden() {
   const plantEl = document.getElementById('gardenPlant');
   if (plantEl) {
     plantEl.style.transform = '';
-    plantEl.style.transition = 'all .5s cubic-bezier(.34,1.56,.64,1)';
+    plantEl.style.transition = 'all .5s cubic-bezier(.22, 1, .36, 1)';
   }
   document.getElementById('garden-title').textContent = t('gardenTitle');
   const streak = calculateStreak();

@@ -379,7 +379,7 @@ function renderCultureExplain() {
     '</div>';
   topics.forEach(function (t) {
     h +=
-      '<div style="margin-bottom:10px;padding:8px 10px;background:var(--card);border-radius:10px;border-left:3px solid var(--love)">' +
+      '<div style="margin-bottom:10px;padding:8px 10px;background:var(--card);border-radius:10px;border-left:2px solid var(--rose-mist)">' +
       '<div style="font-weight:700;font-size:.72rem;margin-bottom:3px">' +
       t.icon +
       ' ' +

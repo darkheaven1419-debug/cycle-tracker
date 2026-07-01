@@ -75,9 +75,9 @@
 
 .lrn-quiz-score-icon {
   font-size: 3.5rem; display: block; margin-bottom: 10px;
-  animation: celebrate 1s cubic-bezier(.34,1.56,.64,1) .15s both;
+  animation: celebrate 1s cubic-bezier(.22, 1, .36, 1) .15s both;
 }
-.lrn-quiz-score-icon.perfect { animation: celebrate 1.2s cubic-bezier(.34,1.56,.64,1) .1s both; }
+.lrn-quiz-score-icon.perfect { animation: celebrate 1.2s cubic-bezier(.22, 1, .36, 1) .1s both; }
 
 .lrn-quiz-score-text {
   font-size: 1.4rem; font-weight: 800; color: var(--text);
@@ -89,7 +89,7 @@
   font-size: 1.6rem; letter-spacing: 4px; margin-bottom: 10px;
 }
 .lrn-quiz-stars .star { display: inline-block; }
-.lrn-quiz-stars .star.filled { animation: starPop .4s cubic-bezier(.34,1.56,.64,1) both; }
+.lrn-quiz-stars .star.filled { animation: starPop .4s cubic-bezier(.22, 1, .36, 1) both; }
 .lrn-quiz-stars .star.filled:nth-child(1) { animation-delay: .1s; }
 .lrn-quiz-stars .star.filled:nth-child(2) { animation-delay: .2s; }
 .lrn-quiz-stars .star.filled:nth-child(3) { animation-delay: .3s; }
@@ -133,7 +133,7 @@
 /* ---- Phase Path Card ---- */
 .lrn-phase-card {
   padding: 18px 12px; border-radius: 18px; text-align: center; cursor: pointer;
-  transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; touch-action: manipulation;
+  transition: transform .25s cubic-bezier(.22, 1, .36, 1), box-shadow .25s; touch-action: manipulation;
   position: relative; overflow: hidden;
   background: var(--gradient-card); border: 2px solid var(--border);
 }
@@ -154,7 +154,7 @@
 .lrn-phase-icon-wrap {
   width: 48px; height: 48px; border-radius: 50%; display: flex;
   align-items: center; justify-content: center; margin: 0 auto 8px;
-  font-size: 1.5rem; transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  font-size: 1.5rem; transition: transform .3s cubic-bezier(.22, 1, .36, 1);
 }
 .lrn-phase-card:hover .lrn-phase-icon-wrap { transform: scale(1.12) rotate(-6deg); }
 .lrn-phase-card.active .lrn-phase-icon-wrap { transform: scale(1.08); }
@@ -360,7 +360,7 @@
 .lrn-practice-option.correct {
   border-color: var(--sage); background: var(--sage-light);
   box-shadow: 0 0 0 3px rgba(122,158,126,.15);
-  animation: correctPop .4s cubic-bezier(.34,1.56,.64,1);
+  animation: correctPop .4s cubic-bezier(.22, 1, .36, 1);
 }
 .lrn-practice-option.wrong {
   border-color: var(--rose); background: var(--rose-light);
@@ -435,7 +435,7 @@
 }
 .lrn-ach-badge.unlocked:active { transform: scale(.95); }
 .lrn-ach-badge.just-unlocked {
-  animation: badgeUnlock .8s cubic-bezier(.34,1.56,.64,1);
+  animation: badgeUnlock .8s cubic-bezier(.22, 1, .36, 1);
 }
 
 .lrn-ach-icon {
@@ -720,7 +720,7 @@
 
 /* ---- Goal Celebrate ---- */
 .lrn-goal-celebrate {
-  animation: goalCelebrate .6s cubic-bezier(.34,1.56,.64,1);
+  animation: goalCelebrate .6s cubic-bezier(.22, 1, .36, 1);
 }
 
 /* ---- Confetti ---- */

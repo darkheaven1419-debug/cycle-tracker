@@ -29,7 +29,7 @@
   min-width: 40px; min-height: 36px;
   border: 1.5px solid rgba(196, 90, 107, 0.15);
   cursor: pointer; flex-shrink: 0;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.25s cubic-bezier(.22, 1, .36, 1);
   touch-action: manipulation; letter-spacing: 0.02em;
 }
 .cal-nav .today-pill:hover { background: var(--gradient-love); color: #fff; box-shadow: 0 4px 16px rgba(196, 90, 107, 0.25); transform: translateY(-1px); border-color: transparent; }
@@ -190,7 +190,7 @@
   max-width: 300px;
   width: 85%;
   box-shadow: 0 16px 48px rgba(0,0,0,0.15);
-  animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: scaleIn 0.25s cubic-bezier(.22, 1, .36, 1);
 }
 .mp-year-row {
   display: flex;
@@ -226,7 +226,7 @@
   font-size: 0.82rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s cubic-bezier(.22, 1, .36, 1);
   text-align: center;
 }
 .mp-month-cell:hover {
