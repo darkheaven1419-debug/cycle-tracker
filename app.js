@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /* eslint-disable no-unused-vars */
 
@@ -1051,6 +1051,11 @@ async function bootApp() {
     switchToTab(initTab);
   }
 
+  // Swipe gesture on calendar container (initialized once)
+  initCalendarSwipe();
+  // Month label click opens year/month picker
+  setupMonthPicker();
+
   // GSAP animations (deep gsap-skills integration)
   initGsapAnimations();
   setTimeout(function () {
@@ -1118,10 +1123,24 @@ function loadHolidays() {
 }
 loadHolidays();
 
+/** Holiday lookup with O(1) cache — replaces O(n) .filter() per cell */
+var _holidayCache = null;
+function _buildHolidayCache() {
+  _holidayCache = {};
+  for (var hi = 0; hi < HOLIDAYS.length; hi++) {
+    var h = HOLIDAYS[hi];
+    if (!_holidayCache[h.d]) _holidayCache[h.d] = [];
+    _holidayCache[h.d].push(h);
+  }
+}
 function getHoliday(dateKey) {
-  return HOLIDAYS.filter(function (h) {
-    return h.d === dateKey;
-  });
+  if (!_holidayCache) _buildHolidayCache();
+  return _holidayCache[dateKey] || [];
+}
+// Rebuild cache when holidays are loaded or merged
+var _origHolidayPush = null;
+function _rebuildHolidayCache() {
+  _holidayCache = null;
 }
 
 // Holiday countdown: find next upcoming holiday within 60 days
@@ -1547,6 +1566,8 @@ function updateCycleCounter(n) {
    ================================================================ */
 let viewYear = today().getFullYear(),
   viewMonth = today().getMonth();
+let calView = 'month'; // 'month' | 'week'
+var _weekOffset = 0; // weeks offset from today when in week view
 let selectedDate = null,
   symptomDate = null,
   knowledgeOpen = false;
@@ -1564,12 +1585,14 @@ function updateLangUI() {
   document.querySelectorAll('.lang-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.lang === lang);
   });
-  const wd = t('weekdays');
-  document.getElementById('weekdaysRow').innerHTML =
-    '<span></span>' +
+  var wd = t('weekdays');
+  var weekdaysEl = document.getElementById('weekdaysRow');
+  weekdaysEl.setAttribute('role', 'row');
+  weekdaysEl.innerHTML =
+    '<span role="gridcell" aria-hidden="true"></span>' +
     wd
       .map(function (d, i) {
-        return '<span' + (i >= 5 ? ' style="color:var(--rose);opacity:.6"' : '') + '>' + d + '</span>';
+        return '<span role="columnheader" scope="col"' + (i >= 5 ? ' style="color:var(--rose);opacity:.6"' : '') + '>' + d + '</span>';
       })
       .join('');
   const lg = t('legend');
@@ -1807,6 +1830,37 @@ function applyAllUI(what) {
 const renderAll = applyAllUI;
 
 /* ================================================================
+   IMMUTABLE STATE HELPERS
+   ================================================================ */
+/** Toggle a period record for a date (immutable state update) */
+function togglePeriodRecord(date) {
+  var idx = state.records.findIndex(function (r) {
+    return sameDay(r, date);
+  });
+  var wasAdded = false;
+  if (idx >= 0) {
+    state = Object.assign({}, state, {
+      records: state.records.filter(function (_, i) {
+        return i !== idx;
+      }),
+    });
+    toast('🚫 ' + t('toast.unmarked'));
+  } else {
+    var newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
+      return a - b;
+    });
+    state = Object.assign({}, state, { records: newRecords });
+    wasAdded = true;
+    toast('🩸 ' + t('toast.marked'));
+  }
+  saveState();
+  renderAll(['calendar', 'core']);
+  updateFab();
+  if (wasAdded) checkCycleCelebration();
+  return wasAdded;
+}
+
+/* ================================================================
    CALENDAR
    ================================================================ */
 const SEASON_EMOJI = { 0: '❄️', 1: '❄️', 2: '🌸', 3: '🌸', 4: '🌸', 5: '☀️', 6: '☀️', 7: '☀️', 8: '🍂', 9: '🍂', 10: '🍂', 11: '❄️' };
@@ -1832,93 +1886,123 @@ function getSeasonLabel(month) {
   return SEASON_LABEL[lang] ? SEASON_LABEL[lang][month] : SEASON_LABEL['sr'][month];
 }
 function renderCalendar() {
-  const pred = predict();
-  const td = today();
-  document.getElementById('monthLabel').textContent =
-    lang === 'sr' ? `${t('months')[viewMonth]} ${viewYear}.` : lang === 'en' ? `${t('months')[viewMonth]} ${viewYear}` : `${viewYear}年${viewMonth + 1}月`;
-  const first = new Date(viewYear, viewMonth, 1);
-  let dow = first.getDay();
-  dow = dow === 0 ? 6 : dow - 1;
-  const gridStart = addDays(first, -dow);
-  const grid = document.getElementById('daysGrid');
-  const frag = document.createDocumentFragment();
-  const recordedStarts = new Set(state.records.map(fmtDate));
-  const plEl = document.getElementById('predLegend');
+  // Orchestrator: delegates to specialized sub-functions
+  var pred = predict();
+  var td = today();
+  var monthLabel = document.getElementById('monthLabel');
+  if (calView === 'week') {
+    var monday = getWeekStart();
+    var sunday = addDays(monday, 6);
+    if (lang === 'sr') {
+      monthLabel.textContent = monday.getDate() + '. ' + t('months')[monday.getMonth()] + ' — ' + sunday.getDate() + '. ' + t('months')[sunday.getMonth()];
+    } else if (lang === 'en') {
+      monthLabel.textContent = t('months')[monday.getMonth()] + ' ' + monday.getDate() + ' — ' + t('months')[sunday.getMonth()] + ' ' + sunday.getDate();
+    } else {
+      monthLabel.textContent = monday.getMonth() + 1 + '月' + monday.getDate() + '日 — ' + (sunday.getMonth() + 1) + '月' + sunday.getDate() + '日';
+    }
+  } else {
+    monthLabel.textContent =
+      lang === 'sr'
+        ? t('months')[viewMonth] + ' ' + viewYear + '.'
+        : lang === 'en'
+          ? t('months')[viewMonth] + ' ' + viewYear
+          : viewYear + '年' + (viewMonth + 1) + '月';
+  }
+  var grid = document.getElementById('daysGrid');
+  buildCalendarGrid(grid, pred, td);
+  updateCalendarSeason();
+  updateProgress(pred);
+  updateStats(pred);
+  updateHistoryDots(pred);
+  updateReminder(pred);
+  renderMonthHolidaySummary();
+  renderUpcomingHoliday();
+  animateCalendarDays();
+}
+
+/** Build the day grid DOM fragment (supports month and week view) */
+function buildCalendarGrid(grid, pred, td) {
+  var isWeekView = calView === 'week';
+  var numDays = isWeekView ? 7 : 42;
+  var gridStart;
+
+  if (isWeekView) {
+    // Week view: Monday of the week containing today
+    var refDay = new Date(viewYear, viewMonth, 1);
+    // Use current view position to find which week
+    var monday = getWeekStart();
+    gridStart = monday;
+    viewYear = monday.getFullYear();
+    viewMonth = monday.getMonth();
+  } else {
+    var first = new Date(viewYear, viewMonth, 1);
+    var dow = first.getDay();
+    dow = dow === 0 ? 6 : dow - 1;
+    gridStart = addDays(first, -dow);
+  }
+  var frag = document.createDocumentFragment();
+  var recordedStarts = new Set(state.records.map(fmtDate));
+  var plEl = document.getElementById('predLegend');
   if (pred.futurePeriods.length > 0) {
     plEl.style.display = '';
     plEl.textContent = t('calendarPredLegend');
   } else plEl.style.display = 'none';
-  // Build shared diary index for dot indicators
-  const sharedDiaryIdx = {};
-  const sd = safeParse(localStorage.getItem('shared-diary'), {});
+  var sharedDiaryIdx = {};
+  var sd = safeParse(localStorage.getItem('shared-diary'), {});
   Object.keys(sd).forEach(function (k) {
     if (sd[k] && (sd[k].barry || sd[k].andjela)) sharedDiaryIdx[k] = true;
   });
-  for (let i = 0; i < 42; i++) {
-    // Insert week number at start of each row (every 7th position)
-    const colPos = i + Math.floor(i / 7); // actual grid position including week columns
-    if (i % 7 === 0) {
-      const wkCell = document.createElement('div');
+  // ARIA grid role for accessibility
+  grid.setAttribute('role', 'grid');
+  grid.setAttribute('aria-label', t('calendarGridLabel') || 'Calendar');
+  // Update grid CSS class for view mode
+  grid.classList.toggle('week-view', isWeekView);
+  // Hide prediction legend in week view (no room)
+  if (isWeekView) {
+    var plEl2 = document.getElementById('predLegend');
+    if (plEl2) plEl2.style.display = 'none';
+  }
+
+  for (var i = 0; i < numDays; i++) {
+    if (!isWeekView && i % 7 === 0) {
+      var wkCell = document.createElement('div');
       wkCell.className = 'week-num';
-      const wkDate = addDays(gridStart, i);
-      // ISO week number approximation
-      const jan1 = new Date(wkDate.getFullYear(), 0, 1);
-      const wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+      var wkDate = addDays(gridStart, i);
+      var jan1 = new Date(wkDate.getFullYear(), 0, 1);
+      var wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
       wkCell.textContent = wkNum;
       wkCell.setAttribute('aria-hidden', 'true');
       frag.appendChild(wkCell);
     }
-    const d = addDays(gridStart, i);
-    const inMonth = d.getMonth() === viewMonth;
-    const isToday = sameDay(d, td);
-    const phase = inMonth ? getPhase(d, pred) : null;
-    const key = fmtDate(d);
-    // Symptom check
-    const symptoms = state.symptoms[key];
-    const hasSymptom =
+    var d = addDays(gridStart, i);
+    var inMonth = d.getMonth() === viewMonth;
+    var isToday = sameDay(d, td);
+    var phase = inMonth ? getPhase(d, pred) : null;
+    var key = fmtDate(d);
+    var symptoms = state.symptoms[key];
+    var hasSymptom =
       symptoms &&
       Object.entries(symptoms).some(function (kv) {
         return kv[0] !== 'notes' && kv[1] > 0;
       });
-    // Cycle day number for Anđela's active cycle
-    let cycleDay = '';
+    var cycleDay = '';
     if (activeProfile === 'andjela' && pred.lastStart) {
-      const cd = daysDiff(d0(pred.lastStart), d0(d));
+      var cd = daysDiff(d0(pred.lastStart), d0(d));
       if (cd >= 0 && cd < pred.cycleLen) cycleDay = String(cd + 1);
     }
-    const annType = isAnniversary(d);
-    const el = document.createElement('div');
+    var annType = isAnniversary(d);
+    var el = document.createElement('div');
     el.className = 'day';
     if (!inMonth) el.classList.add('other-month');
     if (isToday) el.classList.add('today');
     if (isToday) el.setAttribute('aria-current', 'date');
-    if (phase) {
-      el.classList.add(phase);
-      // Inline style fallback — ensures phase colors ALWAYS show
-      const phaseStyles = {
-        'period-on': 'background:linear-gradient(135deg,#E8877B,#D46B5E);color:#fff;border-radius:50%;font-weight:700',
-        'period-mid':
-          'background:linear-gradient(135deg,var(--rose-light,#fdf0f3),rgba(253,240,243,0.6));color:var(--rose-dark,#b3535a);font-weight:600;border-radius:10px',
-        'period-pred-first': 'background:linear-gradient(135deg,#E8877B,#D46B5E);color:#fff;opacity:.55;border-radius:50%;font-weight:700',
-        'period-pred':
-          'background:linear-gradient(135deg,rgba(253,240,243,0.8),rgba(245,224,230,0.4));color:var(--rose-dark,#b3535a);opacity:.75;border-radius:10px',
-        'period-future-first': 'background:linear-gradient(135deg,#E8877B,#D46B5E);color:#fff;opacity:.25;border-radius:50%',
-        'period-future':
-          'background:linear-gradient(135deg,rgba(253,240,243,0.5),rgba(245,224,230,0.2));color:var(--rose-dark,#b3535a);opacity:.35;border-radius:10px',
-        ovulation: 'background:#5E9BAA;color:#fff;font-weight:700;border-radius:50%',
-        fertile: 'background:var(--teal-light,#d4ede6);color:#2d5f6e;font-weight:600;border-radius:10px',
-        luteal: 'background:var(--lavender-light,#e8ddf0);color:var(--lavender-dark,#6b5b7a);font-weight:500;border-radius:10px',
-        follicular: 'background:var(--sage-light,#e0efe6);color:#3d6b55;font-weight:500;border-radius:10px',
-      };
-      if (phaseStyles[phase]) el.style.cssText = (el.style.cssText || '') + ';' + phaseStyles[phase];
-    }
+    if (phase) el.classList.add(phase);
     if (phase === 'period-on' && recordedStarts.has(key)) el.classList.add('recorded');
     if (annType > 0) el.classList.add('anniversary');
     if (getBirthday(d)) el.classList.add('birthday');
-    // Special date icon
-    const special = getSpecialDate(d);
+    var special = getSpecialDate(d);
     if (special) {
-      const spIcon = document.createElement('span');
+      var spIcon = document.createElement('span');
       spIcon.className = 'special-date-icon';
       spIcon.textContent = special.icon;
       spIcon.title = activeProfile === 'barry' ? special.title_zh : special.title_sr;
@@ -1935,23 +2019,20 @@ function renderCalendar() {
         }
       });
     }
-    // Date number
-    const daySpan = document.createElement('span');
+    var daySpan = document.createElement('span');
     daySpan.className = 'day-num';
     daySpan.textContent = d.getDate();
     el.appendChild(daySpan);
-    // Cycle day badge
     if (cycleDay && inMonth && !phase) {
-      const cdSpan = document.createElement('span');
+      var cdSpan = document.createElement('span');
       cdSpan.className = 'day-cycle-num';
       cdSpan.textContent = cycleDay;
       el.appendChild(cdSpan);
     }
-    // Lunar date label (Chinese calendar)
     if (inMonth && typeof Lunar !== 'undefined') {
-      const lunarDayName = getLunarCellText(d);
+      var lunarDayName = getLunarCellText(d);
       if (lunarDayName) {
-        const lunarSpan = document.createElement('span');
+        var lunarSpan = document.createElement('span');
         lunarSpan.className = 'lunar-date ' + getLunarCellClass(d);
         lunarSpan.textContent = lunarDayName;
         el.appendChild(lunarSpan);
@@ -1959,13 +2040,12 @@ function renderCalendar() {
     }
     el.setAttribute('role', 'button');
     el.setAttribute('aria-label', fmtDate(d));
-    // Symptom emoji icons on cell
     if (hasSymptom && !phase && symptoms) {
-      const miniDiv = document.createElement('div');
+      var miniDiv = document.createElement('div');
       miniDiv.className = 'day-symptoms';
       ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
         if (symptoms[sym] && symptoms[sym] > 0) {
-          const symEl = document.createElement('span');
+          var symEl = document.createElement('span');
           symEl.className = 'day-sym-icon';
           symEl.textContent = { cramps: '😣', mood: '😊', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' }[sym];
           symEl.title = sym;
@@ -1974,17 +2054,14 @@ function renderCalendar() {
       });
       if (miniDiv.children.length > 0) el.appendChild(miniDiv);
     }
-    // Diary entry dot — per-user colors
     if (sharedDiaryIdx[key]) {
-      // Check who wrote diary for more precise dot
-      const sdEntry = sd[key] || {};
-      const hasA = !!sdEntry.andjela;
-      const hasB = !!sdEntry.barry;
-      let diaryTooltip = '';
+      var sdEntry = sd[key] || {};
+      var hasA = !!sdEntry.andjela;
+      var hasB = !!sdEntry.barry;
+      var diaryTooltip = '';
       if (hasA && hasB) {
         diaryTooltip = '💕 Oboje';
-        // Both wrote — use the gold dot (existing behavior)
-        const diaryDot = document.createElement('span');
+        var diaryDot = document.createElement('span');
         diaryDot.className = 'mini-dot gold';
         diaryDot.style.cssText =
           'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
@@ -1992,53 +2069,41 @@ function renderCalendar() {
         el.appendChild(diaryDot);
       } else if (hasA) {
         diaryTooltip = '🌸 Anđela';
-        // Only Anđela
-        const diaryDotA = document.createElement('span');
+        var diaryDotA = document.createElement('span');
         diaryDotA.className = 'mini-dot';
         diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#c45a6b;opacity:.7';
         diaryDotA.title = diaryTooltip;
         el.appendChild(diaryDotA);
       } else if (hasB) {
         diaryTooltip = '👦 Barry';
-        // Only Barry
-        const diaryDotB = document.createElement('span');
+        var diaryDotB = document.createElement('span');
         diaryDotB.className = 'mini-dot';
         diaryDotB.style.cssText = 'position:absolute;bottom:8px;left:calc(50% + 4px);width:4px;height:4px;border-radius:50%;background:#4A90D9;opacity:.7';
         diaryDotB.title = diaryTooltip;
         el.appendChild(diaryDotB);
       }
-      // Add diary preview text as data attribute for tooltip on desktop
       if (inMonth && diaryTooltip) {
-        let diaryPreviewText = '';
+        var diaryPreviewText = '';
         try {
-          const entryA = sdEntry.andjela;
-          const entryB = sdEntry.barry;
+          var entryA = sdEntry.andjela;
+          var entryB = sdEntry.barry;
           if (hasA && entryA) diaryPreviewText += '🌸 ' + (entryA.text || entryA.happy || '').substring(0, 40);
           if (hasB && entryB) diaryPreviewText += (diaryPreviewText ? ' | ' : '') + '👦 ' + (entryB.text || entryB.happy || '').substring(0, 40);
         } catch (e) {
           /* ignore */
         }
-        if (diaryPreviewText) {
-          el.setAttribute('data-diary', diaryPreviewText);
-        }
+        if (diaryPreviewText) el.setAttribute('data-diary', diaryPreviewText);
       }
     }
-    // Shared calendar markers (emoji from both users)
     if (typeof getCalendarSummary === 'function' && inMonth) {
-      const calSummary = getCalendarSummary(key);
-      const hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
+      var calSummary = getCalendarSummary(key);
+      var hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
       if (hasUserMarkers) {
-        const markerRow = document.createElement('div');
+        var markerRow = document.createElement('div');
         markerRow.className = 'day-marker-row';
-        const allMarkers = [];
-        calSummary.barry.forEach(function (m) {
-          allMarkers.push(m);
-        });
-        calSummary.andjela.forEach(function (m) {
-          allMarkers.push(m);
-        });
-        for (let mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
-          const mSpan = document.createElement('span');
+        var allMarkers = calSummary.barry.concat(calSummary.andjela);
+        for (var mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
+          var mSpan = document.createElement('span');
           mSpan.className = 'cal-marker-emoji';
           mSpan.textContent = allMarkers[mi2].emoji;
           mSpan.title = (allMarkers[mi2].author === 'andjela' ? '🌸 Anđela' : '👦 Barry') + ': ' + (allMarkers[mi2].note || '');
@@ -2047,66 +2112,42 @@ function renderCalendar() {
         el.appendChild(markerRow);
       }
     }
-    // Anniversary dot
     if (annType === 2 && !phase) {
-      const dot = document.createElement('span');
+      var dot = document.createElement('span');
       dot.className = 'mini-dot gold';
       el.appendChild(dot);
     }
-    // Solar term label on calendar cell
-    const solarTerm = getSolarTerm(key);
+    var solarTerm = getSolarTerm(key);
     if (solarTerm && inMonth) {
-      const stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
-      const stLabel = document.createElement('span');
+      var stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
+      var stLabel = document.createElement('span');
       stLabel.className = 'solar-term-label';
       stLabel.textContent = stName;
-      stLabel.title = stName; // hover shows full name for long solar terms
+      stLabel.title = stName;
       el.appendChild(stLabel);
       el.classList.add('solar-term-day');
-      // Single tap opens modal (same as other days) — modal shows solar term + holiday
-      if (!solarTerm.story) {
-        // Ensure rich data is loaded for the modal
-        ensureSolarTermData();
-      }
+      if (!solarTerm.story) ensureSolarTermData();
     }
-    // Holiday emoji icons — show before solar term for proper layering
-    const holidays = getHoliday(key);
+    var holidays = getHoliday(key);
     holidays.forEach(function (h) {
-      const icon = document.createElement('span');
+      var icon = document.createElement('span');
       icon.className = 'holiday-icon holiday-' + h.country;
       icon.textContent = h.icon || (h.country === 'cn' ? '🎉' : '🇷🇸');
       icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
       el.appendChild(icon);
     });
-    // Double-tap detection using touch events for mobile responsiveness
-    let tapTimer = null;
+    // Double-tap detection
+    var tapTimer = null;
     if (inMonth) {
       el.addEventListener('click', function (e) {
         if (tapTimer) {
-          // Double tap — quick toggle period
           clearTimeout(tapTimer);
           tapTimer = null;
-          const idx = state.records.findIndex(function (r) {
-            return sameDay(r, d);
-          });
-          if (idx >= 0) {
-            state.records.splice(idx, 1);
-            toast('🚫 ' + t('toast.unmarked'));
-          } else {
-            state.records.push(new Date(d));
-            state.records.sort(function (a, b) {
-              return a - b;
-            });
-            el.classList.add('celebrate');
-            setTimeout(function () {
-              el.classList.remove('celebrate');
-            }, 500);
-            toast('🩸 ' + t('toast.marked'));
-            checkCycleCelebration();
-          }
-          saveState();
-          renderAll(['calendar', 'core']);
-          updateFab();
+          togglePeriodRecord(d);
+          el.classList.add('celebrate');
+          setTimeout(function () {
+            el.classList.remove('celebrate');
+          }, 500);
           e.preventDefault();
         } else {
           tapTimer = setTimeout(function () {
@@ -2115,8 +2156,7 @@ function renderCalendar() {
           }, 280);
         }
       });
-      // Also listen for touchend for faster double-tap on mobile
-      let touchCount = 0,
+      var touchCount = 0,
         touchTimer = null;
       el.addEventListener('touchend', function (e) {
         touchCount++;
@@ -2131,52 +2171,164 @@ function renderCalendar() {
             clearTimeout(tapTimer);
             tapTimer = null;
           }
-          const idx = state.records.findIndex(function (r) {
-            return sameDay(r, d);
-          });
-          if (idx >= 0) {
-            state.records.splice(idx, 1);
-            toast('🚫 ' + t('toast.unmarked'));
-          } else {
-            state.records.push(new Date(d));
-            state.records.sort(function (a, b) {
-              return a - b;
-            });
-            el.classList.add('celebrate');
-            setTimeout(function () {
-              el.classList.remove('celebrate');
-            }, 500);
-            toast('🩸 ' + t('toast.marked'));
-            checkCycleCelebration();
-          }
-          saveState();
-          renderAll(['calendar', 'core']);
-          updateFab();
+          togglePeriodRecord(d);
           e.preventDefault();
         }
       });
     }
     frag.appendChild(el);
   }
-  // Batch-replace grid content in single DOM operation
   grid.innerHTML = '';
   grid.appendChild(frag);
-  // Month season subtitle
-  const ml = document.getElementById('monthLabel');
-  if (ml) {
-    // Remove existing season tag and re-add with updated month
-    const existingTag = ml.querySelector('.season-tag');
-    if (existingTag) existingTag.remove();
-    ml.innerHTML =
-      ml.textContent + ' <span class="season-tag" style="font-size:.6rem;opacity:.5">' + SEASON_EMOJI[viewMonth] + ' ' + getSeasonLabel(viewMonth) + '</span>';
+}
+
+/** Update month season tag after grid render */
+function updateCalendarSeason() {
+  var ml = document.getElementById('monthLabel');
+  if (!ml) return;
+  var existingTag = ml.querySelector('.season-tag');
+  if (existingTag) existingTag.remove();
+  ml.innerHTML = ml.textContent + ' <span class="season-tag">' + SEASON_EMOJI[viewMonth] + ' ' + getSeasonLabel(viewMonth) + '</span>';
+  // Add seasonal data attribute to calendar container for CSS styling
+  var container = document.getElementById('calendarContainer');
+  if (container) {
+    var seasons = ['spring', 'spring', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
+    container.dataset.season = seasons[viewMonth] || 'spring';
   }
-  updateProgress(pred);
-  updateStats(pred);
-  updateHistoryDots(pred);
-  updateReminder(pred);
-  renderMonthHolidaySummary();
-  renderUpcomingHoliday();
-  animateCalendarDays();
+}
+
+/** Initialize swipe gesture on calendar container */
+function initCalendarSwipe() {
+  var container = document.getElementById('calendarContainer');
+  if (!container) return;
+  var startX = 0,
+    startY = 0;
+  container.addEventListener(
+    'touchstart',
+    function (e) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  container.addEventListener(
+    'touchend',
+    function (e) {
+      var endX = e.changedTouches[0].clientX;
+      var endY = e.changedTouches[0].clientY;
+      var diffX = endX - startX;
+      var diffY = endY - startY;
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+        if (diffX > 0) changeMonth(-1);
+        else changeMonth(1);
+      }
+    },
+    { passive: true }
+  );
+}
+
+/** Setup month label click — shows year/month picker overlay */
+function setupMonthPicker() {
+  var ml = document.getElementById('monthLabel');
+  if (!ml) return;
+  ml.style.cursor = 'pointer';
+  ml.title = ml.title || t('monthPickerHint') || 'Click to jump';
+  ml.addEventListener('click', function (e) {
+    e.stopPropagation();
+    showMonthPicker();
+  });
+  // Close picker on Escape
+  document.addEventListener('keydown', function mpEscape(e) {
+    if (e.key === 'Escape' && _mpickerEl) {
+      closeMonthPicker();
+    }
+  });
+}
+
+/** Show year/month picker overlay */
+var _mpickerEl = null;
+function showMonthPicker() {
+  closeMonthPicker();
+  var overlay = document.createElement('div');
+  overlay.className = 'month-picker-overlay';
+  overlay.id = 'monthPickerOverlay';
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeMonthPicker();
+  });
+
+  var box = document.createElement('div');
+  box.className = 'month-picker-box';
+
+  // Year nav
+  var yearRow = document.createElement('div');
+  yearRow.className = 'mp-year-row';
+  var prevBtn = document.createElement('button');
+  prevBtn.className = 'mp-nav-btn';
+  prevBtn.textContent = '◂';
+  prevBtn.addEventListener('click', function () {
+    _mpYear--;
+    renderMPicker(box);
+  });
+  var yearLabel = document.createElement('span');
+  yearLabel.className = 'mp-year-label';
+  yearLabel.id = 'mpYearLabel';
+  var nextBtn = document.createElement('button');
+  nextBtn.className = 'mp-nav-btn';
+  nextBtn.textContent = '▸';
+  nextBtn.addEventListener('click', function () {
+    _mpYear++;
+    renderMPicker(box);
+  });
+  yearRow.appendChild(prevBtn);
+  yearRow.appendChild(yearLabel);
+  yearRow.appendChild(nextBtn);
+  box.appendChild(yearRow);
+
+  // Month grid
+  var grid = document.createElement('div');
+  grid.className = 'mp-month-grid';
+  grid.id = 'mpMonthGrid';
+  box.appendChild(grid);
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  _mpickerEl = overlay;
+  _mpYear = viewYear;
+  renderMPicker(box);
+}
+
+var _mpYear = 0;
+function renderMPicker(box) {
+  var yearLabel = document.getElementById('mpYearLabel');
+  var grid = document.getElementById('mpMonthGrid');
+  if (!yearLabel || !grid) return;
+  yearLabel.textContent = String(_mpYear);
+  grid.innerHTML = '';
+  for (var i = 0; i < 12; i++) {
+    var cell = document.createElement('button');
+    cell.className = 'mp-month-cell';
+    cell.textContent = t('months')[i] || (lang === 'zh-CN' ? i + 1 + '月' : i + 1);
+    if (_mpYear === viewYear && i === viewMonth) cell.classList.add('mp-current');
+    cell.addEventListener(
+      'click',
+      (function (y, m) {
+        return function () {
+          viewYear = y;
+          viewMonth = m;
+          closeMonthPicker();
+          renderCalendar();
+        };
+      })(_mpYear, i)
+    );
+    grid.appendChild(cell);
+  }
+}
+
+function closeMonthPicker() {
+  if (_mpickerEl) {
+    _mpickerEl.remove();
+    _mpickerEl = null;
+  }
 }
 
 function updateProgress(pred) {
@@ -3271,31 +3423,75 @@ function clearAllData() {
 let _changeMonthTimer = null;
 function changeMonth(d) {
   if (_changeMonthTimer) return; // Debounce: ignore rapid clicks
+  if (d === 0) {
+    renderCalendar();
+    return;
+  }
   _changeMonthTimer = setTimeout(function () {
     _changeMonthTimer = null;
   }, 150);
-  viewMonth += d;
-  if (viewMonth < 0) {
-    viewMonth = 11;
-    viewYear--;
-  }
-  if (viewMonth > 11) {
-    viewMonth = 0;
-    viewYear++;
+  if (calView === 'week') {
+    // In week view, shift by weeks using offset
+    _weekOffset += d;
+    var newMonday = getWeekStart();
+    viewYear = newMonday.getFullYear();
+    viewMonth = newMonday.getMonth();
+  } else {
+    viewMonth += d;
+    if (viewMonth < 0) {
+      viewMonth = 11;
+      viewYear--;
+    }
+    if (viewMonth > 11) {
+      viewMonth = 0;
+      viewYear++;
+    }
   }
 
-  const grid = document.getElementById('daysGrid');
-  // Fade out old content
+  var grid = document.getElementById('daysGrid');
   grid.style.transition = 'opacity 0.08s ease-out';
   grid.style.opacity = '0';
 
   setTimeout(function () {
-    // Render new month
     renderCalendar();
-    // Fade in new content
     grid.style.transition = 'opacity 0.15s ease-out';
     grid.style.opacity = '1';
   }, 80);
+}
+
+/** Get the Monday of the current view week */
+function getWeekStart() {
+  // Always compute from today, then apply week offset
+  var td = today();
+  var day = td.getDay();
+  var diff = td.getDate() - (day === 0 ? 6 : day - 1);
+  var thisMonday = new Date(td.getFullYear(), td.getMonth(), diff);
+  if (calView === 'week' && _weekOffset !== 0) {
+    return addDays(thisMonday, _weekOffset * 7);
+  }
+  return thisMonday;
+}
+
+/** Toggle between month and week view */
+function setCalView(view) {
+  calView = view;
+  _weekOffset = 0;
+  document.getElementById('viewBtnMonth').classList.toggle('active', view === 'month');
+  document.getElementById('viewBtnWeek').classList.toggle('active', view === 'week');
+  if (view === 'week') {
+    var monday = getWeekStart();
+    viewYear = monday.getFullYear();
+    viewMonth = monday.getMonth();
+  }
+  renderCalendar();
+}
+
+/** Go to today in current view mode */
+function goToday() {
+  _weekOffset = 0;
+  viewYear = today().getFullYear();
+  viewMonth = today().getMonth();
+  renderCalendar();
 }
 
 // Touch swipe

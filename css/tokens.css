@@ -23,6 +23,20 @@
   --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.25);
   --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.3);
   --calendar-hover-lift: 0 4px 12px rgba(196, 90, 107, 0.12);
+  /* Ring-based phase indicator colors (desaturated for borders) */
+  --ring-period: #d4787e;
+  --ring-ovulation: #5e9baa;
+  --ring-fertile: #7ab8a0;
+  --ring-luteal: #b8a0c8;
+  --ring-follicular: #80a590;
+  --ring-predicted: rgba(180, 150, 150, 0.35);
+  /* Seasonal accent colors */
+  --season-spring: #e8867c;
+  --season-summer: #c45a6b;
+  --season-autumn: #d49a5e;
+  --season-winter: #9a7ab0;
+  /* Inner shadow for depth */
+  --shadow-inner-sm: inset 0 0 0 1px rgba(80, 40, 40, 0.04);
   /* Refined shadow system — 4 tiers with better depth */
   --shadow-xs: 0 0 0.5px rgba(80,40,40,0.06), 0 1px 1px rgba(80,40,40,0.04);
   --shadow-sm: 0 1px 3px rgba(80,40,40,0.07), 0 1px 2px rgba(80,40,40,0.04);
@@ -70,6 +84,16 @@
   --calendar-hover-lift: 0 4px 12px rgba(212, 122, 138, 0.1);
   --blur: blur(14px) saturate(1.1);
   --blur-heavy: blur(24px) saturate(1.15);
+  --ring-period: #d47888;
+  --ring-ovulation: #7ab5a0;
+  --ring-fertile: #8fc7b0;
+  --ring-luteal: #c8a8d8;
+  --ring-follicular: #8fc7b0;
+  --ring-predicted: rgba(200, 170, 170, 0.2);
+  --season-spring: #e8867c;
+  --season-summer: #d47888;
+  --season-autumn: #d49a5e;
+  --season-winter: #b89ad0;
 }
 
 /* ---- Phase Color Variables ---- */

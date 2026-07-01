@@ -219,9 +219,13 @@
 
 	  <div class="cal-nav">
     <button class="nav-btn" onclick="changeMonth(-1)" aria-label="Prethodni mesec">◂</button>
-    <span class="month-label" id="monthLabel"></span>
+    <span class="month-label" id="monthLabel" style="cursor:pointer" title="Klikni za skok na mesec"></span>
     <button class="nav-btn" onclick="changeMonth(1)" aria-label="Sledeći mesec">▸</button>
     <button class="today-pill" id="todayBtn" onclick="goToday()"></button>
+    <div class="cal-view-toggle">
+      <button class="cal-view-btn active" id="viewBtnMonth" onclick="setCalView('month')" title="Mesečni pregled">📅</button>
+      <button class="cal-view-btn" id="viewBtnWeek" onclick="setCalView('week')" title="Nedeljni pregled">📆</button>
+    </div>
   </div>
 
   <div class="calendar" id="calendarContainer">
