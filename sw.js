@@ -97,8 +97,12 @@ self.addEventListener('fetch', function(event) {
     return;
   }
 
-  // Everything else: network first, no cache
+  // Everything else: network first, cache fallback, never respond with undefined
   event.respondWith(
-    fetch(request).catch(function() { return caches.match(request); })
+    fetch(request).catch(function() {
+      return caches.match(request).then(function(cached) {
+        return cached || new Response('', { status: 404 });
+      });
+    })
   );
 });
