@@ -2359,7 +2359,7 @@ function updateLangUI(){
   document.getElementById('set-language').value=lang;
   document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);});
   const wd=t('weekdays');
-  document.getElementById('weekdaysRow').innerHTML='<span></span>'+wd.map(function(d,i){return'<span'+(i>=5?' style="color:var(--rose);opacity:.6"':'')+'>'+d+'</span>';}).join('');
+  document.getElementById('weekdaysRow').innerHTML=wd.map(function(d){return'<span>'+d+'</span>';}).join('');
   const lg=t('legend');
   document.getElementById('legend').innerHTML=`<span class="l-period">${lg[0]}</span><span class="l-fertile">${lg[1]}</span><span class="l-follicular">${lg[2]}</span><span class="l-luteal">${lg[3]}</span><span style="font-weight:700;font-size:.66rem;">▣ ${lg[4]}</span>`;
   if (annDateMet || annDateLove) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
@@ -2494,17 +2494,6 @@ function renderCalendar(){
   var sharedDiaryIdx = {};
   try { var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); Object.keys(sd).forEach(function(k){ if(sd[k]&&(sd[k].barry||sd[k].andjela)) sharedDiaryIdx[k]=true; }); } catch(e) {}
   for(let i=0;i<42;i++){
-    // Insert week number at start of each row (every 7th position)
-    var colPos = i + Math.floor(i / 7); // actual grid position including week columns
-    if (i % 7 === 0) {
-      var wkCell = document.createElement('div'); wkCell.className = 'week-num';
-      var wkDate = addDays(gridStart, i);
-      // ISO week number approximation
-      var jan1 = new Date(wkDate.getFullYear(), 0, 1);
-      var wkNum = Math.ceil((((wkDate - jan1) / 86400000) + jan1.getDay() + 1) / 7);
-      wkCell.textContent = wkNum; wkCell.setAttribute('aria-hidden', 'true');
-      frag.appendChild(wkCell);
-    }
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
     const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
     const key=fmtDate(d);
