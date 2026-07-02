@@ -4,11 +4,11 @@
    ================================================================ */
 :root {
   --primary: #C45A6B; --primary-hover: #B85C6E; --primary-light: #FDF0F3;
-  --rose: #D47A8A; --rose-dark: #B85C6E; --rose-light: #FDF0F3; --rose-mist: #F5E0E6;
+  --rose: #D47A8A; --rose-dark: #B85C6E; --rose-light: #F5D6DE; --rose-mist: #EBC9D2;
   --love: #C45A6B; --lipa: #7A9E7E; --dust: #E8D5C4; --gold: #D4A76A; --gold-light: #FFF8E1;
-  --teal: #5E9BAA; --teal-light: #E6F2F5; --teal-dark: #3D6B55;
-  --sage: #80B5A0; --sage-light: #E8F4EE; --sage-dark: #5A8068;
-  --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #F5EEF8;
+  --teal: #5E9BAA; --teal-light: #C5E0E8; --teal-dark: #3D6B55;
+  --sage: #80B5A0; --sage-light: #D0E6DC; --sage-dark: #5A8068;
+  --lavender: #C2A8D0; --lavender-dark: #8E6FA3; --lavender-light: #E2D4EA;
   --error: #E53935; --warm-bg: #FFF3E0; --warm-text: #E65100; --dot-short: #FFCDD2;
   --bg: #EDE4DD; --card: rgba(255,251,248,0.94); --text: #2D2A2B; --text-muted: #9C9496;
   --border: #E8DFD8; --border-soft: #E5DAD4;
@@ -25,12 +25,12 @@
 }
 
 [data-theme="dark"] {
-  --primary: #E898A8; --primary-hover: #D47A8A; --primary-light: #2A1E22;
-  --rose: #E898A8; --rose-dark: #D47A8A; --rose-light: #2A1E22; --rose-mist: #35242A;
+  --primary: #E898A8; --primary-hover: #D47A8A; --primary-light: #3A1E2A;
+  --rose: #E898A8; --rose-dark: #D47A8A; --rose-light: #3A1E2A; --rose-mist: #4A2836;
   --love: #D47A8A; --lipa: #8FC7B0; --dust: #3D3430; --gold: #C49A5E; --gold-light: #3D3020;
-  --teal: #7ABCCB; --teal-light: #14282E;
-  --sage: #8FC7B0; --sage-light: #14281E;
-  --lavender: #D4B8E0; --lavender-dark: #A888BB; --lavender-light: #241D2A;
+  --teal: #7ABCCB; --teal-light: #1C3842;
+  --sage: #8FC7B0; --sage-light: #1C3830;
+  --lavender: #D4B8E0; --lavender-dark: #A888BB; --lavender-light: #2E2242;
   --error: #EF5350; --warm-bg: #3D2000; --warm-text: #FFB74D; --dot-short: #5A3030;
   --bg: #19161A; --card: rgba(35,31,34,0.78); --text: #E6DDDE; --text-muted: #8F8386;
   --border: #2F292B; --border-soft: #282022;
@@ -253,8 +253,8 @@ body {
 .day.birthday { box-shadow:inset 0 0 0 2px var(--gold); background:linear-gradient(135deg,var(--rose-light),#FFF8E7); }
 .day.birthday::after { content:'🎂'; position:absolute; top:0; right:1px; font-size:.48rem; }
 [data-theme="dark"] .day.birthday { background:linear-gradient(135deg,#2A1E22,#2A2218); }
-[data-theme="dark"] .day.fertile { background: #182822; color: var(--teal); }
-[data-theme="dark"] .day.follicular { background: #182820; color: var(--sage); }
+[data-theme="dark"] .day.fertile { background: var(--teal-light); color: var(--teal); }
+[data-theme="dark"] .day.follicular { background: var(--sage-light); color: var(--sage); }
 .day .mini-dot { position:absolute; bottom:3px; width:5px; height:5px; border-radius:50%; }
 .day .mini-dot.pink { background:var(--rose); }
 .day .mini-dot.gold { background:var(--gold); }
