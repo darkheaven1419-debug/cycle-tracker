@@ -1,5 +1,9 @@
 ﻿'use strict';
 
+if (typeof window.HOLIDAYS === 'undefined') window.HOLIDAYS = [];
+if (typeof window.solarTermsCache === 'undefined') window.solarTermsCache = [];
+if (typeof window.CalState === 'undefined') window.CalState = { year: 2026, month: 6, view: 'month', weekOffset: 0 };
+
 /* eslint-disable no-unused-vars */
 
 /* ================================================================
@@ -513,389 +517,8 @@ const CONVERSATION_QUESTIONS = {
     'When did you last try something new — and what was it?',
   ],
 };
-function getDailyQuestion() {
-  const qs = CONVERSATION_QUESTIONS[lang] || CONVERSATION_QUESTIONS['sr'];
-  const idx = new Date().getDate() % qs.length;
-  return qs[idx];
-}
-function initDashboard() {
-  if (getGitHubToken()) {
-    pullAllSharedData().then(function () {
-      renderDashboard();
-    });
-  } else {
-    renderDashboard();
-  }
-}
-function renderDashboard() {
-  const panel = document.getElementById('panel-dashboard');
-  if (!panel) return;
-  const myName = activeProfile === 'andjela' ? '🌸 Anđela' : '👦 Barry';
-  let h = '';
-  h += '<div class=\"dash-welcome\">' + dl('welcomeBack') + '<strong>' + myName + '</strong></div>';
-  // Today's overview strip
-  const predDash = predict();
-  const tdDash = today();
-  const phaseDash = getPhase(tdDash, predDash);
-  const pe = {};
-  pe['period-on'] = '🩸';
-  pe['period-mid'] = '🩸';
-  pe['period-pred-first'] = '🔮';
-  pe['period-pred'] = '🔮';
-  pe['ovulation'] = '🥚';
-  pe['fertile'] = '🌱';
-  pe['luteal'] = '🌙';
-  pe['follicular'] = '🌿';
-  const phLabel = t('phaseBadges')[phaseDash] || '--';
-  const tm = getMood(fmtDate(tdDash));
-  const strk = calculateStreak();
-  const sc = state.records.length;
-  const avgD = predDash.avgCycle || '--';
-  h +=
-    '<div class=\"card dash-card\" style=\"text-align:center\"><div style=\"display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:8px\">';
-  h +=
-    '<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">' +
-    (pe[phaseDash] || '📊') +
-    '</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">' +
-    dl('todayPhase') +
-    '</div><div style=\"font-size:.58rem;color:var(--text-muted)\">' +
-    phLabel +
-    '</div></div>';
-  h +=
-    '<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">' +
-    (tm ? MOOD_EMOJI_MAP[tm] : '🌤️') +
-    '</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">' +
-    dl('todayMoodDash') +
-    '</div><div style=\"font-size:.58rem;color:var(--text-muted)\">' +
-    (tm ? MOOD_NAME_MAP[tm] || t('moodNames')[MOOD_KEYS.indexOf(tm)] : lang === 'sr' ? 'Nije uneto' : lang === 'en' ? 'Not set' : '未记录') +
-    '</div></div>';
-  h +=
-    '<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">🔥</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">' +
-    dl('todayStreak') +
-    '</div><div style=\"font-size:.58rem;color:var(--text-muted)\">' +
-    strk +
-    ' ' +
-    (lang === 'sr' ? 'dana' : lang === 'en' ? 'days' : '天') +
-    '</div></div>';
-  h +=
-    '<div style=\"text-align:center\"><div style=\"font-size:1.4rem\">📊</div><div style=\"font-size:.65rem;font-weight:700;color:var(--text)\">' +
-    dl('todayCycles') +
-    '</div><div style=\"font-size:.58rem;color:var(--text-muted)\">' +
-    sc +
-    ' / ' +
-    dl('avgAbbr') +
-    ' ' +
-    avgD +
-    'd</div></div>';
-  h += '</div></div>';
-  // Today's holiday highlight
-  const todayKey = fmtDate(today());
-  const todayHolidays = getHoliday(todayKey);
-  if (todayHolidays.length > 0) {
-    h +=
-      '<div class=\"card dash-card\" style=\"background:linear-gradient(135deg,var(--rose-light),var(--dust));border:1px solid var(--gold)\"><h4>🎌 ' +
-      (lang === 'sr' ? 'Današnji praznik' : lang === 'en' ? "Today's Holiday" : '今日节日') +
-      '</h4>' +
-      todayHolidays
-        .map(function (h) {
-          return (
-            '<div style=\"font-size:.8rem;font-weight:700;color:var(--love)\">' +
-            h.icon +
-            ' ' +
-            (h.name[lang] || h.name['sr']) +
-            '</div><div style=\"font-size:.68rem;color:var(--text-muted);margin-top:4px\">' +
-            (h.desc[lang] || h.desc['sr']) +
-            '</div>'
-          );
-        })
-        .join('<div style=\"height:4px\"></div>') +
-      '</div>';
-  }
-  // Daily connection question
-  h +=
-    '<div class=\"card dash-card\" style=\"border-left:3px solid var(--teal)\"><h4>' +
-    dl('connectQ') +
-    '</h4><div style=\"font-size:.82rem;color:var(--text);line-height:1.6;font-style:italic;margin-bottom:8px\" id=\"dailyConnectQ\">' +
-    getDailyQuestion() +
-    '</div><button class=\"dash-link-btn\" onclick=\"document.getElementById(\'dailyConnectQ\').textContent=getDailyQuestion();\" style=\"font-size:.62rem;padding:4px 12px\">' +
-    dl('refreshQ') +
-    '</button></div>';
-  // Culture card
-  if (CULTURE_KNOWLEDGE && CULTURE_KNOWLEDGE.length > 0) {
-    const tc = CULTURE_KNOWLEDGE[getTodaysCultureIndex()];
-    if (tc) {
-      const isZh = (lang || '').indexOf('zh') === 0;
-      const isEn = (lang || '').indexOf('en') === 0;
-      const tcTitle = isZh ? tc.zh : isEn && tc.en ? tc.en : tc.sr;
-      const tcDesc = isZh ? (CULTURE_DESC_ZH && CULTURE_DESC_ZH[tc.id]) || tc.desc : isEn && tc.desc_en ? tc.desc_en : tc.desc_sr || tc.desc;
-      h +=
-        '<div class=\"card dash-card\"><h4>' +
-        tc.icon +
-        ' ' +
-        dl('todayCulture') +
-        '</h4><div style=\"font-size:.85rem;font-weight:700;color:var(--love);margin-bottom:4px\">' +
-        tcTitle +
-        '</div><div style=\"font-size:.65rem;color:var(--text-muted);line-height:1.5\">' +
-        tcDesc.substring(0, 120) +
-        '...</div></div>';
-    }
-  }
-  // Quick links
-  h +=
-    '<div class=\"card dash-card\"><div class=\"dash-links\"><button class=\"dash-link-btn\" onclick=\"switchToTab(\'diary\')\">' +
-    dl('goDiary') +
-    '</button><button class=\"dash-link-btn\" onclick=\"switchToTab(\'chinese\')\">' +
-    dl('goLearn') +
-    '</button><button class=\"dash-link-btn\" onclick=\"goToday();switchToTab(\'stats\')\">' +
-    dl('goCalendar') +
-    '</button></div></div>';
-  panel.innerHTML = h;
-  animateDashboardCards();
-}
-function switchToTab(tabId) {
-  const btn = document.querySelector('.tab[data-panel="' + tabId + '"]');
-  if (btn) btn.click();
-  // Persist tab in URL hash for SPA navigation
-  if (history.replaceState) history.replaceState(null, '', '#' + tabId);
-}
-
-/* ================================================================
-   STATS PANEL RENDERER — Canvas charts + summary cards
-   ================================================================ */
-function renderStatsPanel() {
-  const panel = document.getElementById('panel-stats');
-  if (!panel || !panel.classList.contains('active')) return;
-  const pred = predict();
-  const td = today();
-
-  // --- Summary cards ---
-  const grid = document.getElementById('statsSummaryGrid');
-  if (grid) {
-    const clen = state.records.length;
-    const streak = calculateStreak();
-    const phase = getPhase(td, pred);
-    const pe2 = { 'period-on': '🩸', 'period-mid': '🩸', ovulation: '🥚', fertile: '🌱', luteal: '🌙', follicular: '🌿' };
-    const phaseName = t('phaseBadges')[phase] || '--';
-    const phIcon = pe2[phase] || '📊';
-    const rl = t('statsRegLabels');
-    const regLabel = clen >= 2 ? rl[pred.confidence] : '--';
-    const rc = { high: 'var(--sage)', medium: 'var(--gold)', low: 'var(--rose)' };
-    const regColor = rc[pred.confidence] || 'var(--text-muted)';
-    grid.innerHTML =
-      '<div class="stats-mini-card card-accent-rose"><span class="mini-icon">🩸</span><div class="mini-value">' +
-      clen +
-      '</div><div class="mini-label" id="smini-cycles">' +
-      t('stats.count') +
-      '</div></div>' +
-      '<div class="stats-mini-card card-accent-sage"><span class="mini-icon">📏</span><div class="mini-value">' +
-      (pred.avgCycle || '--') +
-      '<span style="font-size:.65rem">d</span></div><div class="mini-label" id="smini-avg">' +
-      t('stats.avg') +
-      '</div><div class="mini-sub" id="smini-range">' +
-      (clen >= 2 ? pred.minCycle + '–' + pred.maxCycle + 'd' : '--') +
-      '</div></div>' +
-      '<div class="stats-mini-card card-accent-teal"><span class="mini-icon">' +
-      phIcon +
-      '</span><div class="mini-value" style="font-size:.9rem;line-height:1.6">' +
-      phaseName +
-      '</div><div class="mini-label" id="smini-phase">' +
-      (lang === 'sr' ? 'Trenutna faza' : lang === 'en' ? 'Current Phase' : '当前阶段') +
-      '</div></div>' +
-      '<div class="stats-mini-card card-accent-gold"><span class="mini-icon">🎯</span><div class="mini-value" style="color:' +
-      regColor +
-      '">' +
-      regLabel +
-      '</div><div class="mini-label" id="smini-reg">' +
-      t('stats.reg') +
-      '</div><div class="mini-sub">' +
-      (clen >= 2 ? 'σ=' + pred.stdDev : '--') +
-      '</div></div>';
-  }
-
-  // --- Cycle trend chart ---
-  const trendCanvas = document.getElementById('chartCycleTrend');
-  const trendEmpty = document.getElementById('chartCycleEmpty');
-  document.getElementById('schart-cycle-title').textContent = t('statsTrendTitle');
-  if (trendCanvas && pred.cycles && pred.cycles.length >= 2) {
-    trendCanvas.parentElement.style.display = '';
-    if (trendEmpty) trendEmpty.style.display = 'none';
-    const recentCycles = pred.cycles.slice(-8);
-    const labels = [];
-    for (let ci = 0; ci < recentCycles.length; ci++) {
-      labels.push('C' + (pred.cycles.length - recentCycles.length + ci + 1));
-    }
-    ChartRenderer.drawLineChart(trendCanvas, recentCycles, labels, {
-      width: 500,
-      height: 200,
-      avgLine: pred.avgCycle,
-      avgLabel: t('statsTrendAvg'),
-      emptyText: t('statsTrendEmpty'),
-    });
-  } else if (trendCanvas) {
-    trendCanvas.parentElement.style.display = 'none';
-    if (trendEmpty) {
-      trendEmpty.style.display = '';
-      trendEmpty.textContent = t('statsTrendNeed');
-    }
-  }
-
-  // --- Mood donut chart ---
-  const moodCanvas = document.getElementById('chartMoodDonut');
-  const moodEmpty = document.getElementById('chartMoodEmpty');
-  const moodLegend = document.getElementById('chartMoodLegend');
-  document.getElementById('schart-mood-title').textContent = t('statsMoodTitle');
-  if (moodCanvas && state.moods) {
-    const moodCounts = {};
-    const moodKeysArr = Object.keys(state.moods);
-    for (let mi = 0; mi < moodKeysArr.length; mi++) {
-      const mk = state.moods[moodKeysArr[mi]].mood;
-      moodCounts[mk] = (moodCounts[mk] || 0) + 1;
-    }
-    const segments = [];
-    const moodColors = ['#c45a6b', '#d4bfb5', '#E57373', '#b8a0c8', '#5e8b7a', '#FFB74D', '#80a590', '#bdbdbd'];
-    for (let mj = 0; mj < MOOD_KEYS.length; mj++) {
-      if (moodCounts[MOOD_KEYS[mj]]) {
-        segments.push({ label: t('moodNames')[mj], value: moodCounts[MOOD_KEYS[mj]], color: moodColors[mj] });
-      }
-    }
-    if (segments.length > 0) {
-      moodCanvas.parentElement.style.display = '';
-      if (moodEmpty) moodEmpty.style.display = 'none';
-      const legendData = ChartRenderer.drawDonutChart(moodCanvas, segments, {
-        width: 260,
-        height: 200,
-        centerLabel: t('statsMoodCenter'),
-        emptyText: t('statsMoodEmpty'),
-      });
-      if (moodLegend && legendData.length > 0) {
-        moodLegend.innerHTML = legendData
-          .map(function (ld) {
-            return '<span><span class="legend-dot" style="background:' + ld.color + '"></span>' + ld.label + ' (' + ld.pct + '%)</span>';
-          })
-          .join('');
-      }
-    } else {
-      moodCanvas.parentElement.style.display = 'none';
-      if (moodEmpty) {
-        moodEmpty.style.display = '';
-        moodEmpty.textContent = t('statsMoodNoRecords');
-      }
-      if (moodLegend) moodLegend.innerHTML = '';
-    }
-  }
-
-  // --- Symptom bar chart ---
-  const symptomCanvas = document.getElementById('chartSymptomBar');
-  const symptomEmpty = document.getElementById('chartSymptomEmpty');
-  document.getElementById('schart-symptom-title').textContent = t('statsSympTitle');
-  if (symptomCanvas && state.symptoms) {
-    const sympKeysArr = Object.keys(state.symptoms);
-    const sympFreq = { cramps: 0, mood: 0, flow: 0, headache: 0, fatigue: 0, cravings: 0 };
-    const sympEmojis = { cramps: '😣', mood: '😊', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' };
-    for (let si2 = 0; si2 < sympKeysArr.length; si2++) {
-      const sv = state.symptoms[sympKeysArr[si2]];
-      for (const sk in sympFreq) {
-        if (sv[sk] && sv[sk] > 0) sympFreq[sk]++;
-      }
-    }
-    const sympNames = t('symptoms');
-    const sympOrder = ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'];
-    const sympBarColors = ['#c45a6b', '#FFB74D', '#5e8b7a', '#b8a0c8', '#a0b0c0', '#d4bfb5'];
-    const barData = [];
-    for (let sn2 = 0; sn2 < sympOrder.length; sn2++) {
-      const k = sympOrder[sn2];
-      barData.push({ label: sympEmojis[k] + ' ' + sympNames[k], value: sympFreq[k], color: sympBarColors[sn2] });
-    }
-    barData.sort(function (a, b) {
-      return b.value - a.value;
-    });
-    let hasSympData = false;
-    for (let bj = 0; bj < barData.length; bj++) {
-      if (barData[bj].value > 0) {
-        hasSympData = true;
-        break;
-      }
-    }
-    if (hasSympData) {
-      symptomCanvas.parentElement.style.display = '';
-      if (symptomEmpty) symptomEmpty.style.display = 'none';
-      ChartRenderer.drawBarChart(symptomCanvas, barData, {
-        width: 460,
-        height: 180,
-        emptyText: t('statsSympEmpty'),
-      });
-    } else {
-      symptomCanvas.parentElement.style.display = 'none';
-      if (symptomEmpty) {
-        symptomEmpty.style.display = '';
-        symptomEmpty.textContent = t('statsSympNoRecords');
-      }
-    }
-  }
-
-  // --- Prediction highlight ---
-  const clen2 = state.records.length;
-  const ph2 = document.getElementById('predictionHighlight');
-  if (ph2 && pred.nextStart) {
-    ph2.style.display = '';
-    const daysUntil = daysDiff(td, pred.nextStart);
-    const rl2 = t('statsRegLabels');
-    document.getElementById('predMainNext').textContent =
-      daysUntil >= 0
-        ? t('statsDaysUntil') + ' ' + daysUntil + ' ' + t('statsDaysUntilEnd')
-        : t('statsDaysLate') + ' ' + Math.abs(daysUntil) + ' ' + t('statsDaysLateEnd');
-    document.getElementById('predSubConf').textContent =
-      clen2 >= 2 ? t('statsConfidence') + rl2[pred.confidence] + ' (±' + pred.stdDev + ')' : t('statsNeedCycles');
-    document.getElementById('predChipOv').textContent = pred.ovulation ? fmtDate(pred.ovulation) : '--';
-    document.getElementById('predChipOvLabel').textContent = t('statsOvLabel');
-    document.getElementById('predChipFert').textContent =
-      pred.fertileStart && pred.fertileEnd ? fmtDate(pred.fertileStart) + ' ~ ' + fmtDate(pred.fertileEnd) : '--';
-    document.getElementById('predChipFertLabel').textContent = t('statsFertLabel');
-    document.getElementById('predChipFuture').textContent =
-      pred.futurePeriods.length > 0
-        ? pred.futurePeriods
-            .map(function (fp) {
-              return fmtDate(fp.start);
-            })
-            .join(', ')
-        : '--';
-    document.getElementById('predChipFutureLabel').textContent = t('statsFutureLabel');
-    document.getElementById('predChipReg').textContent = clen2 >= 2 ? rl2[pred.confidence] + ' ±' + pred.stdDev : '--';
-    document.getElementById('predChipRegLabel').textContent = t('statsRegLabel');
-  } else if (ph2) {
-    ph2.style.display = 'none';
-  }
-
-  // --- Timeline ---
-  const tlRow = document.getElementById('timelineRow');
-  document.getElementById('schart-history-title').textContent = t('statsTimelineTitle');
-  document.getElementById('tleg-short').textContent = t('statsTimelineShort');
-  document.getElementById('tleg-normal').textContent = t('statsTimelineNormal');
-  document.getElementById('tleg-long').textContent = t('statsTimelineLong');
-  if (tlRow && pred.cycles.length > 0) {
-    const recent = pred.cycles.slice(-12),
-      avg = pred.avgCycle;
-    tlRow.innerHTML = recent
-      .map(function (cy) {
-        let cls = 'normal';
-        if (cy < avg - 3) cls = 'short';
-        else if (cy > avg + 3) cls = 'long';
-        return '<span class="timeline-dot ' + cls + '" title="' + cy + 'd" onclick="toast(\'' + cy + ' ' + t('day') + '\')"></span>';
-      })
-      .join('');
-  }
-
-  // --- Relationship section label ---
-  const sectRel = document.getElementById('sect-relationship');
-  if (sectRel) {
-    sectRel.textContent = t('sectRelationship');
-  }
-}
-
-// ===== DATA LOADER: fetch JSON files =====
-let _dataLoaded = false;
-let _dataLoadPromise = null;
-
+var _dataLoadPromise = null;
+var _dataLoaded = false;
 function loadDataFiles() {
   if (_dataLoadPromise) return _dataLoadPromise;
   _dataLoadPromise = CultureCardsModule.load()
@@ -1126,79 +749,6 @@ loadHolidays();
 
 /** Holiday lookup with O(1) cache — replaces O(n) .filter() per cell */
 let _holidayCache = null;
-function _buildHolidayCache() {
-  _holidayCache = {};
-  for (let hi = 0; hi < HOLIDAYS.length; hi++) {
-    let h = HOLIDAYS[hi];
-    if (!_holidayCache[h.d]) _holidayCache[h.d] = [];
-    _holidayCache[h.d].push(h);
-  }
-}
-function getHoliday(dateKey) {
-  if (!_holidayCache) _buildHolidayCache();
-  return _holidayCache[dateKey] || [];
-}
-// Rebuild cache when holidays are loaded or merged
-let _origHolidayPush = null;
-function _rebuildHolidayCache() {
-  _holidayCache = null;
-}
-
-// Holiday countdown: find next upcoming holiday within 60 days
-function renderUpcomingHoliday() {
-  const el = document.getElementById('holidayCountdown');
-  if (!el) return;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const limit = new Date(today);
-  limit.setDate(limit.getDate() + 60);
-  let upcoming = null;
-  for (let i = 0; i < HOLIDAYS.length; i++) {
-    const d = new Date(HOLIDAYS[i].d + 'T00:00:00');
-    if (d >= today && d <= limit) {
-      if (!upcoming || d < new Date(upcoming.d + 'T00:00:00')) upcoming = HOLIDAYS[i];
-    }
-  }
-  if (upcoming) {
-    const days = Math.ceil((new Date(upcoming.d + 'T00:00:00') - today) / 86400000);
-    const name = upcoming.name[lang] || upcoming.name['sr'];
-    const daysText = days === 0 ? t('holidayToday') : t('holidayDaysAway') + ' ' + days + ' ' + t('day');
-    el.style.display = '';
-    el.textContent = '🎌 ' + name + ' · ' + daysText;
-  } else {
-    el.style.display = 'none';
-  }
-}
-// Month holiday summary: show all holidays in current view month
-function renderMonthHolidaySummary() {
-  const el = document.getElementById('holidaySummary');
-  if (!el) return;
-  const m = viewMonth;
-  const y = viewYear;
-  const monthHolidays = [];
-  for (let i = 0; i < HOLIDAYS.length; i++) {
-    const d = new Date(HOLIDAYS[i].d + 'T00:00:00');
-    if (d.getMonth() === m && d.getFullYear() === y) monthHolidays.push(HOLIDAYS[i]);
-  }
-  if (monthHolidays.length === 0) {
-    el.style.display = 'none';
-    return;
-  }
-  el.style.display = '';
-  const flag = function (c) {
-    return c === 'cn' ? '🇨🇳' : '🇷🇸';
-  };
-  el.innerHTML = monthHolidays
-    .sort(function (a, b) {
-      return new Date(a.d + 'T00:00:00') - new Date(b.d + 'T00:00:00');
-    })
-    .map(function (h) {
-      const day = h.d.split('-')[2].replace(/^0/, '');
-      return '<span>' + flag(h.country) + ' ' + h.icon + ' ' + (h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr']) + ' ' + day + '</span>';
-    })
-    .join('');
-}
-
 function saveAnniversaries() {
   annDateMet = document.getElementById('annDateMet').value;
   annDateLove = document.getElementById('annDateLove').value;
@@ -1347,60 +897,6 @@ function renderTea() {
    CALENDAR DATA LOADER — rich stories + solar terms
    ================================================================ */
 let calendarExtraData = null;
-function loadCalendarData(cb) {
-  if (calendarExtraData) {
-    cb(calendarExtraData);
-    return;
-  }
-  const cached = localStorage.getItem('cycle-caldata');
-  if (cached) {
-    try {
-      calendarExtraData = JSON.parse(cached);
-      cb(calendarExtraData);
-      return;
-    } catch (e) {
-      _dbg('[caldata] Bad cache');
-    }
-  }
-  fetch('calendar-data.json')
-    .then(function (r) {
-      return r.json();
-    })
-    .then(function (d) {
-      calendarExtraData = d;
-      localStorage.setItem('cycle-caldata', JSON.stringify(d));
-      cb(d);
-    })
-    .catch(function () {});
-}
-function toggleHolidayStory(uid, date, country) {
-  const detail = document.getElementById('hd-' + uid);
-  const nameEl = document.getElementById('hn-' + uid);
-  if (!detail || !nameEl) return;
-  const isOpen = detail.classList.contains('open');
-  if (isOpen) {
-    detail.classList.remove('open');
-    nameEl.textContent = nameEl.textContent.replace(' ▴', ' ▾');
-    return;
-  }
-  loadCalendarData(function (data) {
-    let story = null;
-    (data.holidays || []).forEach(function (h) {
-      if (h.date === date && h.country === (country === 'cn' ? 'china' : 'serbia')) story = h.story;
-    });
-    if (story) {
-      const txt = story[lang] || story[lang.split('-')[0]] || story['sr'];
-      if (txt) detail.textContent = txt;
-    }
-    detail.classList.add('open');
-    nameEl.textContent = nameEl.textContent.replace(' ▾', ' ▴');
-  });
-}
-
-/* ================================================================
-   ROMANTIC TOUCHES
-   ================================================================ */
-/* moved to js/render-misc.js */
 function randomThinkingOfYou() {
   if (activeProfile !== 'andjela') return;
   if (Math.random() > 0.18) return; // 18% chance
@@ -1565,9 +1061,9 @@ function updateCycleCounter(n) {
 /* ================================================================
    UI STATE
    ================================================================ */
-let viewYear = today().getFullYear(),
-  viewMonth = today().getMonth();
-let calView = 'month'; // 'month' | 'week'
+CalState.year = today().getFullYear(),
+  CalState.month = today().getMonth();
+CalState.view = 'month'; // 'month' | 'week'
 let _weekOffset = 0; // weeks offset from today when in week view
 let selectedDate = null,
   symptomDate = null,
@@ -1700,74 +1196,6 @@ function updateLangUI() {
 }
 
 // Lazy-load rich solar term data from calendar-data.json if not cached yet
-function ensureSolarTermData() {
-  if (solarTermsCache && solarTermsCache.length > 0) return;
-  const cached = localStorage.getItem('cycle-solarterms');
-  if (cached) {
-    try {
-      solarTermsCache = JSON.parse(cached);
-      if (solarTermsCache.length > 0) return;
-    } catch (e) {
-      _dbg('[solar] Bad cached data');
-    }
-  }
-  // Load from calendar-data.json
-  fetch('calendar-data.json')
-    .then(function (r) {
-      return r.json();
-    })
-    .then(function (d) {
-      if (d && d.solarTerms) {
-        solarTermsCache = d.solarTerms;
-        localStorage.setItem('cycle-solarterms', JSON.stringify(solarTermsCache));
-      }
-    })
-    .catch(function () {});
-}
-
-/** Look up a solar term by date key (YYYY-MM-DD). Reads from solarTermsCache. */
-function getSolarTerm(dateKey) {
-  if (!solarTermsCache || !solarTermsCache.length) return;
-  for (let i = 0; i < solarTermsCache.length; i++) {
-    if (solarTermsCache[i].date === dateKey) return solarTermsCache[i];
-  }
-}
-
-function renderSolarTermBadge() {
-  const badge = document.getElementById('solarTermBadge');
-  if (!badge) return;
-  const todayKey = fmtDate(today());
-  const term = getSolarTerm(todayKey);
-  if (term) {
-    const termName = term.name[lang] || term.name[lang.split('-')[0]] || term.name['sr'] || term.name['zh-CN'] || '';
-    badge.textContent = '🌿 ' + termName;
-    badge.style.display = '';
-  } else {
-    // Only show upcoming (future) solar terms within 7 days, not past ones
-    let nearest = null,
-      minDist = 30;
-    const td = today();
-    const terms = solarTermsCache || [];
-    terms.forEach(function (s) {
-      const termDate = new Date(s.date + 'T00:00:00');
-      const dist = daysDiff(td, termDate); // positive = future, negative = past
-      if (dist >= 0 && dist < minDist) {
-        minDist = dist;
-        nearest = s;
-      }
-    });
-    if (nearest && minDist <= 7) {
-      const nearName = nearest.name[lang] || nearest.name[lang.split('-')[0]] || nearest.name['sr'] || nearest.name['zh-CN'] || '';
-      badge.textContent = '🌿 ' + nearName + ' ' + t('solarTermBadge') + ' ' + minDist + ' ' + t('day');
-      badge.style.display = '';
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-}
-// Conditional render system — accepts optional filter to skip unnecessary renders.
-// Groups: 'core','calendar','mood','diary','connection','tips','barry','weather','tea'
-// If called with no args or 'all', renders everything (backward compatible).
 function applyAllUI(what) {
   const all = !what || what === 'all';
   if (all || what === 'core' || (Array.isArray(what) && what.indexOf('core') >= 0)) {
@@ -1891,7 +1319,7 @@ function renderCalendar() {
   let pred = predict();
   let td = today();
   let monthLabel = document.getElementById('monthLabel');
-  if (calView === 'week') {
+  if (CalState.view === 'week') {
     let monday = getWeekStart();
     let sunday = addDays(monday, 6);
     if (lang === 'sr') {
@@ -1904,13 +1332,23 @@ function renderCalendar() {
   } else {
     monthLabel.textContent =
       lang === 'sr'
-        ? t('months')[viewMonth] + ' ' + viewYear + '.'
+        ? t('months')[CalState.month] + ' ' + CalState.year + '.'
         : lang === 'en'
-          ? t('months')[viewMonth] + ' ' + viewYear
-          : viewYear + '年' + (viewMonth + 1) + '月';
+          ? t('months')[CalState.month] + ' ' + CalState.year
+          : CalState.year + '年' + (CalState.month + 1) + '月';
   }
   let grid = document.getElementById('daysGrid');
-  buildCalendarGrid(grid, pred, td);
+  // [STEP 3] 使用 CycleEngine + CalendarRenderer 替换旧的 buildCalendarGrid
+  var engCells = CycleEngine.computeCalendarCells(CalState.year, CalState.month, state.records, state.periodEnds, state.settings, td);
+  CalendarRenderer.render(grid, engCells, {
+    isWeekView: CalState.view === 'week',
+    viewMonth: CalState.month,
+    viewYear: CalState.year,
+    pred: pred,
+    activeProfile: activeProfile,
+    lang: lang,
+    symptoms: state.symptoms,
+  });
   updateCalendarSeason();
   updateProgress(pred);
   updateStats(pred);
@@ -1922,265 +1360,10 @@ function renderCalendar() {
 }
 
 /** Build the day grid DOM fragment (supports month and week view) */
+/** @deprecated Replaced by CycleEngine + CalendarRenderer. Preserved for rollback. */
 function buildCalendarGrid(grid, pred, td) {
-  let isWeekView = calView === 'week';
-  let numDays = isWeekView ? 7 : 42;
-  let gridStart;
-
-  if (isWeekView) {
-    // Week view: Monday of the week containing today
-    let refDay = new Date(viewYear, viewMonth, 1);
-    // Use current view position to find which week
-    let monday = getWeekStart();
-    gridStart = monday;
-    viewYear = monday.getFullYear();
-    viewMonth = monday.getMonth();
-  } else {
-    let first = new Date(viewYear, viewMonth, 1);
-    let dow = first.getDay();
-    dow = dow === 0 ? 6 : dow - 1;
-    gridStart = addDays(first, -dow);
-  }
-  let frag = document.createDocumentFragment();
-  let recordedStarts = new Set(state.records.map(fmtDate));
-  let plEl = document.getElementById('predLegend');
-  if (pred.futurePeriods.length > 0) {
-    plEl.style.display = '';
-    plEl.textContent = t('calendarPredLegend');
-  } else plEl.style.display = 'none';
-  let sharedDiaryIdx = {};
-  let sd = safeParse(localStorage.getItem('shared-diary'), {});
-  Object.keys(sd).forEach(function (k) {
-    if (sd[k] && (sd[k].barry || sd[k].andjela)) sharedDiaryIdx[k] = true;
-  });
-  // ARIA grid role for accessibility
-  grid.setAttribute('role', 'grid');
-  grid.setAttribute('aria-label', t('calendarGridLabel') || 'Calendar');
-  // Update grid CSS class for view mode
-  grid.classList.toggle('week-view', isWeekView);
-  // Hide prediction legend in week view (no room)
-  if (isWeekView) {
-    let plEl2 = document.getElementById('predLegend');
-    if (plEl2) plEl2.style.display = 'none';
-  }
-
-  for (let i = 0; i < numDays; i++) {
-    if (!isWeekView && i % 7 === 0) {
-      let wkCell = document.createElement('div');
-      wkCell.className = 'week-num';
-      let wkDate = addDays(gridStart, i);
-      let jan1 = new Date(wkDate.getFullYear(), 0, 1);
-      let wkNum = Math.ceil(((wkDate - jan1) / 86400000 + jan1.getDay() + 1) / 7);
-      wkCell.textContent = wkNum;
-      wkCell.setAttribute('aria-hidden', 'true');
-      frag.appendChild(wkCell);
-    }
-    let d = addDays(gridStart, i);
-    let inMonth = d.getMonth() === viewMonth;
-    let isToday = sameDay(d, td);
-    let phase = inMonth ? getPhase(d, pred) : null;
-    let key = fmtDate(d);
-    let symptoms = state.symptoms[key];
-    let hasSymptom =
-      symptoms &&
-      Object.entries(symptoms).some(function (kv) {
-        return kv[0] !== 'notes' && kv[1] > 0;
-      });
-    let cycleDay = '';
-    if (activeProfile === 'andjela' && pred.lastStart) {
-      let cd = daysDiff(d0(pred.lastStart), d0(d));
-      if (cd >= 0 && cd < pred.cycleLen) cycleDay = String(cd + 1);
-    }
-    let annType = isAnniversary(d);
-    let el = document.createElement('div');
-    el.className = 'day';
-    if (!inMonth) el.classList.add('other-month');
-    if (isToday) el.classList.add('today');
-    if (isToday) el.setAttribute('aria-current', 'date');
-    if (phase) el.classList.add(phase);
-    if (phase === 'period-on' && recordedStarts.has(key)) el.classList.add('recorded');
-    if (annType > 0) el.classList.add('anniversary');
-    if (getBirthday(d)) el.classList.add('birthday');
-    let special = getSpecialDate(d);
-    if (special) {
-      let spIcon = document.createElement('span');
-      spIcon.className = 'special-date-icon';
-      spIcon.textContent = special.icon;
-      spIcon.title = activeProfile === 'barry' ? special.title_zh : special.title_sr;
-      el.appendChild(spIcon);
-      if (special.type === 'firstmeet') el.classList.add('first-meet');
-      if (special.type === 'monthly') el.classList.add('monthly-anni');
-    }
-    if (inMonth) {
-      el.setAttribute('tabindex', '0');
-      el.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          el.click();
-        }
-      });
-    }
-    let daySpan = document.createElement('span');
-    daySpan.className = 'day-num';
-    daySpan.textContent = d.getDate();
-    el.appendChild(daySpan);
-    if (cycleDay && inMonth && !phase) {
-      let cdSpan = document.createElement('span');
-      cdSpan.className = 'day-cycle-num';
-      cdSpan.textContent = cycleDay;
-      el.appendChild(cdSpan);
-    }
-    if (inMonth && typeof Lunar !== 'undefined') {
-      let lunarDayName = getLunarCellText(d);
-      if (lunarDayName) {
-        let lunarSpan = document.createElement('span');
-        lunarSpan.className = 'lunar-date ' + getLunarCellClass(d);
-        lunarSpan.textContent = lunarDayName;
-        el.appendChild(lunarSpan);
-      }
-    }
-    el.setAttribute('role', 'button');
-    el.setAttribute('aria-label', fmtDate(d));
-    if (hasSymptom && !phase && symptoms) {
-      let miniDiv = document.createElement('div');
-      miniDiv.className = 'day-symptoms';
-      ['cramps', 'mood', 'flow', 'headache', 'fatigue', 'cravings'].forEach(function (sym) {
-        if (symptoms[sym] && symptoms[sym] > 0) {
-          let symEl = document.createElement('span');
-          symEl.className = 'day-sym-icon';
-          symEl.textContent = { cramps: '😣', mood: '😊', flow: '💧', headache: '🤕', fatigue: '😴', cravings: '🍫' }[sym];
-          symEl.title = sym;
-          miniDiv.appendChild(symEl);
-        }
-      });
-      if (miniDiv.children.length > 0) el.appendChild(miniDiv);
-    }
-    if (sharedDiaryIdx[key]) {
-      let sdEntry = sd[key] || {};
-      let hasA = !!sdEntry.andjela;
-      let hasB = !!sdEntry.barry;
-      let diaryTooltip = '';
-      if (hasA && hasB) {
-        diaryTooltip = '💕 Oboje';
-        let diaryDot = document.createElement('span');
-        diaryDot.className = 'mini-dot gold';
-        diaryDot.style.cssText =
-          'position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold)';
-        diaryDot.title = diaryTooltip;
-        el.appendChild(diaryDot);
-      } else if (hasA) {
-        diaryTooltip = '🌸 Anđela';
-        let diaryDotA = document.createElement('span');
-        diaryDotA.className = 'mini-dot';
-        diaryDotA.style.cssText = 'position:absolute;bottom:8px;left:calc(50% - 4px);width:4px;height:4px;border-radius:50%;background:#c45a6b;opacity:.7';
-        diaryDotA.title = diaryTooltip;
-        el.appendChild(diaryDotA);
-      } else if (hasB) {
-        diaryTooltip = '👦 Barry';
-        let diaryDotB = document.createElement('span');
-        diaryDotB.className = 'mini-dot';
-        diaryDotB.style.cssText = 'position:absolute;bottom:8px;left:calc(50% + 4px);width:4px;height:4px;border-radius:50%;background:#4A90D9;opacity:.7';
-        diaryDotB.title = diaryTooltip;
-        el.appendChild(diaryDotB);
-      }
-      if (inMonth && diaryTooltip) {
-        let diaryPreviewText = '';
-        try {
-          let entryA = sdEntry.andjela;
-          let entryB = sdEntry.barry;
-          if (hasA && entryA) diaryPreviewText += '🌸 ' + (entryA.text || entryA.happy || '').substring(0, 40);
-          if (hasB && entryB) diaryPreviewText += (diaryPreviewText ? ' | ' : '') + '👦 ' + (entryB.text || entryB.happy || '').substring(0, 40);
-        } catch (e) {
-          /* ignore */
-        }
-        if (diaryPreviewText) el.setAttribute('data-diary', diaryPreviewText);
-      }
-    }
-    if (typeof getCalendarSummary === 'function' && inMonth) {
-      let calSummary = getCalendarSummary(key);
-      let hasUserMarkers = calSummary.andjela.length > 0 || calSummary.barry.length > 0;
-      if (hasUserMarkers) {
-        let markerRow = document.createElement('div');
-        markerRow.className = 'day-marker-row';
-        let allMarkers = calSummary.barry.concat(calSummary.andjela);
-        for (let mi2 = 0; mi2 < Math.min(allMarkers.length, 3); mi2++) {
-          let mSpan = document.createElement('span');
-          mSpan.className = 'cal-marker-emoji';
-          mSpan.textContent = allMarkers[mi2].emoji;
-          mSpan.title = (allMarkers[mi2].author === 'andjela' ? '🌸 Anđela' : '👦 Barry') + ': ' + (allMarkers[mi2].note || '');
-          markerRow.appendChild(mSpan);
-        }
-        el.appendChild(markerRow);
-      }
-    }
-    if (annType === 2 && !phase) {
-      let dot = document.createElement('span');
-      dot.className = 'mini-dot gold';
-      el.appendChild(dot);
-    }
-    let solarTerm = getSolarTerm(key);
-    if (solarTerm && inMonth) {
-      let stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
-      let stLabel = document.createElement('span');
-      stLabel.className = 'solar-term-label';
-      stLabel.textContent = stName;
-      stLabel.title = stName;
-      el.appendChild(stLabel);
-      el.classList.add('solar-term-day');
-      if (!solarTerm.story) ensureSolarTermData();
-    }
-    let holidays = getHoliday(key);
-    holidays.forEach(function (h) {
-      let icon = document.createElement('span');
-      icon.className = 'holiday-icon holiday-' + h.country;
-      icon.textContent = h.icon || (h.country === 'cn' ? '🎉' : '🇷🇸');
-      icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
-      el.appendChild(icon);
-    });
-    // Double-tap detection
-    let tapTimer = null;
-    if (inMonth) {
-      el.addEventListener('click', function (e) {
-        if (tapTimer) {
-          clearTimeout(tapTimer);
-          tapTimer = null;
-          togglePeriodRecord(d);
-          el.classList.add('celebrate');
-          setTimeout(function () {
-            el.classList.remove('celebrate');
-          }, 500);
-          e.preventDefault();
-        } else {
-          tapTimer = setTimeout(function () {
-            tapTimer = null;
-            openModal(d, pred);
-          }, 280);
-        }
-      });
-      let touchCount = 0,
-        touchTimer = null;
-      el.addEventListener('touchend', function (e) {
-        touchCount++;
-        if (touchCount === 1) {
-          touchTimer = setTimeout(function () {
-            touchCount = 0;
-          }, 350);
-        } else if (touchCount === 2) {
-          clearTimeout(touchTimer);
-          touchCount = 0;
-          if (tapTimer) {
-            clearTimeout(tapTimer);
-            tapTimer = null;
-          }
-          togglePeriodRecord(d);
-          e.preventDefault();
-        }
-      });
-    }
-    frag.appendChild(el);
-  }
-  grid.innerHTML = '';
-  grid.appendChild(frag);
+  // [DEPRECATED] Replaced by CycleEngine + CalendarRenderer. See fix-all.js.
+  return;
 }
 
 /** Update month season tag after grid render */
@@ -2189,12 +1372,12 @@ function updateCalendarSeason() {
   if (!ml) return;
   let existingTag = ml.querySelector('.season-tag');
   if (existingTag) existingTag.remove();
-  ml.innerHTML = ml.textContent + ' <span class="season-tag">' + SEASON_EMOJI[viewMonth] + ' ' + getSeasonLabel(viewMonth) + '</span>';
+  ml.innerHTML = ml.textContent + ' <span class="season-tag">' + SEASON_EMOJI[CalState.month] + ' ' + getSeasonLabel(CalState.month) + '</span>';
   // Add seasonal data attribute to calendar container for CSS styling
   let container = document.getElementById('calendarContainer');
   if (container) {
     let seasons = ['spring', 'spring', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
-    container.dataset.season = seasons[viewMonth] || 'spring';
+    container.dataset.season = seasons[CalState.month] || 'spring';
   }
 }
 
@@ -2294,7 +1477,7 @@ function showMonthPicker() {
   overlay.appendChild(box);
   document.body.appendChild(overlay);
   _mpickerEl = overlay;
-  _mpYear = viewYear;
+  _mpYear = CalState.year;
   renderMPicker(box);
 }
 
@@ -2309,13 +1492,13 @@ function renderMPicker(box) {
     let cell = document.createElement('button');
     cell.className = 'mp-month-cell';
     cell.textContent = t('months')[i] || (lang === 'zh-CN' ? i + 1 + '月' : i + 1);
-    if (_mpYear === viewYear && i === viewMonth) cell.classList.add('mp-current');
+    if (_mpYear === CalState.year && i === CalState.month) cell.classList.add('mp-current');
     cell.addEventListener(
       'click',
       (function (y, m) {
         return function () {
-          viewYear = y;
-          viewMonth = m;
+          CalState.year = y;
+          CalState.month = m;
           closeMonthPicker();
           renderCalendar();
         };
@@ -2524,7 +1707,7 @@ function updateHistoryDots(pred) {
 }
 
 function goToMonth(m) {
-  viewMonth = m;
+  CalState.month = m;
   renderCalendar();
 }
 function updateReminder(pred) {
@@ -3245,116 +2428,6 @@ function renderTips() {
     )
     .join('');
 }
-function saveGitHubToken() {
-  const t = document.getElementById('set-gh-token').value.trim();
-  const warning = document.getElementById('tokenSecurityWarning');
-  if (t) {
-    sessionStorage.setItem('gh-token', t);
-    toast('🔑 Token sačuvan ✓');
-    if (warning) warning.style.display = '';
-    pullAllSharedData().then(function () {
-      updateSyncStatusBadge();
-      renderAll();
-    });
-  } else {
-    sessionStorage.removeItem('gh-token');
-    if (warning) warning.style.display = 'none';
-    updateSyncStatusBadge();
-  }
-}
-
-async function testGitHubToken() {
-  const btn = document.getElementById('testTokenBtn');
-  if (!btn) return;
-  const origText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '⏳ Testiranje...';
-  const token = getGitHubToken();
-  if (!token) {
-    toast('🔑 ' + (lang === 'sr' ? 'Prvo unesi token' : lang === 'en' ? 'Enter a token first' : '请先输入 Token'));
-    btn.textContent = origText;
-    btn.disabled = false;
-    return;
-  }
-  try {
-    const resp = await fetch('https://api.github.com/user', {
-      headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' },
-    });
-    if (resp.ok) {
-      const user = await resp.json();
-      toast(
-        '✅ ' +
-          (lang === 'sr' ? 'Token važi — ' + (user.login || '') : lang === 'en' ? 'Token valid — ' + (user.login || '') : 'Token 有效 — ' + (user.login || ''))
-      );
-      btn.textContent = '✅ Važi';
-      setTimeout(function () {
-        btn.textContent = origText;
-        btn.disabled = false;
-      }, 3000);
-    } else if (resp.status === 401) {
-      toast('❌ ' + (lang === 'sr' ? 'Token nevažeći — generiši novi' : lang === 'en' ? 'Token invalid — generate a new one' : 'Token 无效 — 请重新生成'));
-      btn.textContent = '❌ Nevažeći';
-      setTimeout(function () {
-        btn.textContent = origText;
-        btn.disabled = false;
-      }, 3000);
-    } else {
-      toast('⚠️ ' + (lang === 'sr' ? 'Greška: ' + resp.status : lang === 'en' ? 'Error: ' + resp.status : '错误: ' + resp.status));
-      btn.textContent = origText;
-      btn.disabled = false;
-    }
-  } catch (e) {
-    toast('⚠️ ' + (lang === 'sr' ? 'Mrežna greška' : lang === 'en' ? 'Network error' : '网络错误'));
-    btn.textContent = origText;
-    btn.disabled = false;
-  }
-}
-
-function clearGitHubToken() {
-  if (!getGitHubToken()) return;
-  if (
-    !confirm(
-      lang === 'sr'
-        ? 'Obrisati GitHub token? Sinhronizacija će prestati.'
-        : lang === 'en'
-          ? 'Clear GitHub token? Sync will stop.'
-          : '清除 GitHub Token？同步将停止。'
-    )
-  ) {
-    return;
-  }
-  sessionStorage.removeItem('gh-token');
-  document.getElementById('set-gh-token').value = '';
-  const warning = document.getElementById('tokenSecurityWarning');
-  if (warning) warning.style.display = 'none';
-  updateSyncStatusBadge();
-  toast('🗑️ ' + (lang === 'sr' ? 'Token obrisan' : lang === 'en' ? 'Token cleared' : 'Token 已清除'));
-}
-function loadSettingsUI() {
-  document.getElementById('set-cycle').value = state.settings.cycleLength;
-  document.getElementById('set-period').value = state.settings.periodLength;
-  document.getElementById('set-language').value = lang;
-  document.getElementById('set-theme').value = theme;
-  document.getElementById('annDateMet').value = annDateMet;
-  document.getElementById('annDateLove').value = annDateLove;
-  const hasToken = !!getGitHubToken();
-  document.getElementById('set-gh-token').value = getGitHubToken();
-  document.getElementById('github-token-label').textContent = '🔑 GitHub Token';
-  document.getElementById('set-gh-token').placeholder = 'ghp_...';
-  document.getElementById('set-gh-token').setAttribute('aria-label', 'GitHub Token');
-  document.getElementById('set-h-token').textContent = hasToken ? t('settingsTokenHintEnabled') : t('settingsTokenHintDisabled');
-  const warning = document.getElementById('tokenSecurityWarning');
-  if (warning) warning.style.display = hasToken ? '' : 'none';
-  updateAnniversaryCount();
-  updateSyncStatusBadge();
-}
-function saveSettings() {
-  state.settings.cycleLength = parseInt(document.getElementById('set-cycle').value) || 28;
-  state.settings.periodLength = parseInt(document.getElementById('set-period').value) || 7;
-  saveState();
-  renderAll(['calendar', 'core']);
-  toast(t('toast.saved'));
-}
 function exportData() {
   const blob = new Blob(
     [
@@ -3431,21 +2504,21 @@ function changeMonth(d) {
   _changeMonthTimer = setTimeout(function () {
     _changeMonthTimer = null;
   }, 150);
-  if (calView === 'week') {
+  if (CalState.view === 'week') {
     // In week view, shift by weeks using offset
     _weekOffset += d;
     let newMonday = getWeekStart();
-    viewYear = newMonday.getFullYear();
-    viewMonth = newMonday.getMonth();
+    CalState.year = newMonday.getFullYear();
+    CalState.month = newMonday.getMonth();
   } else {
-    viewMonth += d;
-    if (viewMonth < 0) {
-      viewMonth = 11;
-      viewYear--;
+    CalState.month += d;
+    if (CalState.month < 0) {
+      CalState.month = 11;
+      CalState.year--;
     }
-    if (viewMonth > 11) {
-      viewMonth = 0;
-      viewYear++;
+    if (CalState.month > 11) {
+      CalState.month = 0;
+      CalState.year++;
     }
   }
 
@@ -3467,7 +2540,7 @@ function getWeekStart() {
   let day = td.getDay();
   let diff = td.getDate() - (day === 0 ? 6 : day - 1);
   let thisMonday = new Date(td.getFullYear(), td.getMonth(), diff);
-  if (calView === 'week' && _weekOffset !== 0) {
+  if (CalState.view === 'week' && _weekOffset !== 0) {
     return addDays(thisMonday, _weekOffset * 7);
   }
   return thisMonday;
@@ -3475,14 +2548,14 @@ function getWeekStart() {
 
 /** Toggle between month and week view */
 function setCalView(view) {
-  calView = view;
+  CalState.view = view;
   _weekOffset = 0;
   document.getElementById('viewBtnMonth').classList.toggle('active', view === 'month');
   document.getElementById('viewBtnWeek').classList.toggle('active', view === 'week');
   if (view === 'week') {
     let monday = getWeekStart();
-    viewYear = monday.getFullYear();
-    viewMonth = monday.getMonth();
+    CalState.year = monday.getFullYear();
+    CalState.month = monday.getMonth();
   }
   renderCalendar();
 }
@@ -3490,8 +2563,8 @@ function setCalView(view) {
 /** Go to today in current view mode */
 function goToday() {
   _weekOffset = 0;
-  viewYear = today().getFullYear();
-  viewMonth = today().getMonth();
+  CalState.year = today().getFullYear();
+  CalState.month = today().getMonth();
   renderCalendar();
 }
 
@@ -3545,8 +2618,8 @@ function goToday() {
 })();
 
 function goToday() {
-  viewYear = today().getFullYear();
-  viewMonth = today().getMonth();
+  CalState.year = today().getFullYear();
+  CalState.month = today().getMonth();
   const grid = document.getElementById('daysGrid');
   grid.style.transition = 'opacity 0.08s ease-out';
   grid.style.opacity = '0';
@@ -3610,9 +2683,9 @@ document.querySelectorAll('.tab').forEach((btn) => {
     newPanel.classList.remove('slide-out-left', 'slide-out-right');
     newPanel.classList.add('active');
     // Scroll to top on mobile when switching tabs
-    const app = document.querySelector('.app');
-    if (app) app.scrollTop = 0;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll position preserved per user request
+    // Scroll position preserved per user request
+    // Scroll position preserved per user request
     if (id === 'settings') loadSettingsUI();
     if (id === 'symptoms') {
       if (getGitHubToken()) {
@@ -4073,82 +3146,6 @@ function updateSharedSymptoms() {
 
 // Special badge for Anđela
 // Sleep Tracker
-function saveSleep() {
-  const time = document.getElementById('sleepTime').value;
-  if (!time) return;
-  const entry = { time: time, date: fmtDate(new Date()), saved: Date.now() };
-  localStorage.setItem('barry-sleep', JSON.stringify(entry));
-  pushAllSharedData();
-  renderSleepCard();
-  toast('😴 ' + (lang === 'sr' ? 'Sačuvano!' : lang === 'en' ? 'Saved!' : '已保存！'));
-}
-function getBarrySleep() {
-  return safeParse(localStorage.getItem('barry-sleep'), null);
-}
-function renderSleepCard() {
-  const card = document.getElementById('sleepCard');
-  card.style.display = '';
-  document.getElementById('sleep-title').textContent = lang === 'sr' ? '😴 Spavanje' : lang === 'en' ? '😴 Sleep' : '😴 睡眠';
-  if (activeProfile === 'barry') {
-    document.getElementById('sleepBarryView').style.display = '';
-    document.getElementById('sleepAngieView').style.display = 'none';
-    document.getElementById('sleep-hint').textContent =
-      lang === 'sr'
-        ? 'Kad si legao sinoć? Angie vidi tvoje vreme spavanja 😴'
-        : lang === 'en'
-          ? 'What time did you sleep last night? Angie sees your sleep time 😴'
-          : '昨晚几点睡的？Angie 会看到你的睡眠时间 😴';
-    document.getElementById('sleep-save').textContent = lang === 'sr' ? 'Sačuvaj' : lang === 'en' ? 'Save' : '保存';
-    const s = getBarrySleep();
-    if (s) document.getElementById('sleepTime').value = s.time;
-  } else {
-    // Angie's view
-    document.getElementById('sleepBarryView').style.display = 'none';
-    document.getElementById('sleepAngieView').style.display = '';
-    const s = getBarrySleep();
-    if (!s) {
-      document.getElementById('sleepAngieContent').innerHTML =
-        '<div style="text-align:center;color:var(--text-muted);font-size:.72rem">' +
-        (lang === 'sr'
-          ? 'Barry još nije uneo vreme — podseti ga!'
-          : lang === 'en'
-            ? "Barry hasn't logged sleep yet — remind him!"
-            : 'Barry 还没记录——提醒他！') +
-        '</div>';
-      return;
-    }
-    const timeParts = s.time.split(':');
-    const hour = parseInt(timeParts[0]),
-      min = parseInt(timeParts[1]);
-    let lateMsg = '';
-    if (hour >= 2 || (hour === 1 && min >= 30)) {
-      lateMsg =
-        lang === 'sr'
-          ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">Legao je u ' +
-            s.time +
-            '! To je PREKASNO!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">Srce mu pati kad spava manje od 6 sati. Dugoročno — rizik od srčanih bolesti raste za 48%. Treba mu 7-8 sati sna. Ti si jedina koja može da ga natera da legne ranije. Reci mu večeras — "Barry, molim te, idi u krevet pre pola 2. Za mene. 💗"</div></div>'
-          : lang === 'en'
-            ? '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">He slept at ' +
-              s.time +
-              '! That\'s WAY too late!</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">His heart suffers with less than 6 hours of sleep. Long-term heart disease risk increases 48%. He needs 7-8 hours. You\'re the only one who can make him sleep earlier. Tell him tonight — "Barry, please go to bed before 1:30 AM. For me. 💗"</div></div>'
-            : '<div style="background:var(--rose-light);border-radius:12px;padding:12px;margin-top:8px;text-align:center"><span style="font-size:1.5rem">💔</span><div style="font-size:.76rem;color:var(--rose-dark);font-weight:700;line-height:1.6">他 ' +
-              s.time +
-              ' 才睡！太晚了！</div><div style="font-size:.68rem;color:var(--rose-dark);margin-top:4px;line-height:1.5">睡眠不足6小时，心脏长期受损，心脏病风险增加48%。他需要7-8小时睡眠。只有你能让他早点睡。今晚就告诉他——"Barry，为了我今晚1:30以前就睡觉！💗"</div></div>';
-    }
-    document.getElementById('sleepAngieContent').innerHTML =
-      '<div style="text-align:center"><span style="font-size:2rem">😴</span><div style="font-size:.78rem;color:var(--text);margin-top:4px">' +
-      (lang === 'sr' ? 'Sinoć je legao u' : lang === 'en' ? 'Last night he slept at' : '昨晚他') +
-      ' <b>' +
-      s.time +
-      '</b></div><div style="font-size:.62rem;color:var(--text-muted)">' +
-      s.date +
-      '</div></div>' +
-      lateMsg;
-  }
-}
-/* ================================================================
-   SPECIAL DATES — first meeting & monthly anniversaries
-   ================================================================ */
 function getSpecialDate(d) {
   const annMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
   const annLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';

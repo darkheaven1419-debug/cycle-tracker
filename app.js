@@ -83,14 +83,26 @@ function loadState() {
   var key = profileKey(STORAGE_KEY_BASE);
   try {
     const raw = localStorage.getItem(key);
-    if (raw) { const d = JSON.parse(raw); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:d.moods||{}, diaries:d.diaries||{}, periodEnds:d.periodEnds||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
+    if (raw) { const d = JSON.parse(raw); return validateState({ records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:d.moods||{}, diaries:d.diaries||{}, periodEnds:d.periodEnds||{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }); }
   } catch(e) {}
   // Try old key
   try {
     const old = localStorage.getItem('cycle-data-v5');
-    if (old && activeProfile === 'andjela') { const d=JSON.parse(old); return { records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }; }
+    if (old && activeProfile === 'andjela') { const d=JSON.parse(old); return validateState({ records:(d.records||[]).map(r=>new Date(r)), symptoms:d.symptoms||{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false,...d.settings}, _migrated:true }); }
   } catch(e) {}
-  return { records:activeProfile==='andjela'?[new Date(2026,4,28)]:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
+  return makeDefaultState();
+}
+function validateState(s) {
+  if (!Array.isArray(s.records)) s.records = [];
+  else s.records = s.records.filter(function(r) { return r instanceof Date && !isNaN(r.getTime()); });
+  if (!s.settings || typeof s.settings.cycleLength !== 'number') s.settings = {cycleLength:28,periodLength:7,manualOverride:false};
+  if (typeof s.settings.periodLength !== 'number') s.settings.periodLength = 7;
+  if (typeof s.settings.cycleLength !== 'number' || s.settings.cycleLength < 20 || s.settings.cycleLength > 60) s.settings.cycleLength = 28;
+  return s;
+}
+function makeDefaultState() {
+  if (activeProfile === 'andjela') return { records:[new Date(2026,4,28),new Date(2026,5,24)], periodEnds:{'2026-05-28':'2026-06-03','2026-06-24':'2026-06-30'}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
+  return { records:[], periodEnds:{}, symptoms:{}, moods:{}, diaries:{}, settings:{cycleLength:28,periodLength:7,manualOverride:false}, _migrated:true };
 }
 // Debounced saveState — prevents excessive localStorage writes during rapid clicks
 var _saveTimer = null, _pushTimer = null;
@@ -106,6 +118,21 @@ function saveState() {
   }, 200);
 }
 function saveStateNow() { clearTimeout(_saveTimer); clearTimeout(_pushTimer); localStorage.setItem(profileKey(STORAGE_KEY_BASE), JSON.stringify({ records:state.records.map(fmtDate), periodEnds:state.periodEnds||{}, symptoms:state.symptoms, moods:state.moods, diaries:state.diaries, settings:state.settings, _migrated:true })); pushAllSharedData(); }
+// Immutable state updater — creates new state, applies changes, saves
+function updateState(updater) {
+  var newState = {
+    records: state.records.slice(),
+    periodEnds: Object.assign({}, state.periodEnds || {}),
+    symptoms: Object.assign({}, state.symptoms || {}),
+    moods: Object.assign({}, state.moods || {}),
+    diaries: Object.assign({}, state.diaries || {}),
+    settings: Object.assign({}, state.settings || {}),
+    _migrated: true
+  };
+  updater(newState);
+  state = newState;
+  saveState();
+}
 let state = loadState();
 
 /* ================================================================
@@ -113,10 +140,13 @@ let state = loadState();
    ================================================================ */
 function getMood(dateKey) { return state.moods && state.moods[dateKey] ? state.moods[dateKey].mood : null; }
 function setMood(dateKey, moodKey) {
-  if (!state.moods) state.moods = {};
-  if (state.moods[dateKey] && state.moods[dateKey].mood === moodKey) { delete state.moods[dateKey]; saveState(); renderMoodSection(); return; }
-  state.moods[dateKey] = { mood: moodKey, time: Date.now() };
-  saveState();
+  // If same mood already set, remove it (toggle off)
+  if (state.moods && state.moods[dateKey] && state.moods[dateKey].mood === moodKey) {
+    updateState(function(s) { delete s.moods[dateKey]; });
+    renderMoodSection();
+    return;
+  }
+  updateState(function(s) { s.moods[dateKey] = { mood: moodKey, time: Date.now() }; });
   renderMoodSection();
   renderGarden();
   toast(t('moodNames')[MOOD_KEYS.indexOf(moodKey)] + ' ✓');
@@ -2304,40 +2334,64 @@ function updateCycleCounter(n) {
    PREDICTION
    ================================================================ */
 function predict() {
-  const {records,settings}=state; const sorted=[...records].sort((a,b)=>a-b);
-  // Auto-calculate period length from actual data
-  var periodEnds=state.periodEnds||{};
-  var periodLengths=[];
-  for(var i=0;i<sorted.length;i++){
-    var key=fmtDate(sorted[i]);
-    if(periodEnds[key])periodLengths.push(daysDiff(d0(sorted[i]),d0(new Date(periodEnds[key]+'T00:00:00')))+1);
+  try {
+    const {records,settings}=state; const sorted=[...records].sort((a,b)=>a-b);
+    var periodEnds=state.periodEnds||{};
+    var periodLengths=[];
+    for(var i=0;i<sorted.length;i++){
+      var key=fmtDate(sorted[i]);
+      if(periodEnds[key])periodLengths.push(daysDiff(d0(sorted[i]),d0(new Date(periodEnds[key]+'T00:00:00')))+1);
+    }
+    var avgPeriodLen=Math.min(14,periodLengths.length>0?Math.round(periodLengths.reduce(function(a,b){return a+b;},0)/periodLengths.length):settings.periodLength);
+    var def={lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:settings.cycleLength,periodLen:avgPeriodLen,avgCycle:settings.cycleLength,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
+    if(sorted.length===0) return def;
+    def.lastStart=d0(sorted[sorted.length-1]);
+    if(sorted.length===1){def.nextStart=addDays(def.lastStart,settings.cycleLength);}
+    else{for(let i=1;i<sorted.length;i++) def.cycles.push(daysDiff(d0(sorted[i-1]),d0(sorted[i])));const recent=def.cycles.slice(-6);if(recent.length>0){def.avgCycle=Math.round(recent.reduce((a,b)=>a+b,0)/recent.length);def.minCycle=Math.min(...recent);def.maxCycle=Math.max(...recent);const variance=recent.reduce((s,c)=>s+(c-def.avgCycle)**2,0)/recent.length;def.stdDev=Math.round(Math.sqrt(variance)*10)/10;if(def.stdDev<=3)def.confidence='high';else if(def.stdDev<=6)def.confidence='medium';else def.confidence='low';}def.nextStart=addDays(def.lastStart,def.avgCycle);}
+    const td=today();if(def.nextStart&&td>def.nextStart){const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;const elapsed=daysDiff(def.lastStart,td);const passed=Math.floor(elapsed/useLen);if(passed>=1){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}def.isOverdue=(td>def.nextStart);if(def.isOverdue)def.overdueDays=daysDiff(def.nextStart,td);}
+    if(def.nextStart){def.ovulation=addDays(def.nextStart,-14);def.fertileStart=addDays(def.ovulation,-5);def.fertileEnd=addDays(def.ovulation,-1);const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;for(let i=1;i<=2;i++){const np=addDays(def.nextStart,useLen*i);def.futurePeriods.push({start:np,ovulation:addDays(np,-14),fertileStart:addDays(np,-19),fertileEnd:addDays(np,-15)});}}
+    return def;
+  } catch(e) {
+    console.warn('[predict] Data error, using safe defaults:', e.message);
+    return {lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:28,periodLen:7,avgCycle:28,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
   }
-  var avgPeriodLen=periodLengths.length>0?Math.round(periodLengths.reduce(function(a,b){return a+b;},0)/periodLengths.length):settings.periodLength;
-  var def={lastStart:null,nextStart:null,ovulation:null,fertileStart:null,fertileEnd:null,cycleLen:settings.cycleLength,periodLen:avgPeriodLen,avgCycle:settings.cycleLength,minCycle:null,maxCycle:null,stdDev:0,confidence:'low',cycles:[],isOverdue:false,overdueDays:0,futurePeriods:[]};
-  if(sorted.length===0) return def;
-  def.lastStart=d0(sorted[sorted.length-1]);
-  if(sorted.length===1){def.nextStart=addDays(def.lastStart,settings.cycleLength);}
-  else{for(let i=1;i<sorted.length;i++) def.cycles.push(daysDiff(d0(sorted[i-1]),d0(sorted[i])));const recent=def.cycles.slice(-6);if(recent.length>0){def.avgCycle=Math.round(recent.reduce((a,b)=>a+b,0)/recent.length);def.minCycle=Math.min(...recent);def.maxCycle=Math.max(...recent);const variance=recent.reduce((s,c)=>s+(c-def.avgCycle)**2,0)/recent.length;def.stdDev=Math.round(Math.sqrt(variance)*10)/10;if(def.stdDev<=3)def.confidence='high';else if(def.stdDev<=6)def.confidence='medium';else def.confidence='low';}def.nextStart=addDays(def.lastStart,def.avgCycle);}
-  const td=today();if(def.nextStart&&td>def.nextStart){const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;const elapsed=daysDiff(def.lastStart,td);const passed=Math.floor(elapsed/useLen);if(passed>=1){def.nextStart=addDays(def.lastStart,useLen*(passed+1));}def.isOverdue=(td>def.nextStart);if(def.isOverdue)def.overdueDays=daysDiff(def.nextStart,td);}
-  if(def.nextStart){def.ovulation=addDays(def.nextStart,-14);def.fertileStart=addDays(def.ovulation,-3);def.fertileEnd=addDays(def.ovulation,2);const useLen=settings.manualOverride?settings.cycleLength:def.avgCycle;for(let i=1;i<=2;i++){const np=addDays(def.nextStart,useLen*i);def.futurePeriods.push({start:np,ovulation:addDays(np,-14),fertileStart:addDays(np,-17),fertileEnd:addDays(np,-11)});}}
-  return def;
 }
 
 function getPeriodEndDate(startDate){
   // Return the actual end date for a period start, or null if not ended yet
   var key=fmtDate(startDate);
-  if(state.periodEnds&&state.periodEnds[key])return new Date(state.periodEnds[key]+'T00:00:00');
+  if(state.periodEnds&&state.periodEnds[key]){
+    var e=new Date(state.periodEnds[key]+'T00:00:00');
+    // Safety cap: ignore periodEnds more than 14 days after start (data corruption guard)
+    if(e>addDays(startDate,14)) return null;
+    return e;
+  }
   return null;
 }
 function getPhase(date,pred){
   const d=d0(date);
+  // 1. Recorded period days — actual data takes full priority
   for(const rec of state.records){const s=d0(rec);var e=getPeriodEndDate(rec)||addDays(s,pred.periodLen-1);e.setHours(0,0,0,0);if(d>=s&&d<=e) return sameDay(d,s)?'period-on':'period-mid';}
+  // 2. Predicted next period (including future predictions)
   if(pred.nextStart){const ps=d0(pred.nextStart),pe=addDays(ps,pred.periodLen-1);pe.setHours(0,0,0,0);if(d>=ps&&d<=pe) return sameDay(d,ps)?'period-pred-first':'period-pred';}
   for(const fp of pred.futurePeriods){const ps=d0(fp.start),pe=addDays(ps,pred.periodLen-1);pe.setHours(0,0,0,0);if(d>=ps&&d<=pe) return sameDay(d,ps)?'period-future-first':'period-future';}
-  if(pred.ovulation&&sameDay(d,pred.ovulation)) return 'ovulation';
-  if(pred.fertileStart&&pred.fertileEnd){const fs=d0(pred.fertileStart),fe=d0(pred.fertileEnd);if(d>=fs&&d<=fe) return 'fertile';}
-  if(pred.fertileEnd&&pred.nextStart){const fe=d0(pred.fertileEnd),np=d0(pred.nextStart);if(d>fe&&d<np) return 'luteal';}
-  if(pred.lastStart&&pred.fertileStart){const lpEnd=addDays(pred.lastStart,pred.periodLen);lpEnd.setHours(0,0,0,0);const fs=d0(pred.fertileStart);if(d>=lpEnd&&d<fs) return 'follicular';}
+  // 4-7. Ovulation-based phases
+  if(!pred.ovulation) return null;
+  const ovu=d0(pred.ovulation);
+  // 4. Ovulation day
+  if(sameDay(d,ovu)) return 'ovulation';
+  // 5. Fertile window: 6 days ending on ovulation (standard medical definition)
+  const fwStart=addDays(ovu,-5);
+  if(d>=fwStart&&d<=ovu) return 'fertile';
+  // 6. Luteal phase: day after ovulation until day before next period (~14 days)
+  if(pred.nextStart){const np=d0(pred.nextStart);if(d>ovu&&d<np) return 'luteal';}
+  // 7. Follicular phase: for each recorded period, check if d is after period end but before fertile window
+  for(var fi=0;fi<state.records.length;fi++){
+    var pe=getPeriodEndDate(state.records[fi])||addDays(d0(state.records[fi]),pred.periodLen-1);
+    pe.setHours(0,0,0,0);
+    var dayAfter=addDays(pe,1);
+    if(d>=dayAfter&&d<fwStart) return 'follicular';
+  }
   return null;
 }
 
@@ -2495,7 +2549,7 @@ function renderCalendar(){
   try { var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); Object.keys(sd).forEach(function(k){ if(sd[k]&&(sd[k].barry||sd[k].andjela)) sharedDiaryIdx[k]=true; }); } catch(e) {}
   for(let i=0;i<42;i++){
     const d=addDays(gridStart,i); const inMonth=d.getMonth()===viewMonth;
-    const isToday=sameDay(d,td); const phase=inMonth?getPhase(d,pred):null;
+    const isToday=sameDay(d,td); const phase=getPhase(d,pred);
     const key=fmtDate(d);
     // Symptom check
     var symptoms=state.symptoms[key];
@@ -2529,7 +2583,7 @@ function renderCalendar(){
     if(inMonth) {
       el.setAttribute('tabindex','0');
       el.addEventListener('keydown',function(e){
-        if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();var pred=predict();openModal(d,pred);}
       });
     }
     // Date number
@@ -2540,17 +2594,8 @@ function renderCalendar(){
       var cdSpan=document.createElement('span'); cdSpan.className='day-cycle-num'; cdSpan.textContent=cycleDay;
       el.appendChild(cdSpan);
     }
-    // Lunar date label (Chinese calendar)
-    if (inMonth && typeof Lunar !== 'undefined') {
-      var lunarDayName = getLunarCellText(d);
-      if (lunarDayName) {
-        var lunarSpan = document.createElement('span');
-        lunarSpan.className = 'lunar-date ' + getLunarCellClass(d);
-        lunarSpan.textContent = lunarDayName;
-        el.appendChild(lunarSpan);
-      }
-    }
-    el.setAttribute('role','button'); el.setAttribute('aria-label',fmtDate(d));
+	    el.setAttribute("role","gridcell"); el.setAttribute("aria-label",fmtDate(d));
+	    el.dataset.date = key;
     // Symptom emoji icons on cell
     if (hasSymptom&&!phase&&symptoms){
       var miniDiv=document.createElement('div'); miniDiv.className='day-symptoms';
@@ -2571,23 +2616,7 @@ function renderCalendar(){
     }
     // Anniversary dot
     if(annType===2&&!phase){const dot=document.createElement('span');dot.className='mini-dot gold';el.appendChild(dot);}
-    // Solar term label on calendar cell
-    var solarTerm = getSolarTerm(key);
-    if (solarTerm && inMonth) {
-      var stName = solarTerm.name[lang] || solarTerm.name[lang.split('-')[0]] || solarTerm.name['sr'] || solarTerm.name['zh-CN'] || '';
-      var stLabel = document.createElement('span');
-      stLabel.className = 'solar-term-label';
-      stLabel.textContent = stName;
-      stLabel.title = stName; // hover shows full name for long solar terms
-      el.appendChild(stLabel);
-      el.classList.add('solar-term-day');
-      // Single tap opens modal (same as other days) — modal shows solar term + holiday
-      if (!solarTerm.story) {
-        // Ensure rich data is loaded for the modal
-        ensureSolarTermData();
-      }
-    }
-    // Holiday emoji icons — show before solar term for proper layering
+	    // Holiday emoji icons
     var holidays=getHoliday(key);
     holidays.forEach(function(h){
       var icon=document.createElement('span');
@@ -2596,39 +2625,6 @@ function renderCalendar(){
       icon.title = h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr'] || h.name['zh-CN'] || '';
       el.appendChild(icon);
     });
-    // Double-tap detection using touch events for mobile responsiveness
-    var tapTimer = null;
-    if (inMonth) {
-      el.addEventListener('click', function(e) {
-        if (tapTimer) {
-          // Double tap — quick toggle period
-          clearTimeout(tapTimer); tapTimer = null;
-          var idx = state.records.findIndex(function(r){return sameDay(r,d);});
-          if (idx >= 0) { state.records.splice(idx,1); toast('🚫 '+t('toast.unmarked')); }
-          else { state.records.push(new Date(d)); state.records.sort(function(a,b){return a-b;}); el.classList.add('celebrate'); setTimeout(function(){el.classList.remove('celebrate');},500); toast('🩸 '+t('toast.marked')); checkCycleCelebration(); }
-          saveState(); renderAll(['calendar','core']); updateFab();
-          e.preventDefault();
-        } else {
-          tapTimer = setTimeout(function(){ tapTimer = null; openModal(d,pred); }, 280);
-        }
-      });
-      // Also listen for touchend for faster double-tap on mobile
-      var touchCount = 0, touchTimer = null;
-      el.addEventListener('touchend', function(e) {
-        touchCount++;
-        if (touchCount === 1) {
-          touchTimer = setTimeout(function() { touchCount = 0; }, 350);
-        } else if (touchCount === 2) {
-          clearTimeout(touchTimer); touchCount = 0;
-          if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
-          var idx = state.records.findIndex(function(r){return sameDay(r,d);});
-          if (idx >= 0) { state.records.splice(idx,1); toast('🚫 '+t('toast.unmarked')); }
-          else { state.records.push(new Date(d)); state.records.sort(function(a,b){return a-b;}); el.classList.add('celebrate'); setTimeout(function(){el.classList.remove('celebrate');},500); toast('🩸 '+t('toast.marked')); checkCycleCelebration(); }
-          saveState(); renderAll(['calendar','core']); updateFab();
-          e.preventDefault();
-        }
-      });
-    }
     frag.appendChild(el);
   }
   // Batch-replace grid content in single DOM operation
@@ -2645,6 +2641,53 @@ function renderCalendar(){
   updateProgress(pred); updateStats(pred); updateHistoryDots(pred); updateReminder(pred);
   renderMonthHolidaySummary(); renderUpcomingHoliday();
 }
+
+// ── Delegated pointer event on calendar grid (replaces per-cell click + touchend) ──
+var _cellTapTimer = null, _lastTapKey = '', _lastTapTime = 0, _modalOpenAt = 0;
+var _cellDelegated = false;
+function initCalendarDelegation() {
+  if (_cellDelegated) return;
+  var grid = document.getElementById('daysGrid');
+  if (!grid) return;
+  _cellDelegated = true;
+  grid.addEventListener('pointerup', function(e) {
+    var cell = e.target.closest('.day');
+    if (!cell || cell.classList.contains('other-month') || !cell.dataset.date) return;
+    var d = new Date(cell.dataset.date + 'T00:00:00');
+    if (isNaN(d)) return;
+    var now = Date.now();
+    var key = cell.dataset.date;
+    // Double-tap detection: same cell tapped within 200ms
+    if (key === _lastTapKey && (now - _lastTapTime) < 200) {
+      clearTimeout(_cellTapTimer); _cellTapTimer = null;
+      // Toggle period record
+      var idx = state.records.findIndex(function(r){return sameDay(r,d);});
+      if (idx >= 0) {
+        updateState(function(s){s.records=s.records.filter(function(r,i){return i!==idx;});});
+        toast('\u{1F6AB} '+t('toast.unmarked'));
+      } else {
+        updateState(function(s){s.records=[...s.records,new Date(d)].sort(function(a,b){return a-b;});});
+        cell.classList.add('celebrate');
+        setTimeout(function(){cell.classList.remove('celebrate');},500);
+        toast('\u{1F9F8} '+t('toast.marked'));
+        checkCycleCelebration();
+      }
+      renderAll(['calendar','core']); updateFab();
+      _lastTapKey = ''; _lastTapTime = 0;
+      e.preventDefault();
+      return;
+    }
+    _lastTapKey = key; _lastTapTime = now;
+    if (_cellTapTimer) clearTimeout(_cellTapTimer);
+    _cellTapTimer = setTimeout(function() {
+      _cellTapTimer = null;
+      var pred = predict();
+      openModal(d, pred);
+    // Scroll position preserved per user request
+    // Scroll position preserved per user request
+    // Scroll position preserved per user request
+// Initialize delegation after first render
+setTimeout(initCalendarDelegation, 100);
 
 function updateProgress(pred){
   const td=today(); const numEl=document.getElementById('pg-num'); const unitEl=document.getElementById('pg-unit');
@@ -2738,17 +2781,16 @@ document.getElementById('fabBtn').addEventListener('click',function(){
   if(openStart){
     // Mark period END only if today is after the start
     if(d0(td)<=d0(openStart)){toast(lang==='sr'?'Kraj mora biti posle početka':lang==='en'?'End must be after start':'结束日必须在开始日之后');return;}
-    state.periodEnds=state.periodEnds||{};
-    state.periodEnds[fmtDate(openStart)]=tdKey;
+    updateState(function(s){s.periodEnds[fmtDate(openStart)]=tdKey;});
     toast(lang==='sr'?'Kraj ciklusa označen ✓':lang==='en'?'Period end marked ✓':'经期结束已标记 ✓');
   }else{
     // Mark period START
     var isMarked=state.records.some(function(r){return sameDay(r,td);});
     if(isMarked){toast(fmtDate(td)+(lang==='sr'?' - već označeno':lang==='en'?' - already marked':' - 已标记过'));return;}
-    state.records.push(new Date(td));state.records.sort(function(a,b){return a-b;});
+    updateState(function(s){s.records=[...s.records,new Date(td)].sort(function(a,b){return a-b;});});
     toast(t('toast.marked'));checkCycleCelebration();
   }
-  saveState();renderAll();updateFab();
+  renderAll(['calendar','core','stats']);updateFab();
   var fab=document.getElementById('fabBtn');fab.classList.add('celebrate');setTimeout(function(){fab.classList.remove('celebrate');},500);
 });
 
@@ -2782,7 +2824,7 @@ document.addEventListener('keydown', function(e) {
     greeting.style.display = 'none'; greeting.classList.add('hidden'); return;
   }
   var modal = document.getElementById('modal');
-  if (modal && !modal.parentElement.classList.contains('hidden')) { closeModal(); return; }
+  if (modal && !modal.classList.contains('hidden')) { closeModal(); return; }
   var importModal = document.querySelector('.import-modal-overlay');
   if (importModal) { importModal.remove(); return; }
 });
@@ -2790,22 +2832,31 @@ document.addEventListener('keydown', function(e) {
 /* ================================================================
    MODAL
    ================================================================ */
-function openModal(date,pred){selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);var lunarInfo=typeof Lunar!=='undefined'?Lunar.toLunar(date):null;if(lunarInfo){var lunarDisplay=lang==='sr'?('Lunarni '+lunarInfo.month+'. mesec, '+lunarInfo.day+'. dan'):lang==='en'?('Lunar '+lunarInfo.month+'/'+lunarInfo.day):(lunarInfo.monthName+lunarInfo.dayName);document.getElementById('modal-date').textContent=fmtDate(selectedDate)+' · '+lunarDisplay;}document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var special=getSpecialDate(new Date(key+'T00:00:00'));var specialRow=document.getElementById('modal-special-row');if(special){specialRow.style.display='';document.getElementById('modal-special').innerHTML='<span class=\"holiday-name\">'+special.icon+' '+(activeProfile==='barry'?special.title_zh:special.title_sr)+'</span><span class=\"holiday-detail\" style=\"display:block\">'+(activeProfile==='barry'?special.desc_zh:special.desc_sr)+'</span>';}else{specialRow.style.display='none';}var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;var daysOffInfo=HOLIDAY_DAYS[key];var offHtml='';if(daysOffInfo&&h.country==='cn'){var off=daysOffInfo.zh||daysOffInfo.cn||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}if(daysOffInfo&&h.country==='rs'){var off=daysOffInfo.sr||daysOffInfo.rs||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'+offHtml;});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}window._lastFocusedBeforeModal=document.activeElement;document.getElementById('modal').classList.remove('hidden');document.getElementById('modal-title').focus();}
+function openModal(date,pred){_modalOpenAt=Date.now();selectedDate=new Date(date);const key=fmtDate(selectedDate);const phase=getPhase(date,pred);const isMarked=state.records.some(r=>sameDay(r,selectedDate));const md=t('modal');const phases=t('phases');document.getElementById('modal-date').textContent=fmtDate(selectedDate);var lunarInfo=typeof Lunar!=='undefined'?Lunar.toLunar(date):null;if(lunarInfo){var lunarDisplay=lang==='sr'?('Lunarni '+lunarInfo.month+'. mesec, '+lunarInfo.day+'. dan'):lang==='en'?('Lunar '+lunarInfo.month+'/'+lunarInfo.day):(lunarInfo.monthName+lunarInfo.dayName);document.getElementById('modal-date').textContent=fmtDate(selectedDate)+' · '+lunarDisplay;}document.getElementById('modal-phase').textContent=phases[phase]||'--';const dayRow=document.getElementById('modal-day-row');if(phase==='period-on'||phase==='period-mid'){dayRow.style.display='';const cur=state.records.find(r=>{const s=d0(r),e=addDays(s,pred.periodLen-1);return selectedDate>=s&&selectedDate<=e;});document.getElementById('modal-day').textContent=cur?`${daysDiff(d0(cur),selectedDate)+1}${t('day')}`.trim():'--';}else{dayRow.style.display='none';}const sympRow=document.getElementById('modal-symp-row');const symp=state.symptoms[key];const symNames=t('symptoms');if(symp){const parts=Object.entries(symp).filter(([k,v])=>k!=='notes'&&v>0).map(([k,v])=>symNames[k]+v);if(parts.length>0||(symp.notes&&symp.notes.trim())){sympRow.style.display='';let txt=parts.length>0?parts.join(', '):'';if(symp.notes&&symp.notes.trim()) txt+=(txt?' · ':'')+symp.notes.trim();document.getElementById('modal-symp').textContent=txt||'--';}else{sympRow.style.display='none';}}else{sympRow.style.display='none';}document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{const s=chip.dataset.s;chip.classList.toggle('on',symp&&symp[s]&&symp[s]>0);chip.onclick=()=>quickToggleSymptom(s);});const markBtn=document.getElementById('modal-mark-btn'),unmarkBtn=document.getElementById('modal-unmark-btn');if(isMarked){markBtn.style.display='none';unmarkBtn.style.display='';unmarkBtn.textContent=md.unmark;document.getElementById('modal-title').textContent=md.marked;}else{markBtn.style.display='';markBtn.textContent=md.mark;unmarkBtn.style.display='none';document.getElementById('modal-title').textContent=md.details;}renderKnowledge(phase,key);renderSymptomPanel(key);var special=getSpecialDate(new Date(key+'T00:00:00'));var specialRow=document.getElementById('modal-special-row');if(special){specialRow.style.display='';document.getElementById('modal-special').innerHTML='<span class=\"holiday-name\">'+special.icon+' '+(activeProfile==='barry'?special.title_zh:special.title_sr)+'</span><span class=\"holiday-detail\" style=\"display:block\">'+(activeProfile==='barry'?special.desc_zh:special.desc_sr)+'</span>';}else{specialRow.style.display='none';}var solarTerm=getSolarTerm(key);var solarRow=document.getElementById('modal-solar-row');if(solarTerm){solarRow.style.display='';var sn=solarTerm.name[lang]||solarTerm.name[lang.split('-')[0]]||solarTerm.name['sr'];document.getElementById('modal-solar').innerHTML='<span class="holiday-name" onclick="var d=this.nextElementSibling;d.classList.toggle(\'open\');this.textContent=this.textContent.replace(\' ▾\',\' \').replace(\' ▴\',\' \')+(d.classList.contains(\'open\')?\' ▴\':\' ▾\')">'+sn+' ▾</span><span class="holiday-detail">'+((solarTerm.story?(solarTerm.story[lang]||solarTerm.story[lang.split('-')[0]]||solarTerm.story['sr']):''))+'</span>';}else{solarRow.style.display='none';}var holidays=getHoliday(key);var holidayRow=document.getElementById('modal-holiday-row');if(holidays.length>0){holidayRow.style.display='';var hNames=holidays.map(function(h,i){var n=h.name[lang]||h.name[lang.split('-')[0]]||h.name['sr'];var d=h.desc[lang]||h.desc[lang.split('-')[0]]||h.desc['sr'];var flagEmoji=h.country==='cn'?'🇨🇳':'🇷🇸';var uid='h'+i;var daysOffInfo=HOLIDAY_DAYS[key];var offHtml='';if(daysOffInfo&&h.country==='cn'){var off=daysOffInfo.zh||daysOffInfo.cn||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}if(daysOffInfo&&h.country==='rs'){var off=daysOffInfo.sr||daysOffInfo.rs||'';if(off&&off!=='—')offHtml='<div style="font-size:.62rem;color:var(--text-muted);margin-top:2px">🏖️ '+(lang==='sr'?'Odmor: '+off:lang==='en'?'Days off: '+off:'放假'+off)+'</div>';}return flagEmoji+' <span class="holiday-name" data-d="'+h.d+'" data-c="'+h.country+'" id="hn-'+uid+'" onclick="toggleHolidayStory(\''+uid+'\',\''+h.d+'\',\''+h.country+'\')">'+n+' ▾</span><span class="holiday-detail" id="hd-'+uid+'">'+d+'</span>'+offHtml;});document.getElementById('modal-holiday').innerHTML=hNames.join('<div style="height:8px"></div>');}else{holidayRow.style.display='none';}window._lastFocusedBeforeModal=document.activeElement;document.getElementById('modal').classList.remove('hidden');document.getElementById('modal-title').focus();}
 function closeModal(){
   var overlay = document.getElementById('modal');
   var modalEl = overlay.querySelector('.modal');
   if (modalEl) {
     modalEl.classList.add('closing');
     overlay.classList.add('closing');
-    modalEl.addEventListener('animationend', function h() {
-      modalEl.removeEventListener('animationend', h);
+    function cleanupModal() {
       overlay.classList.add('hidden');
       overlay.classList.remove('closing');
       modalEl.classList.remove('closing');
       selectedDate = null;
       knowledgeOpen = false;
       if (window._lastFocusedBeforeModal) { window._lastFocusedBeforeModal.focus(); }
+    }
+    modalEl.addEventListener('animationend', function h() {
+      modalEl.removeEventListener('animationend', h);
+      clearTimeout(modalCloseFallback);
+      cleanupModal();
     }, {once: true});
+    // Fallback for reduced-motion: animationend may fire too fast or not at all
+    var modalCloseFallback = setTimeout(function() {
+      modalEl.removeEventListener('animationend', cleanupModal);
+      cleanupModal();
+    }, 60);
   }
 }
 function renderKnowledge(phase,dateKey){const panel=document.getElementById('knowledgePanel');const toggleBtn=document.getElementById('knowledgeToggle');let cat=null;if(phase&&(phase.startsWith('period')))cat='period';else if(phase==='ovulation')cat='ovulation';else if(phase==='fertile')cat='fertile';else if(phase==='follicular')cat='follicular';else if(phase==='luteal')cat='luteal';else{const pr=predict();const tp=getPhase(today(),pr);if(tp&&tp.startsWith('period'))cat='period';else if(tp==='ovulation'||tp==='fertile')cat='ovulation';else if(tp==='follicular')cat='follicular';else if(tp==='luteal')cat='luteal';}if(cat){const kn=t('knowledge.'+cat);toggleBtn.style.display='';toggleBtn.textContent=knowledgeOpen?t('knowledgeToggleHide'):t('knowledgeToggle');panel.innerHTML=`<h4>${kn.title}</h4><p>${kn.desc}</p><p style="margin-top:8px"><strong>🩺 ${kn.what}</strong></p><p style="margin-top:6px"><strong>📋 ${kn.symptoms}</strong></p><p style="margin-top:6px"><strong>💡 ${kn.tips}</strong></p>`;panel.className='knowledge-panel'+(knowledgeOpen?' open':'');}else{toggleBtn.style.display='none';panel.className='knowledge-panel';panel.innerHTML='';}}
@@ -2814,24 +2865,29 @@ function togglePeriodRecord(){if(!selectedDate)return;var sd=fmtDate(selectedDat
   // Check if this is marking period END (there's a start without end)
   var openStart=getOpenPeriodStart();
   if(openStart && d0(selectedDate)>d0(openStart)){
-    // Mark as period end
-    state.periodEnds=state.periodEnds||{};
-    state.periodEnds[fmtDate(openStart)]=sd;
+    // Mark as period end — immutable
+    updateState(function(s) {
+      s.periodEnds[fmtDate(openStart)] = sd;
+    });
     toast(lang==='sr'?'Kraj ciklusa označen ✓':lang==='en'?'Period end marked ✓':'经期结束已标记 ✓');
   }else{
-    // Toggle period start
+    // Toggle period start — immutable
     var idx=state.records.findIndex(function(r){return sameDay(r,selectedDate);});
     if(idx>=0){
-      state.records.splice(idx,1);
-      state.periodEnds=state.periodEnds||{};
-      delete state.periodEnds[fmtDate(selectedDate)];
+      updateState(function(s) {
+        s.records = s.records.filter(function(r,i){return i!==idx;});
+        delete s.periodEnds[fmtDate(selectedDate)];
+      });
       toast(t('toast.unmarked'));
     }else{
-      state.records.push(new Date(selectedDate));state.records.sort(function(a,b){return a-b;});
+      updateState(function(s) {
+        s.records = [...s.records, new Date(selectedDate)].sort(function(a,b){return a-b;});
+      });
       toast(t('toast.marked'));checkCycleCelebration();
     }
   }
-  saveState();renderAll();updateFab();openModal(selectedDate,predict());
+  renderAll(['calendar','core','stats']);updateFab();openModal(selectedDate,predict());
+  if (activeProfile === 'andjela') updateSharedCycleInfo();
 }
 function getOpenPeriodStart(){
   // Return the most recent period start that has no end date
@@ -2842,15 +2898,15 @@ function getOpenPeriodStart(){
   }
   return null;
 }
-function removePeriodRecord(){if(!selectedDate)return;state.records=state.records.filter(r=>!sameDay(r,selectedDate));state.periodEnds=state.periodEnds||{};delete state.periodEnds[fmtDate(selectedDate)];saveState();toast(t('toast.unmarked'));renderAll();updateFab();closeModal();}
-function quickToggleSymptom(name){if(!selectedDate)return;const key=fmtDate(selectedDate);if(!state.symptoms[key])state.symptoms[key]={};const s=state.symptoms[key];s[name]=s[name]?0:2;if(s[name]===0)delete s[name];document.querySelectorAll('#modal-symptoms .sym-chip').forEach(chip=>{if(chip.dataset.s===name)chip.classList.toggle('on',s[name]>0);});saveState();toast(t('toast.symptomQuick'));}
+function removePeriodRecord(){if(!selectedDate)return;var key=fmtDate(selectedDate);updateState(function(s){s.records=s.records.filter(function(r){return!sameDay(r,selectedDate);});delete s.periodEnds[key];});toast(t('toast.unmarked'));renderAll(['calendar','core','stats']);updateFab();closeModal();if(activeProfile==='andjela')updateSharedCycleInfo();}
+function quickToggleSymptom(name){if(!selectedDate)return;const key=fmtDate(selectedDate);updateState(function(s){if(!s.symptoms[key])s.symptoms[key]={};var cur=s.symptoms[key][name];if(cur){delete s.symptoms[key][name];}else{s.symptoms[key][name]=2;}});var isOn=state.symptoms[key]&&state.symptoms[key][name];document.querySelectorAll('#modal-symptoms .sym-chip').forEach(function(chip){if(chip.dataset.s===name)chip.classList.toggle('on',!!isOn);});toast(t('toast.symptomQuick'));}
 
 /* ================================================================
    SYMPTOMS / TIPS / SETTINGS
    ================================================================ */
 function renderSymptomPanel(dateKey){symptomDate=dateKey;document.getElementById('symptom-date-label').textContent=dateKey+' '+t('modal.symptoms');document.getElementById('symptom-empty').style.display='none';document.getElementById('symptom-content').style.display='';const symp=state.symptoms[dateKey]||{};['cramps','mood','flow','headache','fatigue','cravings'].forEach(s=>{const lvl=symp[s]||0;const dots=document.getElementById('dots-'+s);if(!dots)return;dots.querySelectorAll('.dot').forEach((dot,i)=>{dot.className='dot'+(i<lvl?' on':'');});const item=dots.closest('.symptom-item');if(item)item.classList.toggle('selected',lvl>0);});document.getElementById('symptom-notes').value=symp.notes||'';}
-function cycleSymptom(name){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};const s=state.symptoms[symptomDate];const cur=s[name]||0;s[name]=cur>=3?0:cur+1;renderSymptomPanel(symptomDate);}
-function saveSymptom(){if(!symptomDate)return;if(!state.symptoms[symptomDate])state.symptoms[symptomDate]={};state.symptoms[symptomDate].notes=document.getElementById('symptom-notes').value.trim();saveState();toast(t('toast.symptomSaved'));renderAll(['calendar']);}
+function cycleSymptom(name){if(!symptomDate)return;var sk=symptomDate;updateState(function(s){if(!s.symptoms[sk])s.symptoms[sk]={};var cur=s.symptoms[sk][name]||0;s.symptoms[sk][name]=cur>=3?0:cur+1;});renderSymptomPanel(symptomDate);}
+function saveSymptom(){if(!symptomDate)return;var sk=symptomDate;var notes=document.getElementById('symptom-notes').value.trim();updateState(function(s){if(!s.symptoms[sk])s.symptoms[sk]={};s.symptoms[sk].notes=notes;});toast(t('toast.symptomSaved'));renderAll(['calendar']);}
 function getSharedCyclePhase() {
   // First try shared-cycle-info (old summary format: {phase, nextStart})
   var shared = null;
@@ -2955,29 +3011,37 @@ function changeMonth(d) {
   }, 80);
 }
 
-// Touch swipe
+// Keyboard arrow nav for calendar grid
+var _gridNavInit=false;
+function initCalendarKeyboardNav(){if(_gridNavInit)return;_gridNavInit=true;var grid=document.getElementById("daysGrid");if(!grid)return;grid.addEventListener("keydown",function(e){if(!e.key.startsWith("Arrow")&&e.key!=="Home"&&e.key!=="End")return;var cell=e.target.closest(".day");if(!cell||cell.classList.contains("other-month"))return;var cells=Array.from(this.querySelectorAll(".day:not(.other-month)"));var idx=cells.indexOf(cell);if(idx===-1)return;e.preventDefault();var newIdx=idx;if(e.key==="ArrowRight")newIdx=Math.min(idx+1,cells.length-1);else if(e.key==="ArrowLeft")newIdx=Math.max(idx-1,0);else if(e.key==="ArrowUp")newIdx=Math.max(idx-7,0);else if(e.key==="ArrowDown")newIdx=Math.min(idx+7,cells.length-1);else if(e.key==="Home")newIdx=0;else if(e.key==="End")newIdx=cells.length-1;cells[newIdx].focus();cells[newIdx].setAttribute("tabindex","0");cell.setAttribute("tabindex","-1");});}
+setTimeout(initCalendarKeyboardNav,200);
+
+// Touch swipe — with proper lock management for consecutive gestures
 (function() {
   var grid = document.getElementById('daysGrid');
-  var sx = 0, active = false;
+  var sx = 0, moving = false, swipeLocked = false;
   grid.addEventListener('touchstart', function(e) {
-    if (active) return;
+    if (swipeLocked) return;
     sx = e.touches[0].clientX;
+    moving = false;
   }, {passive: true});
   grid.addEventListener('touchmove', function(e) {
+    if (swipeLocked) return;
     var dx = e.touches[0].clientX - sx;
-    if (!active && Math.abs(dx) > 10) { active = true; grid.style.transition = 'none'; }
-    if (!active) return;
+    if (!moving && Math.abs(dx) > 10) { moving = true; grid.style.transition = 'none'; }
+    if (!moving) return;
     grid.style.transform = 'translateX(' + dx + 'px)';
     grid.style.opacity = Math.max(0, 1 - Math.abs(dx) / 150);
   }, {passive: false});
   grid.addEventListener('touchend', function() {
-    if (!active) return; active = false;
+    if (!moving) return; moving = false;
     var dx = parseFloat(grid.style.transform.replace('translateX(','').replace('px)','')) || 0;
     grid.style.transition = 'transform .15s ease-out, opacity .15s ease-out';
     if (Math.abs(dx) > 60) {
       var dir = dx > 0 ? -1 : 1;
+      swipeLocked = true;
       grid.style.transform = 'translateX(' + (dir * 100) + 'px)'; grid.style.opacity = '0';
-      setTimeout(function() { grid.style.transition = 'none'; grid.style.transform = ''; grid.style.opacity = ''; changeMonth(dir); }, 150);
+      setTimeout(function() { grid.style.transition = 'none'; grid.style.transform = ''; grid.style.opacity = ''; swipeLocked = false; changeMonth(dir); }, 150);
     } else {
       grid.style.transform = ''; grid.style.opacity = '';
     }
@@ -3244,7 +3308,7 @@ function toast(msg){var container=document.getElementById('toastContainer');if(!
     startY = 0; currentY = 0;
   });
 })();
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this&&Date.now()-_modalOpenAt>600)closeModal();});
 
 /* ================================================================
    SYMPTOM ANALYSIS DATA (Barry's view)
@@ -4037,3 +4101,68 @@ window.runSelfTest = function() {
   return r;
 };
 if((new URLSearchParams(location.search)).get('selftest')==='1')setTimeout(window.runSelfTest,2000);
+
+/* ================================================================
+   DEBUG — type debugCalendar() in browser console (F12)
+   FIX — type fixPeriodData() to reset corrupted period dates
+   ================================================================ */
+window.fixPeriodData = function() {
+  var key = profileKey(STORAGE_KEY_BASE);
+  var raw = localStorage.getItem(key);
+  if (!raw) { console.log('No data to fix'); return; }
+  var d = JSON.parse(raw);
+  // Fix periodEnds: ensure no period is longer than 14 days
+  var fixed = {};
+  if (d.periodEnds) {
+    Object.keys(d.periodEnds).forEach(function(k) {
+      var start = new Date(k + 'T00:00:00');
+      var end = new Date(d.periodEnds[k] + 'T00:00:00');
+      var len = Math.round((end - start) / 86400000) + 1;
+      if (len <= 14) { fixed[k] = d.periodEnds[k]; }
+      else { console.log('Fixed: period ' + k + ' was ' + len + ' days, removed'); }
+    });
+  }
+  d.periodEnds = fixed;
+  localStorage.setItem(key, JSON.stringify(d));
+  console.log('✅ Data fixed. Refresh the page (Ctrl+F5) to see changes.');
+};
+
+window.debugCalendar = function() {
+  var p = typeof predict === 'function' ? predict() : null;
+  var info = {
+    records: (state.records || []).map(function(r) { return r instanceof Date ? r.toISOString().slice(0,10) : String(r); }),
+    recordsCount: (state.records || []).length,
+    periodEnds: state.periodEnds || {},
+    settings: state.settings,
+    pred: p ? {
+      periodLen: p.periodLen,
+      avgCycle: p.avgCycle,
+      lastStart: p.lastStart ? p.lastStart.toISOString().slice(0,10) : null,
+      nextStart: p.nextStart ? p.nextStart.toISOString().slice(0,10) : null,
+      ovulation: p.ovulation ? p.ovulation.toISOString().slice(0,10) : null,
+      fertileStart: p.fertileStart ? p.fertileStart.toISOString().slice(0,10) : null,
+      fertileEnd: p.fertileEnd ? p.fertileEnd.toISOString().slice(0,10) : null,
+      cycles: p.cycles,
+      confidence: p.confidence,
+      stdDev: p.stdDev,
+      futurePeriods: p.futurePeriods
+    } : null,
+    today: typeof today === 'function' ? today().toISOString().slice(0,10) : null,
+    viewMonth: viewMonth,
+    viewYear: viewYear,
+    profile: activeProfile
+  };
+  console.log('===== DEBUG CALENDAR =====');
+  console.log(JSON.stringify(info, null, 2));
+  console.log('===== PHASES FOR CURRENT MONTH =====');
+  if (typeof viewMonth !== 'undefined' && typeof getPhase === 'function' && p) {
+    var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    for (var d = 1; d <= daysInMonth; d++) {
+      var date = new Date(viewYear, viewMonth, d);
+      var phase = getPhase(date, p);
+      if (phase) console.log(date.toISOString().slice(0,10) + ': ' + phase);
+    }
+  }
+  console.log('===== END DEBUG =====');
+  return info;
+};
