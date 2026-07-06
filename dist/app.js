@@ -1140,7 +1140,7 @@ function updateLangUI() {
   document.getElementById('clear-diary-btn').innerHTML = t('settingsClearDiary');
   // Diary panel i18n
   const ta = document.getElementById('diaryTextarea');
-  if (ta) ta.placeholder = t('diaryTextareaPlaceholder');
+  if (ta) ta.placeholder = t('diary.placeholder');
   document.getElementById('sd-export').textContent = st.export;
   document.getElementById('sd-import').textContent = st.import;
   // Diary aria-labels
