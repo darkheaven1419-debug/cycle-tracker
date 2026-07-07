@@ -19,12 +19,12 @@
     var subEl = document.getElementById('pg-sub');
     var badgeEl = document.getElementById('pg-badge');
     if (!fillEl) return;
-    if (typeof state === 'undefined' || typeof predict !== 'function') return;
+    if (typeof window.state === 'undefined' || typeof predict !== 'function') return;
 
     try {
       var pred = predict();
       var td = typeof today === 'function' ? today() : new Date();
-      var hasRecords = state.records && state.records.length > 0;
+      var hasRecords = window.state.records && window.state.records.length > 0;
 
       if (!hasRecords) {
         fillEl.style.width = '0%';
@@ -40,7 +40,7 @@
       var pct = 0, color = 'var(--border, #ddd)', label = '';
 
       if (phase === 'period-on' || phase === 'period-mid') {
-        var cur = state.records.find(function(r) {
+        var cur = window.state.records.find(function(r) {
           var s = typeof d0 === 'function' ? d0(r) : r;
           var e = typeof getPeriodEndDate === 'function' ? (getPeriodEndDate(r) || typeof addDays === 'function' ? addDays(s, (pred.periodLen || 7) - 1) : new Date(s.getTime() + 6*86400000)) : new Date(s.getTime() + 6*86400000);
           return td >= s && td <= e;
@@ -115,10 +115,10 @@
         var tc = document.getElementById('chartCycleTrend');
         var te = document.getElementById('chartCycleEmpty');
         if (!tc) return;
-        var hasData = state && state.records && state.records.length >= 2;
+        var hasData = window.state && window.state.records && window.state.records.length >= 2;
         var chartHidden = te && te.style.display !== 'none';
         if (hasData && chartHidden && typeof ChartRenderer !== 'undefined') {
-          var sorted = state.records.slice().sort(function(a,b){return new Date(a) - new Date(b);});
+          var sorted = window.state.records.slice().sort(function(a,b){return new Date(a) - new Date(b);});
           var diffs = [];
           for (var i = 1; i < sorted.length; i++) {
             diffs.push(Math.round((new Date(sorted[i]) - new Date(sorted[i-1])) / 86400000));
@@ -160,10 +160,10 @@
             var tc2 = document.getElementById('chartCycleTrend');
             var te2 = document.getElementById('chartCycleEmpty');
             if (!tc2) return;
-            var hasData2 = state && state.records && state.records.length >= 2;
+            var hasData2 = window.state && window.state.records && window.state.records.length >= 2;
             var chartHidden2 = te2 && te2.style.display !== 'none';
             if (hasData2 && chartHidden2 && typeof ChartRenderer !== 'undefined') {
-              var sorted2 = state.records.slice().sort(function(a,b){return new Date(a)-new Date(b);});
+              var sorted2 = window.state.records.slice().sort(function(a,b){return new Date(a)-new Date(b);});
               var diffs2 = [];
               for (var i2 = 1; i2 < sorted2.length; i2++) {
                 diffs2.push(Math.round((new Date(sorted2[i2])-new Date(sorted2[i2-1]))/86400000));
@@ -190,9 +190,9 @@
     var TODO_REPO = 'darkheaven1419-debug/cycle-tracker';
     var TODO_FILE = 'shared-todolist.json';
 
-    if (typeof state !== 'undefined') {
-      try { state.todoList = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(state.todoList)) state.todoList = []; }
-      catch (e) { state.todoList = []; }
+    if (typeof window.state !== 'undefined') {
+      try { window.state.todoList = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(window.state.todoList)) window.state.todoList = []; }
+      catch (e) { window.state.todoList = []; }
     }
 
     function _tl(key) {
@@ -217,21 +217,21 @@
     function _td(d) { if (!d) d = new Date(); return typeof d==='string' ? d.slice(0,10) : d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
 
     function _save() {
-      localStorage.setItem('shared-todolist', JSON.stringify(state.todoList||[]));
+      localStorage.setItem('shared-todolist', JSON.stringify(window.state.todoList||[]));
       if (typeof saveState === 'function') saveState();
     }
 
     function _addTodo(text) {
       if (!text||!text.trim()) return;
-      if (!state.todoList) state.todoList=[];
-      state.todoList.push({ id:_gid(), text:text.trim(), author:(typeof activeProfile!=='undefined'?activeProfile:'andjela'), createdAt:_td(new Date()), completed:false, completedBy:null, completedAt:null });
+      if (!window.state.todoList) window.state.todoList=[];
+      window.state.todoList.push({ id:_gid(), text:text.trim(), author:(typeof activeProfile!=='undefined'?activeProfile:'andjela'), createdAt:_td(new Date()), completed:false, completedBy:null, completedAt:null });
       _save(); _render(); _pushTodo();
     }
 
     function _toggleTodo(id) {
-      for (var i=0;i<state.todoList.length;i++) {
-        if (state.todoList[i].id===id) {
-          var t=state.todoList[i];
+      for (var i=0;i<window.state.todoList.length;i++) {
+        if (window.state.todoList[i].id===id) {
+          var t=window.state.todoList[i];
           if (t.completed) { t.completed=false; t.completedBy=null; t.completedAt=null; }
           else { t.completed=true; t.completedBy=(typeof activeProfile!=='undefined'?activeProfile:'andjela'); t.completedAt=_td(new Date()); }
           _save(); _render(); _pushTodo();
@@ -240,12 +240,12 @@
       }
     }
 
-    function _deleteTodo(id) { state.todoList=(state.todoList||[]).filter(function(t){return t.id!==id;}); _save(); _render(); _pushTodo(); }
+    function _deleteTodo(id) { window.state.todoList=(window.state.todoList||[]).filter(function(t){return t.id!==id;}); _save(); _render(); _pushTodo(); }
 
     function _pushTodo() {
       var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
       if (!token) return;
-      var content = btoa(unescape(encodeURIComponent(JSON.stringify(state.todoList||[],null,2))));
+      var content = btoa(unescape(encodeURIComponent(JSON.stringify(window.state.todoList||[],null,2))));
       fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE, { headers:{'Authorization':'token '+token} })
         .then(function(r){return r.ok?r.json():{sha:null};})
         .then(function(d){return fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify({message:'🔄 Sync todo list',content:content,sha:d.sha||null})});})
@@ -261,10 +261,10 @@
           if (!d) return;
           var content = JSON.parse(decodeURIComponent(escape(atob(d.content))));
           if (!Array.isArray(content)) return;
-          var idMap={}; (state.todoList||[]).forEach(function(t){idMap[t.id]=t;});
+          var idMap={}; (window.state.todoList||[]).forEach(function(t){idMap[t.id]=t;});
           content.forEach(function(t){if(!idMap[t.id])idMap[t.id]=t;});
-          state.todoList=Object.keys(idMap).map(function(k){return idMap[k];});
-          localStorage.setItem('shared-todolist',JSON.stringify(state.todoList));
+          window.state.todoList=Object.keys(idMap).map(function(k){return idMap[k];});
+          localStorage.setItem('shared-todolist',JSON.stringify(window.state.todoList));
           _render();
         })
         .catch(function(){});
@@ -277,7 +277,7 @@
       if (!container) return;
 
       var filter = window._todoFilter || 'active';
-      var items = state.todoList || [];
+      var items = window.state.todoList || [];
       var sorted = items.slice().sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
       var filtered = sorted;
       if (filter==='active') filtered=sorted.filter(function(t){return !t.completed;});

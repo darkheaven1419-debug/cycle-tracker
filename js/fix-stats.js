@@ -24,7 +24,7 @@
     try {
       var pred = predict();
       var td = typeof today === 'function' ? today() : new Date();
-      var hasRecords = state.records && state.records.length > 0;
+      var hasRecords = window.state.records && window.state.records.length > 0;
 
       if (!hasRecords) {
         fillEl.style.width = '0%';
@@ -40,7 +40,7 @@
       var pct = 0, color = 'var(--border, #ddd)', label = '';
 
       if (phase === 'period-on' || phase === 'period-mid') {
-        var cur = state.records.find(function(r) {
+        var cur = window.state.records.find(function(r) {
           var s = typeof d0 === 'function' ? d0(r) : r;
           var e = typeof getPeriodEndDate === 'function' ? (getPeriodEndDate(r) || typeof addDays === 'function' ? addDays(s, (pred.periodLen || 7) - 1) : new Date(s.getTime() + 6*86400000)) : new Date(s.getTime() + 6*86400000);
           return td >= s && td <= e;
@@ -115,10 +115,10 @@
         var tc = document.getElementById('chartCycleTrend');
         var te = document.getElementById('chartCycleEmpty');
         if (!tc) return;
-        var hasData = state && state.records && state.records.length >= 2;
+        var hasData = window.state && window.state.records && window.state.records.length >= 2;
         var chartHidden = te && te.style.display !== 'none';
         if (hasData && chartHidden && typeof ChartRenderer !== 'undefined') {
-          var sorted = state.records.slice().sort(function(a,b){return new Date(a) - new Date(b);});
+          var sorted = window.state.records.slice().sort(function(a,b){return new Date(a) - new Date(b);});
           var diffs = [];
           for (var i = 1; i < sorted.length; i++) {
             diffs.push(Math.round((new Date(sorted[i]) - new Date(sorted[i-1])) / 86400000));
@@ -160,10 +160,10 @@
             var tc2 = document.getElementById('chartCycleTrend');
             var te2 = document.getElementById('chartCycleEmpty');
             if (!tc2) return;
-            var hasData2 = state && state.records && state.records.length >= 2;
+            var hasData2 = window.state && window.state.records && window.state.records.length >= 2;
             var chartHidden2 = te2 && te2.style.display !== 'none';
             if (hasData2 && chartHidden2 && typeof ChartRenderer !== 'undefined') {
-              var sorted2 = state.records.slice().sort(function(a,b){return new Date(a)-new Date(b);});
+              var sorted2 = window.state.records.slice().sort(function(a,b){return new Date(a)-new Date(b);});
               var diffs2 = [];
               for (var i2 = 1; i2 < sorted2.length; i2++) {
                 diffs2.push(Math.round((new Date(sorted2[i2])-new Date(sorted2[i2-1]))/86400000));
