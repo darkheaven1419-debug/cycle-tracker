@@ -2683,10 +2683,9 @@ function initCalendarDelegation() {
       _cellTapTimer = null;
       var pred = predict();
       openModal(d, pred);
-    // Scroll position preserved per user request
-    // Scroll position preserved per user request
-    // Scroll position preserved per user request
-// Initialize delegation after first render
+    }, 300);
+  });
+}
 setTimeout(initCalendarDelegation, 100);
 
 function updateProgress(pred){
