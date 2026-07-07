@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-  console.log('[module-settings] 已加载');
+  // console.log('[module-settings] 已加载');
 
   /* token i18n via global t() */
 
@@ -79,9 +79,9 @@
     document.getElementById('annDateLove').value = typeof annDateLove !== 'undefined' ? annDateLove : '2026-05-07';
     var hasToken = typeof getGitHubToken === 'function' ? !!getGitHubToken() : false;
     document.getElementById('set-gh-token').value = typeof getGitHubToken === 'function' ? (getGitHubToken() || '') : '';
-    document.getElementById('github-token-label').textContent = '\u{1F511} ' + (lang === 'zh-CN' ? 'GitHub Token' : lang === 'en' ? 'GitHub Token' : 'GitHub Token');
+    document.getElementById('github-token-label').textContent = '\u{1F511} ' + (typeof t === 'function' ? t('settingsTokenLabel') : 'GitHub Token');
     document.getElementById('set-gh-token').placeholder = 'ghp_...';
-    document.getElementById('set-gh-token').setAttribute('aria-label', 'GitHub Token');
+    document.getElementById('set-gh-token').setAttribute('aria-label', typeof t === 'function' ? t('settingsTokenLabel') : 'GitHub Token');
     document.getElementById('set-h-token').textContent = hasToken ? (typeof t === 'function' ? t('settingsTokenHintEnabled') : '') : (typeof t === 'function' ? t('settingsTokenHintDisabled') : '');
     // Token-related text i18n (hardcoded in HTML, updated dynamically)
     var warning = document.getElementById('tokenSecurityWarning');

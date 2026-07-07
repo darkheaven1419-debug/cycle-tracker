@@ -213,20 +213,7 @@ var APP_VERSION = (function () {
       };
     }
 
-    // 优化 openModal：先显示弹窗，再填充数据
-    var _origOM2 = typeof openModal === 'function' ? openModal : null;
-    if (_origOM2) {
-      window.openModal = function (date, pred) {
-        try {
-          var _m = document.getElementById('modal');
-          if (_m && _m.classList.contains('hidden')) {
-            _m.classList.remove('hidden');
-            if (typeof animateModalIn === 'function') animateModalIn();
-          }
-        } catch (e) {}
-        _origOM2(date, pred);
-      };
-    }
+    // openModal 优化统一合并至下方单一包裹
   })();
 
   (function () {
@@ -363,26 +350,65 @@ var APP_VERSION = (function () {
     }
   })();
 
-  var _origOpenModal = (typeof openModal === 'function') ? openModal : window.openModal;
-  if (!_origOpenModal) {
-    var _retryTimer = setInterval(function () {
+  // === 统一 openModal 包裹 ===
+  // 合并了：弹窗前置显示、日记按钮、节日行交互（原 4 处独立包裹）
+  var _omOrig = (typeof openModal === 'function') ? openModal : null;
+  if (!_omOrig) {
+    var _omRetry = setInterval(function () {
       if (typeof openModal === 'function') {
-        _origOpenModal = openModal;
-        clearInterval(_retryTimer);
+        _omOrig = openModal;
+        clearInterval(_omRetry);
       }
     }, 100);
-    setTimeout(function () { clearInterval(_retryTimer); }, 5000);
+    setTimeout(function () { clearInterval(_omRetry); }, 5000);
   }
-  window.openModal = function (date, pred) {
+  window.openModal = function (d, p) {
     try {
-      if (_origOpenModal) { _origOpenModal(date, pred); }
-      else {
-        if (typeof openModal === 'function') {
-          openModal(date, pred);
-          _origOpenModal = openModal;
+      // 1) 弹窗前置显示优化
+      if (_omOrig) {
+        var _mEl = document.getElementById('modal');
+        if (_mEl && _mEl.classList.contains('hidden')) {
+          _mEl.classList.remove('hidden');
+          if (typeof animateModalIn === 'function') animateModalIn();
         }
+        // 2) 调用原始 openModal
+        _omOrig(d, p);
+      } else if (typeof openModal === 'function') {
+        openModal(d, p);
+        _omOrig = openModal;
       }
     } catch (e) {}
+    // 3) 后处理（DOM 操作延迟执行）
+    setTimeout(function () {
+      // 日记按钮
+      if (!document.getElementById('fix-modal-diary-btn')) {
+        var _cb = document.getElementById('modal-close-btn');
+        if (_cb && _cb.parentNode) {
+          var _btn = document.createElement('button');
+          _btn.id = 'fix-modal-diary-btn';
+          _btn.className = 'btn btn-ghost mt-6';
+          _btn.style.cssText = 'margin-bottom:0;margin-top:6px;width:100%';
+          _btn.textContent = '\u{1F4DD} \u{67E5}\u{770B}\u{5F53}\u{6708}\u{65E5}\u{8BB0}';
+          _btn.onclick = function () {
+            if (typeof closeModal === 'function') closeModal();
+            if (typeof switchToTab === 'function') switchToTab('diary');
+          };
+          _cb.parentNode.insertBefore(_btn, _cb);
+        }
+      }
+      // 节日/节气行点击
+      ['holiday-row', 'solar-row'].forEach(function (id) {
+        var _row = document.getElementById('modal-' + id);
+        if (!_row || _row._fixPatched) return;
+        _row._fixPatched = true;
+        _row.style.cursor = 'pointer';
+        _row.onclick = function (e) {
+          if (e.target.tagName === 'SPAN' || e.target.tagName === 'A') return;
+          var _toggle = _row.querySelector('.knowledge-toggle, .holiday-name, [onclick*="toggle"]');
+          if (_toggle && _toggle.onclick) _toggle.onclick();
+        };
+      });
+    }, 100);
   };
 
   (function () {
@@ -515,25 +541,20 @@ var APP_VERSION = (function () {
   window.animateDashboardCards = null;
   window.animateStatsPanel = null;
 
+  // GitHub Token 以明文存储在 sessionStorage（页面关闭即清除，但非加密存储）。
+  // ⚠️ 安全提示：Token 在浏览器中可被同源脚本读取。建议使用最小权限的 fine-grained token，
+  //    仅授予 contents:write 权限给当前仓库。不要在公共或共享设备上使用此功能。
   (function () {
     var _H4_KEY = 'gh-token';
-    var _H4_PREFIX = 'tk_';
-    function _encode(t) { return _H4_PREFIX + btoa(t).split('').reverse().join(''); }
-    function _decode(t) {
-      if (!t || t.indexOf(_H4_PREFIX) !== 0) return t;
-      try { return atob(t.slice(_H4_PREFIX.length).split('').reverse().join('')); } catch (e) { return ''; }
-    }
     var _origGet = typeof getGitHubToken === 'function' ? getGitHubToken : null;
     window.getGitHubToken = function () {
-      var raw = sessionStorage.getItem(_H4_KEY);
-      if (raw && raw.indexOf(_H4_PREFIX) === 0) return _decode(raw);
-      return raw || '';
+      return sessionStorage.getItem(_H4_KEY) || '';
     };
     var _origSave = typeof saveGitHubToken === 'function' ? saveGitHubToken : null;
     window.saveGitHubToken = function () {
       var t = document.getElementById('set-gh-token').value.trim();
       if (!t) { sessionStorage.removeItem(_H4_KEY); _origSave(); return; }
-      sessionStorage.setItem(_H4_KEY, _encode(t));
+      sessionStorage.setItem(_H4_KEY, t);
       _origSave();
     };
     var _origClear = typeof clearGitHubToken === 'function' ? clearGitHubToken : null;
@@ -586,28 +607,7 @@ var APP_VERSION = (function () {
     };
   })();
 
-  (function () {
-    var _origOM = typeof openModal === 'function' ? openModal : null;
-    if (!_origOM) return;
-    window.openModal = function (date, pred) {
-      _origOM(date, pred);
-      setTimeout(function () {
-        if (document.getElementById('fix-modal-diary-btn')) return;
-        var _cb = document.getElementById('modal-close-btn');
-        if (!_cb || !_cb.parentNode) return;
-        var _btn = document.createElement('button');
-        _btn.id = 'fix-modal-diary-btn';
-        _btn.className = 'btn btn-ghost mt-6';
-        _btn.style.cssText = 'margin-bottom:0;margin-top:6px;width:100%';
-        _btn.textContent = '\u{1F4DD} \u{67E5}\u{770B}\u{5F53}\u{6708}\u{65E5}\u{8BB0}';
-        _btn.onclick = function () {
-          if (typeof closeModal === 'function') closeModal();
-          if (typeof switchToTab === 'function') switchToTab('diary');
-        };
-        _cb.parentNode.insertBefore(_btn, _cb);
-      }, 100);
-    };
-  })();
+  // openModal 日记按钮已合并至上方统一包裹
 
   (function () {
     var _origRD2 = typeof renderDashboard === 'function' ? renderDashboard : null;
@@ -648,27 +648,7 @@ var APP_VERSION = (function () {
     };
   })();
 
-  (function () {
-    var _o = typeof openModal === 'function' ? openModal : null;
-    if (!_o) return;
-    var _orig = window.openModal;
-    window.openModal = function (d, p) {
-      _orig(d, p);
-      setTimeout(function () {
-        ['holiday-row', 'solar-row'].forEach(function (id) {
-          var _row = document.getElementById('modal-' + id);
-          if (!_row || _row._fixPatched) return;
-          _row._fixPatched = true;
-          _row.style.cursor = 'pointer';
-          _row.onclick = function (e) {
-            if (e.target.tagName === 'SPAN' || e.target.tagName === 'A') return;
-            var _toggle = _row.querySelector('.knowledge-toggle, .holiday-name, [onclick*="toggle"]');
-            if (_toggle && _toggle.onclick) _toggle.onclick();
-          };
-        });
-      }, 100);
-    };
-  })();
+  // openModal 节日行交互已合并至上方统一包裹
 
   (function () {
     function _fixPeriodEnds() {

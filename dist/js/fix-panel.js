@@ -1,6 +1,6 @@
 "use strict";
 (function () {
-  console.log('[fix-panel] 已加载');
+  // console.log('[fix-panel] 已加载');
 
   window.updateLangUI = window.updateLangUI || function(){};
   window.initSharedDiaryTab = window.initSharedDiaryTab || function(){};
@@ -21,15 +21,7 @@
     if (!panel || !panel.classList.contains('active')) return;
     var L = window.lang || 'zh-CN';
 
-    // Data fallback: ensure at least 2 records for chart rendering
-    if (typeof state !== 'undefined' && (!state.records || state.records.length < 2)) {
-      state.records = [new Date(2026, 4, 28), new Date(2026, 5, 24)];
-      state.periodEnds = state.periodEnds || {};
-      state.periodEnds['2026-05-28'] = '2026-06-04';
-      state.periodEnds['2026-06-24'] = '2026-07-02';
-      console.log('[面板修复] 数据兜底：已注入 2 条默认记录, state.records.length=' + state.records.length);
-      if (typeof saveState === 'function') saveState();
-    }
+    // Do NOT inject fake data into state.records — empty guidance text is set below
 
     // Title translation
     var M = {
