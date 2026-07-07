@@ -217,18 +217,21 @@
     function _td(d) { if (!d) d = new Date(); return typeof d==='string' ? d.slice(0,10) : d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
 
     function _save() {
+      if (typeof window.state === 'undefined') return;
       localStorage.setItem('shared-todolist', JSON.stringify(window.state.todoList||[]));
       if (typeof saveState === 'function') saveState();
     }
 
     function _addTodo(text) {
       if (!text||!text.trim()) return;
+      if (typeof window.state === 'undefined') return;
       if (!window.state.todoList) window.state.todoList=[];
       window.state.todoList.push({ id:_gid(), text:text.trim(), author:(typeof activeProfile!=='undefined'?activeProfile:'andjela'), createdAt:_td(new Date()), completed:false, completedBy:null, completedAt:null });
       _save(); _render(); _pushTodo();
     }
 
     function _toggleTodo(id) {
+      if (typeof window.state === 'undefined') return;
       for (var i=0;i<window.state.todoList.length;i++) {
         if (window.state.todoList[i].id===id) {
           var t=window.state.todoList[i];
@@ -240,9 +243,10 @@
       }
     }
 
-    function _deleteTodo(id) { window.state.todoList=(window.state.todoList||[]).filter(function(t){return t.id!==id;}); _save(); _render(); _pushTodo(); }
+    function _deleteTodo(id) { if (typeof window.state === 'undefined') return; window.state.todoList=(window.state.todoList||[]).filter(function(t){return t.id!==id;}); _save(); _render(); _pushTodo(); }
 
     function _pushTodo() {
+      if (typeof window.state === 'undefined') return;
       var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
       if (!token) return;
       var content = btoa(unescape(encodeURIComponent(JSON.stringify(window.state.todoList||[],null,2))));
@@ -259,6 +263,7 @@
         .then(function(r){return r.ok?r.json():null;})
         .then(function(d){
           if (!d) return;
+          if (typeof window.state === 'undefined') return;
           var content = JSON.parse(decodeURIComponent(escape(atob(d.content))));
           if (!Array.isArray(content)) return;
           var idMap={}; (window.state.todoList||[]).forEach(function(t){idMap[t.id]=t;});
@@ -276,8 +281,10 @@
       var container = document.getElementById('todoListContainer');
       if (!container) return;
 
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }
       var filter = window._todoFilter || 'active';
-      var items = window.state.todoList || [];
+      var items = list;
       var sorted = items.slice().sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
       var filtered = sorted;
       if (filter==='active') filtered=sorted.filter(function(t){return !t.completed;});
