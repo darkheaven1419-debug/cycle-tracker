@@ -1,0 +1,120 @@
+/* Tokens - CSS variables */
+:root {
+  --primary: #c45a6b;
+  --primary-hover: #a34455;
+  --primary-light: #f2d5db;
+  --rose: #c45a6b;
+  --rose-dark: #a34455;
+  --rose-light: #fdf0f3;
+  --rose-mist: #f5e0e6;
+  --love: #c45a6b;
+  --lipa: #7a9e7e;
+  --dust: #d4bfb5;
+  --gold: #c49a5e;
+  --gold-light: #fff8e1;
+  --gold-muted: #d4b88a;
+  --coral: #e88a8a;
+  --coral-light: #fde8e8;
+  --amber: #d4a85a;
+  --amber-light: #f8f0da;
+  --mint: #7ab8a0;
+  --mint-light: #e0f5ee;
+  --teal: #5e8b7a;
+  --teal-light: #e0efe8;
+  --teal-dark: #3d6b55;
+  --sage: #80a590;
+  --sage-light: #e4f0ea;
+  --sage-dark: #5a8068;
+  --lavender: #b8a0c8;
+  --lavender-dark: #9078a8;
+  --lavender-light: #efe8f5;
+  --error: #e53935;
+  --warm-bg: #fff3e0;
+  --warm-text: #e65100;
+  --dot-short: #ffcdd2;
+  --bg: #ede0da;
+  --card: #fdf8f5;
+  --elevated: #fffbf9;
+  --text: #3d2828;
+  --text-muted: #6d5b58;
+  --border: #c9b4ac;
+  --border-soft: #e3d5ce;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 9999px;
+  --calendar-cell-radius: 16px;
+  --calendar-glow-period: 0 0 20px rgba(196, 90, 107, 0.25);
+  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.25);
+  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.3);
+  --calendar-hover-lift: 0 4px 12px rgba(196, 90, 107, 0.12);
+  --ring-period: #d4787e;
+  --ring-ovulation: #5e9baa;
+  --ring-fertile: #7ab8a0;
+  --ring-luteal: #b8a0c8;
+  --ring-follicular: #80a590;
+  --ring-predicted: rgba(180, 150, 150, 0.35);
+  --season-spring: #e8867c;
+  --season-summer: #c45a6b;
+  --season-autumn: #d49a5e;
+  --season-winter: #9a7ab0;
+  --shadow-inner-sm: inset 0 0 0 1px rgba(80, 40, 40, 0.04);
+  --shadow-xs:
+    0 0 0.5px rgba(80, 40, 40, 0.06), 0 1px 1px rgba(80, 40, 40, 0.04);
+  --shadow-sm:
+    0 1px 3px rgba(80, 40, 40, 0.07), 0 1px 2px rgba(80, 40, 40, 0.04);
+  --shadow-md:
+    0 4px 12px rgba(80, 40, 40, 0.06), 0 2px 6px rgba(80, 40, 40, 0.04);
+  --shadow-lg:
+    0 8px 24px rgba(80, 40, 40, 0.08), 0 4px 12px rgba(80, 40, 40, 0.04);
+  --shadow-xl:
+    0 16px 40px rgba(80, 40, 40, 0.1), 0 8px 20px rgba(80, 40, 40, 0.05);
+  --shadow-glow: 0 0 20px rgba(196, 90, 107, 0.08);
+  --fab-shadow: 0 6px 22px rgba(196, 90, 107, 0.28);
+  --font:
+    -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --blur: blur(14px) saturate(1.05);
+  --blur-heavy: blur(24px) saturate(1.08);
+  --text-xs: 0.62rem;
+  --text-sm: 0.7rem;
+  --text-base: 0.82rem;
+  --text-md: 0.92rem;
+  --text-lg: 1.1rem;
+  --text-xl: 1.4rem;
+  --text-2xl: 1.9rem;
+  --gradient-rose: linear-gradient(135deg, #fdf0f3, #faf0f2);
+  --gradient-card: linear-gradient(145deg, #fdf8f5 0%, #fffbfa 100%);
+  --gradient-warm: linear-gradient(135deg, #fdf0f3, #f5ede8);
+  --gradient-gold: linear-gradient(145deg, #faf3ef 0%, #fdf0f3 150%);
+  --gradient-teal: linear-gradient(135deg, #e0efe8, #d4eae0);
+  --gradient-love: linear-gradient(135deg, #c45a6b, #a34455);
+}
+
+:root {
+  --phase1: #e8877b;
+  --phase1-light: #fde8e4;
+  --phase1-dark: #d46b5e;
+  --phase1-grad: linear-gradient(135deg, #e8877b, #d46b5e);
+  --phase2: #f0985c;
+  --phase2-light: #fef0e2;
+  --phase2-dark: #d97d3e;
+  --phase2-grad: linear-gradient(135deg, #f0985c, #e88340);
+  --phase3: #4eb8b0;
+  --phase3-light: #e0f5f3;
+  --phase3-dark: #3a9b94;
+  --phase3-grad: linear-gradient(135deg, #4eb8b0, #3aa59c);
+  --phase4: #e8919c;
+  --phase4-light: #fde8eb;
+  --phase4-dark: #d47280;
+  --phase4-grad: linear-gradient(135deg, #e8919c, #d47786);
+  --phase5: #9b7ec4;
+  --phase5-light: #ede6f6;
+  --phase5-dark: #7e61b0;
+  --phase5-grad: linear-gradient(135deg, #9b7ec4, #8568b8);
+  --phase6: #d4a843;
+  --phase6-light: #f8f0da;
+  --phase6-dark: #b88e2e;
+  --phase6-grad: linear-gradient(135deg, #d4a843, #c49a35);
+}
