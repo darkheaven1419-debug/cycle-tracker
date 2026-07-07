@@ -633,7 +633,29 @@
 </div>
 
 <div id="toastContainer" aria-live="polite"></div>
-<script src="app.js?v=49" defer></script>
+<script src="app.js?v=49" defer>
+// === 原生日记功能（不依赖 render-diary.js） ===
+(function(){var _L=window.lang||"sr",_M={ph:{"zh-CN":"写下今天想对Ta说的话... \u{1F48C}","en":"Write something for your love... \u{1F48C}","sr":"Pi\u{0161}i za svoju ljubav... \u{1F48C}"},sv:{"zh-CN":"\u{1F4BE} 保存","en":"\u{1F4BE} Save","sr":"\u{1F4BE} Sa\u{010D}uvaj"},sd:{"zh-CN":"\u{2705} 已保存 ✨","en":"\u{2705} Saved ✨","sr":"\u{2705} Sa\u{010D}uvano ✨"},em:{"zh-CN":"今天还没有写日记 \u{1F4ED}","en":"No entry for today yet \u{1F4ED}","sr":"Jo\u{0161} nema unosa za danas \u{1F4ED}"},mo:["\u{1F60A}","\u{1F970}","\u{1F622}","\u{1F624}","\u{1F634}","\u{1F929}"],an:{"zh-CN":"Anđela","en":"Anđela","sr":"Anđela"},ba:{"zh-CN":"Barry","en":"Barry","sr":"Barry"}};function _T(k){return(_M[k]&&_M[k][_L])||_M[k]["zh-CN"]||"";}
+function _diaryInit(){_L=window.lang||"sr";var p=document.getElementById("panel-diary");if(!p||!p.classList.contains("active")){setTimeout(_diaryInit,200);return;}
+var ds=p.querySelector(".diary-date-strip-wrap");var td=typeof fmtDate==="function"?fmtDate(new Date(_diaryViewDate||new Date)):"";var dt=typeof loadSharedDiaryData==="function"?loadSharedDiaryData():{};var me=dt[td]&&dt[td][activeProfile]?dt[td][activeProfile]:null;var md=me&&me.mood?me.mood:"";
+var h="";if(ds)h+=ds.outerHTML;
+h+='<div style="padding:0;animation:fadeIn .3s ease">';
+if(me&&me.text){h+='<div class="card" style="background:linear-gradient(145deg,#fdf6ee,#f9ede0);border:1px solid #e8d5c4;padding:16px;border-radius:var(--radius-md);margin-bottom:10px"><div style="font-size:.9rem;font-weight:600;color:#8b5e3c;margin-bottom:4px">\u{1F48C} '+(activeProfile==="barry"?_T("an"):_T("ba"))+'</div><div style="font-size:.8rem;line-height:1.7;color:#5a3e2b;white-space:pre-wrap">'+esc(me.text)+'</div>'+(md?'<div style="text-align:right;font-size:1.2rem;margin-top:4px">'+md+"</div>":"")+'<div style="text-align:right;font-size:.7rem;color:#8b5e3c;margin-top:6px;font-style:italic">\u{2014}\u{2014} '+(activeProfile==="barry"?_T("an"):_T("ba"))+' ✍️'+(me.time?" · "+new Date(me.time).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"")+"</div></div>";}
+else{h+='<div class="card" style="text-align:center;padding:24px 16px;background:linear-gradient(145deg,#fdf6ee,#f9ede0);border:1px solid #e8d5c4;border-radius:var(--radius-md);margin-bottom:10px"><div style="font-size:2rem;margin-bottom:6px">\u{1F48C}</div><div style="font-size:.78rem;color:var(--text-muted);font-style:italic">'+_T("em")+"</div></div>";}
+h+='<div class="card" style="padding:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:.75rem;font-weight:600;color:var(--text)">\u{1F48C} '+td+'</span><span id="diarySavedBadge" style="font-size:.65rem;color:var(--sage);display:'+(me?"":"none")+'">'+_T("sd")+'</span></div><textarea id="diaryTextarea" maxlength="500" rows="4" placeholder="'+_T("ph")+'" style="width:100%;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.8rem;font-family:var(--font);background:var(--card);color:var(--text);resize:vertical;min-height:80px;box-sizing:border-box">'+(me?esc(me.text||""):"")+'</textarea><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><div id="diaryMoodRow" style="display:flex;gap:4px">';
+_M.mo.forEach(function(e){h+='<span class="diary-mood-chip'+(md===e?" picked":"")+'" onclick="window._pickMood(\''+e+'\')" style="cursor:pointer;font-size:1.1rem;padding:2px 3px;border-radius:6px;transition:all .2s;'+(md===e?"transform:scale(1.2);background:var(--rose-light)":"opacity:.6")+'">'+e+"</span>";});
+h+='</div><div style="display:flex;align-items:center;gap:8px"><span id="diaryCharCount" style="font-size:.6rem;color:var(--text-muted)">'+(me?me.text.length:0)+'/500</span><button id="diarySaveBtn" style="padding:6px 14px;border:none;border-radius:var(--radius-sm);background:var(--love);color:#fff;font-size:.7rem;font-weight:600;cursor:pointer">'+_T("sv")+"</button></div></div></div></div>";
+p.innerHTML=h;
+var ta=document.getElementById("diaryTextarea"),cc=document.getElementById("diaryCharCount"),sb=document.getElementById("diarySaveBtn");
+if(ta&&cc){ta.oninput=function(){cc.textContent=ta.value.length+"/500";};}
+if(sb){sb.onclick=function(){_saveDiary();};}
+window._pickMood=function(e){var m=(typeof _diaryMood!=="undefined"?_diaryMood:"");_diaryMood=m===e?"":e;_diaryInit();};}
+function _saveDiary(){var ta=document.getElementById("diaryTextarea");if(!ta||!ta.value.trim())return;var td=typeof fmtDate==="function"?fmtDate(new Date(_diaryViewDate||new Date)):"";var dt=typeof loadSharedDiaryData==="function"?loadSharedDiaryData():{};if(!dt[td])dt[td]={};dt[td][activeProfile]={text:ta.value.trim(),mood:typeof _diaryMood!=="undefined"?_diaryMood:"",time:Date.now()};if(typeof saveSharedDiaryData==="function")saveSharedDiaryData(dt);if(typeof pushAllSharedData==="function")pushAllSharedData();var b=document.getElementById("diarySavedBadge");if(b){b.style.display="";}_diaryInit();}
+(function(){var mo=new MutationObserver(function(m){m.forEach(function(x){if(x.target.id==="panel-diary"&&x.target.classList.contains("active")){setTimeout(_diaryInit,100);}});});var dp=document.getElementById("panel-diary");if(dp)mo.observe(dp,{attributes:true,attributeFilter:["class"]});if(dp&&dp.classList.contains("active"))setTimeout(_diaryInit,100);})();
+console.log("✅ 原生日记功能已启动（不依赖 render-diary.js）");
+})();
+
+</script>
 </body>
 </html>
 

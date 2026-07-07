@@ -1148,4 +1148,5 @@ var APP_VERSION = (function () {
 
     setTimeout(function(){if(!document.getElementById('todoListCard'))_createCard();},1000);
   })();
+
 })();
