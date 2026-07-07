@@ -73,6 +73,7 @@ function switchProfile(p) {
   activeProfile = p;
   localStorage.setItem('cycle-active-profile', p);
   state = loadState();
+  window.state = state;
   // Immediately sync calendar from shared cycle data for both profiles
   try {
     const sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
@@ -224,7 +225,7 @@ function saveState() {
   }, 200);
 }
 let state = loadState();
-
+window.state = state;
 /* ================================================================
    SOLAR TERMS CACHE — fetched from calendar-data.json
    ================================================================ */
@@ -526,6 +527,7 @@ async function bootApp() {
   });
 
   state = loadState();
+  window.state = state;
   lastCycleCount = predict().cycles.length;
   applyTheme(theme);
   setLang(lang);
@@ -1236,12 +1238,14 @@ function togglePeriodRecord(date) {
         return i !== idx;
       }),
     });
+    window.state = state;
     toast('🚫 ' + t('toast.unmarked'));
   } else {
     let newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
       return a - b;
     });
     state = Object.assign({}, state, { records: newRecords });
+    window.state = state;
     wasAdded = true;
     toast('🩸 ' + t('toast.marked'));
   }
@@ -2447,6 +2451,7 @@ function importData(e) {
 function clearAllData() {
   if (!confirm(t('settings.clearConfirm'))) return;
   state = { records: [], symptoms: {}, moods: {}, diaries: {}, settings: { cycleLength: 28, periodLength: 7, manualOverride: false }, _migrated: true };
+  window.state = state;
   saveState();
   renderAll();
   updateFab();
