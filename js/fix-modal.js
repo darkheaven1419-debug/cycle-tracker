@@ -29,16 +29,16 @@
     if(_mb)_mb.style.display='none';if(_ub)_ub.style.display='none';
     var _sd=typeof selectedDate!=='undefined'?selectedDate:null;
     function _ic(d){
-      if(!state||!state.records||!state.periodEnds)return false;
-      for(var i=0;i<state.records.length;i++){var s=_d0(state.records[i]),ek=_fmtDate(state.records[i]),e=state.periodEnds[ek]?_d0(new Date(state.periodEnds[ek]+'T00:00:00')):null;if(e&&d>=s&&d<=e)return true;}
+      if(typeof window.state==='undefined'||!window.state.records||!window.state.periodEnds)return false;
+      for(var i=0;i<window.state.records.length;i++){var s=_d0(window.state.records[i]),ek=_fmtDate(window.state.records[i]),e=window.state.periodEnds[ek]?_d0(new Date(window.state.periodEnds[ek]+'T00:00:00')):null;if(e&&d>=s&&d<=e)return true;}
       return false;
     }
     function _bt(){
       if(!_sd)return null;var d=_d0(_sd);
-      if(state&&state.records)for(var i=0;i<state.records.length;i++)if(_sameDay(state.records[i],d))return'❌ 移除记录';
+      if(window.state&&window.state.records)for(var i=0;i<window.state.records.length;i++)if(_sameDay(window.state.records[i],d))return t('modalFixRemove');
       var os=typeof getOpenPeriodStart==='function'?getOpenPeriodStart():null;
-      if(os&&_d0(os)<=d)return'⏹️ 结束本次经期';
-      if(_ic(d))return null;return'\u{1F534} 标记经期开始';
+      if(os&&_d0(os)<=d)return t('modalFixEnd');
+      if(_ic(d))return null;return t('modalFixMark');
     }
     var _pr=document.querySelector('.modal .info-row'),_nb=document.getElementById('fix-period-btn'),_tx=_bt();
     if(_tx===null&&_nb){_nb.style.display='none';}else if(_tx!==null){
