@@ -309,4 +309,26 @@ var M={'schart-cycle-title':{'zh-CN':'周期趋势','en':'Cycle Trend','sr':'Tre
 for(var id in M){var el=document.getElementById(id);if(el&&M[id][L])el.textContent=M[id][L];}}
 var sp=document.getElementById('panel-stats');if(sp){if(sp.classList.contains('active'))setTimeout(_sf,100);var mo=new MutationObserver(function(m){m.forEach(function(x){if(x.target.id==='panel-stats'&&x.target.classList.contains('active'))setTimeout(_sf,100);});});mo.observe(sp,{attributes:true,attributeFilter:['class']});}
 console.log('✅ 最小修复脚本已就绪');})();
+</script><script>
+// === 统计面板最终收割者 ===
+(function(){console.log('\u{2694}\u{FE0F} \u{6700}\u{7EC8}\u{6536}\u{5272}\u{8005}\u{5DF2}\u{542F}\u{52A8}');
+var _reaper=setInterval(function(){
+  var p=document.getElementById('panel-stats');if(!p||!p.classList.contains('active'))return;
+  clearInterval(_reaper);
+  var L=window.lang||'sr';
+  var M={'schart-cycle-title':{'zh-CN':'\u{5468}\u{671F}\u{8D8B}\u{52BF}','en':'Cycle Trend','sr':'Trend ciklusa'},'schart-mood-title':{'zh-CN':'\u{5FC3}\u{60C5}\u{5206}\u{5E03}','en':'Mood Distribution','sr':'Raspolo\u{017E}enje'},'schart-symptom-title':{'zh-CN':'\u{75C7}\u{72B6}\u{9891}\u{7387}','en':'Symptom Frequency','sr':'U\u{010D}estalost simptoma'},'predChipOvLabel':{'zh-CN':'\u{6392}\u{5375}\u{65E5}','en':'Ovulation','sr':'Ovulacija'},'predChipFertLabel':{'zh-CN':'\u{6613}\u{5B55}\u{671F}','en':'Fertile','sr':'Plodni dani'},'predChipFutureLabel':{'zh-CN':'\u{672A}\u{6765}\u{9884}\u{6D4B}','en':'Future','sr':'Budu\u{0107}nost'},'predChipRegLabel':{'zh-CN':'\u{89C4}\u{5F8B}\u{6027}','en':'Regularity','sr':'Regularnost'},'schart-history-title':{'zh-CN':'\u{5468}\u{671F}\u{5386}\u{53F2}','en':'Cycle History','sr':'Istorija ciklusa'}};
+  for(var id in M){var el=document.getElementById(id);if(el&&M[id][L])el.textContent=M[id][L];}
+  if(typeof state!=='undefined'&&state.records&&state.records.length>=2){try{
+    var r=state.records.slice().sort(function(a,b){return new Date(a)-new Date(b);});var d=[];var lb=[];
+    for(var i=1;i<r.length;i++){d.push(Math.round((new Date(r[i])-new Date(r[i-1]))/86400000));lb.push('C'+i);}
+    var a=Math.round(d.reduce(function(x,y){return x+y;},0)/d.length);
+    var e=document.getElementById('chartCycleEmpty');if(e){e.style.display='none';e.textContent='';}
+    var c=document.getElementById('chartCycleTrend');
+    if(c&&typeof ChartRenderer!=='undefined'&&ChartRenderer.drawLineChart){c.parentElement.style.display='';ChartRenderer.drawLineChart(c,d,lb,{avgLine:a,avgLabel:L==='zh-CN'?'\u{5747}\u{503C}':'Avg'});}
+    console.log('\u{2694}\u{FE0F} \u{6536}\u{5272}\u{8005}\u{FF1A}\u{56FE}\u{8868}\u{5DF2}\u{7ED8}\u{5236} ('+d.length+'\u{6570}\u{636E}\u{70B9})');
+  }catch(e){console.warn('\u{2694}\u{FE0F} \u{6536}\u{5272}\u{8005}\u{FF1A}\u{7ED8}\u{56FE}\u{5931}\u{8D25} -',e.message);}}
+},200);
+console.log('\u{2694}\u{FE0F} \u{6536}\u{5272}\u{8005}\u{5DF2}\u{5C31}\u{7EEB}');})();
 </script>
+
+<script src="js/fix-trend.js"></script>
