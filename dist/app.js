@@ -426,43 +426,6 @@ function setupPWABanner() {
 }
 
 // ===== DASHBOARD =====
-const DASH_I18N = {
-  barry: {
-    dashTitle: '🏠 主页',
-    welcomeBack: '欢迎回来，',
-    todayCulture: '今日文化知识',
-    goDiary: '📝 写日记',
-    goLearn: '📚 中华文化',
-    goCalendar: '📅 查看日历',
-    connectQ: '💭 今天的对话',
-    refreshQ: '🔄 换一个问题',
-    todayPhase: '今日阶段',
-    todayMoodDash: '今日心情',
-    todayStreak: '连续打卡',
-    todayCycles: '周期总数',
-    avgAbbr: '平均',
-  },
-  andjela: {
-    dashTitle: '🏠 Početna',
-    welcomeBack: 'Dobrodošla nazad, ',
-    todayCulture: 'Današnje kulturno znanje',
-    goDiary: '📝 Dnevnik',
-    goLearn: '📚 Kineska kultura',
-    goCalendar: '📅 Kalendar',
-    connectQ: '💭 Pitanje dana',
-    refreshQ: '🔄 Drugo pitanje',
-    todayPhase: 'Trenutna faza',
-    todayMoodDash: 'Raspoloženje',
-    todayStreak: 'Niz dana',
-    todayCycles: 'Ukupno ciklusa',
-    avgAbbr: 'Prosek',
-  },
-};
-function dl(key) {
-  const profile = (lang || '').indexOf('zh') === 0 ? 'barry' : 'andjela';
-  const p = DASH_I18N[profile] || DASH_I18N.andjela;
-  return p[key] || DASH_I18N.andjela[key] || key;
-}
 // Daily conversation starters — rotating questions to deepen understanding
 const CONVERSATION_QUESTIONS = {
   sr: [
@@ -2593,7 +2556,7 @@ function goToday() {
       grid.style.transform = 'translateX(' + dx + 'px)';
       grid.style.opacity = Math.max(0, 1 - Math.abs(dx) / 150);
     },
-    { passive: false }
+    { passive: true }
   );
   grid.addEventListener('touchend', function () {
     if (!active) return;

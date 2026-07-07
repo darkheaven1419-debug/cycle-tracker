@@ -79,12 +79,20 @@
     document.getElementById('annDateLove').value = typeof annDateLove !== 'undefined' ? annDateLove : '2026-05-07';
     var hasToken = typeof getGitHubToken === 'function' ? !!getGitHubToken() : false;
     document.getElementById('set-gh-token').value = typeof getGitHubToken === 'function' ? (getGitHubToken() || '') : '';
-    document.getElementById('github-token-label').textContent = '\u{1F511} GitHub Token';
+    document.getElementById('github-token-label').textContent = '\u{1F511} ' + (lang === 'zh-CN' ? 'GitHub Token' : lang === 'en' ? 'GitHub Token' : 'GitHub Token');
     document.getElementById('set-gh-token').placeholder = 'ghp_...';
     document.getElementById('set-gh-token').setAttribute('aria-label', 'GitHub Token');
     document.getElementById('set-h-token').textContent = hasToken ? (typeof t === 'function' ? t('settingsTokenHintEnabled') : '') : (typeof t === 'function' ? t('settingsTokenHintDisabled') : '');
+    // Token-related text i18n (hardcoded in HTML, updated dynamically)
     var warning = document.getElementById('tokenSecurityWarning');
-    if (warning) warning.style.display = hasToken ? '' : 'none';
+    if (warning) {
+      warning.textContent = '⚠️ ' + (lang === 'zh-CN' ? 'Token 已保存于浏览器本地存储。请使用最小权限的 fine-grained token（仅 contents:write 权限）。' : lang === 'en' ? 'Token saved in browser local storage. Use minimal fine-grained token (contents:write only).' : 'Token sačuvan u lokalnom skladištu pregledača. Koristi fine-grained token sa minimalnim ovlašćenjima (samo contents:write za ovaj repozitorijum).');
+      warning.style.display = hasToken ? '' : 'none';
+    }
+    var testBtn = document.getElementById('testTokenBtn');
+    if (testBtn) testBtn.textContent = '🔍 ' + (lang === 'zh-CN' ? '测试 Token' : lang === 'en' ? 'Test Token' : 'Testiraj token');
+    var clearBtn = document.getElementById('clearTokenBtn');
+    if (clearBtn) clearBtn.textContent = '🗑️ ' + (lang === 'zh-CN' ? '清除 Token' : lang === 'en' ? 'Clear Token' : 'Obriši token');
     if (typeof updateAnniversaryCount === 'function') updateAnniversaryCount();
     if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
   }
