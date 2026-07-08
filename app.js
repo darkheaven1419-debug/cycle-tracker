@@ -503,6 +503,10 @@ function loadDataFiles() {
 }
 
 async function bootApp() {
+  // CRITICAL: Sync activeProfile — auth.js sets window.activeProfile, not the module-level let.
+  // Re-read from the global source of truth to avoid stale profile bug.
+  activeProfile = window.activeProfile || localStorage.getItem('cycle-active-profile') || 'andjela';
+  window.activeProfile = activeProfile;
   window.bootApp = bootApp; // Export to global scope for auth.js
   // Hide loader IMMEDIATELY
   const loader = document.getElementById('appLoader');
