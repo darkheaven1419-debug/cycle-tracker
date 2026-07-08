@@ -53,11 +53,14 @@
 
     // #9 星星动画性能优化 + 移动端居中修复
     '.floating-stars .star { will-change: transform, opacity !important; }' +
-    'body { margin: 0 auto !important; overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; }' +
-    '.app { margin: 0 auto !important; }' +
+    'body { margin: 0 !important; overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; display: flex !important; justify-content: center !important; }' +
+    'main { width: 100%; margin: 0; display: flex; justify-content: center; }' +
+    '.app { width: 100% !important; max-width: 420px !important; margin: 0 auto !important; }' +
     '.calendar { width: 100% !important; margin: 0 auto !important; box-sizing: border-box !important; }' +
     '.days { grid-template-columns: repeat(7, 1fr) !important; gap: 3px !important; }' +
     '@media (max-width: 420px) { .days { gap: 2px !important; } .day { min-width: 0 !important; } }' +
+    '.emoji-picker-overlay { display: none !important; }' +
+    '.emoji-picker-overlay.hidden { display: none !important; }' +
     '.week-num { display: none !important; }' +
     'nav.tabs-nav .tabs { display: flex !important; justify-content: space-around !important; width: 100% !important; gap: 0 !important; }' +
     'nav.tabs-nav .tabs .tab.active { color: var(--love) !important; }' +
