@@ -444,6 +444,31 @@
     transform: translateY(0);
   }
 }
+@keyframes revealFlash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(122, 158, 126, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(122, 158, 126, 0);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+@keyframes streakPop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  70% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 @keyframes resultReveal {
   from {
     opacity: 0;
@@ -6447,6 +6472,7 @@ body {
   border-color: var(--sage);
   background: var(--sage-light);
   opacity: 0.7;
+  animation: revealFlash 0.6s ease;
 }
 .lrn-practice-input {
   width: 100%;
@@ -7066,6 +7092,10 @@ body {
   background: var(--rose);
   opacity: 0.7;
 }
+.lrn-heat-cell.vhigh {
+  background: var(--rose-dark);
+  opacity: 0.85;
+}
 .lrn-heat-cell.today {
   outline: 2px solid var(--gold);
   outline-offset: -1px;
@@ -7079,6 +7109,10 @@ body {
 [data-theme="dark"] .lrn-heat-cell.high {
   background: var(--rose-dark);
   opacity: 0.6;
+}
+[data-theme="dark"] .lrn-heat-cell.vhigh {
+  background: var(--rose-dark);
+  opacity: 0.9;
 }
 .lrn-goal-track {
   height: 6px;
