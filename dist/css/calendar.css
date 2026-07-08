@@ -7480,6 +7480,35 @@ body {
     max-width: 540px;
   }
 }
+/* ===== Chinese module skeleton loading ===== */
+.lrn-skeleton {
+  background: linear-gradient(90deg,
+    var(--border-soft) 25%,
+    var(--card) 50%,
+    var(--border-soft) 75%
+  );
+  background-size: 200% 100%;
+  animation: lrnShimmer 1.5s ease-in-out infinite;
+  border-radius: 10px;
+}
+@keyframes lrnShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.lrn-skel-streak {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px; margin-bottom: 10px;
+}
+.lrn-skel-circle { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; }
+.lrn-skel-line { height: 14px; border-radius: 7px; flex: 1; }
+.lrn-skel-line-sm { height: 10px; width: 60%; border-radius: 5px; margin-top: 6px; }
+.lrn-skel-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin: 14px 0;
+}
+.lrn-skel-grid-item { height: 80px; border-radius: 12px; }
+.lrn-skel-review { height: 50px; border-radius: 10px; margin-top: 10px; }
+
 @media (min-width: 768px) {
   .app {
     max-width: 620px;
