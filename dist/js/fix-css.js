@@ -51,9 +51,10 @@
     '.hug-btn:active, .diary-submit:active, .btn-primary:active { transform: scale(0.96) !important; opacity: 0.85 !important; }' +
     '.mood-emoji:not(.picked):active { transform: scale(0.9) !important; opacity: 1 !important; }' +
 
-    // #9 星星动画性能优化
+    // #9 星星动画性能优化 + 移动端居中修复
     '.floating-stars .star { will-change: transform, opacity !important; }' +
-    'body { margin-right: 0 !important; overflow-x: hidden !important; width: 100vw !important; max-width: 100vw !important; }' +
+    'body { margin: 0 auto !important; overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; }' +
+    '.app { margin: 0 auto !important; }' +
     '.days { grid-template-columns: repeat(7, 1fr) !important; }' +
     '.week-num { display: none !important; }' +
     'nav.tabs-nav .tabs { display: flex !important; justify-content: space-around !important; width: 100% !important; gap: 0 !important; }' +

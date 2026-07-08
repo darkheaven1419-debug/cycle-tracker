@@ -577,6 +577,7 @@ body {
 .app {
   width: 100%;
   max-width: 420px;
+  margin: 0 auto;
   padding: 12px 18px 20px;
   position: relative;
 }

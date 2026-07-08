@@ -473,11 +473,11 @@ var APP_VERSION = (function () {
 
       var _selDate = (typeof selectedDate !== 'undefined') ? selectedDate : null;
       function _isInClosedPeriod(d) {
-        if (!state || !state.records || !state.periodEnds) return false;
-        for (var _ri = 0; _ri < state.records.length; _ri++) {
-          var _s = _d0(state.records[_ri]);
-          var _ek = _fmtDate(state.records[_ri]);
-          var _e = state.periodEnds[_ek] ? _d0(new Date(state.periodEnds[_ek] + 'T00:00:00')) : null;
+        if (typeof window.state === 'undefined' || !window.state.records || !window.state.periodEnds) return false;
+        for (var _ri = 0; _ri < window.state.records.length; _ri++) {
+          var _s = _d0(window.state.records[_ri]);
+          var _ek = _fmtDate(window.state.records[_ri]);
+          var _e = window.state.periodEnds[_ek] ? _d0(new Date(window.state.periodEnds[_ek] + 'T00:00:00')) : null;
           if (_e && d >= _s && d <= _e) return true;
         }
         return false;
@@ -485,15 +485,15 @@ var APP_VERSION = (function () {
       function _getPeriodBtnText() {
         if (!_selDate) return null;
         var _d = _d0(_selDate);
-        if (typeof state !== 'undefined' && state.records) {
-          for (var _ri2 = 0; _ri2 < state.records.length; _ri2++) {
-            if (_sameDay(state.records[_ri2], _d)) return '\u{274C} \u{79FB}\u{9664}\u{8BB0}\u{5F55}';
+        if (typeof window.state !== 'undefined' && window.state.records) {
+          for (var _ri2 = 0; _ri2 < window.state.records.length; _ri2++) {
+            if (_sameDay(window.state.records[_ri2], _d)) return t('modalFixRemove');
           }
         }
         var _os = (typeof getOpenPeriodStart === 'function') ? getOpenPeriodStart() : null;
-        if (_os && _d0(_os) <= _d) return '\u{23F9}\u{FE0F} \u{7ED3}\u{675F}\u{672C}\u{6B21}\u{7ECF}\u{671F}';
+        if (_os && _d0(_os) <= _d) return t('modalFixEnd');
         if (_isInClosedPeriod(_d)) return null;
-        return '\u{1F534} \u{6807}\u{8BB0}\u{7ECF}\u{671F}\u{5F00}\u{59CB}';
+        return t('modalFixMark');
       }
       var _phaseRow = document.querySelector('.modal .info-row');
       var _newBtn = document.getElementById('fix-period-btn');

@@ -74,6 +74,11 @@ function switchProfile(p) {
   localStorage.setItem('cycle-active-profile', p);
   state = loadState();
   window.state = state;
+  // Load per-profile language & theme settings for this profile
+  loadPerProfileSettings();
+  setLang(lang);
+  applyTheme(theme);
+  console.log('[switchProfile] 已切换到 ' + p + '，语言=' + lang + '，主题=' + theme);
   // Immediately sync calendar from shared cycle data for both profiles
   try {
     const sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
