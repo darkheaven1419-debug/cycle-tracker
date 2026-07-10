@@ -201,6 +201,8 @@ window.saveDiaryEntry = function() {
     _renderOwnSignature();
     if (typeof window._clearDraftForDate === 'function') window._clearDraftForDate(dateKey);
     if (typeof toast === 'function') toast(_dd('saved'));
+    var _lpc=document.getElementById('letterPartnerCard');
+    if(_lpc){_lpc.classList.remove('fly-in');setTimeout(function(){_lpc.classList.add('fly-in');},50);}
   } catch(e) { console.error('[日记] 保存失败:', e); if (typeof toast === 'function') toast('Error: ' + e.message); }
 };
 
@@ -223,12 +225,18 @@ function _renderDiaryDateStrip(centerDate) {
   var sd = {};
   try { sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); } catch(e) {}
   var user = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
+  var _annMet = document.getElementById('annDateMet'); var annMet = _annMet ? _annMet.value : '';
+  var _annLove = document.getElementById('annDateLove'); var annLove = _annLove ? _annLove.value : '';
+  var annDays = {}; if (annMet) annDays[annMet] = '⭐'; if (annLove) annDays[annLove] = '\u{1F495}';
   var html = '';
   for (var i = -3; i <= 3; i++) {
     var d = new Date(cd); d.setDate(d.getDate()+i);
     var dk = _formatDateKey(d), isC = dk === cdKey, isT = _formatDateKey(new Date()) === dk;
     var hasE = sd[dk] && (sd[dk][user] || sd[dk][user==='barry'?'andjela':'barry']);
-    html += '<div class="diary-date-btn'+(isC?' current':'')+'" data-date="'+dk+'" onclick="window._onDateBtnClick(\''+dk+'\')" style="display:flex;flex-direction:column;align-items:center;padding:4px 6px;border-radius:10px;cursor:pointer;transition:all .2s;min-width:38px;background:'+(isC?'var(--rose-light,#f0d0d0)':'transparent')+';border:1px solid '+(isC?'var(--love,#c45a6b)':'var(--border,#e0d0c8)')+';font-weight:'+(isT?'700':'400')+'">';
+    var annIcon = annDays[dk] || '';
+    var cls = 'diary-date-btn' + (isC ? ' current' : '') + (isT ? ' today' : '');
+    html += '<div class="'+cls+'" data-date="'+dk+'" onclick="window._onDateBtnClick(\''+dk+'\')" style="display:flex;flex-direction:column;align-items:center;padding:4px 6px;border-radius:10px;cursor:pointer;transition:all .2s;min-width:38px;background:'+(isC?'var(--rose-light,#f0d0d0)':'transparent')+';border:1px solid '+(isC?'var(--love,#c45a6b)':'var(--border,#e0d0c8)')+';font-weight:'+(isT?'700':'400')+'">';
+    if (annIcon) html += '<span class="dab-badge" style="font-size:.4rem;position:absolute;top:-3px;left:-2px;line-height:1">'+annIcon+'</span>';
     html += '<span style="font-size:.58rem;color:'+(isC?'var(--love,#c45a6b)':'var(--text-muted,#8a7a78)')+';line-height:1.3">'+(d.getMonth()+1)+'/'+d.getDate()+'</span>';
     html += '<span style="font-size:.45rem;color:'+(isC?'var(--love,#c45a6b)':'var(--text-muted,#8a7a78)')+';opacity:.6;line-height:1">'+(L==='zh-CN'?['日','一','二','三','四','五','六'][d.getDay()]:L==='en'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]:['Ned','Pon','Uto','Sre','Čet','Pet','Sub'][d.getDay()])+'</span>';
     if (hasE) html += '<span style="font-size:.4rem;color:var(--love,#c45a6b);line-height:1">●</span>'; else html += '<span style="font-size:.4rem;line-height:1;opacity:0">●</span>';
@@ -347,10 +355,12 @@ window.initSharedDiaryTab = function() {
       syncBtn.innerHTML='⏳';
       _showStatus(L==='zh-CN'?'同步中...':L==='en'?'Syncing...':'Sinhronizacija...','var(--gold)',0);
       if(typeof pullAllSharedData==='function'){
+        var _oldDC2=0;try{_oldDC2=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;}catch(e){}
         pullAllSharedData().then(function(){
           syncBtn.innerHTML='✅';
           _showStatus(L==='zh-CN'?'已同步':L==='en'?'Synced':'Sinhronizovano','var(--sage)',3000);
           setTimeout(function(){syncBtn.innerHTML='🔄';},3000);
+          try{var _newDC2=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;if(_newDC2>_oldDC2&&typeof toast==='function'){var _who2=activeProfile==='barry'?'Anđela':'Barry';toast('\u{1F48C} '+_who2+(L==='zh-CN'?'写了新日记':L==='en'?' wrote a new letter!':' je napisao/la novo pismo!'));}}catch(e){}
         }).catch(function(){
           syncBtn.innerHTML='⚠️';
           _showStatus(L==='zh-CN'?'同步失败':L==='en'?'Sync failed':'Greška','var(--rose)',5000);
@@ -368,7 +378,7 @@ window.initSharedDiaryTab = function() {
 };
 
 var _dp=document.getElementById('panel-diary');
-if(_dp){var _dpMo=new MutationObserver(function(){if(_dp.classList.contains('active')){if(!_diaryViewDate){var _n=new Date();_diaryViewDate=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0');}_renderDiaryDateStrip(_diaryViewDate);setTimeout(_renderOwnSignature,150);setTimeout(_updateDiaryLang,200);if(typeof pullAllSharedData==='function'){console.log('[同步] 日记tab激活，自动拉取...');setTimeout(function(){pullAllSharedData();},300);}}});_dpMo.observe(_dp,{attributes:true,attributeFilter:['class']});}
+if(_dp){var _dpMo=new MutationObserver(function(){if(_dp.classList.contains('active')){if(!_diaryViewDate){var _n=new Date();_diaryViewDate=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0');}_renderDiaryDateStrip(_diaryViewDate);setTimeout(_renderOwnSignature,150);setTimeout(_updateDiaryLang,200);if(typeof pullAllSharedData==='function'){console.log('[同步] 日记tab激活，自动拉取...');var _oldDC=0;try{_oldDC=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;}catch(e){}setTimeout(function(){pullAllSharedData().then(function(){try{var _newDC=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;if(_newDC>_oldDC&&typeof toast==='function'){var L=window.lang||'sr';var _who=activeProfile==='barry'?'Anđela':'Barry';toast('\u{1F48C} '+_who+(L==='zh-CN'?'写了新日记':L==='en'?' wrote a new letter!':' je napisao/la novo pismo!'));}}catch(e){}});},300);}}});_dpMo.observe(_dp,{attributes:true,attributeFilter:['class']});}
 
 setTimeout(_updateDiaryLang,1000);
 console.log('[日记] 语言修复完成');
@@ -401,7 +411,7 @@ function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); 
       var contentEl=document.getElementById('letterPartnerContent'), lockedEl=document.getElementById('letterLocked'), transBtn=document.getElementById('letterTranslateBtn');
       if (!myEntry||!myEntry.text) { if(lockedEl)lockedEl.style.display=''; if(contentEl)contentEl.style.display='none'; if(transBtn)transBtn.style.display='none'; }
       else if (!partnerEntry||!partnerEntry.text) { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';contentEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">📭 '+(window.lang==='zh-CN'?'Ta还没有写，稍后再来看看 💌':window.lang==='en'?'Your partner hasn\'t written yet 💌':'Partner još nije pisao 💌')+'</div>';} if(transBtn)transBtn.style.display='none'; }
-      else { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';var _html='<div style="padding:12px;font-size:.85rem;line-height:1.8;white-space:pre-wrap">'+escHtml(partnerEntry.text)+'</div>';if(partnerEntry.mood)_html+='<div style="text-align:right;font-size:1.2rem;margin-top:8px">'+partnerEntry.mood+'</div>';var _sigData=localStorage.getItem(user+'-signature');if(_sigData)_html+='<div style="text-align:right;margin-top:12px"><img src="'+_sigData+'" style="max-height:50px;max-width:150px;opacity:.8;border-radius:4px" alt="signature"></div>';else _html+='<div style="text-align:right;margin-top:12px;font-family:cursive,serif;font-style:italic;font-size:1.05rem;color:var(--text-muted,#8a7a78)">—— '+(user==='barry'?'Barry':'Anđela')+' ✍️</div>';contentEl.innerHTML=_html;}if(transBtn)transBtn.style.display='';}
+      else { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';var _html='<div style="padding:12px;font-size:.85rem;line-height:1.8;white-space:pre-wrap">'+escHtml(partnerEntry.text)+'</div>';if(partnerEntry.mood)_html+='<div style="text-align:right;font-size:1.2rem;margin-top:8px">'+partnerEntry.mood+'</div>';var _sigData=localStorage.getItem(user+'-signature');if(_sigData)_html+='<div style="text-align:right;margin-top:12px"><img src="'+_sigData+'" style="max-height:50px;max-width:150px;opacity:.8;border-radius:4px" alt="signature"></div>';else _html+='<div style="text-align:right;margin-top:12px;font-family:cursive,serif;font-style:italic;font-size:1.05rem;color:var(--text-muted,#8a7a78)">—— '+(user==='barry'?'Barry':'Anđela')+' ✍️</div>';contentEl.innerHTML=_html;}if(transBtn){transBtn.style.display='';transBtn.style.marginTop='10px';if(transBtn.parentNode!==contentEl.parentNode){contentEl.parentNode.appendChild(transBtn);}}}
     } catch(e) { console.warn('[写作锁] 更新失败:', e.message); }
   };
   window.translatePartnerLetter = function() {
@@ -437,20 +447,23 @@ function _updateSigBtnText() { var sb=document.getElementById('diarySigBtn'); if
   console.log('[签名按钮] 已就绪');
 })();
 
-// ── 草稿自动保存 ──
+// ── 草稿自动保存 + 字数预警 ──
 (function(){var _dt=null;var _ta=document.getElementById('diaryTextarea');if(!_ta)return;
 function _dk(){return 'draft-'+(_diaryViewDate||_formatDateKey(new Date()));}
 function _sd(){var k=_dk();var v=_ta.value.trim();if(v){localStorage.setItem(k,JSON.stringify({text:v,time:Date.now()}));}else{localStorage.removeItem(k);}}
-function _rd(){var k=_dk();try{var d=JSON.parse(localStorage.getItem(k));if(d&&d.text&&d.text.trim()&&d.text!==_ta.value){_ta.value=d.text;var cc=document.getElementById('diaryCharCount');if(cc)cc.textContent=_ta.value.length+'/500';console.log('[草稿] 已恢复:',k);}}catch(e){}}
+function _updCC(){var cc=document.getElementById('diaryCharCount');if(!cc)return;var len=_ta.value.length;cc.textContent=len+'/500';cc.style.color=len>490?'#E65100':len>450?'#FF8F00':'';cc.style.fontWeight=len>490?'700':'400';}
+function _rd(){var k=_dk();try{var d=JSON.parse(localStorage.getItem(k));if(d&&d.text&&d.text.trim()&&d.text!==_ta.value){_ta.value=d.text;console.log('[草稿] 已恢复:',k);_updCC();}}catch(e){}}
 window._clearDraft=function(){localStorage.removeItem(_dk());};
 window._clearDraftForDate=function(dk){localStorage.removeItem('draft-'+dk);};
-_ta.addEventListener('input',function(){if(_dt)clearTimeout(_dt);_dt=setTimeout(_sd,3000);});
+_ta.addEventListener('input',function(){if(_dt)clearTimeout(_dt);_dt=setTimeout(_sd,3000);_updCC();});
+_ta.addEventListener('blur',function(){_sd();});
 _ta.addEventListener('focus',function(){setTimeout(function(){_ta.scrollIntoView({block:'center',behavior:'smooth'});},300);});
 window._restoreDraft=_rd;
+window._updateCharCount=_updCC;
 console.log('[草稿] 自动保存已启动');
 })();
 
-var _odc=window._onDateBtnClick;window._onDateBtnClick=function(dk){if(typeof _odc==='function')_odc(dk);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();},50);};
-var _osc=window.scrollDiaryStrip;window.scrollDiaryStrip=function(d){if(typeof _osc==='function')_osc(d);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();},50);};
+var _odc=window._onDateBtnClick;window._onDateBtnClick=function(dk){if(typeof _odc==='function')_odc(dk);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();if(typeof window._updateCharCount==='function')window._updateCharCount();},50);};
+var _osc=window.scrollDiaryStrip;window.scrollDiaryStrip=function(d){if(typeof _osc==='function')_osc(d);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();if(typeof window._updateCharCount==='function')window._updateCharCount();},50);};
 
 })();
