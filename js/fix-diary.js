@@ -199,6 +199,7 @@ window.saveDiaryEntry = function() {
     if (typeof pushAllSharedData === 'function') pushAllSharedData();
     _updatePartnerLetter(dateKey);
     _renderOwnSignature();
+    if (typeof window._clearDraftForDate === 'function') window._clearDraftForDate(dateKey);
     if (typeof toast === 'function') toast(_dd('saved'));
   } catch(e) { console.error('[日记] 保存失败:', e); if (typeof toast === 'function') toast('Error: ' + e.message); }
 };
@@ -308,32 +309,48 @@ window.initSharedDiaryTab = function() {
   _updatePartnerLetter(dk); _renderOwnSignature();
   var badge=document.getElementById('letterSavedBadge'); if(badge)badge.style.display='none';
   setTimeout(_updateDiaryLang,300);
-  // ── 注入同步刷新按钮 ──
+  // ── 注入同步刷新按钮 + 状态指示器 ──
   (function(){
     if(document.getElementById('diarySyncBtn'))return;
     var wrap=document.querySelector('.diary-date-strip-wrap');
     if(!wrap)return;
     var L=window.lang||'sr';
+    // 状态文字
+    var statusSpan=document.createElement('span');
+    statusSpan.id='diarySyncStatus';
+    statusSpan.style.cssText='font-size:.6rem;color:var(--text-muted);margin-left:4px;transition:opacity .3s;opacity:0';
+    // 按钮
     var syncBtn=document.createElement('button');
     syncBtn.id='diarySyncBtn';
-    syncBtn.innerHTML=L==='zh-CN'?'🔄':'🔄';
+    syncBtn.innerHTML='🔄';
     syncBtn.title=L==='zh-CN'?'同步日记':L==='en'?'Sync diary':'Sinhronizuj dnevnik';
     syncBtn.style.cssText='padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:.72rem;cursor:pointer;margin-left:4px;white-space:nowrap';
+    function _showStatus(msg,color,duration){
+      statusSpan.textContent=msg;
+      statusSpan.style.color=color;
+      statusSpan.style.opacity='1';
+      if(duration)setTimeout(function(){statusSpan.style.opacity='0';},duration);
+    }
     syncBtn.onclick=function(){
-      this.innerHTML='⏳';
+      syncBtn.innerHTML='⏳';
+      _showStatus(L==='zh-CN'?'同步中...':L==='en'?'Syncing...':'Sinhronizacija...','var(--gold)',0);
       if(typeof pullAllSharedData==='function'){
         pullAllSharedData().then(function(){
           syncBtn.innerHTML='✅';
-          setTimeout(function(){syncBtn.innerHTML=L==='zh-CN'?'🔄':'🔄';},2000);
+          _showStatus(L==='zh-CN'?'已同步':L==='en'?'Synced':'Sinhronizovano','var(--sage)',3000);
+          setTimeout(function(){syncBtn.innerHTML='🔄';},3000);
         }).catch(function(){
           syncBtn.innerHTML='⚠️';
-          setTimeout(function(){syncBtn.innerHTML=L==='zh-CN'?'🔄':'🔄';},2000);
+          _showStatus(L==='zh-CN'?'同步失败':L==='en'?'Sync failed':'Greška','var(--rose)',5000);
+          setTimeout(function(){syncBtn.innerHTML='🔄';},5000);
         });
       }else{
         syncBtn.innerHTML='⚠️';
-        setTimeout(function(){syncBtn.innerHTML='🔄';},2000);
+        _showStatus(L==='zh-CN'?'同步不可用':L==='en'?'Unavailable':'Nedostupno','var(--rose)',3000);
+        setTimeout(function(){syncBtn.innerHTML='🔄';},3000);
       }
     };
+    wrap.appendChild(statusSpan);
     wrap.appendChild(syncBtn);
   })();
 };
@@ -344,6 +361,24 @@ if(typeof pullAllSharedData==='function'){console.log('[同步] 日记tab激活�
 
 setTimeout(_updateDiaryLang,1000);
 console.log('[日记] 语言修复完成');
+
+// ── 草稿自动保存 ──
+(function(){var _dt=null;var _ta=document.getElementById('diaryTextarea');if(!_ta)return;
+function _dk(){return 'draft-'+(_diaryViewDate||_formatDateKey(new Date()));}
+function _sd(){var k=_dk();var v=_ta.value.trim();if(v){localStorage.setItem(k,JSON.stringify({text:v,time:Date.now()}));}else{localStorage.removeItem(k);}}
+function _rd(){var k=_dk();try{var d=JSON.parse(localStorage.getItem(k));if(d&&d.text&&d.text.trim()&&d.text!==_ta.value){_ta.value=d.text;var cc=document.getElementById('diaryCharCount');if(cc)cc.textContent=_ta.value.length+'/500';console.log('[草稿] 已恢复:',k);}}catch(e){}}
+window._clearDraft=function(){localStorage.removeItem(_dk());};
+window._clearDraftForDate=function(dk){localStorage.removeItem('draft-'+dk);};
+_ta.addEventListener('input',function(){if(_dt)clearTimeout(_dt);_dt=setTimeout(_sd,3000);});
+_ta.addEventListener('focus',function(){setTimeout(function(){_ta.scrollIntoView({block:'center',behavior:'smooth'});},300);});
+window._restoreDraft=_rd;
+console.log('[草稿] 自动保存已启动');
+})();
+
+// 日期切换时恢复草稿
+var _odc=window._onDateBtnClick;window._onDateBtnClick=function(dk){if(typeof _odc==='function')_odc(dk);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();},50);};
+var _osc=window.scrollDiaryStrip;window.scrollDiaryStrip=function(d){if(typeof _osc==='function')_osc(d);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();},50);};
+
 })();
 
 // ── 共享函数（主日记 + 终极包共用） ──
@@ -403,7 +438,7 @@ function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); 
 function _updateSigBtnText() { var sb=document.getElementById('diarySigBtn'); if(!sb)return; sb.textContent=window.lang==='zh-CN'?'✍️ 设置签名':window.lang==='en'?'✍️ Set Signature':'✍️ Potpis'; }
 
 (function(){
-  function _injectSignatureBtn() { var saveBtn=document.getElementById('diarySaveBtn'); if(!saveBtn)return; if(document.getElementById('diarySigBtn'))return; var sigBtn=document.createElement('button'); sigBtn.id='diarySigBtn'; sigBtn.style.cssText='padding:6px 12px;border:1px dashed var(--border,#d4bfa0);border-radius:8px;background:transparent;cursor:pointer;font-size:.72rem;transition:all .2s;margin-left:6px;white-space:nowrap'; sigBtn.onmouseover=function(){this.style.background='var(--rose-light,#f0d0d0)';}; sigBtn.onmouseout=function(){this.style.background='transparent';}; sigBtn.onclick=function(){if(typeof window._openSignaturePad==='function')window._openSignaturePad();}; sigBtn.textContent='✍️ ...'; saveBtn.parentNode.insertBefore(sigBtn,saveBtn.nextSibling); setTimeout(_updateSigBtnText,300); }
+  function _injectSignatureBtn() { var saveBtn=document.getElementById('diarySaveBtn'); if(!saveBtn)return; if(document.getElementById('diarySigBtn'))return; var sigBtn=document.createElement('button'); sigBtn.id='diarySigBtn'; sigBtn.style.cssText='padding:6px 12px;border:1px dashed var(--border,#d4bfa0);border-radius:8px;background:transparent;cursor:pointer;font-size:.72rem;transition:all .2s;margin-left:6px;white-space:nowrap'; sigBtn.onmouseover=function(){this.style.background='var(--rose-light,#f0d0d0)';}; sigBtn.onmouseout=function(){this.style.background='transparent';}; sigBtn.onclick=function(){if(typeof window._openSignaturePad==='function')window._openSignaturePad();}; sigBtn.textContent='✍️'; saveBtn.parentNode.insertBefore(sigBtn,saveBtn.nextSibling); setTimeout(_updateSigBtnText,100); }
   _injectSignatureBtn(); var _mo=new MutationObserver(function(){_injectSignatureBtn();}); _mo.observe(document.body,{childList:true,subtree:true});
   var _origApply3=window.applyAllUI; if(typeof _origApply3==='function'){window.applyAllUI=function(w){_origApply3(w);setTimeout(_updateSigBtnText,100);};}
   console.log('[签名按钮] 已就绪');

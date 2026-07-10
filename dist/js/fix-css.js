@@ -23,6 +23,7 @@
     // #3 输入框字号 ≥16px（防止 iOS 自动缩放）
     '@media (max-width: 480px) {' +
     'input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="search"], textarea, select { font-size: 16px !important; }' +
+    '.diary-textarea { font-size: 16px !important; }' +
     '}' +
 
     // #4 弹窗在小屏幕溢出修复
