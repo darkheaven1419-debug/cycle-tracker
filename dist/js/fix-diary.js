@@ -308,10 +308,37 @@ window.initSharedDiaryTab = function() {
   _updatePartnerLetter(dk); _renderOwnSignature();
   var badge=document.getElementById('letterSavedBadge'); if(badge)badge.style.display='none';
   setTimeout(_updateDiaryLang,300);
+  (function(){
+    if(document.getElementById('diarySyncBtn'))return;
+    var wrap=document.querySelector('.diary-date-strip-wrap');
+    if(!wrap)return;
+    var L=window.lang||'sr';
+    var syncBtn=document.createElement('button');
+    syncBtn.id='diarySyncBtn';
+    syncBtn.innerHTML='🔄';
+    syncBtn.title=L==='zh-CN'?'同步日记':L==='en'?'Sync diary':'Sinhronizuj dnevnik';
+    syncBtn.style.cssText='padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:.72rem;cursor:pointer;margin-left:4px;white-space:nowrap';
+    syncBtn.onclick=function(){
+      this.innerHTML='⏳';
+      if(typeof pullAllSharedData==='function'){
+        pullAllSharedData().then(function(){
+          syncBtn.innerHTML='✅';
+          setTimeout(function(){syncBtn.innerHTML='🔄';},2000);
+        }).catch(function(){
+          syncBtn.innerHTML='⚠️';
+          setTimeout(function(){syncBtn.innerHTML='🔄';},2000);
+        });
+      }else{
+        syncBtn.innerHTML='⚠️';
+        setTimeout(function(){syncBtn.innerHTML='🔄';},2000);
+      }
+    };
+    wrap.appendChild(syncBtn);
+  })();
 };
 
 var _dp=document.getElementById('panel-diary');
-if(_dp){var _dpMo=new MutationObserver(function(){if(_dp.classList.contains('active')){if(!_diaryViewDate){var _n=new Date();_diaryViewDate=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0');}_renderDiaryDateStrip(_diaryViewDate);setTimeout(_renderOwnSignature,150);setTimeout(_updateDiaryLang,200);}});_dpMo.observe(_dp,{attributes:true,attributeFilter:['class']});}
+if(_dp){var _dpMo=new MutationObserver(function(){if(_dp.classList.contains('active')){if(!_diaryViewDate){var _n=new Date();_diaryViewDate=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0');}_renderDiaryDateStrip(_diaryViewDate);setTimeout(_renderOwnSignature,150);setTimeout(_updateDiaryLang,200);if(typeof pullAllSharedData==='function'){console.log('[同步] 日记tab激活，自动拉取...');setTimeout(function(){pullAllSharedData();},300);}}});_dpMo.observe(_dp,{attributes:true,attributeFilter:['class']});}
 
 setTimeout(_updateDiaryLang,1000);
 console.log('[日记] 语言修复完成');
