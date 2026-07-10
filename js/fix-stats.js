@@ -226,10 +226,29 @@
     var TODO_REPO = 'darkheaven1419-debug/cycle-tracker';
     var TODO_FILE = 'shared-todolist.json';
 
-    if (typeof window.state !== 'undefined') {
-      try { window.state.todoList = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(window.state.todoList)) window.state.todoList = []; }
-      catch (e) { window.state.todoList = []; }
+    // ── 初始化：确保 localStorage 中有空数组 ──
+    function _initData() {
+      var raw = localStorage.getItem('shared-todolist');
+      if (raw === null || raw === undefined || raw === 'null' || raw === 'undefined') {
+        localStorage.setItem('shared-todolist', '[]');
+      }
+      try {
+        var parsed = JSON.parse(localStorage.getItem('shared-todolist') || '[]');
+        if (!Array.isArray(parsed)) {
+          localStorage.setItem('shared-todolist', '[]');
+          parsed = [];
+        }
+        if (typeof window.state !== 'undefined') {
+          window.state.todoList = parsed;
+        }
+      } catch (e) {
+        localStorage.setItem('shared-todolist', '[]');
+        if (typeof window.state !== 'undefined') {
+          window.state.todoList = [];
+        }
+      }
     }
+    _initData();
 
     function _tl(key) {
       var l = window.lang || 'sr';
@@ -317,6 +336,9 @@
       var container = document.getElementById('todoListContainer');
       if (!container) return;
 
+      // 确保数据初始化
+      _initData();
+
       var list = [];
       try { list = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }
       var filter = window._todoFilter || 'active';
@@ -360,6 +382,7 @@
       if (document.getElementById('todoListCard')) return;
       var dash=document.getElementById('panel-dashboard');
       if (!dash) return;
+      _initData();
       var f=window._todoFilter||'active';
       var card=document.createElement('div'); card.id='todoListCard'; card.className='card'; card.style.marginTop='10px';
       card.innerHTML = '<h3>'+_tl('title')+'</h3>'
@@ -374,33 +397,48 @@
       var qc=dash.querySelector('.dash-card.dash-quote');
       if (qc&&qc.parentNode) qc.parentNode.insertBefore(card,qc.nextSibling); else dash.appendChild(card);
       var inp=document.getElementById('todoInput');
-      if (inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&typeof _addTodo==='function')_addTodo(inp.value);});
+      if (inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&typeof window._addTodo==='function')window._addTodo();});
       _render();
+    }
+
+    // ── 全部挂载到 window ──
+    window._renderTodo = _render;
+    window._createTodoCard = _createCard;
+    window._pushTodo = _pushTodo;
+    window._pullTodo = _pullTodo;
+    window._addTodo = function(){var inp=document.getElementById('todoInput');_addTodo(inp?inp.value:'');};
+    window._toggleTodo = _toggleTodo;
+    window._deleteTodo = _deleteTodo;
+    window._setTodoFilter = _setFilter;
+
+    // ── 自动初始化 ──
+    function _tryCreateCard() {
+      if (!document.getElementById('todoListCard')) {
+        _createCard();
+      }
     }
 
     if (typeof renderDashboard==='function') {
       var _origTd=renderDashboard;
-      window.renderDashboard=function(){_origTd.apply(this,arguments);setTimeout(_createCard,50);};
+      window.renderDashboard=function(){_origTd.apply(this,arguments);setTimeout(_tryCreateCard,100);};
     }
+
+    // 首次加载自动创建
+    setTimeout(_tryCreateCard, 500);
+    setTimeout(_tryCreateCard, 1500);
+    setTimeout(_tryCreateCard, 3000);
 
     if (typeof getGitHubToken==='function') {
       _pullTodo();
       setInterval(function(){if(getGitHubToken())_pullTodo();},120000);
     }
 
-    window._addTodo=function(){var inp=document.getElementById('todoInput');_addTodo(inp?inp.value:'');};
-    window._toggleTodo=_toggleTodo;
-    window._deleteTodo=_deleteTodo;
-    window._setTodoFilter=_setFilter;
-
-    setTimeout(function(){if(!document.getElementById('todoListCard'))_createCard();},1000);
-
-    // ── Todo List 恢复观察器 ──
+    // ── MutationObserver：仪表盘重渲染后恢复 ──
     var _dashboardMo = new MutationObserver(function(){
       var todoCard = document.getElementById('todoListCard');
       var dashPanel = document.getElementById('panel-dashboard');
       if (!todoCard && dashPanel && dashPanel.classList.contains('active')) {
-        setTimeout(_createCard, 100);
+        setTimeout(_tryCreateCard, 100);
       }
     });
     var _dashPanel = document.getElementById('panel-dashboard');
