@@ -26,8 +26,6 @@
     if (st) st.textContent = typeof t === 'function' ? t('stats.cycle') : '';
     var moodTitle = document.getElementById('schart-mood-title');
     if (moodTitle) moodTitle.textContent = typeof t === 'function' ? t('stats.mood') : '';
-    var symptomTitle = document.getElementById('schart-symptom-title');
-    if (symptomTitle) symptomTitle.textContent = typeof t === 'function' ? t('stats.symptoms') : '';
 
     // Chart drawing requires ChartRenderer
     if (typeof ChartRenderer === 'undefined') return;
@@ -81,42 +79,6 @@
         if (moodCanvas.parentElement) moodCanvas.parentElement.style.display = 'none';
         if (moodEmpty) { moodEmpty.style.display = ''; moodEmpty.textContent = typeof t === 'function' ? t('statsMoodNoRecords') : ''; }
         if (moodLegend) moodLegend.innerHTML = '';
-      }
-    }
-
-    // --- Symptom Bar Chart ---
-    var symptomCanvas = document.getElementById('chartSymptomBar');
-    var symptomEmpty = document.getElementById('chartSymptomEmpty');
-    if (symptomCanvas && typeof state !== 'undefined' && state.symptoms) {
-      var sympDates = Object.keys(state.symptoms);
-      var sympFreq = { cramps: 0, mood: 0, flow: 0, headache: 0, fatigue: 0, cravings: 0 };
-      var sympEmojis = { cramps: '\u{1F623}', mood: '\u{1F60A}', flow: '\u{1F4A7}', headache: '\u{1F915}', fatigue: '\u{1F634}', cravings: '\u{1F36B}' };
-      for (var si = 0; si < sympDates.length; si++) {
-        var sv = state.symptoms[sympDates[si]];
-        for (var sk in sympFreq) {
-          if (sv[sk] && sv[sk] > 0) sympFreq[sk]++;
-        }
-      }
-      var sympNames = typeof t === 'function' ? t('symptoms') : {};
-      var sympOrder = ['cramps','mood','flow','headache','fatigue','cravings'];
-      var sympBarColors = ['#c45a6b','#FFB74D','#5e8b7a','#b8a0c8','#a0b0c0','#d4bfb5'];
-      var barData = [];
-      for (var sn = 0; sn < sympOrder.length; sn++) {
-        var sk2 = sympOrder[sn];
-        barData.push({ label: sympEmojis[sk2] + ' ' + sympNames[sk2], value: sympFreq[sk2], color: sympBarColors[sn] });
-      }
-      barData.sort(function(a, b) { return b.value - a.value; });
-      var hasSympData = barData.some(function(d) { return d.value > 0; });
-      if (hasSympData) {
-        if (symptomCanvas.parentElement) symptomCanvas.parentElement.style.display = '';
-        if (symptomEmpty) symptomEmpty.style.display = 'none';
-        ChartRenderer.drawBarChart(symptomCanvas, barData, {
-          width: 460, height: 180,
-          emptyText: typeof t === 'function' ? t('statsSympEmpty') : ''
-        });
-      } else {
-        if (symptomCanvas.parentElement) symptomCanvas.parentElement.style.display = 'none';
-        if (symptomEmpty) { symptomEmpty.style.display = ''; symptomEmpty.textContent = typeof t === 'function' ? t('statsSympNoRecords') : ''; }
       }
     }
   }

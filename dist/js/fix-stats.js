@@ -394,5 +394,18 @@
     window._setTodoFilter=_setFilter;
 
     setTimeout(function(){if(!document.getElementById('todoListCard'))_createCard();},1000);
+
+    // ── Todo List 恢复观察器 ──
+    var _dashboardMo = new MutationObserver(function(){
+      var todoCard = document.getElementById('todoListCard');
+      var dashPanel = document.getElementById('panel-dashboard');
+      if (!todoCard && dashPanel && dashPanel.classList.contains('active')) {
+        setTimeout(_createCard, 100);
+      }
+    });
+    var _dashPanel = document.getElementById('panel-dashboard');
+    if (_dashPanel) {
+      _dashboardMo.observe(_dashPanel, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    }
   })();
 })();

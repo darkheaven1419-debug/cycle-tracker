@@ -27,8 +27,7 @@
     var M = {
       'schart-cycle-title':{'zh-CN':'周期趋势（最近6次）','en':'Cycle Trend (last 6)','sr':'Trend ciklusa (poslednjih 6)'},
       'schart-mood-title':{'zh-CN':'心情分布','en':'Mood Distribution','sr':'Raspolozenje'},
-      'schart-symptom-title':{'zh-CN':'症状频率','en':'Symptom Frequency','sr':'Ucestalost simptoma'},
-      'predChipOvLabel':{'zh-CN':'排卵日','en':'Ovulation','sr':'Ovulacija'},
+'predChipOvLabel':{'zh-CN':'排卵日','en':'Ovulation','sr':'Ovulacija'},
       'predChipFertLabel':{'zh-CN':'易孕期','en':'Fertile','sr':'Plodni dani'},
       'predChipFutureLabel':{'zh-CN':'未来预测','en':'Future','sr':'Buducnost'},
       'predChipRegLabel':{'zh-CN':'规律性','en':'Regularity','sr':'Regularnost'},
@@ -45,8 +44,7 @@
     // Empty data guidance
     var EM = {
       'chartCycleEmpty':{'zh-CN':'标记2次经期后显示趋势图','en':'Record 2 cycles to see trend','sr':'Zabelezi 2 ciklusa za trend'},
-      'chartMoodEmpty':{'zh-CN':'记录心情后显示分布图','en':'Record moods to see distribution','sr':'Zabelezi raspolozenja za prikaz'},
-      'chartSymptomEmpty':{'zh-CN':'记录症状后显示频率图','en':'Record symptoms to see frequency','sr':'Zabelezi simptome za prikaz'}
+      'chartMoodEmpty':{'zh-CN':'记录心情后显示分布图','en':'Record moods to see distribution','sr':'Zabelezi raspolozenja za prikaz'}
     };
     for (var eid in EM) { var cel = document.getElementById(eid); if (cel) { cel.textContent = EM[eid][L] || EM[eid]['zh-CN']; cel.style.cssText = 'display:block;padding:20px;text-align:center;color:var(--text-muted);font-size:0.8rem'; } }
 
