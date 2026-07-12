@@ -113,6 +113,22 @@ const SyncModule = (function () {
     }
   }
 
+  // ── 三语错误提示 ──
+  function _syncMsg(key) {
+    var L = window.lang || 'sr';
+    var msgs = {
+      token401: { 'zh-CN': '⚠️ Token 无效，请在设置中重新输入', en: '⚠️ Token invalid, please re-enter in Settings', sr: '⚠️ Token nevažeći, unesite ponovo u Podešavanjima' },
+      netError: { 'zh-CN': '⚠️ 同步失败，请检查网络后重试', en: '⚠️ Sync failed, check network and retry', sr: '⚠️ Sinhronizacija nije uspela — proverite mrežu' },
+      retryFail: { 'zh-CN': '⚠️ 同步失败，请在设置中手动同步', en: '⚠️ Sync failed, please sync manually in Settings', sr: '⚠️ Sinhronizacija nije uspela — pokušajte ručno u Podešavanjima' },
+    };
+    return msgs[key] ? (msgs[key][L] || msgs[key]['sr']) : '';
+  }
+  function _syncToast(msg) {
+    if (typeof toast === 'function') toast(msg);
+    var _sb = document.getElementById('syncStatusBadge');
+    if (_sb) { _sb.textContent = '🔴 ' + msg.replace(/^[^ ]* /, ''); _sb.style.color = '#E53935'; }
+  }
+
   // ── 推送数据到 GitHub ──
   async function push(n) {
     n = n || 0;
@@ -150,10 +166,14 @@ const SyncModule = (function () {
       if (getResp.ok) {
         var getData = await getResp.json();
         sha = getData.sha;
+      } else if (getResp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
       }
     } catch (e) {
       console.warn('[同步] 取 SHA 失败:', e.message);
-      if (n < 3) { setTimeout(function () { push(n + 1); }, 2000); }
+      if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+      else { _syncToast(_syncMsg('retryFail')); }
       return;
     }
 
@@ -175,37 +195,44 @@ const SyncModule = (function () {
         localStorage.setItem('shared-last-sync', Date.now());
         console.log('[同步] 推送成功 ✓');
         updateBadge();
+      } else if (putResp.status === 401) {
+        _syncToast(_syncMsg('token401'));
       } else if (putResp.status === 409 || putResp.status === 422) {
         console.warn('[同步] 冲突 (' + putResp.status + ')，拉取最新后重试...');
         await pull();
-        if (n < 3) {
-          setTimeout(function () { push(n + 1); }, 1500);
-        } else {
-          console.error('[同步] 重试3次后仍失败');
-          if (typeof toast === 'function') toast(window.lang === 'zh-CN' ? '⚠️ 同步失败，请稍后重试' : '⚠️ Sinhronizacija nije uspela — pokušaj ponovo');
-        }
+        if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+        else { _syncToast(_syncMsg('retryFail')); }
       } else {
         console.error('[同步] 意外响应:', putResp.status, putResp.statusText);
+        if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+        else { _syncToast(_syncMsg('retryFail')); }
       }
     } catch (e) {
       console.error('[同步] 网络错误:', e.message);
-      if (n < 3) { setTimeout(function () { push(n + 1); }, 2000); }
+      if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+      else { _syncToast(_syncMsg('retryFail')); }
     }
   }
 
   // ── 从 GitHub 拉取数据 ──
-  async function pull() {
+  async function pull(n) {
+    n = n || 0;
     var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
     if (!token) { console.log('[同步] 无 Token，跳过拉取'); return; }
 
-    console.log('[同步] 开始拉取...');
+    console.log('[同步] 开始拉取 (重试#' + n + ')...');
     var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
 
     try {
       var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
+      if (resp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
+      }
       if (!resp.ok) {
         console.warn('[同步] 拉取失败，状态码:', resp.status);
-        updateBadge();
+        if (n < 2) { setTimeout(function () { pull(n + 1); }, 3000); return; }
+        _syncToast(_syncMsg('retryFail'));
         return;
       }
 
@@ -238,7 +265,8 @@ const SyncModule = (function () {
       updateBadge();
     } catch (e) {
       console.error('[同步] 拉取异常:', e.message);
-      updateBadge();
+      if (n < 2) { setTimeout(function () { pull(n + 1); }, 3000); }
+      else { _syncToast(_syncMsg('retryFail')); }
     }
   }
 

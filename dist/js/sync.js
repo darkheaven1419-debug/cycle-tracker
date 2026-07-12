@@ -43,7 +43,9 @@ const SyncModule = (function () {
     if (!remote || typeof remote !== 'object') return local || {};
     if (!local || typeof local !== 'object') return remote || {};
     var result = {};
+    // 先拷贝所有本地条目
     for (var dk in local) { if (local.hasOwnProperty(dk)) result[dk] = JSON.parse(JSON.stringify(local[dk])); }
+    // 合并远程条目（仅补缺失的，本地已有的不覆盖）
     var added = 0;
     for (var dk2 in remote) {
       if (remote.hasOwnProperty(dk2)) {
@@ -63,12 +65,16 @@ const SyncModule = (function () {
   // ── 应用远程状态到本地 ──
   function apply(state) {
     if (!state) return;
+
+    // 日记：合并而非覆盖
     if (state.diary) {
       var localDiary = getJSON('shared-diary', {});
       var merged = mergeDiary(localDiary, state.diary);
       localStorage.setItem('shared-diary', JSON.stringify(merged));
       console.log('[同步] 日记合并完成 本地=' + Object.keys(localDiary).length + ' 远程=' + Object.keys(state.diary).length + ' 合并后=' + Object.keys(merged).length);
     }
+
+    // 周期数据：替换
     if (state.cycleInfo) {
       localStorage.setItem('shared-cycle-data', JSON.stringify(state.cycleInfo));
       if (state.cycleInfo.records && state.cycleInfo.records.length > 0) {
@@ -81,6 +87,8 @@ const SyncModule = (function () {
         }
       }
     }
+
+    // 其他数据：直接替换
     if (state.symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(state.symptoms));
     if (state.gratitude) localStorage.setItem('shared-gratitude', JSON.stringify(state.gratitude));
     if (state.hug) localStorage.setItem('shared-hug', JSON.stringify(state.hug));
@@ -105,14 +113,31 @@ const SyncModule = (function () {
     }
   }
 
+  // ── 三语错误提示 ──
+  function _syncMsg(key) {
+    var L = window.lang || 'sr';
+    var msgs = {
+      token401: { 'zh-CN': '⚠️ Token 无效，请在设置中重新输入', en: '⚠️ Token invalid, please re-enter in Settings', sr: '⚠️ Token nevažeći, unesite ponovo u Podešavanjima' },
+      netError: { 'zh-CN': '⚠️ 同步失败，请检查网络后重试', en: '⚠️ Sync failed, check network and retry', sr: '⚠️ Sinhronizacija nije uspela — proverite mrežu' },
+      retryFail: { 'zh-CN': '⚠️ 同步失败，请在设置中手动同步', en: '⚠️ Sync failed, please sync manually in Settings', sr: '⚠️ Sinhronizacija nije uspela — pokušajte ručno u Podešavanjima' },
+    };
+    return msgs[key] ? (msgs[key][L] || msgs[key]['sr']) : '';
+  }
+  function _syncToast(msg) {
+    if (typeof toast === 'function') toast(msg);
+    var _sb = document.getElementById('syncStatusBadge');
+    if (_sb) { _sb.textContent = '🔴 ' + msg.replace(/^[^ ]* /, ''); _sb.style.color = '#E53935'; }
+  }
+
   // ── 推送数据到 GitHub ──
   async function push(n) {
     n = n || 0;
     var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
     if (!token) { console.log('[同步] 无 Token，跳过推送'); return; }
+
     console.log('[同步] 开始推送 (重试#' + n + ')...');
 
-    // 步骤 1：先拉取远程，合并日记到本地
+    // ── 步骤 1：先拉取远程，合并日记到本地 ──
     try {
       var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
       var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
@@ -130,59 +155,100 @@ const SyncModule = (function () {
       console.warn('[同步] 推送前拉取失败，继续推送:', e.message);
     }
 
+    // ── 步骤 2：收集本地状态（含已合并的日记） ──
     var state = collect();
+
+    // ── 步骤 3：取 SHA ──
     var sha = null;
     var authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
     try {
       var getResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: authHeaders, cache: 'no-store' });
-      if (getResp.ok) { var getData = await getResp.json(); sha = getData.sha; }
+      if (getResp.ok) {
+        var getData = await getResp.json();
+        sha = getData.sha;
+      } else if (getResp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
+      }
     } catch (e) {
       console.warn('[同步] 取 SHA 失败:', e.message);
-      if (n < 3) { setTimeout(function () { push(n + 1); }, 2000); }
+      if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+      else { _syncToast(_syncMsg('retryFail')); }
       return;
     }
 
-    var body = { message: '🔄 Sync shared state', content: btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2)))) };
+    // ── 步骤 4：PUT ──
+    var body = {
+      message: '🔄 Sync shared state',
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))))
+    };
     if (sha) body.sha = sha;
 
     try {
-      var putResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { method: 'PUT', headers: authHeaders, body: JSON.stringify(body) });
+      var putResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify(body)
+      });
+
       if (putResp.ok) {
         localStorage.setItem('shared-last-sync', Date.now());
         console.log('[同步] 推送成功 ✓');
         updateBadge();
+      } else if (putResp.status === 401) {
+        _syncToast(_syncMsg('token401'));
       } else if (putResp.status === 409 || putResp.status === 422) {
         console.warn('[同步] 冲突 (' + putResp.status + ')，拉取最新后重试...');
         await pull();
-        if (n < 3) { setTimeout(function () { push(n + 1); }, 1500); }
-        else {
-          console.error('[同步] 重试3次后仍失败');
-          if (typeof toast === 'function') toast(window.lang === 'zh-CN' ? '⚠️ 同步失败，请稍后重试' : '⚠️ Sinhronizacija nije uspela — pokušaj ponovo');
-        }
-      } else { console.error('[同步] 意外响应:', putResp.status, putResp.statusText); }
+        if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+        else { _syncToast(_syncMsg('retryFail')); }
+      } else {
+        console.error('[同步] 意外响应:', putResp.status, putResp.statusText);
+        if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+        else { _syncToast(_syncMsg('retryFail')); }
+      }
     } catch (e) {
       console.error('[同步] 网络错误:', e.message);
-      if (n < 3) { setTimeout(function () { push(n + 1); }, 2000); }
+      if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
+      else { _syncToast(_syncMsg('retryFail')); }
     }
   }
 
   // ── 从 GitHub 拉取数据 ──
-  async function pull() {
+  async function pull(n) {
+    n = n || 0;
     var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
     if (!token) { console.log('[同步] 无 Token，跳过拉取'); return; }
-    console.log('[同步] 开始拉取...');
+
+    console.log('[同步] 开始拉取 (重试#' + n + ')...');
     var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
 
     try {
       var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
-      if (!resp.ok) { console.warn('[同步] 拉取失败，状态码:', resp.status); updateBadge(); return; }
+      if (resp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
+      }
+      if (!resp.ok) {
+        console.warn('[同步] 拉取失败，状态码:', resp.status);
+        if (n < 2) { setTimeout(function () { pull(n + 1); }, 3000); return; }
+        _syncToast(_syncMsg('retryFail'));
+        return;
+      }
+
       var data = await resp.json();
       var state = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+
       var diaryCount = state.diary ? Object.keys(state.diary).length : 0;
       console.log('[同步] 拉取成功 ✓ 远程日记条目:', diaryCount);
+
+      // 应用数据到本地（含日记合并）
       apply(state);
+
       localStorage.setItem('shared-last-sync', Date.now());
       console.log('[同步] 已应用 ✓');
+
+      // 触发重渲染
       if (typeof invalidateSDCache === 'function') invalidateSDCache();
       if (typeof renderHug === 'function') renderHug();
       if (typeof renderGratitude === 'function') renderGratitude();
@@ -197,7 +263,11 @@ const SyncModule = (function () {
       if (typeof renderSharedDiary === 'function') renderSharedDiary();
       if (typeof renderDateStrip === 'function') renderDateStrip();
       updateBadge();
-    } catch (e) { console.error('[同步] 拉取异常:', e.message); updateBadge(); }
+    } catch (e) {
+      console.error('[同步] 拉取异常:', e.message);
+      if (n < 2) { setTimeout(function () { pull(n + 1); }, 3000); }
+      else { _syncToast(_syncMsg('retryFail')); }
+    }
   }
 
   // ── 同步状态徽章 ──
@@ -208,14 +278,16 @@ const SyncModule = (function () {
     if (!el) return;
     if (!hasToken) {
       el.textContent = '⚪ ' + (window.lang === 'sr' ? 'Nije podešeno' : window.lang === 'en' ? 'Not configured' : '未设置');
-      el.style.color = 'var(--text-muted)'; return;
+      el.style.color = 'var(--text-muted)';
+      return;
     }
     if (lastSync) {
       var seconds = Math.floor((Date.now() - parseInt(lastSync)) / 1000);
-      var ago = seconds < 30 ? (window.lang === 'sr' ? 'upravo' : window.lang === 'en' ? 'just now' : '刚刚')
-        : seconds < 120 ? (window.lang === 'sr' ? 'pre 1 min' : window.lang === 'en' ? '1 min ago' : '1分钟前')
-        : seconds < 3600 ? Math.floor(seconds / 60) + (window.lang === 'sr' ? ' min' : window.lang === 'en' ? ' min ago' : '分钟前')
-        : Math.floor(seconds / 3600) + (window.lang === 'sr' ? ' h ago' : window.lang === 'en' ? ' h ago' : '小时前');
+      var ago;
+      if (seconds < 30) ago = window.lang === 'sr' ? 'upravo' : window.lang === 'en' ? 'just now' : '刚刚';
+      else if (seconds < 120) ago = (window.lang === 'sr' ? 'pre 1 min' : window.lang === 'en' ? '1 min ago' : '1分钟前');
+      else if (seconds < 3600) ago = Math.floor(seconds / 60) + (window.lang === 'sr' ? ' min' : window.lang === 'en' ? ' min ago' : '分钟前');
+      else ago = Math.floor(seconds / 3600) + (window.lang === 'sr' ? ' h' : window.lang === 'en' ? ' h ago' : '小时前');
       el.textContent = '🟢 ' + (window.lang === 'sr' ? 'Sinhronizovano ' : 'Synced ') + ago;
       el.style.color = 'var(--sage)';
     } else {
@@ -224,18 +296,38 @@ const SyncModule = (function () {
     }
   }
 
+  // ── 公开 API ──
   return {
     init: function () {
+      // Hook saveSharedDiaryData: 保存日记后自动推送
       var orig = window.saveSharedDiaryData;
-      if (typeof orig === 'function') { window.saveSharedDiaryData = function (d) { orig(d); push(); }; }
-      setInterval(function () { if (typeof getGitHubToken === 'function' && getGitHubToken()) { console.log('[同步] 定时拉取...'); pull(); } }, 60000);
+      if (typeof orig === 'function') {
+        window.saveSharedDiaryData = function (data) {
+          orig(data);
+          push();
+        };
+      }
+
+      // 定时自动拉取（每 60 秒）
+      setInterval(function () {
+        if (typeof getGitHubToken === 'function' && getGitHubToken()) {
+          console.log('[同步] 定时拉取...');
+          pull();
+        }
+      }, 60000);
+
       updateBadge();
       console.log('[同步] 模块已初始化 ✓');
     },
-    push: push, pull: pull, collect: collect, apply: apply, updateBadge: updateBadge
+    push: push,
+    pull: pull,
+    collect: collect,
+    apply: apply,
+    updateBadge: updateBadge
   };
 })();
 
+// ── 暴露全局接口 ──
 updateSyncStatusBadge = SyncModule.updateBadge;
 pushAllSharedData = SyncModule.push;
 pullAllSharedData = SyncModule.pull;

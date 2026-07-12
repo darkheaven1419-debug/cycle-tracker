@@ -245,6 +245,14 @@ function _renderDiaryDateStrip(centerDate) {
     html += '</div>';
   }
   container.innerHTML = html;
+  // 自动将选中日期滚动到容器中央
+  (function(){
+    var _cb = container.querySelector('.diary-date-btn.current');
+    if (_cb) {
+      var _to = _cb.offsetLeft - (container.clientWidth / 2) + (_cb.clientWidth / 2);
+      container.scrollLeft = Math.max(0, _to);
+    }
+  })();
 }
 
 window._onDateBtnClick = function(dateKey) {
