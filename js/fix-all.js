@@ -545,25 +545,25 @@ var APP_VERSION = (function () {
   window.animateDashboardCards = null;
   window.animateStatsPanel = null;
 
-  // GitHub Token 以明文存储在 sessionStorage（页面关闭即清除，但非加密存储）。
+  // GitHub Token 以明文存储在 localStorage（持久化存储，代码更新后保留）。
   // ⚠️ 安全提示：Token 在浏览器中可被同源脚本读取。建议使用最小权限的 fine-grained token，
   //    仅授予 contents:write 权限给当前仓库。不要在公共或共享设备上使用此功能。
   (function () {
     var _H4_KEY = 'gh-token';
     var _origGet = typeof getGitHubToken === 'function' ? getGitHubToken : null;
     window.getGitHubToken = function () {
-      return sessionStorage.getItem(_H4_KEY) || '';
+      return localStorage.getItem(_H4_KEY) || '';
     };
     var _origSave = typeof saveGitHubToken === 'function' ? saveGitHubToken : null;
     window.saveGitHubToken = function () {
       var t = document.getElementById('set-gh-token').value.trim();
-      if (!t) { sessionStorage.removeItem(_H4_KEY); _origSave(); return; }
-      sessionStorage.setItem(_H4_KEY, t);
-      _origSave();
+      if (!t) { localStorage.removeItem(_H4_KEY); if (_origSave) _origSave(); return; }
+      localStorage.setItem(_H4_KEY, t);
+      if (_origSave) _origSave();
     };
     var _origClear = typeof clearGitHubToken === 'function' ? clearGitHubToken : null;
     window.clearGitHubToken = function () {
-      sessionStorage.removeItem(_H4_KEY);
+      localStorage.removeItem(_H4_KEY);
       if (_origClear) _origClear();
     };
     try {

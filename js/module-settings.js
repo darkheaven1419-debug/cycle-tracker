@@ -9,7 +9,7 @@
     var t = document.getElementById('set-gh-token').value.trim();
     var warning = document.getElementById('tokenSecurityWarning');
     if (t) {
-      sessionStorage.setItem('gh-token', t);
+      localStorage.setItem('gh-token', t);
       toast('\u{1F511} ' + (typeof t === 'function' ? t('tokenSaved') : 'Token saved ✓'));
       if (warning) warning.style.display = '';
       if (typeof pullAllSharedData === 'function') {
@@ -19,7 +19,7 @@
         });
       }
     } else {
-      sessionStorage.removeItem('gh-token');
+      localStorage.removeItem('gh-token');
       if (warning) warning.style.display = 'none';
       if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
     }
@@ -32,7 +32,7 @@
     var origText = btn.textContent;
     btn.disabled = true;
     btn.textContent = '\u{23F3} Testiranje...';
-    var token = typeof getGitHubToken === 'function' ? getGitHubToken() : sessionStorage.getItem('gh-token') || '';
+    var token = typeof getGitHubToken === 'function' ? getGitHubToken() : localStorage.getItem('gh-token') || '';
     if (!token) {
       toast('\u{1F511} ' + (typeof t === 'function' ? t('tokenMissing') : 'Enter a token first'));
       btn.textContent = origText; btn.disabled = false; return;
@@ -61,7 +61,7 @@
     if (typeof getGitHubToken !== 'function') return;
     if (!getGitHubToken()) return;
     if (!confirm((typeof t === 'function' ? t('tokenConfirmClear') : ''))) return;
-    sessionStorage.removeItem('gh-token');
+    localStorage.removeItem('gh-token');
     document.getElementById('set-gh-token').value = '';
     var warning = document.getElementById('tokenSecurityWarning');
     if (warning) warning.style.display = 'none';
