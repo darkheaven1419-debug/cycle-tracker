@@ -125,7 +125,26 @@
     '[data-theme="dark"] .lpc-textarea{background:#1a1410!important;color:#d0c0b0!important;border-color:#4a3825!important}' +
     '@media(max-width:600px){.lpc-row{flex-direction:column!important}}' +
     '.lpc-row{display:flex!important;gap:14px!important;margin-bottom:14px!important}' +
-    '.lpc-row>*{flex:1!important;min-width:0!important}';
+    '.lpc-row>*{flex:1!important;min-width:0!important}' +
+
+    /* === M3: 小屏日期导航水平滚动 === */
+    '@media(max-width:420px){.diary-date-strip-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important}.diary-date-strip-wrap::-webkit-scrollbar{display:none!important}.diary-date-btn{flex:0 0 auto!important;min-width:38px!important}}' +
+
+    /* === 打字机光标动画 === */
+        // @keyframes diaryCursorBlink removed — caused whole-textarea flickering during typing
+    '.diary-textarea:focus{caret-color:var(--love,#c45a6b)}' +
+
+    /* === 信纸飞入动画 === */
+    '@keyframes letterFlyIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}' +
+    '.letter-card.fly-in .letter-content{animation:letterFlyIn .5s cubic-bezier(.22,1,.36,1) both}' +
+
+    /* === 今天按钮高亮（金色边框+跳动心形） === */
+    '.diary-date-btn.today{border-color:var(--gold,#b89147)!important;box-shadow:0 0 0 2px rgba(184,145,71,.25)!important}' +
+    '.diary-date-btn.today::after{content:\"💖\";position:absolute;font-size:.45rem;top:-2px;right:-4px;animation:diaryHeartBeat 1.5s ease-in-out infinite}@keyframes diaryHeartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}' +
+    '.diary-date-btn{position:relative!important}' +
+
+    /* === 纪念日徽章 === */
+    '.diary-date-btn .dab-badge{font-size:.4rem;position:absolute;top:-3px;left:-2px;line-height:1}';
 
   document.head.appendChild(_s);
 })();

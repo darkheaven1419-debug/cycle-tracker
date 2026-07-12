@@ -485,13 +485,17 @@ var APP_VERSION = (function () {
       function _getPeriodBtnText() {
         if (!_selDate) return null;
         var _d = _d0(_selDate);
+        var _today = _d0(new Date());
+        // Defense: 不允许标记在未来日期的经期
+        if (_d > _today) return null;
         if (typeof window.state !== 'undefined' && window.state.records) {
           for (var _ri2 = 0; _ri2 < window.state.records.length; _ri2++) {
             if (_sameDay(window.state.records[_ri2], _d)) return t('modalFixRemove');
           }
         }
         var _os = (typeof getOpenPeriodStart === 'function') ? getOpenPeriodStart() : null;
-        if (_os && _d0(_os) <= _d) return t('modalFixEnd');
+        // Defense: "结束经期" 仅在选中日 >= 开始日 且 <= 今天时显示
+        if (_os && _d0(_os) <= _d && _d <= _today) return t('modalFixEnd');
         if (_isInClosedPeriod(_d)) return null;
         return t('modalFixMark');
       }
@@ -659,6 +663,13 @@ var APP_VERSION = (function () {
         var _startKey = _fmtDate(_records[i]);
         var _endVal = state.periodEnds[_startKey];
         if (!_endVal) continue;
+        // Defense: 结束日期不能早于开始日期
+        if (_endVal < _startKey) {
+          state.periodEnds[_startKey] = _startKey;
+          _changed = true;
+          _endVal = _startKey;
+          console.log('[fix-period] Fixed end before start:', _startKey);
+        }
         if (i < _records.length - 1) {
           var _nextStart = _records[i + 1];
           var _maxEnd = new Date(_nextStart);
@@ -685,6 +696,34 @@ var APP_VERSION = (function () {
     var _origTPR = typeof togglePeriodRecord === 'function' ? togglePeriodRecord : null;
     if (_origTPR) {
       window.togglePeriodRecord = function (s, e) {
+        // --- 防御性检查（仅在弹窗按钮调用即无显式参数时生效） ---
+        if (!s && !e) {
+          var _sel = (typeof selectedDate !== 'undefined') ? selectedDate : null;
+          if (_sel) {
+            var _today = _d0(new Date());
+            var _d = _d0(_sel);
+            var _open = (typeof getOpenPeriodStart === 'function') ? getOpenPeriodStart() : null;
+            // 1) 不允许标记未来日期
+            if (_d > _today) {
+              var _msg = window.lang === 'zh-CN' ? '不能标记未来日期' : window.lang === 'en' ? 'Cannot mark future date' : 'Ne može se označiti budući datum';
+              if (typeof toast === 'function') toast('⛔ ' + _msg);
+              console.log('[fix-period] BLOCKED future date:', _fmtDate(_sel));
+              return;
+            }
+            // 2) 如果在标记新经期开始时存在未结束的经期，先自动结束它
+            if (_open && _d < _d0(_open)) {
+              var _closeDate = new Date(_today);
+              _closeDate.setDate(_closeDate.getDate() - 1);
+              if (typeof state !== 'undefined' && state) {
+                state.periodEnds = state.periodEnds || {};
+                state.periodEnds[_fmtDate(_open)] = _fmtDate(_closeDate);
+                console.log('[fix-period] Auto-closed open period:', _fmtDate(_open), '→', _fmtDate(_closeDate));
+                if (typeof saveState === 'function') saveState();
+              }
+            }
+            // 3) 结束日期早于开始日期的检查由 app.js 的 d0(selectedDate) > d0(openStart) 条件保证
+          }
+        }
         _origTPR(s, e);
         _fixPeriodEnds();
       };

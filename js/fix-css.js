@@ -131,8 +131,8 @@
     '@media(max-width:420px){.diary-date-strip-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important}.diary-date-strip-wrap::-webkit-scrollbar{display:none!important}.diary-date-btn{flex:0 0 auto!important;min-width:38px!important}}' +
 
     /* === 打字机光标动画 === */
-    '@keyframes diaryCursorBlink{0%,100%{opacity:1}50%{opacity:0}}' +
-    '.diary-textarea:focus{caret-color:var(--love,#c45a6b);animation:diaryCursorBlink 1s step-end infinite}' +
+        // @keyframes diaryCursorBlink removed — caused whole-textarea flickering during typing
+    '.diary-textarea:focus{caret-color:var(--love,#c45a6b)}' +
 
     /* === 信纸飞入动画 === */
     '@keyframes letterFlyIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}' +
