@@ -526,7 +526,7 @@ async function bootApp() {
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=7.2.0').catch(function () {});
+    navigator.serviceWorker.register('sw.js?v=7.3.0').catch(function () {});
   }
   loadPerProfileSettings();
 

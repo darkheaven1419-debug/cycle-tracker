@@ -420,30 +420,29 @@
 
     if (typeof renderDashboard==='function') {
       var _origTd=renderDashboard;
-      window.renderDashboard=function(){_origTd.apply(this,arguments);setTimeout(_tryCreateCard,100);};
+      window.renderDashboard=function(){_origTd.apply(this,arguments);setTimeout(_tryCreateCard,200);};
     }
 
-    // 首次加载自动创建
-    setTimeout(_tryCreateCard, 500);
-    setTimeout(_tryCreateCard, 1500);
-    setTimeout(_tryCreateCard, 3000);
+    // ── 持久轮询：首次加载 + 仪表盘重建后恢复 ──
+    // 每 500ms 检查一次（前 30 秒密集检查），之后每 3 秒检查一次
+    var _todoCheckCount = 0;
+    var _todoCheckTimer = setInterval(function() {
+      _todoCheckCount++;
+      if (!document.getElementById('todoListCard') && document.getElementById('panel-dashboard')) {
+        _tryCreateCard();
+      }
+      if (_todoCheckCount > 60) clearInterval(_todoCheckTimer); // 30秒密集检查结束
+    }, 500);
+    // 持久慢速检查（永不停止）
+    setInterval(function() {
+      if (!document.getElementById('todoListCard') && document.getElementById('panel-dashboard')) {
+        _tryCreateCard();
+      }
+    }, 3000);
 
     if (typeof getGitHubToken==='function') {
       _pullTodo();
       setInterval(function(){if(getGitHubToken())_pullTodo();},120000);
-    }
-
-    // ── MutationObserver：仪表盘重渲染后恢复 ──
-    var _dashboardMo = new MutationObserver(function(){
-      var todoCard = document.getElementById('todoListCard');
-      var dashPanel = document.getElementById('panel-dashboard');
-      if (!todoCard && dashPanel && dashPanel.classList.contains('active')) {
-        setTimeout(_tryCreateCard, 100);
-      }
-    });
-    var _dashPanel = document.getElementById('panel-dashboard');
-    if (_dashPanel) {
-      _dashboardMo.observe(_dashPanel, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     }
   })();
 })();

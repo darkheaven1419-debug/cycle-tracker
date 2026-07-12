@@ -230,7 +230,7 @@ function saveState() {
   }, 200);
 }
 let state = loadState();
-
+window.state = state;
 /* ================================================================
    SOLAR TERMS CACHE — fetched from calendar-data.json
    ================================================================ */
@@ -526,7 +526,7 @@ async function bootApp() {
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=7.2.0').catch(function () {});
+    navigator.serviceWorker.register('sw.js?v=7.3.0').catch(function () {});
   }
   loadPerProfileSettings();
 
@@ -536,6 +536,7 @@ async function bootApp() {
   });
 
   state = loadState();
+  window.state = state;
   lastCycleCount = predict().cycles.length;
   applyTheme(theme);
   setLang(lang);
@@ -1246,12 +1247,14 @@ function togglePeriodRecord(date) {
         return i !== idx;
       }),
     });
+    window.state = state;
     toast('🚫 ' + t('toast.unmarked'));
   } else {
     let newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
       return a - b;
     });
     state = Object.assign({}, state, { records: newRecords });
+    window.state = state;
     wasAdded = true;
     toast('🩸 ' + t('toast.marked'));
   }
@@ -2457,6 +2460,7 @@ function importData(e) {
 function clearAllData() {
   if (!confirm(t('settings.clearConfirm'))) return;
   state = { records: [], symptoms: {}, moods: {}, diaries: {}, settings: { cycleLength: 28, periodLength: 7, manualOverride: false }, _migrated: true };
+  window.state = state;
   saveState();
   renderAll();
   updateFab();
