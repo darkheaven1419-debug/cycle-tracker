@@ -4,14 +4,20 @@
   // console.log('[module-settings] 已加载');
 
   /* token i18n via global t() */
+  function _i18n(key, fallback) {
+    return typeof window.t === 'function' ? window.t(key) : fallback;
+  }
 
   function saveGitHubToken() {
-    var t = document.getElementById('set-gh-token').value.trim();
+    var _val = document.getElementById('set-gh-token').value.trim();
     var warning = document.getElementById('tokenSecurityWarning');
-    if (t) {
-      localStorage.setItem('gh-token', t);
-      toast('\u{1F511} ' + (typeof t === 'function' ? t('tokenSaved') : 'Token saved ✓'));
+    if (_val) {
+      localStorage.setItem('gh-token', _val);
+      toast('\u{1F511} ' + _i18n('tokenSaved', 'Token saved \u{2713}'));
+      console.log('[Token] Token 已保存到 localStorage (前4位=' + _val.substring(0, 4) + '...)');
       if (warning) warning.style.display = '';
+      // 保存后立即验证 Token
+      _validateStoredToken();
       if (typeof pullAllSharedData === 'function') {
         pullAllSharedData().then(function () {
           if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
@@ -20,11 +26,29 @@
       }
     } else {
       localStorage.removeItem('gh-token');
+      console.warn('[Token] Token 被保存但值为空，已从 localStorage 移除');
       if (warning) warning.style.display = 'none';
       if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
     }
   }
   window.saveGitHubToken = saveGitHubToken;
+
+  // 保存后立即验证 Token 有效性
+  async function _validateStoredToken() {
+    var _t = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
+    if (!_t) return;
+    try {
+      var _r = await fetch('https://api.github.com/user', { headers: { Authorization: 'Bearer ' + _t, Accept: 'application/vnd.github.v3+json' } });
+      if (_r.ok) {
+        console.log('[Token] Token 验证通过 ✓');
+      } else if (_r.status === 401) {
+        toast(_i18n('tokenInvalid', 'Token invalid'));
+        console.error('[Token] Token 无效 (401)');
+      }
+    } catch (_e) {
+      // 网络错误不干扰用户操作
+    }
+  }
 
   async function testGitHubToken() {
     var btn = document.getElementById('testTokenBtn');
@@ -34,24 +58,24 @@
     btn.textContent = '\u{23F3} Testiranje...';
     var token = typeof getGitHubToken === 'function' ? getGitHubToken() : localStorage.getItem('gh-token') || '';
     if (!token) {
-      toast('\u{1F511} ' + (typeof t === 'function' ? t('tokenMissing') : 'Enter a token first'));
+      toast('\u{1F511} ' + _i18n('tokenMissing', 'Enter a token first'));
       btn.textContent = origText; btn.disabled = false; return;
     }
     try {
       var resp = await fetch('https://api.github.com/user', { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' } });
       if (resp.ok) {
         var user = await resp.json();
-        toast('\u{2705} ' + (typeof t === 'function' ? t('tokenValid') : 'Token valid') + ' \u{2014} ' + (user.login || ''));
+        toast('\u{2705} ' + _i18n('tokenValid', 'Token valid') + ' \u{2014} ' + (user.login || ''));
         btn.textContent = '\u{2705} Va\u{017E}i'; setTimeout(function () { btn.textContent = origText; btn.disabled = false; }, 3000);
       } else if (resp.status === 401) {
-        toast('\u{274C} ' + (typeof t === 'function' ? t('tokenInvalid') : 'Token invalid'));
+        toast('\u{274C} ' + _i18n('tokenInvalid', 'Token invalid'));
         btn.textContent = '\u{274C} Neva\u{017E}e\u{0107}i'; setTimeout(function () { btn.textContent = origText; btn.disabled = false; }, 3000);
       } else {
-        toast('\u{26A0}\u{FE0F} ' + (typeof t === 'function' ? t('tokenError') : 'Error: ') + resp.status);
+        toast('\u{26A0}\u{FE0F} ' + _i18n('tokenError', 'Error: ') + resp.status);
         btn.textContent = origText; btn.disabled = false;
       }
     } catch (e) {
-      toast('\u{26A0}\u{FE0F} ' + (typeof t === 'function' ? t('tokenNetError') : 'Network error'));
+      toast('\u{26A0}\u{FE0F} ' + _i18n('tokenNetError', 'Network error'));
       btn.textContent = origText; btn.disabled = false;
     }
   }
@@ -60,13 +84,14 @@
   function clearGitHubToken() {
     if (typeof getGitHubToken !== 'function') return;
     if (!getGitHubToken()) return;
-    if (!confirm((typeof t === 'function' ? t('tokenConfirmClear') : ''))) return;
+    if (!confirm(_i18n('tokenConfirmClear', ''))) return;
     localStorage.removeItem('gh-token');
     document.getElementById('set-gh-token').value = '';
     var warning = document.getElementById('tokenSecurityWarning');
     if (warning) warning.style.display = 'none';
     if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
-    toast('\u{1F5D1}\u{FE0F} ' + (typeof t === 'function' ? t('tokenCleared') : 'Token cleared'));
+    toast('\u{1F5D1}\u{FE0F} ' + _i18n('tokenCleared', 'Token cleared'));
+    console.log('[Token] Token 已清除');
   }
   window.clearGitHubToken = clearGitHubToken;
 
@@ -77,12 +102,13 @@
     document.getElementById('set-theme').value = typeof theme !== 'undefined' ? theme : 'light';
     document.getElementById('annDateMet').value = typeof annDateMet !== 'undefined' ? annDateMet : '2026-03-19';
     document.getElementById('annDateLove').value = typeof annDateLove !== 'undefined' ? annDateLove : '2026-05-07';
-    var hasToken = typeof getGitHubToken === 'function' ? !!getGitHubToken() : false;
-    document.getElementById('set-gh-token').value = typeof getGitHubToken === 'function' ? (getGitHubToken() || '') : '';
-    document.getElementById('github-token-label').textContent = '\u{1F511} ' + (typeof t === 'function' ? t('settingsTokenLabel') : 'GitHub Token');
+    var _tokenVal = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
+    var hasToken = !!_tokenVal;
+    document.getElementById('set-gh-token').value = _tokenVal;
+    document.getElementById('github-token-label').textContent = '\u{1F511} ' + _i18n('settingsTokenLabel', 'GitHub Token');
     document.getElementById('set-gh-token').placeholder = 'ghp_...';
-    document.getElementById('set-gh-token').setAttribute('aria-label', typeof t === 'function' ? t('settingsTokenLabel') : 'GitHub Token');
-    document.getElementById('set-h-token').textContent = hasToken ? (typeof t === 'function' ? t('settingsTokenHintEnabled') : '') : (typeof t === 'function' ? t('settingsTokenHintDisabled') : '');
+    document.getElementById('set-gh-token').setAttribute('aria-label', _i18n('settingsTokenLabel', 'GitHub Token'));
+    document.getElementById('set-h-token').textContent = hasToken ? _i18n('settingsTokenHintEnabled', '') : _i18n('settingsTokenHintDisabled', '');
     // Token-related text i18n (hardcoded in HTML, updated dynamically)
     var warning = document.getElementById('tokenSecurityWarning');
     if (warning) {

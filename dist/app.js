@@ -292,7 +292,14 @@ const DATE_STRIP_DAYS = 14; // used by render-diary.js
 let sharedDiaryViewDate = new Date(); // used by render-diary.js
 
 function getGitHubToken() {
-  return sessionStorage.getItem('gh-token') || '';
+  var _token = localStorage.getItem('gh-token') || '';
+  // 防御性日志：Token 为空时输出警告
+  if (!_token) {
+    console.warn('[Token] getGitHubToken: Token 为空 — 请先在设置页面配置 GitHub Token');
+  } else {
+    console.log('[Token] getGitHubToken: Token 存在 (前4位=' + _token.substring(0, 4) + '...)');
+  }
+  return _token;
 }
 
 let _sdCache = null;

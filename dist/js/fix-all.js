@@ -545,33 +545,25 @@ var APP_VERSION = (function () {
   window.animateDashboardCards = null;
   window.animateStatsPanel = null;
 
-  // GitHub Token 以明文存储在 localStorage（持久化存储，代码更新后保留）。
+  // GitHub Token — 已在 app.js 中统一使用 localStorage 持久化存储。
   // ⚠️ 安全提示：Token 在浏览器中可被同源脚本读取。建议使用最小权限的 fine-grained token，
   //    仅授予 contents:write 权限给当前仓库。不要在公共或共享设备上使用此功能。
   (function () {
-    var _H4_KEY = 'gh-token';
-    var _origGet = typeof getGitHubToken === 'function' ? getGitHubToken : null;
-    window.getGitHubToken = function () {
-      return localStorage.getItem(_H4_KEY) || '';
-    };
-    var _origSave = typeof saveGitHubToken === 'function' ? saveGitHubToken : null;
-    window.saveGitHubToken = function () {
-      var t = document.getElementById('set-gh-token').value.trim();
-      if (!t) { localStorage.removeItem(_H4_KEY); if (_origSave) _origSave(); return; }
-      localStorage.setItem(_H4_KEY, t);
-      if (_origSave) _origSave();
-    };
-    var _origClear = typeof clearGitHubToken === 'function' ? clearGitHubToken : null;
-    window.clearGitHubToken = function () {
-      localStorage.removeItem(_H4_KEY);
-      if (_origClear) _origClear();
-    };
     try {
       var _url = new URL(window.location.href);
       if (_url.searchParams.has('token') || _url.searchParams.has('gh-token')) {
         _url.searchParams.delete('token');
         _url.searchParams.delete('gh-token');
         window.history.replaceState({}, '', _url.toString());
+      }
+    } catch (e) {}
+    // 迁移检查：如果用户有旧的 sessionStorage token，迁移到 localStorage
+    try {
+      var _oldToken = sessionStorage.getItem('gh-token');
+      if (_oldToken && !localStorage.getItem('gh-token')) {
+        localStorage.setItem('gh-token', _oldToken);
+        sessionStorage.removeItem('gh-token');
+        console.log('[Token] 已从 sessionStorage 迁移 Token 到 localStorage');
       }
     } catch (e) {}
   })();
