@@ -261,7 +261,10 @@
       "andjela": {
         "text": "Ljubavi moja lepa, danas nam je bio dosta lep dan, uspela sam da te nazovem više puta. Čak si me malo i učio kineski (zaista umeš da budeš strašan i strog učitelj 😱). Prelepo je videti te kako se smeješ, kao da me tvoj osmeh greje kao sunce preko ekrana. Zaista te neopisivo mnogo volim (mada je za tu ljubav zalužno to što si imao 100 bodova sa 10 godina u školi, inače te verovatno ne bih volela ovoliko). Volim da vidim tvoje slike iz detinjstva i nadam se da ćeš mi ih mnogo slati. Volim te!",
         "mood": "",
-        "time": 1784148838026
+        "time": 1784148838026,
+        "hug": {
+          "time": 1784148872724
+        }
       }
     }
   },
@@ -307,7 +310,10 @@
       "time": 1781736167893
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1784148872724
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -354,7 +360,14 @@
     "count": 1,
     "lastDate": "2026-06-20"
   },
-  "knowme": {},
+  "knowme": {
+    "2026-07-15": {
+      "andjela": {
+        "answer": "Mislim da je za sada njegov jezik ljubavi \"acts of service\" zato što on uvek svoju ljubav pokazuje delima više nego reč.",
+        "time": 1784149004692
+      }
+    }
+  },
   "calendarMarkers": {},
-  "updated": 1784148866525
+  "updated": 1784149005236
 }
