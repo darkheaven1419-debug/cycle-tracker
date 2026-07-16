@@ -238,6 +238,11 @@
         "text": "Ljubavi moja lepa, \nVolela bih da sam mogla ranije da te pozovem i da pričamo više preko video poziva. Ali ne brini, ovih dana ćemo imati više vremena za razgovor, makar se ja tome nadam. Zaista mi mnogo nedostaješ. Fali mi da ti čujem glas i da vidim tvoj lepi osmeh i tvoje lepe oči. Volim te najviše na svetu!",
         "mood": "",
         "time": 1783896737960
+      },
+      "barry": {
+        "text": "我爱你",
+        "mood": "",
+        "time": 1784206033148
       }
     },
     "2026-07-13": {
@@ -381,5 +386,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784206022846
+  "updated": 1784206035522
 }
