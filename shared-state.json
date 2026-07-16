@@ -265,6 +265,11 @@
         "text": "Bebo moja, danas mi je bilo baš lepo sa tobom. Nadam se da ćemo se i sutra lepo družiti i provesti puno vremena zajedno. Nadam se da ćeš nekada biti slobodan i raspoložen da pogledamo film. Volim te najviše na svetu, oko moje!",
         "mood": "",
         "time": 1784071905630
+      },
+      "barry": {
+        "text": "我爱你",
+        "mood": "",
+        "time": 1784206089945
       }
     },
     "2026-07-15": {
@@ -386,5 +391,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784206071265
+  "updated": 1784206092637
 }
