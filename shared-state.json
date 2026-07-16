@@ -214,6 +214,11 @@
         "text": "Danas nam nije bio baš lep dan, ali sutra ce biti bolje.",
         "mood": "",
         "time": 1783724659714
+      },
+      "barry": {
+        "text": "我爱你",
+        "mood": "",
+        "time": 1784205888939
       }
     },
     "2026-07-11": {
@@ -369,5 +374,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784205871425
+  "updated": 1784205890058
 }
