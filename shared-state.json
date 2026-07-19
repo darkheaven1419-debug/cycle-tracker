@@ -315,6 +315,13 @@
         "mood": "",
         "time": 1784330650078
       }
+    },
+    "2026-07-19": {
+      "andjela": {
+        "text": "Bebo moja najslađa, danas se nismo mnogo družili, ali smo se više puta na kratko čuli preko video poziva i to me čini jako srećnom jer sam uvek presrećna kada te vidim. Nadam se da ćemo se sutra družiti više. Volim te najviše na svetu!",
+        "mood": "",
+        "time": 1784501004910
+      }
     }
   },
   "cycleInfo": {
@@ -363,10 +370,7 @@
       "time": 1781736167893
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1784330512190
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -422,5 +426,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784330650636
+  "updated": 1784501005480
 }
