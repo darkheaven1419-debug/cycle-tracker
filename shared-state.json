@@ -332,6 +332,13 @@
         "mood": "",
         "time": 1784584799395
       }
+    },
+    "2026-07-22": {
+      "andjela": {
+        "text": "Ljubavi moja lepa, mnogo mi nedostaješ... Jako mi je žao što sam rekla one ružne stvari danas. Želim da znaš da ja to ne mislim zapravo. Znaš da te se ne plašim, ja tebe zaista mnogo volim i verujem ti, znam da me nikada ne bi nikako povredio. Ti si moje malo srce. Ne znam uopšte zašto sam to rekla. Jedva čekam da te vidim. Grlim te I ljubim...",
+        "mood": "",
+        "time": 1784766525438
+      }
     }
   },
   "cycleInfo": {
@@ -384,10 +391,7 @@
       "time": 1781736167893
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1784584615366
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -443,5 +447,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784584799957
+  "updated": 1784766526231
 }
