@@ -355,6 +355,11 @@
         "hug": {
           "time": 1784816182897
         }
+      },
+      "andjela": {
+        "hug": {
+          "time": 1784841019307
+        }
       }
     }
   },
@@ -413,8 +418,8 @@
     }
   ],
   "hug": {
-    "from": "barry",
-    "time": 1784816182897
+    "from": "andjela",
+    "time": 1784841019307
   },
   "songs": {
     "barry": null,
@@ -468,8 +473,14 @@
         "answer": "Mislim da je za sada njegov jezik ljubavi \"acts of service\" zato što on uvek svoju ljubav pokazuje delima više nego reč.",
         "time": 1784149004692
       }
+    },
+    "2026-07-23": {
+      "andjela": {
+        "answer": "U Srbiju 😁",
+        "time": 1784841033612
+      }
     }
   },
   "calendarMarkers": {},
-  "updated": 1784841008472
+  "updated": 1784841033992
 }
