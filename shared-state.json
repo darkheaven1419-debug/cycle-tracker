@@ -364,6 +364,13 @@
         "mood": "",
         "time": 1784841130346
       }
+    },
+    "2026-07-24": {
+      "andjela": {
+        "hug": {
+          "time": 1784927839618
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -423,9 +430,17 @@
       "text": "Mnogo poruka koje si mi poslao",
       "from": "andjela",
       "time": 1781736167893
+    },
+    {
+      "text": "Hvala ti što si mi danas puno pričao o svojoj porodici.",
+      "from": "andjela",
+      "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1784927839618
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -487,5 +502,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784927835123
+  "updated": 1784927875239
 }
