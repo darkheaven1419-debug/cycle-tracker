@@ -374,6 +374,13 @@
         "mood": "",
         "time": 1784928015768
       }
+    },
+    "2026-07-25": {
+      "andjela": {
+        "text": "Volim te ❤️",
+        "mood": "",
+        "time": 1785019670418
+      }
     }
   },
   "cycleInfo": {
@@ -440,10 +447,7 @@
       "time": 1784927874533
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1784927839618
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -505,5 +509,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1784928016620
+  "updated": 1785019670876
 }
