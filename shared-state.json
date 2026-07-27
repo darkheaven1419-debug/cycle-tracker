@@ -391,6 +391,16 @@
         "mood": "",
         "time": 1785038790461
       }
+    },
+    "2026-07-27": {
+      "andjela": {
+        "hug": {
+          "time": 1785188579114
+        },
+        "text": "Honey, I really hope that we can spend more time together tomorrow, I really miss you, but if you are busy with your friends that's also fine, I want you to have fun and be happy. Love you ❤️",
+        "mood": "",
+        "time": 1785188635005
+      }
     }
   },
   "cycleInfo": {
@@ -461,7 +471,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1785188579113
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -523,5 +536,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1785188577901
+  "updated": 1785188635554
 }
