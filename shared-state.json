@@ -401,6 +401,16 @@
         "mood": "",
         "time": 1785188635005
       }
+    },
+    "2026-07-28": {
+      "andjela": {
+        "hug": {
+          "time": 1785275122972
+        },
+        "text": "My dearest, I am so sorry for the way that I behaved in the past few days. Instead of saying that I miss you and asking you to spend a little more time with me, I just argued with you and cried, and that on repeat. I am really sorry. I hope we won't argue anymore and just be happy, because I really love you the most. Forever yours, Anđela... ❤️",
+        "mood": "",
+        "time": 1785275290422
+      }
     }
   },
   "cycleInfo": {
@@ -475,7 +485,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1785275122971
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -537,5 +550,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1785275120376
+  "updated": 1785275290985
 }
