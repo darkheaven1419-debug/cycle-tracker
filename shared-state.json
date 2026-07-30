@@ -424,6 +424,14 @@
         "hug": {
           "time": 1785378218033
         }
+      },
+      "andjela": {
+        "hug": {
+          "time": 1785445345365
+        },
+        "text": "My one and only, I was happy with you today, but I still miss you. I hope we will find a way to watch a movie together, at least we started trying today. I love you more than anything in this world. I will try to wake up earlier every day, so I can spend more time with you. Only yours, Anđela ❤️",
+        "mood": "",
+        "time": 1785445457496
       }
     }
   },
@@ -504,8 +512,8 @@
     }
   ],
   "hug": {
-    "from": "barry",
-    "time": 1785378218033
+    "from": "andjela",
+    "time": 1785445345365
   },
   "songs": {
     "barry": null,
@@ -568,5 +576,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1785445343420
+  "updated": 1785445458175
 }
