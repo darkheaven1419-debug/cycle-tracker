@@ -417,6 +417,11 @@
         "text": "今天我们虽然聊天的时间不是特别多，但是我们的感情却更加深厚了，我以为昨天我们发生了那样的事，你对我的爱会越来越少，但是你并没有那么做，你对我的爱依然是非常深厚并且坚定的，我从来没有遇到过像你这样的女孩，每次这样的时候我都在回忆，之前的女朋友他们都会一点一点撤回自己的爱，而你却依然愿意和我走下去，不过我向你保证，我会尽全力不伤害你，因为我真的很爱你❤️",
         "mood": "",
         "time": 1785378153651
+      },
+      "andjela": {
+        "text": "Volim te ❤️",
+        "mood": "",
+        "time": 1785530695733
       }
     },
     "2026-07-30": {
@@ -432,6 +437,13 @@
         "text": "My one and only, I was happy with you today, but I still miss you. I hope we will find a way to watch a movie together, at least we started trying today. I love you more than anything in this world. I will try to wake up earlier every day, so I can spend more time with you. Only yours, Anđela ❤️",
         "mood": "",
         "time": 1785445457496
+      }
+    },
+    "2026-07-31": {
+      "andjela": {
+        "hug": {
+          "time": 1785530668680
+        }
       }
     }
   },
@@ -518,7 +530,7 @@
   ],
   "hug": {
     "from": "andjela",
-    "time": 1785445345365
+    "time": 1785530668680
   },
   "songs": {
     "barry": null,
@@ -581,5 +593,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1785530667584
+  "updated": 1785530696331
 }
