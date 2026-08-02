@@ -448,6 +448,13 @@
         "mood": "",
         "time": 1785530892822
       }
+    },
+    "2026-08-03": {
+      "andjela": {
+        "hug": {
+          "time": 1785708008571
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -535,7 +542,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1785708008571
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -597,5 +607,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1785708004961
+  "updated": 1785708019871
 }
