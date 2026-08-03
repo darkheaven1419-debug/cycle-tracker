@@ -452,8 +452,11 @@
     "2026-08-03": {
       "andjela": {
         "hug": {
-          "time": 1785708008571
-        }
+          "time": 1785793617218
+        },
+        "text": "My love, I hope you are having nice dreams, since you are sleeping at Fish's place and not in your home and bed. I really miss you, I hope we will be able to talk more on a video call tomorrow. I love you the most...Forever yours, Anđela. ❤️",
+        "mood": "",
+        "time": 1785793743166
       }
     },
     "2026-08-02": {
@@ -555,7 +558,7 @@
   ],
   "hug": {
     "from": "andjela",
-    "time": 1785708008571
+    "time": 1785793617218
   },
   "songs": {
     "barry": null,
@@ -618,5 +621,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1785793615448
+  "updated": 1785793743786
 }
