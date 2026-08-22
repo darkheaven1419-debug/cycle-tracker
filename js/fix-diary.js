@@ -95,7 +95,7 @@ var DD = {
     lockText: '\u{1F512} \u{5199}\u{5B8C}\u{81EA}\u{5DF1}\u{7684}\u{65E5}\u{8BB0}\u{624D}\u{80FD}\u{67E5}\u{770B}\u{4ED6}/\u{5979}\u{7684}\u{54E6} \u{1F48C}',
     navPrev: '\u{25C2} \u{4E0A}\u{4E00}\u{5468}', navNext: '\u{4E0B}\u{4E00}\u{5468} \u{25B8}',
     calTitle: '\u{65E5}\u{5386}', writeDatePrefix: '\u{1F48C} ',
-    translateBtn: '\u{1F310} \u{7FFB}\u{8BD1}', chineseLearn: '\u{1F4DA} \u{5B66}\u{4E2D}\u{6587}',
+    translateBtn: '\u{1F310} \u{7FFB}\u{8BD1}',
   },
   sr: {
     partnerTitle: '\u{1F338} An\u{0111}elino pismo', barryTitle: '\u{1F466} Barryjevo pismo',
@@ -107,7 +107,7 @@ var DD = {
     lockText: '\u{1F512} Napi\u{0161}i svoje pismo da otklju\u{010D}a\u{0161} partnerovo \u{1F48C}',
     navPrev: '\u{25C2} Prethodna nedelja', navNext: 'Slede\u{0107}a nedelja \u{25B8}',
     calTitle: 'Kalendar', writeDatePrefix: '\u{1F48C} ',
-    translateBtn: '\u{1F310} Prevedi', chineseLearn: '\u{1F4DA} Kineski',
+    translateBtn: '\u{1F310} Prevedi',
   },
   en: {
     partnerTitle: '\u{1F338} An\u{0111}ela\'s Letter', barryTitle: '\u{1F466} Barry\'s Letter',
@@ -119,7 +119,7 @@ var DD = {
     lockText: '\u{1F512} Write your diary first to unlock your partner\'s \u{1F48C}',
     navPrev: '\u{25C2} Previous Week', navNext: 'Next Week \u{25B8}',
     calTitle: 'Calendar', writeDatePrefix: '\u{1F48C} ',
-    translateBtn: '\u{1F310} Translate', chineseLearn: '\u{1F4DA} Learn Chinese',
+    translateBtn: '\u{1F310} Translate',
   }
 };
 function _dd(key) {

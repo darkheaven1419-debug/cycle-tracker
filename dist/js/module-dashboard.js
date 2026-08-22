@@ -9,7 +9,6 @@
       welcomeBack: '\u{65E9}\u{4E0A}\u{597D}\u{FF0C}',
       todayCulture: '\u{4ECA}\u{65E5}\u{6587}\u{5316}\u{77E5}\u{8BC6}',
       goDiary: '\u{1F4DD} \u{5199}\u{65E5}\u{8BB0}',
-      goLearn: '\u{1F4DA} \u{4E2D}\u{534E}\u{6587}\u{5316}',
       goCalendar: '\u{1F4C5} \u{67E5}\u{770B}\u{65E5}\u{5386}',
       connectQ: '\u{1F4AD} \u{4ECA}\u{5929}\u{7684}\u{5BF9}\u{8BDD}',
       refreshQ: '\u{1F504} \u{6362}\u{4E00}\u{4E2A}\u{95EE}\u{9898}',
@@ -24,7 +23,6 @@
       welcomeBack: 'Dobrodo\u{0161}la,',
       todayCulture: 'Dana\u{0161}nje kulturno znanje',
       goDiary: '\u{1F4DD} Dnevnik',
-      goLearn: '\u{1F4DA} Kineska kultura',
       goCalendar: '\u{1F4C5} Kalendar',
       connectQ: '\u{1F4AD} Pitanje dana',
       refreshQ: '\u{1F504} Drugo pitanje',
@@ -148,7 +146,7 @@
       '<div class="dash-welcome" id="dash-welcome">' + dl('welcomeBack') + '<strong></strong></div>' +
       '<div class="card dash-card" style="text-align:center"><div id="dash-stats-cards" style="display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:8px"></div></div>' +
       '<div class="card dash-card" id="dash-connect" style="border-left:3px solid var(--teal)"><h4>' + dl('connectQ') + '</h4><div style="font-size:.82rem;color:var(--text);line-height:1.6;font-style:italic;margin-bottom:8px" id="dailyConnectQ"></div><button class="dash-link-btn" onclick="document.getElementById(\'dailyConnectQ\').textContent=getDailyQuestion();" style="font-size:.62rem;padding:4px 12px">' + dl('refreshQ') + '</button></div>' +
-      '<div class="card dash-card"><div class="dash-links"><button class="dash-link-btn" onclick="switchToTab(\'diary\')">' + dl('goDiary') + '</button><button class="dash-link-btn" onclick="switchToTab(\'chinese\')">' + dl('goLearn') + '</button><button class="dash-link-btn" onclick="goToday();switchToTab(\'stats\')">' + dl('goCalendar') + '</button></div></div>';
+      '<div class="card dash-card"><div class="dash-links"><button class="dash-link-btn" onclick="switchToTab(\'diary\')">' + dl('goDiary') + '</button><button class="dash-link-btn" onclick="goToday();switchToTab(\'stats\')">' + dl('goCalendar') + '</button></div></div>';
     _initialized = true;
   }
 

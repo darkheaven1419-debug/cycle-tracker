@@ -382,7 +382,6 @@ function setLang(l) {
    I18N HELPERS
    ================================================================ */
 // i18n helper L() defined below (line ~1647) — handles both object and string args
-// langName() defined in js/chinese-learn.js — 3-level language fallback for object lookups
 
 /* ================================================================
    MODIFIED: init
@@ -692,11 +691,6 @@ function switchLanguage(l) {
   applyAllUI();
   loadSettingsUI();
   document.getElementById('set-language').value = l;
-  try {
-    if (typeof renderChineseHome === 'function') renderChineseHome();
-  } catch (e) {
-    /* renderChineseHome may not exist */
-  }
   renderLunarInfo();
   renderSeasonalPoemCard();
 }
@@ -2625,7 +2619,7 @@ function goToday() {
 // cl(), getTodaysCultureIndex(), initCultureTab(), renderCultureCard(),
 // prevCultureCard(), nextCultureCard(), goToTodayCulture() are in culture-cards.js
 
-const _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'chinese', 'settings'];
+const _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'settings'];
 let _prevTabIdx = 0;
 document.querySelectorAll('.tab').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -2689,9 +2683,6 @@ document.querySelectorAll('.tab').forEach((btn) => {
     }
     if (id === 'diary') {
       initSharedDiaryTab();
-    }
-    if (id === 'chinese') {
-      if (typeof initChineseTab === 'function') initChineseTab();
     }
   });
 });
