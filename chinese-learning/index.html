@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ede0da">
+<title>中文学习 · Kineski · Chinese</title>
+<meta name="description" content="三语中文学习应用 — Barry & Anđela 的中文学习之旅">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🀄</text></svg>">
+<link rel="stylesheet" href="css/learning.css">
+</head>
+<body>
+<div class="lrn-app">
+
+  <!-- 顶部标题 + 语言切换 -->
+  <div class="lrn-header">
+    <div class="lrn-header-title"><span class="lrn-logo">🀄</span><span id="lrnAppTitle">中文学习</span></div>
+    <div class="lrn-lang-switch" role="group" aria-label="Language / 语言 / Jezik">
+      <button class="lrn-lang-btn" data-lang="zh-CN" onclick="setLrnLang('zh-CN')">中文</button>
+      <button class="lrn-lang-btn" data-lang="sr" onclick="setLrnLang('sr')">СРП</button>
+      <button class="lrn-lang-btn" data-lang="en" onclick="setLrnLang('en')">EN</button>
+    </div>
+  </div>
+
+  <div class="lrn-app-tip" id="lrnAppTip">💡 每天 3 课 · 点滴进步 · 滴水穿石</div>
+
+  <!-- 子导航 -->
+  <div class="lrn-subnav" id="lrnSubnav">
+    <button class="lrn-subnav-btn active" data-lrn-view="home" onclick='switchLrnView("home")'>🏠 <span class="lrn-sub-label" id="lrn-sub-home">Learn</span></button>
+    <button class="lrn-subnav-btn" data-lrn-view="stats" onclick='switchLrnView("stats")'>📊 <span class="lrn-sub-label" id="lrn-sub-stats">Stats</span></button>
+    <button class="lrn-subnav-btn" data-lrn-view="achievements" onclick='switchLrnView("achievements")'>🏆 <span class="lrn-sub-label" id="lrn-sub-ach">Badges</span></button>
+    <button class="lrn-subnav-btn" data-lrn-view="favorites" onclick='switchLrnView("favorites")'>⭐ <span class="lrn-sub-label" id="lrn-sub-fav">Favorites</span></button>
+    <button class="lrn-subnav-btn" data-lrn-view="review" onclick='switchLrnView("review")'>🔄 <span class="lrn-sub-label" id="lrn-sub-review">Review</span></button>
+  </div>
+
+  <!-- 首页视图 -->
+  <div class="lrn-view active" id="lrn-view-home">
+    <div class="lrn-streak-card" id="lrnStreakCard">
+      <div class="lrn-streak-icon">🔥</div>
+      <div class="lrn-streak-info">
+        <div class="lrn-streak-count" id="lrnStreakCount">0</div>
+        <div class="lrn-streak-label" id="lrnStreakLabel">dana zaredom</div>
+      </div>
+      <div class="lrn-ring-container">
+        <svg class="lrn-ring" viewBox="0 0 100 100">
+          <circle class="lrn-ring-bg" cx="50" cy="50" r="40"/>
+          <circle class="lrn-ring-fg" id="lrnRingFg" cx="50" cy="50" r="40"/>
+        </svg>
+        <span class="lrn-ring-text" id="lrnRingText">0%</span>
+      </div>
+    </div>
+    <div class="lrn-continue-card" id="lrnContinueCard" style="display:none">
+      <span class="lrn-continue-icon">📖</span>
+      <div class="lrn-continue-info">
+        <div class="lrn-continue-title" id="lrnContinueTitle"></div>
+        <div class="lrn-continue-sub" id="lrnContinueSub"></div>
+      </div>
+      <button class="lrn-continue-btn" onclick="continueLearning()">▶</button>
+    </div>
+    <div class="lrn-phase-title" id="lrn-phase-title">Put učenja</div>
+    <div class="lrn-phase-grid" id="lrnPhaseGrid"></div>
+    <div class="lrn-review-card" id="lrnReviewCard" style="display:none">
+      <div class="lrn-review-header">🔄 <span id="lrn-review-title">Današnji pregled</span></div>
+      <div class="lrn-review-list" id="lrnReviewList"></div>
+      <button class="lrn-review-all-btn" onclick='switchLrnView("review")' id="lrn-review-all-btn">Pregledaj sve</button>
+    </div>
+  </div>
+
+  <!-- 成就 -->
+  <div class="lrn-view" id="lrn-view-achievements">
+    <div class="lrn-ach-stats" id="lrnAchStats"></div>
+    <div class="lrn-ach-grid" id="lrnAchGrid"></div>
+  </div>
+
+  <!-- 统计 -->
+  <div class="lrn-view" id="lrn-view-stats">
+    <div class="lrn-stats-cards" id="lrnStatsCards"></div>
+    <div class="lrn-stats-heatmap" id="lrnStatsHeatmap"></div>
+  </div>
+
+  <!-- 收藏 -->
+  <div class="lrn-view" id="lrn-view-favorites">
+    <div class="lrn-favorites-header fs-small fw-600 mb-10">⭐ <span id="lrn-fav-title">收藏词汇</span></div>
+    <div id="lrnFavoritesContainer"></div>
+  </div>
+
+  <!-- 复习 -->
+  <div class="lrn-view" id="lrn-view-review">
+    <div class="lrn-review-full-list" id="lrnReviewFullList"></div>
+  </div>
+
+  <!-- 阶段课程列表 -->
+  <div class="lrn-view" id="lrn-view-phase" style="display:none">
+    <button class="lrn-back-btn" onclick='switchLrnView("home")'>← <span id="lrn-back-label">Nazad</span></button>
+    <div class="lrn-phase-header" id="lrnPhaseHeader"></div>
+    <div class="lrn-lesson-list" id="lrnLessonList"></div>
+  </div>
+
+  <!-- 课程详情 -->
+  <div class="lrn-view" id="lrn-view-lesson" style="display:none">
+    <button class="lrn-back-btn" onclick='switchLrnView("home")'>← <span id="lrn-back-label2">Nazad</span></button>
+    <div class="lrn-lesson-header" id="lrnLessonHeader"></div>
+    <div class="lrn-step-indicator" id="lrnStepIndicator"></div>
+    <div class="lrn-step-content" id="lrnStepContent"></div>
+    <div class="lrn-step-actions" id="lrnStepActions"></div>
+  </div>
+
+</div>
+
+<div id="toastContainer"></div>
+
+<script src="js/chinese-learn.js"></script>
+<script src="js/chinese-ui.js"></script>
+<script src="js/chinese-quiz.js"></script>
+<script src="js/chinese-panels.js"></script>
+<script src="js/chinese-listen.js"></script>
+<script src="js/bootstrap.js"></script>
+</body>
+</html>
