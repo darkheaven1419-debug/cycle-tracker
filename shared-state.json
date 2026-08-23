@@ -470,6 +470,20 @@
         "mood": "",
         "time": 1785708133223
       }
+    },
+    "2026-08-21": {
+      "andjela": {
+        "hug": {
+          "time": 1787327848704
+        }
+      }
+    },
+    "2026-08-23": {
+      "andjela": {
+        "hug": {
+          "time": 1787472267044
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -487,52 +501,76 @@
     "symptoms": {},
     "moods": {
       "2026-06-13": {
-        "mood": "happy",
-        "time": 1781326770687
+        "andjela": {
+          "mood": "happy",
+          "time": 1781326770687
+        }
       },
       "2026-07-16": {
-        "mood": "happy",
-        "time": 1784206311788
+        "andjela": {
+          "mood": "happy",
+          "time": 1784206311788
+        }
       },
       "2026-07-20": {
-        "mood": "happy",
-        "time": 1784584620248
+        "andjela": {
+          "mood": "happy",
+          "time": 1784584620248
+        }
       },
       "2026-07-23": {
-        "mood": "happy",
-        "time": 1784841006336
+        "andjela": {
+          "mood": "happy",
+          "time": 1784841006336
+        }
       },
       "2026-07-24": {
-        "mood": "loved",
-        "time": 1784927832774
+        "andjela": {
+          "mood": "loved",
+          "time": 1784927832774
+        }
       },
       "2026-07-27": {
-        "mood": "tired",
-        "time": 1785188575796
+        "andjela": {
+          "mood": "tired",
+          "time": 1785188575796
+        }
       },
       "2026-07-28": {
-        "mood": "sad",
-        "time": 1785275117904
+        "andjela": {
+          "mood": "sad",
+          "time": 1785275117904
+        }
       },
       "2026-07-30": {
-        "mood": "happy",
-        "time": 1785445341236
+        "andjela": {
+          "mood": "happy",
+          "time": 1785445341236
+        }
       },
       "2026-07-31": {
-        "mood": "happy",
-        "time": 1785530665427
+        "andjela": {
+          "mood": "happy",
+          "time": 1785530665427
+        }
       },
       "2026-08-02": {
-        "mood": "meh",
-        "time": 1785708002789
+        "andjela": {
+          "mood": "meh",
+          "time": 1785708002789
+        }
       },
       "2026-08-03": {
-        "mood": "tired",
-        "time": 1785793613175
+        "andjela": {
+          "mood": "tired",
+          "time": 1785793613175
+        }
       },
       "2026-08-21": {
-        "mood": "loved",
-        "time": 1787327844125
+        "andjela": {
+          "mood": "loved",
+          "time": 1787327844125
+        }
       }
     },
     "diaries": {},
@@ -566,7 +604,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1787472267043
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -628,5 +669,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1787327846297
+  "updated": 1787472319535
 }
