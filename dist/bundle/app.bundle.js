@@ -888,6 +888,11 @@ const SyncModule = (function () {
 
   function _stopAutoPull() {
     if (_autoPullTimer) { clearInterval(_autoPullTimer); _autoPullTimer = null; }
+    // 同时移除可见性监听，避免登出后页面切回可见时被 _visHandler 重新拉起轮询
+    if (_visHandler && typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', _visHandler);
+      _visHandler = null;
+    }
   }
 
   // ── 同步错误状态管理 ──
@@ -4505,6 +4510,27 @@ saveSymptom = function () {
 if (typeof AuthModule !== 'undefined') {
   AuthModule.init();
 }
+
+/* ── 自动同步：登录确认（bootApp）后启动 60s 自动拉取，登出时停止 ── */
+(function () {
+  // bootApp 是登录成功（PIN 验证通过）与会话恢复的共同入口
+  var _bootAppOrig = window.bootApp;
+  if (typeof _bootAppOrig === 'function') {
+    window.bootApp = function () {
+      var _result = _bootAppOrig.apply(this, arguments);
+      if (typeof SyncModule !== 'undefined' && SyncModule.startAutoPull) SyncModule.startAutoPull();
+      return _result;
+    };
+  }
+  // 登出时停止轮询，避免后台持续请求
+  var _logoutOrig = AuthModule.logout;
+  if (typeof _logoutOrig === 'function') {
+    AuthModule.logout = function () {
+      if (typeof SyncModule !== 'undefined' && SyncModule.stopAutoPull) SyncModule.stopAutoPull();
+      return _logoutOrig.apply(this, arguments);
+    };
+  }
+})();
 
 /* === dist/js/module-holidays.js === */
 "use strict";

@@ -27,6 +27,11 @@ const SyncModule = (function () {
 
   function _stopAutoPull() {
     if (_autoPullTimer) { clearInterval(_autoPullTimer); _autoPullTimer = null; }
+    // 同时移除可见性监听，避免登出后页面切回可见时被 _visHandler 重新拉起轮询
+    if (_visHandler && typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', _visHandler);
+      _visHandler = null;
+    }
   }
 
   // ── 同步错误状态管理 ──
