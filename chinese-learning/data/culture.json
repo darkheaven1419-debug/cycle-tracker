@@ -1,32 +1,362 @@
 [
-  {id:1,zh:'春节',sr:'Kineska Nova Godina',icon:'🧧',desc:'Najvažniji praznik u Kini. Porodice se okupljaju na velikoj večeri (年夜饭), deca dobijaju crvene koverte (红包) sa novcem, a vatromet tera zle duhove. Svaka godina ima svoju životinju po kineskom zodijaku.',tags:['praznik','porodica','tradicija']},
-  {id:2,zh:'微信支付',sr:'WeChat plaćanje',icon:'📱',desc:'U Kini se skoro sve plaća telefonom — WeChat Pay ili Alipay. Gotovina se retko koristi. Kad dođeš u Kinu, instaliraj WeChat i poveži karticu — moći ćeš da platiš sve: od pijace do voza.',tags:['svakodnevno','tehnologija','praktično']},
-  {id:3,zh:'餐桌礼仪',sr:'Ponašanje za stolom',icon:'🥢',desc:'Kinezi vole da dele hranu — jela se stavljaju na sredinu stola i svi uzimaju. Ne zabodi štapiće uspravno u pirinač (podseća na tamjan na sahrani). Kad nazdravljaš, kucni čašom malo niže od starije osobe — znak poštovanja.',tags:['hrana','bonton','svakodnevno']},
-  {id:4,zh:'称呼方式',sr:'Obraćanje ljudima',icon:'👋',desc:'Kinezi retko koriste imena direktno. Starije osobe se oslovljavaju sa 阿姨(tetka) ili 叔叔(čika), mlađe sa 小姐姐(starija sestra) ili 小哥哥(stariji brat). U prodavnici ćeš čuti 美女(lepotice)!',tags:['jezik','bonton','svakodnevno']},
-  {id:5,zh:'外卖与快递',sr:'Dostava hrane i paketa',icon:'🛵',desc:'U Kini možeš naručiti bukvalno SVE preko aplikacije: hranu (美团, 饿了么), namirnice, lekove, pa čak i nekog da ti sredi stan. Dostava je neverovatno brza — često stiže za 30 minuta.',tags:['svakodnevno','praktično','tehnologija']},
-  {id:6,zh:'红包文化',sr:'Kultura crvenih koverti',icon:'🧧',desc:'Crvena koverta (红包) se poklanja za Novu Godinu, venčanja i rođendane. Crvena boja donosi sreću. Nikad ne poklanjaj praznu kovertu, i uvek je primi sa obe ruke. Digitalne crvene koverte preko WeChata su takođe veoma popularne.',tags:['tradicija','praznik','pokloni']},
-  {id:7,zh:'家庭观念',sr:'Porodične vrednosti',icon:'👨‍👩‍👧‍👦',desc:'Porodica je centar kineskog društva. Deca često žive sa roditeljima i kad odrastu. Stariji se poštuju — njihovo mišljenje je veoma važno. Koncept 孝顺 (sinovljeva pobožnost) znači brigu o roditeljima u starosti.',tags:['porodica','tradicija','vrednosti']},
-  {id:8,zh:'茶文化',sr:'Kultura čaja',icon:'🍵',desc:'Čaj je srce kineske kulture. Postoji šest vrsta: zeleni, crni, beli, oolong, žuti i puer. Najpoznatiji je zeleni čaj 龙井 (Longjing). Kad ti neko sipa čaj, kucni prstima po stolu da kažeš hvala — to se zove 叩指礼.',tags:['piće','tradicija','svakodnevno']},
-  {id:9,zh:'吉祥话',sr:'Srećne fraze',icon:'🍀',desc:'Kinezi vole da izgovaraju srećne fraze: 恭喜发财 (da se obogatiš), 万事如意 (da ti sve ide po volji), 身体健康 (da si zdrav). Za Novu Godinu se obavezno kaže 新年快乐! Broj 8 je srećan, broj 4 se izbegava (zvuči kao reč za smrt).',tags:['jezik','tradicija','praznik']},
-  {id:10,zh:'七夕节',sr:'Kineski Dan zaljubljenih',icon:'💕',desc:'Slavi se 7. dana 7. meseca po lunarnom kalendaru. Legenda kaže da pastir i tkalja (牛郎织女) mogu da se sretnu samo te noći, preko mosta od svraka. Danas parovi idu na romantične večere i razmenjuju poklone.',tags:['praznik','ljubav','legenda']},
-  {id:11,zh:'汉字之美',sr:'Lepota kineskih znakova',icon:'🖌️',desc:'Kineski znakovi (汉字) su nastali iz slika — npr. 山 izgleda kao planina, 水 kao voda. Postoji preko 50.000 znakova, ali za svakodnevni život dovoljno je oko 2.000-3.000. Kaligrafija (书法) je visoka umetnost.',tags:['jezik','umetnost','istorija']},
-  {id:12,zh:'尊师重道',sr:'Poštovanje učitelja',icon:'📚',desc:'U Kini su učitelji veoma poštovani. Postoji izreka: 一日为师，终身为父 (učitelj na jedan dan, otac za ceo život). Učenici se obraćaju nastavnicima sa 老师 (laoši) i nikad ih ne oslovljavaju samo po imenu.',tags:['obrazovanje','tradicija','vrednosti']},
-  {id:13,zh:'中国新年习俗',sr:'Novogodišnji običaji',icon:'🏮',desc:'Pre Nove Godine se čisti cela kuća (da se otera loša sreća), lepe se crveni ukrasi, a na vrata se kače dvostrani natpisi (对联). Deca ostaju budna do ponoći (守岁) da čuvaju godinu. Sutradan se oblači nova crvena odeća.',tags:['praznik','tradicija','porodica']},
-  {id:14,zh:'中秋节',sr:'Festival sredine jeseni',icon:'🥮',desc:'Drugi najvažniji praznik posle Nove Godine. Jede se 月饼 (mesečev kolač) i posmatra pun mesec. Simbolizuje porodično okupljanje — mesec je pun, porodica je na okupu. Pesnik Li Bai je napisao: 举头望明月，低头思故乡 (Podignem glavu ka mesecu, spustim je misleći na dom).',tags:['praznik','porodica','hrana']},
-  {id:15,zh:'看病就医',sr:'Odlasci kod lekara',icon:'🏥',desc:'U Kini prvo ideš u lokalnu bolnicu (社区医院) pa tek onda u veliku. Poneseš zdravstvenu knjižicu (医保卡). Aplikacije za zakazivanje pregleda su WeChat mini-programi. U apoteci tražiš 药店 — većina lekova je dostupna bez recepta. Stranci uvek nose pasoš za registraciju.',tags:['svakodnevno','zdravlje','praktično']},
-  {id:16,zh:'银行开户',sr:'Otvaranje računa u banci',icon:'🏦',desc:'Za otvaranje računa u kineskoj banci treba ti pasoš, viza i dokaz o adresi. Najveće banke su ICBC, Bank of China i China Construction Bank. Mobilno bankarstvo je neverovatno napredno — sve transakcije se obavljaju preko aplikacije, a gotovina se retko koristi.',tags:['svakodnevno','praktično','finansije']},
-  {id:17,zh:'租房流程',sr:'Iznajmljivanje stana',icon:'🏠',desc:'U Kini se stanovi iznajmljuju preko agencija ili aplikacija kao što su Ziroom (自如) i Beike (贝壳). Ugovor se potpisuje na kineskom — obavezno nađi prevodioca! Depozit je obično jedna mesečna kirija. Proveri da li su računi (struja, voda, grejanje) uključeni pre potpisivanja.',tags:['svakodnevno','praktično','život']},
-  {id:18,zh:'快递寄取',sr:'Slanje i primanje paketa',icon:'📦',desc:'U Kini sve stiže brzo — naručiš pre podne, stigne do večeri. Kurirske kompanije (SF, ZTO, YTO) su svuda. Paketi se često ostavljaju u ormarićima (快递柜) ispred zgrada. Ako ne pokupiš u roku od 24h, naplaćuje se! Za slanje, popuniš formular na kineskom ili koristiš aplikaciju.',tags:['svakodnevno','tehnologija','praktično']},
-  {id:19,zh:'交通卡使用',sr:'Korišćenje kartice za prevoz',icon:'💳',desc:'U većini kineskih gradova koristi se jedna kartica za sav gradski prevoz (metro, autobus, čak i taksi). U Pekingu je to 一卡通 (Yikatong). Možeš je kupiti na svakoj stanici metroa i dopuniti na istom mestu. U Šangaju i drugim gradovima, mobitel zamenjuje karticu — platiš preko Alipay-a.',tags:['svakodnevno','prevoz','praktično']},
-  {id:20,zh:'手机支付安全',sr:'Sigurnost mobilnog plaćanja',icon:'🔐',desc:'WeChat Pay i Alipay su neverovatno praktični, ali pazi na sigurnost. Nikad ne skeniraj QR kod od nepoznate osobe. Uključi dvofaktorsku autentifikaciju. Ne ostavljaj telefon otključan — sve tvoje finansije su u njemu! Ako izgubiš telefon, odmah blokiraj nalog preko banke.',tags:['tehnologija','sigurnost','praktično']},
-  {id:21,zh:'垃圾分类',sr:'Razvrstavanje otpada',icon:'♻️',desc:'U velikim kineskim gradovima (Šangaj prvi) otpad se strogo razvrstava: kuhinjski otpad (湿垃圾), suvi otpad (干垃圾), reciklaža (可回收物) i opasan otpad (有害垃圾). Kante su u bojama, a na ulici postoje dežurni koji ti pomognu. Kazne za pogrešno bacanje su visoke!',tags:['svakodnevno','ekologija','praktično']},
-  {id:22,zh:'排队礼仪',sr:'Redovi i strpljenje',icon:'🧍',desc:'Kinezi su strpljivi u redovima — svuda se čeka: za hranu, za autobus, za popularni bubble tea. Ali na pijaci ili u metrou, gužva može biti intenzivna. Ne čudi se ako neko stane tik uz tebe — lični prostor je manji nego u Evropi. Važno: u banci ili bolnici uzmi broj i čekaj da bude pozvan.',tags:['svakodnevno','bonton','praktično']},
-  {id:23,zh:'请客吃饭',sr:'Čašćavanje gostiju',icon:'🍽️',desc:'Kad Kinez pozove na večeru, domaćin uvek plaća — borba oko računa je deo bontona! Gosti donose mali poklon (voće, čaj). Kaže se 我来买单 (ja plaćam). Na poslovnim večerama, sedenje prati strogu hijerarhiju — najvažniji sede najdalje od vrata, licem okrenuti ka ulazu.',tags:['hrana','bonton','tradicija']},
-  {id:24,zh:'送礼习俗',sr:'Običaji darivanja',icon:'🎁',desc:'U Kini se ne poklanjaju satovi (送钟 zvuči kao sahrana), kišobrani (散 — razdvajanje) niti oštri predmeti. Crvena koverta sa novcem je uvek siguran izbor. Pokloni se primaju sa obe ruke i ne otvaraju se pred darodavcem — to bi bilo nepristojno. Voće i čaj su uvek dobrodošli pokloni.',tags:['tradicija','bonton','pokloni']},
-  {id:25,zh:'家庭称谓',sr:'Porodični nazivi',icon:'👨‍👩‍👧‍👦',desc:'Kinezi imaju posebne reči za svakog člana porodice. Stariji brat je 哥哥 (gege), mlađi brat 弟弟 (didi), starija sestra 姐姐 (jiejie), mlađa sestra 妹妹 (meimei). Sa tatine strane: baka 奶奶 (nainai), deka 爷爷 (yeye). Sa mamine: baka 外婆 (waipo), deka 外公 (waigong). Zbunjujuće ali lepo!',tags:['jezik','porodica','tradicija']},
-  {id:26,zh:'生肖故事',sr:'Priča o kineskom zodijaku',icon:'🐉',desc:'Kineski zodijak ima 12 životinja. Legenda kaže da je Car od Nebesa pozvao sve životinje na trku — prvih 12 koje pređu reku dobiće svoju godinu. Miš je pobedio jahajući na biku i skočivši prvi na obalu! Svaka godina nosi karakteristike svoje životinje: zmaj je moćan, zec je nežan, konj je slobodan.',tags:['tradicija','priča','kultura']},
-  {id:27,zh:'茶道种类',sr:'Vrste kineskog čaja',icon:'🍵',desc:'Postoji šest glavnih vrsta kineskog čaja: zeleni (绿茶 — nefermentisan, svež), crni (红茶 — potpuno fermentisan, jak), beli (白茶 — minimalno obrađen, delikatan), oolong (乌龙茶 — polufermentisan, cvetni), žuti (黄茶 — redak, blag) i puer (普洱茶 — odležan, zemljani). Svaka vrsta ima svoju ceremoniju pripreme.',tags:['piće','tradicija','kultura']},
-  {id:28,zh:'麻将简介',sr:'Uvod u mahjong',icon:'🀄',desc:'Mahjong je društvena igra sa 144 pločice koja se igra širom Kine — u parkovima, čajdžinicama, na ulici. Igrači vuku i odbacuju pločice pokušavajući da naprave komplete od po 3-4 pločice + jedan par. Zvuk mešanja pločica (哗啦哗啦) je svuda prepoznatljiv. Igra zahteva strategiju, sreću i brzo razmišljanje!',tags:['igra','tradicija','svakodnevno']},
-  {id:29,zh:'广场舞文化',sr:'Ples na trgu',icon:'💃',desc:'Svako veče, milioni kineskih baka (阿姨) izlaze na trgove i plešu uz muziku iz zvučnika. To je 广场舞 (guangchangwu) — ples na trgu. Iako nekad bučno, to je njihov način vežbanja i druženja. U nekim gradovima zabranjen je posle 21h! Postao je toliko popularan da postoje nacionalna takmičenja.',tags:['svakodnevno','zabava','zanimljivost']},
-  {id:30,zh:'高铁出行',sr:'Putovanje brzim vozom',icon:'🚄',desc:'Kina ima najveću mrežu brzih pruga na svetu — vozovi idu 350 km/h! Od Pekinga do Šangaja za samo 4,5 sata. Karte kupuješ online (aplikacija 12306), prolaziš kroz sigurnosni pregled kao na aerodromu. U vozu ima WiFi, utičnice i topla hrana. Brzi voz je ponos Kine — tačan, čist i neverovatno efikasan.',tags:['prevoz','tehnologija','praktično']}
+  {
+    "id": 1,
+    "zh": "春节",
+    "sr": "Kineska Nova Godina",
+    "icon": "🧧",
+    "desc": "Najvažniji praznik u Kini. Porodice se okupljaju na velikoj večeri (年夜饭), deca dobijaju crvene koverte (红包) sa novcem, a vatromet tera zle duhove. Svaka godina ima svoju životinju po kineskom zodijaku.",
+    "tags": [
+      "praznik",
+      "porodica",
+      "tradicija"
+    ]
+  },
+  {
+    "id": 2,
+    "zh": "微信支付",
+    "sr": "WeChat plaćanje",
+    "icon": "📱",
+    "desc": "U Kini se skoro sve plaća telefonom — WeChat Pay ili Alipay. Gotovina se retko koristi. Kad dođeš u Kinu, instaliraj WeChat i poveži karticu — moći ćeš da platiš sve: od pijace do voza.",
+    "tags": [
+      "svakodnevno",
+      "tehnologija",
+      "praktično"
+    ]
+  },
+  {
+    "id": 3,
+    "zh": "餐桌礼仪",
+    "sr": "Ponašanje za stolom",
+    "icon": "🥢",
+    "desc": "Kinezi vole da dele hranu — jela se stavljaju na sredinu stola i svi uzimaju. Ne zabodi štapiće uspravno u pirinač (podseća na tamjan na sahrani). Kad nazdravljaš, kucni čašom malo niže od starije osobe — znak poštovanja.",
+    "tags": [
+      "hrana",
+      "bonton",
+      "svakodnevno"
+    ]
+  },
+  {
+    "id": 4,
+    "zh": "称呼方式",
+    "sr": "Obraćanje ljudima",
+    "icon": "👋",
+    "desc": "Kinezi retko koriste imena direktno. Starije osobe se oslovljavaju sa 阿姨(tetka) ili 叔叔(čika), mlađe sa 小姐姐(starija sestra) ili 小哥哥(stariji brat). U prodavnici ćeš čuti 美女(lepotice)!",
+    "tags": [
+      "jezik",
+      "bonton",
+      "svakodnevno"
+    ]
+  },
+  {
+    "id": 5,
+    "zh": "外卖与快递",
+    "sr": "Dostava hrane i paketa",
+    "icon": "🛵",
+    "desc": "U Kini možeš naručiti bukvalno SVE preko aplikacije: hranu (美团, 饿了么), namirnice, lekove, pa čak i nekog da ti sredi stan. Dostava je neverovatno brza — često stiže za 30 minuta.",
+    "tags": [
+      "svakodnevno",
+      "praktično",
+      "tehnologija"
+    ]
+  },
+  {
+    "id": 6,
+    "zh": "红包文化",
+    "sr": "Kultura crvenih koverti",
+    "icon": "🧧",
+    "desc": "Crvena koverta (红包) se poklanja za Novu Godinu, venčanja i rođendane. Crvena boja donosi sreću. Nikad ne poklanjaj praznu kovertu, i uvek je primi sa obe ruke. Digitalne crvene koverte preko WeChata su takođe veoma popularne.",
+    "tags": [
+      "tradicija",
+      "praznik",
+      "pokloni"
+    ]
+  },
+  {
+    "id": 7,
+    "zh": "家庭观念",
+    "sr": "Porodične vrednosti",
+    "icon": "👨‍👩‍👧‍👦",
+    "desc": "Porodica je centar kineskog društva. Deca često žive sa roditeljima i kad odrastu. Stariji se poštuju — njihovo mišljenje je veoma važno. Koncept 孝顺 (sinovljeva pobožnost) znači brigu o roditeljima u starosti.",
+    "tags": [
+      "porodica",
+      "tradicija",
+      "vrednosti"
+    ]
+  },
+  {
+    "id": 8,
+    "zh": "茶文化",
+    "sr": "Kultura čaja",
+    "icon": "🍵",
+    "desc": "Čaj je srce kineske kulture. Postoji šest vrsta: zeleni, crni, beli, oolong, žuti i puer. Najpoznatiji je zeleni čaj 龙井 (Longjing). Kad ti neko sipa čaj, kucni prstima po stolu da kažeš hvala — to se zove 叩指礼.",
+    "tags": [
+      "piće",
+      "tradicija",
+      "svakodnevno"
+    ]
+  },
+  {
+    "id": 9,
+    "zh": "吉祥话",
+    "sr": "Srećne fraze",
+    "icon": "🍀",
+    "desc": "Kinezi vole da izgovaraju srećne fraze: 恭喜发财 (da se obogatiš), 万事如意 (da ti sve ide po volji), 身体健康 (da si zdrav). Za Novu Godinu se obavezno kaže 新年快乐! Broj 8 je srećan, broj 4 se izbegava (zvuči kao reč za smrt).",
+    "tags": [
+      "jezik",
+      "tradicija",
+      "praznik"
+    ]
+  },
+  {
+    "id": 10,
+    "zh": "七夕节",
+    "sr": "Kineski Dan zaljubljenih",
+    "icon": "💕",
+    "desc": "Slavi se 7. dana 7. meseca po lunarnom kalendaru. Legenda kaže da pastir i tkalja (牛郎织女) mogu da se sretnu samo te noći, preko mosta od svraka. Danas parovi idu na romantične večere i razmenjuju poklone.",
+    "tags": [
+      "praznik",
+      "ljubav",
+      "legenda"
+    ]
+  },
+  {
+    "id": 11,
+    "zh": "汉字之美",
+    "sr": "Lepota kineskih znakova",
+    "icon": "🖌️",
+    "desc": "Kineski znakovi (汉字) su nastali iz slika — npr. 山 izgleda kao planina, 水 kao voda. Postoji preko 50.000 znakova, ali za svakodnevni život dovoljno je oko 2.000-3.000. Kaligrafija (书法) je visoka umetnost.",
+    "tags": [
+      "jezik",
+      "umetnost",
+      "istorija"
+    ]
+  },
+  {
+    "id": 12,
+    "zh": "尊师重道",
+    "sr": "Poštovanje učitelja",
+    "icon": "📚",
+    "desc": "U Kini su učitelji veoma poštovani. Postoji izreka: 一日为师，终身为父 (učitelj na jedan dan, otac za ceo život). Učenici se obraćaju nastavnicima sa 老师 (laoši) i nikad ih ne oslovljavaju samo po imenu.",
+    "tags": [
+      "obrazovanje",
+      "tradicija",
+      "vrednosti"
+    ]
+  },
+  {
+    "id": 13,
+    "zh": "中国新年习俗",
+    "sr": "Novogodišnji običaji",
+    "icon": "🏮",
+    "desc": "Pre Nove Godine se čisti cela kuća (da se otera loša sreća), lepe se crveni ukrasi, a na vrata se kače dvostrani natpisi (对联). Deca ostaju budna do ponoći (守岁) da čuvaju godinu. Sutradan se oblači nova crvena odeća.",
+    "tags": [
+      "praznik",
+      "tradicija",
+      "porodica"
+    ]
+  },
+  {
+    "id": 14,
+    "zh": "中秋节",
+    "sr": "Festival sredine jeseni",
+    "icon": "🥮",
+    "desc": "Drugi najvažniji praznik posle Nove Godine. Jede se 月饼 (mesečev kolač) i posmatra pun mesec. Simbolizuje porodično okupljanje — mesec je pun, porodica je na okupu. Pesnik Li Bai je napisao: 举头望明月，低头思故乡 (Podignem glavu ka mesecu, spustim je misleći na dom).",
+    "tags": [
+      "praznik",
+      "porodica",
+      "hrana"
+    ]
+  },
+  {
+    "id": 15,
+    "zh": "看病就医",
+    "sr": "Odlasci kod lekara",
+    "icon": "🏥",
+    "desc": "U Kini prvo ideš u lokalnu bolnicu (社区医院) pa tek onda u veliku. Poneseš zdravstvenu knjižicu (医保卡). Aplikacije za zakazivanje pregleda su WeChat mini-programi. U apoteci tražiš 药店 — većina lekova je dostupna bez recepta. Stranci uvek nose pasoš za registraciju.",
+    "tags": [
+      "svakodnevno",
+      "zdravlje",
+      "praktično"
+    ]
+  },
+  {
+    "id": 16,
+    "zh": "银行开户",
+    "sr": "Otvaranje računa u banci",
+    "icon": "🏦",
+    "desc": "Za otvaranje računa u kineskoj banci treba ti pasoš, viza i dokaz o adresi. Najveće banke su ICBC, Bank of China i China Construction Bank. Mobilno bankarstvo je neverovatno napredno — sve transakcije se obavljaju preko aplikacije, a gotovina se retko koristi.",
+    "tags": [
+      "svakodnevno",
+      "praktično",
+      "finansije"
+    ]
+  },
+  {
+    "id": 17,
+    "zh": "租房流程",
+    "sr": "Iznajmljivanje stana",
+    "icon": "🏠",
+    "desc": "U Kini se stanovi iznajmljuju preko agencija ili aplikacija kao što su Ziroom (自如) i Beike (贝壳). Ugovor se potpisuje na kineskom — obavezno nađi prevodioca! Depozit je obično jedna mesečna kirija. Proveri da li su računi (struja, voda, grejanje) uključeni pre potpisivanja.",
+    "tags": [
+      "svakodnevno",
+      "praktično",
+      "život"
+    ]
+  },
+  {
+    "id": 18,
+    "zh": "快递寄取",
+    "sr": "Slanje i primanje paketa",
+    "icon": "📦",
+    "desc": "U Kini sve stiže brzo — naručiš pre podne, stigne do večeri. Kurirske kompanije (SF, ZTO, YTO) su svuda. Paketi se često ostavljaju u ormarićima (快递柜) ispred zgrada. Ako ne pokupiš u roku od 24h, naplaćuje se! Za slanje, popuniš formular na kineskom ili koristiš aplikaciju.",
+    "tags": [
+      "svakodnevno",
+      "tehnologija",
+      "praktično"
+    ]
+  },
+  {
+    "id": 19,
+    "zh": "交通卡使用",
+    "sr": "Korišćenje kartice za prevoz",
+    "icon": "💳",
+    "desc": "U većini kineskih gradova koristi se jedna kartica za sav gradski prevoz (metro, autobus, čak i taksi). U Pekingu je to 一卡通 (Yikatong). Možeš je kupiti na svakoj stanici metroa i dopuniti na istom mestu. U Šangaju i drugim gradovima, mobitel zamenjuje karticu — platiš preko Alipay-a.",
+    "tags": [
+      "svakodnevno",
+      "prevoz",
+      "praktično"
+    ]
+  },
+  {
+    "id": 20,
+    "zh": "手机支付安全",
+    "sr": "Sigurnost mobilnog plaćanja",
+    "icon": "🔐",
+    "desc": "WeChat Pay i Alipay su neverovatno praktični, ali pazi na sigurnost. Nikad ne skeniraj QR kod od nepoznate osobe. Uključi dvofaktorsku autentifikaciju. Ne ostavljaj telefon otključan — sve tvoje finansije su u njemu! Ako izgubiš telefon, odmah blokiraj nalog preko banke.",
+    "tags": [
+      "tehnologija",
+      "sigurnost",
+      "praktično"
+    ]
+  },
+  {
+    "id": 21,
+    "zh": "垃圾分类",
+    "sr": "Razvrstavanje otpada",
+    "icon": "♻️",
+    "desc": "U velikim kineskim gradovima (Šangaj prvi) otpad se strogo razvrstava: kuhinjski otpad (湿垃圾), suvi otpad (干垃圾), reciklaža (可回收物) i opasan otpad (有害垃圾). Kante su u bojama, a na ulici postoje dežurni koji ti pomognu. Kazne za pogrešno bacanje su visoke!",
+    "tags": [
+      "svakodnevno",
+      "ekologija",
+      "praktično"
+    ]
+  },
+  {
+    "id": 22,
+    "zh": "排队礼仪",
+    "sr": "Redovi i strpljenje",
+    "icon": "🧍",
+    "desc": "Kinezi su strpljivi u redovima — svuda se čeka: za hranu, za autobus, za popularni bubble tea. Ali na pijaci ili u metrou, gužva može biti intenzivna. Ne čudi se ako neko stane tik uz tebe — lični prostor je manji nego u Evropi. Važno: u banci ili bolnici uzmi broj i čekaj da bude pozvan.",
+    "tags": [
+      "svakodnevno",
+      "bonton",
+      "praktično"
+    ]
+  },
+  {
+    "id": 23,
+    "zh": "请客吃饭",
+    "sr": "Čašćavanje gostiju",
+    "icon": "🍽️",
+    "desc": "Kad Kinez pozove na večeru, domaćin uvek plaća — borba oko računa je deo bontona! Gosti donose mali poklon (voće, čaj). Kaže se 我来买单 (ja plaćam). Na poslovnim večerama, sedenje prati strogu hijerarhiju — najvažniji sede najdalje od vrata, licem okrenuti ka ulazu.",
+    "tags": [
+      "hrana",
+      "bonton",
+      "tradicija"
+    ]
+  },
+  {
+    "id": 24,
+    "zh": "送礼习俗",
+    "sr": "Običaji darivanja",
+    "icon": "🎁",
+    "desc": "U Kini se ne poklanjaju satovi (送钟 zvuči kao sahrana), kišobrani (散 — razdvajanje) niti oštri predmeti. Crvena koverta sa novcem je uvek siguran izbor. Pokloni se primaju sa obe ruke i ne otvaraju se pred darodavcem — to bi bilo nepristojno. Voće i čaj su uvek dobrodošli pokloni.",
+    "tags": [
+      "tradicija",
+      "bonton",
+      "pokloni"
+    ]
+  },
+  {
+    "id": 25,
+    "zh": "家庭称谓",
+    "sr": "Porodični nazivi",
+    "icon": "👨‍👩‍👧‍👦",
+    "desc": "Kinezi imaju posebne reči za svakog člana porodice. Stariji brat je 哥哥 (gege), mlađi brat 弟弟 (didi), starija sestra 姐姐 (jiejie), mlađa sestra 妹妹 (meimei). Sa tatine strane: baka 奶奶 (nainai), deka 爷爷 (yeye). Sa mamine: baka 外婆 (waipo), deka 外公 (waigong). Zbunjujuće ali lepo!",
+    "tags": [
+      "jezik",
+      "porodica",
+      "tradicija"
+    ]
+  },
+  {
+    "id": 26,
+    "zh": "生肖故事",
+    "sr": "Priča o kineskom zodijaku",
+    "icon": "🐉",
+    "desc": "Kineski zodijak ima 12 životinja. Legenda kaže da je Car od Nebesa pozvao sve životinje na trku — prvih 12 koje pređu reku dobiće svoju godinu. Miš je pobedio jahajući na biku i skočivši prvi na obalu! Svaka godina nosi karakteristike svoje životinje: zmaj je moćan, zec je nežan, konj je slobodan.",
+    "tags": [
+      "tradicija",
+      "priča",
+      "kultura"
+    ]
+  },
+  {
+    "id": 27,
+    "zh": "茶道种类",
+    "sr": "Vrste kineskog čaja",
+    "icon": "🍵",
+    "desc": "Postoji šest glavnih vrsta kineskog čaja: zeleni (绿茶 — nefermentisan, svež), crni (红茶 — potpuno fermentisan, jak), beli (白茶 — minimalno obrađen, delikatan), oolong (乌龙茶 — polufermentisan, cvetni), žuti (黄茶 — redak, blag) i puer (普洱茶 — odležan, zemljani). Svaka vrsta ima svoju ceremoniju pripreme.",
+    "tags": [
+      "piće",
+      "tradicija",
+      "kultura"
+    ]
+  },
+  {
+    "id": 28,
+    "zh": "麻将简介",
+    "sr": "Uvod u mahjong",
+    "icon": "🀄",
+    "desc": "Mahjong je društvena igra sa 144 pločice koja se igra širom Kine — u parkovima, čajdžinicama, na ulici. Igrači vuku i odbacuju pločice pokušavajući da naprave komplete od po 3-4 pločice + jedan par. Zvuk mešanja pločica (哗啦哗啦) je svuda prepoznatljiv. Igra zahteva strategiju, sreću i brzo razmišljanje!",
+    "tags": [
+      "igra",
+      "tradicija",
+      "svakodnevno"
+    ]
+  },
+  {
+    "id": 29,
+    "zh": "广场舞文化",
+    "sr": "Ples na trgu",
+    "icon": "💃",
+    "desc": "Svako veče, milioni kineskih baka (阿姨) izlaze na trgove i plešu uz muziku iz zvučnika. To je 广场舞 (guangchangwu) — ples na trgu. Iako nekad bučno, to je njihov način vežbanja i druženja. U nekim gradovima zabranjen je posle 21h! Postao je toliko popularan da postoje nacionalna takmičenja.",
+    "tags": [
+      "svakodnevno",
+      "zabava",
+      "zanimljivost"
+    ]
+  },
+  {
+    "id": 30,
+    "zh": "高铁出行",
+    "sr": "Putovanje brzim vozom",
+    "icon": "🚄",
+    "desc": "Kina ima najveću mrežu brzih pruga na svetu — vozovi idu 350 km/h! Od Pekinga do Šangaja za samo 4,5 sata. Karte kupuješ online (aplikacija 12306), prolaziš kroz sigurnosni pregled kao na aerodromu. U vozu ima WiFi, utičnice i topla hrana. Brzi voz je ponos Kine — tačan, čist i neverovatno efikasan.",
+    "tags": [
+      "prevoz",
+      "tehnologija",
+      "praktično"
+    ]
+  }
 ]

@@ -2466,3 +2466,173 @@ html, body {
 @media (min-width: 700px) {
   .lrn-app { max-width: 700px; }
 }
+
+/* ===================================================================
+   独立站补充样式
+   - 部分规则从主站原始 calendar.css 提取（移除中文模块时遗漏）
+   - 部分规则为补全 JS 生成但从未被样式化的类
+   设计令牌与上方 .lrn-* 规则保持一致
+   =================================================================== */
+
+/* ---- 工具类（原主站 calendar.css）---- */
+.fw-600 { font-weight: 600; }
+.fs-small { font-size: 0.7rem; }
+.mb-10 { margin-bottom: 10px; }
+
+/* ---- 空状态（原主站 calendar.css）+ 补充 ---- */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.empty-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.empty-text,
+.lrn-empty-text { display: block; font-size: 0.75rem; margin-top: 4px; }
+
+/* ---- 通用按钮（原主站 calendar.css）---- */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: var(--font);
+  letter-spacing: 0.01em;
+  touch-action: manipulation;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary {
+  background: var(--gradient-love);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(196, 90, 107, 0.28);
+}
+.btn-primary:hover {
+  box-shadow: 0 6px 24px rgba(196, 90, 107, 0.35);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  box-shadow: 0 2px 8px rgba(196, 90, 107, 0.15);
+  transform: scale(0.96);
+}
+
+/* ---- 测验填空（原主站 calendar.css）---- */
+.chinese-quiz-question .fill-input { margin-top: 8px; }
+
+/* ---- 进度环：修复 JS 生成 .lrn-ring-* 类缺失样式 + 前景描边 ---- */
+.lrn-progress-ring-fg { stroke: var(--love); }
+.lrn-ring-bg {
+  fill: none;
+  stroke: var(--border-soft);
+  stroke-width: 7;
+}
+.lrn-ring-fg {
+  fill: none;
+  stroke: var(--love);
+  stroke-width: 7;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lrn-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- 首页学习路径标题 ---- */
+.lrn-phase-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin: 14px 4px 8px;
+  color: var(--text);
+}
+
+/* ---- 每日目标进度条容器 ---- */
+.lrn-daily-goal-bar { margin-top: 8px; }
+
+/* ---- 成就统计单卡 ---- */
+.lrn-ach-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---- 统计热力图容器 + 图例 ---- */
+.lrn-stats-heatmap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 12px;
+}
+.lrn-heat-legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  align-items: center;
+}
+
+/* ---- 课程列表信息块 / 复习项信息块 ---- */
+.lrn-lesson-info { flex: 1; min-width: 0; }
+.lrn-review-info { flex: 1; min-width: 0; }
+
+/* ---- 练习答案提示 ---- */
+.lrn-hint-answer {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--sage-light);
+  color: var(--sage-dark);
+  font-size: 0.68rem;
+}
+
+/* ---- 听力"下一个"按钮 ---- */
+.lrn-listen-next { margin-top: 10px; }
+
+/* ---- 收藏夹标题 ---- */
+.lrn-favorites-header { margin-bottom: 10px; }
+
+/* ---- 测验 / 练习区块布局（补全 JS 生成类）---- */
+.chinese-quiz-section,
+.chinese-practice-section { margin-top: 4px; }
+.chinese-quiz-instruct,
+.chinese-practice-instruct {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0 0 10px;
+}
+.chinese-quiz-question,
+.chinese-practice-question {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.chinese-quiz-q,
+.chinese-practice-q {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.chinese-quiz-result,
+.chinese-practice-result { text-align: center; font-size: 0.72rem; }
+
+/* ---- 首页进度环静态骨架（init 后由 JS 替换）---- */
+.lrn-ring-container { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+.lrn-ring { width: 76px; height: 76px; transform: rotate(-90deg); }
