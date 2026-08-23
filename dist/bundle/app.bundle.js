@@ -7083,7 +7083,7 @@ var APP_VERSION = (function () {
         var v = _shadow.getAttribute(a);
         if (v) grid.setAttribute(a, v);
       });
-      grid.className = _shadow.className;
+      grid.classList.toggle('week-view', _shadow.classList.contains('week-view'));
       grid.replaceChildren.apply(grid, _shadow.childNodes);
       document.body.removeChild(_shadow);
     };
