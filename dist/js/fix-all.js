@@ -543,8 +543,7 @@ var APP_VERSION = (function () {
     _mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
   })();
 
-  window.animateDashboardCards = null;
-  window.animateStatsPanel = null;
+  // animateStatsPanel / animateDashboardCards 由 gsap-animations.js 定义，勿置空（否则 app.js updateStats 调用崩溃）
 
   // GitHub Token — 已在 app.js 中统一使用 localStorage 持久化存储。
   // ⚠️ 安全提示：Token 在浏览器中可被同源脚本读取。建议使用最小权限的 fine-grained token，

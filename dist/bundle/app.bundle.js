@@ -1286,6 +1286,180 @@ function getMood(t){return state.moods&&state.moods[t]?state.moods[t].mood:null}
 const HUG_EXPIRY_MS=864e5;let _gratNotes=null;const KNOW_ME_QUESTIONS=[{key:"fav_city",q:{sr:"Koji je omiljeni grad tvog/tvoje partnera?",zh:"对方最喜欢的城市是哪里？",en:"What is your partner's favorite city?"}},{key:"first_date_color",q:{sr:"Šta je tvoj/tvoja partner/ka nosio/la na prvom sastanku?",zh:"第一次约会对方穿什么颜色的衣服？",en:"What color did your partner wear on your first date?"}},{key:"dream_trip",q:{sr:"Gde bi tvoj/tvoja partner/ka najradije putovao/la?",zh:"对方最想去的旅行目的地是哪里？",en:"Where does your partner dream of traveling to?"}},{key:"comfort_food",q:{sr:"Koja je omiljena hrana tvog/tvoje partnera za utehu?",zh:"对方心情不好时最爱吃什么？",en:"What comfort food does your partner reach for?"}},{key:"hidden_talent",q:{sr:"Koji skriveni talenat ima tvoj/tvoja partner/ka?",zh:"对方有什么隐藏的才艺？",en:"What hidden talent does your partner have?"}},{key:"childhood_dream",q:{sr:"Šta je tvoj/tvoja partner/ka želeo/la da bude kao dete?",zh:"对方小时候的梦想职业是什么？",en:"What did your partner dream of becoming as a child?"}},{key:"pet_peeve",q:{sr:"Šta tvog/tvoju partnera/ku najviše nervira?",zh:"对方最讨厌的事情是什么？",en:"What annoys your partner the most?"}},{key:"perfect_day",q:{sr:"Kako izgleda savršen dan za tvog/tvoju partnera/ku?",zh:"对方心目中的完美一天是怎样的？",en:"What does your partner's perfect day look like?"}},{key:"music_taste",q:{sr:"Koja je omiljena pesma tvog/tvoje partnera trenutno?",zh:"对方最近单曲循环的歌是什么？",en:"What song is your partner playing on repeat lately?"}},{key:"love_language",q:{sr:"Koji je glavni jezik ljubavi tvog/tvoje partnera?",zh:"对方最重要的爱的语言是什么？",en:"What is your partner's primary love language?"}},{key:"smell_memory",q:{sr:"Koji miris podseća tvog/tvoju partnera/ku na vas?",zh:"什么味道会让对方想起你？",en:"What scent reminds your partner of you?"}},{key:"future_5years",q:{sr:"Gde tvoj/tvoja partner/ka vidi sebe za 5 godina?",zh:"对方觉得五年后的自己会在哪里？",en:"Where does your partner see themselves in 5 years?"}},{key:"best_quality",q:{sr:"Šta tvoj/tvoja partner/ka najviše ceni kod sebe?",zh:"对方最欣赏自己的哪个品质？",en:"What quality does your partner admire most in themselves?"}},{key:"favorite_memory",q:{sr:"Koje je omiljeno zajedničko sećanje tvog/tvoje partnera?",zh:"对方最喜欢你们在一起时的哪个回忆？",en:"What is your partner's favorite shared memory with you?"}},{key:"morning_routine",q:{sr:"Kako tvoj/tvoja partner/ka započinje jutro?",zh:"对方早上起来做的第一件事是什么？",en:"What is the first thing your partner does in the morning?"}}],CHECKIN_QUESTIONS={sr:[{q:"Kako se osećaš u vezi ove nedelje?",opts:["😍 Sjajno","😊 Dobro","😐 Ok","😞 Loše"]},{q:"Da li smo dovoljno komunicirali?",opts:["💬 Da, odlično","👍 Uglavnom","🤔 Moglo bi bolje","👎 Ne baš"]},{q:"Šta bi voleo/la da poboljšamo sledeće nedelje?",opts:["💏 Više zajedničkog vremena","💬 Bolja komunikacija","🔥 Više romantike","🤝 Više podrške"]}],"zh-CN":[{q:"这周的感情状态怎么样？",opts:["😍 很棒","😊 不错","😐 一般","😞 不太好"]},{q:"我们这周的沟通足够吗？",opts:["💬 很好","👍 还行","🤔 可以更好","👎 不太够"]},{q:"下周希望我们哪方面做得更好？",opts:["💏 更多陪伴","💬 更好交流","🔥 更多浪漫","🤝 更多支持"]}],en:[{q:"How do you feel about this week together?",opts:["😍 Amazing","😊 Good","😐 OK","😞 Not great"]},{q:"Did we communicate enough?",opts:["💬 Yes, great","👍 Mostly","🤔 Could improve","👎 Not really"]},{q:"What would you like more of next week?",opts:["💏 More time together","💬 Better talks","🔥 More romance","🤝 More support"]}]};function spawnFloatingHearts(e){const t=["💕","💖","💗","💝","✨","💫"];for(let n=0;n<8;n++)(function(n){setTimeout(function(){const a=document.createElement("span");a.className="floating-heart",a.textContent=t[n%t.length],a.style.left=20+60*Math.random()+"%",a.style.bottom="20px",e.appendChild(a),setTimeout(function(){a.parentNode&&a.remove()},1300)},80*n)})(n)}function getHugStreak(){const e=loadSharedDiaryData(),t=new Date;let n=0;for(let a=0;a<365;a++){const o=new Date(t);o.setDate(o.getDate()-a);const r=e[fmtDate(o)];if(!(r&&r.barry&&r.barry.hug&&r.andjela&&r.andjela.hug))break;n++}return n}function sendHug(e){const n=fmtDate(new Date);let a=parseInt(localStorage.getItem("hug-count-"+n)||"0");if(a>=2)return void toast(t("hugLimit"));a++,localStorage.setItem("hug-count-"+n,a);const o={from:activeProfile,time:Date.now()};localStorage.setItem("shared-hug",JSON.stringify(o));const r=loadSharedDiaryData();r[n]||(r[n]={}),r[n][activeProfile]||(r[n][activeProfile]={}),r[n][activeProfile].hug={time:Date.now()},saveSharedDiaryData(r);const i=document.getElementById("hugSendBtn");i&&(i.classList.add("sending"),setTimeout(function(){i.classList.remove("sending")},600));const s=document.getElementById("hugCard");s&&spawnFloatingHearts(s),renderHug(),toast("🤗 "+("barry"===activeProfile?t("hugSentBarry"):t("hugSentAndjela"))+" ("+a+"/2)")}function checkHug(){try{const e=JSON.parse(localStorage.getItem("shared-hug"));return e?Date.now()-e.time>864e5?(localStorage.removeItem("shared-hug"),null):e.from===activeProfile?null:e:null}catch(e){return null}}function dismissHug(){localStorage.removeItem("shared-hug"),renderHug()}function renderHug(){const e=checkHug(),n=document.getElementById("hugContent"),a=document.getElementById("hug-title");if(!a)return;a.textContent=t("hugTitle");const o=fmtDate(new Date),r=parseInt(sessionStorage.getItem("hug-count-"+o)||"0"),i=2-r,s=getHugStreak();if(e){const t="andjela"===e.from?"🌸 Anđela":"👦 Barry",a=new Date(e.time),o=String(a.getHours()).padStart(2,"0")+":"+String(a.getMinutes()).padStart(2,"0");let r='<div class="hug-received">';s>1&&(r+='<div class="hug-streak-badge">🔥 '+("sr"===lang?s+" dana zaredom!":"en"===lang?s+"-day streak!":"连续 "+s+" 天！")+"</div>"),r+='<span class="hug-icon-wrap"><span class="hug-icon">🤗</span></span>',r+='<div class="hug-text">'+t+" "+("sr"===lang?"te zagrlio/la! 💫":"en"===lang?"hugged you! 💫":"抱了你！💫")+"</div>",r+='<div class="hug-time">'+o+"</div>",r+='<button class="hug-back-btn" onclick="sendHug(true)" id="hugBackBtn">💝 '+("sr"===lang?"Uzvrati zagrljaj":"en"===lang?"Hug back":"回抱一个")+"</button>",r+='<div><button class="hug-dismiss" onclick="dismissHug()">'+("sr"===lang?"✕ zatvori":"en"===lang?"✕ dismiss":"✕ 关闭")+"</button></div></div>",n.innerHTML=r;const i=document.getElementById("hugCard");i&&spawnFloatingHearts(i)}else if(r>0){let e="";for(let t=0;t<2;t++)e+='<span class="hh-heart'+(t>=i?" used":"")+'">'+(t<r?"❤️":"🤍")+"</span>";const a='<div class="hug-sent-state"><div class="hug-hearts-row">'+e+'</div><span class="hss-icon">📬</span><div class="hss-text">'+t("hugSentWaiting")+'</div><button class="hug-back-btn" onclick="sendHug()" style="margin-top:8px">🤗 '+("sr"===lang?"Pošalji još jedan ("+i+")":"en"===lang?"Send another ("+i+")":"再抱一次 ("+i+")")+"</button></div>";n.innerHTML=a}else{const e=t("hugSendBtn");let a="";s>1&&(a+='<div style="text-align:center"><div class="hug-streak-badge">🔥 '+("sr"===lang?s+" dana zaredom!":"en"===lang?s+"-day streak!":"连续 "+s+" 天！")+"</div></div>"),a+='<button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 '+e+"</button>",n.innerHTML=a}}function addGratitude(){const e=document.getElementById("gratInput"),t=e.value.trim();if(!t)return;let n=JSON.parse(localStorage.getItem("shared-gratitude")||"[]");n.push({text:t,from:activeProfile,time:Date.now()}),n.length>20&&(n=n.slice(-20)),localStorage.setItem("shared-gratitude",JSON.stringify(n)),_gratNotes=null,e.value="",renderGratitude(),pushAllSharedData()}function renderGratitude(){const e=document.getElementById("grat-title"),n=document.getElementById("gratInput"),a=document.getElementById("gratList");if(!e||!n||!a)return;e.textContent=t("gratTitle"),n.placeholder=t("gratPlaceholder");const o=JSON.parse(localStorage.getItem("shared-gratitude")||"[]");0!==o.length?a.innerHTML=o.slice(-5).reverse().map(function(e,t){const n="andjela"===e.from?"🌸":"👦",a=e.from!==("andjela"===activeProfile?"andjela":"barry")?' <button onclick="translateGrat('+t+')" style="font-size:.55rem;padding:1px 6px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer">🌐</button>':"";return'<div class="gratitude-item"><span class="gratitude-heart">'+n+'</span><span id="grat-txt-'+t+'">'+esc(e.text)+"</span>"+a+"</div>"}).join(""):a.innerHTML=""}function translateGrat(e){_gratNotes||(_gratNotes=JSON.parse(localStorage.getItem("shared-gratitude")||"[]"));const t=_gratNotes[e];if(!t)return;const n="andjela"===t.from?"sr":"sr"===lang?"zh-CN":"sr",a="sr"===lang?"sr":"zh-CN"===lang?"zh-CN":"en";n!==a&&translateText(t.text,n,a).then(function(t){const n=document.getElementById("grat-txt-"+e);n&&(n.textContent=t)})}function saveCheckinAnswer(e,t){const n="shared-checkin-"+activeProfile,a=JSON.parse(localStorage.getItem(n)||"{}");a[e]=t,localStorage.setItem(n,JSON.stringify(a)),renderCheckin(),pushAllSharedData()}function getCheckinAnswers(e){return JSON.parse(localStorage.getItem("shared-checkin-"+e)||"{}")}function renderCheckin(){const e=(new Date).getDay();if(0!==e&&6!==e)return void(document.getElementById("checkinCard").style.display="none");document.getElementById("checkinCard").style.display="",document.getElementById("checkin-title").textContent=t("checkinTitle");const n=CHECKIN_QUESTIONS[lang]||CHECKIN_QUESTIONS.sr,a=getCheckinAnswers(activeProfile),o="andjela"===activeProfile?"barry":"andjela",r=getCheckinAnswers(o),i="andjela"===o?"🌸 Anđela":"👦 Barry";let s=n.map(function(e,t){const n=a[t]||"",o=r[t]||"",s=e.opts.map(function(e){return'<span class="cq-opt'+(n===e?" picked":"")+'" onclick="saveCheckinAnswer('+t+",'"+e.replace(/'/g,"\\'")+"')\">"+e+"</span>"}).join(""),l=o?'<div style="font-size:.62rem;color:var(--gold);margin-top:4px">'+i+": "+o+"</div>":"";return'<div class="checkin-q"><div class="cq-label"><span>'+e.q+'</span></div><div class="cq-options">'+s+"</div>"+l+"</div>"}).join("");0===Object.keys(a).length&&0===Object.keys(r).length&&(s+='<div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:8px">'+("sr"===lang?"Odgovori na pitanja — partner će videti tvoje odgovore ✨":"en"===lang?"Answer the questions — your partner will see your answers ✨":"回答问题——伴侣会看到你的答案 ✨")+"</div>"),document.getElementById("checkinContent").innerHTML=s}function saveMySong(){const e=document.getElementById("songInputTitle").value.trim();if(!e)return void toast(t("songSaveEmpty"));const n={title:e,note:document.getElementById("songInputNote").value.trim()||"",from:activeProfile,time:Date.now()};localStorage.setItem("shared-song-"+activeProfile,JSON.stringify(n)),renderSong(),pushAllSharedData(),toast(t("songSaved"))}function loadSong(e){return safeParse(localStorage.getItem("shared-song-"+e),null)}function getKnowMeData(){return safeParse(localStorage.getItem("shared-knowme"),{})}function saveKnowMeData(e){localStorage.setItem("shared-knowme",JSON.stringify(e))}function renderKnowMe(){if(!document.getElementById("knowMeCard"))return;document.getElementById("knowMe-title").textContent=t("knowMeTitle");const e=Math.floor(Date.now()/864e5)%KNOW_ME_QUESTIONS.length,n=KNOW_ME_QUESTIONS[e],a=n.q[lang]||n.q.sr,o=fmtDate(today()),r=getKnowMeData()[o]||{},i=r[activeProfile],s="andjela"===activeProfile?"barry":"andjela",l=r[s],d="andjela"===s?"🌹 Anđela":"👦 Barry",g="andjela"===activeProfile?"🌹 Anđela":"👦 Barry";let c="";c+='<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">'+a+"</div>",c+=i?'<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+g+" "+("sr"===lang?"odgovor":"en"===lang?" answer":"的回答")+'</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(i.answer)+"</div></div>":'<div style="margin-bottom:10px"><textarea id="knowMeInput" placeholder="'+("sr"===lang?"Tvoj odgovor...":"en"===lang?"Your answer...":"你的答案...")+'" style="width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);resize:none;min-height:44px" maxlength="120"></textarea><button class="btn btn-primary" onclick="saveKnowMeAnswer()" style="width:100%;font-size:.7rem;padding:8px;margin-top:6px">💭 '+("sr"===lang?"Odgovori":"en"===lang?"Answer":"回答")+"</button></div>",l?(c+='<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+d+t("knowMePartnerLabel")+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(l.answer)+"</div></div>",i&&l&&i.answer.trim().toLowerCase()===l.answer.trim().toLowerCase()&&(c+='<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:float-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">'+t("knowMeMatch")+"</div>")):i&&(c+='<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ '+t("knowMeWaiting")+"</div>"),document.getElementById("knowMeContent").innerHTML=c}function saveKnowMeAnswer(){const e=document.getElementById("knowMeInput");if(!e)return;const n=e.value.trim();if(!n)return;const a=fmtDate(today()),o=getKnowMeData();o[a]||(o[a]={}),o[a][activeProfile]={answer:n,time:Date.now()},saveKnowMeData(o),pushAllSharedData(),renderKnowMe(),toast(t("knowMeAnswerSaved"))}function renderSong(){const e=document.getElementById("song-title");if(!e)return;e.textContent=t("songTitle");const n=loadSong(activeProfile),a="andjela"===activeProfile?"barry":"andjela",o=loadSong(a),r="andjela"===a?"🌸 Anđela":"👦 Barry";let i="";i+=n?'<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">'+t("songMyLabel")+'</span><div class="song-title">🎶 '+esc(n.title)+"</div>"+(n.note?'<div class="song-note">'+esc(n.note)+"</div>":"")+"</div>":'<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="'+t("songTitlePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="'+t("songNotePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 '+t("songSave")+"</button></div>",o&&(i+='<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+r+" "+t("songPartnerLabel")+'</span><div class="song-title">🎶 '+esc(o.title)+"</div>"+(o.note?'<div class="song-note">'+esc(o.note)+"</div>":"")+"</div>"),document.getElementById("songContent").innerHTML=i||'<span class="song-icon">🎶</span><div class="song-note">'+t("songEmpty")+"</div>"}function renderRelTips(){if("andjela"!==activeProfile)return void(document.getElementById("relTipCard").style.display="none");const e=REL_TIPS[lang]||REL_TIPS.sr,t=e[Math.floor(Math.random()*e.length)];document.getElementById("relTipIcon").textContent=t.icon,document.getElementById("relTipText").textContent=t.text,document.getElementById("relTipCard").style.display=""}
 /* === dist/js/render-misc.js === */
 let titleClicks=0,lastCycleCount=0;function updateLoveCounter(){const e=document.getElementById("titleLoveCounter");if(!e||!annDateLove)return;const n=daysDiff(new Date(annDateLove),today());n>=0&&(e.textContent="♥ "+n+t("loveCounterTogether"));const o=document.getElementById("love-days-content");if(!o)return;const a=[];if(annDateMet){const e=daysDiff(new Date(annDateMet),today());e>=0&&a.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> '+e+t("loveCounterMet")+"</div>")}if(annDateLove){const e=daysDiff(new Date(annDateLove),today());e>=0&&a.push('<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ '+e+("sr"===lang?" dana zajedno":"en"===lang?" days together":" 天在一起")+"</div>")}o.innerHTML=a.join('<div style="height:4px"></div>'),document.getElementById("love-days-title").textContent=t("loveDaysTitle")}function randomThinkingOfYou(){if("andjela"!==activeProfile)return;if(Math.random()>.18)return;const e="sr"===lang?["Upravo sam pomislio na tebe ♥","Nadam se da se osećaš dobro danas ✨","Tvoj osmeh mi je najdraža st let 🌸","Mislim na tebe... uvek 💫","Barry je upravo pomislio na tebe 💝"]:"en"===lang?["Just thought of you ♥","Hope you are feeling good today ✨","Your smile is my favorite thing 🌸","Thinking of you... always 💫","Barry was just thinking of you 💝"]:["刚刚在想你 ♥","希望你今天心情好 ✨","你的笑容是我最喜欢的 🌸","一直在想你 💫","Barry 刚刚想到了你 💝"],t=e[Math.floor(Math.random()*e.length)];setTimeout(function(){toast(t)},3e3)}function showGreeting(){if(sessionStorage.getItem("_greetingShown"))return;sessionStorage.setItem("_greetingShown","1");const e=document.getElementById("greetingOverlay");if(!e)return;const t=(I18N[lang]||I18N[lang.split("-")[0]]||I18N.sr).greeting;if(!t)return;const n=(new Date).getHours();let o;o=n>=5&&n<12?t.morning:n>=12&&n<18?t.afternoon:n>=18&&n<23?t.evening:t.night,document.getElementById("greetingIcon").textContent=o.icon,document.getElementById("greetingName").textContent=o.name,document.getElementById("greetingMsg").textContent=o.msg,document.getElementById("greetingSub").textContent=o.sub,e.style.display="flex",e.classList.remove("hidden"),spawnFeathers(),clearTimeout(window._greetingTimer),window._greetingTimer=setTimeout(function(){e.classList.add("hiding"),setTimeout(function(){e.style.display="none",e.classList.add("hidden"),e.classList.remove("hiding")},400)},2800)}function spawnFeathers(){const e=document.querySelector(".greeting-card");if(e)for(let t=0;t<8;t++){const n=document.createElement("span");n.className="feather",n.textContent=["🪶","✦","·"][t%3],n.style.left=10+80*Math.random()+"%",n.style.top=5+40*Math.random()+"%",n.style.animationDelay=2*Math.random()+"s",n.style.animationDuration=3+3*Math.random()+"s",e.appendChild(n),setTimeout(()=>n.remove(),5e3)}}function updateMoonPhase(){const e=document.getElementById("moonPhase"),t=2551443,n=new Date("2000-01-06T18:14:00Z").getTime()/1e3,o=(Date.now()/1e3-n)%t/t;e.innerHTML='<span class="moon-icon">'+["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"][Math.round(8*o)%8]+"</span>"}function handleTitleClick(){titleClicks++,titleClicks>=5&&(titleClicks=0,spawnPetals()),setTimeout(function(){titleClicks<5&&titleClicks>0&&(titleClicks=0)},2e3)}function spawnPetals(){const e=["🌸","💮","🌺","🩷","✿","🌷"];for(let t=0;t<25;t++){const t=document.createElement("span");t.className="petal",t.textContent=e[Math.floor(Math.random()*e.length)],t.style.left=100*Math.random()+"%",t.style.top=-(10+30*Math.random())+"px",t.style.animationDelay=1.5*Math.random()+"s",t.style.animationDuration=3+3*Math.random()+"s",t.style.fontSize=.8+1.5*Math.random()+"rem",document.body.appendChild(t),setTimeout(function(){t.remove()},5e3)}}function checkCycleCelebration(){const e=predict().cycles.length;if(e>lastCycleCount&&e>=1&&state.records.length>=2){lastCycleCount=e;const n=document.createElement("div");n.className="cycle-celebration",n.innerHTML='<span class="celeb-icon">💝</span><span class="celeb-text">'+t("cycleCounter").replace("{n}",e)+"</span>",document.body.appendChild(n),setTimeout(function(){n.style.opacity="0",n.style.transition="opacity .6s"},3e3),setTimeout(function(){n.remove()},4e3),updateCycleCounter(e)}}function updateCycleCounter(e){const n=document.getElementById("cycleCounterCard");n&&(e>0?(n.style.display="",document.getElementById("cc-count").textContent=e,document.getElementById("cc-subtitle").textContent=t("cycleCounterSub")):n.style.display="none")}function renderSpecialBadge(){const e=document.getElementById("specialBadge");if("andjela"!==activeProfile)return void(e.style.display="none");e.style.display="";const t="sr"===lang?["Ti si jedinstvena ✨","Najlepša na svetu 🌸","Barryjeva ljubav 💝","Jedna jedina 💫"]:"en"===lang?["You are unique ✨","Most beautiful 🌸","Barry's love 💝","One and only 💫"]:["独一无二的你 ✨","最美的人 🌸","Barry 的爱 💝","世界上唯一的你 💫"];document.getElementById("specialBadgeText").textContent=t[Math.floor(Math.random()*t.length)]}
+/* === dist/js/module-holidays.js === */
+"use strict";
+
+(function () {
+  console.log('[module-holidays] 已加载');
+
+  window.HOLIDAYS = [];
+  window.HOLIDAY_DAYS = {};
+  window._holidayCache = null;
+  window._origHolidayPush = null;
+  window.calendarExtraData = null;
+  window.solarTermsCache = [];
+
+  function loadHolidays() {
+    return fetch('data/holidays.json')
+      .then(function (r) {
+        if (!r.ok) throw new Error('Failed to load holidays.json');
+        return r.json();
+      })
+      .then(function (data) {
+        window.HOLIDAYS = data.holidays || [];
+        window.HOLIDAY_DAYS = data.holidayDays || {};
+        if (typeof renderCalendar === 'function') renderCalendar();
+      })
+      .catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
+  }
+  window.loadHolidays = loadHolidays;
+  loadHolidays();
+
+  function _buildHolidayCache() {
+    window._holidayCache = {};
+    for (var hi = 0; hi < window.HOLIDAYS.length; hi++) {
+      var h = window.HOLIDAYS[hi];
+      if (!window._holidayCache[h.d]) window._holidayCache[h.d] = [];
+      window._holidayCache[h.d].push(h);
+    }
+  }
+  window._buildHolidayCache = _buildHolidayCache;
+
+  function getHoliday(dateKey) {
+    if (!window._holidayCache) _buildHolidayCache();
+    return window._holidayCache[dateKey] || [];
+  }
+  window.getHoliday = getHoliday;
+
+  function _rebuildHolidayCache() { window._holidayCache = null; }
+  window._rebuildHolidayCache = _rebuildHolidayCache;
+
+  function renderUpcomingHoliday() {
+    var el = document.getElementById('holidayCountdown');
+    if (!el) return;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var limit = new Date(today); limit.setDate(limit.getDate() + 60);
+    var upcoming = null;
+    for (var i = 0; i < window.HOLIDAYS.length; i++) {
+      var d = new Date(window.HOLIDAYS[i].d + 'T00:00:00');
+      if (d >= today && d <= limit) {
+        if (!upcoming || d < new Date(upcoming.d + 'T00:00:00')) upcoming = window.HOLIDAYS[i];
+      }
+    }
+    if (upcoming) {
+      var days = Math.ceil((new Date(upcoming.d + 'T00:00:00') - today) / 86400000);
+      var name = upcoming.name[lang] || upcoming.name[lang && lang.split('-')[0]] || upcoming.name['sr'] || upcoming.name['en'] || '';
+      var daysText = days === 0 ? t('holidayToday') : t('holidayDaysAway') + ' ' + days + ' ' + t('day');
+      el.style.display = ''; el.textContent = '\u{1F38C} ' + name + ' \u{00B7} ' + daysText;
+    } else { el.style.display = 'none'; }
+  }
+  window.renderUpcomingHoliday = renderUpcomingHoliday;
+
+  function renderMonthHolidaySummary() {
+    var el = document.getElementById('holidaySummary');
+    if (!el) return;
+    var m = (typeof CalState.month !== 'undefined') ? CalState.month : new Date().getMonth();
+    var y = (typeof CalState.year !== 'undefined') ? CalState.year : new Date().getFullYear();
+    var mh = [];
+    for (var i = 0; i < window.HOLIDAYS.length; i++) {
+      var d = new Date(window.HOLIDAYS[i].d + 'T00:00:00');
+      if (d.getMonth() === m && d.getFullYear() === y) mh.push(window.HOLIDAYS[i]);
+    }
+    if (mh.length === 0) { el.style.display = 'none'; return; }
+    el.style.display = '';
+    el.innerHTML = mh.sort(function (a, b) { return new Date(a.d) - new Date(b.d); })
+      .map(function (h) {
+        return '<span>' + (h.country === 'cn' ? '\u{1F1E8}\u{1F1F3}' : '\u{1F1F7}\u{1F1F8}') + ' ' + h.icon + ' ' + (h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr']) + ' ' + h.d.split('-')[2].replace(/^0/, '') + '</span>';
+      }).join('');
+  }
+  window.renderMonthHolidaySummary = renderMonthHolidaySummary;
+
+  function toggleHolidayStory(uid, date, country) {
+    var detail = document.getElementById('hd-' + uid), nameEl = document.getElementById('hn-' + uid);
+    if (!detail || !nameEl) return;
+    if (detail.classList.contains('open')) {
+      detail.classList.remove('open');
+      nameEl.textContent = nameEl.textContent.replace(' \u{25B4}', ' \u{25BE}');
+      return;
+    }
+    loadCalendarData(function (data) {
+      var story = null;
+      (data.holidays || []).forEach(function (h) {
+        if (h.date === date && h.country === (country === 'cn' ? 'china' : 'serbia')) story = h.story;
+      });
+      if (story) {
+        var txt = story[lang] || story[lang.split('-')[0]] || story['sr'];
+        if (txt) detail.textContent = txt;
+      }
+      detail.classList.add('open');
+      nameEl.textContent = nameEl.textContent.replace(' \u{25BE}', ' \u{25B4}');
+    });
+  }
+  window.toggleHolidayStory = toggleHolidayStory;
+
+  function loadCalendarData(cb) {
+    if (window.calendarExtraData) {
+      if (window.calendarExtraData.solarTerms) window.solarTermsCache = window.calendarExtraData.solarTerms;
+      cb(window.calendarExtraData); return;
+    }
+    var cached = localStorage.getItem('cycle-caldata');
+    if (cached) {
+      try {
+        window.calendarExtraData = JSON.parse(cached);
+        if (window.calendarExtraData.solarTerms) window.solarTermsCache = window.calendarExtraData.solarTerms;
+        cb(window.calendarExtraData); return;
+      } catch (e) {}
+    }
+    fetch('calendar-data.json').then(function (r) { return r.json(); })
+      .then(function (d) {
+        window.calendarExtraData = d;
+        if (d && d.solarTerms) window.solarTermsCache = d.solarTerms;
+        localStorage.setItem('cycle-caldata', JSON.stringify(d));
+        cb(d);
+      }).catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
+  }
+  window.loadCalendarData = loadCalendarData;
+
+  function ensureSolarTermData() {
+    if (window.solarTermsCache && window.solarTermsCache.length > 0) return;
+    var cached = localStorage.getItem('cycle-solarterms');
+    if (cached) {
+      try { window.solarTermsCache = JSON.parse(cached); if (window.solarTermsCache.length > 0) return; } catch (e) {}
+    }
+    fetch('calendar-data.json').then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.solarTerms) { window.solarTermsCache = d.solarTerms; localStorage.setItem('cycle-solarterms', JSON.stringify(window.solarTermsCache)); } })
+      .catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
+  }
+  window.ensureSolarTermData = ensureSolarTermData;
+
+  function getSolarTerm(dateKey) {
+    if (!window.solarTermsCache || !window.solarTermsCache.length) return;
+    for (var i = 0; i < window.solarTermsCache.length; i++) {
+      if (window.solarTermsCache[i].date === dateKey) return window.solarTermsCache[i];
+    }
+  }
+  window.getSolarTerm = getSolarTerm;
+
+  function renderSolarTermBadge() {
+    var badge = document.getElementById('solarTermBadge');
+    if (!badge) return;
+    var tk = fmtDate(today());
+    var term = getSolarTerm(tk);
+    if (term) {
+      var n = term.name[lang] || term.name[lang.split('-')[0]] || term.name['sr'] || term.name['zh-CN'] || '';
+      badge.textContent = '\u{1F33F} ' + n; badge.style.display = '';
+    } else {
+      var nearest = null, md = 30, td = today(), ts = window.solarTermsCache || [];
+      ts.forEach(function (s) { var d = daysDiff(td, new Date(s.date + 'T00:00:00')); if (d >= 0 && d < md) { md = d; nearest = s; } });
+      if (nearest && md <= 7) {
+        var nn = nearest.name[lang] || nearest.name[lang.split('-')[0]] || nearest.name['sr'] || nearest.name['zh-CN'] || '';
+        badge.textContent = '\u{1F33F} ' + nn + ' ' + t('solarTermBadge') + ' ' + md + ' ' + t('day'); badge.style.display = '';
+      } else { badge.style.display = 'none'; }
+    }
+  }
+  window.renderSolarTermBadge = renderSolarTermBadge;
+})();
+
 /* === dist/app.js === */
 ﻿'use strict';
 
@@ -4532,180 +4706,6 @@ if (typeof AuthModule !== 'undefined') {
   }
 })();
 
-/* === dist/js/module-holidays.js === */
-"use strict";
-
-(function () {
-  console.log('[module-holidays] 已加载');
-
-  window.HOLIDAYS = [];
-  window.HOLIDAY_DAYS = {};
-  window._holidayCache = null;
-  window._origHolidayPush = null;
-  window.calendarExtraData = null;
-  window.solarTermsCache = [];
-
-  function loadHolidays() {
-    return fetch('data/holidays.json')
-      .then(function (r) {
-        if (!r.ok) throw new Error('Failed to load holidays.json');
-        return r.json();
-      })
-      .then(function (data) {
-        window.HOLIDAYS = data.holidays || [];
-        window.HOLIDAY_DAYS = data.holidayDays || {};
-        if (typeof renderCalendar === 'function') renderCalendar();
-      })
-      .catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
-  }
-  window.loadHolidays = loadHolidays;
-  loadHolidays();
-
-  function _buildHolidayCache() {
-    window._holidayCache = {};
-    for (var hi = 0; hi < window.HOLIDAYS.length; hi++) {
-      var h = window.HOLIDAYS[hi];
-      if (!window._holidayCache[h.d]) window._holidayCache[h.d] = [];
-      window._holidayCache[h.d].push(h);
-    }
-  }
-  window._buildHolidayCache = _buildHolidayCache;
-
-  function getHoliday(dateKey) {
-    if (!window._holidayCache) _buildHolidayCache();
-    return window._holidayCache[dateKey] || [];
-  }
-  window.getHoliday = getHoliday;
-
-  function _rebuildHolidayCache() { window._holidayCache = null; }
-  window._rebuildHolidayCache = _rebuildHolidayCache;
-
-  function renderUpcomingHoliday() {
-    var el = document.getElementById('holidayCountdown');
-    if (!el) return;
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    var limit = new Date(today); limit.setDate(limit.getDate() + 60);
-    var upcoming = null;
-    for (var i = 0; i < window.HOLIDAYS.length; i++) {
-      var d = new Date(window.HOLIDAYS[i].d + 'T00:00:00');
-      if (d >= today && d <= limit) {
-        if (!upcoming || d < new Date(upcoming.d + 'T00:00:00')) upcoming = window.HOLIDAYS[i];
-      }
-    }
-    if (upcoming) {
-      var days = Math.ceil((new Date(upcoming.d + 'T00:00:00') - today) / 86400000);
-      var name = upcoming.name[lang] || upcoming.name[lang && lang.split('-')[0]] || upcoming.name['sr'] || upcoming.name['en'] || '';
-      var daysText = days === 0 ? t('holidayToday') : t('holidayDaysAway') + ' ' + days + ' ' + t('day');
-      el.style.display = ''; el.textContent = '\u{1F38C} ' + name + ' \u{00B7} ' + daysText;
-    } else { el.style.display = 'none'; }
-  }
-  window.renderUpcomingHoliday = renderUpcomingHoliday;
-
-  function renderMonthHolidaySummary() {
-    var el = document.getElementById('holidaySummary');
-    if (!el) return;
-    var m = (typeof CalState.month !== 'undefined') ? CalState.month : new Date().getMonth();
-    var y = (typeof CalState.year !== 'undefined') ? CalState.year : new Date().getFullYear();
-    var mh = [];
-    for (var i = 0; i < window.HOLIDAYS.length; i++) {
-      var d = new Date(window.HOLIDAYS[i].d + 'T00:00:00');
-      if (d.getMonth() === m && d.getFullYear() === y) mh.push(window.HOLIDAYS[i]);
-    }
-    if (mh.length === 0) { el.style.display = 'none'; return; }
-    el.style.display = '';
-    el.innerHTML = mh.sort(function (a, b) { return new Date(a.d) - new Date(b.d); })
-      .map(function (h) {
-        return '<span>' + (h.country === 'cn' ? '\u{1F1E8}\u{1F1F3}' : '\u{1F1F7}\u{1F1F8}') + ' ' + h.icon + ' ' + (h.name[lang] || h.name[lang.split('-')[0]] || h.name['sr']) + ' ' + h.d.split('-')[2].replace(/^0/, '') + '</span>';
-      }).join('');
-  }
-  window.renderMonthHolidaySummary = renderMonthHolidaySummary;
-
-  function toggleHolidayStory(uid, date, country) {
-    var detail = document.getElementById('hd-' + uid), nameEl = document.getElementById('hn-' + uid);
-    if (!detail || !nameEl) return;
-    if (detail.classList.contains('open')) {
-      detail.classList.remove('open');
-      nameEl.textContent = nameEl.textContent.replace(' \u{25B4}', ' \u{25BE}');
-      return;
-    }
-    loadCalendarData(function (data) {
-      var story = null;
-      (data.holidays || []).forEach(function (h) {
-        if (h.date === date && h.country === (country === 'cn' ? 'china' : 'serbia')) story = h.story;
-      });
-      if (story) {
-        var txt = story[lang] || story[lang.split('-')[0]] || story['sr'];
-        if (txt) detail.textContent = txt;
-      }
-      detail.classList.add('open');
-      nameEl.textContent = nameEl.textContent.replace(' \u{25BE}', ' \u{25B4}');
-    });
-  }
-  window.toggleHolidayStory = toggleHolidayStory;
-
-  function loadCalendarData(cb) {
-    if (window.calendarExtraData) {
-      if (window.calendarExtraData.solarTerms) window.solarTermsCache = window.calendarExtraData.solarTerms;
-      cb(window.calendarExtraData); return;
-    }
-    var cached = localStorage.getItem('cycle-caldata');
-    if (cached) {
-      try {
-        window.calendarExtraData = JSON.parse(cached);
-        if (window.calendarExtraData.solarTerms) window.solarTermsCache = window.calendarExtraData.solarTerms;
-        cb(window.calendarExtraData); return;
-      } catch (e) {}
-    }
-    fetch('calendar-data.json').then(function (r) { return r.json(); })
-      .then(function (d) {
-        window.calendarExtraData = d;
-        if (d && d.solarTerms) window.solarTermsCache = d.solarTerms;
-        localStorage.setItem('cycle-caldata', JSON.stringify(d));
-        cb(d);
-      }).catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
-  }
-  window.loadCalendarData = loadCalendarData;
-
-  function ensureSolarTermData() {
-    if (window.solarTermsCache && window.solarTermsCache.length > 0) return;
-    var cached = localStorage.getItem('cycle-solarterms');
-    if (cached) {
-      try { window.solarTermsCache = JSON.parse(cached); if (window.solarTermsCache.length > 0) return; } catch (e) {}
-    }
-    fetch('calendar-data.json').then(function (r) { return r.json(); })
-      .then(function (d) { if (d && d.solarTerms) { window.solarTermsCache = d.solarTerms; localStorage.setItem('cycle-solarterms', JSON.stringify(window.solarTermsCache)); } })
-      .catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
-  }
-  window.ensureSolarTermData = ensureSolarTermData;
-
-  function getSolarTerm(dateKey) {
-    if (!window.solarTermsCache || !window.solarTermsCache.length) return;
-    for (var i = 0; i < window.solarTermsCache.length; i++) {
-      if (window.solarTermsCache[i].date === dateKey) return window.solarTermsCache[i];
-    }
-  }
-  window.getSolarTerm = getSolarTerm;
-
-  function renderSolarTermBadge() {
-    var badge = document.getElementById('solarTermBadge');
-    if (!badge) return;
-    var tk = fmtDate(today());
-    var term = getSolarTerm(tk);
-    if (term) {
-      var n = term.name[lang] || term.name[lang.split('-')[0]] || term.name['sr'] || term.name['zh-CN'] || '';
-      badge.textContent = '\u{1F33F} ' + n; badge.style.display = '';
-    } else {
-      var nearest = null, md = 30, td = today(), ts = window.solarTermsCache || [];
-      ts.forEach(function (s) { var d = daysDiff(td, new Date(s.date + 'T00:00:00')); if (d >= 0 && d < md) { md = d; nearest = s; } });
-      if (nearest && md <= 7) {
-        var nn = nearest.name[lang] || nearest.name[lang.split('-')[0]] || nearest.name['sr'] || nearest.name['zh-CN'] || '';
-        badge.textContent = '\u{1F33F} ' + nn + ' ' + t('solarTermBadge') + ' ' + md + ' ' + t('day'); badge.style.display = '';
-      } else { badge.style.display = 'none'; }
-    }
-  }
-  window.renderSolarTermBadge = renderSolarTermBadge;
-})();
-
 /* === dist/js/module-sleep.js === */
 "use strict";
 
@@ -6859,8 +6859,7 @@ var APP_VERSION = (function () {
     _mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
   })();
 
-  window.animateDashboardCards = null;
-  window.animateStatsPanel = null;
+  // animateStatsPanel / animateDashboardCards 由 gsap-animations.js 定义，勿置空（否则 app.js updateStats 调用崩溃）
 
   // GitHub Token — 已在 app.js 中统一使用 localStorage 持久化存储。
   // ⚠️ 安全提示：Token 在浏览器中可被同源脚本读取。建议使用最小权限的 fine-grained token，
