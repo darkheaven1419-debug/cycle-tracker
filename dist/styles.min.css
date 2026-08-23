@@ -1284,7 +1284,7 @@ body {
   border-width: 1.5px;
 }
 .day.birthday::after {
-  content: "\U0001F382";
+  content: "\1F382";
   position: absolute;
   top: 0;
   right: 2px;

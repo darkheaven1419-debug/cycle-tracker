@@ -388,7 +388,8 @@ var APP_VERSION = (function () {
           _btn.id = 'fix-modal-diary-btn';
           _btn.className = 'btn btn-ghost mt-6';
           _btn.style.cssText = 'margin-bottom:0;margin-top:6px;width:100%';
-          _btn.textContent = '\u{1F4DD} \u{67E5}\u{770B}\u{5F53}\u{6708}\u{65E5}\u{8BB0}';
+          var _dl = (typeof window.lang !== 'undefined') ? window.lang : 'sr';
+          _btn.textContent = _dl === 'zh-CN' ? '\u{1F4DD} \u{67E5}\u{770B}\u{5F53}\u{6708}\u{65E5}\u{8BB0}' : _dl === 'en' ? '\u{1F4DD} View This Month\u{2019}s Diary' : '\u{1F4DD} Pregled dnevnika za ovaj mesec';
           _btn.onclick = function () {
             if (typeof closeModal === 'function') closeModal();
             if (typeof switchToTab === 'function') switchToTab('diary');

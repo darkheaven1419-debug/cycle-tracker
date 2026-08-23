@@ -2,7 +2,7 @@
 // Network-First for all dynamic assets, Cache-First for static
 // Features: Background Sync for offline diary saves, cache-first for fonts
 
-const CACHE_STATIC = 'ciklus-static-v27';
+const CACHE_STATIC = 'ciklus-static-v28';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 const STATIC_ASSETS = [
@@ -12,12 +12,7 @@ const STATIC_ASSETS = [
   './styles.css',
   './app.js',
   './css/tokens.css',
-  './css/base.css',
-  './css/components.css',
   './css/calendar.css',
-  './css/diary.css',
-  './css/animations.css',
-  './css/responsive.css',
   './js/i18n.js',
   './js/auth.js',
   './js/weather.js',
@@ -25,6 +20,8 @@ const STATIC_ASSETS = [
   './js/ui-core.js',
   './js/chart-renderer.js',
   './js/cycle-core.js',
+  './js/cycle-engine.js',
+  './js/render-calendar.js',
   './js/lunar.js',
   './js/calendar-culture.js',
   './js/translate.js',
@@ -37,9 +34,17 @@ const STATIC_ASSETS = [
   './js/render-mood.js',
   './js/render-love.js',
   './js/render-misc.js',
-  './js/render-settings.js',
-  './js/render-diary.js',
   './js/gsap-animations.js',
+  './js/module-holidays.js',
+  './js/module-sleep.js',
+  './js/module-settings.js',
+  './js/module-dashboard.js',
+  './js/module-stats.js',
+  './js/fix-css.js',
+  './js/fix-diary.js',
+  './js/fix-stats.js',
+  './js/fix-all.js',
+  './js/fix-panel.js',
   './libs/gsap.min.js',
   './libs/ScrollTrigger.min.js',
 

@@ -8,9 +8,9 @@ var path = require('path');
 
 // 加载顺序（与 index.html 一致）
 var FILES = [
-  'dist/js/i18n.js',
   'dist/js/gsap-animations.js',
   'dist/js/ui-core.js',
+  'dist/js/i18n.js',
   'dist/js/chart-renderer.js',
   'dist/js/lunar.js',
   'dist/js/calendar-culture.js',
@@ -30,15 +30,17 @@ var FILES = [
   'dist/js/render-mood.js',
   'dist/js/render-love.js',
   'dist/js/render-misc.js',
-  'dist/js/render-settings.js',
-  'dist/js/render-diary.js',
   'dist/app.js',
   'dist/js/module-holidays.js',
   'dist/js/module-sleep.js',
   'dist/js/module-settings.js',
   'dist/js/module-dashboard.js',
   'dist/js/module-stats.js',
+  'dist/js/fix-css.js',
+  'dist/js/fix-diary.js',
+  'dist/js/fix-stats.js',
   'dist/js/fix-all.js',
+  'dist/js/fix-panel.js',
 ];
 
 var VERSION = process.env.APP_VERSION || '7.2.0';

@@ -322,7 +322,13 @@
           var content = JSON.parse(decodeURIComponent(escape(atob(d.content))));
           if (!Array.isArray(content)) return;
           var idMap={}; (window.state.todoList||[]).forEach(function(t){idMap[t.id]=t;});
-          content.forEach(function(t){if(!idMap[t.id])idMap[t.id]=t;});
+          content.forEach(function(t){
+            if(!idMap[t.id]){ idMap[t.id]=t; return; }
+            // 同 id：同步完成状态（远程完成能同步到本地），文本保留本地避免覆盖正在编辑的内容
+            var l=idMap[t.id];
+            if(t.completed && !l.completed){ l.completed=true; l.completedBy=t.completedBy||l.completedBy; l.completedAt=t.completedAt||Date.now(); }
+            else if(t.completed && l.completed && (t.completedAt||0)>(l.completedAt||0)){ l.completedBy=t.completedBy||l.completedBy; l.completedAt=t.completedAt; }
+          });
           window.state.todoList=Object.keys(idMap).map(function(k){return idMap[k];});
           localStorage.setItem('shared-todolist',JSON.stringify(window.state.todoList));
           _render();

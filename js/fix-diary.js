@@ -191,6 +191,8 @@ window.saveDiaryEntry = function() {
     var user = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
     if (!sd[dateKey][user]) sd[dateKey][user] = {};
     sd[dateKey][user].text = text; sd[dateKey][user].mood = mood; sd[dateKey][user].time = Date.now();
+    // 失效缓存后再写 localStorage，避免 _sdCache 读到旧数据
+    if (typeof invalidateSDCache === 'function') invalidateSDCache();
     localStorage.setItem('shared-diary', JSON.stringify(sd));
     var badge = document.getElementById('letterSavedBadge');
     if (badge) badge.style.display = '';

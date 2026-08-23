@@ -3,6 +3,32 @@ const SyncModule = (function () {
   var STATE_FILE = 'shared-state.json';
   var _lastError = null; // 持久化同步错误状态
 
+  // ── 自动拉取定时器（句柄可清理，页面隐藏时暂停） ──
+  var _autoPullTimer = null;
+  var _visHandler = null;
+
+  function _startAutoPull() {
+    _stopAutoPull();
+    _autoPullTimer = setInterval(function () {
+      if (typeof getGitHubToken === 'function' && getGitHubToken()) {
+        console.log('[同步] 定时拉取...');
+        pull();
+      }
+    }, 60000);
+    // 页面隐藏时暂停拉取，恢复可见后重启 —— 避免多开/后台重复请求
+    if (!_visHandler && typeof document !== 'undefined') {
+      _visHandler = function () {
+        if (document.hidden) _stopAutoPull();
+        else _startAutoPull();
+      };
+      document.addEventListener('visibilitychange', _visHandler);
+    }
+  }
+
+  function _stopAutoPull() {
+    if (_autoPullTimer) { clearInterval(_autoPullTimer); _autoPullTimer = null; }
+  }
+
   // ── 同步错误状态管理 ──
   function _setError(msg) {
     _lastError = msg;
@@ -16,6 +42,12 @@ const SyncModule = (function () {
   function getJSON(key, fallback) {
     try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
     catch (e) { return fallback; }
+  }
+
+  /** 本地日期键（YYYY-MM-DD），用于记录去重 —— 与项目 sameDay/fmtDate 的本地日期语义一致 */
+  function _dkey(d) {
+    var dt = (d instanceof Date) ? d : new Date(d);
+    return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
   }
 
   // ── 收集全部本地状态 ──
@@ -84,17 +116,35 @@ const SyncModule = (function () {
       console.log('[同步] 日记合并完成 本地=' + Object.keys(localDiary).length + ' 远程=' + Object.keys(state.diary).length + ' 合并后=' + Object.keys(merged).length);
     }
 
-    // 周期数据：替换
+    // 周期数据：合并（保留本地未推送的经期记录，避免拉取覆盖离线标记）
     if (state.cycleInfo) {
-      localStorage.setItem('shared-cycle-data', JSON.stringify(state.cycleInfo));
-      if (state.cycleInfo.records && state.cycleInfo.records.length > 0) {
-        localStorage.setItem('cycle-data-v6-andjela', JSON.stringify(state.cycleInfo));
-        if (typeof window.state !== 'undefined' && state.cycleInfo) {
-          window.state.records = state.cycleInfo.records.map(function (r) { return new Date(r); });
-          window.state.periodEnds = state.cycleInfo.periodEnds || {};
-          window.state.symptoms = state.cycleInfo.symptoms || {};
-          window.state.settings = state.cycleInfo.settings || { cycleLength: 28, periodLength: 7 };
-        }
+      var mergedInfo = JSON.parse(JSON.stringify(state.cycleInfo));
+      var localCE = getJSON('shared-cycle-data', null);
+      if (!localCE || !localCE.records) localCE = getJSON('cycle-data-v6-andjela', null);
+      if (localCE && localCE.records && Array.isArray(localCE.records) && localCE.records.length) {
+        var seen = {};
+        (mergedInfo.records || []).forEach(function (r) { seen[_dkey(r)] = 1; });
+        localCE.records.forEach(function (r) {
+          var k = _dkey(r);
+          if (!seen[k]) { seen[k] = 1; (mergedInfo.records = mergedInfo.records || []).push(r); }
+        });
+        mergedInfo.records.sort(function (a, b) { return new Date(a) - new Date(b); });
+      }
+      // periodEnds：本地有而远程没有的保留
+      var localEnds = (localCE && localCE.periodEnds) || {};
+      var mergedEnds = mergedInfo.periodEnds || {};
+      for (var pk in localEnds) {
+        if (localEnds.hasOwnProperty(pk) && !mergedEnds[pk]) mergedEnds[pk] = localEnds[pk];
+      }
+      mergedInfo.periodEnds = mergedEnds;
+
+      localStorage.setItem('shared-cycle-data', JSON.stringify(mergedInfo));
+      localStorage.setItem('cycle-data-v6-andjela', JSON.stringify(mergedInfo));
+      if (typeof window.state !== 'undefined') {
+        window.state.records = (mergedInfo.records || []).map(function (r) { return new Date(r); });
+        window.state.periodEnds = mergedInfo.periodEnds || {};
+        window.state.symptoms = mergedInfo.symptoms || {};
+        window.state.settings = mergedInfo.settings || { cycleLength: 28, periodLength: 7 };
       }
     }
 
@@ -148,12 +198,18 @@ const SyncModule = (function () {
     var _localBefore = getJSON('shared-diary', {});
     console.log('[同步] 开始推送 (重试#' + n + ') — 本地日记数:', Object.keys(_localBefore).length);
 
-    // ── 步骤 1：先拉取远程，合并日记到本地 ──
+    // ── 步骤 1：拉取远程（一次 GET 取得 sha 并合并日记，消除重复请求与 TOCTOU 窗口） ──
+    var sha = null;
     try {
       var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
       var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
+      if (resp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
+      }
       if (resp.ok) {
         var data = await resp.json();
+        sha = data.sha;
         var remoteState = JSON.parse(decodeURIComponent(escape(atob(data.content))));
         if (remoteState && remoteState.diary) {
           var remoteCount = Object.keys(remoteState.diary).length;
@@ -170,24 +226,8 @@ const SyncModule = (function () {
     // ── 步骤 2：收集本地状态（含已合并的日记） ──
     var state = collect();
 
-    // ── 步骤 3：取 SHA ──
-    var sha = null;
+    // ── 步骤 3（已并入步骤 1）：直接复用步骤 1 取得的 sha ──
     var authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
-    try {
-      var getResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: authHeaders, cache: 'no-store' });
-      if (getResp.ok) {
-        var getData = await getResp.json();
-        sha = getData.sha;
-      } else if (getResp.status === 401) {
-        _syncToast(_syncMsg('token401'));
-        return;
-      }
-    } catch (e) {
-      console.warn('[同步] 取 SHA 失败:', e.message);
-      if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
-      else { _setError(_syncMsg('retryFail')); _syncToast(_syncMsg('retryFail')); }
-      return;
-    }
 
     // ── 步骤 4：PUT ──
     var body = {
@@ -341,13 +381,8 @@ const SyncModule = (function () {
         };
       }
 
-      // 定时自动拉取（每 60 秒）
-      setInterval(function () {
-        if (typeof getGitHubToken === 'function' && getGitHubToken()) {
-          console.log('[同步] 定时拉取...');
-          pull();
-        }
-      }, 60000);
+      // 定时自动拉取（每 60 秒，句柄可清理）
+      _startAutoPull();
 
       updateBadge();
       console.log('[同步] 模块已初始化 ✓');
@@ -356,7 +391,9 @@ const SyncModule = (function () {
     pull: pull,
     collect: collect,
     apply: apply,
-    updateBadge: updateBadge
+    updateBadge: updateBadge,
+    stopAutoPull: _stopAutoPull,
+    startAutoPull: _startAutoPull
   };
 })();
 

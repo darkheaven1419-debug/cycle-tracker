@@ -1,11 +1,11 @@
-// Anđelin Ciklus v7.2.0 | Built 2026-08-22
+// Anđelin Ciklus v7.2.0 | Built 2026-08-23
 
-/* === dist/js/i18n.js === */
-!function(){try{const e=document.getElementById("appLoader");e&&(e.style.display="none")}catch(e){}}();const I18N={sr:{appTitle:"Anđelin Ciklus",theme:"Tamni režim",themeHint:"Prebacivanje između tamnog i svetlog režima",weekdays:["Pon","Uto","Sre","Čet","Pet","Sub","Ned"],months:["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Avg","Sep","Okt","Nov","Dec"],today:"Danas",tabs:["Početna","Statistika","Simptomi","Dnevnik","Podeš."],legend:["Menstruacija","Ovul./Plodni","Folikularna","Lutealna","Danas","Ljubav"],progressLabels:["Menstr.","Folikul.","Ovulacija","Lutealna"],phases:{"period-on":"Početak · Odmori","period-mid":"Menstruacija · Topliće","period-pred-first":"Predviđen početak","period-pred":"Predviđeno","period-future-first":"Buduća pred.","period-future":"Buduća pred.",ovulation:"Ovulacija · Vrhunac",fertile:"Plodni dani",luteal:"Lutealna",follicular:"Folikularna"},phaseBadges:{period:"Menstruacija",follicular:"Folikularna",ovulation:"Ovulacija",fertile:"Plodni dani",luteal:"Lutealna",late:"Kašnjenje"},knowledgeToggle:"📖 Saznaj više o ovoj fazi ▾",knowledgeToggleHide:"Sakri ▴",knowledge:{period:{title:"Menstruacija · Nežnost",desc:"Sluzokoža materice se ljušti. Anđeli je potrebno više odmora i topline. Barry, skuvaj joj čaj. ❤️",what:"Estrogen i progesteron na najnižem nivou. Kineska medicina preporučuje negovanje krvi (xue yang), srpska tradicija topli čaj od nane.",symptoms:"Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima",tips:"Barryev savet: topli čaj od đumbira (kineski) ili nane (srpski). Termofor na stomak. Mnogo ljubavi i pažnje. ❤️"},follicular:{title:"Folikularna · Energija raste",desc:"Posle menstruacije energija se vraća. Sjajan period za planove i zajedničke aktivnosti.",what:"FSH stimuliše rast folikula. Kineski čaj od goji bobica pomaže. Srpska tradicija: voće i orašasti plodovi.",symptoms:"Povratak energije, jasnije razmišljanje, bolja koža",tips:"Planirajte zajednički izlazak! Energija je na vrhuncu za vežbanje i kreativnost."},ovulation:{title:"O ovulaciji",desc:"Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.",what:"LH talas pokreće ovulaciju. Estrogen dostiže vrhunac.",symptoms:"Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature",tips:"Najbolje vreme za začeće, fizičke performanse na vrhuncu"},luteal:{title:"O lutealnoj fazi",desc:"Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.",what:"Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.",symptoms:"PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom",tips:"Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu"},fertile:{title:"O plodnim danima",desc:"Dani oko ovulacije kada je najveća verovatnoća začeća.",what:"Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h.",symptoms:"Bistar rastegljiv sekret, povećan libido, promene bazalne temperature",tips:"Za začeće svaki drugi dan, folna kiselina, dobar san"}},emptyState:"Dodirni datum — započni svoju priču ✨",emptySymptom:"Dodirni datum na kalendaru<br>da uneseš simptome",daysUntil:"Još {n} dana do sledeće menstruacije",daysOverdue:"Kašnjenje {n} dana",day:" dana",periodDay:"{n}. dan ciklusa",expected:"Očekivano",onboarding:"👋 Dobrodošla, Anđelo! Dodirni bilo koji datum da započneš. ♥",fabLabel:"Danas je",greeting:{morning:{icon:"🌅",name:"Anđelo",msg:"Dobro jutro, anđele moj. Želim ti divan dan — budi nežna prema sebi.",sub:"— Sa ljubavlju, Barry"},afternoon:{icon:"🌤️",name:"Anđelo",msg:"Prijatno popodne, moja draga. Napravi pauzu, popij čaj i odmori — brinem se kad preteruješ.",sub:"— Tvoj Barry"},evening:{icon:"🌆",name:"Anđelo",msg:"Dobro veče, najlepša moja. Polako večeras — zaslužuješ miran i topao kraj dana.",sub:"— Sa ljubavlju, tvoj Barry"},night:{icon:"🌙",name:"Anđelo!",msg:"Zašto si još uvek budna? Odmah na spavanje! Brinem se kad ne spavaš, znaš.",sub:"— Voli te, Barry"},dismiss:"♥ Zatvori"},stats:{cycleTitle:"📈 Statistika ciklusa",historyTitle:"📅 Nedavni ciklusi",predTitle:"🔮 Predviđanje",count:"Zabeleženih ciklusa",avg:"Prosečan ciklus",range:"Najkraći / Najduži",reg:"Redovnost",next:"Sledeća menstruacija",ovulation:"Ovulacija",fertile:"Plodni dani",confidence:"Pouzdanost",future:"Buduća predviđanja",cycle:"Trend ciklusa",mood:"Raspoloženje",symptoms:"Učestalost simptoma",history:"Istorija ciklusa",short:"Kratak",normal:"Normalan",long:"Dug",relationship:"Veza",note:"Današnja beleška",knowme:"Da li me poznaješ?",regularity:"Regularnost"},historyLabel:"● Kratak  ● Normalan  ● Dug  (tačka = ciklus)",modal:{details:"Detalji datuma",marked:"Zabeležen početak",phase:"Faza",day:"Dan ciklusa",symptoms:"Simptomi",mark:"Označi početak",unmark:"Ukloni",close:"Zatvori",quickSymptom:"Brzi unos",notesPlaceholder:"Beleške..."},symptoms:{cramps:"Grčevi",mood:"Raspoloženje",flow:"Protok",headache:"Glavobolja",fatigue:"Umor",cravings:"Žudnja"},tips:{period:[{icon:"🩸",text:"Telo gubi gvožđe — jedite crveno meso, spanać i susam.",source:"",tcm:!1},{icon:"♨",text:"Zagrejte stomak termoforom ili toplom vodom.",source:"",tcm:!1},{icon:"🍵",text:"Popijte čaj od šipurka posle obroka — umiruje grčeve.",source:"Srpska tradicija",tcm:!1},{icon:"🧘",text:"Blago istezanje ili joga ublažavaju tegobe.",source:"",tcm:!1},{icon:"🫘",text:"Crveni pasulj i susam bogati gvožđem — tradicionalni srpski izvor gvožđa.",source:"Srpska kuhinja",tcm:!1}],follicular:[{icon:"💪",text:"Estrogen raste, energija se vraća — odlično za novi fitnes plan.",source:"",tcm:!1},{icon:"🥗",text:"Jedite dosta povrća i voća za uravnoteženu ishranu.",source:"",tcm:!1},{icon:"🌿",text:"U kineskoj medicini, ovo je vreme za jačanje krvi (养血). Probajte goji bobice.",source:"中医智慧",tcm:!0},{icon:"🎯",text:"Jasno razmišljanje i visoka energija za važne odluke.",source:"",tcm:!1}],ovulation:[{icon:"⭐",text:"Faza ovulacije — najplodniji dani.",source:"",tcm:!1},{icon:"🏃",text:"Fizičke performanse na vrhuncu — odlično za treninge.",source:"",tcm:!1},{icon:"🌸",text:"U kineskoj tradiciji, ovo je vreme ravnoteže (阴阳调和). Uživajte u prirodi.",source:"中医智慧",tcm:!0}],luteal:[{icon:"🍵",text:"Smanjite kofein — može pogoršati anksioznost.",source:"",tcm:!1},{icon:"🌿",text:"Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.",source:"",tcm:!1},{icon:"🫚",text:"Topla voda sa đumbirom i crvenim datulama greje telo pred ciklus.",source:"中医智慧 · 姜枣茶",tcm:!0},{icon:"🍌",text:"Skloni nadutosti? Smanjite so, jedite banane.",source:"",tcm:!1}]},settings:{lang:"Jezik / Language / 语言",langHint:"Promeni jezik",theme:"Tema",themeHint:"Tamni / Svetli režim",cycle:"Dužina ciklusa",cycleHint:"Automatski, možeš i ručno",period:"Trajanje menstruacije",periodHint:"Trajanje svake menstruacije",override:"Ručne vrednosti",overrideHint:"Ignoriši automatski proračun",save:"💾 Sačuvaj",export:"📤 Izvezi (JSON)",import:"📥 Uvezi (JSON)",clear:"🗑 Obriši sve",clearConfirm:"Sigurna si? Ovo se ne može opozvati!",anniversary:"Godišnjica",anniversaryHint:"Dan kad ste počeli"},toast:{saved:"Sačuvano ✓",marked:"Označeno ✓ Barry je uz tebe",unmarked:"Uklonjeno • Nema veze ❤️",symptomSaved:"Sačuvano ✓",symptomQuick:"Ažurirano ✓",exported:"Izvezeno ✓",imported:"Uvezeno ✓",importError:"Greška",cleared:"Obrisano"},reminder:{beforePeriod:"⏰ Menstruacija za {days} dana — spremi se, dušo",late:"⚠️ Kašnjenje {days} dana — konsultuj lekara",ovulation:"✨ Danas je ovulacija — vrhunac plodnosti"},cycleCounter:"Zajedno: {n} ciklusa",cycleCounterSub:"Barry prati svaki tvoj ciklus ♥",anniversaryTitle:"💕 Datumi koji znače",annMetLabel:"✨ Prvi put smo se sreli",annLoveLabel:"♥ Zajedno smo od",annCountMet:"{n} dana od prvog susreta ✨",annCountLove:"{n} dana zajedno ♥",yearTitle:"Godišnji pregled"},"zh-CN":{appTitle:"Anđelin Ciklus",theme:"深色模式",themeHint:"切换深色/浅色主题",weekdays:["一","二","三","四","五","六","日"],months:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],today:"今天",tabs:["主页","统计","症状","日记","设置"],legend:["经期","排卵/易孕","卵泡期","黄体期","今天","♥纪念日"],progressLabels:["经期","卵泡期","排卵","黄体期"],phases:{"period-on":"经期 · 多休息","period-mid":"经期 · 注意保暖","period-pred-first":"预测开始","period-pred":"预测经期","period-future-first":"未来预测","period-future":"未来预测",ovulation:"排卵 · 最佳时机",fertile:"受孕窗 · 能量峰值",luteal:"黄体期 · 放松心情",follicular:"卵泡期 · 精力充沛"},phaseBadges:{period:"经期中",follicular:"卵泡期",ovulation:"排卵日",fertile:"易孕期",luteal:"黄体期",late:"已推迟"},knowledgeToggle:"📖 了解这个阶段 ▾",knowledgeToggleHide:"收起 ▴",knowledge:{period:{title:"经期 · 温暖守护",desc:"子宫内膜脱落排出体外。这几天Anđela需要更多关心和休息。Barry记得给她泡一杯热茶。",what:"雌激素和孕激素最低。中医建议此时「养血」，塞尓维亚传统建议用暖水袋缓解不适。",symptoms:"腹部绞痛、疲劳、情绪波动、头痛、腰酸",tips:"Barry的贴心提醒：泡一杯姜枣茶（中医）或薄荷茶（塞尔维亚），用暖水袋敷肚子。少喝咖啡，多休息。"},follicular:{title:"卵泡期 · 活力回升",desc:"经期结束后卵泡开始发育，雌激素上升。Anđela的精力开始恢复，这是制定计划的好时机。",what:"FSH 刺激卵泡生长，雌激素使子宫内膜重新增厚。中医推荐枸杞红枣茶补气养血。",symptoms:"精力恢复、思维清晰、皮肤状态改善、自信心提升",tips:"适合开启新项目。塞尔维亚传统建议多吃水果和坚果。一起计划下一次约会吧！"},ovulation:{title:"排卵期 · 能量巅峰",desc:"这是Anđela体能和情绪最好的时期。成熟卵子从卵巢释放，生育力达到顶峰。",what:"LH 激素激增触发卵子释放。中医讲究「阴阳调和」，此时是身心最平衡的阶段。",symptoms:"轻微腹痛、分泌物清亮、性欲增强、体温微升、精力充沛",tips:"如果备孕，这是最佳时机。塞尔维亚传统认为此时适合户外活动和社交。Barry记得多夸她！"},luteal:{title:"黄体期 · 温柔以待",desc:"排卵后到下次月经前的阶段。孕激素上升，Anđela可能需要更多耐心和理解。",what:"孕激素稳定子宫内膜。如未受孕则黄体退化。中医认为此时宜「静养」，塞尔维亚传统推荐花草茶。",symptoms:"PMS、乳房胀痛、情绪波动、水肿、食欲变化、疲劳",tips:"减少咖啡因和盐。塞尔维亚传统：洋甘菊茶安神；中医：红枣桂圆汤暖身。Barry：多倾听，少讲道理。"},fertile:{title:"易孕窗 · 最佳时机",desc:"排卵日前后几天是最易受孕的阶段。精子可存活3-5天，卵子约24小时。",what:"约6天的受孕窗口。中医讲究「天人合一」，此时身体状态最适合孕育新生命。",symptoms:"分泌物清亮黏滑如蛋清、性欲增强、基础体温略升",tips:"如果计划怀孕，隔天同房受孕率最高。塞尔维亚传统：保持心情愉快，避免压力。补充叶酸。"}},emptyState:"点击日历 开始记录你们的故事 ✨",emptySymptom:"点击日历中的日期<br>来记录当日症状",daysUntil:"距下次月经还有 {n} 天",daysOverdue:"已推迟 {n} 天",day:"天",periodDay:"经期第 {n} 天",expected:"预计",onboarding:"👋 欢迎！点击日历开始记录吧 ♥",fabLabel:"今天来了",greeting:{morning:{icon:"🌅",name:"Anđelo",msg:"早安，我的天使。愿你今天温柔待自己。",sub:"— 爱你的 Barry"},afternoon:{icon:"🌤️",name:"Anđelo",msg:"下午了，亲爱的。休息一下，喝杯茶——你太拼了我会心疼。",sub:"— 你的 Barry"},evening:{icon:"🌆",name:"Anđelo",msg:"晚上好，最美的你。慢慢来——你值得一个温暖平静的夜晚。",sub:"— 爱你的 Barry"},night:{icon:"🌙",name:"Anđelo！",msg:"怎么还没睡？快去睡觉！你不睡我会担心的，知道吗。",sub:"— 想你的 Barry"},dismiss:"♥ 开始"},stats:{cycleTitle:"📈 周期统计",historyTitle:"📅 近期周期",predTitle:"🔮 当前预测",count:"已记录周期数",avg:"平均周期",range:"最短 / 最长",reg:"规律性",next:"下次月经",ovulation:"排卵日",fertile:"易孕窗口",confidence:"置信度",futurePeriod:"未来预测",currentPhase:"当前阶段",trendTitle:"📈 周期趋势",historyTitle:"📜 周期历史",cycle:"周期趋势",mood:"心情分布",symptoms:"症状频率",history:"周期历史",short:"短",normal:"正常",long:"长",relationship:"我们的关系",note:"今日笔记",knowme:"你了解我吗",regularity:"规律性"},historyLabel:"● 偏短  ● 正常  ● 偏长  (每点=一个周期)",modal:{details:"日期详情",marked:"已记录的经期开始日",phase:"阶段",day:"周期第几天",symptoms:"已记录症状",mark:"标记经期开始",unmark:"取消标记",close:"关闭",quickSymptom:"快速记录症状",notesPlaceholder:"添加备注..."},symptoms:{cramps:"痛经",mood:"情绪",flow:"流量",headache:"头痛",fatigue:"疲劳",cravings:"食欲"},tips:{period:[{icon:"🩸",text:"经期身体流失铁质，多吃红肉、菠菜、黑芝麻等富含铁的食物。",source:"",tcm:!1},{icon:"♨",text:"注意腹部保暖，可使用暖水袋或暖宝宝缓解不适。",source:"",tcm:!1},{icon:"🍵",text:"喝杯红枣姜茶，暖宫驱寒，缓解经期不适。",source:"中医养生 · 姜枣茶",tcm:!0},{icon:"🧘",text:"轻度拉伸或瑜伽有助缓解不适，避免剧烈运动。",source:"",tcm:!1},{icon:"🫘",text:"红豆补血养心——相思之物，亦养身之物。",source:"中医智慧 · 红豆",tcm:!0}],follicular:[{icon:"💪",text:"卵泡期雌激素上升，精力和体能恢复中，适合开启新运动计划。",source:"",tcm:!1},{icon:"🥗",text:"新陈代谢较好，多吃蔬菜水果，均衡营养。",source:"",tcm:!1},{icon:"🌿",text:"中医认为此时宜养血（养血），枸杞红枣茶正当时。",source:"中医智慧",tcm:!0},{icon:"🎯",text:"思维清晰精力充沛，适合处理复杂任务和做重要决定。",source:"",tcm:!1}],ovulation:[{icon:"⭐",text:"排卵期，如有备孕计划，这几天是最佳时机。",source:"",tcm:!1},{icon:"🏃",text:"体能处于高峰，适合高强度训练。",source:"",tcm:!1},{icon:"🌸",text:"中医讲究阴阳调和，此时阴阳平衡，适合赏花散步。",source:"中医养生",tcm:!0}],luteal:[{icon:"🍵",text:"黄体期减少咖啡因摄入，可能加重焦虑和情绪波动。",source:"",tcm:!1},{icon:"🌿",text:"适当补充维生素B6和镁，有助缓解经前不适。",source:"",tcm:!1},{icon:"🫚",text:"姜枣茶温经散寒——东方古老的温柔。",source:"中医智慧 · 姜枣茶",tcm:!0},{icon:"🍌",text:"易水肿，减少盐分，多吃香蕉等富含钾的食物。",source:"",tcm:!1}]},settings:{lang:"语言 / Language / Jezik",langHint:"切换界面语言",theme:"主题",themeHint:"深色/浅色模式",cycle:"默认周期长度",cycleHint:"系统自动计算，可手动覆盖",period:"默认经期天数",periodHint:"每次经期持续天数",override:"使用手动值预测",overrideHint:"开启后将忽略自动计算",save:"💾 保存设置",export:"📤 导出数据 (JSON)",import:"📥 导入数据 (JSON)",clear:"🗑 清除所有数据",clearConfirm:"确定清除所有数据？此操作不可恢复！",anniversary:"纪念日",anniversaryHint:"你们在一起的那一天"},toast:{saved:"设置已保存 ✓",marked:"已标记 ✓ Barry在守护着你",unmarked:"已取消 ·没关系 ❤️",symptomSaved:"症状已保存 ✓",symptomQuick:"症状已更新 ✓",exported:"数据已导出 ✓",imported:"数据导入成功 ✓",importError:"导入失败",cleared:"所有数据已清除"},reminder:{beforePeriod:"⏰ 预计 {days} 天后经期开始，提前准备哦",late:"⚠️ 经期已推迟 {days} 天，注意休息和调理",ovulation:"✨ 今天是排卵期，备孕的最佳时机"},cycleCounter:"一起走过 {n} 个周期",cycleCounterSub:"Barry 陪着你走过每一个周期 ♥",anniversaryTitle:"💕 重要的日子",annMetLabel:"✨ 初次相遇",annLoveLabel:"♥ 在一起的日子",annCountMet:"相遇 {n} 天 ✨",annCountLove:"相恋 {n} 天 ♥",yearTitle:"年度概览"},en:{appTitle:"Anđelin Ciklus",theme:"Dark Mode",themeHint:"Switch between dark and light",weekdays:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],months:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],today:"Today",tabs:["Home","Stats","Symptoms","Diary","Settings"],legend:["Period","Ovul./Fertile","Follicular","Luteal","Today","♥ Love"],progressLabels:["Period","Follicular","Ovulation","Luteal"],phases:{"period-on":"Period · Rest Well","period-mid":"Period · Stay Warm","period-pred-first":"Predicted Start","period-pred":"Predicted","period-future-first":"Future Pred.","period-future":"Future Pred.",ovulation:"Ovulation",fertile:"Fertile",luteal:"Luteal",follicular:"Follicular"},phaseBadges:{period:"Period",follicular:"Follicular",ovulation:"Ovulation",fertile:"Fertile",luteal:"Luteal",late:"Late"},knowledgeToggle:"📖 Learn about this phase ▾",knowledgeToggleHide:"Hide ▴",knowledge:{period:{title:"Period · Rest & Warmth",desc:"The uterine lining sheds. Anđela needs extra care these days — a warm tea and gentle words go a long way. ❤️",what:"Estrogen and progesterone at lowest. TCM suggests nourishing blood (养血); Serbian tradition recommends mint tea and warmth.",symptoms:"Cramps, fatigue, mood swings, headaches, back pain",tips:"Barry's tip: ginger tea (Chinese) or mint tea (Serbian). Heating pad on the belly. And lots of love from 7,000 km away. ❤️"},follicular:{title:"Follicular · Rising Energy",desc:"After the period, energy returns. A great time for plans and new ideas together.",what:"FSH stimulates follicle growth. TCM recommends goji berry tea. Serbian tradition: fresh fruit and nuts.",symptoms:"Energy returning, clear thinking, better skin",tips:"Plan a virtual date! Great time for exercise and creative projects together."},ovulation:{title:"Ovulation",desc:"Mature egg released. Most fertile time.",what:"LH surge triggers ovulation. Estrogen peaks.",symptoms:"Mild pelvic pain, egg-white mucus, increased libido",tips:"Best time for conception, peak performance"},luteal:{title:"Luteal Phase",desc:"Between ovulation and next period.",what:"Progesterone stabilizes lining. Corpus luteum degrades if no pregnancy.",symptoms:"PMS, breast tenderness, mood swings, bloating",tips:"Reduce caffeine and salt, supplement B6 and magnesium"},fertile:{title:"Fertile Window",desc:"Days around ovulation when pregnancy is most likely.",what:"Sperm survive 3-5 days. Egg ~24h. ~6-day fertile window.",symptoms:"Clear mucus, increased libido, temperature changes",tips:"Every other day for conception, folic acid, good sleep"}},emptyState:"Tap a date — start your story here ✨",emptySymptom:"Tap a date on the calendar<br>to log symptoms",daysUntil:"{n} days until next period",daysOverdue:"{n} days late",day:" days",periodDay:"Period Day {n}",expected:"Expected",onboarding:"👋 Welcome, Anđela! Tap any date to begin. ♥",fabLabel:"Period today",greeting:{morning:{icon:"🌅",name:"Anđelo",msg:"Good morning, my angel. Wishing you a wonderful day — be gentle with yourself.",sub:"— With love, Barry"},afternoon:{icon:"🌤️",name:"Anđelo",msg:"Good afternoon, my dear. Take a break, have some tea — you worry me when you overdo it.",sub:"— Your Barry"},evening:{icon:"🌆",name:"Anđelo",msg:"Good evening, my most beautiful. Take it slow tonight — you deserve a peaceful end to the day.",sub:"— With love, your Barry"},night:{icon:"🌙",name:"Anđelo!",msg:"Why are you still awake? Go to sleep right now! I worry when you don't sleep, you know.",sub:"— Love, Barry"},dismiss:"♥ Enter"},stats:{cycleTitle:"📈 Cycle Statistics",historyTitle:"📅 Recent Cycles",predTitle:"🔮 Prediction",count:"Cycles recorded",avg:"Average cycle",range:"Shortest / Longest",reg:"Regularity",next:"Next period",ovulation:"Ovulation",fertile:"Fertile window",confidence:"Confidence",future:"Future predictions",cycle:"Cycle Trend",mood:"Mood Distribution",symptoms:"Symptom Frequency",history:"Cycle History",short:"Short",normal:"Normal",long:"Long",relationship:"Relationship",note:"Today's Note",knowme:"Do You Know Me?",regularity:"Regularity"},historyLabel:"● Short  ● Normal  ● Long  (dot = cycle)",modal:{details:"Date Details",marked:"Recorded Period Start",phase:"Phase",day:"Cycle day",symptoms:"Symptoms",mark:"Mark Period Start",unmark:"Remove",close:"Close",quickSymptom:"Quick Symptom Log",notesPlaceholder:"Add notes..."},symptoms:{cramps:"Cramps",mood:"Mood",flow:"Flow",headache:"Headache",fatigue:"Fatigue",cravings:"Cravings"},tips:{period:[{icon:"🩸",text:"Your body loses iron — eat iron-rich foods like red meat and spinach.",source:"",tcm:!1},{icon:"♨",text:"Keep your abdomen warm. A heating pad helps relieve discomfort.",source:"",tcm:!1},{icon:"🍵",text:"Try rosehip tea after meals — a Serbian tradition for easing cramps.",source:"Serbian tradition",tcm:!1},{icon:"🧘",text:"Gentle stretching or yoga helps. Avoid intense exercise.",source:"",tcm:!1},{icon:"🫘",text:"Red beans nourish the blood — an ancient Chinese remedy for women.",source:"TCM Wisdom",tcm:!0}],follicular:[{icon:"💪",text:"Estrogen rising, energy returning — great time for new fitness.",source:"",tcm:!1},{icon:"🥗",text:"Eat plenty of vegetables and fruits for balanced nutrition.",source:"",tcm:!1},{icon:"🌿",text:"In Chinese medicine, this is the time to nourish blood (养血). Try goji tea.",source:"TCM Wisdom",tcm:!0},{icon:"🎯",text:"Clear thinking and high energy — ideal for important decisions.",source:"",tcm:!1}],ovulation:[{icon:"⭐",text:"Ovulation phase. Most fertile days if planning pregnancy.",source:"",tcm:!1},{icon:"🏃",text:"Physical performance peaks — great for high-intensity workouts.",source:"",tcm:!1},{icon:"🌸",text:"In Chinese tradition, a time of balance (阴阳调和). Enjoy nature.",source:"TCM Wisdom",tcm:!0}],luteal:[{icon:"🍵",text:"Reduce caffeine — it can worsen anxiety and mood swings.",source:"",tcm:!1},{icon:"🌿",text:"Vitamin B6 and magnesium may ease premenstrual symptoms.",source:"",tcm:!1},{icon:"🫚",text:"Ginger tea with red dates warms the body — an ancient Eastern remedy.",source:"TCM Wisdom",tcm:!0},{icon:"🍌",text:"Prone to bloating? Reduce salt, eat bananas.",source:"",tcm:!1}]},settings:{lang:"Language / 语言 / Jezik",langHint:"Switch language",theme:"Theme",themeHint:"Dark / Light mode",cycle:"Default cycle length",cycleHint:"Auto-calculated (editable)",period:"Default period length",periodHint:"Duration of each period",override:"Use manual values",overrideHint:"Ignore auto-calculation",save:"💾 Save Settings",export:"📤 Export Data (JSON)",import:"📥 Import Data (JSON)",clear:"🗑 Clear All Data",clearConfirm:"Are you sure? This cannot be undone!",anniversary:"Anniversary",anniversaryHint:"The day you two started"},toast:{saved:"Saved ✓",marked:"Marked ✓ Barry is with you",unmarked:"Removed · It’s okay ❤️",symptomSaved:"Saved ✓",symptomQuick:"Updated ✓",exported:"Exported ✓",imported:"Imported ✓",importError:"Import failed",cleared:"Cleared"},reminder:{beforePeriod:"⏰ Period in {days} days — get ready, darling",late:"⚠️ Period {days} days late — check with doctor",ovulation:"✨ Ovulation day — peak fertility"},cycleCounter:"Together: {n} cycles",cycleCounterSub:"Barry is with you every step ♥",anniversaryTitle:"💕 Dates that matter",annMetLabel:"✨ First time we met",annLoveLabel:"♥ Together since",annCountMet:"{n} days since we met ✨",annCountLove:"{n} days together ♥",yearTitle:"Year Overview"}},I18N_EXT={sr:{profileName:"Anđela",profileName2:"Barry",loveNoteDefault:"Svakog dana mislim na tebe — ti si najlepši deo mog sveta. 💕",loveNoteSig:"— Tvoj Barry",moodTitle:"😊 Raspoloženje",moodToday:"Kako se osećaš danas?",moodHistoryLabel:"Poslednjih 7 dana",streakLabel:"dana zaredom!",streakLabel0:"Započni niz!",streakBadgeHot:"Sjajno! 🔥",streakBadgeWarm:"Dobro ✨",streakBadgeCold:"Započni danas 🌱",diaryTitle:"📓 Moja rečenica",diaryPrompt:"Danas ______ me je nasmejalo.",diaryPlaceholder:"upiši jednu rečenicu...",gardenTitle:"🌱 Naša bašta",gardenSeed:"Zalivaj me svaki dan — klikni na emoji iznad! 🌱",gardenSprout:"Tvoj niz raste... nastavi dalje! 🌿",gardenGrowing:"Sve si bliže cvetanju! 🌷",gardenBudding:"Skoro procvetala — još malo! 🎀",gardenBlooming:"Prelepo cvetaš! Kao naša ljubav. 🌸✨",forecastTomorrow:"Sutra",forecastFollicular:"Sutra si u folikularnoj fazi — energija raste, sjajan dan za planove! 💪",forecastOvulation:"Sutra je ovulacija — tvoje telo sija najjače! ✨",forecastLuteal:"Sutra ulaziš u lutealnu fazu — uspori malo, zaslužuješ odmor 🌙",forecastPeriod:"Sutra bi mogla da krene menstruacija — pripremi grejač i čaj 💗",forecastNormal:"Slušaj svoje telo. Ti si neverovatna svakog dana. 🌸",moodEmojis:["😊","🥰","😤","😴","😢","🤩","😰","😐"],moodNames:["Srećna","Voljena","Frustrirana","Umorna","Tužna","Uzbuđena","Anksiozna","Meh"],sharedDiaryTab:"Dnevnik",profileSwitch:"Profil promenjen",profileOnly:"Samo Barry može ovo pregledati",barryTipsPeriod:[{icon:"🫂",text:"Ona je u bolovima — budi nežan, zagrli je, donesi joj termofor i čaj."},{icon:"🍫",text:"Ponesi joj čokoladu. Male stvari znače najviše kad je boli."},{icon:"😤",text:'Ne svađaj se — raspoloženje joj je na minimumu. Slušaj, klimaj, reci "u pravu si".'},{icon:"🛏️",text:"Pusti je da se odmara. Donesi joj ćebe i ostavi na miru ako želi."},{icon:"💆",text:"Ponudi masažu leđa ili stopala — nežno, njeno telo je sad osetljivo."}],barryTipsFollicular:[{icon:"🎯",text:"Imaće više energije — isplaniraj izlazak, šetnju, zajedničku aktivnost!"},{icon:"💬",text:"Društvenija je — odlično vreme za dublje razgovore i planove za budućnost."},{icon:"💪",text:"Pridruži joj se u sportu ili fizičkoj aktivnosti. Zajedno ste jači."},{icon:"🌸",text:"Kupi joj cveće bez povoda. Primetiće i najmanji znak pažnje."},{icon:"🎨",text:"Faza kreativnosti — predloži novi hobi ili zajednički projekat."}],barryTipsOvulation:[{icon:"✨",text:"Danas sija — reci joj koliko je lepa. Budi iskren i detaljan u komplimentima."},{icon:"💋",text:"Fizička bliskost joj je važna — grli je, ljubi, drži za ruku."},{icon:"🎉",text:"Vrhunac energije — odličan dan za ples, izlazak, druženje."},{icon:"🔥",text:"Njen libido je na vrhuncu — budi pažljiv i romantičan večeras."},{icon:"📸",text:"Fotografiši je danas — blistaće na svakoj slici."}],barryTipsLuteal:[{icon:"🧘",text:"PMS počinje — ne shvataj ništa lično. Njen mozak je u hormonskom haosu."},{icon:"🍵",text:"Skuvaj joj čaj od kamilice ili nane. Smiruje nerve i pokazuje da brineš."},{icon:"🤐",text:"Slušaj više, pričaj manje. Ne rešavaj — samo slušaj."},{icon:"🍕",text:"Imaće žudnju — naruči njenu omiljenu hranu bez pitanja."},{icon:"🌙",text:"Pomogni joj da se opusti — topla kupka, sveće, muzika. Zaslužuje mir."}],barryTipsGeneral:[{icon:"💌",text:"Pošalji joj poruku sad — reci da misliš na nju. Ne treba povod."},{icon:"💝",text:"Mali znak pažnje danas — njen omiljeni sok, voće, nešto što voli."},{icon:"📞",text:"Pozovi je — čuj njen glas, pitaj kako je prošao dan."},{icon:"🌍",text:"Seti se — ti si njen oslonac. Voli te. Ti si dovoljan."}],diaryTextareaPlaceholder:"…… 想对她说的话，发自心底 ❤️",diaryDateStripPrev:"◂ Prethodna nedelja",diaryDateStripNext:"Sledeća nedelja ▸",diaryCalPrevMonth:"◂ Prethodni mesec",diaryCalNextMonth:"Sledeći mesec ▸",diaryGoToday:"📍 Danas",diaryCalBtnTitle:"Kalendar",diaryFooterCredit:"Napravljeno sa ljubavlju za Anđelu Nemet ♥",diary:{title:"💌 Naš dnevnik",placeholder:"Piši za svoju ljubav... ✍️",save:"💾 Sačuvaj",saved:"✅ Sačuvano",empty:"Još nema unosa za danas 📭",partnerEmpty:"Tvoj partner još nije pisao 💌",allEntries:"📜 Svi unosi",mailbox:"📮 Poštansko sanduče",export:"📤 Izvezi podatke (JSON)",import:"📥 Uvezi podatke (JSON)",andiLetter:"🌸 Anđelino pismo",barryLetter:"👦 Barryjevo pismo"},settingsTokenHintEnabled:"✅ Sinhronizacija uključena 🌐",settingsTokenHintDisabled:"Unesite GitHub Token za sinhronizaciju dva telefona",settingsTokenLabel:"GitHub Token",tokenSaved:"Token sačuvan ✓",tokenMissing:"Prvo unesi token",tokenValid:"Token važi",tokenInvalid:"Token nevažeći",tokenError:"Greška: ",tokenNetError:"Mrežna greška",tokenConfirmClear:"Obrisati GitHub token? Sinhronizacija će prestati.",tokenCleared:"Token obrisan",settingsExportAll:"📦 Izvezi sve podatke",settingsImportAll:"📥 Vrati iz backup-a",settingsClearDiary:"🗑️ Obriši sve dnevnike",settingsClearDiaryConfirm:"Obrisati SVE zajedničke dnevnike? Ovo se ne može vratiti.",settingsThemeLight:"☀️ Svetli",settingsThemeDark:"🌙 Tamni",sleepTitle:"Spavanje",sleepHint:"Kad si legao sinoc? Angie vidi tvoje vreme spavanja",sleepSave:"Sačuvaj",sleepEmpty:"Barry jos nije uneo vreme — podseti ga!",sleepLabel:"Sinoc je legao u",sleepSaved:"Sačuvano!",sleepLateTitle:"Legao je u {time}! PREKASNO!",sleepLateMsg:"Barry, molim te, idi u krevet ranije! \u{1F495}",specialBadgeTexts:["Ti si jedinstvena ✨","Najlepse na svetu 🌸","Barryjeva ljubav 💝","Jedna jedina 💫"],calendarPredLegend:"※ Prozirni datumi su predviđanja · Barry je uz tebe na svakom koraku ❤️",fabEndPeriod:"Kraj ciklusa",fabStartPeriod:"Početak ciklusa",fabEndYet:"Kraj mora biti posle početka",fabEndMarked:"Kraj ciklusa označen ✓",fabAlreadyMarked:" - već označeno",authPinBtn:"🔓 Prijavi se",authTapHint:"Dodirni za prijavu",authSwitchHint:"Unesi svoj PIN",gardenState0:"Klikni na emoji iznad da me zaliješ! 💧",gardenState1:"Prvi dan! Nastavi da me zalivaš svaki dan 🌱",gardenState3:"Rastem! Još malo pa cvetam 🌿",gardenState7:"Pupoljak! Tvoja ljubav me hrani 🌷",gardenStateBloom:"Procvetala! Kao i vaša ljubav 🌸",sdExportCopied:"Kopirano! Pošalji partneru 💌",sdExportCopiedSimple:"Kopirano!",songTitle:"🎵 Naša pesma",songMyLabel:"Moja pesma",songTitlePlaceholder:"Naziv pesme...",songNotePlaceholder:"Zašto baš ova pesma?",songSave:"Sačuvaj",songPartnerLabel:"pesma",songEmpty:"Postavite pesme koje vas podsećaju jedno na drugo",songSaveEmpty:"Unesi naziv pesme 🎵",songSaved:"🎵 Pesma sačuvana!",knowMeTitle:"💭 Da li me poznaješ?",knowMeMyLabel:"odgovor",knowMeAnswerSaved:"💭 Odgovor sačuvan!",hugTitle:"🤗 Virtuelni zagrljaj",gratTitle:"💝 Zid zahvalnosti",gratPlaceholder:"Hvala ti za...",checkinTitle:"🎯 Nedeljni pregled",teaTitle:"🍵 Čajanka — Srbija ♥ Kina",loveCounterTogether:" dana zajedno",sectRelationship:"💝 Veza",offlineText:"Offline — neke funkcije možda ne rade",pwaInstallText:"📲 Instaliraj na telefon — koristi kao aplikaciju",modalHolidayLabel:"Praznik",modalSolarLabel:"Solarni ciklus",modalSpecialLabel:"Poseban dan",fabEndYet:"Kraj mora biti posle početka",fabEndMarked:"Kraj ciklusa označen ✓",fabAlreadyMarked:" - već označeno",sdDOW:["Ne","Po","Ut","Sr","Če","Pe","Su"],sdDOWMon:["Po","Ut","Sr","Če","Pe","Su","Ne"],sdExportPrompt:"Kopiraj i pošalji partneru:",sdSaveFirst:"Prvo sačuvaj svoj unos",sdImportTitle:"📥 Zalepi partnerov tekst",sdImportPlaceholder:"Zalepi JSON tekst ovde...",sdImportCancel:"Odustani",sdImportConfirm:"Uvezi",sdImportDone:"📥 Uvezeno! 💌",sdImportError:"Neispravan format 😢",sdQuestions:[{q:"💝 Obradovalo"},{q:"🤔 Zasmetalo"},{q:"🙏 Zahvalnost"},{q:"💪 Da poradimo"}],sdNoEntry:"Nema unosa",sdPartnerLocked:"Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.",sdTimelineLocked:"Zaključano",sdTimelineEmpty:"Još nema unosa — započnite danas! 💌",sdTimelineMore:"📅 Prikaži još",sdMyReflection:"Moj osvrt",sdMyHint:"Iskreno o danu — što više detalja, to bolje 💫",sdLabelHappy:"Šta me je danas obradovalo",sdLabelUncomf:"Šta mi je malo zasmetalo",sdLabelThanks:"Želim da ti se zahvalim za...",sdLabelWish:"Voleo/la bih da zajedno poradimo na...",sdSaveView:"Sačuvaj i pogledaj partnerov",sdGateHint:"Sačuvaj svoj unos pre nego što vidiš partnerov",sdPartnerReflection:"Partnerov osvrt",sdSyncHintOn:"☁️ Automatska sinhronizacija",sdSyncHintOff:"📤 Izvezi → pošalji partneru → Partner uveze",sdSyncJustNow:"malopre",sdSyncMinAgo:"min pre",sdSyncHAgo:"h pre",sdExportBtn:"Podeli",sdImportBtn:"Uvezi",sdTimelineTitle:"Vremenska linija",sdPartnerLockedText:"Prvo sačuvaj svoj unos da otključaš partnerov 💌",sdTranslateFail:"prevod nije uspeo",hugStreak:" dana zaredom!",hugReceived:" te zagrlio/la! 💫",hugBackBtn:"💝 Uzvrati zagrljaj",hugDismiss:"✕ zatvori",hugSentWaiting:"Zagrljaj poslat! Čekam odgovor... 💌",hugSendAnother:"Pošalji još jedan",hugSendBtn:"Pošalji zagrljaj",hugLimit:"Već si poslao/la 2 zagrljaja danas — probaj sutra! 🤗",hugSentBarry:"Poslao si joj zagrljaj!",hugSentAndjela:"Poslala si mu zagrljaj!",statsRegLabels:{high:"Visoka",medium:"Srednja",low:"Niska"},statsTrendTitle:"📈 Trend Ciklusa",statsTrendAvg:"Prosek",statsTrendEmpty:"Premalo podataka",statsTrendNeed:"Potrebno bar 2 ciklusa za trend",statsCurrentPhase:"Trenutna faza",statsCycleTitle:"📈 Trend Ciklusa",statsMoodTitle:"🎭 Distribucija Raspoloženja",statsMoodCenter:"unosa",statsMoodEmpty:"Nema podataka",statsMoodNoRecords:"Još nema zapisa o raspoloženju",statsSympTitle:"📋 Učestalost Simptoma",statsSympEmpty:"Nema podataka o simptomima",statsSympNoRecords:"Još nema zapisa o simptomima",statsDaysUntil:"Još",statsDaysUntilEnd:"dana",statsDaysLate:"Kasni",statsDaysLateEnd:"dana",statsConfidence:"Pouzdanost: ",statsNeedCycles:"(potrebno 2+ ciklusa)",statsOvLabel:"Ovulacija",statsFertLabel:"Plodni dani",statsFutureLabel:"Buduće",statsRegLabel:"Regularnost",statsTimelineTitle:"📜 Istorija Ciklusa",statsTimelineShort:"Kratak",statsTimelineNormal:"Normalan",statsTimelineLong:"Dug",statsHintCycles:"(treba bar 2 ciklusa)",holidayToday:"danas! 🎉",holidayDaysAway:"još",holidayOffLabel:"Odmor: ",modalLunar:"Lunarni",modalLunarSrSep:". mesec, ",modalLunarSrDay:". dan",loveCounterMet:" dana od prvog susreta",loveDaysTitle:"💕 Dani zajedno",solarTermBadge:"za",knowMePartnerLabel:" misli da je:",knowMeMatch:"Savršeno se razumete! ✨",knowMeWaiting:"Čeka se odgovor tvog partnera...",barryPhasePeriod:"Njena menstruacija",barryPhaseFollicular:"Njena folikularna",barryPhaseOvulation:"Njena ovulacija",barryPhaseLuteal:"Njena lutealna",barryPhaseGeneral:"Budi tu za nju",barryTipsTitle:"💡 Kako postupati prema njoj danas",phasePeriod:"Menstruacija",phaseFollicular:"Folikularna",phaseOvulation:"Ovulacija",phaseLuteal:"Lutealna"},"zh-CN":{profileName:"Anđela",profileName2:"Barry",loveNoteDefault:"每一天都在想你——你是我世界里最美好的一部分。💕",loveNoteSig:"— 你的 Barry",moodTitle:"😊 今日心情",moodToday:"今天感觉怎么样？",moodHistoryLabel:"最近7天",streakLabel:"天连续记录！",streakLabel0:"开始打卡吧！",streakBadgeHot:"太棒了！🔥",streakBadgeWarm:"不错 ✨",streakBadgeCold:"今天开始 🌱",diaryTitle:"📓 一行日记",diaryPrompt:"今天______让我笑了。",diaryPlaceholder:"写一句话...",gardenTitle:"🌱 我们的花园",gardenSeed:"每天给我浇水——点击上面 emoji 打卡！🌱",gardenSprout:"你的坚持开始发芽了...继续加油！🌿",gardenGrowing:"越来越茁壮了！🌷",gardenBudding:"快要开花了——再坚持一下！🎀",gardenBlooming:"绽放得真美！就像我们的爱。🌸✨",forecastTomorrow:"明天",forecastFollicular:"明天进入卵泡期——精力回升，适合做计划！💪",forecastOvulation:"明天是排卵日——你的身体最有光彩！✨",forecastLuteal:"明天进入黄体期——放慢节奏，你值得好好休息 🌙",forecastPeriod:"明天可能会来月经——准备好暖宝宝和热茶 💗",forecastNormal:"听从你的身体。每一天你都很了不起。🌸",moodEmojis:["😊","🥰","😤","😴","😢","🤩","😰","😐"],moodNames:["开心","被爱","烦躁","疲惫","难过","兴奋","焦虑","还行"],sharedDiaryTab:"日记",profileSwitch:"已切换账号",profileOnly:"仅 Barry 可查看",barryTipsPeriod:[{icon:"🫂",text:"她正在经历疼痛——温柔一点，抱抱她，给她暖水袋和热茶。"},{icon:"🍫",text:"带巧克力或她喜欢的零食给她——小事情在经期最重要。"},{icon:"😤",text:'别跟她争论——她情绪很低。倾听、点头、说"你说得对"。'},{icon:"🛏️",text:"让她休息。如果她想睡一整天——给她毯子，让她安静。"},{icon:"💆",text:"给她按摩背或脚——动作轻柔，她的身体现在很敏感。"}],barryTipsFollicular:[{icon:"🎯",text:"她会精力充沛——计划一起出去！散步、新活动、约会。"},{icon:"💬",text:"比平时更善于社交——适合深入交谈和未来规划。"},{icon:"💪",text:"和她一起运动或健身——一起变得更强。"},{icon:"🌸",text:"买花给她——不需要理由。这个阶段她最容易被小细节打动。"},{icon:"🎨",text:"创造力高峰期——提议一个新爱好或项目一起做。"}],barryTipsOvulation:[{icon:"✨",text:"今天她最闪耀——告诉她她有多美。真诚且具体的夸奖。"},{icon:"💋",text:"身体接触对她很重要——拥抱、亲吻、牵手。"},{icon:"🎉",text:"能量巅峰——适合出去玩、跳舞、朋友聚会。"},{icon:"🔥",text:'她最有"性致"——今晚要体贴又浪漫。'},{icon:"📸",text:"今天给她拍照——每张都会发光。"}],barryTipsLuteal:[{icon:"🧘",text:"PMS 开始了——别把她的情绪当回事。她的大脑在荷尔蒙风暴里。"},{icon:"🍵",text:"给她泡杯无咖啡因的花草茶——洋甘菊或薄荷。"},{icon:"🤐",text:'多听少说。别试图"解决问题"——只需倾听就好。'},{icon:"🍕",text:"她会突然想吃东西——不问就点她最爱的外卖。"},{icon:"🌙",text:"帮她放松——热水澡、蜡烛、轻音乐。她值得安宁。"}],barryTipsGeneral:[{icon:"💌",text:"现在就给她发条消息——说你在想她。不需要理由。"},{icon:"💝",text:"今天一件小事——她喜欢的饮料、水果、小东西。"},{icon:"📞",text:"给她打电话——听听她的声音，问问今天过得怎么样。"},{icon:"🌍",text:"记住——你是她的依靠。她爱你。你足够好。"}],diaryTextareaPlaceholder:"写吧，亲爱的... ✍️",diaryDateStripPrev:"◂ 上一周",diaryDateStripNext:"下一周 ▸",diaryCalPrevMonth:"◂ 上个月",diaryCalNextMonth:"下个月 ▸",diaryGoToday:"📍 今天",diaryCalBtnTitle:"日历",diaryFooterCredit:"为 Anđela Nemet 用爱制作 ♥",diary:{title:"💌 我们的日记",placeholder:"写下今天想对Ta说的话... ✍️",save:"💾 保存",saved:"✅ 已保存",empty:"今天还没有写日记 📭",partnerEmpty:"Ta还没有写，稍后再来看看 💌",allEntries:"📜 全部日记",mailbox:"📮 信箱",export:"📤 导出数据 (JSON)",import:"📥 导入数据 (JSON)",andiLetter:"🌸 Anđela 的信",barryLetter:"👦 Barry 的信"},settingsTokenHintEnabled:"✅ 自动同步已开启 🌐",settingsTokenHintDisabled:"输入 GitHub Token 以同步两台手机",settingsTokenLabel:"GitHub Token",tokenSaved:"Token 已保存 ✓",tokenMissing:"请先输入 Token",tokenValid:"Token 有效",tokenInvalid:"Token 无效",tokenError:"错误: ",tokenNetError:"网络错误",tokenConfirmClear:"清除 GitHub Token？同步将停止。",tokenCleared:"Token 已清除",settingsExportAll:"📦 导出所有数据",settingsImportAll:"📥 从备份恢复",settingsClearDiary:"🗑️ 清空所有日记",settingsClearDiaryConfirm:"删除所有共享日记？此操作不可撤销。",settingsThemeLight:"☀️ 浅色",settingsThemeDark:"🌙 深色",sleepTitle:"睡眠",sleepHint:"昨晚几点睡的？Angie 会看到你的睡眠时间",sleepSave:"保存",sleepEmpty:"Barry 还没记录——提醒他！",sleepLabel:"昨晚他",sleepSaved:"已保存！",sleepLateTitle:"他 {time} 才睡！太晚了！",sleepLateMsg:"Barry，为了我早点睡！\u{1F495}",specialBadgeTexts:["独一无二的你 ✨","最美的人 🌸","Barry 的爱 💝","世界上唯一的你 💫"],calendarPredLegend:"※ 淡色为预测 · Barry陪着你走过每一个周期 ❤️",fabEndPeriod:"经期结束",fabStartPeriod:"经期来了",fabEndYet:"结束日必须在开始日之后",fabEndMarked:"经期结束已标记 ✓",fabAlreadyMarked:" - 已标记过",authPinBtn:"🔓 登录",authTapHint:"点击登录",authSwitchHint:"输入你的 PIN",gardenState0:"点上面的心情给我浇水！💧",gardenState1:"第一天！每天浇我哦 🌱",gardenState3:"在长大！快要开花了 🌿",gardenState7:"花苞！你的爱在滋养我 🌷",gardenStateBloom:"开花了！就像你们的爱 🌸",sdExportCopied:"已复制！发给伴侣吧 💌",sdExportCopiedSimple:"已复制！",songTitle:"🎵 我们的歌",songMyLabel:"我的歌",songTitlePlaceholder:"歌名...",songNotePlaceholder:"为什么是这首歌？",songSave:"保存",songPartnerLabel:"的歌",songEmpty:"设置让你们想到彼此的歌",songSaveEmpty:"请输入歌名 🎵",songSaved:"🎵 歌曲已保存！",knowMeTitle:"💭 你了解我吗？",knowMeMyLabel:"的回答",knowMeAnswerSaved:"💭 答案已保存！",hugTitle:"🤗 隔空拥抱",gratTitle:"💝 感恩便签",gratPlaceholder:"谢谢你...",checkinTitle:"🎯 每周感情体检",teaTitle:"🍵 茶室 — 塞尔维亚 ♥ 中国",loveCounterTogether:" 天在一起",sectRelationship:"💝 关系",offlineText:"当前离线，部分功能不可用",pwaInstallText:"📲 安装到手机 — 像App一样使用",modalHolidayLabel:"节日",modalSolarLabel:"节气",modalSpecialLabel:"特殊日子",sdDOW:["日","一","二","三","四","五","六"],sdDOWMon:["一","二","三","四","五","六","日"],sdExportPrompt:"复制发给伴侣：",sdSaveFirst:"请先保存你的日记",sdImportTitle:"📥 粘贴伴侣分享的内容",sdImportPlaceholder:"粘贴 JSON 文本...",sdImportCancel:"取消",sdImportConfirm:"导入",sdImportDone:"已导入！💌",sdImportError:"格式不对哦 😢",sdQuestions:[{q:"💝 开心的事"},{q:"🤔 不舒服的事"},{q:"🙏 感谢"},{q:"💪 希望改进"}],sdNoEntry:"没有记录",sdPartnerLocked:"伴侣还没写这一天的总结——或者还没同步过来。",sdTimelineLocked:"已锁定",sdTimelineEmpty:"还没有日记——今天就开始吧！💌",sdTimelineMore:"📅 展开剩余",sdMyReflection:"我的总结",sdMyHint:"坦诚地回顾一天——越详细越好 💫",sdLabelHappy:"今天让我开心的事",sdLabelUncomf:"让我有点不舒服的事",sdLabelThanks:"我想感谢你的...",sdLabelWish:"我希望我们能一起改进的...",sdSaveView:"保存并查看伴侣的",sdGateHint:"写完才能看伴侣的哦",sdPartnerReflection:"伴侣的总结",sdSyncHintOn:"☁️ 自动同步中",sdSyncHintOff:"📤 导出 → 发给伴侣 → 导入",sdSyncJustNow:"刚刚",sdSyncMinAgo:"分钟前",sdSyncHAgo:"小时前",sdExportBtn:"分享",sdImportBtn:"导入",sdTimelineTitle:"时间线",sdPartnerLockedText:"先保存你的日记才能解锁伴侣的哦 💌",sdTranslateFail:"翻译失败",hugStreak:"天连续！",hugReceived:"抱了你！💫",hugBackBtn:"回抱一个",hugDismiss:"✕ 关闭",hugSentWaiting:"拥抱已发送！等待回应... 💌",hugSendAnother:"再抱一次",hugSendBtn:"发送拥抱",hugLimit:"今天已经抱了2次——明天再来！🤗",hugSentBarry:"拥抱已发送！",hugSentAndjela:"拥抱已发送！",statsRegLabels:{high:"高",medium:"中",low:"低"},statsTrendTitle:"📈 周期趋势",statsTrendAvg:"均值",statsTrendEmpty:"数据不足",statsTrendNeed:"标记2次经期后显示趋势图",statsCurrentPhase:"当前阶段",statsCycleTitle:"📈 周期趋势",statsMoodTitle:"🎭 心情分布",statsMoodCenter:"次记录",statsMoodEmpty:"暂无心情数据",statsMoodNoRecords:"还没有心情记录",statsSympTitle:"📋 症状频率",statsSympEmpty:"暂无症状数据",statsSympNoRecords:"还没有症状记录",statsDaysUntil:"距下次",statsDaysUntilEnd:"天",statsDaysLate:"已推迟",statsDaysLateEnd:"天",statsConfidence:"置信度：",statsNeedCycles:"(需2个周期以上)",statsOvLabel:"排卵日",statsFertLabel:"易孕窗口",statsFutureLabel:"未来预测",statsRegLabel:"规律性",statsTimelineTitle:"📜 周期历史",statsTimelineShort:"偏短",statsTimelineNormal:"正常",statsTimelineLong:"偏长",statsHintCycles:"(需2个周期以上)",holidayToday:"就是今天！🎉",holidayDaysAway:"还有",holidayOffLabel:"放假",modalLunar:"农历",modalLunarSrSep:"月",modalLunarSrDay:"日",loveCounterMet:" 天前初次相遇",loveDaysTitle:"💕 我们的日子",solarTermBadge:"",knowMePartnerLabel:"认为:",knowMeMatch:"你们太有默契了！✨",knowMeWaiting:"等待对方回答...",barryPhasePeriod:"她的经期",barryPhaseFollicular:"她的卵泡期",barryPhaseOvulation:"她的排卵期",barryPhaseLuteal:"她的黄体期",barryPhaseGeneral:"好好待她",barryTipsTitle:"💡 今天如何对待她",phasePeriod:"经期",phaseFollicular:"卵泡期",phaseOvulation:"排卵期",phaseLuteal:"黄体期",modalFixMark:"🔴 标记经期开始",modalFixEnd:"⏹️ 结束本次经期",modalFixRemove:"❌ 移除记录"},en:{profileName:"Anđela",profileName2:"Barry",loveNoteDefault:"Every day I think of you — you are the most beautiful part of my world. 💕",loveNoteSig:"— Your Barry",moodTitle:"😊 Daily Mood",moodToday:"How are you feeling today?",moodHistoryLabel:"Last 7 days",streakLabel:"day streak!",streakLabel0:"Start a streak!",streakBadgeHot:"Amazing! 🔥",streakBadgeWarm:"Nice ✨",streakBadgeCold:"Start today 🌱",diaryTitle:"📓 One-Line Diary",diaryPrompt:"Today ______ made me smile.",diaryPlaceholder:"write one sentence...",gardenTitle:"🌱 Our Garden",gardenSeed:"Water me daily — tap an emoji above! 🌱",gardenSprout:"Your streak is sprouting... keep going! 🌿",gardenGrowing:"Getting stronger! 🌷",gardenBudding:"Almost blooming — just a bit more! 🎀",gardenBlooming:"Blooming beautifully! Just like our love. 🌸✨",forecastTomorrow:"Tomorrow",forecastFollicular:"Tomorrow you enter the follicular phase — energy rising, great day for plans! 💪",forecastOvulation:"Tomorrow is ovulation — your body shines brightest! ✨",forecastLuteal:"Tomorrow begins the luteal phase — slow down, you deserve rest 🌙",forecastPeriod:"Tomorrow your period may start — get your heating pad and tea ready 💗",forecastNormal:"Listen to your body. You are amazing every day. 🌸",moodEmojis:["😊","🥰","😤","😴","😢","🤩","😰","😐"],moodNames:["Happy","Loved","Frustrated","Tired","Sad","Excited","Anxious","Meh"],sharedDiaryTab:"Diary",profileSwitch:"Profile switched",profileOnly:"Only Barry can view this",barryTipsPeriod:[{icon:"🫂",text:"She is in pain — be gentle, hold her, bring her a heating pad and tea."},{icon:"🍫",text:"Bring her chocolate or her favorite treat. Little things matter most right now."},{icon:"😤",text:"Don't argue — her mood is at its lowest. Listen, nod, say \"you're right.\""},{icon:"🛏️",text:"Let her rest. If she wants to sleep all day — bring her a blanket and peace."},{icon:"💆",text:"Offer a back or foot massage — be gentle, her body is sensitive now."}],barryTipsFollicular:[{icon:"🎯",text:"She has rising energy — plan a date, a walk, a shared activity!"},{icon:"💬",text:"She's more social — great time for deep talks and future plans."},{icon:"💪",text:"Join her for a workout. Stronger together."},{icon:"🌸",text:"Buy her flowers for no reason. She'll notice the smallest gesture now."},{icon:"🎨",text:"Creative phase — suggest a new hobby or project to do together."}],barryTipsOvulation:[{icon:"✨",text:"She shines brightest today — tell her how beautiful she is. Be specific."},{icon:"💋",text:"Physical touch matters to her — hug, kiss, hold hands."},{icon:"🎉",text:"Peak energy — great day for dancing, going out, social fun."},{icon:"🔥",text:"Her libido peaks — be attentive and romantic tonight."},{icon:"📸",text:"Take photos of her today — she will glow in every shot."}],barryTipsLuteal:[{icon:"🧘",text:"PMS begins — don't take anything personally. Her brain is in a hormone storm."},{icon:"🍵",text:"Make her caffeine-free tea — chamomile or mint. It calms and shows you care."},{icon:"🤐",text:'Listen more, talk less. Don\'t try to "fix" — just listen.'},{icon:"🍕",text:"She'll have cravings — order her favorite food without asking."},{icon:"🌙",text:"Help her unwind — warm bath, candles, soft music. She deserves peace."}],barryTipsGeneral:[{icon:"💌",text:"Text her right now — say you're thinking of her. No reason needed."},{icon:"💝",text:"A small gesture today — her favorite drink, fruit, something thoughtful."},{icon:"📞",text:"Call her — hear her voice, ask how her day went."},{icon:"🌍",text:"Remember — you are her rock. She loves you. You are enough."}],diaryTextareaPlaceholder:"Write what’s in your heart today ❤️",diaryDateStripPrev:"◂ Previous week",diaryDateStripNext:"Next week ▸",diaryCalPrevMonth:"◂ Previous month",diaryCalNextMonth:"Next month ▸",diaryCalBtnTitle:"Calendar",diaryGoToday:"📍 Today",diaryFooterCredit:"Made with love for Anđela Nemet ♥",diary:{title:"💌 Our Diary",placeholder:"Write something for your love... ✍️",save:"💾 Save",saved:"✅ Saved",empty:"No entry for today yet 📭",partnerEmpty:"Your partner hasnt written yet 💌",allEntries:"📜 All Entries",mailbox:"📮 Mailbox",export:"📤 Export Data (JSON)",import:"📥 Import Data (JSON)",andiLetter:"🌸 Anđelas Letter",barryLetter:"👦 Barrys Letter"},settingsTokenHintEnabled:"✅ Auto-sync enabled 🌐",settingsTokenHintDisabled:"Enter GitHub Token to sync both phones",settingsTokenLabel:"GitHub Token",tokenSaved:"Token saved ✓",tokenMissing:"Enter a token first",tokenValid:"Token valid",tokenInvalid:"Token invalid",tokenError:"Error: ",tokenNetError:"Network error",tokenConfirmClear:"Clear GitHub token? Sync will stop.",tokenCleared:"Token cleared",settingsExportAll:"📦 Export All Data",settingsImportAll:"📥 Restore from Backup",settingsClearDiary:"🗑️ Clear All Diaries",settingsClearDiaryConfirm:"Delete ALL shared diaries? This cannot be undone.",settingsThemeLight:"☀️ Light",settingsThemeDark:"🌙 Dark",sleepTitle:"Sleep",sleepHint:"What time did you sleep last night? Angie sees your sleep time",sleepSave:"Save",sleepEmpty:"Barry hasn't logged sleep yet — remind him!",sleepLabel:"Last night he slept at",sleepSaved:"Saved!",sleepLateTitle:"He slept at {time}! TOO LATE!",sleepLateMsg:"Barry, please go to bed earlier! \u{1F495}",specialBadgeTexts:["You are unique ✨","Most beautiful 🌸","Barry's love 💝","One and only 💫"],calendarPredLegend:"※ Faded dates are predictions · Barry walks with you through every cycle ❤️",fabEndPeriod:"Period ended",fabStartPeriod:"Period started",fabEndYet:"End must be after start",fabEndMarked:"Period end marked ✓",fabAlreadyMarked:" - already marked",authPinBtn:"🔓 Sign in",authTapHint:"Tap to sign in",authSwitchHint:"Enter your PIN",gardenState0:"Tap an emoji above to water me! 💧",gardenState1:"First day! Keep watering me daily 🌱",gardenState3:"Growing! Almost blooming 🌿",gardenState7:"Budding! Your love feeds me 🌷",gardenStateBloom:"Bloomed! Just like your love 🌸",sdExportCopied:"Copied! Send to partner 💌",sdExportCopiedSimple:"Copied!",songTitle:"🎵 Our Song",songMyLabel:"My song",songTitlePlaceholder:"Song title...",songNotePlaceholder:"Why this song?",songSave:"Save",songPartnerLabel:"song",songEmpty:"Set songs that remind you of each other",songSaveEmpty:"Enter a song title 🎵",songSaved:"🎵 Song saved!",knowMeTitle:"💭 Do You Know Me?",knowMeMyLabel:" answer",knowMeAnswerSaved:"💭 Answer saved!",hugTitle:"🤗 Virtual Hug",gratTitle:"💝 Gratitude Wall",gratPlaceholder:"Thank you for...",checkinTitle:"🎯 Weekly Check-in",teaTitle:"🍵 Tea Room — Serbia ♥ China",loveCounterTogether:" days together",sectRelationship:"💝 Relationship",offlineText:"Offline — some features unavailable",pwaInstallText:"📲 Install on phone — use like an app",modalHolidayLabel:"Holiday",modalSolarLabel:"Solar Term",modalSpecialLabel:"Special Day",sdDOW:["Su","Mo","Tu","We","Th","Fr","Sa"],sdDOWMon:["Mo","Tu","We","Th","Fr","Sa","Su"],sdExportPrompt:"Copy and send to partner:",sdSaveFirst:"Save your entry first",sdImportTitle:"📥 Paste partner's text",sdImportPlaceholder:"Paste JSON text here...",sdImportCancel:"Cancel",sdImportConfirm:"Import",sdImportDone:"📥 Imported! 💌",sdImportError:"Invalid format 😢",sdQuestions:[{q:"💝 Happy"},{q:"🤔 Uncomfortable"},{q:"🙏 Thanks"},{q:"💪 To improve"}],sdNoEntry:"No entry",sdPartnerLocked:"Your partner hasn't written their reflection for this day yet — or it hasn't synced.",sdTimelineLocked:"🔒 Locked",sdTimelineEmpty:"No entries yet — start today! 💌",sdTimelineMore:"📅 Show",sdMyReflection:"My Reflection",sdMyHint:"Be honest about your day — the more detail the better 💫",sdLabelHappy:"What made me happy today",sdLabelUncomf:"What felt a little uncomfortable",sdLabelThanks:"I want to thank you for...",sdLabelWish:"I hope we can work on...",sdSaveView:"Save & View Partner's",sdGateHint:"Save your entry to unlock your partner's",sdPartnerReflection:"Partner's Reflection",sdSyncHintOn:"☁️ Auto-sync on",sdSyncHintOff:"📤 Export → send → Partner imports",sdSyncJustNow:"just now",sdSyncMinAgo:"min ago",sdSyncHAgo:"h ago",sdExportBtn:"Share",sdImportBtn:"Import",sdTimelineTitle:"Timeline",sdPartnerLockedText:"Save your entry first to unlock your partner's 💌",sdTranslateFail:"translation failed",hugStreak:"-day streak!",hugReceived:" hugged you! 💫",hugBackBtn:"💝 Hug back",hugDismiss:"✕ dismiss",hugSentWaiting:"Hug sent! Waiting for response... 💌",hugSendAnother:"Send another",hugSendBtn:"Send a Hug",hugLimit:"You already sent 2 hugs today — try tomorrow! 🤗",hugSentBarry:"Hug sent!",hugSentAndjela:"Hug sent!",statsRegLabels:{high:"High",medium:"Medium",low:"Low"},statsTrendTitle:"📈 Cycle Trend",statsTrendAvg:"Avg",statsTrendEmpty:"Not enough data",statsTrendNeed:"Need 2+ cycles for trend",statsCurrentPhase:"Current Phase",statsCycleTitle:"📈 Cycle Trend",statsMoodTitle:"🎭 Mood Distribution",statsMoodCenter:"entries",statsMoodEmpty:"No mood data",statsMoodNoRecords:"No mood records yet",statsSympTitle:"📋 Symptom Frequency",statsSympEmpty:"No symptom data",statsSympNoRecords:"No symptom records yet",statsDaysUntil:"",statsDaysUntilEnd:"days until",statsDaysLate:"",statsDaysLateEnd:"days late",statsConfidence:"Confidence: ",statsNeedCycles:"(needs 2+ cycles)",statsOvLabel:"Ovulation",statsFertLabel:"Fertile Window",statsFutureLabel:"Future",statsRegLabel:"Regularity",statsTimelineTitle:"📜 Cycle History",statsTimelineShort:"Short",statsTimelineNormal:"Normal",statsTimelineLong:"Long",statsHintCycles:"(needs 2+ cycles)",holidayToday:"today! 🎉",holidayDaysAway:"",holidayOffLabel:"Days off: ",modalLunar:"Lunar",modalLunarSrSep:"/",modalLunarSrDay:"",loveCounterMet:" days since we met",loveDaysTitle:"💕 Our Days",solarTermBadge:"in",knowMePartnerLabel:" thinks it is:",knowMeMatch:"You two are perfectly in sync! ✨",knowMeWaiting:"Waiting for your partner to answer...",barryPhasePeriod:"Her Period",barryPhaseFollicular:"Her Follicular",barryPhaseOvulation:"Her Ovulation",barryPhaseLuteal:"Her Luteal",barryPhaseGeneral:"Be There For Her",barryTipsTitle:"💡 How to treat her today",phasePeriod:"Period",phaseFollicular:"Follicular",phaseOvulation:"Ovulation",phaseLuteal:"Luteal",modalFixMark:"🔴 Mark Period Start",modalFixEnd:"⏹️ End this period",modalFixRemove:"❌ Remove record"}};function t(e,a){const o=e.split(".");let t=I18N_EXT[lang]||I18N_EXT.sr,i=!1;for(const e of o){if(!t||void 0===t[e]){i=!1;break}t=t[e],i=!0}if(i)return t;t=I18N[lang]||I18N.sr;for(const i of o){if(!t||void 0===t[i])return a||e;t=t[i]}return t}window.lang=localStorage.getItem("cycle-lang")||"sr";const LOVE_NOTES=function(){const e=["Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅","Tvoj osmeh je moja omiljena boja. 🎨","Da si ovde, skuvao bih ti čaj i slušao kako ti je prošao dan. 🍵","Znaš onaj osećaj kad sunce izađe posle kiše? Ti si to za mene. 🌈","Nadam se da si danas nosila onaj osmeh koji toliko volim. 😊","Koliko god da si daleko, uvek si mi u srcu. 💝","Vojvodina je dobila najlepši cvet kad si se ti rodila. 🌻","Ti si ona vrsta lepote koja ne bledi — postaje samo dublja. ✨","Kad bih mogao da ti pošaljem zagrljaj kroz ekran, već bi stigao. 🤗","Ti si moja omiljena pesma, ona koja nikad ne dosadi. 🎵","Prošlo je X dana otkad smo zajedno, a ja te volim sve više. ♥","Razmišljam o tebi dok ovo pišem — i smešim se. 😌","Da mogu da biram gde ću biti sad, bio bih pored tebe. 🌍→🏡","Tvoja snaga me inspiriše svaki dan. Ti si neverovatna. 💪🌸","Sećaš se našeg prvog razgovora? Ja ga često prepričavam u glavi. 💭","Volim način na koji se smeješ — kao da cela soba postane svetlija. ✨","U svakom zalasku sunca vidim tvoje oči. 🌆","Danas sam video nešto lepo i poželeo da si tu da podelim s tobom. 🌸","Ako ikada posumnjaš u sebe, seti se da te Barry voli — a Barry zna. 😉","Ti nisi samo moja devojka — ti si moj najbolji prijatelj. 💑","Svaka priča ima svoju heroinu. U mojoj, to si ti. 📖","Da napišem knjigu o tebi, nestalo bi mi stranica. 📚","Ti si moj mir u haosu, moja tišina u buci. 🧘","Ne mogu da zamislim svet bez tvog osmeha. Ne želim ni da pokušam. 🌍♥","Kad te čujem preko telefona, ceo dan mi bude bolji. 📞","Ponekad samo zatvorim oči i zamislim da si pored mene. 💫","Ti me činiš boljom osobom — hvala ti za to. 💗","Kao što Mesec prati Zemlju, tako moje misli prate tebe. 🌙","Da si cvet, bila bi ruža — lepa, jaka, i sa trnjem kad treba. 🌹","Najbolji deo mog dana? Kad pomislim na tebe. A to je mnogo puta. 💌","Tvoja hrabrost me oduševljava. Ti se boriš kao lavica. 🦁","Volim i tvoje dobre i tvoje loše dane. Sve je to deo tebe. 🫂","Peking je veliki grad, ali bez tebe je prazan. 🏙️","Da mogu da ti dam jednu stvar, dao bih ti večnost nežnosti. ♾️","Ti si moj dokaz da ljubav ne poznaje granice. 🌍♥","Od Vojvodine do Pekinga — ljubav je najduža reka, i sve povezuje. 🌊","Kad bih umeo da slikam, slikao bih samo tebe. 🎨","Ti si mi u mislima kao što je beat u muzici — stalno. 🥁","Sanjam dan kad nećemo morati da brojimo kilometre. 🗺️","Volim te na srpskom, kineskom, i svim jezicima koji postoje. 🌐♥","Ako ikada zaboraviš koliko vrediš, pozovi me — podsetiću te. 📱","Ti si moja srećna zvezda. ⭐","Kad si srećna, i ja sam srećan. Tako je jednostavno. 😊","Tvoja lepota nije samo spolja — ona izvire iz tvoje duše. 🕯️","Volim te više nego što reči mogu da izraze. Zato ti šaljem srca. 💕💕💕","Svakog dana zahvaljujem univerzumu što si u mom životu. 🙏","Da se ponovo rodim, opet bih te tražio. 🔄♥","Tvoje ime Anđela — kao anđeo. I stvarno si to. 👼","Ti ulepšavaš svet samim tim što postojiš. 🌍→🌸","Nikad ne zaboravi: voljen si, i to beskrajno. ♾️💗"],a=["每天睁开眼，第一个想到的就是你。🌅","你的笑容是我最喜欢的颜色。🎨","如果你在身边，我会给你泡杯茶，听你讲今天的故事。🍵","你知道雨后阳光的感觉吗？你就是我的那种感觉。🌈","希望你今天带着我最爱的笑容。😊","不管多远，你一直在我心里。💝","Vojvodina 最美的花开在你出生的那天。🌻","你的美不会褪色——只会越来越深。✨","如果能穿过屏幕给你一个拥抱，它已经到了。🤗","你是我最爱的歌，永远听不腻的那一首。🎵","在一起 X 天了，每一天都更爱你。♥","写着写着就笑了——因为我在想你。😌","如果能选择此刻在哪里，我会选你身边。🌍→🏡","你的坚强每天都激励着我。你是了不起的。💪🌸","还记得我们第一次聊天吗？我经常在脑海里回放。💭","我喜欢你笑的样子——整个房间都亮了。✨","每一个日落里，我都看到你的眼睛。🌆","今天看到了美好的东西，真想你在身边分享。🌸","如果你怀疑自己，记住 Barry 爱你——Barry 是对的。😉","你不仅是我的女朋友——你是我最好的朋友。💑","每个故事都有女主角。在我的故事里，是你。📖","如果写一本关于你的书，纸都不够用。📚","你是我混乱中的平静，喧嚣中的安宁。🧘","无法想象没有你笑容的世界。也不想尝试。🌍♥","每次电话里听到你的声音，一整天都变好了。📞","有时候闭上眼，假装你就在身边。💫","你让我成为更好的人——谢谢你。💗","就像月亮绕着地球转，我的思绪绕着你。🌙","如果你是花，你一定是玫瑰——美丽、坚强，必要时有刺。🌹","一天中最棒的时刻？想你的那一刻。每天好多次。💌","你的勇敢让我惊叹。你像母狮一样战斗。🦁","我爱你的好日子，也爱你的坏日子。都是你的一部分。🫂","北京很大，但没有你是空的。🏙️","如果能给你一样东西，我会给你永恒的温柔。♾️","你是我跨过山海的证据。🌍♥","从 Vojvodina 到北京——爱是最长的河，连接一切。🌊","如果我会画画，只画你。🎨","你在我脑海里就像心跳——永不停止。🥁","梦想着不再数公里数的那一天。🗺️","用中文、塞语和所有语言说爱你。🌐♥","如果你忘了自己有多珍贵，打给我——我提醒你。📱","你是我的幸运星。⭐","你开心我就开心。就这么简单。😊","你的美不止在外表——从灵魂深处发光。🕯️","爱你超过言语能表达。所以给你发心心。💕💕💕","每一天都感谢宇宙让你出现在我的生命中。🙏","如果有来生，我还会去找你。🔄♥","你的名字 Anđela——意为天使。你真的是。👼","你存在本身就让世界更美好。🌍→🌸","永远不要忘记：你是被爱着的，无限地。♾️💗"],o=["Every morning when I open my eyes, my first thought is you. 🌅","Your smile is my favorite color. 🎨","If you were here, I would make you tea and listen to your day. 🍵","You know that feeling when the sun comes out after rain? You are that for me. 🌈","I hope you wore that smile I love so much today. 😊","No matter how far, you are always in my heart. 💝","Vojvodina got its most beautiful flower the day you were born. 🌻","You are the kind of beauty that never fades — it only deepens. ✨","If I could send you a hug through the screen, it would already be there. 🤗","You are my favorite song, the one that never gets old. 🎵","It has been X days together, and I love you more each one. ♥","I am writing this thinking of you — and smiling. 😌","If I could choose where to be right now, I would be next to you. 🌍→🏡","Your strength inspires me every day. You are amazing. 💪🌸","Remember our first conversation? I replay it in my head often. 💭","I love the way you laugh — like the whole room gets brighter. ✨","In every sunset, I see your eyes. 🌆","I saw something beautiful today and wished you were here to share it. 🌸","If you ever doubt yourself, remember Barry loves you — and Barry knows. 😉","You are not just my girlfriend — you are my best friend. 💑","Every story has a heroine. In mine, it is you. 📖","If I wrote a book about you, I would run out of pages. 📚","You are my calm in the chaos, my silence in the noise. 🧘","I cannot imagine a world without your smile. I do not want to try. 🌍♥","When I hear your voice on the phone, my whole day improves. 📞","Sometimes I close my eyes and pretend you are beside me. 💫","You make me a better person — thank you for that. 💗","As the moon follows the Earth, so my thoughts follow you. 🌙","If you were a flower, you would be a rose — beautiful, strong, with thorns when needed. 🌹","The best moment of my day? When I think of you. Which is a lot. 💌","Your courage astounds me. You fight like a lioness. 🦁","I love your good days and your bad days. All of it is you. 🫂","Beijing is a big city, but without you it is empty. 🏙️","If I could give you one thing, I would give you eternal tenderness. ♾️","You are my proof that love knows no borders. 🌍♥","From Vojvodina to Beijing — love is the longest river, connecting everything. 🌊","If I could paint, I would only paint you. 🎨","You are in my thoughts like a heartbeat — constant. 🥁","I dream of the day we stop counting kilometers. 🗺️","I love you in Serbian, Chinese, and every language that exists. 🌐♥","If you ever forget how precious you are, call me — I will remind you. 📱","You are my lucky star. ⭐","When you are happy, I am happy. It is that simple. 😊","Your beauty is not just outside — it glows from your soul. 🕯️","I love you more than words can say. So I send hearts. 💕💕💕","Every day I thank the universe for putting you in my life. 🙏","If I were born again, I would look for you. 🔄♥","Your name Anđela — like an angel. And you truly are one. 👼","You make the world more beautiful just by existing. 🌍→🌸","Never forget: you are loved, infinitely. ♾️💗"];return{get:function(){const t="zh-CN"===lang?a:"en"===lang?o:e;return t[Math.floor(Date.now()/864e5)%t.length]}}}();
 /* === dist/js/gsap-animations.js === */
 let HAS_GSAP=!1;try{"undefined"!=typeof gsap&&"undefined"!=typeof ScrollTrigger&&(gsap.registerPlugin(ScrollTrigger),gsap.defaults({ease:"power2.out",duration:.4}),gsap.matchMedia().add("(prefers-reduced-motion: reduce)",()=>(gsap.set(".gsap-animate",{clearProps:"all"}),()=>{})),HAS_GSAP=!0)}catch(a){}function animateLoginEntrance(){if(!HAS_GSAP)return;const a=document.querySelectorAll(".login-card");a.length&&gsap.timeline({defaults:{duration:.5,ease:"back.out(1.4)"}}).from(a,{y:40,autoAlpha:0,scale:.9,stagger:.15}).from(".login-title",{y:-20,autoAlpha:0,duration:.4},"-=0.3").from(".login-pin-area",{y:15,autoAlpha:0,duration:.3},"-=0.1")}function animateGreetingIn(){if(!HAS_GSAP)return;const a=document.querySelector(".greeting-card");a&&gsap.timeline({defaults:{ease:"back.out(1.7)",duration:.5}}).from(a,{scale:.7,autoAlpha:0,y:30}).from(".greeting-icon",{scale:0,rotation:-180,duration:.4},"-=0.2").from(".greeting-name",{y:10,autoAlpha:0},"-=0.15").from(".greeting-msg",{y:10,autoAlpha:0},"-=0.1")}function animateGreetingOut(a){HAS_GSAP&&a?gsap.to(a,{autoAlpha:0,scale:.95,duration:.25,ease:"power2.in",onComplete(){a.classList.add("hidden")}}):a&&a.classList.add("hidden")}function animateCalendarDays(){if(!HAS_GSAP)return;const a=document.querySelectorAll(".days .day.in-month");a.length&&(gsap.killTweensOf(a),gsap.from(a,{autoAlpha:0,y:10,duration:.35,stagger:{amount:.35,from:"center"},ease:"power1.out",clearProps:"all"}))}function animateModalIn(a){if(!HAS_GSAP)return;if(a||(a=document.getElementById("modal")),!a)return;const e=a.querySelector(".modal");if(e)try{gsap.killTweensOf([a,e]),a.classList.remove("hidden"),gsap.set(a,{display:"flex",autoAlpha:1}),gsap.from(e,{scale:.88,autoAlpha:0,y:15,duration:.35,ease:"back.out(1.3)",clearProps:"all"})}catch(a){}}function animateModalOut(a){if(!HAS_GSAP||!a)return void(a&&a.classList.add("hidden"));const e=a.querySelector(".modal");e?gsap.to(e,{scale:.9,autoAlpha:0,y:10,duration:.2,ease:"power2.in",onComplete(){a.classList.add("hidden"),gsap.set(e,{clearProps:"all"}),gsap.set(a,{clearProps:"all"})}}):a.classList.add("hidden")}function animateDashboardCards(){if(!HAS_GSAP)return;const a=document.querySelectorAll("#panel-dashboard .card, #panel-dashboard .dash-card");a.length&&(gsap.killTweensOf(a),gsap.from(a,{autoAlpha:0,y:20,duration:.45,stagger:.1,ease:"power2.out",clearProps:"all"}))}function showToast(a,e){e=e||"info";const t=document.getElementById("toastContainer");if(!t)return;const o=document.createElement("div");o.className="toast toast-"+e,o.textContent=a,o.setAttribute("role","alert"),t.appendChild(o),HAS_GSAP?(gsap.fromTo(o,{y:40,autoAlpha:0,scale:.95},{y:0,autoAlpha:1,scale:1,duration:.35,ease:"back.out(1.2)"}),gsap.to(o,{autoAlpha:0,y:-10,duration:.3,delay:2.5,ease:"power2.in",onComplete(){o.parentNode&&o.parentNode.removeChild(o)}})):setTimeout(()=>{o.parentNode&&o.parentNode.removeChild(o)},3e3)}function animateProgressBar(a,e){a&&(HAS_GSAP?(gsap.killTweensOf(a),gsap.to(a,{scaleX:e/100,duration:.7,ease:"power2.out",transformOrigin:"left center"})):a.style.transform="scaleX("+e/100+")")}function animateMoodPicker(a){if(!HAS_GSAP||!a)return;const e=a.querySelectorAll(".mood-btn");e.length&&(gsap.killTweensOf(e),gsap.from(e,{scale:0,autoAlpha:0,duration:.35,stagger:.05,ease:"back.out(2.5)",clearProps:"all"}))}let _starsAnimated=!1;function animateFloatingStars(){if(!HAS_GSAP||_starsAnimated)return;const a=document.querySelectorAll(".floating-stars .star");a.length&&(_starsAnimated=!0,a.forEach((a,e)=>{gsap.to(a,{y:gsap.utils.random(-15,15),x:gsap.utils.random(-8,8),rotation:gsap.utils.random(-8,8),duration:gsap.utils.random(2,4),repeat:-1,yoyo:!0,ease:"sine.inOut",delay:.25*e})}))}function animateStatsPanel(){if(!HAS_GSAP)return;const a=document.querySelectorAll("#panel-stats .card");a.length&&(gsap.killTweensOf(a),gsap.from(a,{autoAlpha:0,y:16,duration:.4,stagger:.08,ease:"power2.out",clearProps:"all"}))}function animateCountUp(a,e,t){if(t=t||"",!HAS_GSAP||!a)return void(a.textContent=e+t);const o={val:0};gsap.killTweensOf(o),gsap.to(o,{val:e,duration:1.2,ease:"power2.out",onUpdate(){a.textContent=Math.round(o.val)+t}})}function setupScrollReveals(){HAS_GSAP&&(ScrollTrigger.batch(".card, .stats-mini-card, .chart-card, .love-note-card, .garden-card",{interval:.1,batchMax:6,onEnter:a=>gsap.fromTo(a,{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.5,stagger:.08,ease:"power2.out",overwrite:!0}),start:"top 90%",once:!0}),ScrollTrigger.batch(".diary-entry, .letter-card, .timeline-item",{interval:.1,batchMax:5,onEnter:a=>gsap.fromTo(a,{autoAlpha:0,x:-20},{autoAlpha:1,x:0,duration:.4,stagger:.06,ease:"power2.out",overwrite:!0}),start:"top 88%",once:!0}))}function initGsapAnimations(){HAS_GSAP&&(setupScrollReveals(),animateFloatingStars())}
 /* === dist/js/ui-core.js === */
 "use strict";function safeParse(e,t){if(null==e)return t;try{return JSON.parse(e)}catch(e){return t}}let _elCache={};function $(e){if(!_elCache[e]){const t=document.getElementById(e);t&&(_elCache[e]=t)}return _elCache[e]||null}function clearElCache(){_elCache={}}function debounce(e,t){let n=null;return function(){const a=arguments,o=this;clearTimeout(n),n=setTimeout(function(){e.apply(o,a)},t)}}function esc(e){return null==e?"":String(e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/`/g,"&#96;")}function closeModal(){const e=document.getElementById("modal");if(!e)return;const t=e.querySelector(".modal");t?"function"==typeof animateModalOut?animateModalOut(e):(t.classList.add("closing"),e.classList.add("closing"),t.addEventListener("animationend",function n(){t.removeEventListener("animationend",n),e.classList.add("hidden"),e.classList.remove("closing"),t.classList.remove("closing")},{once:!0})):e.classList.add("hidden"),selectedDate=null,knowledgeOpen=!1,window._lastFocusedBeforeModal&&window._lastFocusedBeforeModal.focus()}function toggleKnowledge(){if(knowledgeOpen=!knowledgeOpen,selectedDate){const e=predict();renderKnowledge(getPhase(selectedDate,e),fmtDate(selectedDate))}}function toast(e){const t=document.getElementById("toastContainer");if(!t)return;for(;t.children.length>=3;)t.firstChild.remove();const n=document.createElement("div");n.className="toast",n.textContent=e,t.appendChild(n),setTimeout(function(){n.classList.add("out")},2800),setTimeout(function(){n.parentNode&&n.remove()},3300)}document.addEventListener("click",function(e){const t=e.target.closest("[data-action]");if(!t)return;const n=t.getAttribute("data-action");if(n)switch(e.preventDefault(),n){case"close-modal":"function"==typeof closeModal&&closeModal();break;case"toggle-period":"function"==typeof togglePeriodRecord&&togglePeriodRecord();break;case"remove-period":"function"==typeof removePeriodRecord&&removePeriodRecord();break;case"save-diary":"function"==typeof saveDiaryEntry&&saveDiaryEntry();break;case"save-symptom":"function"==typeof saveSymptom&&saveSymptom();break;case"add-gratitude":"function"==typeof addGratitude&&addGratitude();break;case"send-hug":"function"==typeof sendHug&&sendHug();break;case"export-data":"function"==typeof exportAllData&&exportAllData();break;case"import-data":"function"==typeof importAllData&&importAllData();break;case"clear-diary":"function"==typeof clearAllDiaries&&clearAllDiaries();break;case"save-settings":"function"==typeof saveSettings&&saveSettings();break;default:t.dispatchEvent(new CustomEvent("action-"+n,{bubbles:!0}))}}),document.addEventListener("change",function(e){const t=e.target.closest("[data-action-change]");if(!t)return;const n=t.getAttribute("data-action-change");if(n)switch(n){case"theme":"function"==typeof switchTheme&&switchTheme(t.value);break;case"language":"function"==typeof switchLanguage&&switchLanguage(t.value)}});
+/* === dist/js/i18n.js === */
+!function(){try{const e=document.getElementById("appLoader");e&&(e.style.display="none")}catch(e){}}();const I18N={sr:{appTitle:"Anđelin Ciklus",theme:"Tamni režim",themeHint:"Prebacivanje između tamnog i svetlog režima",weekdays:["Pon","Uto","Sre","Čet","Pet","Sub","Ned"],months:["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Avg","Sep","Okt","Nov","Dec"],today:"Danas",tabs:["Početna","Statistika","Simptomi","Dnevnik","Podeš."],legend:["Menstruacija","Ovul./Plodni","Folikularna","Lutealna","Danas","Ljubav"],progressLabels:["Menstr.","Folikul.","Ovulacija","Lutealna"],phases:{"period-on":"Početak · Odmori","period-mid":"Menstruacija · Topliće","period-pred-first":"Predviđen početak","period-pred":"Predviđeno","period-future-first":"Buduća pred.","period-future":"Buduća pred.",ovulation:"Ovulacija · Vrhunac",fertile:"Plodni dani",luteal:"Lutealna",follicular:"Folikularna"},phaseBadges:{period:"Menstruacija",follicular:"Folikularna",ovulation:"Ovulacija",fertile:"Plodni dani",luteal:"Lutealna",late:"Kašnjenje"},knowledgeToggle:"📖 Saznaj više o ovoj fazi ▾",knowledgeToggleHide:"Sakri ▴",knowledge:{period:{title:"Menstruacija · Nežnost",desc:"Sluzokoža materice se ljušti. Anđeli je potrebno više odmora i topline. Barry, skuvaj joj čaj. ❤️",what:"Estrogen i progesteron na najnižem nivou. Kineska medicina preporučuje negovanje krvi (xue yang), srpska tradicija topli čaj od nane.",symptoms:"Grčevi, umor, promene raspoloženja, glavobolje, bol u leđima",tips:"Barryev savet: topli čaj od đumbira (kineski) ili nane (srpski). Termofor na stomak. Mnogo ljubavi i pažnje. ❤️"},follicular:{title:"Folikularna · Energija raste",desc:"Posle menstruacije energija se vraća. Sjajan period za planove i zajedničke aktivnosti.",what:"FSH stimuliše rast folikula. Kineski čaj od goji bobica pomaže. Srpska tradicija: voće i orašasti plodovi.",symptoms:"Povratak energije, jasnije razmišljanje, bolja koža",tips:"Planirajte zajednički izlazak! Energija je na vrhuncu za vežbanje i kreativnost."},ovulation:{title:"O ovulaciji",desc:"Zrela jajna ćelija se oslobađa. Najplodniji period. Ćelija živi ~24h, spermatozoidi do 5 dana.",what:"LH talas pokreće ovulaciju. Estrogen dostiže vrhunac.",symptoms:"Blagi bol u karlici, bistri sekret, povećan libido, blagi porast temperature",tips:"Najbolje vreme za začeće, fizičke performanse na vrhuncu"},luteal:{title:"O lutealnoj fazi",desc:"Faza između ovulacije i sledeće menstruacije. Žuto telo proizvodi progesteron.",what:"Progesteron stabilizuje sluzokožu. Ako nema trudnoće, žuto telo propada.",symptoms:"PMS, osetljivost grudi, promene raspoloženja, nadutost, žudnja za hranom",tips:"Smanjite kofein i so, uzimajte vitamin B6 i magnezijum, lagane vežbe pomažu"},fertile:{title:"O plodnim danima",desc:"Dani oko ovulacije kada je najveća verovatnoća začeća.",what:"Spermatozoidi preživljavaju 3-5 dana. Jajna ćelija živi ~24h.",symptoms:"Bistar rastegljiv sekret, povećan libido, promene bazalne temperature",tips:"Za začeće svaki drugi dan, folna kiselina, dobar san"}},emptyState:"Dodirni datum — započni svoju priču ✨",emptySymptom:"Dodirni datum na kalendaru<br>da uneseš simptome",daysUntil:"Još {n} dana do sledeće menstruacije",daysOverdue:"Kašnjenje {n} dana",day:" dana",periodDay:"{n}. dan ciklusa",expected:"Očekivano",onboarding:"👋 Dobrodošla, Anđelo! Dodirni bilo koji datum da započneš. ♥",fabLabel:"Danas je",greeting:{morning:{icon:"🌅",name:"Anđelo",msg:"Dobro jutro, anđele moj. Želim ti divan dan — budi nežna prema sebi.",sub:"— Sa ljubavlju, Barry"},afternoon:{icon:"🌤️",name:"Anđelo",msg:"Prijatno popodne, moja draga. Napravi pauzu, popij čaj i odmori — brinem se kad preteruješ.",sub:"— Tvoj Barry"},evening:{icon:"🌆",name:"Anđelo",msg:"Dobro veče, najlepša moja. Polako večeras — zaslužuješ miran i topao kraj dana.",sub:"— Sa ljubavlju, tvoj Barry"},night:{icon:"🌙",name:"Anđelo!",msg:"Zašto si još uvek budna? Odmah na spavanje! Brinem se kad ne spavaš, znaš.",sub:"— Voli te, Barry"},dismiss:"♥ Zatvori"},stats:{cycleTitle:"📈 Statistika ciklusa",historyTitle:"📅 Nedavni ciklusi",predTitle:"🔮 Predviđanje",count:"Zabeleženih ciklusa",avg:"Prosečan ciklus",range:"Najkraći / Najduži",reg:"Redovnost",next:"Sledeća menstruacija",ovulation:"Ovulacija",fertile:"Plodni dani",confidence:"Pouzdanost",future:"Buduća predviđanja",cycle:"Trend ciklusa",mood:"Raspoloženje",symptoms:"Učestalost simptoma",history:"Istorija ciklusa",short:"Kratak",normal:"Normalan",long:"Dug",relationship:"Veza",note:"Današnja beleška",knowme:"Da li me poznaješ?",regularity:"Regularnost"},historyLabel:"● Kratak  ● Normalan  ● Dug  (tačka = ciklus)",modal:{details:"Detalji datuma",marked:"Zabeležen početak",phase:"Faza",day:"Dan ciklusa",symptoms:"Simptomi",mark:"Označi početak",unmark:"Ukloni",close:"Zatvori",quickSymptom:"Brzi unos",notesPlaceholder:"Beleške..."},symptoms:{cramps:"Grčevi",mood:"Raspoloženje",flow:"Protok",headache:"Glavobolja",fatigue:"Umor",cravings:"Žudnja"},tips:{period:[{icon:"🩸",text:"Telo gubi gvožđe — jedite crveno meso, spanać i susam.",source:"",tcm:!1},{icon:"♨",text:"Zagrejte stomak termoforom ili toplom vodom.",source:"",tcm:!1},{icon:"🍵",text:"Popijte čaj od šipurka posle obroka — umiruje grčeve.",source:"Srpska tradicija",tcm:!1},{icon:"🧘",text:"Blago istezanje ili joga ublažavaju tegobe.",source:"",tcm:!1},{icon:"🫘",text:"Crveni pasulj i susam bogati gvožđem — tradicionalni srpski izvor gvožđa.",source:"Srpska kuhinja",tcm:!1}],follicular:[{icon:"💪",text:"Estrogen raste, energija se vraća — odlično za novi fitnes plan.",source:"",tcm:!1},{icon:"🥗",text:"Jedite dosta povrća i voća za uravnoteženu ishranu.",source:"",tcm:!1},{icon:"🌿",text:"U kineskoj medicini, ovo je vreme za jačanje krvi (养血). Probajte goji bobice.",source:"中医智慧",tcm:!0},{icon:"🎯",text:"Jasno razmišljanje i visoka energija za važne odluke.",source:"",tcm:!1}],ovulation:[{icon:"⭐",text:"Faza ovulacije — najplodniji dani.",source:"",tcm:!1},{icon:"🏃",text:"Fizičke performanse na vrhuncu — odlično za treninge.",source:"",tcm:!1},{icon:"🌸",text:"U kineskoj tradiciji, ovo je vreme ravnoteže (阴阳调和). Uživajte u prirodi.",source:"中医智慧",tcm:!0}],luteal:[{icon:"🍵",text:"Smanjite kofein — može pogoršati anksioznost.",source:"",tcm:!1},{icon:"🌿",text:"Vitamin B6 i magnezijum ublažavaju predmenstrualne simptome.",source:"",tcm:!1},{icon:"🫚",text:"Topla voda sa đumbirom i crvenim datulama greje telo pred ciklus.",source:"中医智慧 · 姜枣茶",tcm:!0},{icon:"🍌",text:"Skloni nadutosti? Smanjite so, jedite banane.",source:"",tcm:!1}]},settings:{lang:"Jezik / Language / 语言",langHint:"Promeni jezik",theme:"Tema",themeHint:"Tamni / Svetli režim",cycle:"Dužina ciklusa",cycleHint:"Automatski, možeš i ručno",period:"Trajanje menstruacije",periodHint:"Trajanje svake menstruacije",override:"Ručne vrednosti",overrideHint:"Ignoriši automatski proračun",save:"💾 Sačuvaj",export:"📤 Izvezi (JSON)",import:"📥 Uvezi (JSON)",clear:"🗑 Obriši sve",clearConfirm:"Sigurna si? Ovo se ne može opozvati!",anniversary:"Godišnjica",anniversaryHint:"Dan kad ste počeli"},toast:{saved:"Sačuvano ✓",marked:"Označeno ✓ Barry je uz tebe",unmarked:"Uklonjeno • Nema veze ❤️",symptomSaved:"Sačuvano ✓",symptomQuick:"Ažurirano ✓",exported:"Izvezeno ✓",imported:"Uvezeno ✓",importError:"Greška",cleared:"Obrisano"},reminder:{beforePeriod:"⏰ Menstruacija za {days} dana — spremi se, dušo",late:"⚠️ Kašnjenje {days} dana — konsultuj lekara",ovulation:"✨ Danas je ovulacija — vrhunac plodnosti"},cycleCounter:"Zajedno: {n} ciklusa",cycleCounterSub:"Barry prati svaki tvoj ciklus ♥",anniversaryTitle:"💕 Datumi koji znače",annMetLabel:"✨ Prvi put smo se sreli",annLoveLabel:"♥ Zajedno smo od",annCountMet:"{n} dana od prvog susreta ✨",annCountLove:"{n} dana zajedno ♥",yearTitle:"Godišnji pregled"},"zh-CN":{appTitle:"Anđelin Ciklus",theme:"深色模式",themeHint:"切换深色/浅色主题",weekdays:["一","二","三","四","五","六","日"],months:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],today:"今天",tabs:["主页","统计","症状","日记","设置"],legend:["经期","排卵/易孕","卵泡期","黄体期","今天","♥纪念日"],progressLabels:["经期","卵泡期","排卵","黄体期"],phases:{"period-on":"经期 · 多休息","period-mid":"经期 · 注意保暖","period-pred-first":"预测开始","period-pred":"预测经期","period-future-first":"未来预测","period-future":"未来预测",ovulation:"排卵 · 最佳时机",fertile:"受孕窗 · 能量峰值",luteal:"黄体期 · 放松心情",follicular:"卵泡期 · 精力充沛"},phaseBadges:{period:"经期中",follicular:"卵泡期",ovulation:"排卵日",fertile:"易孕期",luteal:"黄体期",late:"已推迟"},knowledgeToggle:"📖 了解这个阶段 ▾",knowledgeToggleHide:"收起 ▴",knowledge:{period:{title:"经期 · 温暖守护",desc:"子宫内膜脱落排出体外。这几天Anđela需要更多关心和休息。Barry记得给她泡一杯热茶。",what:"雌激素和孕激素最低。中医建议此时「养血」，塞尓维亚传统建议用暖水袋缓解不适。",symptoms:"腹部绞痛、疲劳、情绪波动、头痛、腰酸",tips:"Barry的贴心提醒：泡一杯姜枣茶（中医）或薄荷茶（塞尔维亚），用暖水袋敷肚子。少喝咖啡，多休息。"},follicular:{title:"卵泡期 · 活力回升",desc:"经期结束后卵泡开始发育，雌激素上升。Anđela的精力开始恢复，这是制定计划的好时机。",what:"FSH 刺激卵泡生长，雌激素使子宫内膜重新增厚。中医推荐枸杞红枣茶补气养血。",symptoms:"精力恢复、思维清晰、皮肤状态改善、自信心提升",tips:"适合开启新项目。塞尔维亚传统建议多吃水果和坚果。一起计划下一次约会吧！"},ovulation:{title:"排卵期 · 能量巅峰",desc:"这是Anđela体能和情绪最好的时期。成熟卵子从卵巢释放，生育力达到顶峰。",what:"LH 激素激增触发卵子释放。中医讲究「阴阳调和」，此时是身心最平衡的阶段。",symptoms:"轻微腹痛、分泌物清亮、性欲增强、体温微升、精力充沛",tips:"如果备孕，这是最佳时机。塞尔维亚传统认为此时适合户外活动和社交。Barry记得多夸她！"},luteal:{title:"黄体期 · 温柔以待",desc:"排卵后到下次月经前的阶段。孕激素上升，Anđela可能需要更多耐心和理解。",what:"孕激素稳定子宫内膜。如未受孕则黄体退化。中医认为此时宜「静养」，塞尔维亚传统推荐花草茶。",symptoms:"PMS、乳房胀痛、情绪波动、水肿、食欲变化、疲劳",tips:"减少咖啡因和盐。塞尔维亚传统：洋甘菊茶安神；中医：红枣桂圆汤暖身。Barry：多倾听，少讲道理。"},fertile:{title:"易孕窗 · 最佳时机",desc:"排卵日前后几天是最易受孕的阶段。精子可存活3-5天，卵子约24小时。",what:"约6天的受孕窗口。中医讲究「天人合一」，此时身体状态最适合孕育新生命。",symptoms:"分泌物清亮黏滑如蛋清、性欲增强、基础体温略升",tips:"如果计划怀孕，隔天同房受孕率最高。塞尔维亚传统：保持心情愉快，避免压力。补充叶酸。"}},emptyState:"点击日历 开始记录你们的故事 ✨",emptySymptom:"点击日历中的日期<br>来记录当日症状",daysUntil:"距下次月经还有 {n} 天",daysOverdue:"已推迟 {n} 天",day:"天",periodDay:"经期第 {n} 天",expected:"预计",onboarding:"👋 欢迎！点击日历开始记录吧 ♥",fabLabel:"今天来了",greeting:{morning:{icon:"🌅",name:"Anđelo",msg:"早安，我的天使。愿你今天温柔待自己。",sub:"— 爱你的 Barry"},afternoon:{icon:"🌤️",name:"Anđelo",msg:"下午了，亲爱的。休息一下，喝杯茶——你太拼了我会心疼。",sub:"— 你的 Barry"},evening:{icon:"🌆",name:"Anđelo",msg:"晚上好，最美的你。慢慢来——你值得一个温暖平静的夜晚。",sub:"— 爱你的 Barry"},night:{icon:"🌙",name:"Anđelo！",msg:"怎么还没睡？快去睡觉！你不睡我会担心的，知道吗。",sub:"— 想你的 Barry"},dismiss:"♥ 开始"},stats:{cycleTitle:"📈 周期统计",historyTitle:"📅 近期周期",predTitle:"🔮 当前预测",count:"已记录周期数",avg:"平均周期",range:"最短 / 最长",reg:"规律性",next:"下次月经",ovulation:"排卵日",fertile:"易孕窗口",confidence:"置信度",futurePeriod:"未来预测",currentPhase:"当前阶段",trendTitle:"📈 周期趋势",historyTitle:"📜 周期历史",cycle:"周期趋势",mood:"心情分布",symptoms:"症状频率",history:"周期历史",short:"短",normal:"正常",long:"长",relationship:"我们的关系",note:"今日笔记",knowme:"你了解我吗",regularity:"规律性"},historyLabel:"● 偏短  ● 正常  ● 偏长  (每点=一个周期)",modal:{details:"日期详情",marked:"已记录的经期开始日",phase:"阶段",day:"周期第几天",symptoms:"已记录症状",mark:"标记经期开始",unmark:"取消标记",close:"关闭",quickSymptom:"快速记录症状",notesPlaceholder:"添加备注..."},symptoms:{cramps:"痛经",mood:"情绪",flow:"流量",headache:"头痛",fatigue:"疲劳",cravings:"食欲"},tips:{period:[{icon:"🩸",text:"经期身体流失铁质，多吃红肉、菠菜、黑芝麻等富含铁的食物。",source:"",tcm:!1},{icon:"♨",text:"注意腹部保暖，可使用暖水袋或暖宝宝缓解不适。",source:"",tcm:!1},{icon:"🍵",text:"喝杯红枣姜茶，暖宫驱寒，缓解经期不适。",source:"中医养生 · 姜枣茶",tcm:!0},{icon:"🧘",text:"轻度拉伸或瑜伽有助缓解不适，避免剧烈运动。",source:"",tcm:!1},{icon:"🫘",text:"红豆补血养心——相思之物，亦养身之物。",source:"中医智慧 · 红豆",tcm:!0}],follicular:[{icon:"💪",text:"卵泡期雌激素上升，精力和体能恢复中，适合开启新运动计划。",source:"",tcm:!1},{icon:"🥗",text:"新陈代谢较好，多吃蔬菜水果，均衡营养。",source:"",tcm:!1},{icon:"🌿",text:"中医认为此时宜养血（养血），枸杞红枣茶正当时。",source:"中医智慧",tcm:!0},{icon:"🎯",text:"思维清晰精力充沛，适合处理复杂任务和做重要决定。",source:"",tcm:!1}],ovulation:[{icon:"⭐",text:"排卵期，如有备孕计划，这几天是最佳时机。",source:"",tcm:!1},{icon:"🏃",text:"体能处于高峰，适合高强度训练。",source:"",tcm:!1},{icon:"🌸",text:"中医讲究阴阳调和，此时阴阳平衡，适合赏花散步。",source:"中医养生",tcm:!0}],luteal:[{icon:"🍵",text:"黄体期减少咖啡因摄入，可能加重焦虑和情绪波动。",source:"",tcm:!1},{icon:"🌿",text:"适当补充维生素B6和镁，有助缓解经前不适。",source:"",tcm:!1},{icon:"🫚",text:"姜枣茶温经散寒——东方古老的温柔。",source:"中医智慧 · 姜枣茶",tcm:!0},{icon:"🍌",text:"易水肿，减少盐分，多吃香蕉等富含钾的食物。",source:"",tcm:!1}]},settings:{lang:"语言 / Language / Jezik",langHint:"切换界面语言",theme:"主题",themeHint:"深色/浅色模式",cycle:"默认周期长度",cycleHint:"系统自动计算，可手动覆盖",period:"默认经期天数",periodHint:"每次经期持续天数",override:"使用手动值预测",overrideHint:"开启后将忽略自动计算",save:"💾 保存设置",export:"📤 导出数据 (JSON)",import:"📥 导入数据 (JSON)",clear:"🗑 清除所有数据",clearConfirm:"确定清除所有数据？此操作不可恢复！",anniversary:"纪念日",anniversaryHint:"你们在一起的那一天"},toast:{saved:"设置已保存 ✓",marked:"已标记 ✓ Barry在守护着你",unmarked:"已取消 ·没关系 ❤️",symptomSaved:"症状已保存 ✓",symptomQuick:"症状已更新 ✓",exported:"数据已导出 ✓",imported:"数据导入成功 ✓",importError:"导入失败",cleared:"所有数据已清除"},reminder:{beforePeriod:"⏰ 预计 {days} 天后经期开始，提前准备哦",late:"⚠️ 经期已推迟 {days} 天，注意休息和调理",ovulation:"✨ 今天是排卵期，备孕的最佳时机"},cycleCounter:"一起走过 {n} 个周期",cycleCounterSub:"Barry 陪着你走过每一个周期 ♥",anniversaryTitle:"💕 重要的日子",annMetLabel:"✨ 初次相遇",annLoveLabel:"♥ 在一起的日子",annCountMet:"相遇 {n} 天 ✨",annCountLove:"相恋 {n} 天 ♥",yearTitle:"年度概览"},en:{appTitle:"Anđelin Ciklus",theme:"Dark Mode",themeHint:"Switch between dark and light",weekdays:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],months:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],today:"Today",tabs:["Home","Stats","Symptoms","Diary","Settings"],legend:["Period","Ovul./Fertile","Follicular","Luteal","Today","♥ Love"],progressLabels:["Period","Follicular","Ovulation","Luteal"],phases:{"period-on":"Period · Rest Well","period-mid":"Period · Stay Warm","period-pred-first":"Predicted Start","period-pred":"Predicted","period-future-first":"Future Pred.","period-future":"Future Pred.",ovulation:"Ovulation",fertile:"Fertile",luteal:"Luteal",follicular:"Follicular"},phaseBadges:{period:"Period",follicular:"Follicular",ovulation:"Ovulation",fertile:"Fertile",luteal:"Luteal",late:"Late"},knowledgeToggle:"📖 Learn about this phase ▾",knowledgeToggleHide:"Hide ▴",knowledge:{period:{title:"Period · Rest & Warmth",desc:"The uterine lining sheds. Anđela needs extra care these days — a warm tea and gentle words go a long way. ❤️",what:"Estrogen and progesterone at lowest. TCM suggests nourishing blood (养血); Serbian tradition recommends mint tea and warmth.",symptoms:"Cramps, fatigue, mood swings, headaches, back pain",tips:"Barry's tip: ginger tea (Chinese) or mint tea (Serbian). Heating pad on the belly. And lots of love from 7,000 km away. ❤️"},follicular:{title:"Follicular · Rising Energy",desc:"After the period, energy returns. A great time for plans and new ideas together.",what:"FSH stimulates follicle growth. TCM recommends goji berry tea. Serbian tradition: fresh fruit and nuts.",symptoms:"Energy returning, clear thinking, better skin",tips:"Plan a virtual date! Great time for exercise and creative projects together."},ovulation:{title:"Ovulation",desc:"Mature egg released. Most fertile time.",what:"LH surge triggers ovulation. Estrogen peaks.",symptoms:"Mild pelvic pain, egg-white mucus, increased libido",tips:"Best time for conception, peak performance"},luteal:{title:"Luteal Phase",desc:"Between ovulation and next period.",what:"Progesterone stabilizes lining. Corpus luteum degrades if no pregnancy.",symptoms:"PMS, breast tenderness, mood swings, bloating",tips:"Reduce caffeine and salt, supplement B6 and magnesium"},fertile:{title:"Fertile Window",desc:"Days around ovulation when pregnancy is most likely.",what:"Sperm survive 3-5 days. Egg ~24h. ~6-day fertile window.",symptoms:"Clear mucus, increased libido, temperature changes",tips:"Every other day for conception, folic acid, good sleep"}},emptyState:"Tap a date — start your story here ✨",emptySymptom:"Tap a date on the calendar<br>to log symptoms",daysUntil:"{n} days until next period",daysOverdue:"{n} days late",day:" days",periodDay:"Period Day {n}",expected:"Expected",onboarding:"👋 Welcome, Anđela! Tap any date to begin. ♥",fabLabel:"Period today",greeting:{morning:{icon:"🌅",name:"Anđelo",msg:"Good morning, my angel. Wishing you a wonderful day — be gentle with yourself.",sub:"— With love, Barry"},afternoon:{icon:"🌤️",name:"Anđelo",msg:"Good afternoon, my dear. Take a break, have some tea — you worry me when you overdo it.",sub:"— Your Barry"},evening:{icon:"🌆",name:"Anđelo",msg:"Good evening, my most beautiful. Take it slow tonight — you deserve a peaceful end to the day.",sub:"— With love, your Barry"},night:{icon:"🌙",name:"Anđelo!",msg:"Why are you still awake? Go to sleep right now! I worry when you don't sleep, you know.",sub:"— Love, Barry"},dismiss:"♥ Enter"},stats:{cycleTitle:"📈 Cycle Statistics",historyTitle:"📅 Recent Cycles",predTitle:"🔮 Prediction",count:"Cycles recorded",avg:"Average cycle",range:"Shortest / Longest",reg:"Regularity",next:"Next period",ovulation:"Ovulation",fertile:"Fertile window",confidence:"Confidence",future:"Future predictions",cycle:"Cycle Trend",mood:"Mood Distribution",symptoms:"Symptom Frequency",history:"Cycle History",short:"Short",normal:"Normal",long:"Long",relationship:"Relationship",note:"Today's Note",knowme:"Do You Know Me?",regularity:"Regularity"},historyLabel:"● Short  ● Normal  ● Long  (dot = cycle)",modal:{details:"Date Details",marked:"Recorded Period Start",phase:"Phase",day:"Cycle day",symptoms:"Symptoms",mark:"Mark Period Start",unmark:"Remove",close:"Close",quickSymptom:"Quick Symptom Log",notesPlaceholder:"Add notes..."},symptoms:{cramps:"Cramps",mood:"Mood",flow:"Flow",headache:"Headache",fatigue:"Fatigue",cravings:"Cravings"},tips:{period:[{icon:"🩸",text:"Your body loses iron — eat iron-rich foods like red meat and spinach.",source:"",tcm:!1},{icon:"♨",text:"Keep your abdomen warm. A heating pad helps relieve discomfort.",source:"",tcm:!1},{icon:"🍵",text:"Try rosehip tea after meals — a Serbian tradition for easing cramps.",source:"Serbian tradition",tcm:!1},{icon:"🧘",text:"Gentle stretching or yoga helps. Avoid intense exercise.",source:"",tcm:!1},{icon:"🫘",text:"Red beans nourish the blood — an ancient Chinese remedy for women.",source:"TCM Wisdom",tcm:!0}],follicular:[{icon:"💪",text:"Estrogen rising, energy returning — great time for new fitness.",source:"",tcm:!1},{icon:"🥗",text:"Eat plenty of vegetables and fruits for balanced nutrition.",source:"",tcm:!1},{icon:"🌿",text:"In Chinese medicine, this is the time to nourish blood (养血). Try goji tea.",source:"TCM Wisdom",tcm:!0},{icon:"🎯",text:"Clear thinking and high energy — ideal for important decisions.",source:"",tcm:!1}],ovulation:[{icon:"⭐",text:"Ovulation phase. Most fertile days if planning pregnancy.",source:"",tcm:!1},{icon:"🏃",text:"Physical performance peaks — great for high-intensity workouts.",source:"",tcm:!1},{icon:"🌸",text:"In Chinese tradition, a time of balance (阴阳调和). Enjoy nature.",source:"TCM Wisdom",tcm:!0}],luteal:[{icon:"🍵",text:"Reduce caffeine — it can worsen anxiety and mood swings.",source:"",tcm:!1},{icon:"🌿",text:"Vitamin B6 and magnesium may ease premenstrual symptoms.",source:"",tcm:!1},{icon:"🫚",text:"Ginger tea with red dates warms the body — an ancient Eastern remedy.",source:"TCM Wisdom",tcm:!0},{icon:"🍌",text:"Prone to bloating? Reduce salt, eat bananas.",source:"",tcm:!1}]},settings:{lang:"Language / 语言 / Jezik",langHint:"Switch language",theme:"Theme",themeHint:"Dark / Light mode",cycle:"Default cycle length",cycleHint:"Auto-calculated (editable)",period:"Default period length",periodHint:"Duration of each period",override:"Use manual values",overrideHint:"Ignore auto-calculation",save:"💾 Save Settings",export:"📤 Export Data (JSON)",import:"📥 Import Data (JSON)",clear:"🗑 Clear All Data",clearConfirm:"Are you sure? This cannot be undone!",anniversary:"Anniversary",anniversaryHint:"The day you two started"},toast:{saved:"Saved ✓",marked:"Marked ✓ Barry is with you",unmarked:"Removed · It’s okay ❤️",symptomSaved:"Saved ✓",symptomQuick:"Updated ✓",exported:"Exported ✓",imported:"Imported ✓",importError:"Import failed",cleared:"Cleared"},reminder:{beforePeriod:"⏰ Period in {days} days — get ready, darling",late:"⚠️ Period {days} days late — check with doctor",ovulation:"✨ Ovulation day — peak fertility"},cycleCounter:"Together: {n} cycles",cycleCounterSub:"Barry is with you every step ♥",anniversaryTitle:"💕 Dates that matter",annMetLabel:"✨ First time we met",annLoveLabel:"♥ Together since",annCountMet:"{n} days since we met ✨",annCountLove:"{n} days together ♥",yearTitle:"Year Overview"}},I18N_EXT={sr:{profileName:"Anđela",profileName2:"Barry",loveNoteDefault:"Svakog dana mislim na tebe — ti si najlepši deo mog sveta. 💕",loveNoteSig:"— Tvoj Barry",moodTitle:"😊 Raspoloženje",moodToday:"Kako se osećaš danas?",moodHistoryLabel:"Poslednjih 7 dana",streakLabel:"dana zaredom!",streakLabel0:"Započni niz!",streakBadgeHot:"Sjajno! 🔥",streakBadgeWarm:"Dobro ✨",streakBadgeCold:"Započni danas 🌱",diaryTitle:"📓 Moja rečenica",diaryPrompt:"Danas ______ me je nasmejalo.",diaryPlaceholder:"upiši jednu rečenicu...",gardenTitle:"🌱 Naša bašta",gardenSeed:"Zalivaj me svaki dan — klikni na emoji iznad! 🌱",gardenSprout:"Tvoj niz raste... nastavi dalje! 🌿",gardenGrowing:"Sve si bliže cvetanju! 🌷",gardenBudding:"Skoro procvetala — još malo! 🎀",gardenBlooming:"Prelepo cvetaš! Kao naša ljubav. 🌸✨",forecastTomorrow:"Sutra",forecastFollicular:"Sutra si u folikularnoj fazi — energija raste, sjajan dan za planove! 💪",forecastOvulation:"Sutra je ovulacija — tvoje telo sija najjače! ✨",forecastLuteal:"Sutra ulaziš u lutealnu fazu — uspori malo, zaslužuješ odmor 🌙",forecastPeriod:"Sutra bi mogla da krene menstruacija — pripremi grejač i čaj 💗",forecastNormal:"Slušaj svoje telo. Ti si neverovatna svakog dana. 🌸",moodEmojis:["😊","🥰","😤","😴","😢","🤩","😰","😐"],moodNames:["Srećna","Voljena","Frustrirana","Umorna","Tužna","Uzbuđena","Anksiozna","Meh"],sharedDiaryTab:"Dnevnik",profileSwitch:"Profil promenjen",profileOnly:"Samo Barry može ovo pregledati",barryTipsPeriod:[{icon:"🫂",text:"Ona je u bolovima — budi nežan, zagrli je, donesi joj termofor i čaj."},{icon:"🍫",text:"Ponesi joj čokoladu. Male stvari znače najviše kad je boli."},{icon:"😤",text:'Ne svađaj se — raspoloženje joj je na minimumu. Slušaj, klimaj, reci "u pravu si".'},{icon:"🛏️",text:"Pusti je da se odmara. Donesi joj ćebe i ostavi na miru ako želi."},{icon:"💆",text:"Ponudi masažu leđa ili stopala — nežno, njeno telo je sad osetljivo."}],barryTipsFollicular:[{icon:"🎯",text:"Imaće više energije — isplaniraj izlazak, šetnju, zajedničku aktivnost!"},{icon:"💬",text:"Društvenija je — odlično vreme za dublje razgovore i planove za budućnost."},{icon:"💪",text:"Pridruži joj se u sportu ili fizičkoj aktivnosti. Zajedno ste jači."},{icon:"🌸",text:"Kupi joj cveće bez povoda. Primetiće i najmanji znak pažnje."},{icon:"🎨",text:"Faza kreativnosti — predloži novi hobi ili zajednički projekat."}],barryTipsOvulation:[{icon:"✨",text:"Danas sija — reci joj koliko je lepa. Budi iskren i detaljan u komplimentima."},{icon:"💋",text:"Fizička bliskost joj je važna — grli je, ljubi, drži za ruku."},{icon:"🎉",text:"Vrhunac energije — odličan dan za ples, izlazak, druženje."},{icon:"🔥",text:"Njen libido je na vrhuncu — budi pažljiv i romantičan večeras."},{icon:"📸",text:"Fotografiši je danas — blistaće na svakoj slici."}],barryTipsLuteal:[{icon:"🧘",text:"PMS počinje — ne shvataj ništa lično. Njen mozak je u hormonskom haosu."},{icon:"🍵",text:"Skuvaj joj čaj od kamilice ili nane. Smiruje nerve i pokazuje da brineš."},{icon:"🤐",text:"Slušaj više, pričaj manje. Ne rešavaj — samo slušaj."},{icon:"🍕",text:"Imaće žudnju — naruči njenu omiljenu hranu bez pitanja."},{icon:"🌙",text:"Pomogni joj da se opusti — topla kupka, sveće, muzika. Zaslužuje mir."}],barryTipsGeneral:[{icon:"💌",text:"Pošalji joj poruku sad — reci da misliš na nju. Ne treba povod."},{icon:"💝",text:"Mali znak pažnje danas — njen omiljeni sok, voće, nešto što voli."},{icon:"📞",text:"Pozovi je — čuj njen glas, pitaj kako je prošao dan."},{icon:"🌍",text:"Seti se — ti si njen oslonac. Voli te. Ti si dovoljan."}],diaryTextareaPlaceholder:"…… 想对她说的话，发自心底 ❤️",diaryDateStripPrev:"◂ Prethodna nedelja",diaryDateStripNext:"Sledeća nedelja ▸",diaryCalPrevMonth:"◂ Prethodni mesec",diaryCalNextMonth:"Sledeći mesec ▸",diaryGoToday:"📍 Danas",diaryCalBtnTitle:"Kalendar",diaryFooterCredit:"Napravljeno sa ljubavlju za Anđelu Nemet ♥",diary:{title:"💌 Naš dnevnik",placeholder:"Piši za svoju ljubav... ✍️",save:"💾 Sačuvaj",saved:"✅ Sačuvano",empty:"Još nema unosa za danas 📭",partnerEmpty:"Tvoj partner još nije pisao 💌",allEntries:"📜 Svi unosi",mailbox:"📮 Poštansko sanduče",export:"📤 Izvezi podatke (JSON)",import:"📥 Uvezi podatke (JSON)",andiLetter:"🌸 Anđelino pismo",barryLetter:"👦 Barryjevo pismo"},settingsTokenHintEnabled:"✅ Sinhronizacija uključena 🌐",settingsTokenHintDisabled:"Unesite GitHub Token za sinhronizaciju dva telefona",settingsTokenLabel:"GitHub Token",tokenSaved:"Token sačuvan ✓",tokenMissing:"Prvo unesi token",tokenValid:"Token važi",tokenInvalid:"Token nevažeći",tokenError:"Greška: ",tokenNetError:"Mrežna greška",tokenConfirmClear:"Obrisati GitHub token? Sinhronizacija će prestati.",tokenCleared:"Token obrisan",settingsExportAll:"📦 Izvezi sve podatke",settingsImportAll:"📥 Vrati iz backup-a",settingsClearDiary:"🗑️ Obriši sve dnevnike",settingsClearDiaryConfirm:"Obrisati SVE zajedničke dnevnike? Ovo se ne može vratiti.",settingsThemeLight:"☀️ Svetli",settingsThemeDark:"🌙 Tamni",sleepTitle:"Spavanje",sleepHint:"Kad si legao sinoc? Angie vidi tvoje vreme spavanja",sleepSave:"Sačuvaj",sleepEmpty:"Barry jos nije uneo vreme — podseti ga!",sleepLabel:"Sinoc je legao u",sleepSaved:"Sačuvano!",sleepLateTitle:"Legao je u {time}! PREKASNO!",sleepLateMsg:"Barry, molim te, idi u krevet ranije! \u{1F495}",specialBadgeTexts:["Ti si jedinstvena ✨","Najlepse na svetu 🌸","Barryjeva ljubav 💝","Jedna jedina 💫"],calendarPredLegend:"※ Prozirni datumi su predviđanja · Barry je uz tebe na svakom koraku ❤️",fabEndPeriod:"Kraj ciklusa",fabStartPeriod:"Početak ciklusa",fabEndYet:"Kraj mora biti posle početka",fabEndMarked:"Kraj ciklusa označen ✓",fabAlreadyMarked:" - već označeno",authPinBtn:"🔓 Prijavi se",authTapHint:"Dodirni za prijavu",authSwitchHint:"Unesi svoj PIN",gardenState0:"Klikni na emoji iznad da me zaliješ! 💧",gardenState1:"Prvi dan! Nastavi da me zalivaš svaki dan 🌱",gardenState3:"Rastem! Još malo pa cvetam 🌿",gardenState7:"Pupoljak! Tvoja ljubav me hrani 🌷",gardenStateBloom:"Procvetala! Kao i vaša ljubav 🌸",sdExportCopied:"Kopirano! Pošalji partneru 💌",sdExportCopiedSimple:"Kopirano!",songTitle:"🎵 Naša pesma",songMyLabel:"Moja pesma",songTitlePlaceholder:"Naziv pesme...",songNotePlaceholder:"Zašto baš ova pesma?",songSave:"Sačuvaj",songPartnerLabel:"pesma",songEmpty:"Postavite pesme koje vas podsećaju jedno na drugo",songSaveEmpty:"Unesi naziv pesme 🎵",songSaved:"🎵 Pesma sačuvana!",knowMeTitle:"💭 Da li me poznaješ?",knowMeMyLabel:"odgovor",knowMeAnswerSaved:"💭 Odgovor sačuvan!",hugTitle:"🤗 Virtuelni zagrljaj",gratTitle:"💝 Zid zahvalnosti",gratPlaceholder:"Hvala ti za...",checkinTitle:"🎯 Nedeljni pregled",teaTitle:"🍵 Čajanka — Srbija ♥ Kina",loveCounterTogether:" dana zajedno",sectRelationship:"💝 Veza",offlineText:"Offline — neke funkcije možda ne rade",pwaInstallText:"📲 Instaliraj na telefon — koristi kao aplikaciju",modalHolidayLabel:"Praznik",modalSolarLabel:"Solarni ciklus",modalSpecialLabel:"Poseban dan",fabEndYet:"Kraj mora biti posle početka",fabEndMarked:"Kraj ciklusa označen ✓",fabAlreadyMarked:" - već označeno",sdDOW:["Ne","Po","Ut","Sr","Če","Pe","Su"],sdDOWMon:["Po","Ut","Sr","Če","Pe","Su","Ne"],sdExportPrompt:"Kopiraj i pošalji partneru:",sdSaveFirst:"Prvo sačuvaj svoj unos",sdImportTitle:"📥 Zalepi partnerov tekst",sdImportPlaceholder:"Zalepi JSON tekst ovde...",sdImportCancel:"Odustani",sdImportConfirm:"Uvezi",sdImportDone:"📥 Uvezeno! 💌",sdImportError:"Neispravan format 😢",sdQuestions:[{q:"💝 Obradovalo"},{q:"🤔 Zasmetalo"},{q:"🙏 Zahvalnost"},{q:"💪 Da poradimo"}],sdNoEntry:"Nema unosa",sdPartnerLocked:"Partner još nije napisao svoj osvrt za ovaj dan — ili još nije sinhronizovano.",sdTimelineLocked:"Zaključano",sdTimelineEmpty:"Još nema unosa — započnite danas! 💌",sdTimelineMore:"📅 Prikaži još",sdMyReflection:"Moj osvrt",sdMyHint:"Iskreno o danu — što više detalja, to bolje 💫",sdLabelHappy:"Šta me je danas obradovalo",sdLabelUncomf:"Šta mi je malo zasmetalo",sdLabelThanks:"Želim da ti se zahvalim za...",sdLabelWish:"Voleo/la bih da zajedno poradimo na...",sdSaveView:"Sačuvaj i pogledaj partnerov",sdGateHint:"Sačuvaj svoj unos pre nego što vidiš partnerov",sdPartnerReflection:"Partnerov osvrt",sdSyncHintOn:"☁️ Automatska sinhronizacija",sdSyncHintOff:"📤 Izvezi → pošalji partneru → Partner uveze",sdSyncJustNow:"malopre",sdSyncMinAgo:"min pre",sdSyncHAgo:"h pre",sdExportBtn:"Podeli",sdImportBtn:"Uvezi",sdTimelineTitle:"Vremenska linija",sdPartnerLockedText:"Prvo sačuvaj svoj unos da otključaš partnerov 💌",sdTranslateFail:"prevod nije uspeo",hugStreak:" dana zaredom!",hugReceived:" te zagrlio/la! 💫",hugBackBtn:"💝 Uzvrati zagrljaj",hugDismiss:"✕ zatvori",hugSentWaiting:"Zagrljaj poslat! Čekam odgovor... 💌",hugSendAnother:"Pošalji još jedan",hugSendBtn:"Pošalji zagrljaj",hugLimit:"Već si poslao/la 2 zagrljaja danas — probaj sutra! 🤗",hugSentBarry:"Poslao si joj zagrljaj!",hugSentAndjela:"Poslala si mu zagrljaj!",statsRegLabels:{high:"Visoka",medium:"Srednja",low:"Niska"},statsTrendTitle:"📈 Trend Ciklusa",statsTrendAvg:"Prosek",statsTrendEmpty:"Premalo podataka",statsTrendNeed:"Potrebno bar 2 ciklusa za trend",statsCurrentPhase:"Trenutna faza",statsCycleTitle:"📈 Trend Ciklusa",statsMoodTitle:"🎭 Distribucija Raspoloženja",statsMoodCenter:"unosa",statsMoodEmpty:"Nema podataka",statsMoodNoRecords:"Još nema zapisa o raspoloženju",statsSympTitle:"📋 Učestalost Simptoma",statsSympEmpty:"Nema podataka o simptomima",statsSympNoRecords:"Još nema zapisa o simptomima",statsDaysUntil:"Još",statsDaysUntilEnd:"dana",statsDaysLate:"Kasni",statsDaysLateEnd:"dana",statsConfidence:"Pouzdanost: ",statsNeedCycles:"(potrebno 2+ ciklusa)",statsOvLabel:"Ovulacija",statsFertLabel:"Plodni dani",statsFutureLabel:"Buduće",statsRegLabel:"Regularnost",statsTimelineTitle:"📜 Istorija Ciklusa",statsTimelineShort:"Kratak",statsTimelineNormal:"Normalan",statsTimelineLong:"Dug",statsHintCycles:"(treba bar 2 ciklusa)",holidayToday:"danas! 🎉",holidayDaysAway:"još",holidayOffLabel:"Odmor: ",modalLunar:"Lunarni",modalLunarSrSep:". mesec, ",modalLunarSrDay:". dan",loveCounterMet:" dana od prvog susreta",loveDaysTitle:"💕 Dani zajedno",solarTermBadge:"za",knowMePartnerLabel:" misli da je:",knowMeMatch:"Savršeno se razumete! ✨",knowMeWaiting:"Čeka se odgovor tvog partnera...",barryPhasePeriod:"Njena menstruacija",barryPhaseFollicular:"Njena folikularna",barryPhaseOvulation:"Njena ovulacija",barryPhaseLuteal:"Njena lutealna",barryPhaseGeneral:"Budi tu za nju",barryTipsTitle:"💡 Kako postupati prema njoj danas",phasePeriod:"Menstruacija",phaseFollicular:"Folikularna",phaseOvulation:"Ovulacija",phaseLuteal:"Lutealna",modalFixMark:"🔴 Obeleži početak ciklusa",modalFixEnd:"⏹️ Završi ovaj ciklus",modalFixRemove:"❌ Ukloni zapis"},"zh-CN":{profileName:"Anđela",profileName2:"Barry",loveNoteDefault:"每一天都在想你——你是我世界里最美好的一部分。💕",loveNoteSig:"— 你的 Barry",moodTitle:"😊 今日心情",moodToday:"今天感觉怎么样？",moodHistoryLabel:"最近7天",streakLabel:"天连续记录！",streakLabel0:"开始打卡吧！",streakBadgeHot:"太棒了！🔥",streakBadgeWarm:"不错 ✨",streakBadgeCold:"今天开始 🌱",diaryTitle:"📓 一行日记",diaryPrompt:"今天______让我笑了。",diaryPlaceholder:"写一句话...",gardenTitle:"🌱 我们的花园",gardenSeed:"每天给我浇水——点击上面 emoji 打卡！🌱",gardenSprout:"你的坚持开始发芽了...继续加油！🌿",gardenGrowing:"越来越茁壮了！🌷",gardenBudding:"快要开花了——再坚持一下！🎀",gardenBlooming:"绽放得真美！就像我们的爱。🌸✨",forecastTomorrow:"明天",forecastFollicular:"明天进入卵泡期——精力回升，适合做计划！💪",forecastOvulation:"明天是排卵日——你的身体最有光彩！✨",forecastLuteal:"明天进入黄体期——放慢节奏，你值得好好休息 🌙",forecastPeriod:"明天可能会来月经——准备好暖宝宝和热茶 💗",forecastNormal:"听从你的身体。每一天你都很了不起。🌸",moodEmojis:["😊","🥰","😤","😴","😢","🤩","😰","😐"],moodNames:["开心","被爱","烦躁","疲惫","难过","兴奋","焦虑","还行"],sharedDiaryTab:"日记",profileSwitch:"已切换账号",profileOnly:"仅 Barry 可查看",barryTipsPeriod:[{icon:"🫂",text:"她正在经历疼痛——温柔一点，抱抱她，给她暖水袋和热茶。"},{icon:"🍫",text:"带巧克力或她喜欢的零食给她——小事情在经期最重要。"},{icon:"😤",text:'别跟她争论——她情绪很低。倾听、点头、说"你说得对"。'},{icon:"🛏️",text:"让她休息。如果她想睡一整天——给她毯子，让她安静。"},{icon:"💆",text:"给她按摩背或脚——动作轻柔，她的身体现在很敏感。"}],barryTipsFollicular:[{icon:"🎯",text:"她会精力充沛——计划一起出去！散步、新活动、约会。"},{icon:"💬",text:"比平时更善于社交——适合深入交谈和未来规划。"},{icon:"💪",text:"和她一起运动或健身——一起变得更强。"},{icon:"🌸",text:"买花给她——不需要理由。这个阶段她最容易被小细节打动。"},{icon:"🎨",text:"创造力高峰期——提议一个新爱好或项目一起做。"}],barryTipsOvulation:[{icon:"✨",text:"今天她最闪耀——告诉她她有多美。真诚且具体的夸奖。"},{icon:"💋",text:"身体接触对她很重要——拥抱、亲吻、牵手。"},{icon:"🎉",text:"能量巅峰——适合出去玩、跳舞、朋友聚会。"},{icon:"🔥",text:'她最有"性致"——今晚要体贴又浪漫。'},{icon:"📸",text:"今天给她拍照——每张都会发光。"}],barryTipsLuteal:[{icon:"🧘",text:"PMS 开始了——别把她的情绪当回事。她的大脑在荷尔蒙风暴里。"},{icon:"🍵",text:"给她泡杯无咖啡因的花草茶——洋甘菊或薄荷。"},{icon:"🤐",text:'多听少说。别试图"解决问题"——只需倾听就好。'},{icon:"🍕",text:"她会突然想吃东西——不问就点她最爱的外卖。"},{icon:"🌙",text:"帮她放松——热水澡、蜡烛、轻音乐。她值得安宁。"}],barryTipsGeneral:[{icon:"💌",text:"现在就给她发条消息——说你在想她。不需要理由。"},{icon:"💝",text:"今天一件小事——她喜欢的饮料、水果、小东西。"},{icon:"📞",text:"给她打电话——听听她的声音，问问今天过得怎么样。"},{icon:"🌍",text:"记住——你是她的依靠。她爱你。你足够好。"}],diaryTextareaPlaceholder:"写吧，亲爱的... ✍️",diaryDateStripPrev:"◂ 上一周",diaryDateStripNext:"下一周 ▸",diaryCalPrevMonth:"◂ 上个月",diaryCalNextMonth:"下个月 ▸",diaryGoToday:"📍 今天",diaryCalBtnTitle:"日历",diaryFooterCredit:"为 Anđela Nemet 用爱制作 ♥",diary:{title:"💌 我们的日记",placeholder:"写下今天想对Ta说的话... ✍️",save:"💾 保存",saved:"✅ 已保存",empty:"今天还没有写日记 📭",partnerEmpty:"Ta还没有写，稍后再来看看 💌",allEntries:"📜 全部日记",mailbox:"📮 信箱",export:"📤 导出数据 (JSON)",import:"📥 导入数据 (JSON)",andiLetter:"🌸 Anđela 的信",barryLetter:"👦 Barry 的信"},settingsTokenHintEnabled:"✅ 自动同步已开启 🌐",settingsTokenHintDisabled:"输入 GitHub Token 以同步两台手机",settingsTokenLabel:"GitHub Token",tokenSaved:"Token 已保存 ✓",tokenMissing:"请先输入 Token",tokenValid:"Token 有效",tokenInvalid:"Token 无效",tokenError:"错误: ",tokenNetError:"网络错误",tokenConfirmClear:"清除 GitHub Token？同步将停止。",tokenCleared:"Token 已清除",settingsExportAll:"📦 导出所有数据",settingsImportAll:"📥 从备份恢复",settingsClearDiary:"🗑️ 清空所有日记",settingsClearDiaryConfirm:"删除所有共享日记？此操作不可撤销。",settingsThemeLight:"☀️ 浅色",settingsThemeDark:"🌙 深色",sleepTitle:"睡眠",sleepHint:"昨晚几点睡的？Angie 会看到你的睡眠时间",sleepSave:"保存",sleepEmpty:"Barry 还没记录——提醒他！",sleepLabel:"昨晚他",sleepSaved:"已保存！",sleepLateTitle:"他 {time} 才睡！太晚了！",sleepLateMsg:"Barry，为了我早点睡！\u{1F495}",specialBadgeTexts:["独一无二的你 ✨","最美的人 🌸","Barry 的爱 💝","世界上唯一的你 💫"],calendarPredLegend:"※ 淡色为预测 · Barry陪着你走过每一个周期 ❤️",fabEndPeriod:"经期结束",fabStartPeriod:"经期来了",fabEndYet:"结束日必须在开始日之后",fabEndMarked:"经期结束已标记 ✓",fabAlreadyMarked:" - 已标记过",authPinBtn:"🔓 登录",authTapHint:"点击登录",authSwitchHint:"输入你的 PIN",gardenState0:"点上面的心情给我浇水！💧",gardenState1:"第一天！每天浇我哦 🌱",gardenState3:"在长大！快要开花了 🌿",gardenState7:"花苞！你的爱在滋养我 🌷",gardenStateBloom:"开花了！就像你们的爱 🌸",sdExportCopied:"已复制！发给伴侣吧 💌",sdExportCopiedSimple:"已复制！",songTitle:"🎵 我们的歌",songMyLabel:"我的歌",songTitlePlaceholder:"歌名...",songNotePlaceholder:"为什么是这首歌？",songSave:"保存",songPartnerLabel:"的歌",songEmpty:"设置让你们想到彼此的歌",songSaveEmpty:"请输入歌名 🎵",songSaved:"🎵 歌曲已保存！",knowMeTitle:"💭 你了解我吗？",knowMeMyLabel:"的回答",knowMeAnswerSaved:"💭 答案已保存！",hugTitle:"🤗 隔空拥抱",gratTitle:"💝 感恩便签",gratPlaceholder:"谢谢你...",checkinTitle:"🎯 每周感情体检",teaTitle:"🍵 茶室 — 塞尔维亚 ♥ 中国",loveCounterTogether:" 天在一起",sectRelationship:"💝 关系",offlineText:"当前离线，部分功能不可用",pwaInstallText:"📲 安装到手机 — 像App一样使用",modalHolidayLabel:"节日",modalSolarLabel:"节气",modalSpecialLabel:"特殊日子",sdDOW:["日","一","二","三","四","五","六"],sdDOWMon:["一","二","三","四","五","六","日"],sdExportPrompt:"复制发给伴侣：",sdSaveFirst:"请先保存你的日记",sdImportTitle:"📥 粘贴伴侣分享的内容",sdImportPlaceholder:"粘贴 JSON 文本...",sdImportCancel:"取消",sdImportConfirm:"导入",sdImportDone:"已导入！💌",sdImportError:"格式不对哦 😢",sdQuestions:[{q:"💝 开心的事"},{q:"🤔 不舒服的事"},{q:"🙏 感谢"},{q:"💪 希望改进"}],sdNoEntry:"没有记录",sdPartnerLocked:"伴侣还没写这一天的总结——或者还没同步过来。",sdTimelineLocked:"已锁定",sdTimelineEmpty:"还没有日记——今天就开始吧！💌",sdTimelineMore:"📅 展开剩余",sdMyReflection:"我的总结",sdMyHint:"坦诚地回顾一天——越详细越好 💫",sdLabelHappy:"今天让我开心的事",sdLabelUncomf:"让我有点不舒服的事",sdLabelThanks:"我想感谢你的...",sdLabelWish:"我希望我们能一起改进的...",sdSaveView:"保存并查看伴侣的",sdGateHint:"写完才能看伴侣的哦",sdPartnerReflection:"伴侣的总结",sdSyncHintOn:"☁️ 自动同步中",sdSyncHintOff:"📤 导出 → 发给伴侣 → 导入",sdSyncJustNow:"刚刚",sdSyncMinAgo:"分钟前",sdSyncHAgo:"小时前",sdExportBtn:"分享",sdImportBtn:"导入",sdTimelineTitle:"时间线",sdPartnerLockedText:"先保存你的日记才能解锁伴侣的哦 💌",sdTranslateFail:"翻译失败",hugStreak:"天连续！",hugReceived:"抱了你！💫",hugBackBtn:"回抱一个",hugDismiss:"✕ 关闭",hugSentWaiting:"拥抱已发送！等待回应... 💌",hugSendAnother:"再抱一次",hugSendBtn:"发送拥抱",hugLimit:"今天已经抱了2次——明天再来！🤗",hugSentBarry:"拥抱已发送！",hugSentAndjela:"拥抱已发送！",statsRegLabels:{high:"高",medium:"中",low:"低"},statsTrendTitle:"📈 周期趋势",statsTrendAvg:"均值",statsTrendEmpty:"数据不足",statsTrendNeed:"标记2次经期后显示趋势图",statsCurrentPhase:"当前阶段",statsCycleTitle:"📈 周期趋势",statsMoodTitle:"🎭 心情分布",statsMoodCenter:"次记录",statsMoodEmpty:"暂无心情数据",statsMoodNoRecords:"还没有心情记录",statsSympTitle:"📋 症状频率",statsSympEmpty:"暂无症状数据",statsSympNoRecords:"还没有症状记录",statsDaysUntil:"距下次",statsDaysUntilEnd:"天",statsDaysLate:"已推迟",statsDaysLateEnd:"天",statsConfidence:"置信度：",statsNeedCycles:"(需2个周期以上)",statsOvLabel:"排卵日",statsFertLabel:"易孕窗口",statsFutureLabel:"未来预测",statsRegLabel:"规律性",statsTimelineTitle:"📜 周期历史",statsTimelineShort:"偏短",statsTimelineNormal:"正常",statsTimelineLong:"偏长",statsHintCycles:"(需2个周期以上)",holidayToday:"就是今天！🎉",holidayDaysAway:"还有",holidayOffLabel:"放假",modalLunar:"农历",modalLunarSrSep:"月",modalLunarSrDay:"日",loveCounterMet:" 天前初次相遇",loveDaysTitle:"💕 我们的日子",solarTermBadge:"",knowMePartnerLabel:"认为:",knowMeMatch:"你们太有默契了！✨",knowMeWaiting:"等待对方回答...",barryPhasePeriod:"她的经期",barryPhaseFollicular:"她的卵泡期",barryPhaseOvulation:"她的排卵期",barryPhaseLuteal:"她的黄体期",barryPhaseGeneral:"好好待她",barryTipsTitle:"💡 今天如何对待她",phasePeriod:"经期",phaseFollicular:"卵泡期",phaseOvulation:"排卵期",phaseLuteal:"黄体期",modalFixMark:"🔴 标记经期开始",modalFixEnd:"⏹️ 结束本次经期",modalFixRemove:"❌ 移除记录"},en:{profileName:"Anđela",profileName2:"Barry",loveNoteDefault:"Every day I think of you — you are the most beautiful part of my world. 💕",loveNoteSig:"— Your Barry",moodTitle:"😊 Daily Mood",moodToday:"How are you feeling today?",moodHistoryLabel:"Last 7 days",streakLabel:"day streak!",streakLabel0:"Start a streak!",streakBadgeHot:"Amazing! 🔥",streakBadgeWarm:"Nice ✨",streakBadgeCold:"Start today 🌱",diaryTitle:"📓 One-Line Diary",diaryPrompt:"Today ______ made me smile.",diaryPlaceholder:"write one sentence...",gardenTitle:"🌱 Our Garden",gardenSeed:"Water me daily — tap an emoji above! 🌱",gardenSprout:"Your streak is sprouting... keep going! 🌿",gardenGrowing:"Getting stronger! 🌷",gardenBudding:"Almost blooming — just a bit more! 🎀",gardenBlooming:"Blooming beautifully! Just like our love. 🌸✨",forecastTomorrow:"Tomorrow",forecastFollicular:"Tomorrow you enter the follicular phase — energy rising, great day for plans! 💪",forecastOvulation:"Tomorrow is ovulation — your body shines brightest! ✨",forecastLuteal:"Tomorrow begins the luteal phase — slow down, you deserve rest 🌙",forecastPeriod:"Tomorrow your period may start — get your heating pad and tea ready 💗",forecastNormal:"Listen to your body. You are amazing every day. 🌸",moodEmojis:["😊","🥰","😤","😴","😢","🤩","😰","😐"],moodNames:["Happy","Loved","Frustrated","Tired","Sad","Excited","Anxious","Meh"],sharedDiaryTab:"Diary",profileSwitch:"Profile switched",profileOnly:"Only Barry can view this",barryTipsPeriod:[{icon:"🫂",text:"She is in pain — be gentle, hold her, bring her a heating pad and tea."},{icon:"🍫",text:"Bring her chocolate or her favorite treat. Little things matter most right now."},{icon:"😤",text:"Don't argue — her mood is at its lowest. Listen, nod, say \"you're right.\""},{icon:"🛏️",text:"Let her rest. If she wants to sleep all day — bring her a blanket and peace."},{icon:"💆",text:"Offer a back or foot massage — be gentle, her body is sensitive now."}],barryTipsFollicular:[{icon:"🎯",text:"She has rising energy — plan a date, a walk, a shared activity!"},{icon:"💬",text:"She's more social — great time for deep talks and future plans."},{icon:"💪",text:"Join her for a workout. Stronger together."},{icon:"🌸",text:"Buy her flowers for no reason. She'll notice the smallest gesture now."},{icon:"🎨",text:"Creative phase — suggest a new hobby or project to do together."}],barryTipsOvulation:[{icon:"✨",text:"She shines brightest today — tell her how beautiful she is. Be specific."},{icon:"💋",text:"Physical touch matters to her — hug, kiss, hold hands."},{icon:"🎉",text:"Peak energy — great day for dancing, going out, social fun."},{icon:"🔥",text:"Her libido peaks — be attentive and romantic tonight."},{icon:"📸",text:"Take photos of her today — she will glow in every shot."}],barryTipsLuteal:[{icon:"🧘",text:"PMS begins — don't take anything personally. Her brain is in a hormone storm."},{icon:"🍵",text:"Make her caffeine-free tea — chamomile or mint. It calms and shows you care."},{icon:"🤐",text:'Listen more, talk less. Don\'t try to "fix" — just listen.'},{icon:"🍕",text:"She'll have cravings — order her favorite food without asking."},{icon:"🌙",text:"Help her unwind — warm bath, candles, soft music. She deserves peace."}],barryTipsGeneral:[{icon:"💌",text:"Text her right now — say you're thinking of her. No reason needed."},{icon:"💝",text:"A small gesture today — her favorite drink, fruit, something thoughtful."},{icon:"📞",text:"Call her — hear her voice, ask how her day went."},{icon:"🌍",text:"Remember — you are her rock. She loves you. You are enough."}],diaryTextareaPlaceholder:"Write what’s in your heart today ❤️",diaryDateStripPrev:"◂ Previous week",diaryDateStripNext:"Next week ▸",diaryCalPrevMonth:"◂ Previous month",diaryCalNextMonth:"Next month ▸",diaryCalBtnTitle:"Calendar",diaryGoToday:"📍 Today",diaryFooterCredit:"Made with love for Anđela Nemet ♥",diary:{title:"💌 Our Diary",placeholder:"Write something for your love... ✍️",save:"💾 Save",saved:"✅ Saved",empty:"No entry for today yet 📭",partnerEmpty:"Your partner hasnt written yet 💌",allEntries:"📜 All Entries",mailbox:"📮 Mailbox",export:"📤 Export Data (JSON)",import:"📥 Import Data (JSON)",andiLetter:"🌸 Anđelas Letter",barryLetter:"👦 Barrys Letter"},settingsTokenHintEnabled:"✅ Auto-sync enabled 🌐",settingsTokenHintDisabled:"Enter GitHub Token to sync both phones",settingsTokenLabel:"GitHub Token",tokenSaved:"Token saved ✓",tokenMissing:"Enter a token first",tokenValid:"Token valid",tokenInvalid:"Token invalid",tokenError:"Error: ",tokenNetError:"Network error",tokenConfirmClear:"Clear GitHub token? Sync will stop.",tokenCleared:"Token cleared",settingsExportAll:"📦 Export All Data",settingsImportAll:"📥 Restore from Backup",settingsClearDiary:"🗑️ Clear All Diaries",settingsClearDiaryConfirm:"Delete ALL shared diaries? This cannot be undone.",settingsThemeLight:"☀️ Light",settingsThemeDark:"🌙 Dark",sleepTitle:"Sleep",sleepHint:"What time did you sleep last night? Angie sees your sleep time",sleepSave:"Save",sleepEmpty:"Barry hasn't logged sleep yet — remind him!",sleepLabel:"Last night he slept at",sleepSaved:"Saved!",sleepLateTitle:"He slept at {time}! TOO LATE!",sleepLateMsg:"Barry, please go to bed earlier! \u{1F495}",specialBadgeTexts:["You are unique ✨","Most beautiful 🌸","Barry's love 💝","One and only 💫"],calendarPredLegend:"※ Faded dates are predictions · Barry walks with you through every cycle ❤️",fabEndPeriod:"Period ended",fabStartPeriod:"Period started",fabEndYet:"End must be after start",fabEndMarked:"Period end marked ✓",fabAlreadyMarked:" - already marked",authPinBtn:"🔓 Sign in",authTapHint:"Tap to sign in",authSwitchHint:"Enter your PIN",gardenState0:"Tap an emoji above to water me! 💧",gardenState1:"First day! Keep watering me daily 🌱",gardenState3:"Growing! Almost blooming 🌿",gardenState7:"Budding! Your love feeds me 🌷",gardenStateBloom:"Bloomed! Just like your love 🌸",sdExportCopied:"Copied! Send to partner 💌",sdExportCopiedSimple:"Copied!",songTitle:"🎵 Our Song",songMyLabel:"My song",songTitlePlaceholder:"Song title...",songNotePlaceholder:"Why this song?",songSave:"Save",songPartnerLabel:"song",songEmpty:"Set songs that remind you of each other",songSaveEmpty:"Enter a song title 🎵",songSaved:"🎵 Song saved!",knowMeTitle:"💭 Do You Know Me?",knowMeMyLabel:" answer",knowMeAnswerSaved:"💭 Answer saved!",hugTitle:"🤗 Virtual Hug",gratTitle:"💝 Gratitude Wall",gratPlaceholder:"Thank you for...",checkinTitle:"🎯 Weekly Check-in",teaTitle:"🍵 Tea Room — Serbia ♥ China",loveCounterTogether:" days together",sectRelationship:"💝 Relationship",offlineText:"Offline — some features unavailable",pwaInstallText:"📲 Install on phone — use like an app",modalHolidayLabel:"Holiday",modalSolarLabel:"Solar Term",modalSpecialLabel:"Special Day",sdDOW:["Su","Mo","Tu","We","Th","Fr","Sa"],sdDOWMon:["Mo","Tu","We","Th","Fr","Sa","Su"],sdExportPrompt:"Copy and send to partner:",sdSaveFirst:"Save your entry first",sdImportTitle:"📥 Paste partner's text",sdImportPlaceholder:"Paste JSON text here...",sdImportCancel:"Cancel",sdImportConfirm:"Import",sdImportDone:"📥 Imported! 💌",sdImportError:"Invalid format 😢",sdQuestions:[{q:"💝 Happy"},{q:"🤔 Uncomfortable"},{q:"🙏 Thanks"},{q:"💪 To improve"}],sdNoEntry:"No entry",sdPartnerLocked:"Your partner hasn't written their reflection for this day yet — or it hasn't synced.",sdTimelineLocked:"🔒 Locked",sdTimelineEmpty:"No entries yet — start today! 💌",sdTimelineMore:"📅 Show",sdMyReflection:"My Reflection",sdMyHint:"Be honest about your day — the more detail the better 💫",sdLabelHappy:"What made me happy today",sdLabelUncomf:"What felt a little uncomfortable",sdLabelThanks:"I want to thank you for...",sdLabelWish:"I hope we can work on...",sdSaveView:"Save & View Partner's",sdGateHint:"Save your entry to unlock your partner's",sdPartnerReflection:"Partner's Reflection",sdSyncHintOn:"☁️ Auto-sync on",sdSyncHintOff:"📤 Export → send → Partner imports",sdSyncJustNow:"just now",sdSyncMinAgo:"min ago",sdSyncHAgo:"h ago",sdExportBtn:"Share",sdImportBtn:"Import",sdTimelineTitle:"Timeline",sdPartnerLockedText:"Save your entry first to unlock your partner's 💌",sdTranslateFail:"translation failed",hugStreak:"-day streak!",hugReceived:" hugged you! 💫",hugBackBtn:"💝 Hug back",hugDismiss:"✕ dismiss",hugSentWaiting:"Hug sent! Waiting for response... 💌",hugSendAnother:"Send another",hugSendBtn:"Send a Hug",hugLimit:"You already sent 2 hugs today — try tomorrow! 🤗",hugSentBarry:"Hug sent!",hugSentAndjela:"Hug sent!",statsRegLabels:{high:"High",medium:"Medium",low:"Low"},statsTrendTitle:"📈 Cycle Trend",statsTrendAvg:"Avg",statsTrendEmpty:"Not enough data",statsTrendNeed:"Need 2+ cycles for trend",statsCurrentPhase:"Current Phase",statsCycleTitle:"📈 Cycle Trend",statsMoodTitle:"🎭 Mood Distribution",statsMoodCenter:"entries",statsMoodEmpty:"No mood data",statsMoodNoRecords:"No mood records yet",statsSympTitle:"📋 Symptom Frequency",statsSympEmpty:"No symptom data",statsSympNoRecords:"No symptom records yet",statsDaysUntil:"",statsDaysUntilEnd:"days until",statsDaysLate:"",statsDaysLateEnd:"days late",statsConfidence:"Confidence: ",statsNeedCycles:"(needs 2+ cycles)",statsOvLabel:"Ovulation",statsFertLabel:"Fertile Window",statsFutureLabel:"Future",statsRegLabel:"Regularity",statsTimelineTitle:"📜 Cycle History",statsTimelineShort:"Short",statsTimelineNormal:"Normal",statsTimelineLong:"Long",statsHintCycles:"(needs 2+ cycles)",holidayToday:"today! 🎉",holidayDaysAway:"",holidayOffLabel:"Days off: ",modalLunar:"Lunar",modalLunarSrSep:"/",modalLunarSrDay:"",loveCounterMet:" days since we met",loveDaysTitle:"💕 Our Days",solarTermBadge:"in",knowMePartnerLabel:" thinks it is:",knowMeMatch:"You two are perfectly in sync! ✨",knowMeWaiting:"Waiting for your partner to answer...",barryPhasePeriod:"Her Period",barryPhaseFollicular:"Her Follicular",barryPhaseOvulation:"Her Ovulation",barryPhaseLuteal:"Her Luteal",barryPhaseGeneral:"Be There For Her",barryTipsTitle:"💡 How to treat her today",phasePeriod:"Period",phaseFollicular:"Follicular",phaseOvulation:"Ovulation",phaseLuteal:"Luteal",modalFixMark:"🔴 Mark Period Start",modalFixEnd:"⏹️ End this period",modalFixRemove:"❌ Remove record"}};function t(e,a){const o=e.split(".");let t=I18N_EXT[lang]||I18N_EXT.sr,i=!1;for(const e of o){if(!t||void 0===t[e]){i=!1;break}t=t[e],i=!0}if(i)return t;t=I18N[lang]||I18N.sr;for(const i of o){if(!t||void 0===t[i])return a||e;t=t[i]}return t}window.lang=localStorage.getItem("cycle-lang")||"sr";const LOVE_NOTES=function(){const e=["Svakog jutra kad otvorim oči, prva misao mi si ti. 🌅","Tvoj osmeh je moja omiljena boja. 🎨","Da si ovde, skuvao bih ti čaj i slušao kako ti je prošao dan. 🍵","Znaš onaj osećaj kad sunce izađe posle kiše? Ti si to za mene. 🌈","Nadam se da si danas nosila onaj osmeh koji toliko volim. 😊","Koliko god da si daleko, uvek si mi u srcu. 💝","Vojvodina je dobila najlepši cvet kad si se ti rodila. 🌻","Ti si ona vrsta lepote koja ne bledi — postaje samo dublja. ✨","Kad bih mogao da ti pošaljem zagrljaj kroz ekran, već bi stigao. 🤗","Ti si moja omiljena pesma, ona koja nikad ne dosadi. 🎵","Prošlo je X dana otkad smo zajedno, a ja te volim sve više. ♥","Razmišljam o tebi dok ovo pišem — i smešim se. 😌","Da mogu da biram gde ću biti sad, bio bih pored tebe. 🌍→🏡","Tvoja snaga me inspiriše svaki dan. Ti si neverovatna. 💪🌸","Sećaš se našeg prvog razgovora? Ja ga često prepričavam u glavi. 💭","Volim način na koji se smeješ — kao da cela soba postane svetlija. ✨","U svakom zalasku sunca vidim tvoje oči. 🌆","Danas sam video nešto lepo i poželeo da si tu da podelim s tobom. 🌸","Ako ikada posumnjaš u sebe, seti se da te Barry voli — a Barry zna. 😉","Ti nisi samo moja devojka — ti si moj najbolji prijatelj. 💑","Svaka priča ima svoju heroinu. U mojoj, to si ti. 📖","Da napišem knjigu o tebi, nestalo bi mi stranica. 📚","Ti si moj mir u haosu, moja tišina u buci. 🧘","Ne mogu da zamislim svet bez tvog osmeha. Ne želim ni da pokušam. 🌍♥","Kad te čujem preko telefona, ceo dan mi bude bolji. 📞","Ponekad samo zatvorim oči i zamislim da si pored mene. 💫","Ti me činiš boljom osobom — hvala ti za to. 💗","Kao što Mesec prati Zemlju, tako moje misli prate tebe. 🌙","Da si cvet, bila bi ruža — lepa, jaka, i sa trnjem kad treba. 🌹","Najbolji deo mog dana? Kad pomislim na tebe. A to je mnogo puta. 💌","Tvoja hrabrost me oduševljava. Ti se boriš kao lavica. 🦁","Volim i tvoje dobre i tvoje loše dane. Sve je to deo tebe. 🫂","Peking je veliki grad, ali bez tebe je prazan. 🏙️","Da mogu da ti dam jednu stvar, dao bih ti večnost nežnosti. ♾️","Ti si moj dokaz da ljubav ne poznaje granice. 🌍♥","Od Vojvodine do Pekinga — ljubav je najduža reka, i sve povezuje. 🌊","Kad bih umeo da slikam, slikao bih samo tebe. 🎨","Ti si mi u mislima kao što je beat u muzici — stalno. 🥁","Sanjam dan kad nećemo morati da brojimo kilometre. 🗺️","Volim te na srpskom, kineskom, i svim jezicima koji postoje. 🌐♥","Ako ikada zaboraviš koliko vrediš, pozovi me — podsetiću te. 📱","Ti si moja srećna zvezda. ⭐","Kad si srećna, i ja sam srećan. Tako je jednostavno. 😊","Tvoja lepota nije samo spolja — ona izvire iz tvoje duše. 🕯️","Volim te više nego što reči mogu da izraze. Zato ti šaljem srca. 💕💕💕","Svakog dana zahvaljujem univerzumu što si u mom životu. 🙏","Da se ponovo rodim, opet bih te tražio. 🔄♥","Tvoje ime Anđela — kao anđeo. I stvarno si to. 👼","Ti ulepšavaš svet samim tim što postojiš. 🌍→🌸","Nikad ne zaboravi: voljen si, i to beskrajno. ♾️💗"],a=["每天睁开眼，第一个想到的就是你。🌅","你的笑容是我最喜欢的颜色。🎨","如果你在身边，我会给你泡杯茶，听你讲今天的故事。🍵","你知道雨后阳光的感觉吗？你就是我的那种感觉。🌈","希望你今天带着我最爱的笑容。😊","不管多远，你一直在我心里。💝","Vojvodina 最美的花开在你出生的那天。🌻","你的美不会褪色——只会越来越深。✨","如果能穿过屏幕给你一个拥抱，它已经到了。🤗","你是我最爱的歌，永远听不腻的那一首。🎵","在一起 X 天了，每一天都更爱你。♥","写着写着就笑了——因为我在想你。😌","如果能选择此刻在哪里，我会选你身边。🌍→🏡","你的坚强每天都激励着我。你是了不起的。💪🌸","还记得我们第一次聊天吗？我经常在脑海里回放。💭","我喜欢你笑的样子——整个房间都亮了。✨","每一个日落里，我都看到你的眼睛。🌆","今天看到了美好的东西，真想你在身边分享。🌸","如果你怀疑自己，记住 Barry 爱你——Barry 是对的。😉","你不仅是我的女朋友——你是我最好的朋友。💑","每个故事都有女主角。在我的故事里，是你。📖","如果写一本关于你的书，纸都不够用。📚","你是我混乱中的平静，喧嚣中的安宁。🧘","无法想象没有你笑容的世界。也不想尝试。🌍♥","每次电话里听到你的声音，一整天都变好了。📞","有时候闭上眼，假装你就在身边。💫","你让我成为更好的人——谢谢你。💗","就像月亮绕着地球转，我的思绪绕着你。🌙","如果你是花，你一定是玫瑰——美丽、坚强，必要时有刺。🌹","一天中最棒的时刻？想你的那一刻。每天好多次。💌","你的勇敢让我惊叹。你像母狮一样战斗。🦁","我爱你的好日子，也爱你的坏日子。都是你的一部分。🫂","北京很大，但没有你是空的。🏙️","如果能给你一样东西，我会给你永恒的温柔。♾️","你是我跨过山海的证据。🌍♥","从 Vojvodina 到北京——爱是最长的河，连接一切。🌊","如果我会画画，只画你。🎨","你在我脑海里就像心跳——永不停止。🥁","梦想着不再数公里数的那一天。🗺️","用中文、塞语和所有语言说爱你。🌐♥","如果你忘了自己有多珍贵，打给我——我提醒你。📱","你是我的幸运星。⭐","你开心我就开心。就这么简单。😊","你的美不止在外表——从灵魂深处发光。🕯️","爱你超过言语能表达。所以给你发心心。💕💕💕","每一天都感谢宇宙让你出现在我的生命中。🙏","如果有来生，我还会去找你。🔄♥","你的名字 Anđela——意为天使。你真的是。👼","你存在本身就让世界更美好。🌍→🌸","永远不要忘记：你是被爱着的，无限地。♾️💗"],o=["Every morning when I open my eyes, my first thought is you. 🌅","Your smile is my favorite color. 🎨","If you were here, I would make you tea and listen to your day. 🍵","You know that feeling when the sun comes out after rain? You are that for me. 🌈","I hope you wore that smile I love so much today. 😊","No matter how far, you are always in my heart. 💝","Vojvodina got its most beautiful flower the day you were born. 🌻","You are the kind of beauty that never fades — it only deepens. ✨","If I could send you a hug through the screen, it would already be there. 🤗","You are my favorite song, the one that never gets old. 🎵","It has been X days together, and I love you more each one. ♥","I am writing this thinking of you — and smiling. 😌","If I could choose where to be right now, I would be next to you. 🌍→🏡","Your strength inspires me every day. You are amazing. 💪🌸","Remember our first conversation? I replay it in my head often. 💭","I love the way you laugh — like the whole room gets brighter. ✨","In every sunset, I see your eyes. 🌆","I saw something beautiful today and wished you were here to share it. 🌸","If you ever doubt yourself, remember Barry loves you — and Barry knows. 😉","You are not just my girlfriend — you are my best friend. 💑","Every story has a heroine. In mine, it is you. 📖","If I wrote a book about you, I would run out of pages. 📚","You are my calm in the chaos, my silence in the noise. 🧘","I cannot imagine a world without your smile. I do not want to try. 🌍♥","When I hear your voice on the phone, my whole day improves. 📞","Sometimes I close my eyes and pretend you are beside me. 💫","You make me a better person — thank you for that. 💗","As the moon follows the Earth, so my thoughts follow you. 🌙","If you were a flower, you would be a rose — beautiful, strong, with thorns when needed. 🌹","The best moment of my day? When I think of you. Which is a lot. 💌","Your courage astounds me. You fight like a lioness. 🦁","I love your good days and your bad days. All of it is you. 🫂","Beijing is a big city, but without you it is empty. 🏙️","If I could give you one thing, I would give you eternal tenderness. ♾️","You are my proof that love knows no borders. 🌍♥","From Vojvodina to Beijing — love is the longest river, connecting everything. 🌊","If I could paint, I would only paint you. 🎨","You are in my thoughts like a heartbeat — constant. 🥁","I dream of the day we stop counting kilometers. 🗺️","I love you in Serbian, Chinese, and every language that exists. 🌐♥","If you ever forget how precious you are, call me — I will remind you. 📱","You are my lucky star. ⭐","When you are happy, I am happy. It is that simple. 😊","Your beauty is not just outside — it glows from your soul. 🕯️","I love you more than words can say. So I send hearts. 💕💕💕","Every day I thank the universe for putting you in my life. 🙏","If I were born again, I would look for you. 🔄♥","Your name Anđela — like an angel. And you truly are one. 👼","You make the world more beautiful just by existing. 🌍→🌸","Never forget: you are loved, infinitely. ♾️💗"];return{get:function(){const t="zh-CN"===lang?a:"en"===lang?o:e;return t[Math.floor(Date.now()/864e5)%t.length]}}}();
 /* === dist/js/chart-renderer.js === */
 "use strict";const ChartRenderer={_theme:function(){const t="dark"===document.documentElement.getAttribute("data-theme");return{bg:t?"#1e1518":"#faf3ef",text:t?"#c4a8a8":"#3d2828",textMuted:t?"#7a6a68":"#8a7a78",grid:t?"rgba(255,255,255,0.06)":"rgba(80,40,40,0.08)",line:t?"#d47888":"#c45a6b",fill:t?"rgba(212,120,136,0.15)":"rgba(196,90,107,0.12)",dot:t?"#d47888":"#c45a6b",fillEnd:t?"rgba(212,120,136,0.01)":"rgba(196,90,107,0.01)",sage:t?"#8fc7b0":"#80a590",teal:t?"#7ab8a5":"#5e8b7a",lavender:t?"#c8b8d8":"#b8a0c8",gold:t?"#d4aa6e":"#c49a5e",donutColors:[t?"#d47888":"#c45a6b",t?"#e090a0":"#d4bfb5",t?"#8fc7b0":"#80a590",t?"#c8b8d8":"#b8a0c8",t?"#7ab8a5":"#5e8b7a",t?"#d4aa6e":"#c49a5e",t?"#e8a0b0":"#e8c8c0",t?"#a0c8b8":"#a0c0b0"]}},_setupCanvas:function(t,e,l){const n=window.devicePixelRatio||1,o=t.getBoundingClientRect().width||e;t.width=o*n,t.height=l*n,t.style.width=o+"px",t.style.height=l+"px";const i=t.getContext("2d");return i.scale(n,n),{ctx:i,w:o,h:l}},drawLineChart:function(t,e,l,n){n=n||{};const o=this._theme(),i=this._setupCanvas(t,n.width||500,n.height||200),a=i.ctx,r=i.w,d=i.h,c=16,h=32,f=r-h-16,g=d-c-28;if(a.clearRect(0,0,r,d),!e||0===e.length)return a.fillStyle=o.textMuted,a.font="italic .68rem "+getComputedStyle(document.body).fontFamily,a.textAlign="center",void a.fillText(n.emptyText||"No data yet",r/2,d/2);const u=e.slice();n.avgLine&&u.push(n.avgLine);let m=Math.floor(Math.min.apply(Math,u)-2),s=Math.ceil(Math.max.apply(Math,u)+2);if(s-m<4){const t=(m+s)/2;m=t-2,s=t+2}const y=e.length>1?f/(e.length-1):f/2,x=function(t){return c+g-(t-m)/(s-m)*g};a.strokeStyle=o.grid,a.lineWidth=.5,a.setLineDash([3,4]);for(let t=0;t<=4;t++){const e=c+g/4*t;a.beginPath(),a.moveTo(h,e),a.lineTo(r-16,e),a.stroke(),a.fillStyle=o.textMuted,a.font=".55rem "+getComputedStyle(document.body).fontFamily,a.textAlign="right",a.fillText(Math.round(s-(s-m)/4*t),26,e+3)}if(a.setLineDash([]),l&&l.length>0){a.fillStyle=o.textMuted,a.font=".52rem "+getComputedStyle(document.body).fontFamily,a.textAlign="center";const t=Math.max(1,Math.floor(l.length/5));for(let e=0;e<l.length;e+=t){const t=h+e*y;t<=r-16&&a.fillText(l[e],t,d-4)}}if(n.avgLine){const t=x(n.avgLine);a.strokeStyle=o.textMuted,a.lineWidth=1,a.setLineDash([4,6]),a.beginPath(),a.moveTo(h,t),a.lineTo(r-16,t),a.stroke(),a.setLineDash([]),a.fillStyle=o.textMuted,a.font=".52rem "+getComputedStyle(document.body).fontFamily,a.textAlign="left",a.fillText(n.avgLabel||"Avg",r-16-24,t-4)}const b=a.createLinearGradient(0,c,0,c+g);b.addColorStop(0,o.fill),b.addColorStop(1,o.fillEnd),a.fillStyle=b,a.beginPath(),a.moveTo(h,c+g);for(let t=0;t<e.length;t++)a.lineTo(h+t*y,x(e[t]));a.lineTo(h+(e.length-1)*y,c+g),a.closePath(),a.fill(),a.strokeStyle=o.line,a.lineWidth=2.5,a.lineJoin="round",a.beginPath(),a.moveTo(h,x(e[0]));for(let t=1;t<e.length;t++)a.lineTo(h+t*y,x(e[t]));a.stroke();for(let t=0;t<e.length;t++){const l=h+t*y,n=x(e[t]);a.beginPath(),a.arc(l,n,4,0,2*Math.PI),a.fillStyle=o.dot,a.fill(),a.strokeStyle=o.bg,a.lineWidth=2,a.stroke(),a.fillStyle=o.text,a.font="bold .55rem "+getComputedStyle(document.body).fontFamily,a.textAlign="center",a.fillText(e[t],l,n-10)}},drawDonutChart:function(t,e,l){l=l||{};const n=this._theme(),o=this._setupCanvas(t,l.width||260,l.height||200),i=o.ctx,a=o.w,r=o.h,d=a/2,c=r/2,h=Math.min(d,c)-8,f=.58*h;let g=0;for(let t=0;t<e.length;t++)g+=e[t].value;if(i.clearRect(0,0,a,r),0===g)return i.fillStyle=n.textMuted,i.font="italic .68rem "+getComputedStyle(document.body).fontFamily,i.textAlign="center",i.fillText(l.emptyText||"No data yet",d,c),[];const u=n.donutColors;let m=-Math.PI/2;for(let t=0;t<e.length;t++){const l=e[t].value/g*Math.PI*2;i.beginPath(),i.arc(d,c,h,m,m+l),i.arc(d,c,f,m+l,m,!0),i.closePath(),i.fillStyle=e[t].color||u[t%u.length],i.fill();const o=m+l/2,a=h+14,r=d+Math.cos(o)*a,s=c+Math.sin(o)*a;l>.35&&e[t].value>0&&(i.fillStyle=n.text,i.font="bold .52rem "+getComputedStyle(document.body).fontFamily,i.textAlign="center",i.textBaseline="middle",i.fillText(e[t].value,r,s)),m+=l}i.fillStyle=n.text,i.font="bold .9rem "+getComputedStyle(document.body).fontFamily,i.textAlign="center",i.textBaseline="middle",i.fillText(g,d,c-6),i.fillStyle=n.textMuted,i.font=".55rem "+getComputedStyle(document.body).fontFamily,i.fillText(l.centerLabel||"total",d,c+12);const s=[];for(let t=0;t<e.length;t++)s.push({label:e[t].label,color:e[t].color||u[t%u.length],value:e[t].value,pct:g>0?Math.round(e[t].value/g*100):0});return s},drawBarChart:function(t,e,l){l=l||{};const n=this._theme(),o=this._setupCanvas(t,l.width||460,l.height||200),i=o.ctx,a=o.w,r=o.h;let d=1;for(let t=0;t<e.length;t++)e[t].value>d&&(d=e[t].value);const c=Math.min(22,(r-20)/e.length),h=Math.min(70,.22*a),f=a-h-12;if(i.clearRect(0,0,a,r),0===e.length||0===d)return i.fillStyle=n.textMuted,i.font="italic .68rem "+getComputedStyle(document.body).fontFamily,i.textAlign="center",void i.fillText(l.emptyText||"No data yet",a/2,r/2);for(let t=0;t<e.length;t++){const l=10+t*(c+4),o=Math.max(4,e[t].value/d*f);i.fillStyle=n.text,i.font=".6rem "+getComputedStyle(document.body).fontFamily,i.textAlign="right",i.fillText(e[t].label,h-6,l+c/2+3),i.fillStyle=n.grid,ChartRenderer._roundRect(i,h+4,l,f,c,4),i.fill(),i.fillStyle=e[t].color||n.line,ChartRenderer._roundRect(i,h+4,l,o,c,4),i.fill(),i.fillStyle=n.text,i.font="bold .58rem "+getComputedStyle(document.body).fontFamily,i.textAlign="left",i.fillText(e[t].value,h+o+10,l+c/2+3)}},drawSparkline:function(t,e,l){l=l||{};const n=this._theme(),o=this._setupCanvas(t,l.width||120,l.height||36),i=o.ctx,a=o.w,r=o.h;if(i.clearRect(0,0,a,r),!e||e.length<2)return i.fillStyle=n.textMuted,i.font=".5rem "+getComputedStyle(document.body).fontFamily,i.textAlign="center",void i.fillText("--",a/2,r/2+4);const d=Math.min.apply(Math,e),c=Math.max.apply(Math,e)-d||1,h=(a-4)/(e.length-1),f=function(t){return r-2-(t-d)/c*(r-4)},g=l.color||n.line;i.strokeStyle=g,i.lineWidth=1.5,i.lineJoin="round",i.beginPath(),i.moveTo(2,f(e[0]));for(let t=1;t<e.length;t++)i.lineTo(2+t*h,f(e[t]));i.stroke();const u=2+(e.length-1)*h,m=f(e[e.length-1]);i.beginPath(),i.arc(u,m,2.5,0,2*Math.PI),i.fillStyle=g,i.fill()},_roundRect:function(t,e,l,n,o,i){t.beginPath(),t.moveTo(e+i,l),t.lineTo(e+n-i,l),t.arcTo(e+n,l,e+n,l+i,i),t.lineTo(e+n,l+o-i),t.arcTo(e+n,l+o,e+n-i,l+o,i),t.lineTo(e+i,l+o),t.arcTo(e,l+o,e,l+o-i,i),t.lineTo(e,l+i),t.arcTo(e,l,e+i,l,i),t.closePath()}};
 /* === dist/js/lunar.js === */
@@ -864,6 +864,32 @@ const SyncModule = (function () {
   var STATE_FILE = 'shared-state.json';
   var _lastError = null; // 持久化同步错误状态
 
+  // ── 自动拉取定时器（句柄可清理，页面隐藏时暂停） ──
+  var _autoPullTimer = null;
+  var _visHandler = null;
+
+  function _startAutoPull() {
+    _stopAutoPull();
+    _autoPullTimer = setInterval(function () {
+      if (typeof getGitHubToken === 'function' && getGitHubToken()) {
+        console.log('[同步] 定时拉取...');
+        pull();
+      }
+    }, 60000);
+    // 页面隐藏时暂停拉取，恢复可见后重启 —— 避免多开/后台重复请求
+    if (!_visHandler && typeof document !== 'undefined') {
+      _visHandler = function () {
+        if (document.hidden) _stopAutoPull();
+        else _startAutoPull();
+      };
+      document.addEventListener('visibilitychange', _visHandler);
+    }
+  }
+
+  function _stopAutoPull() {
+    if (_autoPullTimer) { clearInterval(_autoPullTimer); _autoPullTimer = null; }
+  }
+
   // ── 同步错误状态管理 ──
   function _setError(msg) {
     _lastError = msg;
@@ -877,6 +903,12 @@ const SyncModule = (function () {
   function getJSON(key, fallback) {
     try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
     catch (e) { return fallback; }
+  }
+
+  /** 本地日期键（YYYY-MM-DD），用于记录去重 —— 与项目 sameDay/fmtDate 的本地日期语义一致 */
+  function _dkey(d) {
+    var dt = (d instanceof Date) ? d : new Date(d);
+    return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
   }
 
   // ── 收集全部本地状态 ──
@@ -945,17 +977,35 @@ const SyncModule = (function () {
       console.log('[同步] 日记合并完成 本地=' + Object.keys(localDiary).length + ' 远程=' + Object.keys(state.diary).length + ' 合并后=' + Object.keys(merged).length);
     }
 
-    // 周期数据：替换
+    // 周期数据：合并（保留本地未推送的经期记录，避免拉取覆盖离线标记）
     if (state.cycleInfo) {
-      localStorage.setItem('shared-cycle-data', JSON.stringify(state.cycleInfo));
-      if (state.cycleInfo.records && state.cycleInfo.records.length > 0) {
-        localStorage.setItem('cycle-data-v6-andjela', JSON.stringify(state.cycleInfo));
-        if (typeof window.state !== 'undefined' && state.cycleInfo) {
-          window.state.records = state.cycleInfo.records.map(function (r) { return new Date(r); });
-          window.state.periodEnds = state.cycleInfo.periodEnds || {};
-          window.state.symptoms = state.cycleInfo.symptoms || {};
-          window.state.settings = state.cycleInfo.settings || { cycleLength: 28, periodLength: 7 };
-        }
+      var mergedInfo = JSON.parse(JSON.stringify(state.cycleInfo));
+      var localCE = getJSON('shared-cycle-data', null);
+      if (!localCE || !localCE.records) localCE = getJSON('cycle-data-v6-andjela', null);
+      if (localCE && localCE.records && Array.isArray(localCE.records) && localCE.records.length) {
+        var seen = {};
+        (mergedInfo.records || []).forEach(function (r) { seen[_dkey(r)] = 1; });
+        localCE.records.forEach(function (r) {
+          var k = _dkey(r);
+          if (!seen[k]) { seen[k] = 1; (mergedInfo.records = mergedInfo.records || []).push(r); }
+        });
+        mergedInfo.records.sort(function (a, b) { return new Date(a) - new Date(b); });
+      }
+      // periodEnds：本地有而远程没有的保留
+      var localEnds = (localCE && localCE.periodEnds) || {};
+      var mergedEnds = mergedInfo.periodEnds || {};
+      for (var pk in localEnds) {
+        if (localEnds.hasOwnProperty(pk) && !mergedEnds[pk]) mergedEnds[pk] = localEnds[pk];
+      }
+      mergedInfo.periodEnds = mergedEnds;
+
+      localStorage.setItem('shared-cycle-data', JSON.stringify(mergedInfo));
+      localStorage.setItem('cycle-data-v6-andjela', JSON.stringify(mergedInfo));
+      if (typeof window.state !== 'undefined') {
+        window.state.records = (mergedInfo.records || []).map(function (r) { return new Date(r); });
+        window.state.periodEnds = mergedInfo.periodEnds || {};
+        window.state.symptoms = mergedInfo.symptoms || {};
+        window.state.settings = mergedInfo.settings || { cycleLength: 28, periodLength: 7 };
       }
     }
 
@@ -1009,12 +1059,18 @@ const SyncModule = (function () {
     var _localBefore = getJSON('shared-diary', {});
     console.log('[同步] 开始推送 (重试#' + n + ') — 本地日记数:', Object.keys(_localBefore).length);
 
-    // ── 步骤 1：先拉取远程，合并日记到本地 ──
+    // ── 步骤 1：拉取远程（一次 GET 取得 sha 并合并日记，消除重复请求与 TOCTOU 窗口） ──
+    var sha = null;
     try {
       var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
       var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
+      if (resp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
+      }
       if (resp.ok) {
         var data = await resp.json();
+        sha = data.sha;
         var remoteState = JSON.parse(decodeURIComponent(escape(atob(data.content))));
         if (remoteState && remoteState.diary) {
           var remoteCount = Object.keys(remoteState.diary).length;
@@ -1031,24 +1087,8 @@ const SyncModule = (function () {
     // ── 步骤 2：收集本地状态（含已合并的日记） ──
     var state = collect();
 
-    // ── 步骤 3：取 SHA ──
-    var sha = null;
+    // ── 步骤 3（已并入步骤 1）：直接复用步骤 1 取得的 sha ──
     var authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
-    try {
-      var getResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: authHeaders, cache: 'no-store' });
-      if (getResp.ok) {
-        var getData = await getResp.json();
-        sha = getData.sha;
-      } else if (getResp.status === 401) {
-        _syncToast(_syncMsg('token401'));
-        return;
-      }
-    } catch (e) {
-      console.warn('[同步] 取 SHA 失败:', e.message);
-      if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
-      else { _setError(_syncMsg('retryFail')); _syncToast(_syncMsg('retryFail')); }
-      return;
-    }
 
     // ── 步骤 4：PUT ──
     var body = {
@@ -1202,13 +1242,8 @@ const SyncModule = (function () {
         };
       }
 
-      // 定时自动拉取（每 60 秒）
-      setInterval(function () {
-        if (typeof getGitHubToken === 'function' && getGitHubToken()) {
-          console.log('[同步] 定时拉取...');
-          pull();
-        }
-      }, 60000);
+      // 定时自动拉取（每 60 秒，句柄可清理）
+      _startAutoPull();
 
       updateBadge();
       console.log('[同步] 模块已初始化 ✓');
@@ -1217,7 +1252,9 @@ const SyncModule = (function () {
     pull: pull,
     collect: collect,
     apply: apply,
-    updateBadge: updateBadge
+    updateBadge: updateBadge,
+    stopAutoPull: _stopAutoPull,
+    startAutoPull: _startAutoPull
   };
 })();
 
@@ -1244,8 +1281,6 @@ function getMood(t){return state.moods&&state.moods[t]?state.moods[t].mood:null}
 const HUG_EXPIRY_MS=864e5;let _gratNotes=null;const KNOW_ME_QUESTIONS=[{key:"fav_city",q:{sr:"Koji je omiljeni grad tvog/tvoje partnera?",zh:"对方最喜欢的城市是哪里？",en:"What is your partner's favorite city?"}},{key:"first_date_color",q:{sr:"Šta je tvoj/tvoja partner/ka nosio/la na prvom sastanku?",zh:"第一次约会对方穿什么颜色的衣服？",en:"What color did your partner wear on your first date?"}},{key:"dream_trip",q:{sr:"Gde bi tvoj/tvoja partner/ka najradije putovao/la?",zh:"对方最想去的旅行目的地是哪里？",en:"Where does your partner dream of traveling to?"}},{key:"comfort_food",q:{sr:"Koja je omiljena hrana tvog/tvoje partnera za utehu?",zh:"对方心情不好时最爱吃什么？",en:"What comfort food does your partner reach for?"}},{key:"hidden_talent",q:{sr:"Koji skriveni talenat ima tvoj/tvoja partner/ka?",zh:"对方有什么隐藏的才艺？",en:"What hidden talent does your partner have?"}},{key:"childhood_dream",q:{sr:"Šta je tvoj/tvoja partner/ka želeo/la da bude kao dete?",zh:"对方小时候的梦想职业是什么？",en:"What did your partner dream of becoming as a child?"}},{key:"pet_peeve",q:{sr:"Šta tvog/tvoju partnera/ku najviše nervira?",zh:"对方最讨厌的事情是什么？",en:"What annoys your partner the most?"}},{key:"perfect_day",q:{sr:"Kako izgleda savršen dan za tvog/tvoju partnera/ku?",zh:"对方心目中的完美一天是怎样的？",en:"What does your partner's perfect day look like?"}},{key:"music_taste",q:{sr:"Koja je omiljena pesma tvog/tvoje partnera trenutno?",zh:"对方最近单曲循环的歌是什么？",en:"What song is your partner playing on repeat lately?"}},{key:"love_language",q:{sr:"Koji je glavni jezik ljubavi tvog/tvoje partnera?",zh:"对方最重要的爱的语言是什么？",en:"What is your partner's primary love language?"}},{key:"smell_memory",q:{sr:"Koji miris podseća tvog/tvoju partnera/ku na vas?",zh:"什么味道会让对方想起你？",en:"What scent reminds your partner of you?"}},{key:"future_5years",q:{sr:"Gde tvoj/tvoja partner/ka vidi sebe za 5 godina?",zh:"对方觉得五年后的自己会在哪里？",en:"Where does your partner see themselves in 5 years?"}},{key:"best_quality",q:{sr:"Šta tvoj/tvoja partner/ka najviše ceni kod sebe?",zh:"对方最欣赏自己的哪个品质？",en:"What quality does your partner admire most in themselves?"}},{key:"favorite_memory",q:{sr:"Koje je omiljeno zajedničko sećanje tvog/tvoje partnera?",zh:"对方最喜欢你们在一起时的哪个回忆？",en:"What is your partner's favorite shared memory with you?"}},{key:"morning_routine",q:{sr:"Kako tvoj/tvoja partner/ka započinje jutro?",zh:"对方早上起来做的第一件事是什么？",en:"What is the first thing your partner does in the morning?"}}],CHECKIN_QUESTIONS={sr:[{q:"Kako se osećaš u vezi ove nedelje?",opts:["😍 Sjajno","😊 Dobro","😐 Ok","😞 Loše"]},{q:"Da li smo dovoljno komunicirali?",opts:["💬 Da, odlično","👍 Uglavnom","🤔 Moglo bi bolje","👎 Ne baš"]},{q:"Šta bi voleo/la da poboljšamo sledeće nedelje?",opts:["💏 Više zajedničkog vremena","💬 Bolja komunikacija","🔥 Više romantike","🤝 Više podrške"]}],"zh-CN":[{q:"这周的感情状态怎么样？",opts:["😍 很棒","😊 不错","😐 一般","😞 不太好"]},{q:"我们这周的沟通足够吗？",opts:["💬 很好","👍 还行","🤔 可以更好","👎 不太够"]},{q:"下周希望我们哪方面做得更好？",opts:["💏 更多陪伴","💬 更好交流","🔥 更多浪漫","🤝 更多支持"]}],en:[{q:"How do you feel about this week together?",opts:["😍 Amazing","😊 Good","😐 OK","😞 Not great"]},{q:"Did we communicate enough?",opts:["💬 Yes, great","👍 Mostly","🤔 Could improve","👎 Not really"]},{q:"What would you like more of next week?",opts:["💏 More time together","💬 Better talks","🔥 More romance","🤝 More support"]}]};function spawnFloatingHearts(e){const t=["💕","💖","💗","💝","✨","💫"];for(let n=0;n<8;n++)(function(n){setTimeout(function(){const a=document.createElement("span");a.className="floating-heart",a.textContent=t[n%t.length],a.style.left=20+60*Math.random()+"%",a.style.bottom="20px",e.appendChild(a),setTimeout(function(){a.parentNode&&a.remove()},1300)},80*n)})(n)}function getHugStreak(){const e=loadSharedDiaryData(),t=new Date;let n=0;for(let a=0;a<365;a++){const o=new Date(t);o.setDate(o.getDate()-a);const r=e[fmtDate(o)];if(!(r&&r.barry&&r.barry.hug&&r.andjela&&r.andjela.hug))break;n++}return n}function sendHug(e){const n=fmtDate(new Date);let a=parseInt(localStorage.getItem("hug-count-"+n)||"0");if(a>=2)return void toast(t("hugLimit"));a++,localStorage.setItem("hug-count-"+n,a);const o={from:activeProfile,time:Date.now()};localStorage.setItem("shared-hug",JSON.stringify(o));const r=loadSharedDiaryData();r[n]||(r[n]={}),r[n][activeProfile]||(r[n][activeProfile]={}),r[n][activeProfile].hug={time:Date.now()},saveSharedDiaryData(r);const i=document.getElementById("hugSendBtn");i&&(i.classList.add("sending"),setTimeout(function(){i.classList.remove("sending")},600));const s=document.getElementById("hugCard");s&&spawnFloatingHearts(s),renderHug(),toast("🤗 "+("barry"===activeProfile?t("hugSentBarry"):t("hugSentAndjela"))+" ("+a+"/2)")}function checkHug(){try{const e=JSON.parse(localStorage.getItem("shared-hug"));return e?Date.now()-e.time>864e5?(localStorage.removeItem("shared-hug"),null):e.from===activeProfile?null:e:null}catch(e){return null}}function dismissHug(){localStorage.removeItem("shared-hug"),renderHug()}function renderHug(){const e=checkHug(),n=document.getElementById("hugContent"),a=document.getElementById("hug-title");if(!a)return;a.textContent=t("hugTitle");const o=fmtDate(new Date),r=parseInt(sessionStorage.getItem("hug-count-"+o)||"0"),i=2-r,s=getHugStreak();if(e){const t="andjela"===e.from?"🌸 Anđela":"👦 Barry",a=new Date(e.time),o=String(a.getHours()).padStart(2,"0")+":"+String(a.getMinutes()).padStart(2,"0");let r='<div class="hug-received">';s>1&&(r+='<div class="hug-streak-badge">🔥 '+("sr"===lang?s+" dana zaredom!":"en"===lang?s+"-day streak!":"连续 "+s+" 天！")+"</div>"),r+='<span class="hug-icon-wrap"><span class="hug-icon">🤗</span></span>',r+='<div class="hug-text">'+t+" "+("sr"===lang?"te zagrlio/la! 💫":"en"===lang?"hugged you! 💫":"抱了你！💫")+"</div>",r+='<div class="hug-time">'+o+"</div>",r+='<button class="hug-back-btn" onclick="sendHug(true)" id="hugBackBtn">💝 '+("sr"===lang?"Uzvrati zagrljaj":"en"===lang?"Hug back":"回抱一个")+"</button>",r+='<div><button class="hug-dismiss" onclick="dismissHug()">'+("sr"===lang?"✕ zatvori":"en"===lang?"✕ dismiss":"✕ 关闭")+"</button></div></div>",n.innerHTML=r;const i=document.getElementById("hugCard");i&&spawnFloatingHearts(i)}else if(r>0){let e="";for(let t=0;t<2;t++)e+='<span class="hh-heart'+(t>=i?" used":"")+'">'+(t<r?"❤️":"🤍")+"</span>";const a='<div class="hug-sent-state"><div class="hug-hearts-row">'+e+'</div><span class="hss-icon">📬</span><div class="hss-text">'+t("hugSentWaiting")+'</div><button class="hug-back-btn" onclick="sendHug()" style="margin-top:8px">🤗 '+("sr"===lang?"Pošalji još jedan ("+i+")":"en"===lang?"Send another ("+i+")":"再抱一次 ("+i+")")+"</button></div>";n.innerHTML=a}else{const e=t("hugSendBtn");let a="";s>1&&(a+='<div style="text-align:center"><div class="hug-streak-badge">🔥 '+("sr"===lang?s+" dana zaredom!":"en"===lang?s+"-day streak!":"连续 "+s+" 天！")+"</div></div>"),a+='<button class="hug-btn" onclick="sendHug()" id="hugSendBtn">🤗 '+e+"</button>",n.innerHTML=a}}function addGratitude(){const e=document.getElementById("gratInput"),t=e.value.trim();if(!t)return;let n=JSON.parse(localStorage.getItem("shared-gratitude")||"[]");n.push({text:t,from:activeProfile,time:Date.now()}),n.length>20&&(n=n.slice(-20)),localStorage.setItem("shared-gratitude",JSON.stringify(n)),_gratNotes=null,e.value="",renderGratitude(),pushAllSharedData()}function renderGratitude(){const e=document.getElementById("grat-title"),n=document.getElementById("gratInput"),a=document.getElementById("gratList");if(!e||!n||!a)return;e.textContent=t("gratTitle"),n.placeholder=t("gratPlaceholder");const o=JSON.parse(localStorage.getItem("shared-gratitude")||"[]");0!==o.length?a.innerHTML=o.slice(-5).reverse().map(function(e,t){const n="andjela"===e.from?"🌸":"👦",a=e.from!==("andjela"===activeProfile?"andjela":"barry")?' <button onclick="translateGrat('+t+')" style="font-size:.55rem;padding:1px 6px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer">🌐</button>':"";return'<div class="gratitude-item"><span class="gratitude-heart">'+n+'</span><span id="grat-txt-'+t+'">'+esc(e.text)+"</span>"+a+"</div>"}).join(""):a.innerHTML=""}function translateGrat(e){_gratNotes||(_gratNotes=JSON.parse(localStorage.getItem("shared-gratitude")||"[]"));const t=_gratNotes[e];if(!t)return;const n="andjela"===t.from?"sr":"sr"===lang?"zh-CN":"sr",a="sr"===lang?"sr":"zh-CN"===lang?"zh-CN":"en";n!==a&&translateText(t.text,n,a).then(function(t){const n=document.getElementById("grat-txt-"+e);n&&(n.textContent=t)})}function saveCheckinAnswer(e,t){const n="shared-checkin-"+activeProfile,a=JSON.parse(localStorage.getItem(n)||"{}");a[e]=t,localStorage.setItem(n,JSON.stringify(a)),renderCheckin(),pushAllSharedData()}function getCheckinAnswers(e){return JSON.parse(localStorage.getItem("shared-checkin-"+e)||"{}")}function renderCheckin(){const e=(new Date).getDay();if(0!==e&&6!==e)return void(document.getElementById("checkinCard").style.display="none");document.getElementById("checkinCard").style.display="",document.getElementById("checkin-title").textContent=t("checkinTitle");const n=CHECKIN_QUESTIONS[lang]||CHECKIN_QUESTIONS.sr,a=getCheckinAnswers(activeProfile),o="andjela"===activeProfile?"barry":"andjela",r=getCheckinAnswers(o),i="andjela"===o?"🌸 Anđela":"👦 Barry";let s=n.map(function(e,t){const n=a[t]||"",o=r[t]||"",s=e.opts.map(function(e){return'<span class="cq-opt'+(n===e?" picked":"")+'" onclick="saveCheckinAnswer('+t+",'"+e.replace(/'/g,"\\'")+"')\">"+e+"</span>"}).join(""),l=o?'<div style="font-size:.62rem;color:var(--gold);margin-top:4px">'+i+": "+o+"</div>":"";return'<div class="checkin-q"><div class="cq-label"><span>'+e.q+'</span></div><div class="cq-options">'+s+"</div>"+l+"</div>"}).join("");0===Object.keys(a).length&&0===Object.keys(r).length&&(s+='<div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:8px">'+("sr"===lang?"Odgovori na pitanja — partner će videti tvoje odgovore ✨":"en"===lang?"Answer the questions — your partner will see your answers ✨":"回答问题——伴侣会看到你的答案 ✨")+"</div>"),document.getElementById("checkinContent").innerHTML=s}function saveMySong(){const e=document.getElementById("songInputTitle").value.trim();if(!e)return void toast(t("songSaveEmpty"));const n={title:e,note:document.getElementById("songInputNote").value.trim()||"",from:activeProfile,time:Date.now()};localStorage.setItem("shared-song-"+activeProfile,JSON.stringify(n)),renderSong(),pushAllSharedData(),toast(t("songSaved"))}function loadSong(e){return safeParse(localStorage.getItem("shared-song-"+e),null)}function getKnowMeData(){return safeParse(localStorage.getItem("shared-knowme"),{})}function saveKnowMeData(e){localStorage.setItem("shared-knowme",JSON.stringify(e))}function renderKnowMe(){if(!document.getElementById("knowMeCard"))return;document.getElementById("knowMe-title").textContent=t("knowMeTitle");const e=Math.floor(Date.now()/864e5)%KNOW_ME_QUESTIONS.length,n=KNOW_ME_QUESTIONS[e],a=n.q[lang]||n.q.sr,o=fmtDate(today()),r=getKnowMeData()[o]||{},i=r[activeProfile],s="andjela"===activeProfile?"barry":"andjela",l=r[s],d="andjela"===s?"🌹 Anđela":"👦 Barry",g="andjela"===activeProfile?"🌹 Anđela":"👦 Barry";let c="";c+='<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">'+a+"</div>",c+=i?'<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+g+" "+("sr"===lang?"odgovor":"en"===lang?" answer":"的回答")+'</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(i.answer)+"</div></div>":'<div style="margin-bottom:10px"><textarea id="knowMeInput" placeholder="'+("sr"===lang?"Tvoj odgovor...":"en"===lang?"Your answer...":"你的答案...")+'" style="width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);resize:none;min-height:44px" maxlength="120"></textarea><button class="btn btn-primary" onclick="saveKnowMeAnswer()" style="width:100%;font-size:.7rem;padding:8px;margin-top:6px">💭 '+("sr"===lang?"Odgovori":"en"===lang?"Answer":"回答")+"</button></div>",l?(c+='<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+d+t("knowMePartnerLabel")+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(l.answer)+"</div></div>",i&&l&&i.answer.trim().toLowerCase()===l.answer.trim().toLowerCase()&&(c+='<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:float-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">'+t("knowMeMatch")+"</div>")):i&&(c+='<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ '+t("knowMeWaiting")+"</div>"),document.getElementById("knowMeContent").innerHTML=c}function saveKnowMeAnswer(){const e=document.getElementById("knowMeInput");if(!e)return;const n=e.value.trim();if(!n)return;const a=fmtDate(today()),o=getKnowMeData();o[a]||(o[a]={}),o[a][activeProfile]={answer:n,time:Date.now()},saveKnowMeData(o),pushAllSharedData(),renderKnowMe(),toast(t("knowMeAnswerSaved"))}function renderSong(){const e=document.getElementById("song-title");if(!e)return;e.textContent=t("songTitle");const n=loadSong(activeProfile),a="andjela"===activeProfile?"barry":"andjela",o=loadSong(a),r="andjela"===a?"🌸 Anđela":"👦 Barry";let i="";i+=n?'<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">'+t("songMyLabel")+'</span><div class="song-title">🎶 '+esc(n.title)+"</div>"+(n.note?'<div class="song-note">'+esc(n.note)+"</div>":"")+"</div>":'<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="'+t("songTitlePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="'+t("songNotePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 '+t("songSave")+"</button></div>",o&&(i+='<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+r+" "+t("songPartnerLabel")+'</span><div class="song-title">🎶 '+esc(o.title)+"</div>"+(o.note?'<div class="song-note">'+esc(o.note)+"</div>":"")+"</div>"),document.getElementById("songContent").innerHTML=i||'<span class="song-icon">🎶</span><div class="song-note">'+t("songEmpty")+"</div>"}function renderRelTips(){if("andjela"!==activeProfile)return void(document.getElementById("relTipCard").style.display="none");const e=REL_TIPS[lang]||REL_TIPS.sr,t=e[Math.floor(Math.random()*e.length)];document.getElementById("relTipIcon").textContent=t.icon,document.getElementById("relTipText").textContent=t.text,document.getElementById("relTipCard").style.display=""}
 /* === dist/js/render-misc.js === */
 let titleClicks=0,lastCycleCount=0;function updateLoveCounter(){const e=document.getElementById("titleLoveCounter");if(!e||!annDateLove)return;const n=daysDiff(new Date(annDateLove),today());n>=0&&(e.textContent="♥ "+n+t("loveCounterTogether"));const o=document.getElementById("love-days-content");if(!o)return;const a=[];if(annDateMet){const e=daysDiff(new Date(annDateMet),today());e>=0&&a.push('<div style="font-size:.85rem"><span style="color:var(--gold)">✨</span> '+e+t("loveCounterMet")+"</div>")}if(annDateLove){const e=daysDiff(new Date(annDateLove),today());e>=0&&a.push('<div style="font-size:1.2rem;font-weight:700;color:var(--love)">♥ '+e+("sr"===lang?" dana zajedno":"en"===lang?" days together":" 天在一起")+"</div>")}o.innerHTML=a.join('<div style="height:4px"></div>'),document.getElementById("love-days-title").textContent=t("loveDaysTitle")}function randomThinkingOfYou(){if("andjela"!==activeProfile)return;if(Math.random()>.18)return;const e="sr"===lang?["Upravo sam pomislio na tebe ♥","Nadam se da se osećaš dobro danas ✨","Tvoj osmeh mi je najdraža st let 🌸","Mislim na tebe... uvek 💫","Barry je upravo pomislio na tebe 💝"]:"en"===lang?["Just thought of you ♥","Hope you are feeling good today ✨","Your smile is my favorite thing 🌸","Thinking of you... always 💫","Barry was just thinking of you 💝"]:["刚刚在想你 ♥","希望你今天心情好 ✨","你的笑容是我最喜欢的 🌸","一直在想你 💫","Barry 刚刚想到了你 💝"],t=e[Math.floor(Math.random()*e.length)];setTimeout(function(){toast(t)},3e3)}function showGreeting(){if(sessionStorage.getItem("_greetingShown"))return;sessionStorage.setItem("_greetingShown","1");const e=document.getElementById("greetingOverlay");if(!e)return;const t=(I18N[lang]||I18N[lang.split("-")[0]]||I18N.sr).greeting;if(!t)return;const n=(new Date).getHours();let o;o=n>=5&&n<12?t.morning:n>=12&&n<18?t.afternoon:n>=18&&n<23?t.evening:t.night,document.getElementById("greetingIcon").textContent=o.icon,document.getElementById("greetingName").textContent=o.name,document.getElementById("greetingMsg").textContent=o.msg,document.getElementById("greetingSub").textContent=o.sub,e.style.display="flex",e.classList.remove("hidden"),spawnFeathers(),clearTimeout(window._greetingTimer),window._greetingTimer=setTimeout(function(){e.classList.add("hiding"),setTimeout(function(){e.style.display="none",e.classList.add("hidden"),e.classList.remove("hiding")},400)},2800)}function spawnFeathers(){const e=document.querySelector(".greeting-card");if(e)for(let t=0;t<8;t++){const n=document.createElement("span");n.className="feather",n.textContent=["🪶","✦","·"][t%3],n.style.left=10+80*Math.random()+"%",n.style.top=5+40*Math.random()+"%",n.style.animationDelay=2*Math.random()+"s",n.style.animationDuration=3+3*Math.random()+"s",e.appendChild(n),setTimeout(()=>n.remove(),5e3)}}function updateMoonPhase(){const e=document.getElementById("moonPhase"),t=2551443,n=new Date("2000-01-06T18:14:00Z").getTime()/1e3,o=(Date.now()/1e3-n)%t/t;e.innerHTML='<span class="moon-icon">'+["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"][Math.round(8*o)%8]+"</span>"}function handleTitleClick(){titleClicks++,titleClicks>=5&&(titleClicks=0,spawnPetals()),setTimeout(function(){titleClicks<5&&titleClicks>0&&(titleClicks=0)},2e3)}function spawnPetals(){const e=["🌸","💮","🌺","🩷","✿","🌷"];for(let t=0;t<25;t++){const t=document.createElement("span");t.className="petal",t.textContent=e[Math.floor(Math.random()*e.length)],t.style.left=100*Math.random()+"%",t.style.top=-(10+30*Math.random())+"px",t.style.animationDelay=1.5*Math.random()+"s",t.style.animationDuration=3+3*Math.random()+"s",t.style.fontSize=.8+1.5*Math.random()+"rem",document.body.appendChild(t),setTimeout(function(){t.remove()},5e3)}}function checkCycleCelebration(){const e=predict().cycles.length;if(e>lastCycleCount&&e>=1&&state.records.length>=2){lastCycleCount=e;const n=document.createElement("div");n.className="cycle-celebration",n.innerHTML='<span class="celeb-icon">💝</span><span class="celeb-text">'+t("cycleCounter").replace("{n}",e)+"</span>",document.body.appendChild(n),setTimeout(function(){n.style.opacity="0",n.style.transition="opacity .6s"},3e3),setTimeout(function(){n.remove()},4e3),updateCycleCounter(e)}}function updateCycleCounter(e){const n=document.getElementById("cycleCounterCard");n&&(e>0?(n.style.display="",document.getElementById("cc-count").textContent=e,document.getElementById("cc-subtitle").textContent=t("cycleCounterSub")):n.style.display="none")}function renderSpecialBadge(){const e=document.getElementById("specialBadge");if("andjela"!==activeProfile)return void(e.style.display="none");e.style.display="";const t="sr"===lang?["Ti si jedinstvena ✨","Najlepša na svetu 🌸","Barryjeva ljubav 💝","Jedna jedina 💫"]:"en"===lang?["You are unique ✨","Most beautiful 🌸","Barry's love 💝","One and only 💫"]:["独一无二的你 ✨","最美的人 🌸","Barry 的爱 💝","世界上唯一的你 💫"];document.getElementById("specialBadgeText").textContent=t[Math.floor(Math.random()*t.length)]}
-/* === dist/js/render-settings.js === */
-function exportAllData(){const e={version:1,exportedAt:(new Date).toISOString(),exportedBy:activeProfile,diary:JSON.parse(localStorage.getItem("shared-diary")||"{}"),learningProgress:JSON.parse(localStorage.getItem("shared-learning-progress")||"{}"),learningComments:JSON.parse(localStorage.getItem("shared-learning-comments")||"[]"),learningPoints:JSON.parse(localStorage.getItem("shared-learning-points")||"{}"),voiceData:JSON.parse(localStorage.getItem("shared-voice-data")||"{}"),sunCounter:JSON.parse(localStorage.getItem("shared-sun-counter")||"{}"),settings:{activeProfile:activeProfile,lang:lang,theme:theme}},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),n=document.createElement("a");n.href=URL.createObjectURL(t),n.download="andjelin-ciklus-backup-"+(new Date).toISOString().slice(0,10)+".json",n.click(),URL.revokeObjectURL(n.href),toast("📦 "+L("Podaci izvezeni!","Data exported!","数据已导出！"))}function importAllData(){const e=document.createElement("input");e.type="file",e.accept=".json",e.onchange=function(e){const t=e.target.files[0];if(!t)return;if(!confirm(L("Ovo ce PREBRISATI sve trenutne podatke. Nastaviti?","This will OVERWRITE all current data. Continue?","此操作将覆盖所有当前数据，是否继续？")))return;const n=new FileReader;n.onload=function(e){try{const t=JSON.parse(e.target.result);t.diary&&localStorage.setItem("shared-diary",JSON.stringify(t.diary)),t.learningProgress&&localStorage.setItem("shared-learning-progress",JSON.stringify(t.learningProgress)),t.learningComments&&localStorage.setItem("shared-learning-comments",JSON.stringify(t.learningComments)),t.learningPoints&&localStorage.setItem("shared-learning-points",JSON.stringify(t.learningPoints)),t.voiceData&&localStorage.setItem("shared-voice-data",JSON.stringify(t.voiceData)),t.settings&&(t.settings.lang&&(lang=t.settings.lang,setLang(lang)),t.settings.theme&&(theme=t.settings.theme,applyTheme(theme))),pushAllSharedData(),toast("✅ "+L("Podaci vraceni! Osvezavanje...","Data restored! Refreshing...","数据已恢复！刷新中...")),setTimeout(function(){location.reload()},1500)}catch(e){toast("❌ "+L("Neispravan fajl","Invalid file","无效文件"))}},n.readAsText(t)},e.click()}function saveAnniversaries(){annDateMet=document.getElementById("annDateMet").value,annDateLove=document.getElementById("annDateLove").value,localStorage.setItem("cycle-ann-met",annDateMet),localStorage.setItem("cycle-ann-love",annDateLove),updateAnniversaryCount(),renderCalendar()}function saveGitHubToken(){const e=document.getElementById("set-gh-token").value.trim(),t=document.getElementById("tokenSecurityWarning");e?(sessionStorage.setItem("gh-token",e),toast("🔑 Token sacuvan"),t&&(t.style.display=""),pullAllSharedData().then(function(){updateSyncStatusBadge(),renderAll()})):(sessionStorage.removeItem("gh-token"),t&&(t.style.display="none"),updateSyncStatusBadge())}async function testGitHubToken(){const e=document.getElementById("testTokenBtn");if(!e)return;const t=e.textContent;e.disabled=!0,e.textContent="⏳ Testiranje...";const n=getGitHubToken();if(!n)return toast("🔑 "+L("Prvo unesi token","Enter a token first","请先输入 Token")),e.textContent=t,void(e.disabled=!1);try{const a=await fetch("https://api.github.com/user",{headers:{Authorization:"Bearer "+n,Accept:"application/vnd.github.v3+json"}});if(a.ok){const n=await a.json();toast("✅ "+L("Token vazi - "+n.login,"Token valid - "+n.login,"Token 有效 - "+n.login)),e.textContent="✅ Vazi",setTimeout(function(){e.textContent=t,e.disabled=!1},3e3)}else 401===a.status?(toast("❌ "+L("Token nevazeci - generisi novi","Token invalid - generate a new one","Token 无效 - 请重新生成")),e.textContent="❌ Nevazeci",setTimeout(function(){e.textContent=t,e.disabled=!1},3e3)):(toast("⚠️ "+L("Greska: "+a.status,"Error: "+a.status,"错误: "+a.status)),e.textContent=t,e.disabled=!1)}catch(n){toast("⚠️ "+L("Mrezna greska","Network error","网络错误")),e.textContent=t,e.disabled=!1}}function clearGitHubToken(){if(!getGitHubToken())return;if(!confirm(L("Obrisati GitHub token? Sinhronizacija ce prestati.","Clear GitHub token? Sync will stop.","清除 GitHub Token？同步将停止。")))return;sessionStorage.removeItem("gh-token"),document.getElementById("set-gh-token").value="";const e=document.getElementById("tokenSecurityWarning");e&&(e.style.display="none"),updateSyncStatusBadge(),toast("🗑️ "+L("Token obrisan","Token cleared","Token 已清除"))}function loadSettingsUI(){document.getElementById("set-cycle").value=state.settings.cycleLength,document.getElementById("set-period").value=state.settings.periodLength,document.getElementById("set-language").value=lang,document.getElementById("set-theme").value=theme,document.getElementById("annDateMet").value=annDateMet,document.getElementById("annDateLove").value=annDateLove;const e=!!getGitHubToken();document.getElementById("set-gh-token").value=getGitHubToken(),document.getElementById("set-gh-token").placeholder="ghp_...",document.getElementById("set-h-token").textContent=e?t("settingsTokenHintEnabled"):t("settingsTokenHintDisabled");const n=document.getElementById("tokenSecurityWarning");n&&(n.style.display=e?"":"none"),updateAnniversaryCount(),updateSyncStatusBadge()}function saveSettings(){state.settings.cycleLength=parseInt(document.getElementById("set-cycle").value)||28,state.settings.periodLength=parseInt(document.getElementById("set-period").value)||7,saveState(),renderAll(["calendar","core"]),toast(t("toast.saved"))}function exportData(){const e=new Blob([JSON.stringify({records:state.records.map(fmtDate),symptoms:state.symptoms,moods:state.moods||{},diaries:state.diaries||{},settings:state.settings},null,2)],{type:"application/json"}),n=document.createElement("a");n.href=URL.createObjectURL(e),n.download="andjelin-ciklus-"+activeProfile+"-"+fmtDate(new Date)+".json",n.click(),URL.revokeObjectURL(n.href),toast(t("toast.exported"))}function importData(e){const n=e.target.files[0];if(!n)return;const a=new FileReader;a.onload=function(){try{const e=JSON.parse(a.result);if(!e.records||!Array.isArray(e.records))throw new Error("Invalid format");if(state.records=e.records.map(function(e){const t=new Date(e);return isNaN(t.getTime())?null:t}).filter(Boolean),0===state.records.length&&e.records.length>0)throw new Error("No valid dates");state.symptoms=e.symptoms||{},state.moods=e.moods||{},state.diaries=e.diaries||{},state.settings={cycleLength:28,periodLength:7,manualOverride:!1},e.settings&&Object.keys(e.settings).forEach(function(t){state.settings[t]=e.settings[t]}),saveState(),renderAll(),updateFab(),toast(t("toast.imported"))}catch(e){toast(t("toast.importError"))}},a.readAsText(n),e.target.value=""}function clearAllData(){confirm(t("settings.clearConfirm"))&&(state={records:[],symptoms:{},moods:{},diaries:{},settings:{cycleLength:28,periodLength:7,manualOverride:!1},_migrated:!0},saveState(),renderAll(),updateFab(),toast(t("toast.cleared")))}function dismissOnboarding(){document.getElementById("onboardingBanner").style.display="none",localStorage.setItem("cycle-ob-dismissed","1")}function showOnboardingIfNeeded(){"andjela"!==activeProfile||0!==state.records.length||localStorage.getItem("cycle-ob-dismissed")||(document.getElementById("onboardingBanner").style.display="flex",document.getElementById("ob-text").textContent=t("onboarding"))}
 /* === dist/app.js === */
 ﻿'use strict';
 
@@ -2486,34 +2521,8 @@ const renderAll = applyAllUI;
    IMMUTABLE STATE HELPERS
    ================================================================ */
 /** Toggle a period record for a date (immutable state update) */
-function togglePeriodRecord(date) {
-  let idx = state.records.findIndex(function (r) {
-    return sameDay(r, date);
-  });
-  let wasAdded = false;
-  if (idx >= 0) {
-    state = Object.assign({}, state, {
-      records: state.records.filter(function (_, i) {
-        return i !== idx;
-      }),
-    });
-    window.state = state;
-    toast('🚫 ' + t('toast.unmarked'));
-  } else {
-    let newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
-      return a - b;
-    });
-    state = Object.assign({}, state, { records: newRecords });
-    window.state = state;
-    wasAdded = true;
-    toast('🩸 ' + t('toast.marked'));
-  }
-  saveState();
-  renderAll(['calendar', 'core']);
-  updateFab();
-  if (wasAdded) checkCycleCelebration();
-  return wasAdded;
-}
+/* togglePeriodRecord: 单一实现移至下方 (line ~2194)。
+   此处不再重复声明，避免函数提升导致的重复定义遮蔽。 */
 
 /* ================================================================
    CALENDAR
@@ -3290,8 +3299,9 @@ function openModal(date, pred) {
             '</div>';
         }
         diaryBodyEl.innerHTML = diaryText;
-        document.getElementById('modalDiaryHeader').textContent = activeProfile === 'barry' ? '💌 日记' : '💌 Dnevnik';
-        document.getElementById('modalDiaryEditText').textContent = activeProfile === 'barry' ? '编辑' : 'Uredi';
+        var _mdLang = (typeof window.lang !== 'undefined') ? window.lang : 'sr';
+        document.getElementById('modalDiaryHeader').textContent = _mdLang === 'zh-CN' ? '💌 日记' : _mdLang === 'en' ? '💌 Diary' : '💌 Dnevnik';
+        document.getElementById('modalDiaryEditText').textContent = _mdLang === 'zh-CN' ? '编辑' : _mdLang === 'en' ? 'Edit' : 'Uredi';
       } else {
         diaryPreviewEl.style.display = 'none';
       }
@@ -3440,7 +3450,8 @@ function renderKnowledge(phase, dateKey) {
   }
 }
 // toggleKnowledge() extracted to js/ui-core.js
-function togglePeriodRecord() {
+function togglePeriodRecord(date) {
+  if (date) selectedDate = date;
   if (!selectedDate) return;
   const sd = fmtDate(selectedDate);
   // Check if this is marking period END (there's a start without end)
@@ -3792,7 +3803,18 @@ function goToday() {
   _weekOffset = 0;
   CalState.year = today().getFullYear();
   CalState.month = today().getMonth();
-  renderCalendar();
+  const grid = document.getElementById('daysGrid');
+  if (grid) {
+    grid.style.transition = 'opacity 0.08s ease-out';
+    grid.style.opacity = '0';
+    setTimeout(function () {
+      renderCalendar();
+      grid.style.transition = 'opacity 0.2s ease-out';
+      grid.style.opacity = '1';
+    }, 80);
+  } else {
+    renderCalendar();
+  }
 }
 
 // Touch swipe
@@ -3844,18 +3866,8 @@ function goToday() {
   });
 })();
 
-function goToday() {
-  CalState.year = today().getFullYear();
-  CalState.month = today().getMonth();
-  const grid = document.getElementById('daysGrid');
-  grid.style.transition = 'opacity 0.08s ease-out';
-  grid.style.opacity = '0';
-  setTimeout(function () {
-    renderCalendar();
-    grid.style.transition = 'opacity 0.2s ease-out';
-    grid.style.opacity = '1';
-  }, 80);
-}
+/* goToday: 单一实现已上移至 CALENDAR 模块 (重置 _weekOffset + 淡入动画)。
+   此重复声明删除，避免函数提升遮蔽正确版本。 */
 /* ================================================================
    CULTURE MODULE — za Anđelu
    ================================================================ */
@@ -5158,6 +5170,1123 @@ if (typeof AuthModule !== 'undefined') {
   window.renderStatsPanel = renderStatsPanel;
 })();
 
+/* === dist/js/fix-css.js === */
+"use strict";
+(function () {
+  console.log('[fix-css] 已加载');
+
+  var _s = document.createElement('style');
+  _s.textContent =
+    /* === 通用布局 === */
+    'html { overflow-x: hidden !important; }' +
+
+    // #1 导航栏安全区（iPhone Home Indicator）
+    'nav.tabs-nav { padding-bottom: env(safe-area-inset-bottom, 0px) !important; }' +
+    'nav.tabs-nav { padding-bottom: constant(safe-area-inset-bottom, 0px) !important; }' +
+
+    // #2 日历触摸目标 ≥44px
+    '.day { min-height: 44px !important; display: flex !important; align-items: center !important; justify-content: center !important; }' +
+    '.day .day-num { line-height: 1.2 !important; }' +
+    'nav.tabs-nav .tabs .tab { min-height: 44px !important; padding: 8px 4px !important; }' +
+    '.diary-date-btn { min-width: 44px !important; min-height: 44px !important; }' +
+    '.mood-emoji { min-width: 44px !important; min-height: 44px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }' +
+    '.dash-link-btn { min-height: 44px !important; }' +
+    '.todo-check, .todo-del { min-width: 44px !important; min-height: 44px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }' +
+
+    // #3 输入框字号 ≥16px（防止 iOS 自动缩放）
+    '@media (max-width: 480px) {' +
+    'input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"], input[type="search"], textarea, select { font-size: 16px !important; }' +
+    '.diary-textarea { font-size: 16px !important; }' +
+    '}' +
+
+    // #4 弹窗在小屏幕溢出修复
+    '@media (max-width: 480px) {' +
+    '#modal .modal { max-height: 85vh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; margin: 10px auto !important; border-radius: 14px !important; }' +
+    '#modal:not(.hidden) { display: flex !important; align-items: flex-end !important; justify-content: center !important; }' +
+    '#modal .modal .btn-row { flex-direction: column !important; gap: 6px !important; }' +
+    '#modal .modal .btn-row .btn { width: 100% !important; }' +
+    '#modal .modal #modal-close-btn { margin-top: 8px !important; padding: 12px !important; min-height: 44px !important; }' +
+    '}' +
+
+    // #5 touch-active 状态（移动端无 hover）
+    '.day:active:not(.other-month):not(.period-on):not(.ovulation):not(.fertile) { transform: scale(0.96) !important; }' +
+    '.diary-date-btn:active { transform: translateY(0px) !important; box-shadow: none !important; }' +
+    'nav.tabs-nav .tabs .tab:active { opacity: 0.7 !important; }' +
+    '.dash-link-btn:active { transform: scale(0.97) !important; opacity: 0.8 !important; }' +
+    '.todo-check:active { transform: scale(0.85) !important; }' +
+    '.todo-del:active { transform: scale(0.9) !important; opacity: 0.6 !important; }' +
+    '#fabBtn:active { transform: scale(0.92) !important; }' +
+    '.nav-btn:active, .today-pill:active, .cal-view-btn:active { transform: scale(0.92) !important; opacity: 0.7 !important; }' +
+    '.lang-btn:active { transform: scale(0.9) !important; }' +
+    '.theme-btn:active { transform: scale(0.9) !important; }' +
+    '.profile-pill:active { transform: scale(0.95) !important; }' +
+    '.emoji-picker-cell:active { transform: scale(0.85) !important; }' +
+    '.sym-chip:active { transform: scale(0.92) !important; }' +
+    '.hug-btn:active, .diary-submit:active, .btn-primary:active { transform: scale(0.96) !important; opacity: 0.85 !important; }' +
+    '.mood-emoji:not(.picked):active { transform: scale(0.9) !important; opacity: 1 !important; }' +
+
+    // #9 星星动画性能优化 + 移动端居中修复
+    '.floating-stars .star { will-change: transform, opacity !important; }' +
+    'body { margin: 0 !important; overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; display: flex !important; justify-content: center !important; }' +
+    'main { width: 100%; margin: 0; display: flex; justify-content: center; }' +
+    '.app { width: 100% !important; max-width: 420px !important; margin: 0 auto !important; }' +
+    '.calendar { width: 100% !important; margin: 0 auto !important; box-sizing: border-box !important; }' +
+    '.days { grid-template-columns: repeat(7, 1fr) !important; gap: 3px !important; }' +
+    '@media (max-width: 420px) { .days { gap: 2px !important; } .day { min-width: 0 !important; } }' +
+    '.emoji-picker-overlay { display: none !important; }' +
+    '.emoji-picker-overlay.hidden { display: none !important; }' +
+    '.week-num { display: none !important; }' +
+    'nav.tabs-nav .tabs { display: flex !important; justify-content: space-around !important; width: 100% !important; gap: 0 !important; }' +
+    'nav.tabs-nav .tabs .tab.active { color: var(--love) !important; }' +
+    '.progress-fill { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) !important; }' +
+    '.day.in-month { animation: fixDayIn 0.35s ease-out both; }' +
+    '@keyframes fixDayIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }' +
+    '@keyframes modalSlideIn { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }' +
+    '#modal:not(.hidden) .modal { animation: modalSlideIn 0.22s ease-out; }' +
+
+    /* === Todo List 动画 === */
+    '@keyframes todoItemIn{from{opacity:0;transform:translateY(10px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}' +
+    '.todo-item{animation:todoItemIn .35s cubic-bezier(.22,1,.36,1) both}' +
+    '.todo-check{cursor:pointer;font-size:1rem;flex-shrink:0;margin-top:2px;width:22px;text-align:center;transition:transform .2s cubic-bezier(.22,1,.36,1)}' +
+    '.todo-check:hover{transform:scale(1.2)}' +
+    '.todo-check:active{transform:scale(.9)}' +
+    '.todo-del{cursor:pointer;font-size:.65rem;opacity:.35;flex-shrink:0;padding:2px 4px;transition:opacity .2s,transform .2s}' +
+    '.todo-del:hover{opacity:.8;transform:scale(1.15)}' +
+    '.todo-del:active{transform:scale(.9)}' +
+
+    /* === 心情动画 === */
+    '@keyframes moodPop{0%{transform:scale(1) rotate(0deg)}40%{transform:scale(1.4) rotate(-10deg)}70%{transform:scale(1.25) rotate(5deg)}100%{transform:scale(1.3) rotate(0deg)}}' +
+    '.mood-emoji{transition:transform .25s cubic-bezier(.22,1,.36,1),opacity .2s,background .2s,box-shadow .2s}' +
+    '.mood-emoji:not(.picked){opacity:.78}' +
+    '.mood-emoji:not(.picked):hover{transform:scale(1.18)!important;opacity:1!important}' +
+    '.mood-emoji:not(.picked):active{transform:scale(.9)!important}' +
+    '.mood-emoji.picked{animation:moodPop .4s cubic-bezier(.22,1,.36,1) both;background:var(--rose-light);box-shadow:0 0 0 2px var(--love)}' +
+
+    /* === 仪表盘卡片动画 === */
+    '@keyframes dashCardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}' +
+    '#todoListCard{animation:dashCardIn .45s cubic-bezier(.22,1,.36,1) both}' +
+
+    /* === 空状态脉冲 === */
+    '@keyframes emptyPulse{0%,100%{opacity:.65}50%{opacity:1}}' +
+    '.chart-empty{animation:emptyPulse 2.8s ease-in-out infinite}' +
+
+    /* === 日记面板隐藏重复元素 === */
+    '#panel-diary .mt-10>.flex.gap-6.mt-8{display:none!important}' +
+
+    /* === 日历格子 hover === */
+    '.day{transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .25s ease,border-color .22s ease,background .22s ease!important}' +
+    '.day:hover:not(.other-month):not(.period-on):not(.ovulation):not(.fertile){transform:scale(1.1)!important;box-shadow:0 6px 20px rgba(196,90,107,.13)!important;border-color:rgba(196,90,107,.18)!important}' +
+
+    /* === 日记模块：症状按钮隐藏 + 情书卡片 + 日期导航 === */
+    'body:not(.is-barry) #tab-symptoms{display:none!important}' +
+    '.diary-date-btn{transition:all .2s cubic-bezier(.22,1,.36,1)!important}' +
+    '.diary-date-btn:hover{transform:translateY(-2px)!important;box-shadow:0 3px 10px rgba(196,90,107,.15)!important}' +
+    '.diary-date-btn.current{box-shadow:0 2px 8px rgba(196,90,107,.2)!important}' +
+    '.letter-paper-card{background:#fdf5e6!important;border:1px solid #e8d5b7!important;border-radius:12px!important;padding:18px 20px!important;box-shadow:0 2px 12px rgba(0,0,0,.06)!important;position:relative!important;margin-bottom:14px!important}' +
+    '.letter-paper-card::before{content:"";position:absolute;inset:0;border-radius:12px;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 27px,#e8d5b7 27px,#e8d5b7 28px)!important;opacity:.35!important}' +
+    '[data-theme="dark"] .letter-paper-card{background:#2d2318!important;border-color:#4a3825!important}' +
+    '[data-theme="dark"] .letter-paper-card::before{background:repeating-linear-gradient(0deg,transparent,transparent 27px,#4a3825 27px,#4a3825 28px)!important;opacity:.2!important}' +
+    '.letter-paper-card .lpc-header{display:flex!important;justify-content:space-between!important;align-items:center!important;margin-bottom:10px!important;position:relative!important;z-index:1!important}' +
+    '.letter-paper-card .lpc-date{font-size:.72rem!important;color:#8a7a6a!important;font-weight:600!important}' +
+    '[data-theme="dark"] .letter-paper-card .lpc-date{color:#a09080!important}' +
+    '.letter-paper-card .lpc-body{font-size:.85rem!important;line-height:28px!important;color:#3d3225!important;min-height:84px!important;white-space:pre-wrap!important;word-wrap:break-word!important;position:relative!important;z-index:1!important;padding:0 2px!important}' +
+    '[data-theme="dark"] .letter-paper-card .lpc-body{color:#d0c0b0!important}' +
+    '.letter-paper-card .lpc-footer{display:flex!important;justify-content:space-between!important;align-items:flex-end!important;margin-top:12px!important;padding-top:8px!important;border-top:1px dashed #d4bfa0!important;position:relative!important;z-index:1!important}' +
+    '[data-theme="dark"] .letter-paper-card .lpc-footer{border-color:#4a3825!important}' +
+    '.letter-paper-card .lpc-sig{font-size:.7rem!important;color:#8a7a6a!important;font-style:italic!important;text-align:right!important}' +
+    '.lpc-textarea{width:100%!important;padding:12px!important;border:1px solid #d4bfa0!important;border-radius:10px!important;font-size:.82rem!important;font-family:var(--font)!important;background:#fff8f0!important;color:#3d3225!important;line-height:28px!important;resize:vertical!important;box-sizing:border-box!important;min-height:90px!important;position:relative!important;z-index:1!important}' +
+    '[data-theme="dark"] .lpc-textarea{background:#1a1410!important;color:#d0c0b0!important;border-color:#4a3825!important}' +
+    '@media(max-width:600px){.lpc-row{flex-direction:column!important}}' +
+    '.lpc-row{display:flex!important;gap:14px!important;margin-bottom:14px!important}' +
+    '.lpc-row>*{flex:1!important;min-width:0!important}' +
+
+    /* === M3: 小屏日期导航水平滚动 === */
+    '@media(max-width:420px){.diary-date-strip-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important}.diary-date-strip-wrap::-webkit-scrollbar{display:none!important}.diary-date-btn{flex:0 0 auto!important;min-width:38px!important}}' +
+
+    /* === 打字机光标动画 === */
+        // @keyframes diaryCursorBlink removed — caused whole-textarea flickering during typing
+    '.diary-textarea:focus{caret-color:var(--love,#c45a6b)}' +
+
+    /* === 信纸飞入动画 === */
+    '@keyframes letterFlyIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}' +
+    '.letter-card.fly-in .letter-content{animation:letterFlyIn .5s cubic-bezier(.22,1,.36,1) both}' +
+
+    /* === 今天按钮高亮（金色边框+跳动心形） === */
+    '.diary-date-btn.today{border-color:var(--gold,#b89147)!important;box-shadow:0 0 0 2px rgba(184,145,71,.25)!important}' +
+    '.diary-date-btn.today::after{content:\"💖\";position:absolute;font-size:.45rem;top:-2px;right:-4px;animation:diaryHeartBeat 1.5s ease-in-out infinite}@keyframes diaryHeartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}' +
+    '.diary-date-btn{position:relative!important}' +
+
+    /* === 纪念日徽章 === */
+    '.diary-date-btn .dab-badge{font-size:.4rem;position:absolute;top:-3px;left:-2px;line-height:1}';
+
+  document.head.appendChild(_s);
+})();
+
+/* === dist/js/fix-diary.js === */
+"use strict";
+(function () {
+  console.log('[fix-diary] 已加载');
+
+  // ── 日记当前查看日期（全局状态） ──
+  var _diaryViewDate = null;
+
+/* ════════════════════════════════════════════════════════════ */
+/* ★ 日记模块修复：语言切换 + 新功能（v7.2.1）                  */
+/* ════════════════════════════════════════════════════════════ */
+(function(){
+console.log('[日记] 修复模块启动');
+console.log('[日记] 情书卡片布局已添加');
+
+// ── 周期数据恢复：从 shared-cycle-data 合并到 state ──
+(function(){
+  if (typeof state === 'undefined') return;
+  try {
+    var sd = JSON.parse(localStorage.getItem('shared-cycle-data') || 'null');
+    var profileKey = 'cycle-data-v6-' + (typeof activeProfile !== 'undefined' ? activeProfile : 'andjela');
+    var pkData = JSON.parse(localStorage.getItem(profileKey) || 'null');
+
+    var stateCount = state.records ? state.records.length : 0;
+    var sdCount = sd && sd.records ? sd.records.length : 0;
+    var pkCount = pkData && pkData.records ? pkData.records.length : 0;
+
+    var best = null;
+    var bestCount = stateCount;
+    if (sdCount > bestCount) { best = sd; bestCount = sdCount; }
+    if (pkCount > bestCount) { best = pkData; bestCount = pkCount; }
+
+    if (best && best.records && bestCount > stateCount) {
+      state.records = best.records.map(function(r){return new Date(r);});
+      state.periodEnds = best.periodEnds || {};
+      state.symptoms = best.symptoms || {};
+      state.settings = best.settings || state.settings || {};
+      try {
+        var toSave = JSON.parse(JSON.stringify(state));
+        toSave.records = toSave.records.map(function(r){return typeof r==='string'?r:r.getFullYear()+'-'+String(r.getMonth()+1).padStart(2,'0')+'-'+String(r.getDate()).padStart(2,'0');});
+        localStorage.setItem(profileKey, JSON.stringify(toSave));
+      } catch(e) {}
+      if (typeof saveState === 'function') saveState();
+      if (typeof renderCalendar === 'function') renderCalendar();
+      console.log('[数据恢复] 从 ' + (sdCount > stateCount ? 'shared-cycle-data' : 'profileKey') + ' 恢复了 ' + (bestCount - stateCount) + ' 条记录');
+    } else {
+      console.log('[数据恢复] state 已有 ' + stateCount + ' 条记录，无需恢复 (shared=' + sdCount + ', profile=' + pkCount + ')');
+    }
+  } catch(e) {
+    console.warn('[数据恢复] 失败:', e.message);
+  }
+})();
+
+// ── 症状按钮：三重保障 ──
+(function(){
+function _fixSymTab(){
+  var isB = typeof activeProfile !== 'undefined' && activeProfile === 'barry';
+  document.body.classList.toggle('is-barry', isB);
+  var st = document.getElementById('tab-symptoms');
+  if (st) st.style.display = isB ? '' : 'none';
+}
+var _sp = window.switchProfile;
+if (typeof _sp === 'function') {
+  window.switchProfile = function(p) {
+    _sp(p);
+    setTimeout(_fixSymTab, 10);
+  };
+}
+var _up = window.updateProfileUI;
+if (typeof _up === 'function') {
+  window.updateProfileUI = function() {
+    _up.apply(this, arguments);
+    _fixSymTab();
+  };
+}
+var _symMo = new MutationObserver(function(){_fixSymTab();});
+_symMo.observe(document.body, { childList: true, subtree: true });
+_fixSymTab();
+setTimeout(_fixSymTab, 500);
+setTimeout(_fixSymTab, 1500);
+console.log('[安全] 症状按钮三重保障已激活');
+})();
+
+
+// ── 三语硬编码映射表 ──
+// NOTE: 日记专用翻译，i18n.js 的 t() 中不存在这些键
+// 迁移条件：将 partnerTitle/barryTitle/save/saved 等加入 i18n.js 三语映射
+var DD = {
+  'zh-CN': {
+    partnerTitle: '\u{1F338} Anđela 的信', barryTitle: '\u{1F466} Barry 的信',
+    save: '保存', saved: '\u{2705} \u{5DF2}\u{4FDD}\u{5B58}',
+    allEntries: '\u{1F4DC} \u{5168}\u{90E8}\u{65E5}\u{8BB0}', mailbox: '\u{1F4EE} \u{4FE1}\u{7BB1}',
+    export: '\u{1F4E4} \u{5206}\u{4EAB}', import: '\u{1F4E5} \u{5BFC}\u{5165}',
+    edit: '\u{270F}\u{FE0F} \u{7F16}\u{8F91}',
+    diaryPlaceholder: '\u{5199}\u{5427}\u{FF0C}\u{4EB2}\u{7231}\u{7684}... \u{270D}\u{FE0F}',
+    lockText: '\u{1F512} \u{5199}\u{5B8C}\u{81EA}\u{5DF1}\u{7684}\u{65E5}\u{8BB0}\u{624D}\u{80FD}\u{67E5}\u{770B}\u{4ED6}/\u{5979}\u{7684}\u{54E6} \u{1F48C}',
+    navPrev: '\u{25C2} \u{4E0A}\u{4E00}\u{5468}', navNext: '\u{4E0B}\u{4E00}\u{5468} \u{25B8}',
+    calTitle: '\u{65E5}\u{5386}', writeDatePrefix: '\u{1F48C} ',
+    translateBtn: '\u{1F310} \u{7FFB}\u{8BD1}',
+  },
+  sr: {
+    partnerTitle: '\u{1F338} An\u{0111}elino pismo', barryTitle: '\u{1F466} Barryjevo pismo',
+    save: 'Sa\u{010D}uvaj', saved: '\u{2705} Sa\u{010D}uvano',
+    allEntries: '\u{1F4DC} Svi unosi', mailbox: '\u{1F4EE} Po\u{0161}tansko sandu\u{010D}e',
+    export: '\u{1F4E4} Podeli', import: '\u{1F4E5} Uvezi',
+    edit: '\u{270F}\u{FE0F} Uredi',
+    diaryPlaceholder: 'Pi\u{0161}i, du\u{0161}o moja... \u{270D}\u{FE0F}',
+    lockText: '\u{1F512} Napi\u{0161}i svoje pismo da otklju\u{010D}a\u{0161} partnerovo \u{1F48C}',
+    navPrev: '\u{25C2} Prethodna nedelja', navNext: 'Slede\u{0107}a nedelja \u{25B8}',
+    calTitle: 'Kalendar', writeDatePrefix: '\u{1F48C} ',
+    translateBtn: '\u{1F310} Prevedi',
+  },
+  en: {
+    partnerTitle: '\u{1F338} An\u{0111}ela\'s Letter', barryTitle: '\u{1F466} Barry\'s Letter',
+    save: 'Save', saved: '\u{2705} Saved',
+    allEntries: '\u{1F4DC} All Entries', mailbox: '\u{1F4EE} Mailbox',
+    export: '\u{1F4E4} Share', import: '\u{1F4E5} Import',
+    edit: '\u{270F}\u{FE0F} Edit',
+    diaryPlaceholder: 'Write, my dear... \u{270D}\u{FE0F}',
+    lockText: '\u{1F512} Write your diary first to unlock your partner\'s \u{1F48C}',
+    navPrev: '\u{25C2} Previous Week', navNext: 'Next Week \u{25B8}',
+    calTitle: 'Calendar', writeDatePrefix: '\u{1F48C} ',
+    translateBtn: '\u{1F310} Translate',
+  }
+};
+function _dd(key) {
+  var L = window.lang || 'sr';
+  var m = DD[L] || DD.sr;
+  return m[key] || DD['zh-CN'][key] || key;
+}
+
+function _updateDiaryLang() {
+  var map = {
+    'letter-partner-title': _dd('partnerTitle'), 'diary-timeline-title': _dd('allEntries'),
+    'mailbox-title': _dd('mailbox'), 'diary-save-text': _dd('save'),
+    'letter-saved-text': _dd('saved'), 'letter-lock-text': _dd('lockText'),
+    'sd-export': _dd('export'), 'sd-import': _dd('import'), 'modalDiaryEditText': _dd('edit'),
+  };
+  for (var id in map) { var el = document.getElementById(id); if (el) el.textContent = map[id]; }
+  var ta = document.getElementById('diaryTextarea');
+  if (ta) ta.placeholder = _dd('diaryPlaceholder');
+  var pt = document.getElementById('letter-partner-title');
+  if (pt) pt.textContent = (typeof activeProfile !== 'undefined' && activeProfile === 'barry') ? _dd('partnerTitle') : _dd('barryTitle');
+  var tb = document.getElementById('letterTranslateBtn');
+  if (tb) tb.textContent = _dd('translateBtn');
+  var arrows = document.querySelectorAll('.date-strip-arrow');
+  if (arrows.length >= 2) { arrows[0].setAttribute('aria-label', _dd('navPrev')); arrows[1].setAttribute('aria-label', _dd('navNext')); }
+  var calBtn = document.querySelector('.diary-cal-btn');
+  if (calBtn) calBtn.title = _dd('calTitle');
+  _renderDiaryDateStrip(_diaryViewDate);
+  _applyLetterPaperLayout();
+}
+
+function _applyLetterPaperLayout() {
+  var panel = document.getElementById('panel-diary');
+  if (!panel) return;
+  var wc = document.getElementById('diaryWriteCard'), pc = document.getElementById('letterPartnerCard');
+  if (!wc && !pc) return;
+  if (wc) wc.classList.add('letter-paper-card');
+  if (pc) pc.classList.add('letter-paper-card');
+  if (wc && pc && wc.parentNode === panel && pc.parentNode === panel) {
+    var er = wc.previousElementSibling;
+    if (!er || !er.classList.contains('lpc-row')) { var row = document.createElement('div'); row.className = 'lpc-row'; panel.insertBefore(row, wc); row.appendChild(wc); row.appendChild(pc); }
+  }
+  if (wc && !wc.querySelector('.lpc-footer')) {
+    var sigDiv = document.createElement('div');
+    sigDiv.className = 'lpc-footer';
+    var L = window.lang || 'sr', today = new Date();
+    sigDiv.innerHTML = '<span class="lpc-date">\u{1F48C} ' + today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear() + '</span><span class="lpc-sig">...</span>';
+    wc.appendChild(sigDiv);
+  }
+  setTimeout(_renderOwnSignature, 100);
+}
+
+
+window.saveDiaryEntry = function() {
+  var ta = document.getElementById('diaryTextarea');
+  if (!ta) { if (typeof toast === 'function') toast('Diary not ready'); return; }
+  var text = ta.value.trim();
+  if (!text) { if (typeof toast === 'function') toast('\u{1F4DD} ' + (window.lang === 'zh-CN' ? '\u{5199}\u{70B9}\u{4EC0}\u{4E48}\u{5427}' : window.lang === 'en' ? 'Write something' : 'Napi\u{0161}i ne\u{0161}to')); return; }
+  try {
+    var dateEl = document.getElementById('diaryWriteDate');
+    var dateKey = null;
+    if (dateEl && dateEl.textContent) { var m = dateEl.textContent.match(/\d{4}-\d{2}-\d{2}/); if (m) dateKey = m[0]; }
+    if (!dateKey) { var d = new Date(); dateKey = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+    var mood = '';
+    var moodRow = document.getElementById('diaryMoodRow');
+    if (moodRow) { var sel = moodRow.querySelector('.mood-emoji.picked,.selected'); if (sel) mood = sel.getAttribute('data-mood')||''; }
+    var sd = {};
+    try { sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); } catch(e) {}
+    if (!sd[dateKey]) sd[dateKey] = {};
+    var user = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
+    if (!sd[dateKey][user]) sd[dateKey][user] = {};
+    sd[dateKey][user].text = text; sd[dateKey][user].mood = mood; sd[dateKey][user].time = Date.now();
+    // 失效缓存后再写 localStorage，避免 _sdCache 读到旧数据
+    if (typeof invalidateSDCache === 'function') invalidateSDCache();
+    localStorage.setItem('shared-diary', JSON.stringify(sd));
+    var badge = document.getElementById('letterSavedBadge');
+    if (badge) badge.style.display = '';
+    var savedText = document.getElementById('letter-saved-text');
+    if (savedText) savedText.textContent = _dd('saved');
+    if (typeof pushAllSharedData === 'function') pushAllSharedData();
+    _updatePartnerLetter(dateKey);
+    _renderOwnSignature();
+    if (typeof window._clearDraftForDate === 'function') window._clearDraftForDate(dateKey);
+    if (typeof toast === 'function') toast(_dd('saved'));
+    // 信纸飞入动画
+    var _lpc=document.getElementById('letterPartnerCard');
+    if(_lpc){_lpc.classList.remove('fly-in');setTimeout(function(){_lpc.classList.add('fly-in');},50);}
+  } catch(e) { console.error('[日记] 保存失败:', e); if (typeof toast === 'function') toast('Error: ' + e.message); }
+};
+
+
+
+window._updateDiaryLang = _updateDiaryLang;
+
+var _origApply2 = window.applyAllUI;
+if (typeof _origApply2 === 'function') { window.applyAllUI = function(w) { _origApply2(w); setTimeout(_updateDiaryLang, 50); }; }
+
+function _parseDateKey(s) { if (!s) return new Date(); var p = s.split('-'); return new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10)); }
+function _formatDateKey(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+window._formatDateKey = _formatDateKey;
+
+function _renderDiaryDateStrip(centerDate) {
+  var container = document.getElementById('diaryDateStrip');
+  if (!container) return;
+  var cd = centerDate ? _parseDateKey(centerDate) : new Date();
+  var cdKey = _formatDateKey(cd), L = window.lang || 'sr';
+  var sd = {};
+  try { sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); } catch(e) {}
+  var user = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
+  // 读取纪念日
+  var _annMet = document.getElementById('annDateMet'); var annMet = _annMet ? _annMet.value : '';
+  var _annLove = document.getElementById('annDateLove'); var annLove = _annLove ? _annLove.value : '';
+  var annDays = {}; if (annMet) annDays[annMet] = '⭐'; if (annLove) annDays[annLove] = '\u{1F495}';
+  var html = '';
+  for (var i = -3; i <= 3; i++) {
+    var d = new Date(cd); d.setDate(d.getDate()+i);
+    var dk = _formatDateKey(d), isC = dk === cdKey, isT = _formatDateKey(new Date()) === dk;
+    var hasE = sd[dk] && (sd[dk][user] || sd[dk][user==='barry'?'andjela':'barry']);
+    var annIcon = annDays[dk] || '';
+    var cls = 'diary-date-btn' + (isC ? ' current' : '') + (isT ? ' today' : '');
+    html += '<div class="'+cls+'" data-date="'+dk+'" onclick="window._onDateBtnClick(\''+dk+'\')" style="display:flex;flex-direction:column;align-items:center;padding:4px 6px;border-radius:10px;cursor:pointer;transition:all .2s;min-width:38px;background:'+(isC?'var(--rose-light,#f0d0d0)':'transparent')+';border:1px solid '+(isC?'var(--love,#c45a6b)':'var(--border,#e0d0c8)')+';font-weight:'+(isT?'700':'400')+'">';
+    if (annIcon) html += '<span class="dab-badge" style="font-size:.4rem;position:absolute;top:-3px;left:-2px;line-height:1">'+annIcon+'</span>';
+    html += '<span style="font-size:.58rem;color:'+(isC?'var(--love,#c45a6b)':'var(--text-muted,#8a7a78)')+';line-height:1.3">'+(d.getMonth()+1)+'/'+d.getDate()+'</span>';
+    html += '<span style="font-size:.45rem;color:'+(isC?'var(--love,#c45a6b)':'var(--text-muted,#8a7a78)')+';opacity:.6;line-height:1">'+(L==='zh-CN'?['日','一','二','三','四','五','六'][d.getDay()]:L==='en'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]:['Ned','Pon','Uto','Sre','Čet','Pet','Sub'][d.getDay()])+'</span>';
+    if (hasE) html += '<span style="font-size:.4rem;color:var(--love,#c45a6b);line-height:1">●</span>'; else html += '<span style="font-size:.4rem;line-height:1;opacity:0">●</span>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+  // 自动将选中日期滚动到容器中央
+  (function(){
+    var _cb = container.querySelector('.diary-date-btn.current');
+    if (_cb) {
+      var _to = _cb.offsetLeft - (container.clientWidth / 2) + (_cb.clientWidth / 2);
+      container.scrollLeft = Math.max(0, _to);
+    }
+  })();
+}
+
+window._onDateBtnClick = function(dateKey) {
+  _setDiaryDate(dateKey); _updatePartnerLetter(dateKey); _renderOwnSignature();
+  try {
+    var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}');
+    var u = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
+    var entry = sd[dateKey]&&sd[dateKey][u] ? sd[dateKey][u] : null;
+    var ta = document.getElementById('diaryTextarea');
+    if (ta) { if (entry&&entry.text) { ta.value = entry.text; var b = document.getElementById('letterSavedBadge'); if (b) b.style.display = ''; } else { ta.value = ''; var b2 = document.getElementById('letterSavedBadge'); if (b2) b2.style.display = 'none'; } }
+    var cc = document.getElementById('diaryCharCount');
+    if (cc) { var ta2 = document.getElementById('diaryTextarea'); cc.textContent = (ta2?ta2.value.length:0)+'/500'; }
+  } catch(e) {}
+};
+
+function _setDiaryDate(dateKey) {
+  var dateEl = document.getElementById('diaryWriteDate');
+  if (!dateEl) return;
+  var d = dateKey ? _parseDateKey(dateKey) : new Date();
+  if (!dateKey) dateKey = _formatDateKey(d);
+  var L = window.lang || 'sr';
+  var dayNames = L === 'zh-CN' ? ['\u{65E5}','\u{4E00}','\u{4E8C}','\u{4E09}','\u{56DB}','\u{4E94}','\u{516D}'] : L === 'en' ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] : ['Ned','Pon','Uto','Sre','\u{010C}et','Pet','Sub'];
+  dateEl.textContent = '\u{1F48C} ' + dayNames[d.getDay()] + ' ' + dateKey;
+  _diaryViewDate = dateKey;
+  _renderDiaryDateStrip(dateKey);
+}
+window._setDiaryDate = _setDiaryDate;
+
+window.scrollDiaryStrip = function(direction) {
+  if (direction !== -1 && direction !== 1) return;
+  var currentKey = _diaryViewDate;
+  if (!currentKey) { var d = new Date(); currentKey = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  var d = _parseDateKey(currentKey); d.setDate(d.getDate()+(direction*7));
+  var newKey = _formatDateKey(d);
+  _setDiaryDate(newKey); _updatePartnerLetter(newKey); _renderOwnSignature();
+  try {
+    var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}');
+    var user = (typeof activeProfile!=='undefined')?activeProfile:'andjela';
+    var ue = sd[newKey]&&sd[newKey][user]?sd[newKey][user]:null;
+    var ta = document.getElementById('diaryTextarea');
+    if (ta) { if (ue&&ue.text) { ta.value=ue.text; var b=document.getElementById('letterSavedBadge'); if(b)b.style.display=''; } else { ta.value=''; var b2=document.getElementById('letterSavedBadge'); if(b2)b2.style.display='none'; } }
+  } catch(e) {}
+  var cc = document.getElementById('diaryCharCount');
+  if (cc) { var ta2 = document.getElementById('diaryTextarea'); cc.textContent = (ta2?ta2.value.length:0)+'/500'; }
+};
+
+window.toggleDiaryCalendar = function() {
+  var ex = document.getElementById('diaryCalPicker');
+  if (ex) { ex.remove(); return; }
+  var picker = document.createElement('div');
+  picker.id = 'diaryCalPicker';
+  picker.style.cssText = 'position:absolute;top:100%;right:0;z-index:100;background:var(--card,#fff);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,.12);width:240px;max-height:300px;overflow-y:auto';
+  var html = '<div style="font-size:.65rem;font-weight:700;text-align:center;margin-bottom:6px;color:var(--text-muted)">📅 '+(window.lang==='zh-CN'?'选择日期':window.lang==='en'?'Pick a date':'Izaberi datum')+'</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center">';
+  var L = window.lang || 'sr';
+  var dh = L==='zh-CN'?['日','一','二','三','四','五','六']:L==='en'?['Su','Mo','Tu','We','Th','Fr','Sa']:['Ne','Po','Ut','Sr','Če','Pe','Su'];
+  for (var hi=0;hi<7;hi++) html+='<span style="font-size:.5rem;color:var(--text-muted);padding:2px 0">'+dh[hi]+'</span>';
+  var today = new Date(); today.setHours(0,0,0,0);
+  for (var i=30;i>=-7;i--) { var d=new Date(today); d.setDate(d.getDate()-i); var dk=_formatDateKey(d); var isT=d.getTime()===today.getTime(), isC=dk===_diaryViewDate;
+    html+='<div onclick="var d=this.dataset.date;document.getElementById(\'diaryCalPicker\').remove();window.scrollDiaryStrip(0);_diaryViewDate=d;_setDiaryDate(d);_updatePartnerLetter(d);try{var sd=JSON.parse(localStorage.getItem(\'shared-diary\')||\'{}\');var u=(typeof activeProfile!==\'undefined\')?activeProfile:\'andjela\';var e=sd[d]&&sd[d][u]?sd[d][u]:null;var ta=document.getElementById(\'diaryTextarea\');if(ta){if(e&&e.text){ta.value=e.text;document.getElementById(\'letterSavedBadge\').style.display=\'\'}else{ta.value=\'\';document.getElementById(\'letterSavedBadge\').style.display=\'none\'}}var cc=document.getElementById(\'diaryCharCount\');if(cc){var ta2=document.getElementById(\'diaryTextarea\');cc.textContent=(ta2?ta2.value.length:0)+\'/500\'}}catch(e){}" data-date="'+dk+'" style="cursor:pointer;padding:4px 2px;border-radius:6px;font-size:.62rem;background:'+(isC?'var(--love)':isT?'var(--rose-light)':'transparent')+';color:'+(isC?'#fff':'var(--text)')+';font-weight:'+(isT?'700':'400')+'">'+d.getDate()+'</div>'; }
+  html += '</div>'; picker.innerHTML = html;
+  var calBtn = document.querySelector('.diary-cal-btn');
+  if (calBtn&&calBtn.parentNode) { calBtn.parentNode.style.position='relative'; calBtn.parentNode.appendChild(picker); }
+  else { document.getElementById('panel-diary').appendChild(picker); }
+};
+
+var _origSD2 = window.initSharedDiaryTab;
+window.initSharedDiaryTab = function() {
+  if (typeof _origSD2 === 'function') _origSD2();
+  _setDiaryDate();
+  var _sr=0,_st=setInterval(function(){_sr++;var c=document.getElementById('diaryDateStrip');if(c&&c.innerHTML===''&&_diaryViewDate)_renderDiaryDateStrip(_diaryViewDate);if(_sr>20||(c&&c.innerHTML!==''))clearInterval(_st);},100);
+  var d=new Date(); var dk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  _updatePartnerLetter(dk); _renderOwnSignature();
+  var badge=document.getElementById('letterSavedBadge'); if(badge)badge.style.display='none';
+  setTimeout(_updateDiaryLang,300);
+  setTimeout(_updateSigBtnText,350);
+  // ── 注入同步刷新按钮 + 状态指示器 ──
+  (function(){
+    if(document.getElementById('diarySyncBtn'))return;
+    var wrap=document.querySelector('.diary-date-strip-wrap');
+    if(!wrap)return;
+    var L=window.lang||'sr';
+    // 状态文字
+    var statusSpan=document.createElement('span');
+    statusSpan.id='diarySyncStatus';
+    statusSpan.style.cssText='font-size:.6rem;color:var(--text-muted);margin-left:4px;transition:opacity .3s;opacity:0';
+    // 按钮
+    var syncBtn=document.createElement('button');
+    syncBtn.id='diarySyncBtn';
+    syncBtn.innerHTML='🔄';
+    syncBtn.title=L==='zh-CN'?'同步日记':L==='en'?'Sync diary':'Sinhronizuj dnevnik';
+    syncBtn.style.cssText='padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:.72rem;cursor:pointer;margin-left:4px;white-space:nowrap';
+    function _showStatus(msg,color,duration){
+      statusSpan.textContent=msg;
+      statusSpan.style.color=color;
+      statusSpan.style.opacity='1';
+      if(duration)setTimeout(function(){statusSpan.style.opacity='0';},duration);
+    }
+    syncBtn.onclick=function(){
+      syncBtn.innerHTML='⏳';
+      _showStatus(L==='zh-CN'?'同步中...':L==='en'?'Syncing...':'Sinhronizacija...','var(--gold)',0);
+      if(typeof pullAllSharedData==='function'){
+        var _oldDC2=0;try{_oldDC2=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;}catch(e){}
+        pullAllSharedData().then(function(){
+          syncBtn.innerHTML='✅';
+          _showStatus(L==='zh-CN'?'已同步':L==='en'?'Synced':'Sinhronizovano','var(--sage)',3000);
+          setTimeout(function(){syncBtn.innerHTML='🔄';},3000);
+          try{var _newDC2=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;if(_newDC2>_oldDC2&&typeof toast==='function'){var _who2=activeProfile==='barry'?'Anđela':'Barry';toast('\u{1F48C} '+_who2+(L==='zh-CN'?'写了新日记':L==='en'?' wrote a new letter!':' je napisao/la novo pismo!'));}}catch(e){}
+        }).catch(function(){
+          syncBtn.innerHTML='⚠️';
+          _showStatus(L==='zh-CN'?'同步失败':L==='en'?'Sync failed':'Greška','var(--rose)',5000);
+          setTimeout(function(){syncBtn.innerHTML='🔄';},5000);
+        });
+      }else{
+        syncBtn.innerHTML='⚠️';
+        _showStatus(L==='zh-CN'?'同步不可用':L==='en'?'Unavailable':'Nedostupno','var(--rose)',3000);
+        setTimeout(function(){syncBtn.innerHTML='🔄';},3000);
+      }
+    };
+    wrap.appendChild(statusSpan);
+    wrap.appendChild(syncBtn);
+  })();
+};
+
+var _dp=document.getElementById('panel-diary');
+if(_dp){var _dpMo=new MutationObserver(function(){if(_dp.classList.contains('active')){if(!_diaryViewDate){var _n=new Date();_diaryViewDate=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0');}_renderDiaryDateStrip(_diaryViewDate);setTimeout(_renderOwnSignature,150);setTimeout(_updateDiaryLang,200);// 切换到日记 tab 时自动触发同步拉取
+if(typeof pullAllSharedData==='function'){console.log('[同步] 日记tab激活，自动拉取...');var _oldDC=0;try{_oldDC=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;}catch(e){}setTimeout(function(){pullAllSharedData().then(function(){try{var _newDC=Object.keys(JSON.parse(localStorage.getItem('shared-diary')||'{}')).length;if(_newDC>_oldDC&&typeof toast==='function'){var _who=activeProfile==='barry'?'Anđela':'Barry';toast('\u{1F48C} '+_who+(L==='zh-CN'?'写了新日记':L==='en'?' wrote a new letter!':' je napisao/la novo pismo!'));}}catch(e){}});},300);}}});_dpMo.observe(_dp,{attributes:true,attributeFilter:['class']});}
+
+setTimeout(_updateDiaryLang,1000);
+console.log('[日记] 语言修复完成');
+
+// ── 草稿自动保存 + 字数预警 ──
+(function(){var _dt=null;var _ta=document.getElementById('diaryTextarea');if(!_ta)return;
+function _dk(){return 'draft-'+(_diaryViewDate||_formatDateKey(new Date()));}
+function _sd(){var k=_dk();var v=_ta.value.trim();if(v){localStorage.setItem(k,JSON.stringify({text:v,time:Date.now()}));}else{localStorage.removeItem(k);}}
+function _updCC(){var cc=document.getElementById('diaryCharCount');if(!cc)return;var len=_ta.value.length;cc.textContent=len+'/500';cc.style.color=len>490?'#E65100':len>450?'#FF8F00':'';cc.style.fontWeight=len>490?'700':'400';}
+function _rd(){var k=_dk();try{var d=JSON.parse(localStorage.getItem(k));if(d&&d.text&&d.text.trim()&&d.text!==_ta.value){_ta.value=d.text;console.log('[草稿] 已恢复:',k);_updCC();}}catch(e){}}
+window._clearDraft=function(){localStorage.removeItem(_dk());};
+window._clearDraftForDate=function(dk){localStorage.removeItem('draft-'+dk);};
+_ta.addEventListener('input',function(){if(_dt)clearTimeout(_dt);_dt=setTimeout(_sd,3000);_updCC();});
+_ta.addEventListener('blur',function(){_sd();});
+_ta.addEventListener('focus',function(){setTimeout(function(){_ta.scrollIntoView({block:'center',behavior:'smooth'});},300);});
+window._restoreDraft=_rd;
+window._updateCharCount=_updCC;
+console.log('[草稿] 自动保存已启动');
+})();
+
+// 日期切换时恢复草稿
+var _odc=window._onDateBtnClick;window._onDateBtnClick=function(dk){if(typeof _odc==='function')_odc(dk);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();if(typeof window._updateCharCount==='function')window._updateCharCount();},50);};
+var _osc=window.scrollDiaryStrip;window.scrollDiaryStrip=function(d){if(typeof _osc==='function')_osc(d);setTimeout(function(){if(typeof window._restoreDraft==='function')window._restoreDraft();if(typeof window._updateCharCount==='function')window._updateCharCount();},50);};
+
+})();
+
+// ── 共享函数（主日记 + 终极包共用） ──
+function _getLatestSignature(user) {
+  var latest = null, latestDate = '';
+  for (var _i = 0; _i < localStorage.length; _i++) {
+    var _k = localStorage.key(_i);
+    if (_k && _k.indexOf(user + '-signature-') === 0) {
+      var _d = _k.replace(user + '-signature-', '');
+      if (_d.length === 10 && _d > latestDate) { latestDate = _d; latest = localStorage.getItem(_k); }
+    }
+  }
+  return latest;
+}
+function _renderOwnSignature() {
+  var sig = document.querySelector('#diaryWriteCard .lpc-sig');
+  if (!sig) return;
+  var user = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
+  // 按日期读取签名，无专属签名时回退到最新签名
+  var dateKey = _diaryViewDate;
+  var sigData = dateKey ? localStorage.getItem(user + '-signature-' + dateKey) : null;
+  if (!sigData) sigData = _getLatestSignature(user);
+  if (sigData) { sig.innerHTML = '<img src="' + sigData + '" style="max-height:50px;max-width:150px;opacity:.8;border-radius:4px;vertical-align:middle" alt="signature">'; }
+  else { sig.textContent = '—— ' + (user === 'barry' ? 'Barry' : 'Anđela') + ' \u{270D}\u{FE0F}'; }
+  var dateEl = document.querySelector('#diaryWriteCard .lpc-date');
+  if (dateEl && _diaryViewDate) { var parts = _diaryViewDate.split('-'); if (parts.length === 3) dateEl.textContent = '\u{1F48C} ' + parseInt(parts[2],10) + '.' + parseInt(parts[1],10) + '.'; }
+}
+function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+// === 日记终极功能包：写作锁 + 翻译 + 签名 ===
+(function(){
+  console.log('[日记终极包] 已加载');
+  window._updatePartnerLetter = function(dateKey) {
+    if (!dateKey) { var d=new Date(); dateKey=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+    try {
+      var sd=JSON.parse(localStorage.getItem('shared-diary')||'{}');
+      var user=(typeof activeProfile!=='undefined')?activeProfile:'barry';
+      var partner=user==='barry'?'andjela':'barry';
+      var dayData=sd[dateKey]||{};
+      var myEntry=dayData[user], partnerEntry=dayData[partner];
+      var contentEl=document.getElementById('letterPartnerContent'), lockedEl=document.getElementById('letterLocked'), transBtn=document.getElementById('letterTranslateBtn');
+      if (!myEntry||!myEntry.text) { if(lockedEl)lockedEl.style.display=''; if(contentEl)contentEl.style.display='none'; if(transBtn)transBtn.style.display='none'; }
+      else if (!partnerEntry||!partnerEntry.text) { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';contentEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">📭 '+(window.lang==='zh-CN'?'Ta还没有写，稍后再来看看 💌':window.lang==='en'?'Your partner hasn\'t written yet 💌':'Partner još nije pisao 💌')+'</div>';} if(transBtn)transBtn.style.display='none'; }
+      else { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';var _html='<div style="padding:12px;font-size:.85rem;line-height:1.8;white-space:pre-wrap">'+escHtml(partnerEntry.text)+'</div>';if(partnerEntry.mood)_html+='<div style="text-align:right;font-size:1.2rem;margin-top:8px">'+partnerEntry.mood+'</div>';var _sigData=localStorage.getItem(user+'-signature-'+(dateKey||''));if(!_sigData&&typeof _getLatestSignature==='function')_sigData=_getLatestSignature(user);if(_sigData)_html+='<div style="text-align:right;margin-top:12px"><img src="'+_sigData+'" style="max-height:50px;max-width:150px;opacity:.8;border-radius:4px" alt="signature"></div>';else _html+='<div style="text-align:right;margin-top:12px;font-family:cursive,serif;font-style:italic;font-size:1.05rem;color:var(--text-muted,#8a7a78)">—— '+(user==='barry'?'Barry':'Anđela')+' ✍️</div>';contentEl.innerHTML=_html;}if(transBtn){transBtn.style.display='';transBtn.style.marginTop='10px';if(transBtn.parentNode!==contentEl.parentNode){contentEl.parentNode.appendChild(transBtn);}}}
+    } catch(e) { console.warn('[写作锁] 更新失败:', e.message); }
+  };
+  window.translatePartnerLetter = function() {
+    var contentEl=document.getElementById('letterPartnerContent'), btn=document.getElementById('letterTranslateBtn');
+    if(!contentEl||!btn)return; var originalText=contentEl.textContent||''; if(!originalText.trim())return;
+    if(contentEl.dataset.translated==='true'){contentEl.dataset.translated='false';btn.textContent=window.lang==='zh-CN'?'🌐 翻译':window.lang==='en'?'🌐 Translate':'🌐 Prevedi';var d=new Date(),dk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');window._updatePartnerLetter(dk);}
+    else {btn.textContent=window.lang==='zh-CN'?'⏳ 翻译中...':window.lang==='en'?'⏳ Translating...':'⏳ Prevođenje...';var targetLang=(window.lang==='zh-CN')?'zh-CN':(window.lang==='sr'?'sr':'en');var sourceLang=(targetLang==='zh-CN')?'sr':(targetLang==='sr'?'zh-CN':'sr');var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+sourceLang+'&tl='+targetLang+'&dt=t&q='+encodeURIComponent(originalText);fetch(url).then(function(r){return r.json();}).then(function(data){if(data&&data[0]){var translated=data[0].map(function(s){return s[0];}).join('');contentEl.innerHTML='<div style="padding:12px;font-size:.85rem;line-height:1.8;white-space:pre-wrap">'+escHtml(translated)+'</div>';contentEl.dataset.translated='true';btn.textContent=window.lang==='zh-CN'?'📋 查看原文':window.lang==='en'?'📋 Original':'📋 Original';}}).catch(function(e){console.warn('[翻译] 失败:',e.message);btn.textContent=window.lang==='zh-CN'?'🌐 翻译':window.lang==='en'?'🌐 Translate':'🌐 Prevedi';});}
+  };
+  window._openSignaturePad = function() {
+    var overlay=document.createElement('div'); overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:99999;display:flex;align-items:center;justify-content:center'; overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+    var pad=document.createElement('div'); pad.style.cssText='background:#fdf5e6;border-radius:16px;padding:20px;width:90%;max-width:400px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)';
+    var title=document.createElement('div'); title.textContent=window.lang==='zh-CN'?'✍️ 手写签名':window.lang==='en'?'✍️ Signature':'✍️ Potpis'; title.style.cssText='font-size:1rem;font-weight:700;margin-bottom:12px;color:#5a3e2b'; pad.appendChild(title);
+    var canvas=document.createElement('canvas'); canvas.width=350; canvas.height=150; canvas.style.cssText='background:#fff;border:1px solid #e8d5c4;border-radius:8px;touch-action:none;width:100%'; pad.appendChild(canvas);
+    var _colors=[{name:'#2c1810',label:'⚫'},{name:'#1a237e',label:'🔵'},{name:'#8b0000',label:'🔴'}]; var _curColor=_colors[0].name;
+    var ctx=canvas.getContext('2d'); ctx.strokeStyle=_curColor; ctx.lineWidth=2; ctx.lineCap='round'; var drawing=false;
+    canvas.onpointerdown=function(e){drawing=true;ctx.beginPath();var r=canvas.getBoundingClientRect();ctx.moveTo(e.clientX-r.left,e.clientY-r.top);canvas.setPointerCapture(e.pointerId);e.preventDefault();};
+    canvas.onpointermove=function(e){if(!drawing)return;var r=canvas.getBoundingClientRect();ctx.lineTo(e.clientX-r.left,e.clientY-r.top);ctx.stroke();e.preventDefault();};
+    canvas.onpointerup=function(){drawing=false;}; canvas.onpointercancel=function(){drawing=false;};
+    // 颜色选择器
+    var colorRow=document.createElement('div'); colorRow.style.cssText='display:flex;gap:10px;margin-top:8px;justify-content:center;align-items:center';
+    colorRow.innerHTML='<span style="font-size:.7rem;color:#8a7a6a;margin-right:4px">🎨</span>';
+    for(var _ci=0;_ci<_colors.length;_ci++){(function(_c){var _swatch=document.createElement('span');_swatch.style.cssText='display:inline-block;width:28px;height:28px;border-radius:50%;background:'+_c.name+';cursor:pointer;border:3px solid '+( _c.name===_curColor ? 'var(--gold,#b89147)' : 'transparent')+';transition:border .2s';_swatch.onclick=function(){_curColor=_c.name;ctx.strokeStyle=_curColor;colorRow.querySelectorAll('.sig-swatch').forEach(function(s){s.style.border='3px solid transparent';});_swatch.style.border='3px solid var(--gold,#b89147)';};_swatch.className='sig-swatch';colorRow.appendChild(_swatch);})(_colors[_ci]);}
+    pad.appendChild(colorRow);
+    var btnRow=document.createElement('div'); btnRow.style.cssText='display:flex;gap:8px;margin-top:10px;justify-content:center';
+    var clearBtn=document.createElement('button'); clearBtn.textContent=window.lang==='zh-CN'?'清除':window.lang==='en'?'Clear':'Obriši'; clearBtn.style.cssText='padding:8px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:.8rem'; clearBtn.onclick=function(){ctx.clearRect(0,0,canvas.width,canvas.height);};
+    var saveBtn=document.createElement('button'); saveBtn.textContent='💾 '+(window.lang==='zh-CN'?'保存':window.lang==='en'?'Save':'Sačuvaj'); saveBtn.style.cssText='padding:8px 16px;border:none;border-radius:8px;background:var(--love,#c45a6b);color:#fff;cursor:pointer;font-size:.8rem;font-weight:600';
+    saveBtn.onclick=function(){var dataUrl=canvas.toDataURL('image/png');var user2=(typeof activeProfile!=='undefined')?activeProfile:'barry';var _dateKey=_diaryViewDate||(function(){var _d=new Date();return _d.getFullYear()+'-'+String(_d.getMonth()+1).padStart(2,'0')+'-'+String(_d.getDate()).padStart(2,'0');})();localStorage.setItem(user2+'-signature-'+_dateKey,dataUrl);overlay.remove();_renderOwnSignature();if(typeof _updatePartnerLetter==='function')_updatePartnerLetter(_dateKey);console.log('[签名] 已保存 ('+user2+', '+_dateKey+')');};
+    btnRow.appendChild(clearBtn); btnRow.appendChild(saveBtn); pad.appendChild(btnRow); overlay.appendChild(pad); document.body.appendChild(overlay);
+  };
+  console.log('[日记终极包] 写作锁+翻译+签名 已就绪');
+})();
+
+function _updateSigBtnText() { var sb=document.getElementById('diarySigBtn'); if(!sb)return; var _l=window.lang||'sr'; sb.textContent=_l==='zh-CN'?'✍️ 设置签名':_l==='en'?'✍️ Set Signature':'✍️ Potpis'; }
+
+(function(){
+  function _injectSignatureBtn() { var saveBtn=document.getElementById('diarySaveBtn'); if(!saveBtn)return; if(document.getElementById('diarySigBtn'))return; var sigBtn=document.createElement('button'); sigBtn.id='diarySigBtn'; sigBtn.style.cssText='padding:6px 12px;border:1px dashed var(--border,#d4bfa0);border-radius:8px;background:transparent;cursor:pointer;font-size:.72rem;transition:all .2s;margin-left:6px;white-space:nowrap'; sigBtn.onmouseover=function(){this.style.background='var(--rose-light,#f0d0d0)';}; sigBtn.onmouseout=function(){this.style.background='transparent';}; sigBtn.onclick=function(){if(typeof window._openSignaturePad==='function')window._openSignaturePad();}; sigBtn.textContent='✍️'; saveBtn.parentNode.insertBefore(sigBtn,saveBtn.nextSibling); setTimeout(_updateSigBtnText,100); }
+  _injectSignatureBtn(); var _mo=new MutationObserver(function(){_injectSignatureBtn();}); _mo.observe(document.body,{childList:true,subtree:true});
+  // 重试包裹 applyAllUI（该函数在 app.js defer 加载后才存在）
+  (function(){
+    function _tryHook() {
+      var _oa = window.applyAllUI;
+      if (typeof _oa === 'function') {
+        window.applyAllUI = function(w) { _oa(w); setTimeout(_updateSigBtnText, 100); };
+        return true;
+      }
+      return false;
+    }
+    if (!_tryHook()) {
+      var _hookRetry = setInterval(function() { if (_tryHook()) clearInterval(_hookRetry); }, 200);
+      setTimeout(function() { clearInterval(_hookRetry); }, 5000);
+    }
+  })();
+  console.log('[签名按钮] 已就绪');
+})();
+
+})();
+
+/* === dist/js/fix-stats.js === */
+"use strict";
+(function () {
+  console.log('[fix-stats] 已加载');
+
+  // ── 数据初始化：默认经期记录 ──
+  (function () {
+    function _seed() {
+      if (typeof window.state === 'undefined') { setTimeout(_seed, 200); return; }
+      if (window.state.records && window.state.records.length >= 2) {
+        console.log('[数据初始化] 已有' + window.state.records.length + '条记录，跳过注入');
+        return;
+      }
+      var defaultRecords = [new Date(2026, 4, 28), new Date(2026, 5, 24)];
+      var defaultPeriodEnds = {'2026-05-28': '2026-06-04', '2026-06-24': '2026-07-02'};
+      if (!window.state.records) window.state.records = [];
+      var seen = {};
+      for (var i = 0; i < window.state.records.length; i++) {
+        var k = typeof fmtDate === 'function' ? fmtDate(window.state.records[i]) : window.state.records[i].toISOString().slice(0, 10);
+        seen[k] = true;
+      }
+      for (var j = 0; j < defaultRecords.length; j++) {
+        var dk = typeof fmtDate === 'function' ? fmtDate(defaultRecords[j]) : defaultRecords[j].toISOString().slice(0, 10);
+        if (!seen[dk]) {
+          window.state.records.push(defaultRecords[j]);
+        }
+      }
+      window.state.periodEnds = window.state.periodEnds || {};
+      for (var pk in defaultPeriodEnds) {
+        if (!window.state.periodEnds[pk]) window.state.periodEnds[pk] = defaultPeriodEnds[pk];
+      }
+      window.state.settings = window.state.settings || { cycleLength: 28, periodLength: 7 };
+      if (typeof saveState === 'function') saveState();
+      setTimeout(function() {
+        if (typeof renderCalendar === 'function') renderCalendar();
+      }, 300);
+      console.log('[数据初始化] 已注入默认周期记录');
+    }
+    setTimeout(_seed, 200);
+  })();
+
+  // ── 进度条修复 ──
+  (function(){
+  window.animateProgressBar = function(el, pct) {
+    if (!el) return;
+    pct = Math.min(100, Math.max(0, pct));
+    el.style.width = pct + '%';
+    el.style.transition = 'width 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+    if (pct > 0 && pct < 2) el.style.minWidth = '2px';
+    else el.style.minWidth = '';
+  };
+
+  function _fixProgressBar() {
+    var fillEl = document.getElementById('pg-fill');
+    var numEl = document.getElementById('pg-num');
+    var subEl = document.getElementById('pg-sub');
+    var badgeEl = document.getElementById('pg-badge');
+    if (!fillEl) return;
+    if (typeof window.state === 'undefined' || typeof predict !== 'function') return;
+
+    try {
+      var pred = predict();
+      var td = typeof today === 'function' ? today() : new Date();
+      var hasRecords = window.state.records && window.state.records.length > 0;
+
+      if (!hasRecords) {
+        fillEl.style.width = '0%';
+        fillEl.style.background = 'var(--border, #ddd)';
+        if (numEl) numEl.textContent = '--';
+        if (subEl) subEl.textContent = '';
+        if (badgeEl) { badgeEl.textContent = ''; badgeEl.className = 'phase-badge'; }
+        console.log('[进度条] 无数据，宽度=0%');
+        return;
+      }
+
+      var phase = typeof getPhase === 'function' ? getPhase(td, pred) : null;
+      var pct = 0, color = 'var(--border, #ddd)', label = '';
+
+      if (phase === 'period-on' || phase === 'period-mid') {
+        var cur = window.state.records.find(function(r) {
+          var s = typeof d0 === 'function' ? d0(r) : r;
+          var e = typeof getPeriodEndDate === 'function' ? (getPeriodEndDate(r) || typeof addDays === 'function' ? addDays(s, (pred.periodLen || 7) - 1) : new Date(s.getTime() + 6*86400000)) : new Date(s.getTime() + 6*86400000);
+          return td >= s && td <= e;
+        });
+        if (cur) {
+          var dayNum = typeof daysDiff === 'function' ? daysDiff(typeof d0 === 'function' ? d0(cur) : cur, td) + 1 : 1;
+          var actualLen = pred.periodLen || 7;
+          pct = (dayNum / actualLen) * 15;
+          if (pct > 15) pct = 15;
+          color = 'var(--love, #c45a6b)';
+          label = typeof t === 'function' ? t('phaseBadges').period : '';
+        }
+      } else if (pred.isOverdue) {
+        pct = 100;
+        color = '#E65100';
+        label = typeof t === 'function' ? t('phaseBadges').late : '';
+      } else {
+        var totalLen = pred.nextStart && pred.lastStart ? Math.round((pred.nextStart - pred.lastStart) / 86400000) : (pred.cycleLen || 28);
+        var elapsed = pred.lastStart ? Math.round((td - pred.lastStart) / 86400000) : 0;
+        pct = Math.min(100, Math.max(0, (elapsed / totalLen) * 100));
+        if (phase === 'luteal' || phase === 'fertile') { color = 'var(--lavender, #b8a0c8)'; label = ''; }
+        else if (phase === 'follicular') { color = 'var(--sage, #5e8b7a)'; label = ''; }
+        else if (phase === 'ovulation') { color = 'var(--teal, #80a590)'; label = ''; }
+        else { color = 'var(--love, #c45a6b)'; }
+      }
+
+      fillEl.style.width = pct + '%';
+      fillEl.style.background = color;
+      fillEl.style.transition = 'width 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      if (badgeEl) badgeEl.style.background = color;
+
+      console.log('[进度条] 宽度=' + Math.round(pct) + '% 颜色=' + color + ' 阶段=' + (phase || 'none'));
+    } catch(e) {
+      console.warn('[进度条] 计算失败:', e.message);
+    }
+  }
+
+  var _rc = window.renderCalendar;
+  if (typeof _rc === 'function') {
+    window.renderCalendar = function() {
+      _rc.apply(this, arguments);
+      setTimeout(_fixProgressBar, 200);
+    };
+  }
+  var _aa = window.applyAllUI;
+  if (typeof _aa === 'function') {
+    window.applyAllUI = function(w) {
+      _aa(w);
+      setTimeout(_fixProgressBar, 200);
+    };
+  }
+  var _tp = window.togglePeriodRecord;
+  if (typeof _tp === 'function') {
+    window.togglePeriodRecord = function(s, e) {
+      _tp(s, e);
+      setTimeout(_fixProgressBar, 300);
+    };
+  }
+  setTimeout(_fixProgressBar, 500);
+  setTimeout(_fixProgressBar, 1500);
+  setTimeout(_fixProgressBar, 3000);
+  console.log('[进度条] 修复已加载');
+  })();
+
+  // ── 统计面板：图表渲染修复 ──
+  (function(){
+  var _origRC = window._renderCharts;
+  if (typeof _origRC === 'function') {
+    window._renderCharts = function(pred, td, clen) {
+      _origRC(pred, td, clen);
+      try {
+        var tc = document.getElementById('chartCycleTrend');
+        var te = document.getElementById('chartCycleEmpty');
+        if (!tc) return;
+        var hasData = window.state && window.state.records && window.state.records.length >= 2;
+        var chartHidden = te && te.style.display !== 'none';
+        if (hasData && chartHidden && typeof ChartRenderer !== 'undefined') {
+          var sorted = window.state.records.slice().sort(function(a,b){return new Date(a) - new Date(b);});
+          var diffs = [];
+          for (var i = 1; i < sorted.length; i++) {
+            diffs.push(Math.round((new Date(sorted[i]) - new Date(sorted[i-1])) / 86400000));
+          }
+          if (diffs.length > 0) {
+            var lbs = [];
+            var L = window.lang || 'sr';
+            for (var j = 0; j < diffs.length; j++) {
+              lbs.push(L === 'zh-CN' ? '周期' + (j+1) : 'C' + (j+1));
+            }
+            var avg = diffs.length > 1 ? Math.round(diffs.reduce(function(s,v){return s+v;},0) / diffs.length) : diffs[0];
+            if (te) { te.style.display = 'none'; }
+            if (tc.parentElement) tc.parentElement.style.display = '';
+            ChartRenderer.drawLineChart(tc, diffs, lbs, { width: 500, height: 200, avgLine: avg, avgLabel: L === 'zh-CN' ? '均值' : L === 'en' ? 'Avg' : 'Prosek', emptyText: '' });
+            var note = document.getElementById('chartCycleNote');
+            if (!note) {
+              note = document.createElement('div');
+              note.id = 'chartCycleNote';
+              note.style.cssText = 'text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:6px';
+              tc.closest('.chart-card').appendChild(note);
+            }
+            if (diffs.length === 1) {
+              note.textContent = L === 'zh-CN' ? '当前仅有 2 次记录，趋势将随更多记录逐渐清晰' : L === 'en' ? 'Only 2 records, trend will become clearer' : 'Samo 2 zapisa, trend će postati jasniji';
+            } else { note.textContent = ''; }
+          }
+        }
+      } catch(e) {}
+    };
+  } else {
+    var _chartRetry = 0;
+    var _chartTimer = setInterval(function() {
+      _chartRetry++;
+      if (typeof window._renderCharts === 'function') {
+        clearInterval(_chartTimer);
+        var _oc2 = window._renderCharts;
+        window._renderCharts = function(pred, td, clen) {
+          _oc2(pred, td, clen);
+          try {
+            var tc2 = document.getElementById('chartCycleTrend');
+            var te2 = document.getElementById('chartCycleEmpty');
+            if (!tc2) return;
+            var hasData2 = window.state && window.state.records && window.state.records.length >= 2;
+            var chartHidden2 = te2 && te2.style.display !== 'none';
+            if (hasData2 && chartHidden2 && typeof ChartRenderer !== 'undefined') {
+              var sorted2 = window.state.records.slice().sort(function(a,b){return new Date(a)-new Date(b);});
+              var diffs2 = [];
+              for (var i2 = 1; i2 < sorted2.length; i2++) {
+                diffs2.push(Math.round((new Date(sorted2[i2])-new Date(sorted2[i2-1]))/86400000));
+              }
+              if (diffs2.length > 0) {
+                var lbs2 = [], L2 = window.lang||'sr';
+                for (var j2 = 0; j2 < diffs2.length; j2++) lbs2.push(L2==='zh-CN'?'周期'+(j2+1):'C'+(j2+1));
+                var avg2 = diffs2.length>1 ? Math.round(diffs2.reduce(function(s,v){return s+v;},0)/diffs2.length) : diffs2[0];
+                if (te2) te2.style.display = 'none';
+                if (tc2.parentElement) tc2.parentElement.style.display = '';
+                ChartRenderer.drawLineChart(tc2, diffs2, lbs2, {width:500,height:200,avgLine:avg2,avgLabel:L2==='zh-CN'?'均值':L2==='en'?'Avg':'Prosek',emptyText:''});
+              }
+            }
+          } catch(e) {}
+        };
+      }
+      if (_chartRetry > 100) clearInterval(_chartTimer);
+    }, 100);
+  }
+  })();
+
+  // ── 双人共享 Todo List ──
+  (function () {
+    var TODO_REPO = 'darkheaven1419-debug/cycle-tracker';
+    var TODO_FILE = 'shared-todolist.json';
+
+    // ── 初始化：确保 localStorage 中有空数组 ──
+    function _initData() {
+      var raw = localStorage.getItem('shared-todolist');
+      if (raw === null || raw === undefined || raw === 'null' || raw === 'undefined') {
+        localStorage.setItem('shared-todolist', '[]');
+      }
+      try {
+        var parsed = JSON.parse(localStorage.getItem('shared-todolist') || '[]');
+        if (!Array.isArray(parsed)) {
+          localStorage.setItem('shared-todolist', '[]');
+          parsed = [];
+        }
+        if (typeof window.state !== 'undefined') {
+          window.state.todoList = parsed;
+        }
+      } catch (e) {
+        localStorage.setItem('shared-todolist', '[]');
+        if (typeof window.state !== 'undefined') {
+          window.state.todoList = [];
+        }
+      }
+    }
+    _initData();
+
+    function _tl(key) {
+      var l = window.lang || 'sr';
+      var m = {
+        title:        {'zh-CN':'📋 我们的清单','en':'📋 Our Todo List','sr':'📋 Naša lista'},
+        ph:           {'zh-CN':'想一起做什么？','en':'What do we want to do together?','sr':'Šta želimo da radimo zajedno?'},
+        add:          {'zh-CN':'添加','en':'Add','sr':'Dodaj'},
+        all:          {'zh-CN':'全部','en':'All','sr':'Sve'},
+        active:       {'zh-CN':'⏳ 未完成','en':'⏳ Active','sr':'⏳ Aktivno'},
+        done:         {'zh-CN':'✅ 已完成','en':'✅ Done','sr':'✅ Završeno'},
+        empty:        {'zh-CN':'还没有事项 ✨','en':'No items yet ✨','sr':'Još nema stavki ✨'},
+        noMatch:      {'zh-CN':'没有匹配的事项','en':'No matching items','sr':'Nema odgovarajućih'},
+        doneBy:       {'zh-CN':'已完成','en':'Done by','sr':'Završio/la'},
+      };
+      return (m[key] && m[key][l]) || m[key]['zh-CN'] || '';
+    }
+
+    function _uid(u) { return u === 'barry' ? '👦 Barry' : '👧 Anđela'; }
+    function _esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+    function _gid() { return Date.now().toString(36) + Math.random().toString(36).substr(2,4); }
+    function _td(d) { if (!d) d = new Date(); return typeof d==='string' ? d.slice(0,10) : d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
+
+    function _save() {
+      if (typeof window.state === 'undefined') return;
+      localStorage.setItem('shared-todolist', JSON.stringify(window.state.todoList||[]));
+      if (typeof saveState === 'function') saveState();
+    }
+
+    function _addTodo(text) {
+      if (!text||!text.trim()) return;
+      if (typeof window.state === 'undefined') return;
+      if (!window.state.todoList) window.state.todoList=[];
+      window.state.todoList.push({ id:_gid(), text:text.trim(), author:(typeof activeProfile!=='undefined'?activeProfile:'andjela'), createdAt:_td(new Date()), completed:false, completedBy:null, completedAt:null });
+      _save(); _render(); _pushTodo();
+    }
+
+    function _toggleTodo(id) {
+      if (typeof window.state === 'undefined') return;
+      for (var i=0;i<window.state.todoList.length;i++) {
+        if (window.state.todoList[i].id===id) {
+          var t=window.state.todoList[i];
+          if (t.completed) { t.completed=false; t.completedBy=null; t.completedAt=null; }
+          else { t.completed=true; t.completedBy=(typeof activeProfile!=='undefined'?activeProfile:'andjela'); t.completedAt=_td(new Date()); }
+          _save(); _render(); _pushTodo();
+          return;
+        }
+      }
+    }
+
+    function _deleteTodo(id) { if (typeof window.state === 'undefined') return; window.state.todoList=(window.state.todoList||[]).filter(function(t){return t.id!==id;}); _save(); _render(); _pushTodo(); }
+
+    function _pushTodo() {
+      if (typeof window.state === 'undefined') return;
+      var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
+      if (!token) return;
+      var content = btoa(unescape(encodeURIComponent(JSON.stringify(window.state.todoList||[],null,2))));
+      fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE, { headers:{'Authorization':'token '+token} })
+        .then(function(r){return r.ok?r.json():{sha:null};})
+        .then(function(d){return fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify({message:'🔄 Sync todo list',content:content,sha:d.sha||null})});})
+        .catch(function(){});
+    }
+
+    function _pullTodo() {
+      var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
+      if (!token) return;
+      fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE, { headers:{'Authorization':'token '+token} })
+        .then(function(r){return r.ok?r.json():null;})
+        .then(function(d){
+          if (!d) return;
+          if (typeof window.state === 'undefined') return;
+          var content = JSON.parse(decodeURIComponent(escape(atob(d.content))));
+          if (!Array.isArray(content)) return;
+          var idMap={}; (window.state.todoList||[]).forEach(function(t){idMap[t.id]=t;});
+          content.forEach(function(t){
+            if(!idMap[t.id]){ idMap[t.id]=t; return; }
+            // 同 id：同步完成状态（远程完成能同步到本地），文本保留本地避免覆盖正在编辑的内容
+            var l=idMap[t.id];
+            if(t.completed && !l.completed){ l.completed=true; l.completedBy=t.completedBy||l.completedBy; l.completedAt=t.completedAt||Date.now(); }
+            else if(t.completed && l.completed && (t.completedAt||0)>(l.completedAt||0)){ l.completedBy=t.completedBy||l.completedBy; l.completedAt=t.completedAt; }
+          });
+          window.state.todoList=Object.keys(idMap).map(function(k){return idMap[k];});
+          localStorage.setItem('shared-todolist',JSON.stringify(window.state.todoList));
+          _render();
+        })
+        .catch(function(){});
+    }
+
+    window._todoFilter = window._todoFilter || 'active';
+
+    function _render() {
+      var container = document.getElementById('todoListContainer');
+      if (!container) return;
+
+      // 确保数据初始化
+      _initData();
+
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }
+      var filter = window._todoFilter || 'active';
+      var items = list;
+      var sorted = items.slice().sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
+      var filtered = sorted;
+      if (filter==='active') filtered=sorted.filter(function(t){return !t.completed;});
+      else if (filter==='done') filtered=sorted.filter(function(t){return t.completed;});
+
+      if (!filtered.length) {
+        container.innerHTML = '<div style="text-align:center;padding:16px;font-size:.72rem;color:var(--text-muted);animation:emptyPulse 2.8s ease-in-out infinite">'+(items.length?_tl('noMatch'):_tl('empty'))+'</div>';
+        return;
+      }
+
+      var html = '';
+      for (var i=0;i<filtered.length;i++) {
+        var t=filtered[i];
+        var _delay=i*0.05;
+        html += '<div class="todo-item" style="display:flex;align-items:flex-start;gap:6px;padding:8px 4px;border-bottom:1px solid var(--border);animation-delay:'+_delay+'s">';
+        html += '<span style="cursor:pointer;font-size:1rem;flex-shrink:0;margin-top:2px;width:22px;text-align:center" class="todo-check" onclick="window._toggleTodo(\''+t.id+'\')">'+(t.completed?'✅':'☐')+'</span>';
+        html += '<div style="flex:1;min-width:0">';
+        html += '<div class="todo-text" style="font-size:.78rem;line-height:1.3;'+(t.completed?'text-decoration:line-through;color:var(--text-muted)':'color:var(--text)')+'">'+_esc(t.text)+'</div>';
+        html += '<div style="font-size:.48rem;color:var(--text-muted);margin-top:2px;display:flex;gap:4px;flex-wrap:wrap;align-items:center">';
+        html += '<span>'+_uid(t.author)+'</span><span>·</span><span>'+(t.createdAt||'')+'</span>';
+        if (t.completed&&t.completedBy) html += '<span>·</span><span style="color:var(--sage)">'+_tl('doneBy')+' '+_uid(t.completedBy)+' '+(t.completedAt||'')+'</span>';
+        html += '</div></div>';
+        html += '<span style="cursor:pointer;font-size:.65rem;opacity:.35;flex-shrink:0;padding:2px 4px" class="todo-del" onclick="window._deleteTodo(\''+t.id+'\')">✕</span>';
+        html += '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function _setFilter(f) {
+      window._todoFilter=f;
+      var btns=document.querySelectorAll('#todoFilterBar button');
+      for (var i=0;i<btns.length;i++){btns[i].style.background=btns[i].dataset.filter===f?'var(--love)':'var(--card)';btns[i].style.fontWeight=btns[i].dataset.filter===f?'700':'400';}
+      _render();
+    }
+
+    function _createCard() {
+      if (document.getElementById('todoListCard')) return;
+      var dash=document.getElementById('panel-dashboard');
+      if (!dash) return;
+      _initData();
+      var f=window._todoFilter||'active';
+      var card=document.createElement('div'); card.id='todoListCard'; card.className='card'; card.style.marginTop='10px';
+      card.innerHTML = '<h3>'+_tl('title')+'</h3>'
+        +'<div style="display:flex;gap:6px;margin-bottom:10px">'
+        +'<input id="todoInput" type="text" placeholder="'+_tl('ph')+'" style="flex:1;padding:8px 10px;border-radius:10px;border:1px solid var(--border);font-size:.78rem;font-family:var(--font);background:var(--card);color:var(--text)">'
+        +'<button onclick="window._addTodo()" style="padding:8px 14px;border-radius:10px;border:none;background:var(--love);color:#fff;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap">'+_tl('add')+'</button></div>'
+        +'<div id="todoFilterBar" style="display:flex;gap:6px;margin-bottom:8px">'
+        +'<button data-filter="all" onclick="window._setTodoFilter(\'all\')" style="padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:'+(f==='all'?'var(--love)':'var(--card)')+';color:var(--text);font-size:.6rem;cursor:pointer;font-weight:'+(f==='all'?'700':'400')+'">'+_tl('all')+'</button>'
+        +'<button data-filter="active" onclick="window._setTodoFilter(\'active\')" style="padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:'+(f==='active'?'var(--love)':'var(--card)')+';color:var(--text);font-size:.6rem;cursor:pointer;font-weight:'+(f==='active'?'700':'400')+'">'+_tl('active')+'</button>'
+        +'<button data-filter="done" onclick="window._setTodoFilter(\'done\')" style="padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:'+(f==='done'?'var(--love)':'var(--card)')+';color:var(--text);font-size:.6rem;cursor:pointer;font-weight:'+(f==='done'?'700':'400')+'">'+_tl('done')+'</button></div>'
+        +'<div id="todoListContainer"></div>';
+      var qc=dash.querySelector('.dash-card.dash-quote');
+      if (qc&&qc.parentNode) qc.parentNode.insertBefore(card,qc.nextSibling); else dash.appendChild(card);
+      var inp=document.getElementById('todoInput');
+      if (inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&typeof window._addTodo==='function')window._addTodo();});
+      _render();
+    }
+
+    // ── 全部挂载到 window ──
+    window._renderTodo = _render;
+    window._createTodoCard = _createCard;
+    window._pushTodo = _pushTodo;
+    window._pullTodo = _pullTodo;
+    window._addTodo = function(){var inp=document.getElementById('todoInput');_addTodo(inp?inp.value:'');};
+    window._toggleTodo = _toggleTodo;
+    window._deleteTodo = _deleteTodo;
+    window._setTodoFilter = _setFilter;
+
+    // ── 自动初始化 ──
+    function _tryCreateCard() {
+      if (!document.getElementById('todoListCard')) {
+        _createCard();
+      }
+    }
+
+    if (typeof renderDashboard==='function') {
+      var _origTd=renderDashboard;
+      window.renderDashboard=function(){_origTd.apply(this,arguments);setTimeout(_tryCreateCard,200);};
+    }
+
+    // ── 持久轮询：首次加载 + 仪表盘重建后恢复 ──
+    // 每 500ms 检查一次（前 30 秒密集检查），之后每 3 秒检查一次
+    var _todoCheckCount = 0;
+    var _todoCheckTimer = setInterval(function() {
+      _todoCheckCount++;
+      if (!document.getElementById('todoListCard') && document.getElementById('panel-dashboard')) {
+        _tryCreateCard();
+      }
+      if (_todoCheckCount > 60) clearInterval(_todoCheckTimer); // 30秒密集检查结束
+    }, 500);
+    // 持久慢速检查（永不停止）
+    setInterval(function() {
+      if (!document.getElementById('todoListCard') && document.getElementById('panel-dashboard')) {
+        _tryCreateCard();
+      }
+    }, 3000);
+
+    if (typeof getGitHubToken==='function') {
+      _pullTodo();
+      setInterval(function(){if(getGitHubToken())_pullTodo();},120000);
+    }
+  })();
+})();
+
 /* === dist/js/fix-all.js === */
 "use strict";
 
@@ -5549,7 +6678,8 @@ var APP_VERSION = (function () {
           _btn.id = 'fix-modal-diary-btn';
           _btn.className = 'btn btn-ghost mt-6';
           _btn.style.cssText = 'margin-bottom:0;margin-top:6px;width:100%';
-          _btn.textContent = '\u{1F4DD} \u{67E5}\u{770B}\u{5F53}\u{6708}\u{65E5}\u{8BB0}';
+          var _dl = (typeof window.lang !== 'undefined') ? window.lang : 'sr';
+          _btn.textContent = _dl === 'zh-CN' ? '\u{1F4DD} \u{67E5}\u{770B}\u{5F53}\u{6708}\u{65E5}\u{8BB0}' : _dl === 'en' ? '\u{1F4DD} View This Month\u{2019}s Diary' : '\u{1F4DD} Pregled dnevnika za ovaj mesec';
           _btn.onclick = function () {
             if (typeof closeModal === 'function') closeModal();
             if (typeof switchToTab === 'function') switchToTab('diary');
@@ -6134,5 +7264,134 @@ var APP_VERSION = (function () {
 
 
 
+})();
+
+/* === dist/js/fix-panel.js === */
+"use strict";
+(function () {
+  // console.log('[fix-panel] 已加载');
+
+  window.updateLangUI = window.updateLangUI || function(){};
+  window.initSharedDiaryTab = window.initSharedDiaryTab || function(){};
+  window.renderDiaryForm = window.renderDiaryForm || function(){};
+  window.renderDiaryPanel = window.renderDiaryPanel || function(){};
+
+  function fmtDate(d) {
+    if (!d) return '--';
+    if (typeof d === 'string') { var m = d.match(/^\d{4}-\d{2}-\d{2}/); return m ? m[0] : d.slice(0, 10); }
+    if (d instanceof Date) return d.toISOString().slice(0, 10);
+    return String(d).slice(0, 10);
+  }
+
+  function setEl(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+
+  function applyStatsFix() {
+    var panel = document.getElementById('panel-stats');
+    if (!panel || !panel.classList.contains('active')) return;
+    var L = window.lang || 'zh-CN';
+
+    // Do NOT inject fake data into state.records — empty guidance text is set below
+
+    // Title translation
+    var M = {
+      'schart-cycle-title':{'zh-CN':'周期趋势（最近6次）','en':'Cycle Trend (last 6)','sr':'Trend ciklusa (poslednjih 6)'},
+      'schart-mood-title':{'zh-CN':'心情分布','en':'Mood Distribution','sr':'Raspolozenje'},
+'predChipOvLabel':{'zh-CN':'排卵日','en':'Ovulation','sr':'Ovulacija'},
+      'predChipFertLabel':{'zh-CN':'易孕期','en':'Fertile','sr':'Plodni dani'},
+      'predChipFutureLabel':{'zh-CN':'未来预测','en':'Future','sr':'Buducnost'},
+      'predChipRegLabel':{'zh-CN':'规律性','en':'Regularity','sr':'Regularnost'},
+      'schart-history-title':{'zh-CN':'周期历史','en':'Cycle History','sr':'Istorija ciklusa'},
+      'tleg-short':{'zh-CN':'短（<26天）','en':'Short (<26d)','sr':'Kratak (<26d)'},
+      'tleg-normal':{'zh-CN':'正常（26-32天）','en':'Normal (26-32d)','sr':'Normalan (26-32d)'},
+      'tleg-long':{'zh-CN':'长（>32天）','en':'Long (>32d)','sr':'Dug (>32d)'},
+      'sect-relationship':{'zh-CN':'关系','en':'Relationship','sr':'Veza'},
+      'diary-title':{'zh-CN':'今日笔记','en':"Today's Note",'sr':'Danasnja beleska'},
+      'knowMe-title':{'zh-CN':'你了解我吗','en':'Do You Know Me?','sr':'Da li me poznajes?'}
+    };
+    for (var id in M) { var el = document.getElementById(id); if (el && M[id][L]) el.textContent = M[id][L]; }
+
+    // Empty data guidance
+    var EM = {
+      'chartCycleEmpty':{'zh-CN':'标记2次经期后显示趋势图','en':'Record 2 cycles to see trend','sr':'Zabelezi 2 ciklusa za trend'},
+      'chartMoodEmpty':{'zh-CN':'记录心情后显示分布图','en':'Record moods to see distribution','sr':'Zabelezi raspolozenja za prikaz'}
+    };
+    for (var eid in EM) { var cel = document.getElementById(eid); if (cel) { cel.textContent = EM[eid][L] || EM[eid]['zh-CN']; cel.style.cssText = 'display:block;padding:20px;text-align:center;color:var(--text-muted);font-size:0.8rem'; } }
+
+    if (typeof state !== 'undefined' && state.records && state.records.length >= 1) {
+      // Prediction data
+      if (typeof predict === 'function') {
+        var pred = predict();
+        if (pred) {
+          setEl('predMainNext', fmtDate(pred.nextStart));
+          var cm = {high:{'zh-CN':'高','en':'High','sr':'Visok'},mid:{'zh-CN':'中','en':'Medium','sr':'Srednji'},low:{'zh-CN':'低','en':'Low','sr':'Nizak'}};
+          setEl('predSubConf', (cm[pred.confidence || 'mid'] || cm.mid)[L]);
+          setEl('predChipOv', fmtDate(pred.ovulation));
+          setEl('predChipFert', pred.fertileStart ? fmtDate(pred.fertileStart) + ' ~ ' + fmtDate(pred.fertileEnd) : '--');
+          if (Array.isArray(pred.futurePeriods)) { setEl('predChipFuture', pred.futurePeriods.map(function(f) { return typeof f === 'object' ? fmtDate(f.start || f) : fmtDate(f); }).join(', ')); }
+          var rl = {'zh-CN':{high:'规律',mid:'较规律',low:'不规律'},'en':{high:'Regular',mid:'Fair',low:'Irregular'},'sr':{high:'Redovan',mid:'Srednji',low:'Neredovan'}};
+          var regMap = rl[L] || rl['zh-CN'];
+          setEl('predChipReg', (regMap[pred.regularity || 'mid'] || '') + ' ±' + (pred.stdDev || '0'));
+        }
+      }
+
+      // Cycle trend chart
+      if (typeof ChartRenderer !== 'undefined' && ChartRenderer.drawLineChart && state.records.length >= 2) { try {
+        var sorted = state.records.slice().sort(function(a, b) { return new Date(a) - new Date(b); });
+        var diffs = [], lbs = [];
+        for (var i = 1; i < sorted.length; i++) { diffs.push(Math.round((new Date(sorted[i]) - new Date(sorted[i - 1])) / 86400000)); lbs.push(L === 'zh-CN' ? '周期' + i : 'C' + i); }
+        var avg = diffs.length > 0 ? Math.round(diffs.reduce(function(s, v) { return s + v; }, 0) / diffs.length) : 28;
+        var tc = document.getElementById('chartCycleTrend');
+        if (tc) { ChartRenderer.drawLineChart(tc, diffs, lbs, { width: 500, height: 200, avgLine: avg, avgLabel: L === 'zh-CN' ? '均值' : L === 'en' ? 'Avg' : 'Prosek', emptyText: '' }); var ce = document.getElementById('chartCycleEmpty'); if (ce) ce.style.display = 'none'; }
+      } catch(ex) {} }
+
+      // Cycle history timeline
+      if (state.records.length >= 2) { try {
+        var tlSorted = state.records.slice().sort(function(a, b) { return new Date(a) - new Date(b); });
+        var tlDiffs = [];
+        for (var tli = 1; tli < tlSorted.length; tli++) { tlDiffs.push(Math.round((new Date(tlSorted[tli]) - new Date(tlSorted[tli - 1])) / 86400000)); }
+        var tlRow = document.getElementById('timelineRow');
+        if (tlRow) {
+          var tlHtml = '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:10px 0">';
+          for (var tli2 = 0; tli2 < tlDiffs.length; tli2++) {
+            var td = tlDiffs[tli2], c = td < 26 ? '#4CAF50' : td <= 32 ? '#42A5F5' : '#FF7043';
+            var lb = (L === 'zh-CN' ? '周期' : L === 'en' ? 'Cycle ' : 'Ciklus ') + (tli2 + 1) + ': ' + td + (L === 'zh-CN' ? '天' : 'd');
+            tlHtml += '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:28px" title="' + lb + '">';
+            tlHtml += '<div style="width:20px;height:20px;border-radius:50%;background:' + c + ';cursor:pointer;transition:transform .2s;box-shadow:0 0 0 2px var(--card),0 0 0 3px ' + c + '40" title="' + lb + '"></div>';
+            tlHtml += '<span style="font-size:.45rem;color:var(--text-muted);opacity:.7">' + td + '</span></div>';
+          }
+          tlHtml += '</div>';
+          tlRow.innerHTML = tlHtml;
+        }
+        var tls = document.getElementById('tleg-short'); if (tls) tls.innerHTML = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4CAF50;margin-right:4px;vertical-align:middle"></span>' + (L === 'zh-CN' ? '偏短（<26天' : L === 'en' ? 'Short (<26d)' : 'Kratak (<26d)');
+        var tln = document.getElementById('tleg-normal'); if (tln) tln.innerHTML = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#42A5F5;margin-right:4px;vertical-align:middle"></span>' + (L === 'zh-CN' ? '正常（26-32天' : L === 'en' ? 'Normal (26-32d)' : 'Normalan (26-32d)');
+        var tll = document.getElementById('tleg-long'); if (tll) tll.innerHTML = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF7043;margin-right:4px;vertical-align:middle"></span>' + (L === 'zh-CN' ? '偏长（>32天' : L === 'en' ? 'Long (>32d)' : 'Dug (>32d)');
+        var hl = document.getElementById('historyLabel'); if (hl) hl.textContent = (L === 'zh-CN' ? '共 ' : L === 'en' ? 'Total: ' : 'Ukupno: ') + tlDiffs.length + (L === 'zh-CN' ? ' 个周期' : L === 'en' ? ' cycles' : ' ciklusa');
+      } catch(ex) {} }
+
+      // Cycle counter
+      var tot = state.records ? state.records.length : 0;
+      var cc = document.getElementById('cc-count'); if (cc) cc.textContent = tot;
+      var cct = document.getElementById('cc-title'); if (cct) cct.textContent = L === 'zh-CN' ? '一起走过 ' + tot + ' 个周期' : L === 'en' ? 'Together: ' + tot + ' cycles' : 'Zajedno: ' + tot + ' ciklusa';
+
+      // Stability
+      var sn = document.getElementById('chartCycleStability');
+      if (!sn) { sn = document.createElement('div'); sn.id = 'chartCycleStability'; sn.style.cssText = 'text-align:center;font-size:.72rem;margin-top:6px;font-weight:600;'; var cc2 = document.getElementById('chartCycleTrend'); if (cc2) { var cp2 = cc2.closest('.chart-card'); if (cp2) cp2.appendChild(sn); } }
+      if (tot >= 2 && typeof predict === 'function') { var p2 = predict(); if (p2 && p2.stdDev != null) { if (p2.stdDev <= 2) { sn.textContent = L === 'zh-CN' ? '✨ 你的周期非常规律' : L === 'en' ? '✨ Very regular' : '✨ Vrlo redovan'; sn.style.color = 'var(--sage)'; } else if (p2.stdDev <= 5) { sn.textContent = L === 'zh-CN' ? '📊 你的周期比较规律' : L === 'en' ? '📊 Fairly regular' : '📊 Prilicno redovan'; sn.style.color = 'var(--gold)'; } else { sn.textContent = L === 'zh-CN' ? '⚠️ 你的周期不太规律' : L === 'en' ? '⚠️ Irregular' : '⚠️ Neredovan'; sn.style.color = 'var(--rose)'; } } }
+    }
+  }
+
+  // Hook into renderStatsPanel for data-update re-renders (profile switch, sync, etc.)
+  var _origRSP = window.renderStatsPanel;
+  if (typeof _origRSP === 'function') {
+    window.renderStatsPanel = function() {
+      _origRSP.apply(this, arguments);
+      setTimeout(applyStatsFix, 50);
+    };
+  }
+
+  var mo = new MutationObserver(function(muts) { muts.forEach(function(m) { if (m.target.id === 'panel-stats' && m.target.classList.contains('active')) { setTimeout(applyStatsFix, 100); } }); });
+  var sp = document.getElementById('panel-stats');
+  if (sp) mo.observe(sp, { attributes: true, attributeFilter: ['class'] });
+  if (document.readyState === 'complete') { setTimeout(applyStatsFix, 500); } else { window.addEventListener('load', function() { setTimeout(applyStatsFix, 500); }); }
 })();
 

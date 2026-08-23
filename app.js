@@ -1237,34 +1237,8 @@ const renderAll = applyAllUI;
    IMMUTABLE STATE HELPERS
    ================================================================ */
 /** Toggle a period record for a date (immutable state update) */
-function togglePeriodRecord(date) {
-  let idx = state.records.findIndex(function (r) {
-    return sameDay(r, date);
-  });
-  let wasAdded = false;
-  if (idx >= 0) {
-    state = Object.assign({}, state, {
-      records: state.records.filter(function (_, i) {
-        return i !== idx;
-      }),
-    });
-    window.state = state;
-    toast('🚫 ' + t('toast.unmarked'));
-  } else {
-    let newRecords = state.records.concat([new Date(date)]).sort(function (a, b) {
-      return a - b;
-    });
-    state = Object.assign({}, state, { records: newRecords });
-    window.state = state;
-    wasAdded = true;
-    toast('🩸 ' + t('toast.marked'));
-  }
-  saveState();
-  renderAll(['calendar', 'core']);
-  updateFab();
-  if (wasAdded) checkCycleCelebration();
-  return wasAdded;
-}
+/* togglePeriodRecord: 单一实现移至下方 (line ~2194)。
+   此处不再重复声明，避免函数提升导致的重复定义遮蔽。 */
 
 /* ================================================================
    CALENDAR
@@ -2041,8 +2015,9 @@ function openModal(date, pred) {
             '</div>';
         }
         diaryBodyEl.innerHTML = diaryText;
-        document.getElementById('modalDiaryHeader').textContent = activeProfile === 'barry' ? '💌 日记' : '💌 Dnevnik';
-        document.getElementById('modalDiaryEditText').textContent = activeProfile === 'barry' ? '编辑' : 'Uredi';
+        var _mdLang = (typeof window.lang !== 'undefined') ? window.lang : 'sr';
+        document.getElementById('modalDiaryHeader').textContent = _mdLang === 'zh-CN' ? '💌 日记' : _mdLang === 'en' ? '💌 Diary' : '💌 Dnevnik';
+        document.getElementById('modalDiaryEditText').textContent = _mdLang === 'zh-CN' ? '编辑' : _mdLang === 'en' ? 'Edit' : 'Uredi';
       } else {
         diaryPreviewEl.style.display = 'none';
       }
@@ -2191,7 +2166,8 @@ function renderKnowledge(phase, dateKey) {
   }
 }
 // toggleKnowledge() extracted to js/ui-core.js
-function togglePeriodRecord() {
+function togglePeriodRecord(date) {
+  if (date) selectedDate = date;
   if (!selectedDate) return;
   const sd = fmtDate(selectedDate);
   // Check if this is marking period END (there's a start without end)
@@ -2543,7 +2519,18 @@ function goToday() {
   _weekOffset = 0;
   CalState.year = today().getFullYear();
   CalState.month = today().getMonth();
-  renderCalendar();
+  const grid = document.getElementById('daysGrid');
+  if (grid) {
+    grid.style.transition = 'opacity 0.08s ease-out';
+    grid.style.opacity = '0';
+    setTimeout(function () {
+      renderCalendar();
+      grid.style.transition = 'opacity 0.2s ease-out';
+      grid.style.opacity = '1';
+    }, 80);
+  } else {
+    renderCalendar();
+  }
 }
 
 // Touch swipe
@@ -2595,18 +2582,8 @@ function goToday() {
   });
 })();
 
-function goToday() {
-  CalState.year = today().getFullYear();
-  CalState.month = today().getMonth();
-  const grid = document.getElementById('daysGrid');
-  grid.style.transition = 'opacity 0.08s ease-out';
-  grid.style.opacity = '0';
-  setTimeout(function () {
-    renderCalendar();
-    grid.style.transition = 'opacity 0.2s ease-out';
-    grid.style.opacity = '1';
-  }, 80);
-}
+/* goToday: 单一实现已上移至 CALENDAR 模块 (重置 _weekOffset + 淡入动画)。
+   此重复声明删除，避免函数提升遮蔽正确版本。 */
 /* ================================================================
    CULTURE MODULE — za Anđelu
    ================================================================ */
