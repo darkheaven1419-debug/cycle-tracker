@@ -484,6 +484,16 @@
           "time": 1787472267044
         }
       }
+    },
+    "2026-08-24": {
+      "andjela": {
+        "hug": {
+          "time": 1787608628669
+        },
+        "text": "Ljubavi moja, proveli smo lep dan zajedno. Ja nisam bila baš najbolje raspoložena, ali ti me uvek oraspoložiš. Nadam se da ćemo sledeći put biti bolji u toj igrici. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1787608698720
+      }
     }
   },
   "cycleInfo": {
@@ -610,7 +620,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1787608628669
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -672,5 +685,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1787608627855
+  "updated": 1787608699353
 }
