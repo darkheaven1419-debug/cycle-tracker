@@ -494,6 +494,16 @@
         "mood": "",
         "time": 1787608698720
       }
+    },
+    "2026-08-25": {
+      "andjela": {
+        "hug": {
+          "time": 1787691998065
+        },
+        "text": "Danas nismo baš mnogo pričali, a nismo uspeli čak ni igricu da odigramo zajedno. Ali nema veze, sutra će biti bolje. Ipak je sutra dan pred moj rođendan. Za moj rođendan moraš da me maksimalno voliš. Ljubim te puno! ❤️",
+        "mood": "",
+        "time": 1787692094735
+      }
     }
   },
   "cycleInfo": {
@@ -691,5 +701,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1787691992455
+  "updated": 1787692095152
 }
