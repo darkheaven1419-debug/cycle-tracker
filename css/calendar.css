@@ -1873,7 +1873,7 @@ body {
   transition: transform 0.1s;
 }
 .card h3 {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   color: var(--text);
   font-weight: 700;
   margin-bottom: 14px;
@@ -1896,7 +1896,7 @@ body {
   justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid var(--border-soft);
-  font-size: 0.84rem;
+  font-size: 0.86rem;
 }
 .stat-row:last-child {
   border-bottom: none;
@@ -3323,7 +3323,7 @@ body {
   padding: 14px 16px;
 }
 .dash-card h3 {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   margin-bottom: 8px;
   color: var(--text);
 }
@@ -3724,7 +3724,7 @@ body {
   margin-bottom: 12px;
 }
 .chart-card h3 {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 10px;
@@ -5827,7 +5827,7 @@ body {
   --blur-heavy: blur(24px) saturate(1.08);
   --text-xs: 0.62rem;
   --text-sm: 0.7rem;
-  --text-base: 0.82rem;
+  --text-base: 0.86rem;
   --text-md: 0.92rem;
   --text-lg: 1.1rem;
   --text-xl: 1.4rem;

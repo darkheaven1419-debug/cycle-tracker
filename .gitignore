@@ -20,3 +20,6 @@ Desktop.ini
 # Environment
 .env
 .env.local
+
+# Local verification artifacts (Playwright screenshots & one-off scripts)
+.claude-verify/
