@@ -1584,21 +1584,21 @@ body {
 }
 .header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 6px 4px 6px;
-  position: relative;
-  min-height: 48px;
-  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 6px 6px;
+  flex-wrap: nowrap;
 }
 .header h1 {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 800;
   letter-spacing: -0.02em;
   cursor: default;
   user-select: none;
-  flex: 1;
+  width: 100%;
   text-align: center;
+  padding: 2px 0 0;
   background: linear-gradient(135deg, var(--love), var(--rose-dark));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1614,9 +1614,6 @@ body {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.06),
     0 1px 2px rgba(0, 0, 0, 0.04);
-  position: absolute;
-  right: 6px;
-  top: 8px;
   border: 1px solid var(--border-soft);
 }
 [data-theme="dark"] .header-actions {
@@ -1815,39 +1812,90 @@ body {
   font-weight: 700;
 }
 .phase-badge {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
   margin-top: 12px;
-  letter-spacing: 0.02em;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 .phase-badge.period {
-  background: var(--rose-light);
+  background: linear-gradient(135deg, #fde8eb, #fbd2da) !important;
   color: var(--rose-dark);
+  box-shadow: 0 2px 12px rgba(196, 90, 107, 0.22);
+}
+.phase-badge.period::before {
+  content: "🌸";
 }
 .phase-badge.follicular {
-  background: var(--sage-light);
+  background: linear-gradient(135deg, #e4f0ea, #d1e5da) !important;
   color: #3d6b55;
+  box-shadow: 0 2px 12px rgba(122, 158, 126, 0.2);
+}
+.phase-badge.follicular::before {
+  content: "🌱";
 }
 .phase-badge.fertile,
 .phase-badge.ovulation {
-  background: var(--teal-light);
+  background: linear-gradient(135deg, #e0efe8, #cae4d8) !important;
   color: #2d5f6e;
+  box-shadow: 0 2px 12px rgba(94, 139, 122, 0.22);
+}
+.phase-badge.fertile::before,
+.phase-badge.ovulation::before {
+  content: "✨";
 }
 .phase-badge.luteal {
-  background: var(--lavender-light);
+  background: linear-gradient(135deg, #efe8f5, #e0d3ed) !important;
   color: var(--lavender-dark);
+  box-shadow: 0 2px 12px rgba(184, 160, 200, 0.22);
+}
+.phase-badge.luteal::before {
+  content: "🌙";
 }
 .phase-badge.late {
-  background: var(--warm-bg);
+  background: linear-gradient(135deg, #f8f0da, #f0e1bf) !important;
   color: var(--warm-text);
+  box-shadow: 0 2px 12px rgba(212, 168, 90, 0.22);
+}
+.phase-badge.late::before {
+  content: "⏳";
+}
+[data-theme="dark"] .phase-badge.period {
+  background: linear-gradient(135deg, #3a1c24, #331e28) !important;
+  color: #f2a8b4;
+  border-color: rgba(212, 120, 136, 0.3);
+  box-shadow: 0 2px 14px rgba(212, 120, 136, 0.18);
+}
+[data-theme="dark"] .phase-badge.follicular {
+  background: linear-gradient(135deg, #14221c, #16261e) !important;
+  color: #a5cfb4;
+  border-color: rgba(143, 199, 176, 0.25);
+  box-shadow: 0 2px 14px rgba(143, 199, 176, 0.12);
+}
+[data-theme="dark"] .phase-badge.fertile,
+[data-theme="dark"] .phase-badge.ovulation {
+  background: linear-gradient(135deg, #14221e, #152420) !important;
+  color: #9fd0c0;
+  border-color: rgba(122, 181, 160, 0.25);
+  box-shadow: 0 2px 14px rgba(122, 181, 160, 0.12);
+}
+[data-theme="dark"] .phase-badge.luteal {
+  background: linear-gradient(135deg, #241c2a, #281e30) !important;
+  color: #d8b8e8;
+  border-color: rgba(200, 168, 216, 0.25);
+  box-shadow: 0 2px 14px rgba(200, 168, 216, 0.12);
 }
 [data-theme="dark"] .phase-badge.late {
-  background: #3d2000;
+  background: linear-gradient(135deg, #2a200e, #332611) !important;
   color: #ffb74d;
+  border-color: rgba(196, 154, 94, 0.25);
+  box-shadow: 0 2px 14px rgba(196, 154, 94, 0.12);
 }
 .andjelin-label {
   text-align: center;
@@ -2768,12 +2816,14 @@ body {
   position: relative;
   overflow: hidden;
   transition:
-    transform 0.3s,
-    box-shadow 0.3s;
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 .love-note-card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  border-color: rgba(196, 90, 107, 0.35);
 }
 .love-note-card::before {
   content: "";
@@ -3238,6 +3288,19 @@ body {
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.2),
     0 1px 4px rgba(0, 0, 0, 0.15);
+}
+.tea-room-card {
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.tea-room-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(122, 158, 126, 0.5);
+}
+[data-theme="dark"] .tea-room-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 .tea-room-inner {
   display: flex;
@@ -3925,6 +3988,21 @@ body {
   color: var(--text);
   opacity: 0.7;
 }
+.culture-card {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.culture-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: rgba(180, 140, 100, 0.3);
+}
+[data-theme="dark"] .culture-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.12);
+}
 .lunar-info {
   text-align: center;
   font-size: 0.68rem;
@@ -4359,12 +4437,18 @@ body {
   margin-bottom: 12px;
   text-align: center;
   transition:
-    transform 0.3s,
-    box-shadow 0.3s;
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 .rel-tip-card:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+  border-color: rgba(196, 154, 94, 0.55);
+}
+[data-theme="dark"] .rel-tip-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 [data-theme="dark"] .rel-tip-card {
   background: linear-gradient(135deg, #241d2a, #2a1e22);
@@ -5520,19 +5604,15 @@ body {
 }
 @media (max-width: 420px) {
   .header {
-    flex-wrap: nowrap;
-    padding: 6px 2px 2px 2px;
+    padding: 10px 2px 4px;
   }
   .header h1 {
-    font-size: 0.82rem;
-    text-align: left;
-    padding-left: 4px;
+    font-size: 1.02rem;
+    text-align: center;
   }
   .header-actions {
-    gap: 1px;
-    padding: 1px 2px;
-    right: 2px;
-    top: 4px;
+    gap: 2px;
+    padding: 2px 3px;
   }
   .lang-btn {
     min-width: 36px;
@@ -5607,7 +5687,7 @@ body {
 }
 @media (max-width: 360px) {
   .header h1 {
-    font-size: 0.72rem;
+    font-size: 0.95rem;
   }
   .lang-btn {
     min-width: 32px;
@@ -5699,7 +5779,7 @@ body {
     padding: 22px;
   }
   .card h3 {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
   }
 }
 @media (min-width: 1024px) {
@@ -5959,5 +6039,125 @@ body.festival-victory {
   --rose-light: #fff3e0;
   --gold: #ffd700;
   --gradient-love: linear-gradient(135deg, #e53935, #bf360c);
+}
+/* P1-5 移动端日历格子信息裁减（≤600px：隐藏周期天数与普通农历日期，保留初一/十五/新年；红线元素不受影响） */
+@media (max-width: 600px) {
+  .day .day-cycle-num {
+    display: none;
+  }
+  .day .lunar-date {
+    display: none;
+  }
+  .day .lunar-date.lunar-first,
+  .day .lunar-date.lunar-fifteen,
+  .day .lunar-date.lunar-newyear {
+    display: block;
+  }
+}
+/* P1-7 仪表盘卡片顺序与入场节奏
+   说明：gsap 库未加载（HAS_GSAP=false），animateDashboardCards() 为空操作，
+   卡片入场此前完全缺失，现用纯 CSS 实现，与动态注入的 #todoListCard 互不冲突。
+   · #panel-dashboard.active 改 flex 纵向，用 order 重排卡片（不触碰 DOM）：
+     welcome(0) → stats(1) → todo(2) → connect(3) → links(4)
+   · 逐卡 staggered 入场；fill-mode 用 backwards（动画结束不残留 transform，
+     保证 P0-4 的 .card:hover translateY(-2px) 仍生效，禁用 both/forwards）
+   · #todoListCard 覆盖 fix-css.js 的 dashCardIn(both) —— 同属性不同文件，本规则
+     特异性更高胜出，顺带修复其 both 填充阻塞 hover 的问题 */
+#panel-dashboard.active {
+  display: flex;
+  flex-direction: column;
+  animation: none; /* 取消 .panel.active 的 panelSlideIn，由卡片各自承担入场 */
+}
+.dash-welcome {
+  padding: 14px 6px;
+  margin-bottom: var(--space-gap);
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+#panel-dashboard.active > .dash-welcome {
+  order: 0;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.05s backwards;
+}
+#panel-dashboard.active > .card:nth-of-type(2) {
+  order: 1;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.12s backwards;
+}
+#panel-dashboard.active > #todoListCard {
+  order: 2;
+  margin-top: 0 !important; /* 覆盖内联 margin-top:10px；flex 下 margin 不折叠，需归一化 */
+  margin-bottom: var(--space-gap);
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.19s backwards;
+}
+#panel-dashboard.active > .card:nth-of-type(3) {
+  order: 3;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.26s backwards;
+}
+#panel-dashboard.active > .card:nth-of-type(4) {
+  order: 4;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.33s backwards;
+}
+@keyframes p17DashIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #panel-dashboard.active > * { animation: none !important; }
+}
+/* P1-8 深色模式观感优化
+   问题（probe-dark 实测）：
+   · 深色大卡片面 --gradient-card(#241e20→#1f1a1c, L≈0.013) 与页面 bg(#1a1516, L≈0.008)
+     几乎同亮度 → 卡片整体"沉"进背景、无分层
+   · --border-soft(#332a2c) ≈ --card(#33292c, L≈0.025) → 日历格线/分隔线/描边不可见
+   · --text-muted(#a09896) 在小字上处于 WCAG 4.5:1 边缘
+   · .theme-btn 边框用 border-soft → 深色下圆形按钮无描边，与 header-actions 不协调
+   方案（仅深色，纯 token/表面层；token 重声明同特异性更靠后胜出）：
+   · 提亮 --gradient-card 至暖调 #30292c→#282124（L 提升~1 倍）→ 卡片从背景浮起
+   · --border-soft 提亮至 #45383c → 格线/分隔线可见且保持含蓄
+   · --text-muted 提亮至 #a8a09e → 深色小字可读性上修
+   · 深色卡片加顶部 1px 内高光 → "lifted paper" 深度感（hover 规则 1558 选择器不同，不受影响）
+   · .theme-btn 深色描边改用 --border，与 header-actions 一致 */
+[data-theme="dark"] {
+  --gradient-card: linear-gradient(145deg, #30292c 0%, #282124 100%);
+  --border-soft: #45383c;
+  --text-muted: #a8a09e;
+}
+[data-theme="dark"] .calendar,
+[data-theme="dark"] .card,
+[data-theme="dark"] .progress-section,
+[data-theme="dark"] .setting-row,
+[data-theme="dark"] .tip-card {
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+[data-theme="dark"] .theme-btn {
+  border-color: var(--border);
+}
+/* P1-9 桌面端精致居中卡片墙/信笺感
+   前提：fix-css.js 已用 !important 将 .app 锁定为 420px 居中列（移动优先成立），
+   桌面端此前只是"平板背景上漂浮 420px 内容"，缺外部呈现。
+   方案（仅 >=768px 桌面，纯呈现层）：
+   · body 换暖调环境背景（light: 玫瑰暖白径向渐变；dark: 暗棕径向渐变），
+     加垂直留白 32/56px → 420px 列从环境背景中浮起
+   · .app 变"信笺/卡片"：纸面(var(--gradient-card)) + 发丝描边(border-soft)
+     + 22px 圆角(radius-lg) + 定制大投影 + 顶部1px内高光 → 居中卡片墙/信笺感
+   · 移动端(<768px)零改动：无环境渐变、无信笺装裱，保持像素级原样 */
+@media (min-width: 768px) {
+  body {
+    padding: 32px 0 56px;
+    background: radial-gradient(120% 80% at 50% 0%, #f7efe9 0%, #f0e5dd 42%, #e7d8cf 100%);
+  }
+  [data-theme="dark"] body {
+    background: radial-gradient(120% 80% at 50% 0%, #251f22 0%, #1c1718 45%, #161113 100%);
+  }
+  .app {
+    background: var(--gradient-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 70px rgba(80, 40, 40, 0.16), 0 10px 24px rgba(80, 40, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    padding: 26px 20px calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  [data-theme="dark"] .app {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 10px 24px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
 }
 /*# sourceMappingURL=styles.min.css.map */
