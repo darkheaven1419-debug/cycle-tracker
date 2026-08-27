@@ -504,6 +504,16 @@
         "mood": "",
         "time": 1787692094735
       }
+    },
+    "2026-08-27": {
+      "andjela": {
+        "hug": {
+          "time": 1787863639740
+        },
+        "text": "Danas je moj rođendaaaan! Zaista si bio divan, proveo si mnogo vremena sa mnom, lepo se pričao sa mnom od kada sam se probudila, pa sve dok nisi otišao da spavaš, a pročitao si mi i napisao pismo na srpskom. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1787863750579
+      }
     }
   },
   "cycleInfo": {
@@ -642,7 +652,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1787863639740
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -704,5 +717,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1787863614634
+  "updated": 1787863751004
 }
