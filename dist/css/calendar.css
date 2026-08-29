@@ -6073,7 +6073,12 @@ body.festival-victory {
 #panel-dashboard.active {
   display: flex;
   flex-direction: column;
-  animation: none; /* 取消 .panel.active 的 panelSlideIn，由卡片各自承担入场 */
+}
+/* animation:none 仅在非滑出状态下生效：否则会压过 .panel.slide-out-left/right 的退出动画
+   （#panel-dashboard.active 特异性 1-1-0 > .panel.slide-out-* 0-2-0），导致首页退出动画被取消、
+   animationend 永不触发、旧面板 active 残留而与新面板堆叠。 */
+#panel-dashboard.active:not(.slide-out-left):not(.slide-out-right) {
+  animation: none; /* 取消 .panel.active 的 panelSlideIn，由卡片各自承担入场；滑出时放行 exit 动画 */
 }
 .dash-welcome {
   padding: 14px 6px;

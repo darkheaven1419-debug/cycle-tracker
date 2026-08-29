@@ -2598,6 +2598,11 @@ function goToday() {
 
 const _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'settings'];
 let _prevTabIdx = 0;
+// 面板过渡状态：记录当前正在滑出的面板及其兜底清理定时器。
+// 每次切换先强制结束上一个过渡（防止快速连点时多个面板同时在途/残留 active 堆叠），
+// 并在 animationend 不触发（reduced-motion / 动画被覆盖）时兜底隐藏旧面板。
+let _outgoing = null;
+let _outTimer = null;
 document.querySelectorAll('.tab').forEach((btn) => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.panel;
@@ -2619,13 +2624,36 @@ document.querySelectorAll('.tab').forEach((btn) => {
     });
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
+    // 强制结束上一个未完成的滑出过渡：直接隐藏，杜绝多面板同时在途/残留 active 堆叠
+    if (_outTimer) { clearTimeout(_outTimer); _outTimer = null; }
+    if (_outgoing) {
+      _outgoing.classList.remove('active', 'slide-out-left', 'slide-out-right');
+      _outgoing = null;
+    }
     const oldPanel = document.querySelector('.panel.active');
     if (oldPanel) {
+      // 面板可见性由 .active 控制；滑出动画只是视觉增强，绝不能依赖 animationend 才移除
+      // active——#panel-dashboard.active{animation:none} 覆盖或 prefers-reduced-motion 会让
+      // animationend 永不触发，旧面板残留 active 导致多面板同时显示（内容堆叠）。
+      // 因此：animationend 只认面板自身动画（忽略子元素冒泡）+ 400ms 兜底定时器，
+      // 保证 active 必定被移除；仅当该面板仍是当前过渡对象时才清理（防快速连点误隐藏）。
       oldPanel.classList.add(dir);
+      _outgoing = oldPanel;
+      _outTimer = setTimeout(function () {
+        if (_outgoing === oldPanel) _outgoing = null;
+        oldPanel.classList.remove('active', dir);
+      }, 400);
       oldPanel.addEventListener(
         'animationend',
-        function h() {
+        function h(e) {
+          // 只认面板自身动画；且仅当它仍是当前过渡对象时才清理。
+          // 忽略：子元素动画冒泡、以及快速重选后该面板重播 panelSlideIn 入口动画
+          // 触发的残留监听（此时 _outgoing 已指向别的面板，绝不可误清其定时器）。
+          if (e.target !== oldPanel) return;
+          if (_outgoing !== oldPanel) return;
           oldPanel.removeEventListener('animationend', h);
+          if (_outTimer) { clearTimeout(_outTimer); _outTimer = null; }
+          _outgoing = null;
           oldPanel.classList.remove('active', dir);
         },
         { once: true }

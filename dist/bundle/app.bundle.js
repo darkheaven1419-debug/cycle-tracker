@@ -1,4 +1,4 @@
-// Anđelin Ciklus v7.2.0 | Built 2026-08-23
+// Anđelin Ciklus v7.2.0 | Built 2026-08-29
 
 /* === dist/js/gsap-animations.js === */
 let HAS_GSAP=!1;try{"undefined"!=typeof gsap&&"undefined"!=typeof ScrollTrigger&&(gsap.registerPlugin(ScrollTrigger),gsap.defaults({ease:"power2.out",duration:.4}),gsap.matchMedia().add("(prefers-reduced-motion: reduce)",()=>(gsap.set(".gsap-animate",{clearProps:"all"}),()=>{})),HAS_GSAP=!0)}catch(a){}function animateLoginEntrance(){if(!HAS_GSAP)return;const a=document.querySelectorAll(".login-card");a.length&&gsap.timeline({defaults:{duration:.5,ease:"back.out(1.4)"}}).from(a,{y:40,autoAlpha:0,scale:.9,stagger:.15}).from(".login-title",{y:-20,autoAlpha:0,duration:.4},"-=0.3").from(".login-pin-area",{y:15,autoAlpha:0,duration:.3},"-=0.1")}function animateGreetingIn(){if(!HAS_GSAP)return;const a=document.querySelector(".greeting-card");a&&gsap.timeline({defaults:{ease:"back.out(1.7)",duration:.5}}).from(a,{scale:.7,autoAlpha:0,y:30}).from(".greeting-icon",{scale:0,rotation:-180,duration:.4},"-=0.2").from(".greeting-name",{y:10,autoAlpha:0},"-=0.15").from(".greeting-msg",{y:10,autoAlpha:0},"-=0.1")}function animateGreetingOut(a){HAS_GSAP&&a?gsap.to(a,{autoAlpha:0,scale:.95,duration:.25,ease:"power2.in",onComplete(){a.classList.add("hidden")}}):a&&a.classList.add("hidden")}function animateCalendarDays(){if(!HAS_GSAP)return;const a=document.querySelectorAll(".days .day.in-month");a.length&&(gsap.killTweensOf(a),gsap.from(a,{autoAlpha:0,y:10,duration:.35,stagger:{amount:.35,from:"center"},ease:"power1.out",clearProps:"all"}))}function animateModalIn(a){if(!HAS_GSAP)return;if(a||(a=document.getElementById("modal")),!a)return;const e=a.querySelector(".modal");if(e)try{gsap.killTweensOf([a,e]),a.classList.remove("hidden"),gsap.set(a,{display:"flex",autoAlpha:1}),gsap.from(e,{scale:.88,autoAlpha:0,y:15,duration:.35,ease:"back.out(1.3)",clearProps:"all"})}catch(a){}}function animateModalOut(a){if(!HAS_GSAP||!a)return void(a&&a.classList.add("hidden"));const e=a.querySelector(".modal");e?gsap.to(e,{scale:.9,autoAlpha:0,y:10,duration:.2,ease:"power2.in",onComplete(){a.classList.add("hidden"),gsap.set(e,{clearProps:"all"}),gsap.set(a,{clearProps:"all"})}}):a.classList.add("hidden")}function animateDashboardCards(){if(!HAS_GSAP)return;const a=document.querySelectorAll("#panel-dashboard .card, #panel-dashboard .dash-card");a.length&&(gsap.killTweensOf(a),gsap.from(a,{autoAlpha:0,y:20,duration:.45,stagger:.1,ease:"power2.out",clearProps:"all"}))}function showToast(a,e){e=e||"info";const t=document.getElementById("toastContainer");if(!t)return;const o=document.createElement("div");o.className="toast toast-"+e,o.textContent=a,o.setAttribute("role","alert"),t.appendChild(o),HAS_GSAP?(gsap.fromTo(o,{y:40,autoAlpha:0,scale:.95},{y:0,autoAlpha:1,scale:1,duration:.35,ease:"back.out(1.2)"}),gsap.to(o,{autoAlpha:0,y:-10,duration:.3,delay:2.5,ease:"power2.in",onComplete(){o.parentNode&&o.parentNode.removeChild(o)}})):setTimeout(()=>{o.parentNode&&o.parentNode.removeChild(o)},3e3)}function animateProgressBar(a,e){a&&(HAS_GSAP?(gsap.killTweensOf(a),gsap.to(a,{scaleX:e/100,duration:.7,ease:"power2.out",transformOrigin:"left center"})):a.style.transform="scaleX("+e/100+")")}function animateMoodPicker(a){if(!HAS_GSAP||!a)return;const e=a.querySelectorAll(".mood-btn");e.length&&(gsap.killTweensOf(e),gsap.from(e,{scale:0,autoAlpha:0,duration:.35,stagger:.05,ease:"back.out(2.5)",clearProps:"all"}))}let _starsAnimated=!1;function animateFloatingStars(){if(!HAS_GSAP||_starsAnimated)return;const a=document.querySelectorAll(".floating-stars .star");a.length&&(_starsAnimated=!0,a.forEach((a,e)=>{gsap.to(a,{y:gsap.utils.random(-15,15),x:gsap.utils.random(-8,8),rotation:gsap.utils.random(-8,8),duration:gsap.utils.random(2,4),repeat:-1,yoyo:!0,ease:"sine.inOut",delay:.25*e})}))}function animateStatsPanel(){if(!HAS_GSAP)return;const a=document.querySelectorAll("#panel-stats .card");a.length&&(gsap.killTweensOf(a),gsap.from(a,{autoAlpha:0,y:16,duration:.4,stagger:.08,ease:"power2.out",clearProps:"all"}))}function animateCountUp(a,e,t){if(t=t||"",!HAS_GSAP||!a)return void(a.textContent=e+t);const o={val:0};gsap.killTweensOf(o),gsap.to(o,{val:e,duration:1.2,ease:"power2.out",onUpdate(){a.textContent=Math.round(o.val)+t}})}function setupScrollReveals(){HAS_GSAP&&(ScrollTrigger.batch(".card, .stats-mini-card, .chart-card, .love-note-card, .garden-card",{interval:.1,batchMax:6,onEnter:a=>gsap.fromTo(a,{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.5,stagger:.08,ease:"power2.out",overwrite:!0}),start:"top 90%",once:!0}),ScrollTrigger.batch(".diary-entry, .letter-card, .timeline-item",{interval:.1,batchMax:5,onEnter:a=>gsap.fromTo(a,{autoAlpha:0,x:-20},{autoAlpha:1,x:0,duration:.4,stagger:.06,ease:"power2.out",overwrite:!0}),start:"top 88%",once:!0}))}function initGsapAnimations(){HAS_GSAP&&(setupScrollReveals(),animateFloatingStars())}
@@ -4061,6 +4061,11 @@ function goToday() {
 
 const _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'settings'];
 let _prevTabIdx = 0;
+// 面板过渡状态：记录当前正在滑出的面板及其兜底清理定时器。
+// 每次切换先强制结束上一个过渡（防止快速连点时多个面板同时在途/残留 active 堆叠），
+// 并在 animationend 不触发（reduced-motion / 动画被覆盖）时兜底隐藏旧面板。
+let _outgoing = null;
+let _outTimer = null;
 document.querySelectorAll('.tab').forEach((btn) => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.panel;
@@ -4082,13 +4087,36 @@ document.querySelectorAll('.tab').forEach((btn) => {
     });
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
+    // 强制结束上一个未完成的滑出过渡：直接隐藏，杜绝多面板同时在途/残留 active 堆叠
+    if (_outTimer) { clearTimeout(_outTimer); _outTimer = null; }
+    if (_outgoing) {
+      _outgoing.classList.remove('active', 'slide-out-left', 'slide-out-right');
+      _outgoing = null;
+    }
     const oldPanel = document.querySelector('.panel.active');
     if (oldPanel) {
+      // 面板可见性由 .active 控制；滑出动画只是视觉增强，绝不能依赖 animationend 才移除
+      // active——#panel-dashboard.active{animation:none} 覆盖或 prefers-reduced-motion 会让
+      // animationend 永不触发，旧面板残留 active 导致多面板同时显示（内容堆叠）。
+      // 因此：animationend 只认面板自身动画（忽略子元素冒泡）+ 400ms 兜底定时器，
+      // 保证 active 必定被移除；仅当该面板仍是当前过渡对象时才清理（防快速连点误隐藏）。
       oldPanel.classList.add(dir);
+      _outgoing = oldPanel;
+      _outTimer = setTimeout(function () {
+        if (_outgoing === oldPanel) _outgoing = null;
+        oldPanel.classList.remove('active', dir);
+      }, 400);
       oldPanel.addEventListener(
         'animationend',
-        function h() {
+        function h(e) {
+          // 只认面板自身动画；且仅当它仍是当前过渡对象时才清理。
+          // 忽略：子元素动画冒泡、以及快速重选后该面板重播 panelSlideIn 入口动画
+          // 触发的残留监听（此时 _outgoing 已指向别的面板，绝不可误清其定时器）。
+          if (e.target !== oldPanel) return;
+          if (_outgoing !== oldPanel) return;
           oldPanel.removeEventListener('animationend', h);
+          if (_outTimer) { clearTimeout(_outTimer); _outTimer = null; }
+          _outgoing = null;
           oldPanel.classList.remove('active', dir);
         },
         { once: true }
@@ -6470,6 +6498,24 @@ var APP_VERSION = (function () {
 
   window.animateModalOut = null;
 
+  // === closeModal 兜底：确保 #modal 必定隐藏（防 animationend 不触发 → hidden 永不添加 → 透明遮罩残留卡死） ===
+  var _origCloseModal = (typeof closeModal === 'function') ? closeModal : null;
+  if (_origCloseModal) {
+    window.closeModal = function () {
+      try { _origCloseModal(); } catch (e) {}
+      setTimeout(function () {
+        var _m = document.getElementById('modal');
+        if (!_m) return;
+        if (_m.classList.contains('closing')) {
+          if (!_m.classList.contains('hidden')) _m.classList.add('hidden');
+          _m.classList.remove('closing');
+          var _ms = _m.querySelector('.modal');
+          if (_ms) _ms.classList.remove('closing');
+        }
+      }, 400);
+    };
+  }
+
   // === 导航栏滑动指示器 ===
   (function () {
     var _tabs = document.querySelector('.tabs');
@@ -6685,6 +6731,10 @@ var APP_VERSION = (function () {
         var _mEl = document.getElementById('modal');
         if (_mEl && _mEl.classList.contains('hidden')) {
           _mEl.classList.remove('hidden');
+          // 清理可能泄漏的 closing（异常/连续关闭后遗留），确保重开时动画从初始态播放
+          _mEl.classList.remove('closing');
+          var _mSheet = _mEl.querySelector('.modal');
+          if (_mSheet) _mSheet.classList.remove('closing');
           if (typeof animateModalIn === 'function') animateModalIn();
         }
         // 2) 调用原始 openModal
