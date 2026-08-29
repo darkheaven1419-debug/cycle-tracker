@@ -154,6 +154,24 @@ var APP_VERSION = (function () {
 
   window.animateModalOut = null;
 
+  // === closeModal 兜底：确保 #modal 必定隐藏（防 animationend 不触发 → hidden 永不添加 → 透明遮罩残留卡死） ===
+  var _origCloseModal = (typeof closeModal === 'function') ? closeModal : null;
+  if (_origCloseModal) {
+    window.closeModal = function () {
+      try { _origCloseModal(); } catch (e) {}
+      setTimeout(function () {
+        var _m = document.getElementById('modal');
+        if (!_m) return;
+        if (_m.classList.contains('closing')) {
+          if (!_m.classList.contains('hidden')) _m.classList.add('hidden');
+          _m.classList.remove('closing');
+          var _ms = _m.querySelector('.modal');
+          if (_ms) _ms.classList.remove('closing');
+        }
+      }, 400);
+    };
+  }
+
   // === 导航栏滑动指示器 ===
   (function () {
     var _tabs = document.querySelector('.tabs');
@@ -369,6 +387,10 @@ var APP_VERSION = (function () {
         var _mEl = document.getElementById('modal');
         if (_mEl && _mEl.classList.contains('hidden')) {
           _mEl.classList.remove('hidden');
+          // 清理可能泄漏的 closing（异常/连续关闭后遗留），确保重开时动画从初始态播放
+          _mEl.classList.remove('closing');
+          var _mSheet = _mEl.querySelector('.modal');
+          if (_mSheet) _mSheet.classList.remove('closing');
           if (typeof animateModalIn === 'function') animateModalIn();
         }
         // 2) 调用原始 openModal
