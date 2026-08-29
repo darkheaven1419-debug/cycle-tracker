@@ -98,20 +98,30 @@ self.addEventListener('fetch', function (event) {
   const request = event.request;
   const url = new URL(request.url);
 
+  // 非 HTTP(S) 请求（chrome-extension:、data:、blob:、about: 等）一律跳过：
+  // 不 respondWith、不 fetch、不进 Cache。
+  // 否则 fetch()/caches.match() 会抛 "Request scheme 'chrome-extension' is unsupported"。
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
   // Google Fonts — cache-first (fonts are versioned, rarely change)
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
       caches.match(request).then(function (cached) {
-        return (
-          cached ||
-          fetch(request).then(function (response) {
+        if (cached) return cached;
+        return fetch(request)
+          .then(function (response) {
             const clone = response.clone();
             caches.open(CACHE_FONTS).then(function (cache) {
               cache.put(request, clone).catch(function () {});
             });
             return response;
           })
-        );
+          .catch(function () {
+            // 网络失败且缓存 miss：合成 503，绝不 resolve(undefined)。
+            return new Response('', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+          });
       })
     );
     return;
@@ -128,7 +138,7 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // HTML — network first with timeout fallback (3s), then offline page
+  // HTML — network first with timeout fallback (3s), then offline page / cached root / synthesized 503
   if (request.mode === 'navigate') {
     event.respondWith(
       Promise.race([
@@ -139,7 +149,19 @@ self.addEventListener('fetch', function (event) {
           }, 3000);
         }),
       ]).catch(function () {
-        return caches.match('./offline.html');
+        // 网络失败/超时 → 依次回退：缓存的 offline.html → 缓存的根页面 → 合成 503。
+        // caches.match() 在 miss 时 resolve(undefined) 而非 reject，
+        // 必须显式判空兜底，保证 respondWith 永远拿到合法 Response。
+        return caches.match('./offline.html').then(function (offline) {
+          if (offline) return offline;
+          return caches.match('./').then(function (root) {
+            if (root) return root;
+            return new Response(
+              '<!DOCTYPE html><html lang="zh"><meta charset="utf-8"><title>Offline</title><body><h1>Offline</h1></body></html>',
+              { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+            );
+          });
+        });
       })
     );
     return;
@@ -153,12 +175,16 @@ self.addEventListener('fetch', function (event) {
           // Clone immediately — response body can only be read once
           const clone = response.clone();
           caches.open(CACHE_STATIC).then(function (cache) {
-            cache.put(request, clone);
+            cache.put(request, clone).catch(function () {});
           });
           return response;
         })
         .catch(function () {
-          return caches.match(request);
+          return caches.match(request).then(function (cached) {
+            if (cached) return cached;
+            // 网络失败且缓存 miss：合成 503，绝不 resolve(undefined)。
+            return new Response('', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+          });
         })
     );
     return;
@@ -167,7 +193,11 @@ self.addEventListener('fetch', function (event) {
   // Everything else: network first, no cache
   event.respondWith(
     fetch(request).catch(function () {
-      return caches.match(request);
+      return caches.match(request).then(function (cached) {
+        if (cached) return cached;
+        // 网络失败且缓存 miss：合成 503，绝不 resolve(undefined)。
+        return new Response('', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+      });
     })
   );
 });
