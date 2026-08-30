@@ -23,3 +23,6 @@ Desktop.ini
 
 # Local verification artifacts (Playwright screenshots & one-off scripts)
 .claude-verify/
+
+# One-off working scripts / backups / review drafts (chinese-learning)
+chinese-learning/_tmp_*

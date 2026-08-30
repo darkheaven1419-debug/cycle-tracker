@@ -402,7 +402,7 @@
 }
 
 .lrn-back-btn {
-  padding: 8px 14px;
+  padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--card);
@@ -640,7 +640,7 @@
   padding: 14px;
   border: none;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--sage), var(--teal));
+  background: linear-gradient(135deg, var(--love), var(--rose-dark));
   color: #fff;
   font-size: 0.8rem;
   font-weight: 700;
@@ -2415,7 +2415,7 @@ html, body {
   color: var(--text-muted);
   font-size: .66rem;
   font-weight: 700;
-  padding: 5px 10px;
+  padding: 10px 12px;
   border-radius: 999px;
   cursor: pointer;
   transition: all .18s;
@@ -2451,7 +2451,7 @@ html, body {
 
 .lrn-subnav::-webkit-scrollbar { display: none; }
 
-.lrn-subnav-btn { white-space: nowrap; min-width: 68px; }
+.lrn-subnav-btn { white-space: nowrap; min-width: 0; }
 
 /* 返回按钮悬停态 */
 .lrn-back-btn { cursor: pointer; }
@@ -2461,6 +2461,18 @@ html, body {
   .lrn-header { flex-direction: column; align-items: stretch; text-align: center; }
   .lrn-lang-switch { justify-content: center; }
   .lrn-header-title { justify-content: center; }
+}
+
+/* D3: 窄屏导航压缩 — 5 项完整可见（不隐藏/不换行/不横向滚动） */
+@media (max-width: 360px) {
+  .lrn-subnav { gap: 3px; padding: 3px; }
+  .lrn-subnav-btn { padding: 9px 3px; }
+}
+
+@media (max-width: 340px) {
+  .lrn-subnav { gap: 2px; padding: 2px; }
+  .lrn-subnav-btn { padding: 8px 1px; font-size: 0.62rem; }
+  .lrn-sub-label { font-size: 0.56rem; margin-top: 1px; }
 }
 
 @media (min-width: 700px) {

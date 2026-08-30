@@ -1,6 +1,6 @@
 /* bootstrap.js — 独立中文学习网站启动脚本
    职责：
-   1. 定义全局 lang（默认 zh-CN，持久化到 localStorage）
+   1. 定义全局 lang（默认 sr，持久化到 localStorage）
    2. 提供最小 toast() 实现（依赖 #toastContainer）
    3. 语言切换：更新静态三语标签 + 重渲染当前视图
    4. 启动 initChineseTab()（chinese-ui.js 提供）
@@ -10,7 +10,7 @@
   'use strict';
 
   /* ---------- 1. 全局语言 ---------- */
-  var DEFAULT_LANG = 'zh-CN';
+  var DEFAULT_LANG = 'sr';
   try {
     window.lang = localStorage.getItem('lrn-lang') || DEFAULT_LANG;
   } catch (e) {
@@ -50,6 +50,20 @@
     'lrn-fav-title':  { 'zh-CN': '收藏词汇',  sr: 'Sačuvane reči', en: 'Favorite words' }
   };
 
+  /* 浏览器标签页标题（三语，随语言动态变化） */
+  var PAGE_TITLE = {
+    'zh-CN': '中文学习 · Chinese',
+    sr: 'Učenje kineskog · Kineski',
+    en: 'Chinese Learning · Chinese'
+  };
+
+  /* 启动失败提示（防御性，三语） */
+  var LOAD_FAIL = {
+    'zh-CN': '加载失败',
+    sr: 'Greška pri učitavanju',
+    en: 'Failed to load'
+  };
+
   function applyStaticLabels() {
     var l = window.lang || DEFAULT_LANG;
     Object.keys(STATIC_LABELS).forEach(function (id) {
@@ -68,43 +82,26 @@
     }
     // 页面 lang 属性
     if (document.documentElement) document.documentElement.setAttribute('lang', l);
+    // 浏览器标签页标题（随语言变化：首次加载 / 切换语言 / 刷新均生效）
+    if (PAGE_TITLE[l]) document.title = PAGE_TITLE[l];
   }
 
   /* ---------- 语言切换 ---------- */
+  // 以 chinese-ui 模块的真实状态（getLrnUIState）为唯一状态来源，
+  // 切换语言后重渲染当前视图，保留 phase / lesson 上下文，不再跳回首页
   window.setLrnLang = function (l) {
     window.lang = l;
     try { localStorage.setItem('lrn-lang', l); } catch (e) {}
     applyStaticLabels();
-    // 重渲染当前视图（保留 phase / lesson 内部状态）
-    var cur = document.querySelector('.lrn-subnav-btn.active');
-    var view = cur ? cur.getAttribute('data-lrn-view') : 'home';
-    if (view === 'phase' && window.__lrnLastPhase) {
-      window.renderPhaseLessons(window.__lrnLastPhase);
-    } else if (view === 'lesson' && window.__lrnLastLesson) {
-      window.renderLessonView(window.__lrnLastLesson);
+    var st = (typeof window.getLrnUIState === 'function') ? window.getLrnUIState() : null;
+    if (st && st.view === 'phase' && st.phaseId) {
+      window.renderPhaseLessons(st.phaseId);
+    } else if (st && st.view === 'lesson' && st.lessonId) {
+      window.renderLessonView(st.lessonId, st.tab);
     } else {
-      window.switchLrnView(view);
+      window.switchLrnView((st && st.view) ? st.view : 'home');
     }
   };
-
-  /* ---------- 记录 phase/lesson 当前状态（供语言切换重渲染） ---------- */
-  (function () {
-    var origPhase = window.renderPhaseLessons;
-    if (typeof origPhase === 'function') {
-      window.renderPhaseLessons = function (id) {
-        window.__lrnLastPhase = id;
-        return origPhase(id);
-      };
-    }
-    var origLesson = window.renderLessonView;
-    if (typeof origLesson === 'function') {
-      window.renderLessonView = function (id, tab) {
-        window.__lrnLastLesson = id;
-        if (tab) window.__lrnLastTab = tab;
-        return origLesson(id, tab);
-      };
-    }
-  })();
 
   /* ---------- 启动 ---------- */
   function boot() {
@@ -112,7 +109,7 @@
     if (typeof window.initChineseTab === 'function') {
       window.initChineseTab();
     } else {
-      toast('加载失败');
+      toast(LOAD_FAIL[window.lang] || LOAD_FAIL['zh-CN']);
     }
   }
 

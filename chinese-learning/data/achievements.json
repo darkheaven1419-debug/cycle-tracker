@@ -209,12 +209,12 @@
       "en": "50 Words"
     },
     "description": {
-      "zh": "掌握50个词",
-      "sr": "Savladajte 50 riječi",
-      "en": "Master 50 words"
+      "zh": "学习50个词",
+      "sr": "Naučite 50 riječi",
+      "en": "Learn 50 words"
     },
     "condition": {
-      "type": "totalPoints",
+      "type": "wordsLearned",
       "value": 50
     },
     "points": 30
@@ -229,12 +229,12 @@
       "en": "100 Words"
     },
     "description": {
-      "zh": "掌握100个词",
-      "sr": "Savladajte 100 riječi",
-      "en": "Master 100 words"
+      "zh": "学习100个词",
+      "sr": "Naučite 100 riječi",
+      "en": "Learn 100 words"
     },
     "condition": {
-      "type": "totalPoints",
+      "type": "wordsLearned",
       "value": 100
     },
     "points": 50
@@ -249,12 +249,12 @@
       "en": "500 Words"
     },
     "description": {
-      "zh": "掌握500个词",
-      "sr": "Savladajte 500 riječi",
-      "en": "Master 500 words"
+      "zh": "学习500个词",
+      "sr": "Naučite 500 riječi",
+      "en": "Learn 500 words"
     },
     "condition": {
-      "type": "totalPoints",
+      "type": "wordsLearned",
       "value": 500
     },
     "points": 100
@@ -389,7 +389,7 @@
       "en": "Complete Mastery"
     },
     "description": {
-      "zh": "完成全逗180课",
+      "zh": "完成全部180课",
       "sr": "Završite svih 180 lekcija",
       "en": "Complete all 180 lessons"
     },
