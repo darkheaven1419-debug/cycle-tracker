@@ -619,6 +619,12 @@
           "mood": "happy",
           "time": 1787863612488
         }
+      },
+      "2026-08-30": {
+        "barry": {
+          "mood": "loved",
+          "time": 1788126909470
+        }
       }
     },
     "diaries": {},
@@ -652,10 +658,7 @@
       "time": 1784927874533
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1787863639740
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -717,5 +720,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1787863751004
+  "updated": 1788126911651
 }
