@@ -514,6 +514,26 @@
         "mood": "",
         "time": 1787863750579
       }
+    },
+    "2026-08-30": {
+      "andjela": {
+        "hug": {
+          "time": 1788126912934
+        },
+        "text": "Ljubavi moja, bilo mi je lepo danas. Iskreno mi je delovalo kao da nećemo provesti puno vremena zajedno danas, ali smo baš dosta pričali na video pozivu i to me je učinilo mnogo srećnom. Zaista mi se dopada kako si napravio onaj sajt za učenje. Nadam se da ćemo se sutra družiti više. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788127025445
+      }
+    },
+    "2026-08-31": {
+      "andjela": {
+        "hug": {
+          "time": 1788212046786
+        },
+        "text": "Ljubavi moja, \nPuno mi nedostaješ! Jedva čekam da te vidim kada se probudim. Bilo mi je baš lepo kada smo pričali na video pozivu danas i puno si mi pomogao sa piyin-om. Ali si posle mnogo učio i mnogo mi falio. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788212129742
+      }
     }
   },
   "cycleInfo": {
@@ -619,6 +639,18 @@
           "mood": "happy",
           "time": 1787863612488
         }
+      },
+      "2026-08-30": {
+        "barry": {
+          "mood": "loved",
+          "time": 1788126909470
+        }
+      },
+      "2026-08-31": {
+        "barry": {
+          "mood": "happy",
+          "time": 1788212042917
+        }
       }
     },
     "diaries": {},
@@ -654,7 +686,7 @@
   ],
   "hug": {
     "from": "andjela",
-    "time": 1787863639740
+    "time": 1788126912934
   },
   "songs": {
     "barry": null,
@@ -717,5 +749,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1787863751004
+  "updated": 1788212130296
 }
