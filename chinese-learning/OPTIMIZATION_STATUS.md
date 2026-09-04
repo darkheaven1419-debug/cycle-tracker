@@ -4,11 +4,12 @@
 > 长期原则见 `PROJECT_CONTEXT.md`，路线图见 `OPTIMIZATION_ROADMAP.md`。
 > 每完成一个阶段后更新本文件。
 
-## Current Phase: V1.0 Real User Observation（2026-08-31）
+## Current Phase: V1.1 Tone MVP 封存 / Real User Validation（2026-09-04）
 
-- V1.0（commit `5651d9d`）已上线 GitHub Pages，Anđela 已获得链接并开始使用。
-- 产品开发暂停，等待真实用户反馈。
-- 反馈记录见 `USER_FEEDBACK.md`（只记录真实反馈，不写猜测）。
+- V1.1 Pinyin & Tone Training MVP（**方案 B：8 题听音辨调**）已实现、封存并提交（commit subject：`feat: add pinyin tone training MVP`）。
+- 功能范围到此为止：入口 = Practice tab「🎵 Vežbanje tonova」；只播放已学范围内单字词的中文 TTS（复用现有 zh-CN voice，无新增音频）；8 题一轮 / 对错反馈 / 结果卡 / 再练一轮 / 语言切换保留会话 / 无 voice 自动视觉降级。
+- **当前阶段：Real User Validation** —— 唯一待验证事项 = **真实手机中文 TTS 的实际发音体验**，验证清单见下方「V1.1-TONE-REAL-DEVICE」。
+- 暂不继续开发 L3/L4 课程 / minimal-pair / 麦克风 / AI 评分等后续功能。
 
 ## 已完成（全部验证通过）
 
@@ -32,6 +33,7 @@
 | **UX-10D D4** | **移动端触控目标（欢迎 CTA 40px / 语言按钮 33px / 返回按钮 33px / Quiz 选项 44px / Continue 46px / Review 热区）** | **D4 17/17** |
 | **UX-10D D5** | **视觉对比度（欢迎标题/🎯/completion180/✅徽章 sage→sage-dark；欢迎 CTA + 完成按钮 sage→玫瑰渐变；6 处修复，保持风格）** | **D5 31/31** |
 | **V1.0** | **正式部署上线（commit `5651d9d`，19 文件）；线上 10/10 文件 hash = 本地；真实浏览器 smoke 验收通过（首用/第一课/quiz/完成/返回首页/移动端 320-390/三语/首页循环）；页面错误 0** | **已上线** |
+| **V1.1** | **声调训练 MVP（方案 B：8 题听音辨调）；toneOf 纯函数 / 单字词题池（含 reserve 补池）/ 8 题状态机 / 视觉降级；不改课程结构、不写进度、不动首页导航** | **87/87** |
 
 ## 最近一次全量回归（2026-08-31）
 
@@ -45,15 +47,37 @@ D2 flow16 唯一偏差 D2-10b = 旧测试断言与产品设计不符（submitQui
 node --check 全部 js / JSON 全部有效 / 资源引用 10 无缺失 ✅
 ```
 
+## 最近一次全量回归（2026-09-04，V1.1 封存前）
+
+```
+verify_tone（V1.1 新增）        87/87   ✅
+verify_ux.test.js all          218/218 ✅
+verify_ux11a                    24/24   ✅
+Phase1 / Phase2 / Phase3        25/25 / 61/61 / 42/42  ✅
+node --check 全部 js / JSON 全部有效  ✅
+真实移动端 Chromium 检查（320/360/390）54/54  ✅（入口按钮顺序→打开 overlay→作答 Tačno!→结果卡 Kraj runde/8/8→再练一轮重置→EN 切语言保留会话→关闭移除；页面错误 0；headless 无 zh voice 自动走视觉降级路径）
+```
+
 ## 当前任务
 
-- **V1.0 真实用户观察阶段**：V1.0 已上线（`5651d9d`），Anđela 已获得链接。
-- **产品开发已暂停**，等待真实用户反馈（用户指令：先暂停继续开发，进入 V1.0 真人使用观察阶段，不要修改任何产品代码）。
+- **V1.1 Tone MVP 封存 + 真机观察准备**：声调训练 MVP（方案 B / 8 题听音辨调）已实现，功能范围封存，进入 **Real User Validation**。
+- 当前唯一待验证事项：**真实手机中文 TTS 的实际发音体验**（清单见下）。
 - 反馈收集后按 `USER_FEEDBACK.md` 规范记录；未收到真实反馈前不填充、不猜测。
 
-## 下一任务（等真实反馈，勿预先决定）
+## REAL DEVICE VALIDATION — V1.1-TONE-REAL-DEVICE（待验证）
 
-1. **V1.1 = Based on real user feedback**（具体内容由真实反馈决定，见 `OPTIMIZATION_ROADMAP.md` 版本路线；不预先决定做什么）
+> 待 Anđela 在真实手机（Android / iPhone 浏览器）使用「🎵 Vežbanje tonova」后逐项确认。全部确认前 V1.1 保持封存，不继续开发后续功能。
+
+- [ ] **zh-CN TTS 播放**：手机浏览器能正常播放中文单字词的朗读；无中文 voice 的机型自动降级为视觉模式（不白屏）
+- [ ] **「🔁 再听一次」**：按钮可用，能反复重播当前词
+- [ ] **语速**：rate 0.6 慢速是否适合辨调（听不清可再降速；嫌拖沓可提速）
+- [ ] **四声参照条可理解性**：顶部 `ā á ǎ à` + 1234 + sr 方向提示能否帮她听懂差别并作答
+- [ ] **一轮 8 题时长**：是否过长/过短（过短→加到 10；过长→减到 6/5）
+- [ ] **辨调能力提升感**：实际使用后是否觉得更能听出四声（结果卡正确率是否逐步提高）
+
+## 下一任务（等真机验证反馈，勿预先决定）
+
+- 待 V1.1-TONE-REAL-DEVICE 各项确认后，再按真实反馈决定是否/如何迭代；L3/L4 / minimal-pair / 麦克风 / AI 评分等一律等反馈，不预先开发。
 
 ## 已知问题（已记录，未擅自处理）
 

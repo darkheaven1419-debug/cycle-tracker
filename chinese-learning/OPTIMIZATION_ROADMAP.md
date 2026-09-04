@@ -7,9 +7,10 @@
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | **V1.0** | 正式上线（commit `5651d9d`，2026-08-31），Anđela 开始真实使用 | ✅ 上线 |
-| **V1.1** | **Based on real user feedback**（具体内容待真实反馈确定，不预先决定）| 🔍 观察中 |
+| **V1.1** | **Pinyin & Tone Training MVP（方案 B：8 题听音辨调；commit subject `feat: add pinyin tone training MVP`）**：Practice tab 声调入口 / toneOf 纯函数 / 单字词 8 题状态机 / 视觉降级；范围封存 | ✅ 已实现 · 🔍 真机验证中 |
+| **V1.2+** | Based on real user feedback（L3/L4 课程 / minimal-pair / 麦克风 / AI 评分等，内容由真机反馈决定）| 🔍 待反馈 |
 
-> 反馈记录见 `USER_FEEDBACK.md`。V1.1 做什么由真实反馈决定，不提前规划。
+> 反馈记录见 `USER_FEEDBACK.md`。V1.1 已按真实用户痛点（听辨声调困难）落地为首版声调 MVP；下一阶段做什么由 **V1.1-TONE-REAL-DEVICE 真机验证结果**决定，不提前规划。
 
 ## 状态图例
 
@@ -52,6 +53,7 @@
 - L41-L180 对话自然化（UX-8C 范围外，将来一并处理；含 L59/L81 碎片句）
 - L5 `Zauzet?`（用户定保持为性别中性）
 - 首屏 <1s 静态语言闪现 / `<html lang>` / 热力图「2 lekcija」数词变格 / 复习两套术语统一
+- V1.1 之后的课程/功能扩展（L3/L4、minimal-pair、麦克风/AI 评分）：等 V1.1-TONE-REAL-DEVICE 真机反馈再决定，暂不开发
 
 ## 决策记录（历史重要决策）
 

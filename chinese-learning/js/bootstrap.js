@@ -101,6 +101,8 @@
     } else {
       window.switchLrnView((st && st.view) ? st.view : 'home');
     }
+    // V1.1 声调练习：语言切换时刷新悬浮层文案（保留会话状态），无则跳过
+    if (typeof window.toneOnLangSwitch === 'function') window.toneOnLangSwitch(st);
   };
 
   /* ---------- 启动 ---------- */
