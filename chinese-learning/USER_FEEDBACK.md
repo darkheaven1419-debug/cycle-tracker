@@ -68,6 +68,29 @@ _（等待反馈；记录基于真实反馈做出的产品决策）_
 - 功能范围已封存；**下一步等待 Anđela 真机使用反馈**（验证清单见 `OPTIMIZATION_STATUS.md` 的 `V1.1-TONE-REAL-DEVICE`）。
 - 真机反馈到达前：不填充具体问题、不写猜测（遵循本文件「只记录真实反馈」原则）；收到后按下方 FB-00N 格式逐条记录。
 
+## 2026-09-04 — Zero Beginner Tone Curriculum 设计锁定（后续正式方向）
+
+**设计前提（开发者对真实用户能力的判断，非 Anđela 原话 → 不标 `User Quote`）**
+- 判断：Anđela 几乎无法稳定区分 / 产出第一、二、三、四声，属「**声调零基础**」——V1.1 的 8 题随机听音辨调对她偏难（超出当前能力）；声调需要**更早、更慢、可控变量**的专门路径，即 **Faza 0 零基础声调课程**。
+
+**产品决策（已由用户圈定，作为 V1.1 后续实现正式方向）**
+1. 新用户首次进入 → 主 CTA 指向 Faza 0 声调入门；次要入口可直接进入正式课程（可跳过）。一旦开始 180 课则不强制重走；Anđela 属老用户 → 只给 Faza 0 推荐卡，不锁正式课程。
+2. Faza1 L6「四声」维持现状（不删/不改/不重排），定位 = Faza 0 完成后的复习 / 再确认；待 Faza 0 真机验证后再议是否降级为复习页。
+3. 首页采用 Faza 0 / 第 0 阶段视觉门面（视觉位于 6 个 Faza 之前）；工程上为独立模块，不进 180 engine、不占课号。
+
+**下一步实现边界**：Implementation MVP = **G1–G7**；G8/G9/G10 暂不实现，先真机验证闭环再决定。V1.1 随机 8 题保留为底层 / 巩固能力，后续逐步转向「课程内容驱动训练」。
+
+## 2026-09-05 — Faza 0 G1–G7 已实现并验收（开发者验证 · 非真实用户反馈）
+
+- 按 2026-09-04 锁定设计完成 Implementation MVP：G1 概念 / G2 T1 / G3 T4 / G4 一比四 / G5 T2 / G6 T3（low-valley）/ G7 ma 四声；新增 `data/tone-course.json` / `js/tone-course.js` / `js/tone-course-ui.js` / `js/faza0-home.js`，进度隔离 `chinese-tone-course-<profile>`，不触碰 180 课进度 / `chinese-progress-default`。
+- **本日无真实用户反馈**。以下全部为**开发者内部验证**（≠ Anđela 使用反馈）：
+  - 教学认知走查：教什么→练什么 7 条不变量全满足（G4 只 T1/T4、G6 只 2/3/4、G7 才四声全上；无完整降升教条；mimic = 自报）
+  - 三语 sr/en/zh-CN 全页扫描（含 F0 首页卡 / G1–G7 overlay / 毕业卡 / 正式入口）
+  - 真实 Chromium 320/360/390 全旅程 **182/182 ALL_PASS**（walking home→Faza0→G1…G7→毕业→正式 L1；refresh/mid-resume、TTS/no-TTS、replay、skip、老用户推荐卡、formal entry、进度隔离）
+  - 仓库单测 **296/296**；验收中发现并修复 **2 个真实产品 bug**（关闭 tone-course overlay 后首页 F0 卡不刷新、scored-fail 结果屏 warm 文案重复），修复后回归全绿
+- **已进入 Real User Validation**：Faza 0 G1–G7 交付给 Anđela 真机验证（清单见 `OPTIMIZATION_STATUS.md` → `REAL DEVICE VALIDATION — FAZA0-G1-G7`）。
+- **原则声明**：真机反馈到达前，下方 FB-00N 字段保持空白——不写猜测、不标 `User Quote`、不填充 `Actual / Expected`。
+
 ## 问题 / 请求记录
 
 > 格式模板。**无真实反馈前不填充。** 收到反馈后按此格式新增条目（FB-001、FB-002 …）。

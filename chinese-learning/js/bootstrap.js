@@ -103,6 +103,8 @@
     }
     // V1.1 声调练习：语言切换时刷新悬浮层文案（保留会话状态），无则跳过
     if (typeof window.toneOnLangSwitch === 'function') window.toneOnLangSwitch(st);
+    // Faza0 声调课程（tone-course）：语言切换保留 lesson/step/题目状态，仅重渲染文案
+    if (typeof window.toneCourseOnLangSwitch === 'function') window.toneCourseOnLangSwitch(st);
   };
 
   /* ---------- 启动 ---------- */

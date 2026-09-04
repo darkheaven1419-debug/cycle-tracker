@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 1,
+  "id": "faza0-tones",
+  "meta": {
+    "order": 0,
+    "icon": "🎙️",
+    "name": { "zh": "声调入门", "sr": "Glasovi i tonovi", "en": "Tones & Sounds" },
+    "shortName": { "zh": "声调", "sr": "Tonovi", "en": "Tones" },
+    "cardTitle": { "zh": "Faza 0 · 声调入门", "sr": "Faza 0 · Glasovi i tonovi", "en": "Faza 0 · Tones & Sounds" },
+    "subtitle": { "zh": "先学会听出四声，再开始正式课程（约 20 分钟）", "sr": "Prvo nauči da čuješ tonove, pa kreni sa kursom (oko 20 min)", "en": "Learn to hear the tones before starting the course (≈20 min)" },
+    "done": { "zh": "声调基础完成！", "sr": "Osnove tonova završene!", "en": "Tone basics done!" }
+  },
+  "tones": [
+    { "tone": 1, "glyph": "ā", "dir": { "zh": "高平", "sr": "visok i ravan", "en": "high & level" }, "ord": { "zh": "第一声", "sr": "prvi ton", "en": "Tone 1" } },
+    { "tone": 2, "glyph": "á", "dir": { "zh": "上扬", "sr": "uzlazni", "en": "rising" }, "ord": { "zh": "第二声", "sr": "drugi ton", "en": "Tone 2" } },
+    { "tone": 3, "glyph": "ǎ", "dir": { "zh": "低而弯", "sr": "nizak i savijen", "en": "low & curved" }, "ord": { "zh": "第三声", "sr": "treći ton", "en": "Tone 3" } },
+    { "tone": 4, "glyph": "à", "dir": { "zh": "快速下降", "sr": "silazni", "en": "falling" }, "ord": { "zh": "第四声", "sr": "četvrti ton", "en": "Tone 4" } }
+  ],
+  "lessons": [
+    {
+      "id": "G1",
+      "order": 1,
+      "icon": "✨",
+      "kind": "concept",
+      "noScore": true,
+      "title": { "zh": "声调是什么", "sr": "Šta je ton", "en": "What is a tone?" },
+      "objective": { "zh": "同一个音节，音高走向不同，意思就不同。", "sr": "Isti slog — različit tok visine — drugo značenje.", "en": "The same syllable changes meaning with its pitch shape." },
+      "toneFocus": [1, 2, 3, 4],
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "explain",
+          "title": { "zh": "一句话说明", "sr": "U jednoj rečenici", "en": "In one sentence" },
+          "body": {
+            "zh": "汉语里，同一个音节可以用四种不同的「音高走向」说出来，意思完全不同。这叫声调（四声）。",
+            "sr": "U kineskom se isti slog može izgovoriti sa četiri različita „toka visine“ — i svaki put znači nešto drugo. To su tonovi.",
+            "en": "In Chinese, the same syllable can be spoken with four different pitch shapes — each meaning something different. Those are the tones."
+          },
+          "points": [
+            { "zh": "不是重音，而是整个音节的音高形状。", "sr": "Nije naglasak — oblik visine celog sloga.", "en": "Not stress — the pitch shape of the whole syllable." },
+            { "zh": "四个声调都有编号和符号。", "sr": "Svaki ton ima broj i znak.", "en": "Each tone has a number and a mark." },
+            { "zh": "先学会「听出差别」，不用急着背。", "sr": "Prvo samo nauči da ČUJEŠ razliku — ne moraš ništa da pamtiš.", "en": "First just learn to HEAR the difference — nothing to memorize." }
+          ]
+        },
+        {
+          "id": "s2",
+          "kind": "cards",
+          "title": { "zh": "四个声调，先听一遍", "sr": "Četiri tona — poslušaj ih", "en": "Four tones — give them a listen" },
+          "intro": {
+            "zh": "同一个 ma，四种音高。先别记，只听。",
+            "sr": "Isti slog „ma“ — četiri visine. Samo slušaj, još ništa ne pamti.",
+            "en": "The same \"ma\" at four pitches. Just listen for now."
+          },
+          "autoplay": true,
+          "cards": [
+            { "tone": 1, "glyph": "ā", "dir": { "zh": "高平", "sr": "visok i ravan", "en": "high & level" }, "sample": { "zh": "妈", "py": "mā", "sr": "mama" } },
+            { "tone": 2, "glyph": "á", "dir": { "zh": "上扬", "sr": "uzlazni", "en": "rising" }, "sample": { "zh": "麻", "py": "má", "sr": "konoplja" } },
+            { "tone": 3, "glyph": "ǎ", "dir": { "zh": "低而弯", "sr": "nizak i savijen", "en": "low & curved" }, "sample": { "zh": "马", "py": "mǎ", "sr": "konj" } },
+            { "tone": 4, "glyph": "à", "dir": { "zh": "快速下降", "sr": "silazni", "en": "falling" }, "sample": { "zh": "骂", "py": "mà", "sr": "psovati" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "order": 2,
+      "icon": "📈",
+      "kind": "anchor",
+      "title": { "zh": "第一声 · 高平", "sr": "Prvi ton — visok i ravan", "en": "Tone 1 — high & level" },
+      "objective": { "zh": "听出「又高又平」的第一声（ā）。", "sr": "Prepoznaj prvi ton — visok i ravan (ā).", "en": "Recognize Tone 1 — high and level (ā)." },
+      "toneFocus": [1],
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "teach",
+          "tone": 1,
+          "glyph": "ā",
+          "title": { "zh": "第一声的形状", "sr": "Oblik prvog tona", "en": "The shape of Tone 1" },
+          "body": {
+            "zh": "又高又平，像把声音稳稳架在高处。不会忽然升，也不会忽然降。",
+            "sr": "Visok i ravan — kao da zvuk mirno držiš na vrhu. Ne ide ni gore ni dole.",
+            "en": "High and level — like holding the sound steady at the top. It neither rises nor falls."
+          },
+          "hint": { "zh": "可以拖长念，像在说「啊——」但没有起伏。", "sr": "Možeš da ga produžiš kao „aaa…“, bez uspona i padova.", "en": "You can stretch it like \"ahh…\" with no up or down." },
+          "sample": { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" }
+        },
+        {
+          "id": "s2",
+          "kind": "listen",
+          "title": { "zh": "多听几个第一声", "sr": "Poslušaj još nekoliko prvih tonova", "en": "Hear more Tone 1 words" },
+          "intro": {
+            "zh": "这些都是第一声。用耳朵找「高而平」的感觉。",
+            "sr": "Sve su ovo prvi ton. Uhom traži osećaj „visoko i ravno“.",
+            "en": "These are all Tone 1. Tune your ear to that high, level feel."
+          },
+          "repeat": true,
+          "items": [
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "三", "py": "sān", "tone": 1, "sr": "tri" },
+            { "zh": "八", "py": "bā", "tone": 1, "sr": "osam" },
+            { "zh": "书", "py": "shū", "tone": 1, "sr": "knjiga" }
+          ]
+        },
+        {
+          "id": "s3",
+          "kind": "mimic",
+          "title": { "zh": "跟着读一遍", "sr": "Ponovi za mnom", "en": "Repeat after me" },
+          "instructions": {
+            "zh": "先听标准读法，再自己读一遍，然后老实告诉它：像，还是不太像？",
+            "sr": "Prvo poslušaj kako zvuči, pa ponovi naglas. Zatim iskreno reci: zvuči li slično ili ne?",
+            "en": "Listen, then say it out loud. Then honestly tell us: similar, or not quite?"
+          },
+          "item": { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+          "selfReport": true
+        },
+        {
+          "id": "s4",
+          "kind": "check",
+          "checkKind": "isTone",
+          "title": { "zh": "短辨认：这是第一声吗？", "sr": "Kratka provera: je li ovo prvi ton?", "en": "Quick check: is this Tone 1?" },
+          "intro": {
+            "zh": "听这个词：它的声音是又高又平的第一声吗？答「是」或「不是」就行。（这些字 G1 里都听过。）",
+            "sr": "Poslušaj reč: zvuči li kao prvi ton — visoko i ravno? Odgovori sa „da“ ili „ne“. (Sve ove slogove si čula u G1.)",
+            "en": "Listen to the word: does it sound like Tone 1 — high and level? Just answer yes or no. (You heard all these in G1.)"
+          },
+          "question": {
+            "zh": "这是第一声（高平）吗？",
+            "sr": "Je li ovo prvi ton (visok i ravan)?",
+            "en": "Is this Tone 1 (high & level)?"
+          },
+          "tones": [1],
+          "round": 4,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "三", "py": "sān", "tone": 1, "sr": "tri" },
+            { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G3",
+      "order": 3,
+      "icon": "📉",
+      "kind": "anchor",
+      "title": { "zh": "第四声 · 快速下降", "sr": "Četvrti ton — silazni", "en": "Tone 4 — falling" },
+      "objective": { "zh": "听出「从高处快速落下」的第四声（à）。", "sr": "Prepoznaj četvrti ton — kratak pad sa visine (à).", "en": "Recognize Tone 4 — the quick drop from high (à)." },
+      "toneFocus": [4],
+      "now": { "zh": "你现在认识第四声了：从高处快速落下的 à。", "sr": "Sada znaš četvrti ton — silazni à.", "en": "You now know Tone 4 — the quick falling à." },
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "teach",
+          "tone": 4,
+          "glyph": "à",
+          "title": { "zh": "第四声的形状", "sr": "Oblik četvrtog tona", "en": "The shape of Tone 4" },
+          "body": {
+            "zh": "第四声从高处快速落下，干脆地「砸」到低处。正好和第一声相反：第一声在高处稳稳不动，第四声是一下子落下来。",
+            "sr": "4. ton naglo pada sa visine — kratko i odsečno. Suprotan je prvom tonu: prvi miruje na vrhu, a četvrti „padne“.",
+            "en": "Tone 4 falls sharply from high — short and crisp. It is the opposite of Tone 1: Tone 1 stays steady at the top, Tone 4 drops down."
+          },
+          "hint": { "zh": "像很肯定地回一声「对！」那样干脆地往下一落。", "sr": "Zamisli odlučan kratak uzvik koji pada — kao „Da!“ okrenuto naniže.", "en": "Think of a firm short “Down!” — a decisive drop." },
+          "sample": { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" }
+        },
+        {
+          "id": "s2",
+          "kind": "listen",
+          "title": { "zh": "多听几个第四声", "sr": "Poslušaj još četvrtih tonova", "en": "Hear more Tone 4 words" },
+          "intro": {
+            "zh": "这些都是第四声——声音从高处掉下来。用耳朵找那种「啪」地一落的干脆。",
+            "sr": "Sve su ovo četvrti ton — zvuk pada. Uhom traži taj kratki, odsečni pad.",
+            "en": "These are all Tone 4 — the falling sound. Tune your ear to that crisp drop."
+          },
+          "repeat": true,
+          "items": [
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "大", "py": "dà", "tone": 4, "sr": "veliko" },
+            { "zh": "四", "py": "sì", "tone": 4, "sr": "četiri" },
+            { "zh": "是", "py": "shì", "tone": 4, "sr": "jeste" }
+          ]
+        },
+        {
+          "id": "s3",
+          "kind": "mimic",
+          "title": { "zh": "跟着读一遍", "sr": "Ponovi za mnom", "en": "Repeat after me" },
+          "instructions": {
+            "zh": "先听标准读法，再自己读一遍，然后老实告诉它：像，还是不太像？",
+            "sr": "Prvo poslušaj kako zvuči, pa ponovi naglas. Zatim iskreno reci: zvuči li slično ili ne?",
+            "en": "Listen, then say it out loud. Then honestly tell us: similar, or not quite?"
+          },
+          "item": { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+          "selfReport": true
+        },
+        {
+          "id": "s4",
+          "kind": "check",
+          "checkKind": "isTone",
+          "title": { "zh": "短辨认：这是第四声吗？", "sr": "Kratka provera: je li ovo četvrti ton?", "en": "Quick check: is this Tone 4?" },
+          "intro": {
+            "zh": "听这个词：声音是从高处「一下子落下来」的吗？答「是」或「不是」。（对照：第一声是平的，不是往下掉的。）",
+            "sr": "Poslušaj reč: da li zvuk naglo pada sa visine? Odgovori sa „da“ ili „ne“. (Podsetnik: prvi ton je ravan — ne pada.)",
+            "en": "Listen to the word: does the sound drop sharply from high? Just answer yes or no. (Remember: Tone 1 is level — it does not fall.)"
+          },
+          "question": {
+            "zh": "这是第四声（快速下降）吗？",
+            "sr": "Je li ovo četvrti ton (silazni)?",
+            "en": "Is this Tone 4 (falling)?"
+          },
+          "tones": [4],
+          "round": 6,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "大", "py": "dà", "tone": 4, "sr": "veliko" },
+            { "zh": "四", "py": "sì", "tone": 4, "sr": "četiri" },
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "三", "py": "sān", "tone": 1, "sr": "tri" },
+            { "zh": "八", "py": "bā", "tone": 1, "sr": "osam" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G4",
+      "order": 4,
+      "icon": "⚖️",
+      "kind": "compare",
+      "title": { "zh": "一比四：妈 ↔ 骂", "sr": "1. naspram 4.: mā ↔ mà", "en": "Tone 1 vs 4: mā ↔ mà" },
+      "objective": { "zh": "在 ma 和别的字上，听出第一声与第四声的区别。", "sr": "Razlikuj prvi i četvrti ton — na „ma“ i drugim slogovima.", "en": "Tell Tone 1 apart from Tone 4 — on “ma” and other words." },
+      "toneFocus": [1, 4],
+      "now": { "zh": "你已经能把第一声和第四声分开了。", "sr": "Sada razlikuješ prvi i četvrti ton.", "en": "You can now tell Tone 1 from Tone 4." },
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "cards",
+          "title": { "zh": "只比这两个声", "sr": "Poredimo samo ova dva tona", "en": "Just these two tones" },
+          "intro": {
+            "zh": "只比这两声：1 = 高平（mā 妈），4 = 快速下降（mà 骂）。先把两个点开听熟，把「平」和「落」分开。",
+            "sr": "Samo dva tona: 1. je visok i ravan (mā — mama), 4. je silazni (mà — psovati). Prvo ih poslušaj i razdvoji „ravno“ od „pada“.",
+            "en": "Only two tones here: 1 is high & level (mā — mum), 4 is falling (mà — to scold). Listen to both and separate “level” from “fall”."
+          },
+          "autoplay": false,
+          "cards": [
+            { "tone": 1, "glyph": "ā", "dir": { "zh": "高平", "sr": "visok i ravan", "en": "high & level" }, "sample": { "zh": "妈", "py": "mā", "sr": "mama" } },
+            { "tone": 4, "glyph": "à", "dir": { "zh": "快速下降", "sr": "silazni", "en": "falling" }, "sample": { "zh": "骂", "py": "mà", "sr": "psovati" } }
+          ]
+        },
+        {
+          "id": "s2",
+          "kind": "check",
+          "checkKind": "whichTone",
+          "title": { "zh": "短辨认：第几声？", "sr": "Kratka provera: koji ton?", "en": "Quick check: which tone?" },
+          "intro": {
+            "zh": "听每个词：是第 1 声（高平）还是第 4 声（下降）？就两个选项，慢慢听。",
+            "sr": "Poslušaj svaku reč: je li to 1. (visok i ravan) ili 4. (silazni)? Samo dve opcije — slušaj polako.",
+            "en": "Listen to each word: is it Tone 1 (level) or Tone 4 (falling)? Only two options — take your time."
+          },
+          "question": {
+            "zh": "这是第几声？",
+            "sr": "Koji je ovo ton?",
+            "en": "Which tone is this?"
+          },
+          "tones": [1, 4],
+          "round": 8,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "三", "py": "sān", "tone": 1, "sr": "tri" },
+            { "zh": "四", "py": "sì", "tone": 4, "sr": "četiri" },
+            { "zh": "八", "py": "bā", "tone": 1, "sr": "osam" },
+            { "zh": "大", "py": "dà", "tone": 4, "sr": "veliko" },
+            { "zh": "书", "py": "shū", "tone": 1, "sr": "knjiga" },
+            { "zh": "是", "py": "shì", "tone": 4, "sr": "jeste" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G5",
+      "order": 5,
+      "icon": "↗️",
+      "kind": "anchor",
+      "title": { "zh": "第二声 · 上扬", "sr": "Drugi ton — uzlazni", "en": "Tone 2 — rising" },
+      "objective": { "zh": "听出「往上扬」的第二声（á）。", "sr": "Prepoznaj drugi ton — uzlazni, kao pitanje (á).", "en": "Recognize Tone 2 — the rising, question-like tone (á)." },
+      "toneFocus": [2],
+      "now": { "zh": "你现在认识第二声了：往上扬的 á。", "sr": "Sada znaš drugi ton — uzlazni á.", "en": "You now know Tone 2 — the rising á." },
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "teach",
+          "tone": 2,
+          "glyph": "á",
+          "title": { "zh": "第二声的形状", "sr": "Oblik drugog tona", "en": "The shape of Tone 2" },
+          "body": {
+            "zh": "第二声从低往高扬起来，像很自然地问「嗯？」——声音往上走。",
+            "sr": "Drugi ton ide od niskog ka visokom — kao prirodno „Hm?“ u kome glas ide gore.",
+            "en": "Tone 2 rises from low to high — like a natural “Huh?” where your voice goes up."
+          },
+          "hint": { "zh": "试着用往上问的语气念，声音会自己扬起来。", "sr": "Probaj da ga izgovoriš kao pitanje — glas će sam krenuti nagore.", "en": "Say it with a question-y rise and the pitch goes up on its own." },
+          "sample": { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" }
+        },
+        {
+          "id": "s2",
+          "kind": "listen",
+          "title": { "zh": "多听几个第二声", "sr": "Poslušaj još drugih tonova", "en": "Hear more Tone 2 words" },
+          "intro": {
+            "zh": "这些都是第二声——声音往上升。和往下落的第四声正好相反。",
+            "sr": "Sve su ovo drugi ton — zvuk ide nagore. Suprotno četvrtom, koji pada.",
+            "en": "These are all Tone 2 — the sound rises. The opposite of Tone 4’s fall."
+          },
+          "repeat": true,
+          "items": [
+            { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+            { "zh": "十", "py": "shí", "tone": 2, "sr": "deset" },
+            { "zh": "人", "py": "rén", "tone": 2, "sr": "čovek" },
+            { "zh": "学", "py": "xué", "tone": 2, "sr": "učiti" }
+          ]
+        },
+        {
+          "id": "s3",
+          "kind": "mimic",
+          "title": { "zh": "跟着读一遍", "sr": "Ponovi za mnom", "en": "Repeat after me" },
+          "instructions": {
+            "zh": "先听标准读法，再自己读一遍，然后老实告诉它：像，还是不太像？",
+            "sr": "Prvo poslušaj kako zvuči, pa ponovi naglas. Zatim iskreno reci: zvuči li slično ili ne?",
+            "en": "Listen, then say it out loud. Then honestly tell us: similar, or not quite?"
+          },
+          "item": { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+          "selfReport": true
+        },
+        {
+          "id": "s4",
+          "kind": "check",
+          "checkKind": "isTone",
+          "title": { "zh": "短辨认：这是第二声吗？", "sr": "Kratka provera: je li ovo drugi ton?", "en": "Quick check: is this Tone 2?" },
+          "intro": {
+            "zh": "听这个词：声音是在「往上扬」吗？对照：第一声平，第四声往下落，都不是上扬。",
+            "sr": "Poslušaj reč: da li zvuk ide nagore? Podsetnik: prvi ton je ravan, a četvrti pada — nijedan se ne penje.",
+            "en": "Listen to the word: is the sound rising? Remember: Tone 1 is level and Tone 4 falls — neither rises."
+          },
+          "question": {
+            "zh": "这是第二声（上扬）吗？",
+            "sr": "Je li ovo drugi ton (uzlazni)?",
+            "en": "Is this Tone 2 (rising)?"
+          },
+          "tones": [2],
+          "round": 8,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "十", "py": "shí", "tone": 2, "sr": "deset" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "人", "py": "rén", "tone": 2, "sr": "čovek" },
+            { "zh": "三", "py": "sān", "tone": 1, "sr": "tri" },
+            { "zh": "书", "py": "shū", "tone": 1, "sr": "knjiga" },
+            { "zh": "大", "py": "dà", "tone": 4, "sr": "veliko" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G6",
+      "order": 6,
+      "icon": "〰️",
+      "kind": "anchor",
+      "title": { "zh": "第三声 · 低而弯", "sr": "Treći ton — nizak i savijen", "en": "Tone 3 — low & curved" },
+      "objective": { "zh": "认识「低而弯」的第三声（ǎ），并知道它在自然语流里常常很短。", "sr": "Upoznaj treći ton — NIZAK i SAVIJEN (ǎ), i to da u brzom govoru često bude kratak.", "en": "Meet Tone 3 — LOW and curved (ǎ), and notice it is often short in fast speech." },
+      "toneFocus": [3],
+      "now": { "zh": "你现在熟悉第三声了：低而弯的 ǎ——在自然说话里常常很轻很短。", "sr": "Sada ti je blizak treći ton — nizak i savijen ǎ, u govoru često kratak.", "en": "You’ve now got Tone 3 — the low, curved ǎ, often short in real speech." },
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "teach",
+          "tone": 3,
+          "glyph": "ǎ",
+          "title": { "zh": "第三声：低，而且弯", "sr": "Treći ton: nizak i savijen", "en": "Tone 3: low and curved" },
+          "body": {
+            "zh": "第三声听起来「低、弯、压下去」，像一个浅浅的低谷。它不一定非要完整地「降下去再升上来」——在自然、快速的句子里它常常很短、很轻，重要的是那个「低」的感觉。",
+            "sr": "Treći ton zvuči NISKO i SAVIJENO, kao plitka dolina. Ne mora da bude pun „spust pa uspon“: u prirodnom, brzom govoru često je kratak i tih — važan je samo taj osećaj da je nisko.",
+            "en": "Tone 3 sounds LOW and curved, like a shallow valley. It does not have to be a full “down then up”: in natural, fast speech it is often short and light — what matters is that low feel."
+          },
+          "hint": { "zh": "用很低、很放松的声音说，不要刻意抬起来。像轻轻压下去，再让它自然回一点。", "sr": "Izgovori ga nisko i opušteno, bez namernog podizanja. Kao blagi pritisak nadole koji se malo vrati.", "en": "Say it low and relaxed, without forcing it up. Like a soft press down that eases back a touch." },
+          "sample": { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" }
+        },
+        {
+          "id": "s2",
+          "kind": "listen",
+          "title": { "zh": "多听几个第三声", "sr": "Poslušaj još trećih tonova", "en": "Hear more Tone 3 words" },
+          "intro": {
+            "zh": "这些都是第三声——声音低低地弯一下。听那个「低」的感觉就好。",
+            "sr": "Sve su ovo treći ton — zvuk je nisko i blago se savija. Slušaj samo taj osećaj niskog.",
+            "en": "These are all Tone 3 — the sound sits low with a slight curve. Just feel the low."
+          },
+          "repeat": true,
+          "items": [
+            { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" },
+            { "zh": "好", "py": "hǎo", "tone": 3, "sr": "dobro" },
+            { "zh": "走", "py": "zǒu", "tone": 3, "sr": "ići" },
+            { "zh": "五", "py": "wǔ", "tone": 3, "sr": "pet" }
+          ]
+        },
+        {
+          "id": "s3",
+          "kind": "mimic",
+          "title": { "zh": "跟着读一遍", "sr": "Ponovi za mnom", "en": "Repeat after me" },
+          "instructions": {
+            "zh": "先听标准读法，再自己读一遍，然后老实告诉它：像，还是不太像？",
+            "sr": "Prvo poslušaj kako zvuči, pa ponovi naglas. Zatim iskreno reci: zvuči li slično ili ne?",
+            "en": "Listen, then say it out loud. Then honestly tell us: similar, or not quite?"
+          },
+          "item": { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" },
+          "selfReport": true
+        },
+        {
+          "id": "s4",
+          "kind": "check",
+          "checkKind": "isTone",
+          "title": { "zh": "短辨认：这是第三声吗？", "sr": "Kratka provera: je li ovo treći ton?", "en": "Quick check: is this Tone 3?" },
+          "intro": {
+            "zh": "听这个词：声音是不是低低地「弯/压」下去了？不是上扬的 2，也不是往下落的 4。",
+            "sr": "Poslušaj reč: da li je zvuk nisko i savijeno? Ne penje se kao 2, ne pada kao 4.",
+            "en": "Listen to the word: does it sit low and curved? Not rising like Tone 2, not falling like Tone 4."
+          },
+          "question": {
+            "zh": "这是第三声（低而弯）吗？",
+            "sr": "Je li ovo treći ton (nizak i savijen)?",
+            "en": "Is this Tone 3 (low & curved)?"
+          },
+          "tones": [3],
+          "round": 6,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" },
+            { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+            { "zh": "好", "py": "hǎo", "tone": 3, "sr": "dobro" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "五", "py": "wǔ", "tone": 3, "sr": "pet" },
+            { "zh": "十", "py": "shí", "tone": 2, "sr": "deset" }
+          ]
+        },
+        {
+          "id": "s5",
+          "kind": "check",
+          "checkKind": "whichTone",
+          "title": { "zh": "快速辨认：2、3、还是 4？", "sr": "Brzo prepoznavanje: 2, 3 ili 4?", "en": "Quick sort: 2, 3, or 4?" },
+          "intro": {
+            "zh": "现在把第三声放进 2、3、4 里认。都是你学过的声音——慢慢听，不急。",
+            "sr": "Sad prepoznaj treći ton među 2, 3 i 4. Sve si ovo već učila — slušaj polako.",
+            "en": "Now sort Tone 3 among 2, 3 and 4. You have learned all of these — listen slowly."
+          },
+          "question": {
+            "zh": "这是第几声？",
+            "sr": "Koji je ovo ton?",
+            "en": "Which tone is this?"
+          },
+          "tones": [2, 3, 4],
+          "round": 6,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+            { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "十", "py": "shí", "tone": 2, "sr": "deset" },
+            { "zh": "好", "py": "hǎo", "tone": 3, "sr": "dobro" },
+            { "zh": "大", "py": "dà", "tone": 4, "sr": "veliko" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "G7",
+      "order": 7,
+      "icon": "🎓",
+      "kind": "review",
+      "title": { "zh": "ma 四声总辨认", "sr": "„ma“ — sva četiri tona", "en": "“ma” — all four tones" },
+      "objective": { "zh": "把同一个 ma 的四个声调分成四类。", "sr": "Razvrstaj isti slog „ma“ u četiri tona.", "en": "Sort the same “ma” into its four tones." },
+      "toneFocus": [1, 2, 3, 4],
+      "now": { "zh": "真棒——你现在能把 mā、má、mǎ、mà 分成四类了。接下来可以进入正式中文课程。", "sr": "Bravo — sada razvrstavaš mā, má, mǎ i mà u četiri tona. Vreme je za zvanični kurs!", "en": "Great — you can now sort mā, má, mǎ and mà into the four tones. On to the main course!" },
+      "steps": [
+        {
+          "id": "s1",
+          "kind": "cards",
+          "title": { "zh": "同一个 ma，四种声音", "sr": "Isti slog „ma“, četiri zvuka", "en": "The same “ma”, four sounds" },
+          "intro": {
+            "zh": "同一个 ma 的四种声音：1 妈 mā（妈妈）· 2 麻 má（麻绳）· 3 马 mǎ（马）· 4 骂 mà（骂人）。先点开四个卡片，把声音对上号。",
+            "sr": "Četiri zvuka istog sloga: 1 mā = mama · 2 má = konoplja · 3 mǎ = konj · 4 mà = psovati. Prvo poslušaj kartice i poveži zvuk sa brojem.",
+            "en": "The same “ma” four ways: 1 mā = mum · 2 má = hemp · 3 mǎ = horse · 4 mà = to scold. Listen to the four cards and match sound to number first."
+          },
+          "autoplay": false,
+          "cards": [
+            { "tone": 1, "glyph": "ā", "dir": { "zh": "高平", "sr": "visok i ravan", "en": "high & level" }, "sample": { "zh": "妈", "py": "mā", "sr": "mama" } },
+            { "tone": 2, "glyph": "á", "dir": { "zh": "上扬", "sr": "uzlazni", "en": "rising" }, "sample": { "zh": "麻", "py": "má", "sr": "konoplja" } },
+            { "tone": 3, "glyph": "ǎ", "dir": { "zh": "低而弯", "sr": "nizak i savijen", "en": "low & curved" }, "sample": { "zh": "马", "py": "mǎ", "sr": "konj" } },
+            { "tone": 4, "glyph": "à", "dir": { "zh": "快速下降", "sr": "silazni", "en": "falling" }, "sample": { "zh": "骂", "py": "mà", "sr": "psovati" } }
+          ]
+        },
+        {
+          "id": "s2",
+          "kind": "check",
+          "checkKind": "whichTone",
+          "title": { "zh": "总辨认：mā / má / mǎ / mà", "sr": "Završno prepoznavanje: mā / má / mǎ / mà", "en": "Final sort: mā / má / mǎ / mà" },
+          "intro": {
+            "zh": "听声音选声调——就这四个选项。错了也没关系，可以再练。",
+            "sr": "Slušaj i odaberi koji je ton — samo ove četiri opcije. Greška nije problem — možeš ponovo.",
+            "en": "Listen and pick which tone it is — just these four options. Wrong is fine — you can practice again."
+          },
+          "question": {
+            "zh": "这个 ma 是第几声？",
+            "sr": "Koja je visina ovog „ma“?",
+            "en": "Which tone is this “ma”?"
+          },
+          "tones": [1, 2, 3, 4],
+          "round": 8,
+          "threshold": 75,
+          "allowRetry": true,
+          "items": [
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+            { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" },
+            { "zh": "妈", "py": "mā", "tone": 1, "sr": "mama" },
+            { "zh": "麻", "py": "má", "tone": 2, "sr": "konoplja" },
+            { "zh": "马", "py": "mǎ", "tone": 3, "sr": "konj" },
+            { "zh": "骂", "py": "mà", "tone": 4, "sr": "psovati" }
+          ]
+        }
+      ]
+    }
+  ]
+}
