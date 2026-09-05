@@ -556,6 +556,13 @@
           "time": 1788532212494
         }
       }
+    },
+    "2026-09-05": {
+      "andjela": {
+        "hug": {
+          "time": 1788643766067
+        }
+      }
     }
   },
   "cycleInfo": {
@@ -611,7 +618,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1788643766067
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -673,5 +683,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1788643764847
+  "updated": 1788643781143
 }
