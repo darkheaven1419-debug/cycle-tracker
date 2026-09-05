@@ -535,10 +535,25 @@
         "time": 1788212129742
       }
     },
+    "2026-09-01": {
+      "andjela": {
+        "hug": {
+          "time": 1788291115963
+        },
+        "text": "Ljubavi moja mala, danas sam se baš umorila. Ništa od toga mi ne bi palo toliko teško da sam mogla više vremena da provedem sa tobom. Zaista mi mnogo nedostaješ i nadam se da ćemo sutra provesti više vremena zajedno. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788291201470
+      }
+    },
     "2026-09-04": {
       "barry": {
         "hug": {
           "time": 1788527507229
+        }
+      },
+      "andjela": {
+        "hug": {
+          "time": 1788532212494
         }
       }
     }
@@ -557,7 +572,14 @@
       "2026-08-21": "2026-08-28"
     },
     "symptoms": {},
-    "moods": {},
+    "moods": {
+      "2026-09-05": {
+        "barry": {
+          "mood": "tired",
+          "time": 1788643762800
+        }
+      }
+    },
     "diaries": {},
     "settings": {
       "cycleLength": 28,
@@ -651,5 +673,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1788527624471
+  "updated": 1788643764847
 }
