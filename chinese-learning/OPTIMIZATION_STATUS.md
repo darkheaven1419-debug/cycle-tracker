@@ -55,6 +55,7 @@
 | **V1.0** | **正式部署上线（commit `5651d9d`，19 文件）；线上 10/10 文件 hash = 本地；真实浏览器 smoke 验收通过（首用/第一课/quiz/完成/返回首页/移动端 320-390/三语/首页循环）；页面错误 0** | **已上线** |
 | **V1.1** | **声调训练 MVP（方案 B：8 题听音辨调）；toneOf 纯函数 / 单字词题池（含 reserve 补池）/ 8 题状态机 / 视觉降级；不改课程结构、不写进度、不动首页导航** | **87/87** |
 | **V1.2** | **Faza 0 零基础声调课程 G1–G7 实现 + 验收：新增 `tone-course.json`（G1 概念 / G2 T1 / G3 T4 / G4 一比四 / G5 T2 / G6 T3 / G7 ma 四声 4-way）+ `tone-course.js`（纯函数、whichTone/multi-check/graduated）+ `tone-course-ui.js`（overlay、三语归一 zh-CN→zh、mimic 自报）+ `faza0-home.js`（F0 门面 / 新用户首入 / 老用户推荐卡 / 毕业卡）；进度隔离 `chinese-tone-course-<profile>`；不碰 lessons.json/180 引擎/progress-default；不改 G1/G2；G8/G9/G10 未构建** | **journey7 182/182 · 单测 296/296** |
+| **V1.3** | **Vocabulary Contextualization Audit — Phase A（2026-09-05）：只读全量词汇语境化审计 1142 词（A/B/C 分类 · 真错误/过度简化区分 · 字→词→句 · P0–P3 · Top 风险表 · schema 建议），审计结论 = Panic 多为过度简化误报，仅约 10 处真实问题 → 定点修复 11 处高价值翻译：咸 `Sleno`→`Slano`（L32）/ 喂 py `wéi`→`wèi`（L41）/ 想 sr→`nedostajati (misliti na)`（L94，与想念口径一致）/ 会 sr→`umeti (znati)`（L12，与练习 Umeti 对齐）/ L68 可是·却 sr 撞串拆开（`ali (razgovorni)` / `međutim (ipak; književno)`）/ L87 好运·幸福 sr 撞串拆开（`sreća (u igri)` / `sreća (životna)`）/ 岁→`Godina (starosti)`（L13）/ 酒→`vino / alkoholno piće`（L129）/ 倍→`put(a) / puta više`（L57）；仅改 `data/lessons.json` + 新增 `tests/verify_vocab_phasea.test.js`；**不改 schema / 课程结构 / 180 引擎 / 首页** | **单测 794/794 · Chromium 109/109** |
 
 ## 最近一次全量回归（2026-08-31）
 
@@ -90,6 +91,17 @@ node --check 全部 js / JSON 全部有效  ✅
   [L9] 90/90   三语 sr/en/zh-CN 语言切换保态 + 文案逐字
 修复后复跑回归 = ALL_PASS（与上同一轮即修复后全绿；另有独立 close-probe：RESULT_A PASS / RESULT_B PASS）
 node --check 全部 js / JSON 全部有效 ✅
+```
+
+## 最近一次全量回归（2026-09-05，Vocabulary Phase A 发布前）
+
+```
+仓库单测（10 文件）：verify_faza0_home 65 · phase1 25 · phase2 61 · phase3 42 · verify_tone 87 · verify_tone_course 116 · verify_tone_course_ui 115 · verify_ux 218 · verify_ux11a 24 · verify_vocab_phasea 41（新增）= 794/794 ✅
+真实 Chromium 词汇验收（tcc_phasea_vocab，390px，9 门被改课 L12/13/32/41/57/68/87/94/129）：vocab/grammar/practice/culture/quiz/listen 全渲染 109/109 ✅
+  L68 可是=`ali (razgovorni)` · 却=`međutim (ipak; književno)` —— 词表同屏互异 + quiz 真实作答 5/5 100%（0 新错）
+  L87 好运=`sreća (u igri)` · 幸福=`sreća (životna)` —— 词表同屏互异 + quiz 真实作答 5/5 100%（0 新错）
+  全部被改课 quiz 5 题 答案/选项 唯一无撞串；页面异常 0（唯一排除项 = headless 无手势 navigator.vibrate 拦截，harness 假阳性）
+修复后复跑 = ALL PASS（与上同一轮即全绿）
 ```
 
 ## 已修复的真实产品 bug（2026-09-05 验收发现，非 harness 假阳性）
@@ -145,6 +157,7 @@ node --check 全部 js / JSON 全部有效 ✅
 - 热力图 title「2 lekcija」数词变格（不在圈定范围，已报告）。
 - L59/L81 等 L41+ 碎片式对话句 → 将来 L41-L180 自然化一并处理（UX-8C 范围外）。
 - Faza0 课程名 zh 轻微不一致：`tone-course.json` meta.name zh「声调入门」vs 首页 `F0_L.name` zh「语音与声调」（en 也不同）；sr 一致「Glasovi i tonovi」→ 已知、待真机反馈后再统一，避免后期 churn。
+- 词汇审计 Phase A 边界内有意不改：`点` L22 sr 保持 `Sat`（追加 usage note 需词条第 4 字段 → schema 变更，属 Phase B）；`幸福` 仅改 L87，L109/L143 保留小写 `sreća`（最小改动原则）。
 
 ## 重要回归注意事项
 

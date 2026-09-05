@@ -91,6 +91,14 @@ _（等待反馈；记录基于真实反馈做出的产品决策）_
 - **已进入 Real User Validation**：Faza 0 G1–G7 交付给 Anđela 真机验证（清单见 `OPTIMIZATION_STATUS.md` → `REAL DEVICE VALIDATION — FAZA0-G1-G7`）。
 - **原则声明**：真机反馈到达前，下方 FB-00N 字段保持空白——不写猜测、不标 `User Quote`、不填充 `Actual / Expected`。
 
+## 2026-09-05 — Vocabulary Contextualization Audit — Phase A 已定点修复（开发者验证 · 非真实用户反馈）
+
+- 完成**只读全量词汇审计**（1142 词：A/B/C 分类 · 区分真实错误/过度简化/正常简化 · 字→词→句与课程上下文 · P0–P3 · Top 风险表 · schema 建议）。审计结论：大部分「字被当固定词翻译」Panic 是**过度简化误报**（正常教学简化），仅约 10 处真实问题。
+- 按用户圈定边界执行 **Phase A 定点修复**：只改 `data/lessons.json`（11 处：L32 咸拼写 / L41 喂声调 / L94 想 / L12 会 / L68 可是·却 / L87 好运·幸福 / L13 岁 / L129 酒 / L57 倍）+ 新增 `tests/verify_vocab_phasea.test.js`；**不重构 schema、不加 usage note 字段、不改课程结构 / 180 引擎 / 首页**。
+- **本日无真实用户反馈**。以下为**开发者内部验证**（≠ Anđela 使用反馈）：仓库单测 10 文件 **794/794**；真实 Chromium 9 门被改课全视图 **109/109**（L68 可是=`ali (razgovorni)`·却=`međutim (ipak; književno)`、L87 好运=`sreća (u igri)`·幸福=`sreća (životna)` 词表同屏互异，quiz 真实作答均 5/5 100%，同课 sr 撞串清零）。
+- **边界内决策**：`点` L22 保持 `Sat`（usage note 需 schema 第 4 字段，Phase B 再议）；`幸福` 仅改 L87（L109/L143 保留小写 `sreća`，最小改动）。
+- **原则声明**：真实用户（Anđela）反馈到达前，下方 FB-00N 字段保持空白——不写猜测、不标 `User Quote`。
+
 ## 问题 / 请求记录
 
 > 格式模板。**无真实反馈前不填充。** 收到反馈后按此格式新增条目（FB-001、FB-002 …）。
