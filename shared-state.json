@@ -566,6 +566,13 @@
         "mood": "",
         "time": 1788643886407
       }
+    },
+    "2026-09-06": {
+      "andjela": {
+        "text": "Ljubavi, imam utisak kao da smo danas proveli baš malo vremena zajedno. Mnogo mi nedostaješ. Nadam se da ćemo sutra imati više zajedničkih trenutaka. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788731939043
+      }
     }
   },
   "cycleInfo": {
@@ -621,10 +628,7 @@
       "time": 1784927874533
     }
   ],
-  "hug": {
-    "from": "andjela",
-    "time": 1788643766067
-  },
+  "hug": null,
   "songs": {
     "barry": null,
     "andjela": {
@@ -686,5 +690,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1788643886920
+  "updated": 1788731939662
 }
