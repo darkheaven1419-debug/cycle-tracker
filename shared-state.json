@@ -580,6 +580,16 @@
         "mood": "",
         "time": 1788814809804
       }
+    },
+    "2026-09-10": {
+      "andjela": {
+        "hug": {
+          "time": 1789068754128
+        },
+        "text": "Ljubavi moja lepa, htela sam samo da ti kažem da te volim najviše na svetu i da se nadam da si svestan toga. Ne mislim da je bilo ko pre tebe bio bolji od tebe, niti sam ikoga volela više od tebe. Ti si moje malo srce i moja najveća sreća. Puno te ljubim! ❤️",
+        "mood": "",
+        "time": 1789068841796
+      }
     }
   },
   "cycleInfo": {
@@ -641,7 +651,10 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "hug": {
+    "from": "andjela",
+    "time": 1789068754128
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -703,5 +716,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1789068743994
+  "updated": 1789068842300
 }
