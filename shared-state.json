@@ -600,7 +600,10 @@
       "andjela": {
         "hug": {
           "time": 1789331122641
-        }
+        },
+        "text": "Ljubavi, danas me je baš obradovalo to što mi je delovalo kao da me tvoja mama više voli i bolje prihvata nego inače. Možda je to bio samo moj utisak, ali mi je bilo izuzetno drago zbog toga. Nadam se da će me voleti kada me upozna. ❤️",
+        "mood": "",
+        "time": 1789331218243
       }
     },
     "2026-09-12": {
@@ -732,5 +735,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1789331145631
+  "updated": 1789331218826
 }
