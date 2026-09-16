@@ -4372,6 +4372,57 @@ body {
   color: var(--love);
   flex-shrink: 0;
 }
+/* 每条便签 + 它的 emoji 回应行包在一个块里；分隔线与内边距移到块上，
+   内层 .gratitude-item 原有的 flex 行布局一字未改 */
+.grat-block {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.grat-block:last-child {
+  border-bottom: none;
+}
+.grat-block .gratitude-item {
+  padding: 0;
+  border-bottom: none;
+}
+.grat-echo {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  padding-left: 20px;
+}
+.grat-echo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 40px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+}
+.grat-echo-btn:active {
+  transform: scale(0.92);
+}
+/* 我已回应过的那一个：一眼能看出"我回过她了" */
+.grat-echo-btn.mine {
+  border-color: var(--love);
+  background: var(--love);
+  color: #fff;
+}
+.grat-echo-n {
+  font-size: 0.6rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
 .checkin-q {
   margin-bottom: 14px;
 }
