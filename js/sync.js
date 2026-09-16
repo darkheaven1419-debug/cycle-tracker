@@ -64,6 +64,7 @@ const SyncModule = (function () {
       cycleInfo: ce,
       symptoms: getJSON('shared-symptoms', null),
       gratitude: getJSON('shared-gratitude', []),
+      gratitudeEcho: getJSON('shared-gratitude-echo', []),
       hug: getJSON('shared-hug', null),
       songs: {
         barry: getJSON('shared-song-barry', null),
@@ -107,6 +108,65 @@ const SyncModule = (function () {
     }
     if (added > 0) console.log('[同步] 日记合并新增 ' + added + ' 条外来条目');
     return result;
+  }
+
+  // ── 通用 append-only 合并 ──
+  function _asArray(v) { return Array.isArray(v) ? v : []; }
+
+  /**
+   * 两个 append-only 数组按 key 取并集。
+   *
+   * - 先收本地条目，再收远端中 key 未出现过的条目 —— 双方近同时提交时得到并集
+   * - 同一 key 冲突时取 timeOf 更大的那条。不用"本地优先"：那会让两台设备各自
+   *   坚持自己的版本、永久发散；按时间取新是确定性的，两端收敛到同一结果
+   * - 结果按 timeOf 升序（稳定排序），cap 给定时裁到最近 cap 条
+   */
+  function mergeByTimeKey(local, remote, keyOf, timeOf, cap) {
+    var out = [];
+    var at = Object.create(null); // 无原型，避免 key 撞上 constructor 等内建属性
+    function add(entry) {
+      if (!entry || typeof entry !== 'object') return;
+      var k = keyOf(entry);
+      var i = at[k];
+      if (i === undefined) { at[k] = out.length; out.push(entry); return; }
+      if (timeOf(entry) > timeOf(out[i])) out[i] = entry;
+    }
+    _asArray(local).forEach(add);
+    _asArray(remote).forEach(add);
+    out.sort(function (a, b) { return timeOf(a) - timeOf(b); });
+    if (cap && out.length > cap) out = out.slice(-cap);
+    return out;
+  }
+
+  // ── 感恩便签：按 (from,time) 取并集，沿用本地 slice(-20) 的窗口 ──
+  var GRAT_CAP = 20;
+
+  function _gratKey(note) {
+    var t = note.time;
+    if (typeof t === 'number' && isFinite(t)) return String(note.from) + '|' + t;
+    // 旧数据兜底：没有可用时间戳的条目按 (from,text) 去重，只合并、绝不丢弃
+    return 'legacy|' + String(note.from) + '|' + String(note.text);
+  }
+  function _gratTime(note) {
+    return (typeof note.time === 'number' && isFinite(note.time)) ? note.time : 0;
+  }
+
+  function mergeGratitude(local, remote) {
+    return mergeByTimeKey(local, remote, _gratKey, _gratTime, GRAT_CAP);
+  }
+
+  // ── Echo：感恩便签上的 emoji 回应，独立 append-only，不污染 gratitude 条目 ──
+  // 存储键 shared-gratitude-echo，字段 {noteFrom, noteTime, from, emoji, time}
+  var ECHO_CAP = 500; // 单文件 JSON 的体积护栏；两个人正常使用远达不到
+
+  /** noteFrom+noteTime 指向被回应的便签，from 是回应者：一人一条，天然幂等 */
+  function _echoKey(e) { return String(e.noteFrom) + '|' + e.noteTime + '|' + String(e.from); }
+  function _echoTime(e) {
+    return (typeof e.time === 'number' && isFinite(e.time)) ? e.time : 0;
+  }
+
+  function mergeEcho(local, remote) {
+    return mergeByTimeKey(local, remote, _echoKey, _echoTime, ECHO_CAP);
   }
 
   // ── 应用远程状态到本地 ──
@@ -153,9 +213,24 @@ const SyncModule = (function () {
       }
     }
 
+    // 感恩便签：合并而非覆盖 —— 拉取不能抹掉本机刚写、对方还没有的内容
+    if (state.gratitude) {
+      var localGrat = _asArray(getJSON('shared-gratitude', []));
+      var mergedGrat = mergeGratitude(localGrat, state.gratitude);
+      localStorage.setItem('shared-gratitude', JSON.stringify(mergedGrat));
+      console.log('[同步] 感恩便签合并 本地=' + localGrat.length + ' 远程=' + _asArray(state.gratitude).length + ' 合并后=' + mergedGrat.length);
+    }
+
+    // Echo：独立 append-only，取并集
+    if (state.gratitudeEcho) {
+      var localEcho = _asArray(getJSON('shared-gratitude-echo', []));
+      var mergedEcho = mergeEcho(localEcho, state.gratitudeEcho);
+      localStorage.setItem('shared-gratitude-echo', JSON.stringify(mergedEcho));
+      console.log('[同步] Echo 合并 本地=' + localEcho.length + ' 远程=' + _asArray(state.gratitudeEcho).length + ' 合并后=' + mergedEcho.length);
+    }
+
     // 其他数据：直接替换
     if (state.symptoms) localStorage.setItem('shared-symptoms', JSON.stringify(state.symptoms));
-    if (state.gratitude) localStorage.setItem('shared-gratitude', JSON.stringify(state.gratitude));
     if (state.hug) localStorage.setItem('shared-hug', JSON.stringify(state.hug));
     if (state.sleep) localStorage.setItem('barry-sleep', JSON.stringify(state.sleep));
     if (state.songs) {
@@ -222,6 +297,19 @@ const SyncModule = (function () {
           var merged = mergeDiary(localDiary, remoteState.diary);
           localStorage.setItem('shared-diary', JSON.stringify(merged));
           console.log('[同步] 推送前合并远程 ✓ 本地=' + Object.keys(localDiary).length + ' 远程=' + remoteCount + ' 合并后=' + Object.keys(merged).length);
+        }
+        // 推送前与远端取并集：本机推送不能抹掉对方刚写的便签 / 刚产生的回应
+        if (remoteState && remoteState.gratitude) {
+          var lg = _asArray(getJSON('shared-gratitude', []));
+          var mg = mergeGratitude(lg, remoteState.gratitude);
+          localStorage.setItem('shared-gratitude', JSON.stringify(mg));
+          console.log('[同步] 推送前合并感恩便签 本地=' + lg.length + ' 远程=' + _asArray(remoteState.gratitude).length + ' 合并后=' + mg.length);
+        }
+        if (remoteState && remoteState.gratitudeEcho) {
+          var le = _asArray(getJSON('shared-gratitude-echo', []));
+          var me = mergeEcho(le, remoteState.gratitudeEcho);
+          localStorage.setItem('shared-gratitude-echo', JSON.stringify(me));
+          console.log('[同步] 推送前合并 Echo 本地=' + le.length + ' 远程=' + _asArray(remoteState.gratitudeEcho).length + ' 合并后=' + me.length);
         }
       }
     } catch (e) {
@@ -398,6 +486,10 @@ const SyncModule = (function () {
     pull: pull,
     collect: collect,
     apply: apply,
+    // 合并规则单独暴露，供 tests/test-sync-merge.js 直接做单元测试（与 apply/collect 同理）
+    mergeByTimeKey: mergeByTimeKey,
+    mergeGratitude: mergeGratitude,
+    mergeEcho: mergeEcho,
     updateBadge: updateBadge,
     stopAutoPull: _stopAutoPull,
     startAutoPull: _startAutoPull
