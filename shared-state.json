@@ -619,6 +619,23 @@
         "mood": "",
         "time": 1789425385654
       }
+    },
+    "2026-09-15": {
+      "andjela": {
+        "hug": {
+          "time": 1789425413911
+        }
+      }
+    },
+    "2026-09-16": {
+      "andjela": {
+        "hug": {
+          "time": 1789590426138
+        },
+        "text": "Ljubavi moja, mnogo mi nedostaješ. Žao mi je što sam delovala loše kada smo pričali danas dok sam radila. Zaista mi to nije bila namera i uživam u vremenu koje provedem sa tobom. Volin te najviše na svetu i jedva čekam da te te vidim! ❤️",
+        "mood": "",
+        "time": 1789590506153
+      }
     }
   },
   "cycleInfo": {
@@ -680,7 +697,11 @@
       "time": 1784927874533
     }
   ],
-  "hug": null,
+  "gratitudeEcho": [],
+  "hug": {
+    "from": "andjela",
+    "time": 1789590426137
+  },
   "songs": {
     "barry": null,
     "andjela": {
@@ -742,5 +763,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1789425386089
+  "updated": 1789590506729
 }
