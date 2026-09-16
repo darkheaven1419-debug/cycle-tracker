@@ -333,6 +333,8 @@ const SyncModule = (function () {
       }
       if (typeof renderSharedDiary === 'function') renderSharedDiary();
       if (typeof renderDateStrip === 'function') renderDateStrip();
+      // Today card — refreshed without replaying the entrance animation.
+      if (typeof renderDashboard === 'function') renderDashboard(false);
       updateBadge();
     } catch (e) {
       console.error('[同步] 拉取异常:', e.message);
