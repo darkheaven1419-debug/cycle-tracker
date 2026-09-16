@@ -1,0 +1,23 @@
+# cycle-tracker — private shared-data Worker
+#
+# Deploy:  npx wrangler deploy
+# Dev:     npx wrangler dev
+#
+# There is deliberately NO [vars] block. The GitHub owner/repo and the two data
+# file names are compiled into src/index.js as literals so that a request can
+# never influence the upstream URL. Everything secret is a Worker secret:
+#
+#   npx wrangler secret put GH_PAT
+#   npx wrangler secret put APP_KEY_ANDJELA
+#   npx wrangler secret put APP_KEY_BARRY
+#
+# Secrets are write-only: once set they cannot be read back from Wrangler or the
+# dashboard. Record each one in a password manager at the moment you create it.
+
+name = "cycle-tracker-data"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# workers.dev is the only route this Worker needs. No custom domain, no route
+# patterns, no cron triggers.
+workers_dev = true

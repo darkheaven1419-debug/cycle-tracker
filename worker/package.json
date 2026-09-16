@@ -1,0 +1,13 @@
+{
+  "name": "cycle-tracker-data-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Authenticated CAS proxy between the public cycle-tracker PWA and the private cycle-tracker-data repository.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "test": "node ../tests/test-worker.js"
+  }
+}
