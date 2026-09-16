@@ -4942,6 +4942,11 @@ body {
 .diary-date-strip::-webkit-scrollbar {
   display: none;
 }
+/* Date pills own their own taps — stops double-tap zoom from hijacking a strip drag.
+   The strip itself keeps default panning on BOTH axes so vertical page scroll still works. */
+.diary-date-btn {
+  touch-action: manipulation;
+}
 .diary-cal-btn {
   width: 36px;
   height: 36px;

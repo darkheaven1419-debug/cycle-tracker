@@ -2705,6 +2705,12 @@ document.getElementById('set-theme').addEventListener('change', function () {
 (function () {
   const app = document.querySelector('.app');
   if (!app) return;
+  /* Elements that own their own horizontal gesture. A drag starting inside one of these
+     is handled locally (native horizontal scroll) and must never engage the page tab-swipe. */
+  const SWIPE_EXEMPT = '.diary-date-strip, .diary-date-strip-wrap, [data-no-tab-swipe]';
+  function isSwipeExempt(target) {
+    return !!(target && target.closest && target.closest(SWIPE_EXEMPT));
+  }
   let startX = 0,
     startY = 0,
     swiping = false,
@@ -2714,6 +2720,12 @@ document.getElementById('set-theme').addEventListener('change', function () {
     function (e) {
       // Only handle single-finger swipes
       if (e.touches.length !== 1) return;
+      // Drag started on a horizontally scrollable control — let it scroll, never switch tabs
+      if (isSwipeExempt(e.target)) {
+        swiping = false;
+        lockDir = null;
+        return;
+      }
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       swiping = true;
