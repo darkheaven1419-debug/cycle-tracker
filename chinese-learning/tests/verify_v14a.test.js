@@ -165,6 +165,9 @@ ok(L36.grammar.en.indexOf('Guò le') >= 0 && L36.grammar.sr.indexOf('Guò le') >
   const hits = [];
   for (const f of files) {
     if (!/\.(json|js|html|css|md|txt)$/i.test(f)) continue;
+    // 断言「不再出现」的测试文件本身必须写出该字符串，否则无法断言，属必然自命中；
+    // 本项检查的对象是课程内容与运行代码，故 tests/ 不计入扫描范围。
+    if (f.startsWith('tests/')) continue;
     let t; try { t = fs.readFileSync(path.join(BASE, f), 'utf8'); } catch (e) { continue; }
     if (t.indexOf('有过两个红绿灯') >= 0) hits.push(f);
   }
@@ -351,7 +354,14 @@ ok([1, 36, 37].every((id) => byId[id]), 'L1 / L36 / L37 均存在');
     const repoRoot = execSync('git rev-parse --show-toplevel', { cwd: BASE, encoding: 'utf8' }).trim();
     const relProj = path.relative(repoRoot, BASE).split(path.sep).join('/');
     ok(relProj === 'chinese-learning', '项目目录相对仓库根 = chinese-learning（实际 ' + relProj + '）');
-    const headRaw = execSync('git show HEAD:' + relProj + '/data/lessons.json',
+    // 基准取「当前版本之前、最后一次改动该文件的提交」，而不是 HEAD：
+    // V1.4 提交入库后 HEAD 已与工作区一致，用 HEAD 作基准会得到空变化集而假失败。
+    // hist[0] 是引入当前内容的提交，hist[1] 即 V1.4 之前的版本；提交前后都成立。
+    const hist = execSync('git log --format=%H -- ' + relProj + '/data/lessons.json',
+      { cwd: repoRoot, encoding: 'utf8' }).split('\n').filter(Boolean);
+    ok(hist.length > 1, '能定位 V1.4 之前的基准版本（该文件历史 ' + hist.length + ' 个提交）');
+    const baseRev = hist[1];
+    const headRaw = execSync('git show ' + baseRev + ':' + relProj + '/data/lessons.json',
       { cwd: repoRoot, encoding: 'utf8', maxBuffer: 1 << 28 });
     headFlat = JSON.parse(headRaw).flatMap((p) => (p.lessons || []));
   } catch (e) { ok(false, '读取 HEAD 版 lessons.json 失败: ' + e.message); }
@@ -364,7 +374,7 @@ ok([1, 36, 37].every((id) => byId[id]), 'L1 / L36 / L37 均存在');
       if (!c) { changed.push('缺L' + h.id); continue; }
       if (bodyOf(h) !== bodyOf(c)) changed.push(h.id);
     }
-    ok(changed.join(',') === '1,36,37', '正文（zh）相对 HEAD 仅 L1/L36/L37 变化（实际 ' + changed.join(',') + '）');
+    ok(changed.join(',') === '1,36,37', '正文（zh）相对 V1.4 之前版本仅 L1/L36/L37 变化（实际 ' + changed.join(',') + '）');
   }
 }
 
