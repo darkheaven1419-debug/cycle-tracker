@@ -1,3 +1,16 @@
+// ⚠️ DEPRECATED / 已退役 —— 2026-09-16（Data Source Cleanup）
+//
+// 本脚本是 2026-06 中文学习模块最初的引导生成器。其内联课程内容是模块完成前的
+// 早期草稿（例如 L1 词表、L37 对话均为旧版），**不等于**现行 180 课课程数据。
+//
+// 现行唯一课程数据源：chinese-learning/data/lessons.json
+//
+// 本脚本原先向「仓库根 data/lessons.json」写入。该文件是"中文模块内嵌在主 PWA 里"
+// 时期的历史遗留副本，不参与任何运行路径，已于 2026-09-16 删除。
+// 写入路径现已切断：运行本脚本不会产生任何文件，只打印说明并以退出码 1 结束。
+//
+// 若确需重新生成课程数据，请勿复活本脚本 —— 它的输出会覆盖现行课程。
+//
 // Generate full 180-lesson JSON data
 var fs = require('fs');
 
@@ -242,6 +255,13 @@ var allPhases = [
   {phase:2,name:L('日常生活','Svakodnevni život','Daily Life'),description:L('掌握日常生活场景用语——餐厅、购物、问路、交通。','Jezik za svakodnevne situacije.','Language for everyday situations.'),icon:'🗣️',lessons:p2},
   p3,p4,p5,p6
 ];
-fs.writeFileSync('data/lessons.json', JSON.stringify(allPhases), 'utf8');
+// —— 写入路径已切断（2026-09-16 Data Source Cleanup）——
+// 原语句：fs.writeFileSync('data/lessons.json', JSON.stringify(allPhases), 'utf8');
+// 退役原因：内联内容是 2026-06 早期草稿，运行它会覆盖现行 180 课课程；
+// 且旧输出目标（仓库根 data/lessons.json）已于本次清理删除。
 var total = 0; allPhases.forEach(function(p){total+=p.lessons.length;});
 console.log('Generated ' + total + ' lessons across ' + allPhases.length + ' phases');
+console.log('（以上仅为统计；本脚本已退役，未写入任何文件）');
+console.error('[gen-lessons.js] 已退役（DEPRECATED），拒绝写入。');
+console.error('  现行唯一课程数据源：chinese-learning/data/lessons.json');
+process.exit(1);

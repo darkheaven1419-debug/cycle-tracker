@@ -2,7 +2,26 @@
 
 > **项目**: Anđelin Ciklus v7 — cycle-tracker
 > **日期**: 2026-06-23
-> **状态**: 待用户确认
+> **状态**: ⚠️ 历史文档 / 所述架构已废弃（2026-09-16 标注）
+
+---
+
+> ## ⚠️ 本文档描述的是已废弃的架构，请勿据此实施
+>
+> 本文写于 2026-06-23，描述的是**中文学习模块内嵌在主 PWA 里**的原始方案
+> （`panel-chinese`、`js/lesson-engine.js`、仓库根 `data/lessons.json`、`sw.js` 缓存）。
+>
+> **该方案已不复存在。** 2026-08-23 中文学习模块已从主 PWA 移出，成为独立站点
+> `chinese-learning/`；主站 `index.html` 与 `js/` 中不再有任何中文学习代码。
+> 独立站点发布在 `https://darkheaven1419-debug.github.io/cycle-tracker/chinese-learning/`。
+>
+> **现行唯一课程数据源：`chinese-learning/data/lessons.json`**
+> （180 课 / 1143 词条 / 三语 zh·py·sr），由 `chinese-learning/js/chinese-learn.js` 相对
+> `fetch('data/lessons.json')` 读取。
+>
+> 下文出现的 `data/lessons.json` 均指**当时**的仓库根路径。该文件是"中文模块内嵌在主
+> PWA 里"时期的历史遗留快照，**不参与运行、不是中文学习课程数据源**，已于 2026-09-16
+> 与 `dist/data/lessons.json` 一并删除。请勿据此文档把课程数据写回仓库根 `data/`。
 
 ---
 
@@ -180,7 +199,7 @@ data/achievements.json  ← 20个成就定义 (~3KB)
 
 **修改文件:**
 ```
-data/lessons.json       ← 30课 → 180课 (~120KB)
+data/lessons.json       ← 30课 → 180课 (~120KB)  ⚠️ 当时路径；现为 chinese-learning/data/lessons.json
 index.html              ← panel-culture → panel-chinese
 app.js                  ← ~8处修改
 styles.css              ← +200行学习UI样式
@@ -189,6 +208,9 @@ sw.js                   ← 缓存新增文件
 ```
 
 ### 5.2 数据流
+
+> ⚠️ 下图为**原设计**（模块内嵌在主 PWA 时）。现行形态是 `chinese-learning/` 独立站点，
+> 由 `js/chinese-learn.js` fetch `chinese-learning/data/lessons.json`。
 
 ```
 data/lessons.json ──fetch──→ LESSONS_CACHE (内存)

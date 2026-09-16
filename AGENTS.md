@@ -21,9 +21,22 @@ manifest.json       ← PWA manifest
 sw.js               ← Service Worker 离线缓存
 data/culture.json   ← 中国文化知识卡片
 data/quotes.json    ← 名人名言
-data/lessons.json   ← 中文学习课程
 libs/html2canvas.min.js ← 截图导出
 ```
+
+## 中文学习课程数据源（重要）
+
+> **正式课程数据源：`chinese-learning/data/lessons.json`**（180 课 / 1143 词条 / 三语 zh·py·sr）
+
+中文学习模块已于 2026-08-23 从本 PWA 移出，成为独立站点 `chinese-learning/`，
+发布在 `https://darkheaven1419-debug.github.io/cycle-tracker/chinese-learning/`。
+
+- 本仓库根目录的 `data/` 属于本 PWA（节日 / 节气 / 文化卡片 / 名言），**不含中文学习课程**。
+- 根目录 `data/lessons.json` 与 `dist/data/lessons.json` 是"中文模块内嵌在主 PWA 里"
+  时期的历史遗留快照，**不参与运行，不是中文学习课程数据源**，已于 2026-09-16 删除。
+- 不要把课程数据写回仓库根 `data/`。生成器 `tools/gen-lessons.js` 与
+  `scripts/gen_full.js` 已退役（DEPRECATED）并切断写入路径。
+- 防回归检查：`chinese-learning/tests/verify_data_source.test.js`。
 
 ## 功能模块
 - 🩸 经期追踪 / 🌍 双城天气（北京↔贝尔格莱德）

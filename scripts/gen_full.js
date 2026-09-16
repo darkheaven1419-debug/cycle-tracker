@@ -1,3 +1,14 @@
+// ⚠️ DEPRECATED / 已退役 —— 2026-09-16（Data Source Cleanup）
+//
+// 本脚本是 2026-06 中文学习模块的早期草稿生成器，只生成到 L37 的半成品
+// （脚本自身在末尾即写着 "Phases 1-2 lessons (1-37) done, continuing..."）。
+//
+// 现行唯一课程数据源：chinese-learning/data/lessons.json
+//
+// 本脚本原先向「仓库根 data/lessons.json.tmp」写入。旧输出目标位于仓库根 data/，
+// 容易被误认为中文学习课程数据源，已随本次清理一并切断。
+// 写入路径现已切断：运行本脚本不会产生任何文件，只打印说明并以退出码 1 结束。
+//
 // Generate complete 180-lesson JSON data
 const fs = require('fs');
 
@@ -294,10 +305,15 @@ console.log('Phases 1-2 lessons (1-37) done, continuing...');
 
 // For this test, let's just serialize what we have so far
 const data = [phase1, phase2];
+// —— 写入路径已切断（2026-09-16 Data Source Cleanup）——
+// 原语句：fs.writeFileSync('data/lessons.json.tmp', jsonStr, 'utf8');
+// 退役原因：输出是只到 L37 的半成品草稿，且旧目标位于仓库根 data/，易被误认为正式数据源。
 const jsonStr = JSON.stringify(data, null, 2);
-fs.writeFileSync('data/lessons.json.tmp', jsonStr, 'utf8');
-console.log('Written temporary file');
 console.log('Phases:', data.length);
 console.log('Phase1 lessons:', data[0].lessons.length);
 console.log('Phase2 lessons:', data[1].lessons.length);
 console.log('Total lessons so far:', data[0].lessons.length + data[1].lessons.length);
+console.log('（以上仅为统计；本脚本已退役，未写入任何文件）');
+console.error('[gen_full.js] 已退役（DEPRECATED），拒绝写入。');
+console.error('  现行唯一课程数据源：chinese-learning/data/lessons.json');
+process.exit(1);

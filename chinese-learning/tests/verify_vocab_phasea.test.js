@@ -1,7 +1,9 @@
 /* Vocabulary Contextualization Audit — Phase A 验证（node）
    用法: node tests/verify_vocab_phasea.test.js
    验证内容:
-   1. lessons.json 合法 + 课程结构不变（6 phase / 180 课 / 1142 词条 / 词条 key 恰为 zh,py,sr 且非空）
+   1. lessons.json 合法 + 课程结构不变（6 phase / 180 课 / 1143 词条 / 词条 key 恰为 zh,py,sr 且非空）
+      注：1143 = V1.3 基线 1142 + 1。2026-09-16 用户决定把「飞机」恢复到 L37 词表作为扩展词汇
+      （理由是 飞机 属高价值基础交通词，真正的问题是"对话没覆盖它"而非"不值得学"）。
    2. Phase A 的 11 处定点修复值正确（含 喂 py 改 wèi、sr 拼写、同课 sr 撞串拆开）
    3. L22 点 有意保持 "Sat"（usage note 需第 4 字段 → schema 变更，越界缓做）
    4. 全语料无「同课 sr 撞串」（反向题二义数据级清零）
@@ -31,7 +33,7 @@ function toneOf(py) {
 section('结构不变');
 ok(LESSONS.length === 6, 'phase 数 = 6（实际 ' + LESSONS.length + '）');
 ok(flat.length === 180, 'lesson 数 = 180（实际 ' + flat.length + '）');
-ok(allWords.length === 1142, '词条总数 = 1142（实际 ' + allWords.length + '）');
+ok(allWords.length === 1143, '词条总数 = 1143（实际 ' + allWords.length + '）');
 let badKey = [];
 allWords.forEach(w => { const ks = Object.keys(w).sort().join(','); if (ks !== 'py,sr,zh') badKey.push(ks); });
 ok(badKey.length === 0, '词条 key 恰为 {zh,py,sr}（异常 ' + badKey.slice(0, 3).join('|') + '）');
