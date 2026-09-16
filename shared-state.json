@@ -535,11 +535,89 @@
         "time": 1788212129742
       }
     },
+    "2026-09-01": {
+      "andjela": {
+        "hug": {
+          "time": 1788291115963
+        },
+        "text": "Ljubavi moja mala, danas sam se baš umorila. Ništa od toga mi ne bi palo toliko teško da sam mogla više vremena da provedem sa tobom. Zaista mi mnogo nedostaješ i nadam se da ćemo sutra provesti više vremena zajedno. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788291201470
+      }
+    },
     "2026-09-04": {
       "barry": {
         "hug": {
           "time": 1788527507229
         }
+      },
+      "andjela": {
+        "hug": {
+          "time": 1788532212494
+        }
+      }
+    },
+    "2026-09-05": {
+      "andjela": {
+        "hug": {
+          "time": 1788643766067
+        },
+        "text": "Ljubavi moja lepa, mnogo mi nedostaješ i jedva čekam da te ponovo vidim ujutru kad ustanem. Bilo mi je baš lepo sa tobom danas. Drago mi je što si me pozvao dok si odmarao na treningu. Takođe mi je drago i što smo zajedno istraživali nove igrice. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788643886407
+      }
+    },
+    "2026-09-06": {
+      "andjela": {
+        "text": "Ljubavi, imam utisak kao da smo danas proveli baš malo vremena zajedno. Mnogo mi nedostaješ. Nadam se da ćemo sutra imati više zajedničkih trenutaka. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1788731939043
+      }
+    },
+    "2026-09-07": {
+      "andjela": {
+        "text": "Ljubavi moja, drago mi je što smo razgovorom smireno rešili današnji problem. Volim te najviše! ❤️",
+        "mood": "",
+        "time": 1788814809804
+      }
+    },
+    "2026-09-10": {
+      "andjela": {
+        "hug": {
+          "time": 1789068754128
+        },
+        "text": "Ljubavi moja lepa, htela sam samo da ti kažem da te volim najviše na svetu i da se nadam da si svestan toga. Ne mislim da je bilo ko pre tebe bio bolji od tebe, niti sam ikoga volela više od tebe. Ti si moje malo srce i moja najveća sreća. Puno te ljubim! ❤️",
+        "mood": "",
+        "time": 1789068851700
+      },
+      "barry": {
+        "text": "I love you the most",
+        "mood": "",
+        "time": 1789144551591
+      }
+    },
+    "2026-09-13": {
+      "andjela": {
+        "hug": {
+          "time": 1789331122641
+        },
+        "text": "Ljubavi, danas me je baš obradovalo to što mi je delovalo kao da me tvoja mama više voli i bolje prihvata nego inače. Možda je to bio samo moj utisak, ali mi je bilo izuzetno drago zbog toga. Nadam se da će me voleti kada me upozna. Volim te ❤️",
+        "mood": "",
+        "time": 1789331224277
+      }
+    },
+    "2026-09-12": {
+      "andjela": {
+        "text": "Volim te ❤️",
+        "mood": "",
+        "time": 1789331145246
+      }
+    },
+    "2026-09-14": {
+      "andjela": {
+        "text": "Ljubavi, danas sam izuzetno srećna - sada imamo iste slatke profilne na svim društvenim mrežama! To me čini neizmerno srećnom. Volim te najviše na svetu! ❤️",
+        "mood": "",
+        "time": 1789425385654
       }
     }
   },
@@ -557,7 +635,20 @@
       "2026-08-21": "2026-08-28"
     },
     "symptoms": {},
-    "moods": {},
+    "moods": {
+      "2026-09-05": {
+        "barry": {
+          "mood": "tired",
+          "time": 1788643762800
+        }
+      },
+      "2026-09-10": {
+        "barry": {
+          "mood": "tired",
+          "time": 1789068741892
+        }
+      }
+    },
     "diaries": {},
     "settings": {
       "cycleLength": 28,
@@ -651,5 +742,5 @@
     }
   },
   "calendarMarkers": {},
-  "updated": 1788527624471
+  "updated": 1789425386089
 }
