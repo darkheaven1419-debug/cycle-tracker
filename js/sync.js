@@ -18,7 +18,8 @@ const SyncModule = (function () {
   function _startAutoPull() {
     _stopAutoPull();
     _autoPullTimer = setInterval(function () {
-      if (typeof getGitHubToken === 'function' && getGitHubToken()) {
+      // Phase 2B：定时拉取只看 Pull 凭据（App Secret），不再看 Push 用的 GitHub PAT
+      if (typeof getAppSecret === 'function' && getAppSecret()) {
         console.log('[同步] 定时拉取...');
         pull();
       }
@@ -280,7 +281,7 @@ const SyncModule = (function () {
   function _syncMsg(key) {
     var L = window.lang || 'sr';
     var msgs = {
-      token401: { 'zh-CN': '⚠️ Token 无效，请在设置中重新输入', en: '⚠️ Token invalid, please re-enter in Settings', sr: '⚠️ Token nevažeći, unesite ponovo u Podešavanjima' },
+      token401: { 'zh-CN': '⚠️ 数据同步密钥无效，请在设置中重新输入', en: '⚠️ Data sync key invalid, please re-enter in Settings', sr: '⚠️ Ključ za sinhronizaciju je nevažeći — unesite ponovo u Podešavanjima' },
       netError: { 'zh-CN': '⚠️ 同步失败，请检查网络后重试', en: '⚠️ Sync failed, check network and retry', sr: '⚠️ Sinhronizacija nije uspela — proverite mrežu' },
       retryFail: { 'zh-CN': '⚠️ 同步失败，请在设置中手动同步', en: '⚠️ Sync failed, please sync manually in Settings', sr: '⚠️ Sinhronizacija nije uspela — pokušajte ručno u Podešavanjima' },
     };
@@ -466,7 +467,9 @@ const SyncModule = (function () {
 
   // ── 同步状态徽章 ──
   function updateBadge() {
-    var hasToken = !!getGitHubToken();
+    // Phase 2B：徽章反映「Pull 能否运行」，因此以 App Secret 为准；
+    // Push 用的 GitHub PAT 与此无关，不能拿它当同步是否可用的依据。
+    var hasToken = !!getAppSecret();
     var lastSync = localStorage.getItem('shared-last-sync');
     var el = document.getElementById('syncStatusBadge');
     if (!el) return;
@@ -534,6 +537,10 @@ const SyncModule = (function () {
 })();
 
 // ── 暴露全局接口 ──
+// Phase 2B：两把凭据必须分开，谁都不能顺手删掉另一个 ——
+//   Pull 凭据 = App Secret （localStorage['ct-app-key']，Worker 身份，Phase 2A/2B 已迁移）
+//   Push 凭据 = GitHub PAT（localStorage['gh-token']，仍在旧链路，Phase 2C 才迁移）
+getAppSecret = SyncModule.getAppSecret;
 updateSyncStatusBadge = SyncModule.updateBadge;
 pushAllSharedData = SyncModule.push;
 pullAllSharedData = SyncModule.pull;

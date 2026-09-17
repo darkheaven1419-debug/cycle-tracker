@@ -95,8 +95,9 @@ function switchProfile(p) {
   }
   lastCycleCount = predict().cycles.length;
 
-  // Pull latest shared data from GitHub when switching profiles
-  if (getGitHubToken()) {
+  // Pull latest shared data when switching profiles
+  // Phase 2B：这是 Pull，凭据是 App Secret（不再用 Push 的 GitHub PAT 当门禁）
+  if (typeof getAppSecret === 'function' && getAppSecret()) {
     pullAllSharedData().then(function () {
       if (p === 'barry') {
         renderCalendar();
@@ -291,13 +292,17 @@ const SD_KEY = 'shared-diary';
 const DATE_STRIP_DAYS = 14; // used by render-diary.js
 let sharedDiaryViewDate = new Date(); // used by render-diary.js
 
+// ── Push 凭据：GitHub PAT ──
+// Phase 2B：Pull 已不再经过这里（Pull 走 sync.js 的 getAppSecret()）。这个函数只服务于
+// 仍在旧 GitHub 链路上的 Push（sync.js push() / fix-stats.js 的 Todo），Phase 2C 才迁移
+// —— 在 Push 迁移完成前不要删除它，也不要让 Pull 再依赖它。
 function getGitHubToken() {
   var _token = localStorage.getItem('gh-token') || '';
-  // 防御性日志：Token 为空时输出警告
+  // 防御性日志：只报「有没有」，绝不打印 PAT 的任何片段
   if (!_token) {
-    console.warn('[Token] getGitHubToken: Token 为空 — 请先在设置页面配置 GitHub Token');
+    console.warn('[Token] getGitHubToken: GitHub PAT 未配置 — Push 将跳过（不影响 Pull）');
   } else {
-    console.log('[Token] getGitHubToken: Token 存在 (前4位=' + _token.substring(0, 4) + '...)');
+    console.log('[Token] getGitHubToken: GitHub PAT 已配置');
   }
   return _token;
 }
@@ -324,7 +329,8 @@ function invalidateSDCache() {
 
 // Pull partner entries from unified shared-state.json (not old shared-diary.json)
 async function pullPartnerEntry(dateKey) {
-  if (!getGitHubToken()) return;
+  // Phase 2B：读取伴侣日记属于 Pull，凭据是 App Secret
+  if (typeof getAppSecret !== 'function' || !getAppSecret()) return;
   // Use unified pullAllSharedData — applies shared-state.json to localStorage
   // then re-render; avoids dual-format sync drift
   await pullAllSharedData();
@@ -558,7 +564,8 @@ async function bootApp() {
   initDashboard();
 
   // Pull shared data in background (2s timeout, non-blocking)
-  if (getGitHubToken()) {
+  // Phase 2B：boot 拉取属于 Pull，凭据是 App Secret
+  if (typeof getAppSecret === 'function' && getAppSecret()) {
     const ghTimeout = new Promise(function (_, reject) {
       setTimeout(function () {
         reject(new Error('GitHub timeout'));
@@ -2671,7 +2678,8 @@ document.querySelectorAll('.tab').forEach((btn) => {
     // Scroll position preserved per user request
     if (id === 'settings') loadSettingsUI();
     if (id === 'symptoms') {
-      if (getGitHubToken()) {
+      // Phase 2B：症状页拉取伴侣数据，属于 Pull，凭据是 App Secret
+      if (typeof getAppSecret === 'function' && getAppSecret()) {
         pullAllSharedData().then(function () {
           renderBarrySymptomView();
         });

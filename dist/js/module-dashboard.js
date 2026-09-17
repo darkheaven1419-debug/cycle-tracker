@@ -309,7 +309,8 @@
     // window.renderDashboard (quick-mark button, todo card). A bare local call
     // would resolve to this module's own renderDashboard and skip them.
     function _render() { (window.renderDashboard || renderDashboard)(); }
-    if (typeof getGitHubToken === 'function' && getGitHubToken()) {
+    // Phase 2B：这是 Pull 门禁，凭据是 App Secret（Push 用的 GitHub PAT 与此无关）
+    if (typeof getAppSecret === 'function' && getAppSecret()) {
       if (typeof pullAllSharedData === 'function') pullAllSharedData().then(_render);
     } else { _render(); }
   }
