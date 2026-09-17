@@ -223,8 +223,8 @@
 
   // ── 双人共享 Todo List ──
   (function () {
-    var TODO_REPO = 'darkheaven1419-debug/cycle-tracker';
-    var TODO_FILE = 'shared-todolist.json';
+    // Phase 2C-2：这里不再有 TODO_REPO / TODO_FILE —— 仓库名与文件路径都是 Worker 里的
+    // 字面量，浏览器只发 /todo 这个路径，既不持有也不需要知道它们。
 
     // ── 初始化：确保 localStorage 中有空数组 ──
     function _initData() {
@@ -298,42 +298,210 @@
       }
     }
 
-    function _deleteTodo(id) { if (typeof window.state === 'undefined') return; window.state.todoList=(window.state.todoList||[]).filter(function(t){return t.id!==id;}); _save(); _render(); _pushTodo(); }
+    // ════════════════════════════════════════════════════════════════════════
+    // Todo 合并规则（Phase 2C-2）—— 先写清楚，再实现
+    //
+    // 数据模型：一个条目必是二者之一
+    //   活条目 { id, text, author, createdAt, completed, completedBy, completedAt }
+    //   墓碑   { id, deleted:true, deletedAt, deletedBy }
+    //
+    // 从现有代码推出的事实（是既有行为，不是新设计）：
+    //   F1 id 由 _gid() 在创建时生成一次，全项目没有任何地方改写 id。
+    //   F2 text / author / createdAt 只在 _addTodo 里写。没有任何编辑入口
+    //      （_toggleTodo 只动完成三元组，_deleteTodo 只删除），所以同一个 id 的
+    //      两个副本，这三个字段必然相同。
+    //   F3 completed / completedBy / completedAt 是唯一可变字段，只由 _toggleTodo 改。
+    //
+    // 规则：
+    //   R1 id 不同 → 取并集，两边都留。
+    //   R2 同 id，两边都不是墓碑：
+    //      R2a 一边完成一边未完成 → 完成的一方胜（沿用旧 _pullTodo 的
+    //          “远程完成能同步到本地”），completedBy / completedAt 取完成方。
+    //      R2b 都完成 → completedAt 较大者胜；相同则 completedBy 字典序较大者胜。
+    //      R2c 都未完成 → 按 F2 两边字段本来就相同，任取；万一 id 撞车（F2 被打破），
+    //          按 createdAt → author → text 字典序取较大者。
+    //   R3 同 id，一边是墓碑 → 删除胜，结果是墓碑。删除因此可以传播。
+    //   R4 两边都是墓碑 → deletedAt 较大者胜，相同则 deletedBy 较大者胜。
+    //   R5 合并结果按 id 升序排序：同样的输入永远得到逐字节相同的输出，
+    //      既让重复拉取/推送不产生重复条目，也避免 CAS 因为数组顺序抖动反复冲突。
+    //   R6 墓碑不参与渲染（_render 过滤掉），但保留在 shared-todolist 和 PUT 载荷里
+    //      —— 它本身就是传播给对方的删除信号。
+    //
+    // R1–R5 全是全序、可交换且可结合的，所以结果与合并顺序无关，409 重试一定收敛
+    // 而不是来回打架。不引入向量时钟，不引入 CRDT。
+    //
+    // 已知取舍：墓碑只增不删。2C 不做墓碑回收——那是策略问题，不是合并正确性问题。
+    // ════════════════════════════════════════════════════════════════════════
 
-    function _pushTodo() {
-      if (typeof window.state === 'undefined') return;
-      var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
-      if (!token) return;
-      var content = btoa(unescape(encodeURIComponent(JSON.stringify(window.state.todoList||[],null,2))));
-      fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE, { headers:{'Authorization':'token '+token} })
-        .then(function(r){return r.ok?r.json():{sha:null};})
-        .then(function(d){return fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify({message:'🔄 Sync todo list',content:content,sha:d.sha||null})});})
-        .catch(function(){});
+    /** 字典序比较；null / undefined 视为最小。返回 -1 / 0 / 1。 */
+    function _cmp(a, b, k) {
+      var x = a[k], y = b[k];
+      if (x === y) return 0;
+      if (x === null || x === undefined) return -1;
+      if (y === null || y === undefined) return 1;
+      return x < y ? -1 : 1;
     }
 
-    function _pullTodo() {
-      var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
-      if (!token) return;
-      fetch('https://api.github.com/repos/'+TODO_REPO+'/contents/'+TODO_FILE, { headers:{'Authorization':'token '+token} })
-        .then(function(r){return r.ok?r.json():null;})
-        .then(function(d){
-          if (!d) return;
-          if (typeof window.state === 'undefined') return;
-          var content = JSON.parse(decodeURIComponent(escape(atob(d.content))));
-          if (!Array.isArray(content)) return;
-          var idMap={}; (window.state.todoList||[]).forEach(function(t){idMap[t.id]=t;});
-          content.forEach(function(t){
-            if(!idMap[t.id]){ idMap[t.id]=t; return; }
-            // 同 id：同步完成状态（远程完成能同步到本地），文本保留本地避免覆盖正在编辑的内容
-            var l=idMap[t.id];
-            if(t.completed && !l.completed){ l.completed=true; l.completedBy=t.completedBy||l.completedBy; l.completedAt=t.completedAt||Date.now(); }
-            else if(t.completed && l.completed && (t.completedAt||0)>(l.completedAt||0)){ l.completedBy=t.completedBy||l.completedBy; l.completedAt=t.completedAt; }
-          });
-          window.state.todoList=Object.keys(idMap).map(function(k){return idMap[k];});
-          localStorage.setItem('shared-todolist',JSON.stringify(window.state.todoList));
-          _render();
-        })
-        .catch(function(){});
+    /** 最后兜底：createdAt → author → text，保证 _todoPick 是全序的。 */
+    function _todoTotals(a, b) {
+      var c = _cmp(a, b, 'createdAt'); if (c !== 0) return c > 0 ? a : b;
+      c = _cmp(a, b, 'author'); if (c !== 0) return c > 0 ? a : b;
+      c = _cmp(a, b, 'text'); if (c !== 0) return c > 0 ? a : b;
+      return a;
+    }
+
+    /** 先比 k1 再比 k2，最后走 _todoTotals。 */
+    function _todoLater(a, b, k1, k2) {
+      var c = _cmp(a, b, k1); if (c !== 0) return c > 0 ? a : b;
+      c = _cmp(a, b, k2); if (c !== 0) return c > 0 ? a : b;
+      return _todoTotals(a, b);
+    }
+
+    /** 同一个 id 的两个副本取确定性胜者（R2 / R3 / R4）。 */
+    function _todoPick(a, b) {
+      if (a.deleted && b.deleted) return _todoLater(a, b, 'deletedAt', 'deletedBy');
+      if (a.deleted) return a;
+      if (b.deleted) return b;
+      if (!!a.completed !== !!b.completed) return a.completed ? a : b;
+      if (a.completed) return _todoLater(a, b, 'completedAt', 'completedBy');
+      return _todoTotals(a, b);
+    }
+
+    /** 按 id 合并两个数组（R1 + R5）。纯函数，不改参数。 */
+    function _todoMerge(local, remote) {
+      var byId = {};
+      function put(rec) {
+        if (!rec || !rec.id) return;
+        var cur = byId[rec.id];
+        byId[rec.id] = cur ? _todoPick(cur, rec) : rec;
+      }
+      (local || []).forEach(put);
+      (remote || []).forEach(put);
+      return Object.keys(byId).map(function (k) { return byId[k]; }).sort(function (a, b) {
+        return a.id < b.id ? -1 : (a.id > b.id ? 1 : 0);
+      });
+    }
+
+    function _todoList() {
+      return (typeof window.state !== 'undefined' && window.state.todoList) || [];
+    }
+
+    /** Phase 2C：Worker 地址只在 sync.js 有一处出处，这里不复制字面量。 */
+    function _workerUrl() {
+      return (typeof SyncModule !== 'undefined' && SyncModule.workerUrl) ? SyncModule.workerUrl : '';
+    }
+
+    function _appSecret() {
+      return typeof getAppSecret === 'function' ? getAppSecret() : '';
+    }
+
+    /** 把远程条目并进本地（合并 → 落盘 → 重绘）。 */
+    function _mergeTodoIntoLocal(remoteTodo) {
+      if (!Array.isArray(remoteTodo)) return;
+      if (typeof window.state === 'undefined') return;
+      var merged = _todoMerge(_todoList(), remoteTodo);
+      window.state.todoList = merged;
+      localStorage.setItem('shared-todolist', JSON.stringify(merged));
+      _render();
+    }
+
+    function _deleteTodo(id) {
+      if (typeof window.state === 'undefined') return;
+      // R3：删除留墓碑，而不是把条目抹掉——否则对方的副本会在下一次合并里把它复活。
+      var by = (typeof activeProfile !== 'undefined' ? activeProfile : 'andjela');
+      var list = (window.state.todoList || []).filter(function (t) { return t.id !== id; });
+      list.push({ id: id, deleted: true, deletedAt: _td(new Date()), deletedBy: by });
+      window.state.todoList = list;
+      _save(); _render(); _pushTodo();
+    }
+
+    // ── Phase 2C-2：推送走 Worker /todo（真正的 CAS），凭据 = App Secret ──
+    // 修掉的缺陷：旧 _pushTodo 是「GET 远程 sha → PUT 整个本地数组」，两人在同一窗口
+    // 各加一条，后到的 PUT 会把先到的整条覆盖掉。现在推送前先把远程按 id 并进本地，
+    // 再拿 GET 给的 baseSha 做 compare-and-swap。
+    // 全流程不访问 api.github.com，也不存在任何 GitHub 回退路径：Worker 不可用时保留
+    // 本地数据、走既有重试，最终如实报告失败。
+    async function _pushTodo(n) {
+      n = n || 0;
+      var secret = _appSecret();
+      var url = _workerUrl();
+      if (!secret || !url || typeof window.state === 'undefined') return;
+      var baseSha = null;
+      try {
+        var resp = await fetch(url + '/todo', {
+          headers: { 'Authorization': 'Bearer ' + secret, 'Accept': 'application/json' },
+          cache: 'no-store'
+        });
+        if (resp.ok) {
+          var env = await resp.json();
+          if (env && typeof env === 'object') {
+            baseSha = env.sha || null;
+            _mergeTodoIntoLocal(env.todo);   // ← 推送前先并远程：这一行就是 clobber 的修复
+          }
+        }
+      } catch (e) {
+        // 远程读不到时 baseSha 保持 null。Worker 侧 null ≠ 当前 sha，只会回 409，
+        // 不会静默覆盖——所以这条分支是安全的，不是“盲推”。
+        // 这里刻意不调度重试：紧接着的 _putTodo 失败时自己会调度，两边都调度会让
+        // 重试次数翻倍，3 次的上限就守不住了（与 sync.js push() 的处理一致）。
+        console.warn('[待办] 推送前读取远程失败，仍尝试推送:', e.message);
+      }
+      await _putTodo(_todoList(), baseSha, n);
+    }
+
+    async function _putTodo(todo, baseSha, n) {
+      var secret = _appSecret();
+      var url = _workerUrl();
+      if (!secret || !url) return;
+      var retry = function () {
+        if (n < 2) setTimeout(function () { _pushTodo(n + 1); }, 3000);
+        else console.warn('[待办] 重试已达上限，保留本地数据');
+      };
+      try {
+        var resp = await fetch(url + '/todo', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + secret, 'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ baseSha: baseSha || null, todo: todo })
+        });
+        if (resp.ok) return;
+        if (resp.status !== 409) {
+          console.warn('[待办] 推送失败: HTTP ' + resp.status);
+          retry(); return;
+        }
+        // 409：用信封里带的最新快照和 sha 就地再合并一次后重发——不再 GET，
+        // 否则会重新打开 CAS 要关掉的那个「读—写」窗口。
+        var latest = null;
+        try { latest = await resp.json(); } catch (e) { latest = null; }
+        if (latest && typeof latest === 'object' && Array.isArray(latest.todo)) {
+          _mergeTodoIntoLocal(latest.todo);
+          if (n < 2) setTimeout(function () { _putTodo(_todoList(), latest.sha || null, n + 1); }, 3000);
+          else console.warn('[待办] 冲突重试已达上限，保留本地数据');
+          return;
+        }
+        retry();
+      } catch (e) {
+        console.warn('[待办] 推送失败:', e.message);
+        retry();
+      }
+    }
+
+    async function _pullTodo() {
+      var secret = _appSecret();
+      var url = _workerUrl();
+      if (!secret || !url) return;
+      try {
+        var resp = await fetch(url + '/todo', {
+          headers: { 'Authorization': 'Bearer ' + secret, 'Accept': 'application/json' },
+          cache: 'no-store'
+        });
+        if (!resp.ok) return;
+        var env = await resp.json();
+        if (!env || typeof env !== 'object') return;
+        _mergeTodoIntoLocal(env.todo);
+      } catch (e) { /* 拉取失败保留本地数据，等下一次轮询 */ }
     }
 
     window._todoFilter = window._todoFilter || 'active';
@@ -348,7 +516,8 @@
       var list = [];
       try { list = JSON.parse(localStorage.getItem('shared-todolist') || '[]'); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }
       var filter = window._todoFilter || 'active';
-      var items = list;
+      // R6：墓碑条目已经被删除，不参与渲染——它只负责把删除传播给对方。
+      var items = list.filter(function(t){return t && !t.deleted;});
       var sorted = items.slice().sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
       var filtered = sorted;
       if (filter==='active') filtered=sorted.filter(function(t){return !t.completed;});
@@ -416,6 +585,9 @@
     window._toggleTodo = _toggleTodo;
     window._deleteTodo = _deleteTodo;
     window._setTodoFilter = _setFilter;
+    // 合并规则单独暴露，供 tests/test-phase2c-todo.js 直接做单元测试
+    // （与 sync.js 暴露 mergeByTimeKey 同理：测的是真规则，不是测试里的复刻品）。
+    window._todoMergeRules = { merge: _todoMerge, pick: _todoPick };
 
     // ── 自动初始化 ──
     function _tryCreateCard() {
@@ -446,9 +618,12 @@
       }
     }, 3000);
 
-    if (typeof getGitHubToken==='function') {
-      _pullTodo();
-      setInterval(function(){if(getGitHubToken())_pullTodo();},120000);
-    }
+    // Phase 2C-2：轮询的凭据从 GitHub PAT 换成 App Secret（共享数据唯一的那把钥匙）。
+    // 定时器无条件注册，每次真正触发时才检查凭据——这样之后才保存 App Secret 的用户
+    // 不用刷新页面也能开始同步。
+    if (typeof getAppSecret === 'function' && getAppSecret()) _pullTodo();
+    setInterval(function () {
+      if (typeof getAppSecret === 'function' && getAppSecret()) _pullTodo();
+    }, 120000);
   })();
 })();
