@@ -33,20 +33,58 @@ function Check {
   }
 }
 
+# Invoke-WebRequest cannot be used here. On a non-2xx status, Windows PowerShell
+# 5.1 has already drained and disposed the response stream by the time the
+# exception becomes catchable, so $_.Exception.Response.GetResponseStream()
+# reads back empty: EVERY error body is lost. That silently broke the stale-sha
+# check, which needs the 409 payload the client merges from. HttpWebRequest
+# hands the stream back on both success and failure.
 function Req {
   param([string]$Method, [string]$Path, [hashtable]$Headers, [string]$Body)
-  $p = @{ Uri = "$W$Path"; Method = $Method; Headers = $Headers; UseBasicParsing = $true }
-  if ($Body) { $p['Body'] = $Body; $p['ContentType'] = 'application/json' }
-  try {
-    $r = Invoke-WebRequest @p
-    return @{ Status = [int]$r.StatusCode; Body = [string]$r.Content; Head = $r.Headers }
-  } catch {
-    $resp = $_.Exception.Response
-    if (-not $resp) { return @{ Status = -1; Body = ''; Head = @{} } }
-    $sr = New-Object IO.StreamReader($resp.GetResponseStream())
-    $txt = $sr.ReadToEnd()
-    return @{ Status = [int]$resp.StatusCode; Body = $txt; Head = $resp.Headers }
+  $req = [Net.HttpWebRequest]::Create("$W$Path")
+  $req.Method = $Method
+  $req.AllowAutoRedirect = $false
+  $req.Timeout = 30000
+  $req.UserAgent = 'cycle-tracker-phase1-gate'
+  foreach ($name in $Headers.Keys) { $req.Headers.Add([string]$name, [string]$Headers[$name]) }
+
+  if ($Body) {
+    $req.ContentType = 'application/json'
+    $bytes = [Text.Encoding]::UTF8.GetBytes($Body)
+    $req.ContentLength = $bytes.Length
+    $stream = $req.GetRequestStream()
+    $stream.Write($bytes, 0, $bytes.Length)
+    $stream.Close()
   }
+
+  try {
+    $resp = $req.GetResponse()
+  } catch {
+    # A .NET method call surfaces as MethodInvocationException, so the
+    # WebException carrying .Response sits one or more levels in. Walking
+    # InnerException is what makes 4xx/5xx bodies reachable here at all.
+    $resp = $null
+    $ex = $_.Exception
+    for ($depth = 0; $depth -lt 5 -and $ex; $depth++) {
+      if ($ex.Response) { $resp = $ex.Response; break }
+      $ex = $ex.InnerException
+    }
+    if (-not $resp) { return @{ Status = -1; Body = ''; Head = @{} } }
+  }
+
+  $text = ''
+  try {
+    $reader = New-Object IO.StreamReader($resp.GetResponseStream())
+    $text = $reader.ReadToEnd()
+    $reader.Close()
+  } catch { $text = '' }
+
+  $head = @{}
+  foreach ($name in $resp.Headers.AllKeys) { $head[$name] = $resp.Headers[$name] }
+  $status = [int]$resp.StatusCode
+  $resp.Close()
+
+  return @{ Status = $status; Body = $text; Head = $head }
 }
 
 # Works for both the success dictionary and the error-response header collection.
