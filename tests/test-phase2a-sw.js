@@ -34,22 +34,28 @@ function check(name, pass, detail) {
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${name}${detail ? '  — ' + detail : ''}`);
 }
 
-/** Minimal CacheStorage stand-in that records every put(). */
+/**
+ * Minimal CacheStorage stand-in that records every put() and counts every
+ * lookup. The lookup counter is what lets Phase 2C assert that a /state or /todo
+ * write (and read) is not merely "not cached" but never looked up at all.
+ */
 function createCaches() {
   const store = new Map();
+  const lookups = [];
   const key = (req) => (typeof req === 'string' ? req : req.url);
   const cache = {
     put: async (req, res) => { store.set(key(req), res); },
-    match: async (req) => store.get(key(req)),
+    match: async (req) => { lookups.push(key(req)); return store.get(key(req)); },
     keys: async () => Array.from(store.keys()),
     addAll: async () => {},
     delete: async () => true,
   };
   return {
     store,
+    lookups,
     api: {
       open: async () => cache,
-      match: async (req) => store.get(key(req)),
+      match: async (req) => { lookups.push(key(req)); return store.get(key(req)); },
       keys: async () => Array.from(store.keys()),
       delete: async () => true,
     },
@@ -76,7 +82,7 @@ function loadSw() {
   };
   sandbox.self.self = sandbox.self;
   vm.runInContext(fs.readFileSync(SW_FILE, 'utf8'), vm.createContext(sandbox), { filename: 'sw.js' });
-  return { caches, handlers };
+  return { caches, handlers, sandbox };
 }
 
 /** Fires the fetch handler; returns what it passed to respondWith (null = bypass). */
@@ -100,7 +106,7 @@ function fire(handlers, url, opts) {
       `root=${a.length}B dist=${b.length}B identical=${a === b}`);
   }
 
-  const { caches, handlers } = loadSw();
+  const { caches, handlers, sandbox } = loadSw();
 
   // S2 — the private-data Worker request takes the bypass: no respondWith, and
   // therefore no interaction with the Cache API at all.
@@ -137,6 +143,54 @@ function fire(handlers, url, opts) {
     const leaked = keys.filter((k) => k.indexOf(WORKER_HOST) !== -1);
     check('S5 no Worker-host entry ends up in the cache', leaked.length === 0,
       `cacheKeys=${keys.length} workerEntries=${leaked.length}`);
+  }
+
+  // ── S6..S10 — Phase 2C added PUT /state and GET+PUT /todo to the same host.
+  // The bypass is a hostname check placed before every branch, so it must be
+  // method- and path-agnostic: all four combinations take it, none calls
+  // respondWith, and none performs even a cache *lookup* — which is the stronger
+  // property for a write, since a lookup that misses would still have put private
+  // request metadata into the Cache API path.
+  {
+    const CASES = [
+      ['S6', 'GET', '/state', 'a read of the private state'],
+      ['S7', 'PUT', '/state', 'a write of the private state'],
+      ['S8', 'GET', '/todo', 'a read of the private todo list'],
+      ['S9', 'PUT', '/todo', 'a write of the private todo list'],
+    ];
+    for (const [id, method, path, label] of CASES) {
+      const url = 'https://' + WORKER_HOST + path;
+      const lookupsBefore = caches.lookups.length;
+      const keysBefore = caches.store.size;
+      const init = { method, headers: { Authorization: 'Bearer test-key' } };
+      if (method === 'PUT') {
+        init.body = JSON.stringify({ baseSha: null, todo: [] });
+        init.headers['Content-Type'] = 'application/json';
+      }
+      const responded = fire(handlers, url, init);
+      await new Promise((r) => setTimeout(r, 20));
+      const newLookups = caches.lookups.length - lookupsBefore;
+      check(`${id} ${method} ${path} — ${label} bypasses the SW entirely`,
+        responded === null && newLookups === 0 && caches.store.size === keysBefore,
+        `respondWith=${responded === null ? 'not called' : 'called'} cacheLookups=${newLookups} newCacheEntries=${caches.store.size - keysBefore}`);
+    }
+  }
+
+  // S10 — the control that keeps S6..S9 from being vacuous. A cache *lookup* only
+  // happens on the caching branch's offline path, so the control forces the network
+  // to fail: the same-origin .json request must then fall back to caches.match and
+  // be counted. Without this, a zero above could just mean a dead counter.
+  {
+    const lookupsBefore = caches.lookups.length;
+    const realFetch = sandbox.fetch;
+    sandbox.fetch = async () => { throw new Error('offline'); };
+    const responded = fire(handlers, CONTROL_URL);
+    if (responded !== null) await responded;
+    await new Promise((r) => setTimeout(r, 20));
+    sandbox.fetch = realFetch;
+    const newLookups = caches.lookups.length - lookupsBefore;
+    check('S10 control: an offline same-origin .json request does perform a cache lookup',
+      newLookups > 0, `cacheLookups=${newLookups}`);
   }
 
   const failed = results.filter((r) => !r.pass);

@@ -218,14 +218,17 @@ async function openPage(browser, seed) {
     check('U6 a device with no PAT makes zero api.github.com requests (item 12)',
       seen.github.length === 0, `github=${JSON.stringify(seen.github)}`);
 
-    // Push must not silently fall back to the App Secret (item 15).
+    // Phase 2C: a Push runs off the App Secret and goes to the Worker, never GitHub.
+    // Supersedes the Phase 2B form of this check, which asserted the opposite — that
+    // a Push with no PAT did *not* fall back to the App Secret — because 2B had
+    // migrated Pull only and the App Secret was then a Pull-only credential.
     const workerBeforePush = seen.worker.length;
     const pushed = await page.evaluate(() => {
       try { window.pushAllSharedData(); return true; } catch (e) { return false; }
     });
     await page.waitForTimeout(1500);
-    check('U7 a Push with no GitHub PAT does not fall back to the App Secret (item 15)',
-      pushed && seen.github.length === 0 && seen.worker.length === workerBeforePush,
+    check('U7 a Push runs off the App Secret against the Worker, and never reaches GitHub',
+      pushed && seen.github.length === 0 && seen.worker.length > workerBeforePush,
       `pushed=${pushed} github=${seen.github.length} workerBefore=${workerBeforePush} workerAfter=${seen.worker.length}`);
     // Pre-existing, and NOT a load-order artifact: renderSharedDiary is called
     // unguarded at app.js:112 and app.js:600 but is defined nowhere in the tree
@@ -257,10 +260,13 @@ async function openPage(browser, seed) {
     });
     await page.waitForTimeout(3000);
     const ghReads = await page.evaluate(() => window.__reads.filter((k) => k === 'gh-token').length);
-    check('U10 with only a GitHub PAT, a Push still reads that PAT and writes to GitHub (items 13, 14, 15)',
-      pushed && ghReads >= 1 && seen.github.length > before &&
-      seen.github.some((c) => c.indexOf('PUT') === 0),
-      `pushed=${pushed} ghTokenReads=${ghReads} github=${JSON.stringify(seen.github)}`);
+    // Phase 2C: the PAT is no longer a credential for shared data at all. A device
+    // holding only a PAT must therefore do nothing on a Push — it may not read the
+    // PAT, and it may not reach GitHub or the Worker. Supersedes the Phase 2B form,
+    // which asserted the PAT was still read and used to write to GitHub.
+    check('U10 with only a GitHub PAT, a Push reads no PAT and reaches neither GitHub nor the Worker',
+      pushed && ghReads === 0 && seen.github.length === before && seen.worker.length === 0,
+      `pushed=${pushed} ghTokenReads=${ghReads} github=${JSON.stringify(seen.github)} worker=${seen.worker.length}`);
     check('U11 the PAT-only scenario never contacted the Worker',
       seen.worker.length === 0, `worker=${seen.worker.length}`);
     check('U12 no page error was raised in the PAT-only scenario',

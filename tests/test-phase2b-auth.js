@@ -203,24 +203,36 @@ const has = (arr, needle) => arr.some((x) => String(x).indexOf(needle) !== -1);
     d.S.stopAutoPull();
   }
 
-  // ── 9. the Push path still reads the PAT (item 13, guard against over-deletion) ──
+  // ── 9. the Push path uses the App Secret, never the PAT and never GitHub (2C) ──
+  // Supersedes the Phase 2B form of this check, which asserted the opposite: that a
+  // Push still obtained the PAT and wrote to GitHub, because 2B had migrated Pull
+  // only. Phase 2C moved Push to the Worker, so the PAT is no longer consulted at
+  // all. The device below still has a *valid-looking* PAT available.
   {
     const d = createDevice({ appKey: APP_KEY, ghToken: GH_TOKEN, ghTokenValue: GH_TOKEN });
     d.reset();
     await d.push();
-    check('B9 a Push still obtains the GitHub PAT and writes to GitHub',
-      d.ledger.tokenCalls >= 1 && has(d.ledger.github, 'api.github.com'),
-      `getGitHubTokenCalls=${d.ledger.tokenCalls} github=${d.ledger.github.length}`);
+    check('B9 a Push reaches the Worker with the App Secret and calls neither getGitHubToken nor GitHub',
+      d.ledger.worker.length === 2 && d.ledger.tokenCalls === 0 && d.ledger.github.length === 0,
+      `worker=${d.ledger.worker.length} getGitHubTokenCalls=${d.ledger.tokenCalls} github=${d.ledger.github.length}`);
   }
 
-  // ── 10. with no PAT, the Push skips (and still does not fall back to the App Secret) ──
+  // ── 10. the App Secret alone is enough to push; a PAT alone is enough for nothing ──
   {
     const d = createDevice({ appKey: APP_KEY, ghTokenValue: '' });
     d.reset();
     await d.push();
-    check('B10 a Push with no GitHub PAT skips instead of using the App Secret',
-      d.ledger.github.length === 0,
-      `github=${d.ledger.github.length} worker=${d.ledger.worker.length}`);
+    check('B10 a Push works off the App Secret with no GitHub PAT on the device',
+      d.ledger.worker.length === 2 && d.ledger.github.length === 0,
+      `worker=${d.ledger.worker.length} github=${d.ledger.github.length}`);
+  }
+  {
+    const d = createDevice({ ghToken: GH_TOKEN, ghTokenValue: GH_TOKEN });
+    d.reset();
+    await d.push();
+    check('B10b with only a GitHub PAT a Push does nothing at all — no Worker, and no GitHub fallback',
+      d.ledger.worker.length === 0 && d.ledger.github.length === 0,
+      `worker=${d.ledger.worker.length} github=${d.ledger.github.length}`);
   }
 
   // ── 11. the Pull gates in app.js are all keyed on the App Secret (items 5/7/8 source form) ──

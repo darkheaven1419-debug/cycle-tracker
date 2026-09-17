@@ -1,10 +1,9 @@
 const SyncModule = (function () {
-  var REPO = 'darkheaven1419-debug/cycle-tracker';
-  var STATE_FILE = 'shared-state.json';
   var _lastError = null; // 持久化同步错误状态
 
-  // ── Phase 2A：Pull 改走 Worker（私有数据仓库），Push 暂时仍走旧 GitHub 链路 ──
+  // ── Phase 2A/2C：Pull 与 Push 都走 Worker（私有数据仓库） ──
   // 仓库名/文件路径是 Worker 里的字面量，前端只发路径，不带任何 repo/path 参数。
+  // 浏览器不再持有、也不再用任何 GitHub API 地址 —— 共享数据的读写只有这一条链路。
   var WORKER_URL = 'https://cycle-tracker-data.cycletracker-barry.workers.dev';
   // 与旧 gh-token 明确分开的一把钥匙。只存 localStorage，绝不进 URL / Git / 源码 / 日志
   var APP_KEY_STORAGE = 'ct-app-key';
@@ -59,8 +58,8 @@ const SyncModule = (function () {
   }
 
   /**
-   * 读取本机的 app secret。与旧 gh-token 是两把互不相干的钥匙：
-   * gh-token 只用于仍在旧链路上的 Push，这个只用于 Worker 的 Pull。
+   * 读取本机的 app secret。Phase 2C 起这是共享数据（Pull 与 Push）唯一的凭据，
+   * 与旧的 GitHub PAT 完全无关。
    * 只做 trim —— 值本身绝不写日志、绝不进 URL。
    */
   function getAppSecret() {
@@ -293,71 +292,49 @@ const SyncModule = (function () {
     if (_sb) { _sb.textContent = '🔴 ' + msg.replace(/^[^ ]* /, ''); _sb.style.color = '#E53935'; }
   }
 
-  // ── 推送数据到 GitHub ──
-  async function push(n) {
-    n = n || 0;
-    var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
-    if (!token) { console.log('[同步] 无 Token，跳过推送'); return; }
-
-    var _localBefore = getJSON('shared-diary', {});
-    console.log('[同步] 开始推送 (重试#' + n + ') — 本地日记数:', Object.keys(_localBefore).length);
-
-    // ── 步骤 1：拉取远程（一次 GET 取得 sha 并合并日记，消除重复请求与 TOCTOU 窗口） ──
-    var sha = null;
-    try {
-      var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
-      var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
-      if (resp.status === 401) {
-        _syncToast(_syncMsg('token401'));
-        return;
-      }
-      if (resp.ok) {
-        var data = await resp.json();
-        sha = data.sha;
-        var remoteState = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-        if (remoteState && remoteState.diary) {
-          var remoteCount = Object.keys(remoteState.diary).length;
-          var localDiary = getJSON('shared-diary', {});
-          var merged = mergeDiary(localDiary, remoteState.diary);
-          localStorage.setItem('shared-diary', JSON.stringify(merged));
-          console.log('[同步] 推送前合并远程 ✓ 本地=' + Object.keys(localDiary).length + ' 远程=' + remoteCount + ' 合并后=' + Object.keys(merged).length);
-        }
-        // 推送前与远端取并集：本机推送不能抹掉对方刚写的便签 / 刚产生的回应
-        if (remoteState && remoteState.gratitude) {
-          var lg = _asArray(getJSON('shared-gratitude', []));
-          var mg = mergeGratitude(lg, remoteState.gratitude);
-          localStorage.setItem('shared-gratitude', JSON.stringify(mg));
-          console.log('[同步] 推送前合并感恩便签 本地=' + lg.length + ' 远程=' + _asArray(remoteState.gratitude).length + ' 合并后=' + mg.length);
-        }
-        if (remoteState && remoteState.gratitudeEcho) {
-          var le = _asArray(getJSON('shared-gratitude-echo', []));
-          var me = mergeEcho(le, remoteState.gratitudeEcho);
-          localStorage.setItem('shared-gratitude-echo', JSON.stringify(me));
-          console.log('[同步] 推送前合并 Echo 本地=' + le.length + ' 远程=' + _asArray(remoteState.gratitudeEcho).length + ' 合并后=' + me.length);
-        }
-      }
-    } catch (e) {
-      console.warn('[同步] 推送前拉取失败，继续推送:', e.message);
+  // ── Phase 2C：把远程快照里的先写内容并进本地 ──
+  // 推送前必须先取并集：本机推送不能抹掉对方刚写的日记 / 便签 / 刚产生的回应。
+  // 迁移前这段逻辑内联在 push() 的 GET 分支里；现在「推送前的 GET」与「409 冲突重试」
+  // 共用同一份实现，保证两条路径的合并语义严格一致。
+  function _mergeRemoteIntoLocal(remoteState) {
+    if (!remoteState || typeof remoteState !== 'object') return;
+    if (remoteState.diary) {
+      var remoteCount = Object.keys(remoteState.diary).length;
+      var localDiary = getJSON('shared-diary', {});
+      var merged = mergeDiary(localDiary, remoteState.diary);
+      localStorage.setItem('shared-diary', JSON.stringify(merged));
+      console.log('[同步] 推送前合并远程 ✓ 本地=' + Object.keys(localDiary).length + ' 远程=' + remoteCount + ' 合并后=' + Object.keys(merged).length);
     }
+    if (remoteState.gratitude) {
+      var lg = _asArray(getJSON('shared-gratitude', []));
+      var mg = mergeGratitude(lg, remoteState.gratitude);
+      localStorage.setItem('shared-gratitude', JSON.stringify(mg));
+      console.log('[同步] 推送前合并感恩便签 本地=' + lg.length + ' 远程=' + _asArray(remoteState.gratitude).length + ' 合并后=' + mg.length);
+    }
+    if (remoteState.gratitudeEcho) {
+      var le = _asArray(getJSON('shared-gratitude-echo', []));
+      var me = mergeEcho(le, remoteState.gratitudeEcho);
+      localStorage.setItem('shared-gratitude-echo', JSON.stringify(me));
+      console.log('[同步] 推送前合并 Echo 本地=' + le.length + ' 远程=' + _asArray(remoteState.gratitudeEcho).length + ' 合并后=' + me.length);
+    }
+  }
 
-    // ── 步骤 2：收集本地状态（含已合并的日记） ──
-    var state = collect();
-
-    // ── 步骤 3（已并入步骤 1）：直接复用步骤 1 取得的 sha ──
-    var authHeaders = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
-
-    // ── 步骤 4：PUT ──
-    var body = {
-      message: '🔄 Sync shared state',
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))))
+  // ── PUT /state 并处理全部响应分支（含 409 CAS 冲突重试） ──
+  // 409 时 Worker 的信封里直接带回最新 sha 与最新 state：用它合并后重发，
+  // 不再额外发 GET，也不会覆盖掉对方刚写入的数据。重试上限仍是 3 次（n=0,1,2）。
+  async function _putState(state, baseSha, n) {
+    var secret = getAppSecret();
+    if (!secret) return;
+    var headers = {
+      Authorization: 'Bearer ' + secret,
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
     };
-    if (sha) body.sha = sha;
-
     try {
-      var putResp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, {
+      var putResp = await fetch(WORKER_URL + '/state', {
         method: 'PUT',
-        headers: authHeaders,
-        body: JSON.stringify(body)
+        headers: headers,
+        body: JSON.stringify({ baseSha: baseSha || null, state: state })
       });
 
       if (putResp.ok) {
@@ -368,11 +345,20 @@ const SyncModule = (function () {
       } else if (putResp.status === 401) {
         _setError(_syncMsg('token401'));
         _syncToast(_syncMsg('token401'));
-      } else if (putResp.status === 409 || putResp.status === 422) {
-        console.warn('[同步] 冲突 (' + putResp.status + ')，拉取最新后重试...');
-        await pull();
+      } else if (putResp.status === 409) {
+        console.warn('[同步] 版本冲突 (409)，用返回的最新快照合并后重试...');
+        var latest = null;
+        try { latest = await putResp.json(); } catch (e) { latest = null; }
+        if (latest && typeof latest === 'object') {
+          _mergeRemoteIntoLocal(latest.state);
+          if (n < 2) {
+            // 直接复用 409 信封里的 sha 重发（不再 GET）
+            setTimeout(function () { _putState(collect(), latest.sha || null, n + 1); }, 3000);
+            return;
+          }
+        }
         if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
-        else { _syncToast(_syncMsg('retryFail')); }
+        else { _setError(_syncMsg('retryFail')); _syncToast(_syncMsg('retryFail')); }
       } else {
         console.error('[同步] 意外响应:', putResp.status, putResp.statusText);
         if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
@@ -384,6 +370,46 @@ const SyncModule = (function () {
       if (n < 2) { setTimeout(function () { push(n + 1); }, 3000); }
       else { _syncToast(_syncMsg('retryFail')); }
     }
+  }
+
+  // ── 推送数据到 Worker（Phase 2C：私有数据仓库 + CAS，凭据 = App Secret） ──
+  // 全流程不访问 api.github.com，也不存在任何 GitHub 回退路径：
+  // Worker 不可用时保留本地数据、走既有重试，最终如实报告同步失败。
+  async function push(n) {
+    n = n || 0;
+    var secret = typeof getAppSecret === 'function' ? getAppSecret() : '';
+    if (!secret) { console.log('[同步] 无 App Secret，跳过推送'); return; }
+
+    var _localBefore = getJSON('shared-diary', {});
+    console.log('[同步] 开始推送 (重试#' + n + ') — 本地日记数:', Object.keys(_localBefore).length);
+
+    // ── 步骤 1：GET Worker /state —— 一次请求取得 baseSha，并把远程 diary/gratitude/echo 先并进本地 ──
+    var baseSha = null;
+    try {
+      var headers = { Authorization: 'Bearer ' + secret, Accept: 'application/json' };
+      var resp = await fetch(WORKER_URL + '/state', { headers: headers, cache: 'no-store' });
+      if (resp.status === 401) {
+        _syncToast(_syncMsg('token401'));
+        return;
+      }
+      if (resp.ok) {
+        var env = await resp.json();
+        if (env && typeof env === 'object') {
+          baseSha = env.sha || null;
+          _mergeRemoteIntoLocal(env.state);
+        }
+      } else {
+        console.warn('[同步] 推送前读取失败 (' + resp.status + ')，仍尝试推送');
+      }
+    } catch (e) {
+      console.warn('[同步] 推送前拉取失败，继续推送:', e.message);
+    }
+
+    // ── 步骤 2：收集本地状态（含已并入的远程内容） ──
+    var state = collect();
+
+    // ── 步骤 3：PUT Worker /state（baseSha = 步骤 1 取得的 sha） ──
+    await _putState(state, baseSha, n);
   }
 
   // ── 从 Worker 拉取数据（Phase 2A：Pull 已迁移；Push 仍在旧 GitHub 链路） ──
@@ -537,9 +563,9 @@ const SyncModule = (function () {
 })();
 
 // ── 暴露全局接口 ──
-// Phase 2B：两把凭据必须分开，谁都不能顺手删掉另一个 ——
-//   Pull 凭据 = App Secret （localStorage['ct-app-key']，Worker 身份，Phase 2A/2B 已迁移）
-//   Push 凭据 = GitHub PAT（localStorage['gh-token']，仍在旧链路，Phase 2C 才迁移）
+// Phase 2C：共享数据（Pull 与 Push）统一使用一把凭据 ——
+//   App Secret（localStorage['ct-app-key']，Worker 身份，Phase 2A/2B/2C 全部迁移完成）
+// GitHub PAT 不再是这条链路上的凭据，也不再参与任何同步决策。
 getAppSecret = SyncModule.getAppSecret;
 updateSyncStatusBadge = SyncModule.updateBadge;
 pushAllSharedData = SyncModule.push;

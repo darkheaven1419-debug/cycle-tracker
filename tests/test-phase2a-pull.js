@@ -94,11 +94,9 @@ function serve() {
   const page = await ctx.newPage();
   page.on('pageerror', (e) => console.log('  [pageerror]', e.message.split('\n')[0]));
 
-  const seen = { worker: [], github: [], ghSeq: [], authOk: null, urlHasKey: false };
+  const seen = { worker: [], workerSeq: [], github: [], ghSeq: [], authOk: null, urlHasKey: false };
   let wakeWorker = null;
-  let wakeGh = null;
   const nextWorkerHit = () => new Promise((res) => { wakeWorker = res; });
-  const nextGhPush = () => new Promise((res) => { wakeGh = res; });
 
   await page.route('**/*', (route) => {
     const req = route.request();
@@ -117,6 +115,7 @@ function serve() {
     if (u === WORKER_STATE) {
       if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
       seen.worker.push(u);
+      seen.workerSeq.push(req.method());
       const auth = req.headers()['authorization'] || '';
       if (seen.authOk === null) seen.authOk = (auth === 'Bearer ' + APP_KEY);
       if (u.indexOf(APP_KEY) !== -1 || u.indexOf('?') !== -1) seen.urlHasKey = true;
@@ -126,14 +125,14 @@ function serve() {
         headers: cors, body: JSON.stringify(ENVELOPE),
       });
     }
-    // A minimal fake Contents API for the still-unmigrated push path, so that
-    // push() genuinely completes (GET sha → PUT) and the sequence below is real
-    // rather than a list of aborted calls.
+    // A minimal fake Contents API, deliberately left wired after Phase 2C even
+    // though nothing should reach it: it is the tripwire that turns "push fell
+    // back to GitHub" into a recorded call the assertions below can see, instead
+    // of an aborted request that would look like a plain network failure.
     if (u.indexOf(GH_STATE) !== -1) {
       seen.github.push(req.method() + ' ' + u);
       seen.ghSeq.push(req.method());
       if (req.method() === 'PUT') {
-        if (wakeGh) { const w = wakeGh; wakeGh = null; w(); }
         return route.fulfill({
           status: 200, contentType: 'application/json',
           body: JSON.stringify({ content: { sha: 'c'.repeat(40) } }),
@@ -230,24 +229,29 @@ function serve() {
       `switched=${switched} hit=${got} before=${before} after=${seen.worker.length}`);
   }
 
-  // ── 5. push still goes to GitHub; every GitHub read is the read half of a push ──
-  // push() is GET-sha-then-PUT. A pull that still read GitHub would leave an
-  // unpaired GET in this sequence — that is what this asserts against, and the
-  // push below makes the sequence non-empty so the assertion is not vacuous.
+  // ── 5. Phase 2C: push goes to the Worker, and GitHub sees nothing at all ──
+  // Supersedes the Phase 2A form of this check, which asserted that push still
+  // reached GitHub (GET sha → PUT) and that no GET was left unpaired. Phase 2C
+  // moved push to the Worker, so the property is now the opposite one: every push
+  // is a /state GET followed by a /state PUT, and the GitHub tripwire above stays
+  // at zero for the entire run — not just for this call.
+  //
+  // The window is deliberately not asserted to contain exactly one push: the app
+  // has several pre-existing push triggers (app.js:229/2110/3143, js/fix-data.js,
+  // js/fix-diary.js:201, js/module-sleep.js:11) that can fire inside it. What must
+  // hold is the shape of the Worker traffic and the absence of GitHub traffic.
   {
-    const gh = nextGhPush();
+    const wkBefore = seen.workerSeq.length;
     const pushed = await page.evaluate(() => {
       try { window.pushAllSharedData(); return true; } catch (e) { return false; }
     });
-    const reached = await Promise.race([gh.then(() => true), page.waitForTimeout(8000).then(() => false)]);
+    await page.waitForTimeout(3000);
     const lastSync = await page.evaluate(() => localStorage.getItem('shared-last-sync'));
-    let unpaired = 0;
-    for (let i = 0; i < seen.ghSeq.length; i++) {
-      if (seen.ghSeq[i] === 'GET' && seen.ghSeq[i + 1] !== 'PUT') unpaired++;
-    }
-    check('P7 push still goes to GitHub, and no shared-state.json GET is left unpaired',
-      pushed && reached && seen.ghSeq.length > 0 && unpaired === 0 && !!lastSync,
-      `seq=[${seen.ghSeq.join(',')}] unpairedGets=${unpaired} lastSync=${!!lastSync} workerPulls=${seen.worker.length}`);
+    const wkSeq = seen.workerSeq.slice(wkBefore);
+    const paired = wkSeq.length >= 2 && wkSeq.every((m, i) => m === (i % 2 === 0 ? 'GET' : 'PUT'));
+    check('P7 every push is a Worker /state GET then PUT, and GitHub is never contacted',
+      pushed && paired && seen.ghSeq.length === 0 && !!lastSync,
+      `workerSeq=[${wkSeq.join(',')}] paired=${paired} githubTotal=${seen.ghSeq.length} lastSync=${!!lastSync}`);
   }
 
   await ctx.close();

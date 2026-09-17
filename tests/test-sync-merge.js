@@ -1,19 +1,21 @@
 /**
- * Sync-layer merge safety + Phase 2A Pull migration.
+ * Sync-layer merge safety + Phase 2A Pull / Phase 2C Push migration.
  *
  * Two independent vm "devices" share one in-memory fake GitHub Contents API.
- * Phase 2A moved only the *Pull* path to the Worker, so this harness now runs the
- * real worker/src/index.js in-process: a Worker-URL call from a device goes into
- * the Worker, whose own upstream GitHub request is pointed back at the same fake
- * remote; an api.github.com call goes straight to that remote, which is still
- * where push() writes. Routing is recorded per device, so the tests below can
- * assert that a pull never touches GitHub and a push never touches the Worker.
+ * Phase 2A moved the *Pull* path to the Worker and Phase 2C moved the *Push* path
+ * there too, so this harness runs the real worker/src/index.js in-process: a
+ * Worker-URL call from a device goes into the Worker, whose own upstream GitHub
+ * request is pointed back at the same fake remote; an api.github.com call would go
+ * straight to that remote. Routing is recorded per device, so the tests below can
+ * assert that neither direction of a sync reaches GitHub from the browser any more.
  *
  * Run: node tests/test-sync-merge.js
  *
  * The property under test is that neither direction of a sync can destroy the
  * other side's fresh content: A's push must not drop B's new note, B's push must
- * not drop A's new reaction, and near-simultaneous writes must union.
+ * not drop A's new reaction, and near-simultaneous writes must union — now
+ * enforced by the Worker's compare-and-swap on the blob sha instead of by a
+ * read-then-write against the Contents API.
  */
 'use strict';
 
@@ -538,18 +540,20 @@ const echo = (noteFrom, noteTime, from, emoji, time) => ({ noteFrom, noteTime, f
       A.calls.worker.length === 1 && g === 'L,R' && e === 2, `gratitude=[${g}] echo=${e}`);
   }
 
-  // W6 — push is untouched: GitHub only, never the Worker (item 9)
+  // W6 — Phase 2C: push goes to the Worker and never to GitHub (items 9, 11)
+  // Superseded the Phase 2B form of this check, which asserted the opposite
+  // routing because 2B had migrated Pull only.
   {
     const { remote, A } = fresh();
     A.set('shared-gratitude', [note('andjela', 1000, 'push me')]);
     await A.S.push();
-    const gh = A.calls.github.join(' ');
-    check('W6 push still goes to GitHub and never to the Worker',
-      A.calls.github.length === 2 &&
-      gh.indexOf('api.github.com/repos/darkheaven1419-debug/cycle-tracker/contents/shared-state.json') !== -1 &&
-      A.calls.worker.length === 0 &&
+    const wk = A.calls.worker.join(' ');
+    check('W6 push goes to the Worker (/state GET then PUT) and never to GitHub',
+      A.calls.worker.length === 2 &&
+      wk.indexOf('/state') !== -1 &&
+      A.calls.github.length === 0 &&
       remote.content.gratitude.length === 1,
-      `github=${A.calls.github.length} worker=${A.calls.worker.length} remote=${remote.content.gratitude.length}`);
+      `worker=${A.calls.worker.length} github=${A.calls.github.length} remote=${remote.content.gratitude.length}`);
   }
 
   // W7 — one pull never mixes the two transports (item 10)
