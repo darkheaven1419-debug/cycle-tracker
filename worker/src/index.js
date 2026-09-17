@@ -122,6 +122,19 @@ function fail(code, message, status, request, extra) {
 
 // ── auth ────────────────────────────────────────────────────────────────────
 
+/**
+ * Reads a Worker secret as a trimmed string. A value pasted through a Windows
+ * terminal very often arrives with a trailing CR/LF that `wrangler secret put`
+ * stores verbatim — and because secrets can never be read back, that turns into
+ * a permanent auth failure with no observable cause. The values here (base64url
+ * app secrets, GitHub PATs) never legitimately carry edge whitespace, so
+ * trimming costs no entropy.
+ */
+function envString(env, name) {
+  const value = env[name];
+  return typeof value === 'string' ? value.trim() : value;
+}
+
 /** Length-independent compare, so a wrong key cannot be narrowed byte by byte. */
 function safeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
@@ -137,8 +150,8 @@ function actorFrom(request, env) {
   const match = /^Bearer[ \t]+(.+)$/i.exec(header.trim());
   if (!match) return null;
   const key = match[1].trim();
-  if (safeEqual(key, env.APP_KEY_ANDJELA)) return 'andjela';
-  if (safeEqual(key, env.APP_KEY_BARRY)) return 'barry';
+  if (safeEqual(key, envString(env, 'APP_KEY_ANDJELA'))) return 'andjela';
+  if (safeEqual(key, envString(env, 'APP_KEY_BARRY'))) return 'barry';
   return null;
 }
 
@@ -174,7 +187,7 @@ function ghRequest(env, path, init) {
     init: {
       ...init,
       headers: {
-        Authorization: 'Bearer ' + env.GH_PAT,
+        Authorization: 'Bearer ' + envString(env, 'GH_PAT'),
         Accept: GH_ACCEPT,
         'X-GitHub-Api-Version': GH_API_VERSION,
         'User-Agent': 'cycle-tracker-worker',
