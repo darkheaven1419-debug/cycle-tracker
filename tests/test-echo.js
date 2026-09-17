@@ -53,6 +53,16 @@ function check(name, pass, detail) {
 
 const errors = [];
 
+// ── Phase 2C：共享数据的传输层是 Worker，不再是 GitHub Contents API ──
+// 只用合成凭据；真实 app secret 绝不出现在测试里。
+const APP_KEY = 'test-app-key-phase2c-echo-00000000000000000';
+const WORKER_HOST = 'https://cycle-tracker-data.cycletracker-barry.workers.dev';
+const WORKER_STATE = WORKER_HOST + '/state';
+const WORKER_TODO = WORKER_HOST + '/todo';
+
+// 任何打到旧 GitHub 路径的请求都是传输层回归，不是网络事故：记下来，最后统一断言。
+const githubCalls = [];
+
 async function scenario(browser, seed) {
   const ctx = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -70,20 +80,48 @@ async function scenario(browser, seed) {
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
 
-  const remote = { state: null };
+  const remote = { state: null, todo: [] };
   await page.route('**/*', (route) => {
-    const u = route.request().url();
-    if (u.includes('/contents/shared-state.json') && remote.state) {
+    const req = route.request();
+    const u = req.url();
+    // Phase 2C：共享数据经 Worker 读写，所以假远端现在是 Worker，CORS 契约一并模拟
+    // （与 tests/test-phase2a-pull.js 的写法一致）。页面 origin 是 localhost，不是生产
+    // Pages origin，因此回显浏览器实际发来的 Origin —— 否则浏览器会拦掉响应，pull 永远
+    // 应用不上，看起来像代码坏了，实际是夹具没搭好。
+    const origin = req.headers()['origin'];
+    const cors = origin ? {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+      'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+      Vary: 'Origin',
+    } : {};
+    if (u === WORKER_STATE) {
+      if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+      if (req.method() === 'PUT') {
+        return route.fulfill({ status: 200, contentType: 'application/json', headers: cors, body: JSON.stringify({ sha: 'test-sha' }) });
+      }
+      // 远端还没被写入时返回空信封 —— 等价于旧夹具「mock 未就绪就不供给数据」。
       return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          sha: 'test-sha',
-          content: Buffer.from(JSON.stringify(remote.state), 'utf8').toString('base64'),
-        }),
+        status: 200, contentType: 'application/json', headers: cors,
+        body: JSON.stringify({ sha: remote.state ? 'test-sha' : null, state: remote.state || {} }),
       });
     }
-    if (u.includes('api.github.com') || u.includes('open-meteo')) return route.abort();
+    if (u === WORKER_TODO) {
+      if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+      if (req.method() === 'PUT') {
+        return route.fulfill({ status: 200, contentType: 'application/json', headers: cors, body: JSON.stringify({ sha: 'test-todo-sha' }) });
+      }
+      return route.fulfill({
+        status: 200, contentType: 'application/json', headers: cors,
+        body: JSON.stringify({ sha: null, todo: remote.todo || [] }),
+      });
+    }
+    // GitHub 现在是绊线而不是传输层：打到这里就说明某条共享数据路径回退了。
+    if (u.indexOf('api.github.com') !== -1) {
+      githubCalls.push(req.method() + ' ' + u);
+      return route.abort();
+    }
+    if (u.includes('open-meteo')) return route.abort();
     return route.continue();
   });
 
@@ -93,9 +131,9 @@ async function scenario(browser, seed) {
   await page.waitForTimeout(500);
   // The stats tab handler only calls renderStatsPanel(); the gratitude wall is
   // filled by renderAll()/the pull path (sync.js calls renderGratitude() after a
-  // pull, which the aborted api.github.com route here prevents). Verified against
-  // HEAD: the wall is equally empty at boot before this change, so the render is
-  // driven explicitly. E9 still exercises the real pull → render path.
+  // pull). Before a remote state exists the Worker stub answers with an empty
+  // envelope, so the wall is empty at boot and the render is driven explicitly
+  // here. E9 still exercises the real pull → render path.
   await page.evaluate(() => { if (typeof window.renderGratitude === 'function') window.renderGratitude(); });
   await page.waitForTimeout(100);
   return { page, ctx, remote };
@@ -137,11 +175,27 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
 
   // ---- E2: one tap writes exactly one record and marks itself as mine ----
   {
-    const s = await scenario(browser, { 'shared-gratitude': grat, 'gh-token': 'test-token' });
+    // 'gh-token' 仍然种下去：设备上留着旧 PAT 不应该改变任何行为（GitHub 现在是绊线）。
+    const s = await scenario(browser, { 'shared-gratitude': grat, 'gh-token': 'test-token', 'ct-app-key': APP_KEY });
+    // Attribute each push to its caller. One tap must produce exactly one push
+    // *from the tap handler* — that is the propagation this check is about.
+    // Counting every call instead would also count app.js's saveState(), which
+    // debounces its own push 1500ms behind any unrelated state write, so the
+    // raw total depends on whether such a write happened to be pending during
+    // the 400ms window. That is an environmental accident, not a property of
+    // the tap, and it is what made this check flaky. The tap's own count keeps
+    // the original "exactly one" strength; background pushes are counted
+    // separately and only reported.
     await s.page.evaluate(() => {
       window.__pushed = 0;
+      window.__pushedOther = 0;
       const orig = window.pushAllSharedData;
-      window.pushAllSharedData = function () { window.__pushed++; if (orig) orig.apply(this, arguments); };
+      window.pushAllSharedData = function () {
+        const st = (new Error().stack || '');
+        if (st.indexOf('reactGratitude') !== -1) window.__pushed++;
+        else window.__pushedOther++;
+        if (orig) orig.apply(this, arguments);
+      };
     });
     await s.page.click(B(2, 1)); // ❤️ on barry's note
     await s.page.waitForTimeout(400);
@@ -158,8 +212,9 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
       heart.mine === true && heart.count === '1' && r[0].echo[0].mine === false,
       JSON.stringify(r[1].echo[0]));
 
-    const pushed = await s.page.evaluate(() => window.__pushed);
-    check('E2c the tap propagates to sync', pushed === 1, `pushAllSharedData calls=${pushed}`);
+    const pushed = await s.page.evaluate(() => ({ tap: window.__pushed, other: window.__pushedOther }));
+    check('E2c the tap propagates to sync exactly once', pushed.tap === 1,
+      `tapCalls=${pushed.tap} backgroundCalls=${pushed.other}`);
     await s.ctx.close();
   }
 
@@ -247,7 +302,8 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
 
   // ---- E9: the pull path surfaces a partner reaction with no reload ----
   {
-    const s = await scenario(browser, { 'shared-gratitude': grat, 'gh-token': 'test-token' });
+    // 'gh-token' 仍然种下去：设备上留着旧 PAT 不应该改变任何行为（GitHub 现在是绊线）。
+    const s = await scenario(browser, { 'shared-gratitude': grat, 'gh-token': 'test-token', 'ct-app-key': APP_KEY });
     s.remote.state = { gratitude: grat };
     await s.page.evaluate(() => window.pullAllSharedData());
     await s.page.waitForTimeout(600);
@@ -283,6 +339,11 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
   srv.close();
 
   check('R1 no uncaught page error in any scenario', errors.length === 0, errors.slice(0, 3).join(' | '));
+
+  // E11：13 个场景跑完后，没有任何一次共享数据请求落到 GitHub。种了 gh-token 的场景也在内，
+  // 所以这一条同时证明「设备上留着旧 PAT 也不会把任何路径拉回 GitHub」。
+  check('E11 no shared-data request reached api.github.com in any scenario',
+    githubCalls.length === 0, githubCalls.slice(0, 3).join(' | ') || 'githubCalls=0');
 
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} passed`);

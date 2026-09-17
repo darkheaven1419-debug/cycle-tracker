@@ -30,6 +30,16 @@ const MIME = {
 const HOUR = 3600000;
 const DAY = 86400000;
 
+// ── Phase 2C：共享数据的传输层是 Worker，不再是 GitHub Contents API ──
+// 只用合成凭据；真实 app secret 绝不出现在测试里。
+const APP_KEY = 'test-app-key-phase2c-today-0000000000000000';
+const WORKER_HOST = 'https://cycle-tracker-data.cycletracker-barry.workers.dev';
+const WORKER_STATE = WORKER_HOST + '/state';
+const WORKER_TODO = WORKER_HOST + '/todo';
+
+// 任何打到旧 GitHub 路径的请求都是传输层回归，不是网络事故：记下来，最后统一断言。
+const githubCalls = [];
+
 function serve() {
   return new Promise((resolve) => {
     const srv = http.createServer((req, res) => {
@@ -137,20 +147,48 @@ async function scenario(browser, seed) {
     }
   });
 
-  const remote = { state: null };
+  const remote = { state: null, todo: [] };
   await page.route('**/*', (route) => {
-    const u = route.request().url();
-    if (u.includes('/contents/shared-state.json') && remote.state) {
+    const req = route.request();
+    const u = req.url();
+    // Phase 2C：共享数据经 Worker 读写，所以假远端现在是 Worker，CORS 契约一并模拟
+    // （与 tests/test-phase2a-pull.js 的写法一致）。页面 origin 是 localhost，不是生产
+    // Pages origin，因此回显浏览器实际发来的 Origin —— 否则浏览器会拦掉响应，pull 永远
+    // 应用不上，看起来像代码坏了，实际是夹具没搭好。
+    const origin = req.headers()['origin'];
+    const cors = origin ? {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+      'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+      Vary: 'Origin',
+    } : {};
+    if (u === WORKER_STATE) {
+      if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+      if (req.method() === 'PUT') {
+        return route.fulfill({ status: 200, contentType: 'application/json', headers: cors, body: JSON.stringify({ sha: 'test-sha' }) });
+      }
+      // 远端还没被写入时返回空信封 —— 等价于旧夹具「mock 未就绪就不供给数据」。
       return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          sha: 'test-sha',
-          content: Buffer.from(JSON.stringify(remote.state), 'utf8').toString('base64'),
-        }),
+        status: 200, contentType: 'application/json', headers: cors,
+        body: JSON.stringify({ sha: remote.state ? 'test-sha' : null, state: remote.state || {} }),
       });
     }
-    if (u.includes('api.github.com') || u.includes('open-meteo')) return route.abort();
+    if (u === WORKER_TODO) {
+      if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+      if (req.method() === 'PUT') {
+        return route.fulfill({ status: 200, contentType: 'application/json', headers: cors, body: JSON.stringify({ sha: 'test-todo-sha' }) });
+      }
+      return route.fulfill({
+        status: 200, contentType: 'application/json', headers: cors,
+        body: JSON.stringify({ sha: null, todo: remote.todo || [] }),
+      });
+    }
+    // GitHub 现在是绊线而不是传输层：打到这里就说明某条共享数据路径回退了。
+    if (u.indexOf('api.github.com') !== -1) {
+      githubCalls.push(req.method() + ' ' + u);
+      return route.abort();
+    }
+    if (u.includes('open-meteo')) return route.abort();
     return route.continue();
   });
 
@@ -181,7 +219,9 @@ async function openDashboard(page) {
       return {
         before, after, threw,
         bootState: typeof window.state,
-        tokenLen: String(window.getGitHubToken ? (window.getGitHubToken() || '') : '').length,
+        // Phase 2C：凭据是本机 App Secret；旧 getGitHubToken() 已在 2C-3 删除。
+        // 只报长度，不回显值；这是失败路径的诊断输出，不参与断言。
+        appKeyLen: (function () { try { return String(localStorage.getItem('ct-app-key') || '').length; } catch (e) { return -1; } })(),
         errs: window.__errs || [],
         timeline: window.__tl || [],
         renderAllErr,
@@ -265,7 +305,9 @@ const todayText = (page) => page.evaluate(() => {
   // ---- T6: the pull path refreshes the card with no page reload ----
   {
     const s = await scenario(browser, {
+      // 'gh-token' 仍然种下去：设备上留着旧 PAT 不应该改变任何行为（GitHub 现在是绊线）。
       'gh-token': 'test-token',
+      'ct-app-key': APP_KEY, // Phase 2C：Pull 的凭据
       'shared-gratitude': [{ text: 'PRVA', from: 'barry', time: Date.now() - 2 * HOUR }],
     });
     s.remote.state = { gratitude: [{ text: 'PRVA', from: 'barry', time: Date.now() - 2 * HOUR }] };
@@ -368,6 +410,11 @@ const todayText = (page) => page.evaluate(() => {
 
   await browser.close();
   srv.close();
+
+  // T11：10 个场景跑完后，没有任何一次共享数据请求落到 GitHub。种了 gh-token 的 T6 也在内，
+  // 所以这一条同时证明「设备上留着旧 PAT 也不会把任何路径拉回 GitHub」。
+  check('T11 no shared-data request reached api.github.com in any scenario',
+    githubCalls.length === 0, githubCalls.slice(0, 3).join(' | ') || 'githubCalls=0');
 
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} passed`);
