@@ -3,6 +3,14 @@ const SyncModule = (function () {
   var STATE_FILE = 'shared-state.json';
   var _lastError = null; // 持久化同步错误状态
 
+  // ── Phase 2A：Pull 改走 Worker（私有数据仓库），Push 暂时仍走旧 GitHub 链路 ──
+  // 仓库名/文件路径是 Worker 里的字面量，前端只发路径，不带任何 repo/path 参数。
+  var WORKER_URL = 'https://cycle-tracker-data.cycletracker-barry.workers.dev';
+  // 与旧 gh-token 明确分开的一把钥匙。只存 localStorage，绝不进 URL / Git / 源码 / 日志
+  var APP_KEY_STORAGE = 'ct-app-key';
+  // 最近一次拉取到的远端 sha（Worker 信封里的 sha）——为后续阶段的 CAS 推送保留
+  var _lastSha = null;
+
   // ── 自动拉取定时器（句柄可清理，页面隐藏时暂停） ──
   var _autoPullTimer = null;
   var _visHandler = null;
@@ -48,6 +56,21 @@ const SyncModule = (function () {
     try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
     catch (e) { return fallback; }
   }
+
+  /**
+   * 读取本机的 app secret。与旧 gh-token 是两把互不相干的钥匙：
+   * gh-token 只用于仍在旧链路上的 Push，这个只用于 Worker 的 Pull。
+   * 只做 trim —— 值本身绝不写日志、绝不进 URL。
+   */
+  function getAppSecret() {
+    try {
+      var key = localStorage.getItem(APP_KEY_STORAGE);
+      return key ? String(key).trim() : '';
+    } catch (e) { return ''; }
+  }
+
+  /** 最近一次 Worker 拉取拿到的 sha；没有就是 null。 */
+  function getLastSha() { return _lastSha; }
 
   /** 本地日期键（YYYY-MM-DD），用于记录去重 —— 与项目 sameDay/fmtDate 的本地日期语义一致 */
   function _dkey(d) {
@@ -362,18 +385,18 @@ const SyncModule = (function () {
     }
   }
 
-  // ── 从 GitHub 拉取数据 ──
+  // ── 从 Worker 拉取数据（Phase 2A：Pull 已迁移；Push 仍在旧 GitHub 链路） ──
   async function pull(n) {
     n = n || 0;
-    var token = typeof getGitHubToken === 'function' ? getGitHubToken() : '';
-    if (!token) { console.log('[同步] 无 Token，跳过拉取'); return; }
+    var secret = getAppSecret();
+    if (!secret) { console.log('[同步] 无 App Secret，跳过拉取'); return; }
 
     var _localBefore = getJSON('shared-diary', {});
     console.log('[同步] 开始拉取 (重试#' + n + ') — 本地日记数:', Object.keys(_localBefore).length);
-    var headers = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' };
+    var headers = { Authorization: 'Bearer ' + secret, Accept: 'application/json' };
 
     try {
-      var resp = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + STATE_FILE, { headers: headers, cache: 'no-store' });
+      var resp = await fetch(WORKER_URL + '/state', { headers: headers, cache: 'no-store' });
       if (resp.status === 401) {
         _setError(_syncMsg('token401'));
         _syncToast(_syncMsg('token401'));
@@ -388,9 +411,18 @@ const SyncModule = (function () {
       }
 
       var data = await resp.json();
-      var state = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      // Worker 返回 { sha, state } 信封，不是 state 本身 —— 必须先拆封再交给 apply()
+      if (!data || typeof data !== 'object' || !('state' in data)) {
+        console.warn('[同步] 拉取响应不是 Worker 信封，已忽略');
+        if (n < 2) { setTimeout(function () { pull(n + 1); }, 3000); return; }
+        _setError(_syncMsg('retryFail'));
+        _syncToast(_syncMsg('retryFail'));
+        return;
+      }
+      _lastSha = data.sha || null;
+      var state = data.state;
 
-      var diaryCount = state.diary ? Object.keys(state.diary).length : 0;
+      var diaryCount = (state && state.diary) ? Object.keys(state.diary).length : 0;
       console.log('[同步] 拉取成功 ✓ 远程=', diaryCount, '本地=', Object.keys(_localBefore).length);
 
       // 应用数据到本地（含日记合并）
@@ -486,6 +518,11 @@ const SyncModule = (function () {
     pull: pull,
     collect: collect,
     apply: apply,
+    // Phase 2A：Pull 用的 Worker 地址 / app secret 读取，供 tests/test-sync-merge.js 断言
+    workerUrl: WORKER_URL,
+    appKeyStorage: APP_KEY_STORAGE,
+    getAppSecret: getAppSecret,
+    getLastSha: getLastSha,
     // 合并规则单独暴露，供 tests/test-sync-merge.js 直接做单元测试（与 apply/collect 同理）
     mergeByTimeKey: mergeByTimeKey,
     mergeGratitude: mergeGratitude,

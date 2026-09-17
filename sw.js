@@ -133,7 +133,11 @@ self.addEventListener('fetch', function (event) {
     url.hostname.includes('api.open-meteo.com') ||
     url.hostname.includes('translate.googleapis.com') ||
     url.hostname.includes('api.mymemory.translated.net') ||
-    url.hostname.includes('translate.argosopentech.com')
+    url.hostname.includes('translate.argosopentech.com') ||
+    // 私有数据 Worker（Phase 2A 起 Pull 走这里）。
+    // 精确匹配：这条路返回私人 diary / mood / gratitude 数据，
+    // 绝不能被下面的 .json / 兜底分支写进 CACHE_STATIC。
+    url.hostname === 'cycle-tracker-data.cycletracker-barry.workers.dev'
   ) {
     return;
   }

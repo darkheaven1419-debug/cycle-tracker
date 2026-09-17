@@ -1,10 +1,13 @@
 /**
- * Phase 3 test — gratitude / gratitudeEcho merge safety in the sync layer.
+ * Sync-layer merge safety + Phase 2A Pull migration.
  *
- * Two independent vm "devices" share one in-memory fake GitHub Contents API, so
- * push()/pull() run for real (including the pre-push fetch + merge) without a
- * browser. Every device has its own localStorage; the remote is the only thing
- * they have in common.
+ * Two independent vm "devices" share one in-memory fake GitHub Contents API.
+ * Phase 2A moved only the *Pull* path to the Worker, so this harness now runs the
+ * real worker/src/index.js in-process: a Worker-URL call from a device goes into
+ * the Worker, whose own upstream GitHub request is pointed back at the same fake
+ * remote; an api.github.com call goes straight to that remote, which is still
+ * where push() writes. Routing is recorded per device, so the tests below can
+ * assert that a pull never touches GitHub and a push never touches the Worker.
  *
  * Run: node tests/test-sync-merge.js
  *
@@ -17,9 +20,58 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { pathToFileURL } = require('url');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = fs.readFileSync(path.join(ROOT, 'js/sync.js'), 'utf8');
+
+// ── Phase 2A wiring under test ──
+const WORKER_HOST = 'cycle-tracker-data.cycletracker-barry.workers.dev';
+const WORKER_ORIGIN = 'https://darkheaven1419-debug.github.io';
+const APP_KEY_STORAGE = 'ct-app-key';
+// Synthetic test keys. They are NOT the real app secrets and guard nothing.
+const APP_KEY_A = 'test-app-key-andjela-00000000000000000000';
+const APP_KEY_B = 'test-app-key-barry-0000000000000000000000';
+const workerEnv = () => ({
+  GH_PAT: 'ghp_SYNTHETIC_TEST_PAT',
+  APP_KEY_ANDJELA: APP_KEY_A,
+  APP_KEY_BARRY: APP_KEY_B,
+});
+
+/** The real Worker entrypoint, loaded once. */
+let workerFetch = null;
+async function loadWorker() {
+  const mod = await import(pathToFileURL(path.join(ROOT, 'worker/src/index.js')).href);
+  workerFetch = mod.default.fetch;
+}
+
+/**
+ * Runs one request through the real Worker, with the Worker's own upstream
+ * GitHub fetch redirected to the in-memory fake. This is what makes the envelope
+ * in the assertions below genuine Worker output rather than a hand-written stub.
+ */
+async function callWorker(remote, url, opts, onBody) {
+  const init = { method: (opts && opts.method) || 'GET' };
+  // A browser attaches Origin to a cross-origin request; sync.js never sets it
+  // itself. Adding it here keeps the Worker's origin gate in the exercised path.
+  const headers = Object.assign({}, (opts && opts.headers) || {});
+  if (!headers.Origin) headers.Origin = WORKER_ORIGIN;
+  init.headers = headers;
+  if (opts && opts.body) init.body = opts.body;
+  const request = new Request(url, init);
+
+  const prev = globalThis.fetch;
+  globalThis.fetch = (u, o) => remote.fetch(String(u), o);
+  try {
+    const resp = await workerFetch(request, workerEnv());
+    if (onBody) {
+      try { onBody(await resp.clone().json()); } catch (e) { onBody(null); }
+    }
+    return resp;
+  } finally {
+    globalThis.fetch = prev;
+  }
+}
 
 const results = [];
 function check(name, pass, detail) {
@@ -29,6 +81,9 @@ function check(name, pass, detail) {
 
 /** Host-realm copy of a vm-realm value, so assertions compare plain data. */
 const j = (x) => JSON.parse(JSON.stringify(x));
+
+/** GitHub blob shas are 40-hex; the fake must be too, or length checks lie. */
+const shaOf = (n) => n.toString(16).padStart(40, '0');
 
 // ── fake GitHub Contents API ──
 function createRemote() {
@@ -46,13 +101,13 @@ function createRemote() {
         return {
           status: 200, ok: true,
           json: async () => ({
-            sha: 'sha' + api.sha,
+            sha: shaOf(api.sha),
             content: Buffer.from(JSON.stringify(api.content), 'utf8').toString('base64'),
           }),
         };
       }
       const body = JSON.parse(opts.body);
-      const current = api.content === null ? undefined : 'sha' + api.sha;
+      const current = api.content === null ? undefined : shaOf(api.sha);
       if (body.sha !== current) { api.conflicts++; return { status: 409, ok: false, statusText: 'Conflict' }; }
       api.content = JSON.parse(Buffer.from(body.content, 'base64').toString('utf8'));
       api.sha++; api.writes++;
@@ -63,10 +118,35 @@ function createRemote() {
 }
 
 // ── one "device": its own localStorage, shares the remote ──
-function createDevice(name, remote) {
+function createDevice(name, remote, appKey) {
   const store = new Map();
   const logs = [];
   const timers = [];
+  // Per-device call ledger. Keeping the two transports apart is what lets the
+  // tests assert "a pull never contacts GitHub, a push never contacts the Worker".
+  const calls = { worker: [], github: [], other: [], workerBodies: [] };
+  // When set, the Worker route answers 200 with this body verbatim instead of
+  // running the Worker — used to prove a non-envelope 200 is not applied as state.
+  let rawWorkerBody = null;
+
+  function route(u, opts) {
+    if (u.indexOf(WORKER_HOST) !== -1) {
+      calls.worker.push(u);
+      if (rawWorkerBody !== null) {
+        return Promise.resolve(new Response(JSON.stringify(rawWorkerBody), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        }));
+      }
+      return callWorker(remote, u, opts, (b) => calls.workerBodies.push(b));
+    }
+    if (u.indexOf('api.github.com') !== -1) {
+      calls.github.push(u);
+      return remote.fetch(u, opts);
+    }
+    calls.other.push(u);
+    return Promise.reject(new Error('unexpected fetch: ' + u));
+  }
+
   const sandbox = {
     localStorage: {
       getItem: (k) => (store.has(k) ? store.get(k) : null),
@@ -80,7 +160,7 @@ function createDevice(name, remote) {
       warn: (m) => logs.push('WARN ' + m),
       error: (m) => logs.push('ERR ' + m),
     },
-    fetch: (url, opts) => remote.fetch(url, opts),
+    fetch: (url, opts) => route(String(url), opts),
     getGitHubToken: () => 'test-token',
     btoa: globalThis.btoa, atob: globalThis.atob,
     escape: globalThis.escape, unescape: globalThis.unescape,
@@ -91,11 +171,20 @@ function createDevice(name, remote) {
   };
   const ctx = vm.createContext(sandbox);
   vm.runInContext(SRC + '\n;globalThis.__Sync = SyncModule;', ctx, { filename: 'sync.js' });
+
+  // The app secret is a pull() precondition now (Phase 2A). Seed it under its own
+  // key so every scenario below exercises the Worker path, not the skip path.
+  store.set(APP_KEY_STORAGE, appKey || APP_KEY_A);
+
   return {
-    name, logs, timers,
+    name, logs, timers, calls,
     S: vm.runInContext('__Sync', ctx),
     set(k, v) { store.set(k, JSON.stringify(v)); },
     get(k) { const r = store.get(k); return r === undefined ? null : JSON.parse(r); },
+    /** Raw (unencoded) write — localStorage stores the app secret as a plain string. */
+    setRaw(k, v) { store.set(k, String(v)); },
+    getRaw(k) { return store.has(k) ? store.get(k) : null; },
+    serveRawWorkerBody(v) { rawWorkerBody = v; },
   };
 }
 
@@ -103,6 +192,9 @@ const note = (from, time, text) => ({ text, from, time });
 const echo = (noteFrom, noteTime, from, emoji, time) => ({ noteFrom, noteTime, from, emoji, time });
 
 (async () => {
+  // The real Worker must be loaded before any device can pull through it.
+  await loadWorker();
+
   // ════ Unit: merge rules ════
   {
     const d = createDevice('unit', createRemote());
@@ -184,7 +276,7 @@ const echo = (noteFrom, noteTime, from, emoji, time) => ({ noteFrom, noteTime, f
   // ════ Two devices, one remote ════
   const fresh = () => {
     const remote = createRemote();
-    return { remote, A: createDevice('A', remote), B: createDevice('B', remote) };
+    return { remote, A: createDevice('A', remote, APP_KEY_A), B: createDevice('B', remote, APP_KEY_B) };
   };
 
   // D1 — the plain happy path
@@ -370,6 +462,153 @@ const echo = (noteFrom, noteTime, from, emoji, time) => ({ noteFrom, noteTime, f
     const texts = remote.content.gratitude.map((n) => n.text).sort().join(',');
     check('D13 push against a stale local view merges rather than clobbering',
       texts === 'A note,B note' && remote.conflicts === 0, `remote=[${texts}] conflicts=${remote.conflicts}`);
+  }
+
+  // ════ Phase 2A — the Pull path goes through the Worker ════
+  // Every scenario above already runs its pulls through the real Worker; these
+  // assertions pin the transport contract itself.
+
+  // W1 — pull hits exactly the Worker /state endpoint
+  {
+    const { remote, A } = fresh();
+    remote.content = { gratitude: [note('barry', 2000, 'from remote')] };
+    await A.S.pull();
+    check('W1 pull hits the Worker /state endpoint exactly once',
+      A.calls.worker.length === 1 &&
+      A.calls.worker[0] === 'https://' + WORKER_HOST + '/state' &&
+      A.calls.github.length === 0 && A.calls.other.length === 0,
+      `worker=[${A.calls.worker}] github=${A.calls.github.length}`);
+  }
+
+  // W2 — the response is the {sha,state} envelope, and the sha is a 40-hex blob id
+  {
+    const { remote, A } = fresh();
+    remote.content = { gratitude: [note('barry', 2000, 'from remote')] };
+    await A.S.pull();
+    const env = A.calls.workerBodies[0];
+    const keys = env && typeof env === 'object' ? Object.keys(env).sort().join(',') : '(none)';
+    check('W2 the Worker answers with a {sha,state} envelope carrying a 40-char sha',
+      !!env && keys === 'sha,state' &&
+      typeof env.sha === 'string' && env.sha.length === 40 && /^[0-9a-f]{40}$/.test(env.sha) &&
+      !!env.state && typeof env.state === 'object',
+      `keys=[${keys}] shaLength=${env && env.sha ? env.sha.length : '-'} hex=${!!env && /^[0-9a-f]{40}$/.test(env.sha)}`);
+  }
+
+  // W3 — the envelope is unwrapped before apply(): state is applied, sha is kept
+  {
+    const { remote, A } = fresh();
+    remote.content = { gratitude: [note('barry', 2000, 'from remote')] };
+    await A.S.pull();
+    const env = A.calls.workerBodies[0];
+    const g = A.get('shared-gratitude');
+    check('W3 apply() receives the unwrapped state, and the client retains the sha',
+      g.length === 1 && g[0].text === 'from remote' && A.S.getLastSha() === env.sha,
+      `applied=${g.length} shaKept=${A.S.getLastSha() === env.sha}`);
+  }
+
+  // W4 — diary merge semantics are unchanged by the migration (item 5)
+  {
+    const { remote, A } = fresh();
+    remote.content = {
+      gratitude: [],
+      diary: { '2026-01-01': { andjela: { text: 'remote-a' } }, '2026-01-02': { barry: { text: 'remote-b' } } },
+    };
+    A.set('shared-diary', { '2026-01-01': { andjela: { text: 'local-a' } } });
+    await A.S.pull();
+    const d = A.get('shared-diary');
+    check('W4 diary merge (local wins same day, remote-only day added) holds through the Worker',
+      A.calls.worker.length === 1 &&
+      d['2026-01-01'].andjela.text === 'local-a' && d['2026-01-02'].barry.text === 'remote-b',
+      JSON.stringify(d));
+  }
+
+  // W5 — gratitude / echo union semantics are unchanged by the migration (item 6)
+  {
+    const { remote, A } = fresh();
+    remote.content = {
+      gratitude: [note('barry', 2000, 'R')],
+      gratitudeEcho: [echo('barry', 2000, 'andjela', '🥰', 3000)],
+    };
+    A.set('shared-gratitude', [note('andjela', 1000, 'L')]);
+    A.set('shared-gratitude-echo', [echo('barry', 2000, 'barry', '❤️', 3000)]);
+    await A.S.pull();
+    const g = A.get('shared-gratitude').map((n) => n.text).join(',');
+    const e = A.get('shared-gratitude-echo').length;
+    check('W5 gratitude + echo union holds through the Worker pull',
+      A.calls.worker.length === 1 && g === 'L,R' && e === 2, `gratitude=[${g}] echo=${e}`);
+  }
+
+  // W6 — push is untouched: GitHub only, never the Worker (item 9)
+  {
+    const { remote, A } = fresh();
+    A.set('shared-gratitude', [note('andjela', 1000, 'push me')]);
+    await A.S.push();
+    const gh = A.calls.github.join(' ');
+    check('W6 push still goes to GitHub and never to the Worker',
+      A.calls.github.length === 2 &&
+      gh.indexOf('api.github.com/repos/darkheaven1419-debug/cycle-tracker/contents/shared-state.json') !== -1 &&
+      A.calls.worker.length === 0 &&
+      remote.content.gratitude.length === 1,
+      `github=${A.calls.github.length} worker=${A.calls.worker.length} remote=${remote.content.gratitude.length}`);
+  }
+
+  // W7 — one pull never mixes the two transports (item 10)
+  {
+    const { remote, A } = fresh();
+    remote.content = { gratitude: [note('barry', 2000, 'R')] };
+    await A.S.pull();
+    check('W7 a single pull is Worker-only — no GitHub call in the same flow',
+      A.calls.worker.length === 1 && A.calls.github.length === 0 && A.calls.other.length === 0,
+      `worker=${A.calls.worker.length} github=${A.calls.github.length} other=${A.calls.other.length}`);
+  }
+
+  // W8 — no app secret: pull skips silently, makes no request, throws nothing
+  {
+    const { remote, A } = fresh();
+    A.setRaw(APP_KEY_STORAGE, '');
+    remote.content = { gratitude: [note('barry', 2000, 'R')] };
+    await A.S.pull();
+    check('W8 without an app secret pull makes no request at all',
+      A.calls.worker.length === 0 && A.calls.github.length === 0 &&
+      A.get('shared-gratitude') === null && A.timers.length === 0,
+      `worker=${A.calls.worker.length} github=${A.calls.github.length} timers=${A.timers.length}`);
+  }
+
+  // W9 — the app secret lives under its own key, never the old gh-token
+  {
+    const { A } = fresh();
+    const secret = A.S.getAppSecret();
+    check('W9 the app secret uses its own storage key, separate from gh-token',
+      A.S.appKeyStorage === APP_KEY_STORAGE && A.S.appKeyStorage !== 'gh-token' &&
+      A.S.workerUrl === 'https://' + WORKER_HOST &&
+      secret.length === APP_KEY_A.length && A.getRaw('gh-token') === null,
+      `key=${A.S.appKeyStorage} secretLen=${secret.length} url=${A.S.workerUrl}`);
+  }
+
+  // W10 — a 401 from the Worker is terminal: no GitHub fallback, nothing applied
+  {
+    const { remote, A } = fresh();
+    A.setRaw(APP_KEY_STORAGE, 'not-a-valid-app-key');
+    remote.content = { gratitude: [note('barry', 2000, 'R')] };
+    await A.S.pull();
+    const warned = A.logs.some((l) => l.indexOf('WARN') === 0);
+    check('W10 a 401 from the Worker does not fall back to GitHub and applies nothing',
+      A.calls.worker.length === 1 && A.calls.github.length === 0 &&
+      A.get('shared-gratitude') === null && A.getRaw('shared-last-sync') === null &&
+      warned && A.timers.length === 0,
+      `worker=${A.calls.worker.length} github=${A.calls.github.length} warned=${warned} retries=${A.timers.length}`);
+  }
+
+  // W11 — a 200 that is not the envelope must never be applied as if it were state
+  {
+    const { remote, A } = fresh();
+    remote.content = { gratitude: [note('barry', 2000, 'R')] };
+    A.serveRawWorkerBody({ gratitude: [note('barry', 2000, 'unwrapped')] });
+    await A.S.pull();
+    check('W11 a non-envelope 200 is rejected, not applied as state',
+      A.get('shared-gratitude') === null && A.getRaw('shared-last-sync') === null &&
+      A.timers.indexOf(3000) !== -1,
+      `applied=${A.get('shared-gratitude')} retries=${A.timers.join(',')}`);
   }
 
   const failed = results.filter((r) => !r.pass);
