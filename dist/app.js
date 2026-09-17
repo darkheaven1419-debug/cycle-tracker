@@ -292,20 +292,13 @@ const SD_KEY = 'shared-diary';
 const DATE_STRIP_DAYS = 14; // used by render-diary.js
 let sharedDiaryViewDate = new Date(); // used by render-diary.js
 
-// ── Push 凭据：GitHub PAT ──
-// Phase 2B：Pull 已不再经过这里（Pull 走 sync.js 的 getAppSecret()）。这个函数只服务于
-// 仍在旧 GitHub 链路上的 Push（sync.js push() / fix-stats.js 的 Todo），Phase 2C 才迁移
-// —— 在 Push 迁移完成前不要删除它，也不要让 Pull 再依赖它。
-function getGitHubToken() {
-  var _token = localStorage.getItem('gh-token') || '';
-  // 防御性日志：只报「有没有」，绝不打印 PAT 的任何片段
-  if (!_token) {
-    console.warn('[Token] getGitHubToken: GitHub PAT 未配置 — Push 将跳过（不影响 Pull）');
-  } else {
-    console.log('[Token] getGitHubToken: GitHub PAT 已配置');
-  }
-  return _token;
-}
+// ── 共享数据凭据（Phase 2C）──
+// 两条链路——sync.js 的 state 与 fix-stats.js 的 Todo——现在都走 Worker，凭据统一是本机
+// App Secret（js/sync.js 的 getAppSecret()，localStorage['ct-app-key']）。原先只服务于旧
+// GitHub Push 链路的 getGitHubToken() 已无任何调用点，于 2C-3 删除；删掉它同时消掉了
+// 一处会把「PAT 有没有配」写进控制台的日志。
+// 仍未删除、属于 2D 的清理项：fix-all.js 里从 URL 参数 / sessionStorage 恢复旧 gh-token 的
+// 历史逻辑。它只是把旧值搬进 localStorage，已无人读取，也不参与任何同步决策。
 
 let _sdCache = null;
 function loadSharedDiaryData() {
