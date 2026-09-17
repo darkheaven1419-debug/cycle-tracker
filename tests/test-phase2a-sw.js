@@ -62,9 +62,49 @@ function createCaches() {
   };
 }
 
-/** Loads sw.js and returns its fetch handler plus the fake caches. */
-function loadSw() {
-  const caches = createCaches();
+/**
+ * A CacheStorage stand-in that models *named buckets*, which is what a cache
+ * version bump is actually about: install fills the new name, activate deletes
+ * every name that is not current. The flat harness above cannot express that,
+ * because it keys one shared Map by request.
+ */
+function createNamedCaches() {
+  const buckets = new Map();
+  const bucket = (name) => {
+    if (!buckets.has(name)) buckets.set(name, new Set());
+    return buckets.get(name);
+  };
+  const url = (x) => (typeof x === 'string' ? x : x.url);
+  const makeCache = (name) => {
+    bucket(name); // open() creates the cache, as the real CacheStorage does
+    return {
+      add: async (u) => { bucket(name).add(url(u)); },
+      addAll: async (list) => { (list || []).forEach((u) => bucket(name).add(url(u))); },
+      put: async (req) => { bucket(name).add(url(req)); },
+      match: async () => undefined,
+      keys: async () => Array.from(bucket(name)),
+      delete: async (k) => bucket(name).delete(url(k)),
+    };
+  };
+  return {
+    names: () => Array.from(buckets.keys()),
+    contents: (n) => Array.from(buckets.get(n) || []),
+    api: {
+      open: async (name) => makeCache(name),
+      keys: async () => Array.from(buckets.keys()),
+      delete: async (name) => buckets.delete(name),
+      match: async () => undefined,
+    },
+  };
+}
+
+/**
+ * Loads sw.js and returns its handlers plus the fake caches. Pass a CacheStorage
+ * stand-in to drive install/activate against named buckets; omit it for the
+ * flat request-keyed harness the fetch assertions use.
+ */
+function loadSw(cachesApi) {
+  const caches = cachesApi ? null : createCaches();
   const handlers = {};
   const sandbox = {
     self: {
@@ -74,7 +114,7 @@ function loadSw() {
       registration: { sync: { register: async () => {} }, showNotification: async () => {} },
       location: { href: 'http://localhost:8933/', origin: 'http://localhost:8933' },
     },
-    caches: caches.api,
+    caches: cachesApi || caches.api,
     fetch: async (req) => new Response('network:' + (typeof req === 'string' ? req : req.url), { status: 200 }),
     Response, Request, URL, Headers,
     console: { log: () => {}, warn: () => {}, error: () => {} },
@@ -191,6 +231,62 @@ function fire(handlers, url, opts) {
     const newLookups = caches.lookups.length - lookupsBefore;
     check('S10 control: an offline same-origin .json request does perform a cache lookup',
       newLookups > 0, `cacheLookups=${newLookups}`);
+  }
+
+  // ── S11..S14 — Phase 2C bumped CACHE_STATIC v28 → v29. The bump is the only
+  // thing that makes a deploy reach a client that already has the old SW
+  // installed: ./app.js and ./js/fix-stats.js sit in STATIC_ASSETS and are served
+  // cache-first, so without a new cache name the stale copies keep winning and
+  // the 2C fixes stay invisible. These four assertions prove the mechanism, not
+  // just that a string changed.
+  {
+    const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+    const hasV29 = /const CACHE_STATIC = 'ciklus-static-v29';/.test(src);
+    const hasV28 = /ciklus-static-v28/.test(src);
+    check('S11 CACHE_STATIC is the new name and the old one is fully gone',
+      hasV29 && !hasV28, `v29=${hasV29} v28StillPresent=${hasV28}`);
+
+    // The refresh only happens for files that are actually precached. Read the
+    // list out of the source so a later edit that drops one of them fails here.
+    const changed = ['./app.js', './js/fix-stats.js'];
+    const missing = changed.filter((f) => src.indexOf("'" + f + "'") === -1);
+    check('S12 both Phase 2C bundles are in STATIC_ASSETS (so v29 re-fetches them)',
+      missing.length === 0, `missing=${missing.join(',') || 'none'}`);
+  }
+
+  // S13 — an installed client still holds v28. Run the real activate handler: the
+  // stale bucket must be deleted, the current one must survive. This is the step
+  // that actually evicts the old app.js / fix-stats.js copies.
+  {
+    const named = createNamedCaches();
+    const h = loadSw(named.api).handlers;
+    await named.api.open('ciklus-static-v28');
+    await named.api.open('ciklus-static-v29');
+    await named.api.open('ciklus-fonts-v1');
+    let done = null;
+    h.activate({ waitUntil: (p) => { done = p; } });
+    await done;
+    const names = named.names();
+    check('S13 activate evicts the stale v28 bucket and keeps v29 + fonts',
+      names.indexOf('ciklus-static-v28') === -1 &&
+      names.indexOf('ciklus-static-v29') !== -1 &&
+      names.indexOf('ciklus-fonts-v1') !== -1,
+      `caches=${names.join(',')}`);
+  }
+
+  // S14 — and install (the other half) fills the NEW bucket with the precache
+  // list. S13 evicts, S14 re-populates; together they are the refresh.
+  {
+    const named = createNamedCaches();
+    const h = loadSw(named.api).handlers;
+    let done = null;
+    h.install({ waitUntil: (p) => { done = p; } });
+    await done;
+    const got = named.contents('ciklus-static-v29');
+    const missing = ['./app.js', './js/fix-stats.js'].filter((f) => got.indexOf(f) === -1);
+    check('S14 install precaches app.js and fix-stats.js into the new bucket',
+      got.length > 40 && missing.length === 0,
+      `entries=${got.length} missing=${missing.join(',') || 'none'}`);
   }
 
   const failed = results.filter((r) => !r.pass);

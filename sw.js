@@ -2,7 +2,10 @@
 // Network-First for all dynamic assets, Cache-First for static
 // Features: Background Sync for offline diary saves, cache-first for fonts
 
-const CACHE_STATIC = 'ciklus-static-v28';
+// Phase 2C：v28 → v29。STATIC_ASSETS 里的 ./app.js 与 ./js/fix-stats.js 是 cache-first 的，
+// 不换这个名字，已装 SW 的客户端在部署后仍会拿旧文件，2C-1/2C-2 的修复对老客户端不可见。
+// activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，所以改名即完成刷新。
+const CACHE_STATIC = 'ciklus-static-v29';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 const STATIC_ASSETS = [
