@@ -567,25 +567,23 @@ var APP_VERSION = (function () {
 
   // animateStatsPanel / animateDashboardCards 由 gsap-animations.js 定义，勿置空（否则 app.js updateStats 调用崩溃）
 
-  // GitHub Token — 已在 app.js 中统一使用 localStorage 持久化存储。
-  // ⚠️ 安全提示：Token 在浏览器中可被同源脚本读取。建议使用最小权限的 fine-grained token，
-  //    仅授予 contents:write 权限给当前仓库。不要在公共或共享设备上使用此功能。
+  // Phase 2D：旧的 GitHub PAT 通道已彻底移除。共享数据只经 Cloudflare Worker 读写，
+  // 浏览器侧的凭据是「本机 App Secret」（localStorage['ct-app-key']），Pull 与 Push 共用它。
+  // 所以这里不再有任何 PAT 恢复 / 迁移逻辑，改成一次性的遗留清理：
+  // 抹掉历史上可能残留的 gh-token，并从地址栏移除 ?token= / ?gh-token=。
+  // 只删除、不读取参数值、不保存、不转发 —— 因此它不构成任何回退通道；幂等，可安全重复执行。
+  // 注意：绝不触碰 ct-app-key，那是当前唯一在用的凭据。
   (function () {
+    try {
+      localStorage.removeItem('gh-token');
+      sessionStorage.removeItem('gh-token');
+    } catch (e) {}
     try {
       var _url = new URL(window.location.href);
       if (_url.searchParams.has('token') || _url.searchParams.has('gh-token')) {
         _url.searchParams.delete('token');
         _url.searchParams.delete('gh-token');
         window.history.replaceState({}, '', _url.toString());
-      }
-    } catch (e) {}
-    // 迁移检查：如果用户有旧的 sessionStorage token，迁移到 localStorage
-    try {
-      var _oldToken = sessionStorage.getItem('gh-token');
-      if (_oldToken && !localStorage.getItem('gh-token')) {
-        localStorage.setItem('gh-token', _oldToken);
-        sessionStorage.removeItem('gh-token');
-        console.log('[Token] 已从 sessionStorage 迁移 Token 到 localStorage');
       }
     } catch (e) {}
   })();

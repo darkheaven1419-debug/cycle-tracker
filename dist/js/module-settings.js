@@ -8,9 +8,9 @@
     return typeof window.t === 'function' ? window.t(key) : fallback;
   }
 
-  // ── Phase 2B：设置页管理「本机 App Secret」（Pull 凭据 / Worker 身份） ──
-  // 与 Push 仍在用的 GitHub PAT（localStorage['gh-token']）是两把互不相干的钥匙：
-  // 这里绝不读写 gh-token，也绝不把密钥的值写进日志、错误消息或 URL。
+  // ── Phase 2B/2C：设置页管理「本机 App Secret」（Worker 身份；Pull 与 Push 共用同一把） ──
+  // 旧的 GitHub PAT 通道已于 Phase 2D 移除，浏览器侧不再有第二把钥匙，
+  // 存储键只剩 ct-app-key。这里绝不读写 gh-token，也绝不把密钥的值写进日志、错误消息或 URL。
   var APP_KEY_STORAGE = 'ct-app-key';
   var WORKER_URL = (typeof SyncModule !== 'undefined' && SyncModule.workerUrl)
     ? SyncModule.workerUrl
@@ -117,7 +117,8 @@
   function clearAppSecret() {
     if (!_getAppSecret()) return;
     if (!confirm(_i18n('tokenConfirmClear', ''))) return;
-    // 只清 Pull 凭据（ct-app-key）。Push 用的 gh-token 必须原样保留。
+    // 只清本机 App Secret（ct-app-key）——Phase 2C 起它同时是 Pull 与 Push 的凭据。
+    // 旧 gh-token 已不是凭据，清不清都不影响同步；这里不碰它，交给 fix-all.js 的遗留清理。
     localStorage.removeItem(APP_KEY_STORAGE);
     var el = document.getElementById('set-gh-token');
     if (el) el.value = '';
@@ -125,7 +126,7 @@
     if (warning) warning.style.display = 'none';
     if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
     toast('\u{1F5D1}\u{FE0F} ' + _i18n('tokenCleared', 'Key cleared'));
-    console.log('[Token] 本机 App Secret 已清除（GitHub PAT 未动）');
+    console.log('[Token] 本机 App Secret 已清除（旧 gh-token 与同步无关，未触碰）');
   }
   window.clearAppSecret = clearAppSecret;
 

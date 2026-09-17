@@ -297,8 +297,9 @@ let sharedDiaryViewDate = new Date(); // used by render-diary.js
 // App Secret（js/sync.js 的 getAppSecret()，localStorage['ct-app-key']）。原先只服务于旧
 // GitHub Push 链路的 getGitHubToken() 已无任何调用点，于 2C-3 删除；删掉它同时消掉了
 // 一处会把「PAT 有没有配」写进控制台的日志。
-// 仍未删除、属于 2D 的清理项：fix-all.js 里从 URL 参数 / sessionStorage 恢复旧 gh-token 的
-// 历史逻辑。它只是把旧值搬进 localStorage，已无人读取，也不参与任何同步决策。
+// 已于 2D 清理：fix-all.js 里「从 URL 参数 / sessionStorage 恢复旧 gh-token」的历史逻辑已删除。
+// 现在那里只剩一次性的遗留清理（删除残留 gh-token、抹掉地址栏里的 ?token=），
+// 只删除不读取，因此旧的 GitHub PAT 已不可能被任何机制复活。
 
 let _sdCache = null;
 function loadSharedDiaryData() {
