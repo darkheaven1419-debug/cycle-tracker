@@ -241,18 +241,27 @@ window.CalState={year:2026,month:6,view:"month",weekOffset:0};
   })();
 
   function _fixNavigation() {
-    var _cal = document.querySelector('.calendar') || document.querySelector('.days');
+    /* Size the nav to the app's content column. This used to measure `.calendar`,
+       which was a full-width direct child of `.app` and so stood in for that
+       column. Now that the calendar lives in #panel-stats it is display:none on
+       every other tab, and getBoundingClientRect() on a hidden element is all
+       zeros — which silently collapsed the nav to width 0 on Home. Measure the
+       shell itself, which is always laid out. */
     var _nav = document.querySelector('nav.tabs-nav');
-    if (!_cal || !_nav) return;
+    if (!_nav) return;
     var _all2 = document.querySelectorAll('nav.tabs-nav');
     if (_all2.length > 1) {
       for (var _ni2 = 1; _ni2 < _all2.length; _ni2++) _all2[_ni2].parentNode.removeChild(_all2[_ni2]);
     }
-    var _rect = _cal.getBoundingClientRect();
+    var _shell = document.querySelector('.app') || document.body;
+    var _rect = _shell.getBoundingClientRect();
+    var _scs = getComputedStyle(_shell);
+    var _padL = parseFloat(_scs.paddingLeft) || 0;
+    var _padR = parseFloat(_scs.paddingRight) || 0;
     _nav.style.position = 'fixed';
     _nav.style.bottom = '0';
-    _nav.style.left = _rect.left + 'px';
-    _nav.style.width = _rect.width + 'px';
+    _nav.style.left = (_rect.left + _padL) + 'px';
+    _nav.style.width = (_rect.width - _padL - _padR) + 'px';
     _nav.style.maxWidth = 'none';
     _nav.style.margin = '0';
     _nav.style.transform = 'none';
