@@ -126,14 +126,15 @@ async function scenario(browser, seed) {
   });
 
   await page.goto(URL, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.tab[data-panel="stats"]', { timeout: 15000 });
-  await page.click('.tab[data-panel="stats"]');
+  // Phase 1A moved the gratitude wall (and its Echo reaction buttons) out of the
+  // Cycle panel and into the Together panel, so navigate there instead.
+  await page.waitForSelector('.tab[data-panel="together"]', { timeout: 15000 });
+  await page.click('.tab[data-panel="together"]');
   await page.waitForTimeout(500);
-  // The stats tab handler only calls renderStatsPanel(); the gratitude wall is
-  // filled by renderAll()/the pull path (sync.js calls renderGratitude() after a
-  // pull). Before a remote state exists the Worker stub answers with an empty
-  // envelope, so the wall is empty at boot and the render is driven explicitly
-  // here. E9 still exercises the real pull → render path.
+  // renderTogether() repaints all six couple cards on entry, so the wall fills
+  // without waiting for a pull. The explicit call below is kept because the
+  // Worker stub answers with an empty envelope before a remote state exists.
+  // E9 still exercises the real pull → render path.
   await page.evaluate(() => { if (typeof window.renderGratitude === 'function') window.renderGratitude(); });
   await page.waitForTimeout(100);
   return { page, ctx, remote };

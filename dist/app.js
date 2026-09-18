@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 if (typeof window.HOLIDAYS === 'undefined') window.HOLIDAYS = [];
 if (typeof window.solarTermsCache === 'undefined') window.solarTermsCache = [];
@@ -1064,6 +1064,9 @@ function updateLangUI() {
   document.querySelectorAll('.tb-label').forEach((el, i) => {
     el.textContent = t('tabs')[i];
   });
+  // V2: 症状页不再是顶级 tab，改为「周期」页内的入口（仅 Barry 可见）
+  const _symEntryLabel = document.getElementById('sym-entry-label');
+  if (_symEntryLabel) _symEntryLabel.textContent = t('symptomsEntry');
   document.getElementById('set-language').value = lang;
   document.querySelectorAll('.lang-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.lang === lang);
@@ -2607,7 +2610,14 @@ function goToday() {
 // cl(), getTodaysCultureIndex(), initCultureTab(), renderCultureCard(),
 // prevCultureCard(), nextCultureCard(), goToTodayCulture() are in culture-cards.js
 
-const _tabOrder = ['dashboard', 'stats', 'symptoms', 'diary', 'settings'];
+/* V2 信息架构：主页 / 一起 / 回忆 / 周期 / 设置，外加一个隐藏的 symptoms 路由按钮。
+   symptoms 保留在 _tabOrder 里是必须的——switchToTab('symptoms') 走的是
+   `.tab[data-panel="symptoms"]`.click()，而点击处理器用 indexOf(id) 解析序号，
+   不在表内就会被 `if (newIdx === -1) return;` 静默吞掉。
+   但它不是一个"页"，只是周期页内部入口的转发目标，所以另立 _swipeOrder：
+   滑动导航绝不可以落到一个用户看不见的 tab 上。 */
+const _tabOrder = ['dashboard', 'together', 'diary', 'stats', 'settings', 'symptoms'];
+const _swipeOrder = ['dashboard', 'together', 'diary', 'stats', 'settings'];
 let _prevTabIdx = 0;
 // 面板过渡状态：记录当前正在滑出的面板及其兜底清理定时器。
 // 每次切换先强制结束上一个过渡（防止快速连点时多个面板同时在途/残留 active 堆叠），
@@ -2701,6 +2711,10 @@ document.querySelectorAll('.tab').forEach((btn) => {
     if (id === 'diary') {
       initSharedDiaryTab();
     }
+    if (id === 'together') {
+      // 与 diary 同理：进入面板时才渲染，避免每次 applyAllUI 都重排一遍。
+      if (typeof renderTogether === 'function') renderTogether();
+    }
   });
 });
 document.querySelectorAll('.lang-btn').forEach((btn) => {
@@ -2788,13 +2802,15 @@ document.getElementById('set-theme').addEventListener('change', function () {
     if (Math.abs(dx) > 60) {
       const currentTab = document.querySelector('.tab.active');
       const currentId = currentTab ? currentTab.dataset.panel : 'dashboard';
-      const curIdx = _tabOrder.indexOf(currentId);
+      const curIdx = _swipeOrder.indexOf(currentId);
+      // 隐藏的路由 tab（symptoms）不在滑动序列里：停在原地，而不是被 -1 带偏到首页。
+      if (curIdx === -1) return;
       if (dx > 60 && curIdx > 0) {
         // Swipe right → previous tab
-        switchToTab(_tabOrder[curIdx - 1]);
-      } else if (dx < -60 && curIdx < _tabOrder.length - 1) {
+        switchToTab(_swipeOrder[curIdx - 1]);
+      } else if (dx < -60 && curIdx < _swipeOrder.length - 1) {
         // Swipe left → next tab
-        switchToTab(_tabOrder[curIdx + 1]);
+        switchToTab(_swipeOrder[curIdx + 1]);
       }
     }
   });

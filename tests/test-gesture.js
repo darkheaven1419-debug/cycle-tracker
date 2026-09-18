@@ -139,12 +139,14 @@ function check(name, pass, detail) {
   check('A4 vertical drag on date strip does NOT switch tab', (await activePanel(page)) === 'diary', `panel=${await activePanel(page)}`);
 
   // ---- A5: normal page area still swipes between tabs (regression guard) ----
+  // V2 IA order is home → together → memories → cycle → settings, so the diary
+  // panel's right-hand neighbour is now stats (it used to be settings).
   await touchDrag(page, '#panel-diary', -140, 0);
   await page.waitForTimeout(700);
-  check('A5 swipe on normal page area STILL switches tab', (await activePanel(page)) === 'settings', `panel=${await activePanel(page)}`);
+  check('A5 swipe on normal page area STILL switches tab', (await activePanel(page)) === 'stats', `panel=${await activePanel(page)}`);
 
   // ---- A6: swipe back the other way ----
-  await touchDrag(page, '#panel-settings', 140, 0);
+  await touchDrag(page, '#panel-stats', 140, 0);
   await page.waitForTimeout(700);
   check('A6 swipe back STILL switches tab', (await activePanel(page)) === 'diary', `panel=${await activePanel(page)}`);
 

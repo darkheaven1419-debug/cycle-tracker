@@ -6051,27 +6051,170 @@ body.festival-victory {
   font-size: 0.95rem;
   color: var(--text);
 }
-#panel-dashboard.active > .dash-welcome {
+/* ── V2 首页顺序 ─────────────────────────────────────────────────────────
+   显式 order 取代原来的 `> .card:nth-of-type(N)`。原规则是坏的：nth-of-type
+   只在同类型兄弟间计数，而 #panel-dashboard 的第 2 个 <div> 是 .dash-welcome
+   （不是 .card），所以 `> .card:nth-of-type(2)` 永远不匹配，注释里写的
+   welcome→stats→todo→connect→links 与实际生效顺序从来不一致。
+   改按 id 排序，顺序与 _initSkeleton 的 DOM 顺序保持一致。 */
+#panel-dashboard.active > #dash-couple-head {
   order: 0;
-  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.05s backwards;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.04s backwards;
 }
-#panel-dashboard.active > .card:nth-of-type(2) {
+#panel-dashboard.active > #dash-today {
   order: 1;
-  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.12s backwards;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
+}
+#panel-dashboard.active > #dash-connect {
+  order: 2;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.16s backwards;
+}
+#panel-dashboard.active > .dash-quote {
+  order: 3;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.21s backwards;
 }
 #panel-dashboard.active > #todoListCard {
-  order: 2;
+  order: 4;
   margin-top: 0 !important; /* 覆盖内联 margin-top:10px；flex 下 margin 不折叠，需归一化 */
   margin-bottom: var(--space-gap);
-  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.19s backwards;
-}
-#panel-dashboard.active > .card:nth-of-type(3) {
-  order: 3;
   animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.26s backwards;
 }
-#panel-dashboard.active > .card:nth-of-type(4) {
-  order: 4;
-  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.33s backwards;
+#panel-dashboard.active > #dash-her-cycle {
+  order: 5;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.31s backwards;
+}
+#panel-dashboard.active > #dash-links-card {
+  order: 6;
+  animation: p17DashIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.36s backwards;
+}
+
+/* ── V2 情侣头部 ─────────────────────────────────────────────────────────
+   身份先行：这块存在的意义是让人第一眼看到"这是我和她的空间"，而不是一个
+   健康工具。刻意不做成卡片——不加底色/边框/阴影，避免与下方的卡片抢层级，
+   它是一层标签，不是一个内容块。 */
+.dash-couple-head {
+  text-align: center;
+  padding: 18px 12px 12px;
+  margin-bottom: var(--space-gap);
+}
+.dch-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.dch-avatar {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.dch-names {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+.dch-x {
+  color: var(--love);
+  font-weight: 400;
+  margin: 0 6px;
+  opacity: 0.75;
+}
+.dch-greet {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── V2 分组标题 ─────────────────────────────────────────────────────────
+   首页「她的周期」与「一起」页的问题卡共用这一形态：弱化标题 + 一个查看更多。 */
+.dhc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.dhc-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.dhc-more {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1;
+  padding: 2px 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  touch-action: manipulation;
+}
+.dhc-more:hover {
+  color: var(--love);
+}
+.dhc-more:active {
+  transform: scale(0.92);
+}
+
+/* ── V2 周期降权 ─────────────────────────────────────────────────────────
+   周期信息保留但视觉降权，不占首页一半以上：去掉卡片外观（无底色/边框/阴影），
+   只留一个分组标题 + 一行数字。_updateStatsCards 写的是内联样式，所以整体用
+   opacity 统一压暗，只有最吵的图标需要一条 !important（与本仓库 fix-css.js
+   的既有做法一致）。 */
+#dash-her-cycle {
+  padding: 8px 4px 4px;
+}
+#dash-her-cycle .dhc-title {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+#dash-her-cycle .dhc-grid {
+  opacity: 0.72;
+}
+#dash-her-cycle .dhc-grid > div > div:first-child {
+  font-size: 1.1rem !important;
+}
+.dhc-grid {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── V2 今日一问（首页只读提示） ─────────────────────────────────────────
+   首页只显示问题本身 + 一个「去回答」入口；输入留在「一起」页。
+   不在首页放输入框，是为了不让首页重新变成一张问卷。 */
+.dash-q-text {
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1.6;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.dash-q-cta {
+  flex: 0 0 auto;
+  font-size: 0.66rem;
+  padding: 6px 14px;
+}
+
+/* ── V2 底部导航：隐藏的 symptoms 路由按钮 ───────────────────────────────
+   它必须留在 DOM 里——switchToTab('symptoms') 靠 .click() 派发到它，而
+   display:none 的元素依然会收到程序化 click。用 !important 是因为
+   js/fix-diary.js:_fixSymTab 会写内联 display（Barry 下写空串，空串回落
+   到这里的规则），js/fix-css.js 里也还有一条针对 body:not(.is-barry) 的旧规则。 */
+nav.tabs-nav .tabs #tab-symptoms {
+  display: none !important;
+}
+
+/* tabSlideIndicator 由 js/fix-all.js 依据 .tab.active 的 getBoundingClientRect()
+   定位。symptoms 是 display:none，矩形宽高皆为 0，指示条会被拽到导航条左端抽一下。
+   它成为 active 时直接隐藏。选择器从 .tabs-nav 起，这样无论指示条被挂在
+   .tabs 内还是 nav 下都能命中。 */
+.tabs-nav:has(#tab-symptoms.active) #tabSlideIndicator {
+  display: none !important;
 }
 @keyframes p17DashIn {
   from { opacity: 0; transform: translateY(14px); }
@@ -6184,4 +6327,18 @@ body.festival-victory {
    第一段是硬编码奶油色 → dark 下呈"亮奶油 → 深褐"的对角穿帮。 */
 [data-theme="dark"] #birthdayCard {
   background: linear-gradient(135deg, #2a2218, var(--rose-light)) !important;
+}
+
+/* ── V2 症状入口（收进「周期」页） ────────────────────────────────────────
+   症状页在 V2 里不再是顶级 tab，改为「周期」页内的入口，符合 §8『周期页是工具页』。
+   可见性沿用 fix-diary.js 已经维护的 body.is-barry，不新造权限判断——
+   Anđela 的可见行为因此与 V2 之前逐字相同（旧 tab 对她同样是隐藏的）。 */
+.v2-sym-entry {
+  display: none;
+}
+body.is-barry .v2-sym-entry {
+  display: block;
+}
+.v2-sym-entry .dash-link-btn {
+  width: 100%;
 }

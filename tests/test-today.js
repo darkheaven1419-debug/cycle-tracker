@@ -374,13 +374,21 @@ const todayText = (page) => page.evaluate(() => {
       stats: !!document.getElementById('dash-stats-cards'),
       connect: !!document.getElementById('dash-connect'),
       links: !!document.querySelector('#panel-dashboard .dash-links'),
-      todayFirst: document.getElementById('panel-dashboard').firstElementChild.id,
+      order: Array.from(document.getElementById('panel-dashboard').children)
+        .map((n) => n.id || (n.classList.contains('dash-quote') ? 'dash-quote' : n.className)),
       quickMark: !!document.getElementById('fix-quick-mark'),
     }));
     check('T8 existing dashboard cards intact',
       shape.welcome && shape.stats && shape.connect && shape.links && shape.quickMark,
       JSON.stringify(shape));
-    check('T8b Today card is the first block on the homepage', shape.todayFirst === 'dash-today', `first=${shape.todayFirst}`);
+    /* V2 homepage sequence: identity → what she left me → the cycle, with the
+       Todo card injected next to .dash-quote by fix-stats.js. Pinned as a full
+       ordered list because Phase 1A deliberately put the couple header above the
+       Today card, so "Today is first" is no longer the invariant worth guarding. */
+    const HOME_ORDER = ['dash-couple-head', 'dash-today', 'dash-connect', 'dash-quote', 'dash-her-cycle', 'dash-links-card'];
+    const homeOrder = shape.order.filter((c) => c !== 'todoListCard');
+    check('T8b homepage blocks are in the V2 order',
+      JSON.stringify(homeOrder) === JSON.stringify(HOME_ORDER), `order=${JSON.stringify(shape.order)}`);
 
     await s.page.waitForTimeout(3600); // fix-stats polls at 500ms and 3s
     const todo = await s.page.evaluate(() => !!document.getElementById('todoListCard'));

@@ -134,6 +134,57 @@
     }
   };
 
+  /* ── V2 copy ────────────────────────────────────────────────────────────
+     Phase 1 copy lives in its own table rather than in DASH_I18N. DASH_I18N is
+     pinned at exactly 12 keys by tests/test-i18n-lang-keys.js, and it belongs
+     to the cycle stat cells; the couple-space copy is a different surface with
+     a different lifetime. Same resolution rule as dl(): exact locale, then base
+     language, then Serbian — so `zh-CN` still resolves against a bare `zh`. */
+  var V2_I18N = {
+    sr: {
+      herCycle: '\u{1F338} Njen ciklus',
+      goTogether: '\u{1F49E} Zajedno',
+      qOfDay: '\u{1F4AD} Pitanje dana',
+      qAnswer: 'Odgovori \u{2192}',
+      homeQuote: 'Od Pekinga do Vojvodine \u{2014} 7.000 km, jedno srce.',
+      togetherLead: 'Na\u{0161} prostor — ovde ostavljamo jedno drugom.',
+      daysTogether: 'dana zajedno'
+    },
+    'zh-CN': {
+      herCycle: '\u{1F338} \u{5979}\u{7684}\u{5468}\u{671F}',
+      goTogether: '\u{1F49E} \u{4E00}\u{8D77}',
+      qOfDay: '\u{1F4AD} \u{4ECA}\u{65E5}\u{4E00}\u{95EE}',
+      qAnswer: '\u{53BB}\u{56DE}\u{7B54} \u{2192}',
+      homeQuote: '\u{4ECE}\u{5317}\u{4EAC}\u{5230}\u{4F0F}\u{4F0A}\u{4F0F}\u{4E01}\u{90A3} \u{2014} 7000 \u{516C}\u{91CC}\u{FF0C}\u{4E00}\u{9897}\u{5FC3}\u{3002}',
+      togetherLead: '\u{6211}\u{4EEC}\u{7684}\u{7A7A}\u{95F4} \u{2014}\u{2014} \u{5728}\u{8FD9}\u{91CC}\u{7ED9}\u{5F7C}\u{6B64}\u{7559}\u{4E0B}\u{4E1C}\u{897F}\u{3002}',
+      daysTogether: '\u{5929}\u{5728}\u{4E00}\u{8D77}'
+    },
+    en: {
+      herCycle: '\u{1F338} Her cycle',
+      goTogether: '\u{1F49E} Together',
+      qOfDay: "\u{1F4AD} Today's question",
+      qAnswer: 'Answer \u{2192}',
+      homeQuote: 'Beijing to Vojvodina \u{2014} 7,000 km, one heart.',
+      togetherLead: 'Our space \u{2014} where we leave things for each other.',
+      daysTogether: 'days together'
+    }
+  };
+
+  function v2(key) {
+    var L = (typeof lang !== 'undefined' && lang) ? lang : 'sr';
+    var p = V2_I18N[L] || V2_I18N[L.split('-')[0]] || V2_I18N.sr;
+    return p[key] || V2_I18N.sr[key] || key;
+  }
+
+  /** Who this space belongs to — the same block heads Home and Together. */
+  function _coupleHeadHtml() {
+    return '<div class="dch-row">' +
+      '<span class="dch-avatar" aria-hidden="true">\u{1F466}</span>' +
+      '<span class="dch-names">Barry<span class="dch-x">\u{00D7}</span>An\u{0111}ela</span>' +
+      '<span class="dch-avatar" aria-hidden="true">\u{1F338}</span>' +
+      '</div>';
+  }
+
   var _todayWindow = 0;
 
   function _todayCtx() {
@@ -340,8 +391,10 @@
   }
   window.initDashboard = initDashboard;
 
+  /* The greeting sits under the couple header, which already names both people,
+     so it no longer repeats the signed-in user's name — it addresses the pair.
+     Written with textContent rather than innerHTML: nothing here is markup. */
   function _updateWelcome(panel) {
-    var myName = activeProfile === 'andjela' ? '\u{1F338} An\u{0111}ela' : '\u{1F466} Barry';
     var el = document.getElementById('dash-welcome');
     if (!el) return;
     var _h = new Date().getHours();
@@ -359,7 +412,20 @@
     }
     var _ann = typeof annDateMet !== 'undefined' ? annDateMet : '2026-03-19';
     var _days = Math.round((Date.now() - new Date(_ann).getTime()) / 86400000);
-    el.innerHTML = _greet + ' ' + _icon + '\u{FF0C}' + '<strong>' + myName + '</strong> \u{00B7} ' + _days + ' ' + (_l === 'sr' ? 'dana' : _l === 'en' ? 'days' : '\u{5929}') + ' \u{2764}';
+    el.textContent = _greet + ' ' + _icon + ' \u{00B7} ' + _days + ' ' + v2('daysTogether');
+  }
+
+  /* Labels are written on every render rather than baked into the skeleton,
+     because switchLanguage() re-runs applyAllUI without rebuilding the panel —
+     a baked label would keep the previous language until a reload. */
+  function _updateV2Labels() {
+    var set = function (id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; };
+    set('dash-q-title', v2('qOfDay'));
+    set('dash-q-cta', v2('qAnswer'));
+    set('dash-quote-text', v2('homeQuote'));
+    set('dash-her-cycle-title', v2('herCycle'));
+    set('dash-link-diary', dl('goDiary'));
+    set('dash-link-together', v2('goTogether'));
   }
 
   function _updateStatsCards(panel) {
@@ -389,13 +455,33 @@
     if (cq) cq.textContent = q;
   }
 
+  /* V2 Home order — the couple's identity, then what she left for him, then the
+     cycle. Ordering is enforced by explicit `order:` rules in calendar.css, not
+     by DOM position, but the DOM is built in the same sequence so that the tab
+     order a screen reader reads matches what is on screen.
+     `#todoListCard` is injected by js/fix-stats.js next to `.dash-quote`, so
+     that anchor card must stay a direct child of this panel. */
   function _initSkeleton(panel) {
     panel.innerHTML =
+      '<div class="dash-couple-head" id="dash-couple-head">' + _coupleHeadHtml() +
+        '<div class="dch-greet" id="dash-welcome"></div></div>' +
       '<div id="dash-today"></div>' +
-      '<div class="dash-welcome" id="dash-welcome">' + dl('welcomeBack') + '<strong></strong></div>' +
-      '<div class="card dash-card" style="text-align:center"><div id="dash-stats-cards" style="display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:8px"></div></div>' +
-      '<div class="card dash-card" id="dash-connect" style="border-left:3px solid var(--teal)"><h4>' + dl('connectQ') + '</h4><div style="font-size:.82rem;color:var(--text);line-height:1.6;font-style:italic;margin-bottom:8px" id="dailyConnectQ"></div><button class="dash-link-btn" onclick="document.getElementById(\'dailyConnectQ\').textContent=getDailyQuestion();" style="font-size:.62rem;padding:4px 12px">' + dl('refreshQ') + '</button></div>' +
-      '<div class="card dash-card"><div class="dash-links"><button class="dash-link-btn" onclick="switchToTab(\'diary\')">' + dl('goDiary') + '</button><button class="dash-link-btn" onclick="goToday();switchToTab(\'stats\')">' + dl('goCalendar') + '</button></div></div>';
+      '<div class="card dash-card" id="dash-connect">' +
+        '<div class="dhc-head"><span class="dhc-title" id="dash-q-title"></span>' +
+        '<button class="dhc-more" onclick="switchToTab(\'together\')" aria-label="' + esc(v2('qAnswer')) + '">\u{203A}</button></div>' +
+        '<div class="dash-q-text" id="dailyConnectQ"></div>' +
+        '<button class="dash-link-btn dash-q-cta" id="dash-q-cta" onclick="switchToTab(\'together\')"></button>' +
+      '</div>' +
+      '<div class="card dash-card dash-quote"><div class="fs-base text-love" style="font-style:italic" id="dash-quote-text"></div></div>' +
+      '<div class="dash-her-cycle" id="dash-her-cycle">' +
+        '<div class="dhc-head"><span class="dhc-title" id="dash-her-cycle-title"></span>' +
+        '<button class="dhc-more" onclick="switchToTab(\'stats\')" aria-label="' + esc(v2('herCycle')) + '">\u{203A}</button></div>' +
+        '<div id="dash-stats-cards" class="dhc-grid"></div>' +
+      '</div>' +
+      '<div class="card dash-card" id="dash-links-card"><div class="dash-links">' +
+        '<button class="dash-link-btn" id="dash-link-diary" onclick="switchToTab(\'diary\')"></button>' +
+        '<button class="dash-link-btn" id="dash-link-together" onclick="switchToTab(\'together\')"></button>' +
+      '</div></div>';
     _initialized = true;
   }
 
@@ -406,6 +492,7 @@
     if (!panel) return;
     if (!_initialized) _initSkeleton(panel);
     _ensureTodayHost(panel);
+    _updateV2Labels();
     _updateWelcome(panel);
     _renderTodayCard();
     _updateStatsCards(panel);
@@ -414,16 +501,58 @@
   }
   window.renderDashboard = renderDashboard;
 
+  /* ── Together ───────────────────────────────────────────────────────────
+     Phase 1A moves the six interaction cards here from the Cycle panel, which
+     is where they had ended up: Hug, Gratitude (+ Echo reactions), Song,
+     Know Me, weekly Check-in and the relationship tip. Their markup, ids,
+     renderers and storage keys are unchanged — this is a relocation, not a
+     rewrite, so no data or sync behaviour is affected.
+
+     Refreshing them on entry matters for one of the six in particular:
+     renderKnowMe() is missing from applyAllUI's `connection` group, so nothing
+     else would repaint the Know Me card after a sync pull landed while the user
+     was on another tab. */
+  var _togetherBuilt = false;
+
+  function renderTogether() {
+    var host = document.getElementById('together-body');
+    if (!host) return;
+    if (!_togetherBuilt) {
+      host.innerHTML =
+        '<div class="dash-couple-head" id="together-head">' + _coupleHeadHtml() +
+          '<div class="dch-greet">' + esc(v2('togetherLead')) + '</div></div>' +
+        '<div class="card" id="together-connect">' +
+          '<div class="dhc-head"><span class="dhc-title">' + esc(v2('qOfDay')) + '</span>' +
+          '<button class="dhc-more" onclick="document.getElementById(\'togetherConnectQ\').textContent=getDailyQuestion()" aria-label="' + esc(dl('refreshQ')) + '">\u{1F504}</button></div>' +
+          '<div class="dash-q-text" id="togetherConnectQ"></div>' +
+        '</div>';
+      _togetherBuilt = true;
+    }
+    var q = document.getElementById('togetherConnectQ');
+    if (q) q.textContent = getDailyQuestion();
+    ['renderHug', 'renderGratitude', 'renderSong', 'renderCheckin', 'renderKnowMe', 'renderRelTips'].forEach(function (fn) {
+      if (typeof window[fn] === 'function') { try { window[fn](); } catch (e) {} }
+    });
+  }
+  window.renderTogether = renderTogether;
+
   /* bootApp() is invoked from app.js's own tail, while the parser is still
      inside app.js — it aborts a line before its initDashboard() call, on
      loadSettingsUI() from js/module-settings.js, which is parsed even later. So
      on a fresh load the dashboard is never built and the homepage keeps
      index.html's static markup. Build it once every script has run instead.
-     Idempotent: renderDashboard always creates #dash-today, so an existing one
-     means the dashboard is already up. Skipped while the login screen is shown,
-     so the since-last-visit window is not started by a logged-out visitor. */
+     Idempotent via this module's own _initialized flag. Do NOT go back to
+     probing for #dash-today: the V2 homepage in index.html now ships a static
+     #dash-today (plus #dash-couple-head / #dash-stats-cards / #dash-links-card)
+     as first-paint placeholder content, so that probe now matches before
+     initDashboard() has ever run and boot exits without building anything —
+     leaving the raw static markup on screen and, because the boot sync pull
+     hangs off this same path, no Worker pull either. _initialized is set by
+     _initSkeleton() and is the direct signal the probe was standing in for.
+     Skipped while the login screen is shown, so the since-last-visit window is
+     not started by a logged-out visitor. */
   function _bootDashboard() {
-    if (document.getElementById('dash-today')) return;
+    if (_initialized) return;
     var overlay = document.getElementById('loginOverlay');
     if (overlay && !overlay.classList.contains('hidden')) return;
     initDashboard();
