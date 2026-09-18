@@ -68,7 +68,6 @@
     '.emoji-picker-overlay.hidden { display: none !important; }' +
     '.week-num { display: none !important; }' +
     'nav.tabs-nav .tabs { display: flex !important; justify-content: space-around !important; width: 100% !important; gap: 0 !important; }' +
-    'nav.tabs-nav .tabs .tab.active { color: var(--love) !important; }' +
     '.progress-fill { transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) !important; }' +
     '.day.in-month { animation: fixDayIn 0.35s ease-out both; }' +
     '@keyframes fixDayIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }' +

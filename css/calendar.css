@@ -6145,13 +6145,6 @@ nav.tabs-nav .tabs #tab-symptoms {
   display: none !important;
 }
 
-/* tabSlideIndicator 由 js/fix-all.js 依据 .tab.active 的 getBoundingClientRect()
-   定位。symptoms 是 display:none，矩形宽高皆为 0，指示条会被拽到导航条左端抽一下。
-   它成为 active 时直接隐藏。选择器从 .tabs-nav 起，这样无论指示条被挂在
-   .tabs 内还是 nav 下都能命中。 */
-.tabs-nav:has(#tab-symptoms.active) #tabSlideIndicator {
-  display: none !important;
-}
 @keyframes p17DashIn {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }

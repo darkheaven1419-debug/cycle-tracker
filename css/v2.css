@@ -95,21 +95,37 @@ body::before {
   white-space: nowrap;
 }
 
-/* §9 Micro-motion: the active tab settles, it does not bounce.
-   The background is ours; the tab's COLOR cannot be, because js/fix-css.js:71
-   injects `nav.tabs-nav .tabs .tab.active { color: var(--love) !important }`
-   into a <style> tag at runtime. An injected !important outranks any
-   specificity, and its selector already sits at (0,4,0) and lands after this
-   sheet in source order, so matching or beating it means adding an !important
-   of our own. Not worth it: nothing competes for the label or the icon colour,
-   so colouring those two directly wins with a plain declaration.
-   --primary-hover over --rose-light clears 4.5:1 in both themes (5.3:1 light,
-   5.8:1 dark); --love does not clear it in light (4.1:1), which is the
-   contrast the injected rule would otherwise impose. That injected rule
-   duplicates the token layer and should be deleted — until it is, this is what
-   keeps the active tab readable. */
+/* ── §6 Active tab: exactly ONE signal ────────────────────────────────────
+   Three used to compete for attention at once:
+     1. this pill,
+     2. the tab's own colour, forced by a rule js/fix-css.js injected as
+        `nav.tabs-nav .tabs .tab.active { color: var(--love) !important }`,
+     3. #tabSlideIndicator — a 3px `var(--love)` bar that js/fix-all.js
+        positioned from getBoundingClientRect on every class mutation.
+
+   Only the pill survives. It is the calmest of the three, it is on-palette,
+   and it needs no !important anywhere.
+
+   The other two were deleted AT THE SOURCE, not overridden. Overriding them in
+   CSS would have hidden the symptom and left the machinery running: fix-all.js
+   also carried a setInterval that polled 30 times and a MutationObserver that
+   fired on every tab switch, and calendar.css carried a
+   `:has(#tab-symptoms.active) #tabSlideIndicator` rule whose only purpose was
+   to stop the sliding bar lurching when the hidden symptoms tab activated.
+   Dead code that describes a removed element is worse than none, so all of it
+   went, including that rule and its comment.
+
+   Contrast, --primary-hover on --rose-light: 5.3:1 light, 5.8:1 dark — clears
+   4.5:1 both ways. The --love the injected rule used was 4.1:1 in light and
+   failed. */
 .tabs-nav .tab.active {
   background: var(--rose-light);
+  color: var(--primary-hover);
+  /* calendar.css still carries `.tab.active { box-shadow: 0 2px 12px
+     rgba(196,90,107,.25) }` — a hardcoded warm glow that is not a token and
+     reads as a second emphasis. Cancelled here rather than deleted there, so
+     the override stays visible next to the state it belongs to. */
+  box-shadow: none;
 }
 nav.tabs-nav .tabs .tab.active .tb-label,
 nav.tabs-nav .tabs .tab.active .tb-icon {
@@ -148,6 +164,11 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
    mean removing that transform, which drives the nav's entrance animation.
    Do not reintroduce translucency here without first checking that transform. */
 .tabs-nav .tabs {
+  /* Was set imperatively by the removed slide-indicator code
+     (`_tabs.style.position = 'relative'`). Restored here so the bar's computed
+     position is unchanged and nothing that assumed a positioned ancestor
+     shifts. */
+  position: relative;
   box-shadow: 0 -2px 20px rgba(40, 32, 70, 0.08);
   background: var(--elevated);
 }

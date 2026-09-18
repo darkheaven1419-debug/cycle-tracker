@@ -171,39 +171,11 @@ window.CalState={year:2026,month:6,view:"month",weekOffset:0};
     };
   }
 
-  // === 导航栏滑动指示器 ===
-  (function () {
-    var _tabs = document.querySelector('.tabs');
-    var _indicator = document.getElementById('tabSlideIndicator');
-    if (_tabs && !_indicator) {
-      _indicator = document.createElement('div');
-      _indicator.id = 'tabSlideIndicator';
-      _indicator.style.cssText = 'position:absolute;bottom:0;left:0;height:3px;background:var(--love);border-radius:3px 3px 0 0;transition:transform .3s cubic-bezier(.22,1,.36,1),width .3s cubic-bezier(.22,1,.36,1);pointer-events:none;z-index:2';
-      _tabs.style.position = 'relative';
-      _tabs.appendChild(_indicator);
-    }
-    function _updateTabIndicator() {
-      var _a = document.querySelector('.tab.active');
-      var _t = document.querySelector('.tabs');
-      var _i = document.getElementById('tabSlideIndicator');
-      if (!_a || !_t || !_i) return;
-      var _tr = _t.getBoundingClientRect();
-      var _ar = _a.getBoundingClientRect();
-      _i.style.transform = 'translateX(' + (_ar.left - _tr.left) + 'px)';
-      _i.style.width = _ar.width + 'px';
-    }
-    _updateTabIndicator();
-    var _tabMo = new MutationObserver(function () { _updateTabIndicator(); });
-    document.querySelectorAll('.tab').forEach(function (t) { _tabMo.observe(t, { attributes: true, attributeFilter: ['class'] }); });
-    var _tmRetry = 0;
-    var _tmTimer = setInterval(function () {
-      _tmRetry++;
-      var _newTabs = document.querySelectorAll('.tab');
-      if (_newTabs.length === 0) { clearInterval(_tmTimer); return; }
-      _newTabs.forEach(function (t) { _tabMo.observe(t, { attributes: true, attributeFilter: ['class'] }); });
-      if (_tmRetry > 30) clearInterval(_tmTimer);
-    }, 200);
-  })();
+  // === 导航栏活动态 ===
+  // 滑动指示条（#tabSlideIndicator）已移除。它和 .tab.active 的底色、以及
+  // fix-css.js 注入的 !important 文字色同时存在，是三个争抢注意力的活动态信号。
+  // 现在只保留一套：css/v2.css 里 .tab.active 的柔玫瑰底色 + --primary-hover 图标/文字。
+  // 顺带去掉了一个每 200ms 跑 30 次的 setInterval 和一个 MutationObserver。
 
   // === 弹窗加速：防重入 + 先显示后填充 ===
   (function () {
