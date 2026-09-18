@@ -216,6 +216,77 @@ check('symptoms entry is Barry-only, reusing the existing body.is-barry flag',
   /body\.is-barry\s+\.v2-sym-entry\s*\{[^}]*display:\s*block/.test(css) &&
   /\.v2-sym-entry\s*\{[^}]*display:\s*none/.test(css));
 
+/* ── Phase 1D: the Cycle panel is a cycle centre, not a second home page ── */
+
+/* These nine are couple content that had been sitting under the calendar since
+   before Phase 1A. They pushed the cycle’s own content (prediction, stats)
+   below the fold, and made a cycle tool read like a second home page. They were
+   MOVED, not rewritten — every element id is still in the document, so the
+   render functions that write into them are untouched. */
+const COUPLE_LEGACY = ['sect-relationship', 'cycleCounterCard', 'loveDaysCard', 'birthdayCard',
+  'loveNoteCard', 'moodCard', 'gardenCard', 'forecastCard', 'specialBadge'];
+check('the 9 legacy couple blocks left #panel-stats',
+  !!panelSrc.stats && COUPLE_LEGACY.every((id) => panelSrc.stats.indexOf('id="' + id + '"') === -1),
+  `left=${JSON.stringify(COUPLE_LEGACY.filter((id) => panelSrc.stats && panelSrc.stats.indexOf('id="' + id + '"') !== -1))}`);
+check('every one of them arrived in #panel-together (moved, not dropped)',
+  !!panelSrc.together && COUPLE_LEGACY.every((id) => panelSrc.together.indexOf('id="' + id + '"') !== -1),
+  `missing=${JSON.stringify(COUPLE_LEGACY.filter((id) => !panelSrc.together || panelSrc.together.indexOf('id="' + id + '"') === -1))}`);
+
+/* §四 protects the calendar, cycle data, symptoms, stats, prediction and
+   culture/lunar content. Nothing on that list may leave with the couple cards. */
+const CYCLE_KEEP = ['cycleCalendarBlock', 'calendarContainer', 'legend', 'cultureCard',
+  'lunarInfo', 'statsSummaryGrid', 'symEntryCard', 'predictionHighlight', 'sleepCard'];
+check('nothing the cycle tool owns was moved out with them',
+  !!panelSrc.stats && CYCLE_KEEP.every((id) => panelSrc.stats.indexOf('id="' + id + '"') !== -1),
+  `missing=${JSON.stringify(CYCLE_KEEP.filter((id) => !panelSrc.stats || panelSrc.stats.indexOf('id="' + id + '"') === -1))}`);
+
+/* The panel had no title at all — it opened straight onto a calendar, so
+   nothing on screen said which tab you were on. panelSrc slices from the panel
+   id, so this asserts the header comes first, before the calendar block. */
+const headAt = panelSrc.stats ? panelSrc.stats.indexOf('<div class="cycle-head">') : -1;
+const calAt = panelSrc.stats ? panelSrc.stats.indexOf('cycleCalendarBlock') : -1;
+check('#panel-stats opens with its own header, ahead of the calendar',
+  headAt !== -1 && calAt !== -1 && headAt < calAt &&
+  panelSrc.stats.indexOf('id="cycle-head-title"') !== -1 &&
+  panelSrc.stats.indexOf('id="cycle-head-sub"') !== -1,
+  `headAt=${headAt} calAt=${calAt}`);
+
+/* The header copy rides the existing path rather than a new one: t() keys in
+   js/i18n.js, filled by updateLangUI. Three occurrences = one per language. */
+check('the header copy is declared once per language',
+  i18n.split('cycleCenterTitle:').length - 1 === 3 && i18n.split('cycleCenterSub:').length - 1 === 3,
+  `title=${i18n.split('cycleCenterTitle:').length - 1} sub=${i18n.split('cycleCenterSub:').length - 1}`);
+
+/* updateLangUI runs on every switch, including on pages with no cycle header,
+   so the two new lines must look the element up and then guard before writing
+   — the same shape as the symptoms-entry label above them. This asserts the
+   guard, not just the assignment: an unguarded write would throw on every other
+   panel. The window is 260 characters, enough to span one line and no further. */
+const appSrc = read('app.js');
+const wired = (id, key) => {
+  const at = appSrc.indexOf("getElementById('" + id + "')");
+  if (at === -1) return false;
+  const win = appSrc.slice(at, at + 260);
+  return win.indexOf("t('" + key + "')") !== -1 && win.indexOf("if (") !== -1;
+};
+check('updateLangUI fills both header slots through the null-guarded pattern',
+  wired('cycle-head-title', 'cycleCenterTitle') && wired('cycle-head-sub', 'cycleCenterSub'),
+  `title=${wired('cycle-head-title', 'cycleCenterTitle')} sub=${wired('cycle-head-sub', 'cycleCenterSub')}`);
+
+/* Styled in css/v2.css, not a third stylesheet. */
+const v2 = read('css/v2.css');
+check('.cycle-head is styled in the V2 layer, not a new one',
+  v2.indexOf('.cycle-head {') !== -1 && v2.indexOf('.cycle-head-title {') !== -1 &&
+  v2.indexOf('.cycle-head-sub {') !== -1);
+
+/* '#diaryCard' was a second, broken diary: its only control was
+   onclick="saveDiary()", and saveDiary is defined nowhere in the repo. The live
+   diary is #diaryWriteCard in panel-diary, driven by saveDiaryEntry in
+   js/fix-diary.js — a different function, so this matches the dead handler
+   exactly rather than by prefix. */
+check('#diaryCard and its undefined saveDiary() handler are gone from the markup',
+  html.indexOf('id="diaryCard"') === -1 && html.indexOf('onclick="saveDiary()"') === -1);
+
 /* ── Cycle de-weighting on Home ─────────────────────────────────────────── */
 
 check('#dash-her-cycle is ordered last-but-one on the homepage',

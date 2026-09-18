@@ -1074,6 +1074,14 @@ function updateLangUI() {
   // V2: 症状页不再是顶级 tab，改为「周期」页内的入口（仅 Barry 可见）
   const _symEntryLabel = document.getElementById('sym-entry-label');
   if (_symEntryLabel) _symEntryLabel.textContent = t('symptomsEntry');
+  // Phase 1D: the Cycle panel's own header. Small, but the page previously had
+  // no title at all — it opened straight onto a calendar, so nothing on screen
+  // said which tab you were on. Null-guarded like the line above: this runs on
+  // every language switch, including on pages that have no cycle header.
+  const _cycleHeadTitle = document.getElementById('cycle-head-title');
+  if (_cycleHeadTitle) _cycleHeadTitle.textContent = t('cycleCenterTitle');
+  const _cycleHeadSub = document.getElementById('cycle-head-sub');
+  if (_cycleHeadSub) _cycleHeadSub.textContent = t('cycleCenterSub');
   document.getElementById('set-language').value = lang;
   document.querySelectorAll('.lang-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.lang === lang);

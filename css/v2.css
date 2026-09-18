@@ -860,6 +860,30 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   display: none;
 }
 
+/* ── Phase 1D: the Cycle panel’s own header ───────────────────────────────
+   The panel opened straight onto a calendar, so nothing on screen said which
+   tab you were on. It also still carried the legacy couple cards (days
+   together, birthday, love note, mood, garden, forecast, badge), which made a
+   cycle tool read like a second home page; those moved to Zajedno. What is
+   left needs one line of identity — deliberately plain, because Cycle is the
+   professional surface, not a hero. */
+.cycle-head {
+  padding: 4px 2px 14px;
+}
+.cycle-head-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.cycle-head-sub {
+  margin: 4px 0 0;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
 /* §9 requires reduced-motion to be honoured. calendar.css has two such blocks;
    everything added here is covered by this one — including the Phase 1B
    reaction pop, the send-button press, and the Phase 1C featured-memory rise. */
