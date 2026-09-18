@@ -89,6 +89,45 @@
   --ring-follicular: #6d8f74;
   --ring-predicted: rgba(120, 105, 150, 0.32);
 
+  /* ── Calendar cycle states ───────────────────────────────────────────────
+     One triple per state, and BOTH the day cell and its legend swatch read the
+     same one. That is the point of this block: the grid used to paint
+     --rose-light / --teal-light / --sage-light while the legend painted
+     --love / --teal / --sage, so the key showed a saturated green square for
+     "Ovul./Plodni" while the fertile days it labelled were pale mint. The
+     legend described a calendar nobody was looking at.
+
+       bg    the tinted fill a run of days wears
+       ink   the day number on that fill            (all ≥4.5:1 on bg)
+       edge  the state's saturated accent, used as a 2px ring on the one day
+             that must read at a glance, and as the legend swatch's border
+                                                      (all ≥3:1 on bg)
+
+     The accent is an EDGE, never a fill. The old design filled the first day
+     of the period and the ovulation peak with --love and --teal and set the
+     number in white; that is where the "deep red / deep green blocks" came
+     from, and #55806f behind white is only 4.46:1, under AA. A ring carries
+     the same signal at a fraction of the ink and clears AA in both themes. */
+  --cal-period-bg: #fbf1f5;
+  --cal-period-ink: #a3455d;
+  --cal-period-edge: #b8566f;
+  --cal-ovu-bg: #e3f2ee;
+  --cal-ovu-ink: #2d5f6e;
+  --cal-ovu-edge: #4a7263;
+  --cal-fertile-bg: #eef7f3;
+  --cal-fertile-ink: #2d5f6e;
+  --cal-fertile-edge: #4a7263;
+  --cal-luteal-bg: #efeaf8;
+  --cal-luteal-ink: #6a5595;
+  --cal-luteal-edge: #7d68ab;
+  --cal-folli-bg: #e6efe9;
+  --cal-folli-ink: #3d6b55;
+  --cal-folli-edge: #5f8168;
+  /* The halo derives from the state's own hue. The ovulation glow used to be
+     rgba(94,155,170) — a blue — under a teal circle. */
+  --cal-halo-period: 0 0 0 4px rgba(184, 86, 111, 0.18);
+  --cal-halo-ovu: 0 0 0 4px rgba(74, 114, 99, 0.2);
+
   --season-spring: #d4797f;
   --season-summer: #b8566f;
   --season-autumn: #c39550;
@@ -205,6 +244,27 @@
   --ring-luteal: #a996cf;
   --ring-follicular: #7fb095;
   --ring-predicted: rgba(157, 154, 176, 0.22);
+
+  /* Calendar cycle states — same triples as :root, retuned to the night room.
+     Here the tint stays deep and the EDGE carries the brightness, which is why
+     no white number ever sits on a saturated fill. See the :root block. */
+  --cal-period-bg: #33202a;
+  --cal-period-ink: #f0b8c8;
+  --cal-period-edge: #e08fa6;
+  --cal-ovu-bg: #17302c;
+  --cal-ovu-ink: #a8dcc8;
+  --cal-ovu-edge: #7fc4ab;
+  --cal-fertile-bg: #142a26;
+  --cal-fertile-ink: #a8dcc8;
+  --cal-fertile-edge: #7fc4ab;
+  --cal-luteal-bg: #241e33;
+  --cal-luteal-ink: #cdbde8;
+  --cal-luteal-edge: #b9a6dd;
+  --cal-folli-bg: #1a2b22;
+  --cal-folli-ink: #b2dcc0;
+  --cal-folli-edge: #93c4a4;
+  --cal-halo-period: 0 0 0 4px rgba(224, 143, 166, 0.16);
+  --cal-halo-ovu: 0 0 0 4px rgba(127, 196, 171, 0.16);
 
   --season-spring: #d4797f;
   --season-summer: #c96a86;

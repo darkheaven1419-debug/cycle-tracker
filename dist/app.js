@@ -2,7 +2,14 @@
 
 if (typeof window.HOLIDAYS === 'undefined') window.HOLIDAYS = [];
 if (typeof window.solarTermsCache === 'undefined') window.solarTermsCache = [];
-if (typeof window.CalState === 'undefined') window.CalState = { year: 2026, month: 6, view: 'month', weekOffset: 0 };
+if (typeof window.CalState === 'undefined') {
+  /* Open on the month the user is actually in. This was a literal
+     { year: 2026, month: 6 } — July 2026 — so from August onward every visit
+     to the Cycle tab landed two months in the past with no today marker on
+     screen, and the first thing to do was always swipe back. */
+  var _calNow = new Date();
+  window.CalState = { year: _calNow.getFullYear(), month: _calNow.getMonth(), view: 'month', weekOffset: 0 };
+}
 
 /* eslint-disable no-unused-vars */
 
@@ -1086,7 +1093,7 @@ function updateLangUI() {
     `<span class="l-period">${lg[0]}</span><span class="l-fertile">${lg[1]}</span><span class="l-follicular">${lg[2]}</span><span class="l-luteal">${lg[3]}</span><span style="font-weight:700;font-size:.66rem;">▣ ${lg[4]}</span>`;
   if (annDateMet || annDateLove) document.getElementById('legend').innerHTML += `<span class="l-heart">${lg[5]}</span>`;
   document.getElementById('legend').innerHTML +=
-    '<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#E53935;display:inline-block"></span>🇨🇳</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#0C4076;display:inline-block"></span>🇷🇸</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#4CAF50;display:inline-block"></span>🌿</span>';
+    '<span class="l-mark">🇨🇳</span><span class="l-mark">🇷🇸</span><span class="l-mark">🌿</span>';
   const pl = t('progressLabels');
   document.querySelector('.lbl-period').textContent = pl[0];
   document.querySelector('.lbl-follicular').textContent = pl[1];

@@ -983,70 +983,76 @@ body {
 [data-theme="dark"] .day.selected {
   background: rgba(184, 145, 71, 0.12);
 }
+/* ── Cycle states ────────────────────────────────────────────────────────
+   Every rule below reads the --cal-<state>-bg / -ink / -edge triple from
+   css/tokens.css, which the legend swatches read too, so the key cannot
+   describe a colour the grid does not draw. The saturated colour is always an
+   EDGE (an inset ring) and never a fill: the first day of the period and the
+   ovulation peak used to be solid --love / --teal circles with a white number,
+   which is what read as "deep red and deep green blocks" — and --teal behind
+   white is 4.46:1, under AA. A ring carries the same signal quietly and keeps
+   the number legible in both themes. */
 .day.period-on {
-  background: var(--love);
-  color: #fff !important;
+  background: var(--cal-period-bg);
+  color: var(--cal-period-ink);
   font-weight: 700;
-  border-radius: 50%;
   border: none;
-  box-shadow: 0 0 0 4px rgba(184, 72, 90, 0.2);
+  box-shadow: inset 0 0 0 2px var(--cal-period-edge), var(--cal-halo-period);
 }
 .day.period-on.recorded {
   box-shadow:
-    0 0 0 4px rgba(184, 72, 90, 0.2),
-    0 0 0 6px rgba(184, 72, 90, 0.08);
+    inset 0 0 0 2px var(--cal-period-edge),
+    0 0 0 4px rgba(184, 86, 111, 0.2),
+    0 0 0 6px rgba(184, 86, 111, 0.08);
 }
 .day.period-on:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 4px rgba(184, 72, 90, 0.28);
+  transform: scale(1.06);
+  box-shadow: inset 0 0 0 2px var(--cal-period-edge), 0 0 0 4px rgba(184, 86, 111, 0.28);
 }
 .day.period-mid {
-  background: var(--rose-light);
-  color: var(--rose-dark);
+  background: var(--cal-period-bg);
+  color: var(--cal-period-ink);
   font-weight: 600;
 }
 .day.period-pred {
-  background: var(--rose-mist);
-  color: var(--rose-dark);
+  background: var(--cal-period-bg);
+  color: var(--cal-period-ink);
+  opacity: 0.75;
 }
 .day.period-pred-first {
-  background: var(--love);
-  color: #fff;
+  background: var(--cal-period-bg);
+  color: var(--cal-period-ink);
   font-weight: 700;
-  opacity: 0.55;
-  border-radius: 50%;
+  opacity: 0.8;
   border: none;
+  box-shadow: inset 0 0 0 2px var(--cal-period-edge);
 }
 .day.period-future {
-  background: var(--rose-mist);
-  color: var(--rose-dark);
+  background: var(--cal-period-bg);
+  color: var(--cal-period-ink);
   opacity: 0.35;
 }
 .day.period-future-first {
-  background: var(--love);
-  color: #fff;
+  background: var(--cal-period-bg);
+  color: var(--cal-period-ink);
   font-weight: 700;
-  opacity: 0.25;
-  border-radius: 50%;
+  opacity: 0.4;
   border: none;
+  box-shadow: inset 0 0 0 2px var(--cal-period-edge);
 }
-[data-theme="dark"] .day.period-mid {
-  background: #332022;
-}
-[data-theme="dark"] .day.period-pred {
-  background: #2a1c20;
-}
+/* The per-theme overrides that used to sit here are gone: one triple per state
+   in tokens.css now covers both themes, so a dark-specific background can no
+   longer drift away from the light one. */
 .day.ovulation {
-  background: var(--teal);
-  color: #fff !important;
+  background: var(--cal-ovu-bg);
+  color: var(--cal-ovu-ink);
   font-weight: 700;
-  border-radius: 50%;
   border: none;
-  box-shadow: 0 0 0 4px rgba(94, 155, 170, 0.22);
+  box-shadow: inset 0 0 0 2px var(--cal-ovu-edge), var(--cal-halo-ovu);
 }
 .day.ovulation:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 4px rgba(94, 155, 170, 0.3);
+  transform: scale(1.06);
+  box-shadow: inset 0 0 0 2px var(--cal-ovu-edge), 0 0 0 4px rgba(74, 114, 99, 0.3);
 }
 .day.ovulation::after {
   content: "\2605";
@@ -1054,66 +1060,75 @@ body {
   top: 1px;
   right: 4px;
   font-size: 0.45rem;
-  color: #fff;
-  opacity: 0.8;
+  color: var(--cal-ovu-edge);
+  opacity: 0.9;
   z-index: 2;
 }
 .day.fertile {
-  background: var(--teal-light);
-  color: #2d5f6e;
+  background: var(--cal-fertile-bg);
+  color: var(--cal-fertile-ink);
   font-weight: 600;
 }
-[data-theme="dark"] .day.fertile {
-  background: #182a26;
-  color: var(--teal);
-}
 .day.fertile:hover {
-  background: var(--teal-light);
-  filter: brightness(0.95);
+  filter: brightness(0.96);
 }
 [data-theme="dark"] .day.fertile:hover {
-  filter: brightness(1.3);
+  filter: brightness(1.25);
 }
 .day.luteal {
-  background: var(--lavender-light);
-  color: var(--lavender-dark);
-}
-[data-theme="dark"] .day.luteal {
-  background: #261e2a;
-  color: var(--lavender);
+  background: var(--cal-luteal-bg);
+  color: var(--cal-luteal-ink);
 }
 .day.follicular {
-  background: var(--sage-light);
-  color: #3d6b55;
+  background: var(--cal-folli-bg);
+  color: var(--cal-folli-ink);
 }
-[data-theme="dark"] .day.follicular {
-  background: #182620;
-  color: var(--sage);
-}
-.day.ovulation .day-num,
-.day.period-on .day-num {
-  color: #fff;
-}
+/* These two used to be repainted white and then dimmed with
+   `filter: brightness(8)`, a trick that only existed because the number was
+   sitting on a saturated fill. On a tint the ink is already legible, so the
+   sub-labels just step back. */
 .day.ovulation .day-cycle-num,
 .day.ovulation .lunar-date,
 .day.period-on .day-cycle-num,
 .day.period-on .lunar-date {
-  filter: brightness(8);
-  opacity: 0.5;
+  opacity: 0.55;
 }
-.day.today.period-on {
+/* Today on a state day keeps BOTH markers: the inner dark ring is the "today"
+   tell, the outer coloured ring is the state. The rule below used to replace
+   the whole box-shadow, which silently dropped the state ring — today was the
+   one day of the period that stopped looking like a period day.
+   Every period variant is listed, not just `period-on`: today is roughly a
+   one-in-four chance of landing inside a period run, and those days take
+   `period-mid` / `period-pred`. With only `period-on` covered, a today inside
+   a period wore the base 1.5px --love ring — the same rose as the period's own
+   first day — so the one cell a user looks for first was the one cell
+   indistinguishable from its neighbours. */
+.day.today.period-on,
+.day.today.period-mid,
+.day.today.period-pred,
+.day.today.period-pred-first,
+.day.today.period-future,
+.day.today.period-future-first {
   box-shadow:
-    inset 0 0 0 1.5px var(--text),
-    0 0 0 4px rgba(184, 72, 90, 0.2);
+    inset 0 0 0 2px var(--text),
+    inset 0 0 0 4px var(--cal-period-edge),
+    var(--cal-halo-period);
 }
 .day.today.ovulation {
   box-shadow:
-    inset 0 0 0 1.5px var(--text),
-    0 0 0 4px rgba(94, 155, 170, 0.22);
+    inset 0 0 0 2px var(--text),
+    inset 0 0 0 4px var(--cal-ovu-edge),
+    var(--cal-halo-ovu);
 }
-.day.today.ovulation::after,
-.day.today.period-on::after {
-  box-shadow: 0 0 14px rgba(184, 72, 90, 0.25);
+/* The base .day.today paints a pulsing rose halo on ::after. On a state day the
+   box-shadow above already carries the halo, so the pulse is left to the star
+   and the heart rather than doubling the glow on the fill. */
+.day.today.period-on::after,
+.day.today.period-mid::after,
+.day.today.period-pred::after,
+.day.today.period-pred-first::after,
+.day.today.ovulation::after {
+  box-shadow: none;
 }
 .day.anniversary {
   border-color: var(--gold);
@@ -1347,20 +1362,29 @@ body {
   flex-shrink: 0;
   box-sizing: border-box;
 }
+/* The key reads the same triple the grid paints: tint inside, saturated ring
+   outside. It used to paint the saturated tokens here while the day cells used
+   the pale ones, so the legend showed a deep green dot for "Ovul./Plodni" next
+   to fertile days drawn in mint — a key to a calendar that was not on screen. */
 .legend .l-period::before {
-  background: var(--love);
+  background: var(--cal-period-bg);
+  border: 2px solid var(--cal-period-edge);
 }
 .legend .l-fertile::before {
-  background: var(--teal);
+  background: var(--cal-fertile-bg);
+  border: 2px solid var(--cal-fertile-edge);
 }
 .legend .l-ovulation::before {
-  background: var(--ring-ovulation);
+  background: var(--cal-ovu-bg);
+  border: 2px solid var(--cal-ovu-edge);
 }
 .legend .l-follicular::before {
-  background: var(--sage);
+  background: var(--cal-folli-bg);
+  border: 2px solid var(--cal-folli-edge);
 }
 .legend .l-luteal::before {
-  background: var(--lavender);
+  background: var(--cal-luteal-bg);
+  border: 2px solid var(--cal-luteal-edge);
 }
 .legend .l-heart::before {
   content: "\2665";
@@ -1372,6 +1396,16 @@ body {
   height: auto;
   border: none;
   box-shadow: none;
+}
+/* The origin markers (🇨🇳 / 🇷🇸 / 🌿) used to carry three raw hex dots —
+   #E53935, #0C4076, #4CAF50 — which were the most saturated pixels on the page
+   and the only colours in the calendar that belonged to no token. They are not
+   cycle states and must not read as one: the emoji already carries the colour,
+   so the swatch is a plain ring that only says "marker". */
+.legend .l-mark::before {
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  opacity: 0.7;
 }
 .pred-legend {
   font-size: 0.58rem;
@@ -5782,18 +5816,25 @@ body {
   .days {
     grid-template-columns: repeat(7, 1fr);
   }
-  .day:nth-child(8n + 7),
-  .day:nth-child(8n + 8) {
-    background: 0 0;
-  }
-  .day:nth-child(7n + 6),
-  .day:nth-child(7n + 7) {
-    background: rgba(196, 112, 120, 0.04);
-  }
-  [data-theme="dark"] .day:nth-child(7n + 6),
-  [data-theme="dark"] .day:nth-child(7n + 7) {
-    background: rgba(255, 255, 255, 0.02);
-  }
+  /* The weekend rule that used to live here is gone, and it is worth saying why
+     rather than quietly re-indexing it.
+
+     It tried to flatten Saturday and Sunday with `.day:nth-child(8n+7/8n+8)`
+     plus a stray `.day:nth-child(7n+6/7n+7)` that washed two other cells in a
+     4% rose. Neither set was ever right: `.days` carries a `.week-num` child at
+     the head of every row, so a row is eight children, and the weekday header
+     runs 日一二三四五六 — Sunday first. The days therefore sit at 8n+2 (Sun)
+     through 8n+8 (Sat), and the old selectors shaded Friday and deleted
+     Saturday instead.
+
+     Worse, a bare `.day:nth-child()` ties on specificity with `.day.ovulation`
+     and sits later in the file, so it did not merely tint — it REPLACED the
+     fill. Two of every seven days lost their cycle state at ≤360px, the width
+     this app is actually used at, and a `period-pred` run could go completely
+     invisible.
+
+     So the background of a day now means exactly one thing: its cycle state.
+     Nothing else in the phone layout is allowed to overwrite it. */
 }
 @media (max-width: 340px) {
   .tab .tb-label {

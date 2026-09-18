@@ -7,7 +7,14 @@ var SAVE_DEBOUNCE_MS = 200;
 var SYNC_DEBOUNCE_MS = 1500;
 var SYNC_INTERVAL_MS = 120000;
 
-window.CalState={year:2026,month:6,view:"month",weekOffset:0};
+/* 与 app.js 顶部同一处初始化。这里原本硬编码 {year:2026,month:6}（2026 年 7 月），
+   而本文件在 app.js 之后加载且无条件覆盖，所以真正生效的是这一行 —— 结果是
+   2026 年 8 月之后每次打开周期页都落在两个月前，屏幕上看不到"今天"。
+   日历应该落在用户所在的月份。 */
+(function () {
+  var d = new Date();
+  window.CalState = { year: d.getFullYear(), month: d.getMonth(), view: "month", weekOffset: 0 };
+})();
 // 这里曾有一个读 <meta name="version"> 的 APP_VERSION（兜底值 '7.2.0'）。
 // 它在全仓库从未被引用过，却是一个会静默过期的版本号来源 —— 已删除。
 // 版本号唯一来源见 sw.js 的 APP_VERSION，由 tests/test-version-consistency.js 强制校验。

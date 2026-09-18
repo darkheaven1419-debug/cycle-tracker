@@ -12,15 +12,22 @@
 const APP_VERSION = '7.3.0';
 const V = '?v=' + APP_VERSION;
 
-// Phase 1C：v31 → v32。改的是 ./css/v2.css（Our Story 的整段新样式）、
-// ./index.html（新增一个 script 标签）、以及一个全新的 cache-first 文件
-// ./js/module-memories.js —— 不换这个名字，已装 SW 的客户端在部署后仍会拿旧
-// 文件，整个 Memories 页对老客户端就不可见。activate 会删掉所有不在
-// CURRENT_CACHES 里的旧 cache，所以改名即完成刷新。
-// （Phase 1B.5 刷新过 ./css/v2.css、./js/sync.js、./js/render-love.js、
-//  ./js/module-dashboard.js：v30 → v31；Phase 1B 同一批：v29 → v30；
-//  Phase 2C 刷新过 ./app.js 与 ./js/fix-stats.js：v28 → v29。）
-const CACHE_STATIC = 'ciklus-static-v32';
+// Phase 1D：v32 → v33。改的是 ./css/tokens.css（新增 --cal-<state>-bg/-ink/-edge
+// 三元组）、./css/calendar.css（日历状态改为 tint + 描边、图例与格子对齐、删掉
+// ≤360px 那条会覆盖状态底色的周末规则）、./app.js（日历默认停在当前月）和
+// ./js/fix-all.js（同上，且这一行才是真正生效的那行）。这四个文件都在
+// STATIC_ASSETS 里、都以 cache-first 提供 —— 其中 tokens.css 与 calendar.css
+// 甚至是裸路径（无 ?v=），cache key 永远不变，所以不换 cache 名字的话，已装
+// SW 的客户端会一直拿旧调色板：日历还是深红/深绿实心块，图例还是和格子对不上，
+// 而且打开周期页仍会落在两个月前。改名即刷新。
+// （Phase 1C 刷新过 ./css/v2.css（Our Story 整段新样式）、./index.html（新增一个
+//  script 标签）与全新的 cache-first 文件 ./js/module-memories.js：v31 → v32，
+//  不换名字则整个 Memories 页对老客户端不可见；Phase 1B.5 刷新过 ./css/v2.css、
+//  ./js/sync.js、./js/render-love.js、./js/module-dashboard.js：v30 → v31；
+//  Phase 1B 同一批：v29 → v30；Phase 2C 刷新过 ./app.js 与 ./js/fix-stats.js：
+//  v28 → v29。activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，所以改名即
+//  完成刷新。）
+const CACHE_STATIC = 'ciklus-static-v33';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
