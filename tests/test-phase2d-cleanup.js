@@ -219,7 +219,8 @@ async function bootWithLegacyPat(browser, opts) {
       `githubPrefetch=${toGithub.length} weatherPrefetch=${toWeather.length}`);
   }
 
-  // ── D. source/dist consistency and the SW version (§九: keep v29) ──
+  // ── D. source/dist consistency and the SW version (§九: keep it current —
+  // Phase 2D pinned v29, Phase 1B carries it to v30) ──
   {
     const drift = ['app.js', 'js/fix-all.js', 'js/module-settings.js', 'index.html', 'sw.js']
       .filter((f) => read(f) !== read('dist/' + f));
@@ -227,9 +228,9 @@ async function bootWithLegacyPat(browser, opts) {
       drift.length === 0, `drift=${drift.join(',') || 'none'}`);
 
     const sw = read('sw.js');
-    check('D8 CACHE_STATIC is still v29 and no older name survives',
-      /const CACHE_STATIC = 'ciklus-static-v29';/.test(sw) && sw.indexOf('ciklus-static-v28') === -1,
-      `v29=${/ciklus-static-v29/.test(sw)} v28=${sw.indexOf('ciklus-static-v28') !== -1}`);
+    check('D8 CACHE_STATIC is the current name and no older one survives',
+      /const CACHE_STATIC = 'ciklus-static-v30';/.test(sw) && sw.indexOf('ciklus-static-v29') === -1,
+      `v30=${/ciklus-static-v30/.test(sw)} v29=${sw.indexOf('ciklus-static-v29') !== -1}`);
 
     // The files 2D changed must still be covered by the precache list, or a
     // later cache-name bump would not refresh them.

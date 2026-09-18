@@ -12,10 +12,12 @@
 const APP_VERSION = '7.3.0';
 const V = '?v=' + APP_VERSION;
 
-// Phase 2C：v28 → v29。STATIC_ASSETS 里的 ./app.js 与 ./js/fix-stats.js 是 cache-first 的，
-// 不换这个名字，已装 SW 的客户端在部署后仍会拿旧文件，2C-1/2C-2 的修复对老客户端不可见。
+// Phase 1B：v29 → v30。STATIC_ASSETS 里的 ./css/v2.css、./js/sync.js、
+// ./js/render-love.js、./js/module-dashboard.js 都是 cache-first 的：不换这个名字，
+// 已装 SW 的客户端在部署后仍会拿旧文件，Together 的互动改动对老客户端不可见。
 // activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，所以改名即完成刷新。
-const CACHE_STATIC = 'ciklus-static-v29';
+// （Phase 2C 用同一机制刷新过 ./app.js 与 ./js/fix-stats.js：v28 → v29。）
+const CACHE_STATIC = 'ciklus-static-v30';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

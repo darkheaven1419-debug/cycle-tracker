@@ -88,6 +88,7 @@ const SyncModule = (function () {
       symptoms: getJSON('shared-symptoms', null),
       gratitude: getJSON('shared-gratitude', []),
       gratitudeEcho: getJSON('shared-gratitude-echo', []),
+      dailyQ: getJSON('shared-daily-q', []),
       hug: getJSON('shared-hug', null),
       songs: {
         barry: getJSON('shared-song-barry', null),
@@ -192,6 +193,25 @@ const SyncModule = (function () {
     return mergeByTimeKey(local, remote, _echoKey, _echoTime, ECHO_CAP);
   }
 
+  // ── Daily Question：两人各自对「今天这道题」的回答，独立 append-only ──
+  // 存储键 shared-daily-q，字段 {qKey, from, answer, time}
+  var DAILY_Q_CAP = 500; // 与 Echo 同样的体积护栏
+
+  /**
+   * qKey 必须与语言和时区都无关，否则两个人永远对不上同一道题：
+   * 用「epoch 天数 + 题库下标」（module-dashboard.js 的 getDailyQuestion 用同一算法），
+   * 同一时刻两人算出同一个值。以后改题库文案也不影响历史记录的身份。
+   * from 一起进 key —— 每人对每道题只保留一条回答，改答案就是覆盖自己那条。
+   */
+  function _dqKey(e) { return String(e.qKey) + '|' + String(e.from); }
+  function _dqTime(e) {
+    return (typeof e.time === 'number' && isFinite(e.time)) ? e.time : 0;
+  }
+
+  function mergeDailyQ(local, remote) {
+    return mergeByTimeKey(local, remote, _dqKey, _dqTime, DAILY_Q_CAP);
+  }
+
   // ── 应用远程状态到本地 ──
   function apply(state) {
     if (!state) return;
@@ -250,6 +270,22 @@ const SyncModule = (function () {
       var mergedEcho = mergeEcho(localEcho, state.gratitudeEcho);
       localStorage.setItem('shared-gratitude-echo', JSON.stringify(mergedEcho));
       console.log('[同步] Echo 合并 本地=' + localEcho.length + ' 远程=' + _asArray(state.gratitudeEcho).length + ' 合并后=' + mergedEcho.length);
+      // §3：对方的回应也算「她给我留了东西」，拉取后要让提示立即反映出来。
+      // _initTodayWindow() 的窗口在整个会话内是固定的，所以这里不会因为
+      // 「拉取时刚好重算了窗口」而把新内容吃掉。
+      if (typeof renderTogetherNew === 'function') renderTogetherNew();
+    }
+
+    // Daily Question 回答：独立 append-only，取并集 —— 两人各留自己那条
+    if (state.dailyQ) {
+      var localDQ = _asArray(getJSON('shared-daily-q', []));
+      var mergedDQ = mergeDailyQ(localDQ, state.dailyQ);
+      localStorage.setItem('shared-daily-q', JSON.stringify(mergedDQ));
+      console.log('[同步] Daily Question 合并 本地=' + localDQ.length + ' 远程=' + _asArray(state.dailyQ).length + ' 合并后=' + mergedDQ.length);
+      // renderTogether() only runs when the Together tab is entered, so without
+      // this a pull that lands while the app is open leaves the card showing the
+      // pre-pull state until the user navigates away and back.
+      if (typeof renderDailyQ === 'function') renderDailyQ();
     }
 
     // 其他数据：直接替换
@@ -316,6 +352,12 @@ const SyncModule = (function () {
       var me = mergeEcho(le, remoteState.gratitudeEcho);
       localStorage.setItem('shared-gratitude-echo', JSON.stringify(me));
       console.log('[同步] 推送前合并 Echo 本地=' + le.length + ' 远程=' + _asArray(remoteState.gratitudeEcho).length + ' 合并后=' + me.length);
+    }
+    if (remoteState.dailyQ) {
+      var ldq = _asArray(getJSON('shared-daily-q', []));
+      var mdq = mergeDailyQ(ldq, remoteState.dailyQ);
+      localStorage.setItem('shared-daily-q', JSON.stringify(mdq));
+      console.log('[同步] 推送前合并 Daily Question 本地=' + ldq.length + ' 远程=' + _asArray(remoteState.dailyQ).length + ' 合并后=' + mdq.length);
     }
   }
 
@@ -556,6 +598,7 @@ const SyncModule = (function () {
     mergeByTimeKey: mergeByTimeKey,
     mergeGratitude: mergeGratitude,
     mergeEcho: mergeEcho,
+    mergeDailyQ: mergeDailyQ,
     updateBadge: updateBadge,
     stopAutoPull: _stopAutoPull,
     startAutoPull: _startAutoPull

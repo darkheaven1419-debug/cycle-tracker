@@ -57,25 +57,25 @@
   var DAILY_QS = {
     sr: [
       'Koja je tvoja najlep\u{0161}a uspomena iz detinjstva?',
-      '\u{0160}ta bi voleo/la da nau\u{010D}i\u{0161} o Kini?',
+      'Šta bi voleo/la da naučiš o zemlji svog partnera?',
       'Kad smo najbli\u{017E}e iako smo 7.000 km daleko?',
-      '\u{0160}ta ti najvi\u{0161}e nedostaje kad nisam tu?',
+      'Šta ti najviše nedostaje kad nismo zajedno?',
       'Kako zami\u{0161}lja\u{0161} na\u{0161} prvi zagrljaj?',
-      'Koji srpski obi\u{010D}aj želi\u{0161} da poka\u{017E}e\u{0161} Baraju?',
+      'Koju tradiciju želiš da podeliš sa svojim partnerom?',
       '\u{0160}ta ćemo raditi kad se prvi put sretnemo?'
     ],
     'zh-CN': [
       '\u{4F60}\u{7AE5}\u{5E74}\u{6700}\u{7F8E}\u{597D}\u{7684}\u{56DE}\u{5FC6}\u{662F}\u{4EC0}\u{4E48}\u{FF1F}',
-      '\u{4F60}\u{60F3}\u{4E86}\u{89E3}\u{5173}\u{4E8E}\u{585E}\u{5C14}\u{7EF4}\u{4E9A}\u{7684}\u{4EC0}\u{4E48}\u{FF1F}',
+      '你想了解对方国家的什么？',
       '\u{4EC0}\u{4E48}\u{65F6}\u{5019}\u{4F60}\u{89C9}\u{5F97}\u{6211}\u{4EEC}\u{6700}\u{8FD1}\u{FF1F}',
-      '\u{5982}\u{679C}\u{80FD}\u{77AC}\u{95F4}\u{98DE}\u{5230}Kikinda\u{FF0C}\u{4F60}\u{6700}\u{60F3}\u{548C}\u{5979}\u{505A}\u{4EC0}\u{4E48}\u{FF1F}',
+      '我们不在一起的时候，你最想念什么？',
       '\u{4F60}\u{89C9}\u{5F97}\u{6211}\u{4EEC}\u{7684}\u{7B2C}\u{4E00}\u{6B21}\u{62E5}\u{62B1}\u{4F1A}\u{662F}\u{4EC0}\u{4E48}\u{6837}\u{7684}\u{FF1F}',
-      '\u{4E2D}\u{56FD}\u{6709}\u{4EC0}\u{4E48}\u{4F60}\u{60F3}\u{5E26}An\u{0111}ela\u{53BB}\u{770B}\u{7684}\u{FF1F}',
-      '\u{60F3}\u{5411}An\u{0111}ela\u{5B66}\u{4EC0}\u{4E48}\u{585E}\u{5C14}\u{7EF4}\u{4E9A}\u{8BED}\u{FF1F}'
+      '你想和对方分享什么传统？',
+      '我们第一次见面时想做什么？'
     ],
     en: [
       'What is your most beautiful childhood memory?',
-      'What do you want to learn about Serbia/China?',
+      "What do you want to learn about your partner's country?",
       'When do you feel closest despite the distance?',
       'What do you miss most when we are apart?',
       'How do you imagine our first hug?',
@@ -148,7 +148,14 @@
       qAnswer: 'Odgovori \u{2192}',
       homeQuote: 'Od Pekinga do Vojvodine \u{2014} 7.000 km, jedno srce.',
       togetherLead: 'Na\u{0161} prostor — ovde ostavljamo jedno drugom.',
-      daysSinceMet: '{n} dana od susreta'
+      daysSinceMet: '{n} dana od susreta',
+      qYours: 'Tvoj odgovor',
+      qPlaceholder: 'Napi\u{0161}i odgovor\u{2026}',
+      qSend: 'Po\u{0161}alji',
+      qUpdate: 'Sa\u{010D}uvaj izmenu',
+      qSaved: '\u{2713} Sa\u{010D}uvano',
+      qWaiting: 'jo\u{0161} nije odgovorio/la',
+      qBoth: '\u{2728} Oboje ste odgovorili'
     },
     'zh-CN': {
       herCycle: '\u{1F338} \u{5979}\u{7684}\u{5468}\u{671F}',
@@ -157,7 +164,14 @@
       qAnswer: '\u{53BB}\u{56DE}\u{7B54} \u{2192}',
       homeQuote: '\u{4ECE}\u{5317}\u{4EAC}\u{5230}\u{4F0F}\u{4F0A}\u{4F0F}\u{4E01}\u{90A3} \u{2014} 7000 \u{516C}\u{91CC}\u{FF0C}\u{4E00}\u{9897}\u{5FC3}\u{3002}',
       togetherLead: '\u{6211}\u{4EEC}\u{7684}\u{7A7A}\u{95F4} \u{2014}\u{2014} \u{5728}\u{8FD9}\u{91CC}\u{7ED9}\u{5F7C}\u{6B64}\u{7559}\u{4E0B}\u{4E1C}\u{897F}\u{3002}',
-      daysSinceMet: '\u{76F8}\u{8BC6} {n} \u{5929}'
+      daysSinceMet: '\u{76F8}\u{8BC6} {n} \u{5929}',
+      qYours: '\u{4F60}\u{7684}\u{56DE}\u{7B54}',
+      qPlaceholder: '\u{5199}\u{4E0B}\u{4F60}\u{7684}\u{56DE}\u{7B54}\u{2026}',
+      qSend: '\u{53D1}\u{9001}',
+      qUpdate: '\u{66F4}\u{65B0}\u{56DE}\u{7B54}',
+      qSaved: '\u{2713} \u{5DF2}\u{4FDD}\u{5B58}',
+      qWaiting: '\u{8FD8}\u{6CA1}\u{6709}\u{56DE}\u{7B54}',
+      qBoth: '\u{2728} \u{4F60}\u{4EEC}\u{90FD}\u{56DE}\u{7B54}\u{4E86}'
     },
     en: {
       herCycle: '\u{1F338} Her cycle',
@@ -166,7 +180,14 @@
       qAnswer: 'Answer \u{2192}',
       homeQuote: 'Beijing to Vojvodina \u{2014} 7,000 km, one heart.',
       togetherLead: 'Our space \u{2014} where we leave things for each other.',
-      daysSinceMet: '{n} days since we met'
+      daysSinceMet: '{n} days since we met',
+      qYours: 'Your answer',
+      qPlaceholder: 'Write your answer\u{2026}',
+      qSend: 'Send',
+      qUpdate: 'Update answer',
+      qSaved: '\u{2713} Saved',
+      qWaiting: "hasn't answered yet",
+      qBoth: '\u{2728} You both answered'
     }
   };
 
@@ -240,18 +261,34 @@
       out.push({ t: t, e: emoji, l: label, x: text || '', tab: tab });
     }
 
+    /* 目标页是 'together'，不是 'stats'：Phase 1A 把这四张卡从 Cycle 面板搬到了
+       Together 面板，点进去却跳到 stats 就成了死链（卡片早不在那里了）。 */
     var grat = _readJSON('shared-gratitude', []);
     if (Array.isArray(grat)) grat.forEach(function (g) {
-      if (g && g.from === partner) add(g.time, '\u{1F48C}', 'grat', g.text, 'stats');
+      if (g && g.from === partner) add(g.time, '\u{1F48C}', 'grat', g.text, 'together');
+    });
+
+    /* 对方的 emoji 回应 —— §3 的「反向也必须成立」：我回应的那条她会看到，
+       她回应的这条我也要看到。Echo 之前不在这份名单里，所以她的回应永远
+       不会出现在提示里。 */
+    var echo = _readJSON('shared-gratitude-echo', []);
+    if (Array.isArray(echo)) echo.forEach(function (x) {
+      if (x && x.from === partner && x.time) add(x.time, x.emoji || '\u{1F49E}', 'grat', '', 'together');
+    });
+
+    /* 对方今天对每日一问的回答 —— 也是「她给我留了东西」的一种。 */
+    var dq = _readJSON('shared-daily-q', []);
+    if (Array.isArray(dq)) dq.forEach(function (x) {
+      if (x && x.from === partner && x.time) add(x.time, '\u{1F4AD}', 'knowme', x.answer, 'together');
     });
 
     var song = _readJSON('shared-song-' + partner, null);
-    if (song && song.time) add(song.time, '\u{1F3B6}', 'song', song.title, 'stats');
+    if (song && song.time) add(song.time, '\u{1F3B6}', 'song', song.title, 'together');
 
     var km = _readJSON('shared-knowme', {});
     Object.keys(km || {}).forEach(function (d) {
       var e = km[d] && km[d][partner];
-      if (e && e.time) add(e.time, '\u{1F4AD}', 'knowme', e.answer, 'stats');
+      if (e && e.time) add(e.time, '\u{1F4AD}', 'knowme', e.answer, 'together');
     });
 
     /* Moods are read straight from localStorage: sync.apply() never writes
@@ -266,7 +303,7 @@
     });
 
     var hug = _readJSON('shared-hug', null);
-    if (hug && hug.from === partner) add(hug.time, '\u{1F917}', 'hug', '', 'stats');
+    if (hug && hug.from === partner) add(hug.time, '\u{1F917}', 'hug', '', 'together');
 
     if (partner === 'barry') {
       var sl = _readJSON('barry-sleep', null);
@@ -368,7 +405,12 @@
 
   function getDailyQuestion() {
     var qs = DAILY_QS[lang] || DAILY_QS.sr;
-    return qs[new Date().getDate() % qs.length];
+    /* 用「epoch 天数」而不是「几号」。getDate() 是本地时区量：北京与塞尔维亚相差
+       6~7 小时，每天有一段时间两人处在不同的本地日期，会拿到不同的题；而且它按
+       月内日期取模，1/8/15/22/29 号会重复同一题，跨月还会跳。epoch 天是绝对量，
+       同一时刻两人的下标必然相同——这是 §4「两个人每天回答同一道题」的前提。
+       三个数组等长（各 7 条）且第 i 条语义一致，缺一不可。 */
+    return qs[Math.floor(Date.now() / 864e5) % qs.length];
   }
   window.getDailyQuestion = getDailyQuestion;
 
@@ -512,8 +554,121 @@
      renderKnowMe() is missing from applyAllUI's `connection` group, so nothing
      else would repaint the Know Me card after a sync pull landed while the user
      was on another tab. */
+  /* ── Daily Question：两个人一起回答同一道题 ─────────────────────────────
+     §4。不是题库、不是问卷：谁回答了、回答了什么，两边都看得见；两个人都答
+     完给一个轻的完成态。没有分数、没有排名、没有连续签到。
+
+     数据的身份是 qKey = 「epoch 天数 : 题库下标」，由 getDailyQuestion 用同一个
+     算法算出来，所以它与语言和时区都无关 —— 两人在同一时刻必然拿到同一个值。
+     存储键 shared-daily-q，条目 {qKey, from, answer, time}，append-only；在
+     sync.js 里按 (qKey|from) 取并集，每人对每道题只保留一条，改答案就是覆盖
+     自己那条，对方那条不受影响。（这正是它不能用 shared-knowme 那种整体替换
+     语义的原因：整体替换会把对方刚写的回答抹掉。） */
+  var DQ_KEY = 'shared-daily-q';
+
+  function _dqCurrent() {
+    var day = Math.floor(Date.now() / 864e5);
+    var n = (DAILY_QS.sr && DAILY_QS.sr.length) || 1;
+    return { day: day, qKey: day + ':' + (day % n) };
+  }
+
+  function _dqEntries(qKey) {
+    var out = {};
+    var list = _readJSON(DQ_KEY, []);
+    if (Array.isArray(list)) list.forEach(function (e) {
+      if (e && e.qKey === qKey && e.from) out[String(e.from)] = e;
+    });
+    return out;
+  }
+
+  function _nameOf(p) { return p === 'barry' ? 'Barry' : 'An\u{0111}ela'; }
+
+  /** 写自己的回答。同一道题重复提交只替换自己那条，对方那条原样不动。 */
+  function answerDailyQ(text) {
+    var t = String(text == null ? '' : text).trim();
+    if (!t || t.length > 280) return;
+    var cur = _dqCurrent();
+    var me = _todayCtx().me;
+    var list = _readJSON(DQ_KEY, []);
+    if (!Array.isArray(list)) list = [];
+    var rec = { qKey: cur.qKey, from: me, answer: t, time: Date.now() };
+    var i = -1;
+    list.forEach(function (e, n) {
+      if (e && e.qKey === cur.qKey && String(e.from) === me) i = n;
+    });
+    if (i >= 0) list[i] = rec; else list.push(rec);
+    try { localStorage.setItem(DQ_KEY, JSON.stringify(list)); } catch (e) {}
+    _renderDailyQ();
+    if (typeof pushAllSharedData === 'function') pushAllSharedData();
+  }
+  window.answerDailyQ = answerDailyQ;
+
+  function _renderDailyQ() {
+    var host = document.getElementById('togetherDailyQ');
+    if (!host) return;
+    var ctx = _todayCtx();
+    var both = _dqEntries(_dqCurrent().qKey);
+    var mine = both[ctx.me] || null;
+    var theirs = both[ctx.partner] || null;
+
+    /* 一行 = 一个人。✅ 已答（附答案），⏳ 未答。两边对称，Barry 不是查看者。 */
+    function line(p, rec) {
+      var ok = !!rec;
+      return '<div class="dq-line' + (ok ? ' dq-done' : '') + '">' +
+        '<span class="dq-who">' + esc(_nameOf(p)) + '</span>' +
+        '<span class="dq-mark" aria-hidden="true">' + (ok ? '\u{2705}' : '\u{23F3}') + '</span>' +
+        '<span class="dq-ans">' + esc(ok ? rec.answer : v2('qWaiting')) + '</span>' +
+        '</div>';
+    }
+
+    host.innerHTML =
+      '<div class="dq-q" id="togetherDailyQText"></div>' +
+      '<textarea class="dq-input" id="dqInput" rows="2" maxlength="280" ' +
+        'placeholder="' + esc(v2('qPlaceholder')) + '" aria-label="' + esc(v2('qYours')) + '">' +
+        esc(mine ? mine.answer : '') + '</textarea>' +
+      '<div class="dq-actions">' +
+        '<button class="dq-send" onclick="answerDailyQ(document.getElementById(\'dqInput\').value)">' +
+          esc(mine ? v2('qUpdate') : v2('qSend')) + '</button>' +
+        (mine ? '<span class="dq-saved">' + esc(v2('qSaved')) + '</span>' : '') +
+      '</div>' +
+      (mine && theirs ? '<div class="dq-both">' + esc(v2('qBoth')) + '</div>' : '') +
+      line(ctx.me, mine) + line(ctx.partner, theirs);
+
+    var qt = document.getElementById('togetherDailyQText');
+    if (qt) qt.textContent = getDailyQuestion();
+  }
+  window.renderDailyQ = _renderDailyQ;
+
+  /* ── §3 "New from your partner" ─────────────────────────────────────────
+     不是未读系统。复用 Home 上已经在用的「自上次打开以来的窗口」
+     （LAST_OPEN_KEY + 自己的 profile，见 _initTodayWindow）：窗口之内对方留
+     下的东西就显示，看见即消费。两个人的窗口各存各的、不同步，所以不存在
+     会产生同步冲突的全局 unread 字段。两处共用同一份 _collectTodayEvents，
+     §3 要求的对称性因此是结构性的，而不是两处各写一遍。 */
+  function _renderTogetherNew() {
+    var host = document.getElementById('together-new');
+    if (!host) return;
+    var ctx = _todayCtx();
+    var S = ctx.S;
+    var items = _collectTodayEvents(_initTodayWindow());
+    if (!items.length) { host.hidden = true; host.innerHTML = ''; return; }
+    host.hidden = false;
+    var rows = items.slice(0, 3).map(function (it) {
+      return '<div class="tnew-row" onclick="switchToTab(\'' + it.tab + '\')">' +
+        '<span class="tnew-e">' + it.e + '</span>' +
+        '<span class="tnew-x">' + esc(it.x ? String(it.x).slice(0, 90) : (S[it.l] || '')) + '</span>' +
+        '<span class="tnew-t">' + esc(_relTime(it.t, S)) + '</span>' +
+        '</div>';
+    }).join('');
+    host.innerHTML = '<div class="tnew-head">' + esc(ctx.partner === 'barry' ? S.m : S.f) + '</div>' + rows;
+  }
+  window.renderTogetherNew = _renderTogetherNew;
+
   var _togetherBuilt = false;
 
+  /* Together 第一屏：§8 要求 Barry 一进来就看到「有一件事是他可以为她做的」，
+     所以「对方的新动态」和「今天的问题 + 回答框」在最前面，六张静态卡片跟在
+     后面（它们的 markup / id / 渲染器 / 存储键一律没动）。 */
   function renderTogether() {
     var host = document.getElementById('together-body');
     if (!host) return;
@@ -521,15 +676,16 @@
       host.innerHTML =
         '<div class="dash-couple-head" id="together-head">' + _coupleHeadHtml() +
           '<div class="dch-greet">' + esc(v2('togetherLead')) + '</div></div>' +
-        '<div class="card" id="together-connect">' +
+        '<div class="card dash-card" id="together-new" hidden></div>' +
+        '<div class="card" id="together-daily">' +
           '<div class="dhc-head"><span class="dhc-title">' + esc(v2('qOfDay')) + '</span>' +
-          '<button class="dhc-more" onclick="document.getElementById(\'togetherConnectQ\').textContent=getDailyQuestion()" aria-label="' + esc(dl('refreshQ')) + '">\u{1F504}</button></div>' +
-          '<div class="dash-q-text" id="togetherConnectQ"></div>' +
+          '<button class="dhc-more" onclick="renderDailyQ()" aria-label="' + esc(dl('refreshQ')) + '">\u{1F504}</button></div>' +
+          '<div id="togetherDailyQ"></div>' +
         '</div>';
       _togetherBuilt = true;
     }
-    var q = document.getElementById('togetherConnectQ');
-    if (q) q.textContent = getDailyQuestion();
+    _renderDailyQ();
+    _renderTogetherNew();
     ['renderHug', 'renderGratitude', 'renderSong', 'renderCheckin', 'renderKnowMe', 'renderRelTips'].forEach(function (fn) {
       if (typeof window[fn] === 'function') { try { window[fn](); } catch (e) {} }
     });

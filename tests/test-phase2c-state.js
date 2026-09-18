@@ -41,9 +41,13 @@ const SHA_A = 'a'.repeat(40);
 const SHA_B = 'b'.repeat(40);
 const SHA_C = 'c'.repeat(40);
 
-/** The 17 keys collect() has always returned. Phase 2C must not change the set. */
+/** The keys collect() returns. Phase 2C pinned the set at 17 and required the
+ *  migration not to change it; Phase 1B adds exactly one, `dailyQ` — the pair's
+ *  answers to the Daily Question. It is append-only and merged by (qKey|from)
+ *  in sync.js, so it cannot be a whole-object-replace key like `knowme`: that
+ *  shape would let a pull erase the answer the other person just wrote. */
 const COLLECT_KEYS = [
-  'diary', 'cycleInfo', 'symptoms', 'gratitude', 'gratitudeEcho', 'hug',
+  'diary', 'cycleInfo', 'symptoms', 'gratitude', 'gratitudeEcho', 'dailyQ', 'hug',
   'songs', 'sleep', 'checkins', 'learningProgress', 'learningComments',
   'learningPoints', 'voiceData', 'sunCounter', 'knowme', 'calendarMarkers', 'updated',
 ];
@@ -331,8 +335,8 @@ const tick = () => new Promise((r) => setTimeout(r, 20));
     const state = d.S.collect();
     const missing = COLLECT_KEYS.filter((k) => !(k in state));
     const extra = Object.keys(state).filter((k) => COLLECT_KEYS.indexOf(k) === -1);
-    check('C18 collect() still returns exactly the same 17 keys',
-      missing.length === 0 && extra.length === 0 && Object.keys(state).length === 17,
+    check('C18 collect() returns exactly the pinned key set (17 + dailyQ)',
+      missing.length === 0 && extra.length === 0 && Object.keys(state).length === 18,
       `keys=${Object.keys(state).length} missing=[${missing.join(',')}] extra=[${extra.join(',')}]`);
   }
 

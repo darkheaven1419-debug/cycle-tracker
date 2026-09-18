@@ -169,8 +169,33 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
     const r = await rows(s.page);
     const order = r[0] && r[0].echo.map((x) => x.emoji).join('');
     check('E1 each note shows the five emoji in order',
-      r.length === 2 && r.every((x) => x.echo.length === 5) && order === '❤️😘🥰😂👍',
+      r.length === 2 && r.every((x) => x.echo.length === 5) && order === '❤️🫂😘🥹✨',
       `blocks=${r.length} order=${order}`);
+    await s.ctx.close();
+  }
+
+  // ---- E12: retired emoji already in storage stay visible, but are not offered ----
+  {
+    // 🥰 😂 👍 were the Phase 4 set. A record written then is still someone's
+    // real reaction; narrowing GRAT_EMOJI must not erase it from the note.
+    // Block 0 is andjela's note (slice(-5).reverse()), so seed against T2.
+    const legacy = [{ noteFrom: 'andjela', noteTime: T2, from: 'barry', emoji: '🥰', time: T2 + 1000 }];
+    const s = await scenario(browser, { 'shared-gratitude': grat, 'shared-gratitude-echo': legacy });
+    const info = await s.page.evaluate(() => {
+      const box = document.querySelector('#gratList .grat-block .grat-echo');
+      if (!box) return null;
+      return Array.from(box.children).map((x) => ({
+        tag: x.tagName,
+        emoji: x.childNodes[0].textContent,
+        old: x.classList.contains('grat-echo-old'),
+        count: x.querySelector('.grat-echo-n') ? x.querySelector('.grat-echo-n').textContent : '0',
+      }));
+    });
+    check('E12 a retired emoji keeps its count as a non-interactive chip',
+      !!info && info.length === 6 &&
+      info.slice(0, 5).every((x) => x.tag === 'BUTTON') &&
+      info[5].tag === 'SPAN' && info[5].old && info[5].emoji === '🥰' && info[5].count === '1',
+      JSON.stringify(info));
     await s.ctx.close();
   }
 
@@ -239,12 +264,12 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
     const s = await scenario(browser, { 'shared-gratitude': grat });
     await s.page.click(B(2, 1)); // ❤️
     await s.page.waitForTimeout(300);
-    await s.page.click(B(2, 2)); // 😘
+    await s.page.click(B(2, 2)); // 🫂
     await s.page.waitForTimeout(300);
     const list = await echoList(s.page);
     const r = await rows(s.page);
     check('E4 switching emoji updates my single record',
-      list.length === 1 && list[0].emoji === '😘' &&
+      list.length === 1 && list[0].emoji === '🫂' &&
       r[1].echo[1].mine === true && r[1].echo[0].mine === false && r[1].echo[0].count === '0',
       `list=${JSON.stringify(list)} mineAt=${r[1].echo.findIndex((x) => x.mine)}`);
     await s.ctx.close();
@@ -255,11 +280,11 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
     const s = await scenario(browser, {
       'shared-gratitude': grat,
       'shared-gratitude-echo': [
-        { noteFrom: 'andjela', noteTime: T2, from: 'barry', emoji: '🥰', time: T2 + 1000 },
+        { noteFrom: 'andjela', noteTime: T2, from: 'barry', emoji: '😘', time: T2 + 1000 },
       ],
     });
     const r = await rows(s.page);
-    const partner = r[0].echo[2]; // andjela's note, 🥰
+    const partner = r[0].echo[2]; // andjela's note, 😘
     check("E5 partner's reaction is displayed but not marked as mine",
       partner.count === '1' && partner.mine === false, JSON.stringify(partner));
 
@@ -312,7 +337,7 @@ const B = (block, nth) => `#gratList .grat-block:nth-child(${block}) .grat-echo-
 
     s.remote.state = {
       gratitude: grat,
-      gratitudeEcho: [{ noteFrom: 'andjela', noteTime: T2, from: 'barry', emoji: '👍', time: T2 + 5000 }],
+      gratitudeEcho: [{ noteFrom: 'andjela', noteTime: T2, from: 'barry', emoji: '✨', time: T2 + 5000 }],
     };
     await s.page.evaluate(() => window.pullAllSharedData());
     await s.page.waitForTimeout(900);
