@@ -5894,70 +5894,6 @@ body {
     transform: scale(1.05);
   }
 }
-[data-theme="dark"] {
-  --primary: #d47888;
-  --primary-hover: #c45a6b;
-  --primary-light: #352028;
-  --rose: #d47888;
-  --rose-dark: #c45a6b;
-  --rose-light: #2a1c20;
-  --rose-mist: #302228;
-  --love: #d47888;
-  --lipa: #8fc7b0;
-  --dust: #3d302c;
-  --gold: #c49a5e;
-  --gold-light: #3d3020;
-  --gold-muted: #8a7a5e;
-  --teal: #7ab5a0;
-  --teal-light: #182822;
-  --sage: #8fc7b0;
-  --sage-light: #182820;
-  --lavender: #c8a8d8;
-  --lavender-dark: #a080b8;
-  --lavender-light: #261e2a;
-  --error: #ef5350;
-  --warm-bg: #3d2000;
-  --warm-text: #ffb74d;
-  --dot-short: #5a3030;
-  --bg: #1a1516;
-  --card: #33292c;
-  --elevated: #403538;
-  --text: #e8dcd8;
-  --text-muted: #a09896;
-  --border: #514448;
-  --border-soft: #332a2c;
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.22);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.18);
-  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.35), 0 16px 44px rgba(0, 0, 0, 0.22);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4), 0 24px 60px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 24px rgba(212, 120, 136, 0.15);
-  --fab-shadow: 0 6px 22px rgba(212, 120, 136, 0.26);
-  --calendar-glow-period: 0 0 20px rgba(212, 122, 138, 0.2);
-  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.15);
-  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.2);
-  --calendar-hover-lift: 0 4px 12px rgba(212, 122, 138, 0.1);
-  --blur: blur(14px) saturate(1.1);
-  --blur-heavy: blur(24px) saturate(1.15);
-  --ring-period: #d47888;
-  --ring-ovulation: #7ab5a0;
-  --ring-fertile: #8fc7b0;
-  --ring-luteal: #c8a8d8;
-  --ring-follicular: #8fc7b0;
-  --ring-predicted: rgba(200, 170, 170, 0.2);
-  --season-spring: #e8867c;
-  --season-summer: #d47888;
-  --season-autumn: #d49a5e;
-  --season-winter: #b89ad0;
-}
-[data-theme="dark"] {
-  --gradient-rose: linear-gradient(135deg, #2a1c20, #1e181a);
-  --gradient-card: linear-gradient(145deg, #241e20 0%, #1f1a1c 100%);
-  --gradient-warm: linear-gradient(135deg, #2a1c20, #2a221e);
-  --gradient-gold: linear-gradient(145deg, #302520 0%, #2e2824 100%);
-  --gradient-teal: linear-gradient(135deg, #182822, #142e28);
-  --gradient-love: linear-gradient(135deg, #d47888, #c45a6b);
-}
 body.festival-spring {
   --love: #d32f2f;
   --rose: #d32f2f;
@@ -6222,24 +6158,6 @@ nav.tabs-nav .tabs #tab-symptoms {
 }
 @media (prefers-reduced-motion: reduce) {
   #panel-dashboard.active > * { animation: none !important; }
-}
-/* P1-8 深色模式观感优化
-   问题（probe-dark 实测）：
-   · 深色大卡片面 --gradient-card(#241e20→#1f1a1c, L≈0.013) 与页面 bg(#1a1516, L≈0.008)
-     几乎同亮度 → 卡片整体"沉"进背景、无分层
-   · --border-soft(#332a2c) ≈ --card(#33292c, L≈0.025) → 日历格线/分隔线/描边不可见
-   · --text-muted(#a09896) 在小字上处于 WCAG 4.5:1 边缘
-   · .theme-btn 边框用 border-soft → 深色下圆形按钮无描边，与 header-actions 不协调
-   方案（仅深色，纯 token/表面层；token 重声明同特异性更靠后胜出）：
-   · 提亮 --gradient-card 至暖调 #30292c→#282124（L 提升~1 倍）→ 卡片从背景浮起
-   · --border-soft 提亮至 #45383c → 格线/分隔线可见且保持含蓄
-   · --text-muted 提亮至 #a8a09e → 深色小字可读性上修
-   · 深色卡片加顶部 1px 内高光 → "lifted paper" 深度感（hover 规则 1558 选择器不同，不受影响）
-   · .theme-btn 深色描边改用 --border，与 header-actions 一致 */
-[data-theme="dark"] {
-  --gradient-card: linear-gradient(145deg, #30292c 0%, #282124 100%);
-  --border-soft: #45383c;
-  --text-muted: #a8a09e;
 }
 [data-theme="dark"] .calendar,
 [data-theme="dark"] .card,

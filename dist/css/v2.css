@@ -1,0 +1,271 @@
+/* ============================================================================
+   Phase 1A.5 — Midnight Couple: the V2 component layer.
+   ============================================================================
+   Scope rule, deliberately narrow: this file adds only what css/calendar.css
+   does NOT already define. The palette lives in css/tokens.css — the single
+   authoritative variable layer for both themes. This file adds component
+   STRUCTURE (bottom-nav icon presentation, the card hierarchy, the default
+   ambience, micro-motion).
+
+   It deliberately does NOT restyle what calendar.css already styles from
+   tokens. Re-styling everything from a later sheet is exactly how the "giant
+   overlay on top of calendar.css" that Phase 0 spent its time deleting came to
+   exist; the goal here is that this file stays small and honest.
+
+   Loaded after css/calendar.css, on purpose, so its component rules win.
+   ========================================================================== */
+
+/* ── §2 Default ambience: a faint night sky, not falling petals ───────────
+   The "midnight" feeling is a property of the room, so it lives on the body as
+   a static gradient rather than as moving decoration. Two very low-opacity
+   star glows, fixed, behind everything. No JavaScript, no DOM, no animation. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    var(--glow-star) no-repeat 78% 6% / 340px 340px,
+    var(--glow-star) no-repeat 12% 92% / 260px 260px;
+  opacity: 0.9;
+}
+
+/* ── §7 Default visual vs festival decoration ─────────────────────────────
+   The seasonal emoji layer (js/theme.js applySeasonalDecor) used to be on by
+   DEFAULT: falling leaves and pumpkins all over Home in the ordinary case. It
+   was also `position: fixed` with `z-index: 100`, i.e. above the navigation.
+
+   Midnight Couple is now the default visual, so the ambient seasonal layer is
+   off. Festival decoration is NOT deleted — it still works: js/theme.js sets
+   body.festival-* and early-returns the seasonal layer whenever a festival
+   theme is active, so festival behaviour is unchanged. */
+#seasonalDecorations {
+  display: none !important;
+}
+
+/* Festival decoration stays, but may not sit above the bottom navigation, and
+   may not be so opaque that it breaks dark mode. */
+#festivalDecorations {
+  z-index: 40;
+}
+#festivalDecorations .festival-deco {
+  opacity: 0.22;
+}
+
+/* ── §6 Bottom navigation ─────────────────────────────────────────────────
+   Emoji were the main "old utility app" tell. There is no icon asset, icon
+   font or inline SVG anywhere in the project to reuse, so each tab in
+   index.html now carries a small inline SVG (no library, no extra request).
+   These rules only present it. */
+.tabs-nav .tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  /* Was implicitly text-height (~34px). §6/§10 require a real touch target at
+     320px, where five tabs share ~292px. */
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 6px 2px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.tabs-nav .tab .tb-icon {
+  width: 21px;
+  height: 21px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.78;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.tabs-nav .tab .tb-label {
+  font-size: var(--text-sm);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* §9 Micro-motion: the active tab settles, it does not bounce.
+   The background is ours; the tab's COLOR cannot be, because js/fix-css.js:71
+   injects `nav.tabs-nav .tabs .tab.active { color: var(--love) !important }`
+   into a <style> tag at runtime. An injected !important outranks any
+   specificity, and its selector already sits at (0,4,0) and lands after this
+   sheet in source order, so matching or beating it means adding an !important
+   of our own. Not worth it: nothing competes for the label or the icon colour,
+   so colouring those two directly wins with a plain declaration.
+   --primary-hover over --rose-light clears 4.5:1 in both themes (5.3:1 light,
+   5.8:1 dark); --love does not clear it in light (4.1:1), which is the
+   contrast the injected rule would otherwise impose. That injected rule
+   duplicates the token layer and should be deleted — until it is, this is what
+   keeps the active tab readable. */
+.tabs-nav .tab.active {
+  background: var(--rose-light);
+}
+nav.tabs-nav .tabs .tab.active .tb-label,
+nav.tabs-nav .tabs .tab.active .tb-icon {
+  color: var(--primary-hover);
+}
+.tabs-nav .tab.active .tb-icon {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+@media (hover: hover) {
+  .tabs-nav .tab:hover {
+    color: var(--text);
+  }
+  .tabs-nav .tab:hover .tb-icon {
+    opacity: 1;
+  }
+}
+
+/* The nav bar itself: the hardcoded warm shadow (rgba(80,40,40,.08)) had no
+   dark counterpart, so in dark mode the bar was lit by a brown glow.
+
+   Background stays OPAQUE (`--elevated`), as calendar.css already had it. This
+   started out as a glass bar in this phase and had to be reverted: the cycle
+   summary scrolls under the bar, and with a translucent background its digits
+   showed through as ghosts sitting on top of the nav icons.
+
+   `backdrop-filter` was the intended cure and it does not work here. Probed on
+   the live page (D:/Claude/v2a-visual/probe-nav.js): the computed value applied
+   correctly — `blur(24px) saturate(1.15)` — but `nav.tabs-nav` carries
+   `transform: matrix(1,0,0,1,0,0)`, and a transformed ancestor becomes the
+   backdrop root. The element then samples a backdrop containing only its own
+   transparent nav, so the blur has nothing to act on and silently does nothing.
+   Only the alpha was ever hiding anything, and 86% opacity still leaves text
+   legible underneath. Making it opaque is the honest fix; a real glass bar would
+   mean removing that transform, which drives the nav's entrance animation.
+   Do not reintroduce translucency here without first checking that transform. */
+.tabs-nav .tabs {
+  box-shadow: 0 -2px 20px rgba(40, 32, 70, 0.08);
+  background: var(--elevated);
+}
+[data-theme="dark"] .tabs-nav .tabs {
+  box-shadow: 0 -2px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ── §8 Card hierarchy ────────────────────────────────────────────────────
+   Four levels, one shape language. Primary = the couple header, secondary =
+   ordinary content cards, interactive = cards with a call to action, subtle =
+   the de-emphasised cycle summary. calendar.css keys its cards off the same
+   tokens, so they follow the palette; these rules fix the SHAPE, which was the
+   part that varied per card. */
+.card {
+  border-radius: var(--radius);
+  border: 1px solid var(--border-soft);
+  background: var(--gradient-card);
+  padding: var(--space-card);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary: an ordinary content card — quieter than the header, present. */
+.card.dash-card {
+  padding: var(--space-card-sm);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Interactive: it has somewhere to go, so it reads as reachable. */
+.card.dash-card:has(.dash-link-btn) {
+  border-color: var(--border);
+}
+
+/* Subtle: Her Cycle is a summary, not a destination — it must not compete with
+   the couple content above it (§5). */
+#dash-her-cycle {
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  box-shadow: none;
+  border-radius: var(--radius-md);
+}
+
+/* Title hierarchy inside a card: one step up, muted metadata beneath. */
+.card > h3,
+.card > h2 {
+  font-size: var(--text-md);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+/* ── §10 Responsive ───────────────────────────────────────────────────────
+   The 我们的清单 row is an inline-styled `display:flex;gap:6px` with `flex:1`
+   on #todoInput. A flex item defaults to min-width:auto, so the input would not
+   shrink below its ~237px intrinsic width and the 添加 button was pushed 9px
+   past the viewport at 320 (measured right=329 against a 320 viewport) — and
+   clipped, because the page itself never scrolled. Allowing the input to shrink
+   keeps the row inside its card at every width. This predates Phase 1A.5; it
+   sits in the 320 layout, which §10 asks to hold. */
+#todoInput {
+  min-width: 0;
+}
+
+/* ── §9 Micro-motion ──────────────────────────────────────────────────────
+   Only the five things §9 allows: tab active (above), card press, reaction,
+   page transition, subtle appearance. Nothing larger. */
+.card,
+.dash-link-btn,
+.phase-badge,
+.tab {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card {
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+@media (hover: hover) {
+  .card:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+.card:active {
+  transform: scale(0.995);
+}
+
+/* Page transition: the panel arrives rather than appearing. */
+.panel.active {
+  animation: v2PanelIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes v2PanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reaction: the one place a little delight belongs. */
+.dash-link-btn:active,
+.mood-emoji:active {
+  transform: scale(0.94);
+  transition: transform 120ms ease;
+}
+
+/* §9 requires reduced-motion to be honoured. calendar.css has two such blocks;
+   everything added here is covered by this one. */
+@media (prefers-reduced-motion: reduce) {
+  .panel.active,
+  .card,
+  .tabs-nav .tab,
+  .tabs-nav .tab .tb-icon,
+  .dash-link-btn,
+  .mood-emoji {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

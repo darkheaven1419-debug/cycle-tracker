@@ -1,86 +1,120 @@
-/* Tokens - CSS variables */
+/* Tokens — the single authoritative variable layer for BOTH themes.
+   Phase 1A.5 "Midnight Couple": a deep-night indigo room, not a clinic and not
+   a pink teen app. Base is night indigo, secondary is a soft violet, text is
+   warm white on a soft grey, and rose appears only as a small love accent.
+
+   Dark is the reference design; light is the SAME family lifted into daylight
+   (cool porcelain with a violet cast), not a second unrelated theme and not
+   "dark mode but lighter".
+
+   Load order matters: this file is linked FIRST, before css/calendar.css. The
+   dark block used to live at the bottom of calendar.css, which meant
+   calendar.css won for dark tokens. It has been moved here and removed there,
+   so this file is the only place a theme is defined. Do not reintroduce a
+   second set of variables elsewhere. */
 :root {
-  --primary: #c45a6b;
-  --primary-hover: #a34455;
-  --primary-light: #f2d5db;
-  --rose: #c45a6b;
-  --rose-dark: #a34455;
-  --rose-light: #fdf0f3;
-  --rose-mist: #f5e0e6;
-  --love: #c45a6b;
-  --lipa: #7a9e7e;
-  --dust: #d4bfb5;
-  --gold: #c49a5e;
-  --gold-light: #fff8e1;
-  --gold-muted: #d4b88a;
-  --coral: #e88a8a;
-  --coral-light: #fde8e8;
-  --amber: #d4a85a;
-  --amber-light: #f8f0da;
-  --mint: #7ab8a0;
-  --mint-light: #e0f5ee;
-  --teal: #5e8b7a;
-  --teal-light: #e0efe8;
-  --teal-dark: #3d6b55;
-  --sage: #80a590;
-  --sage-light: #e4f0ea;
-  --sage-dark: #5a8068;
-  --lavender: #b8a0c8;
-  --lavender-dark: #9078a8;
-  --lavender-light: #efe8f5;
-  --error: #e53935;
-  --warm-bg: #fff3e0;
-  --warm-text: #e65100;
-  --dot-short: #ffcdd2;
-  --bg: #ede0da;
-  --card: #fdf8f5;
-  --elevated: #fffbf9;
-  --text: #3d2828;
-  --text-muted: #6d5b58;
-  --border: #c9b4ac;
-  --border-soft: #e3d5ce;
+  /* ── Love accent (restrained rose, used sparingly) ── */
+  --primary: #b8566f;
+  --primary-hover: #a3455d;
+  --primary-light: #f7e8ee;
+  --rose: #b8566f;
+  --rose-dark: #a3455d;
+  --rose-light: #fbf1f5;
+  --rose-mist: #f3e3ea;
+  --love: #b8566f;
+
+  /* ── Secondary: soft violet ── */
+  --lavender: #7d68ab;
+  --lavender-dark: #6a5595;
+  --lavender-light: #efeaf8;
+
+  /* ── Supporting naturals, kept muted so rose stays the accent ── */
+  --lipa: #6d8f74;
+  --dust: #cfc7d4;
+  --gold: #b08a4f;
+  --gold-light: #faf3e4;
+  --gold-muted: #c4ac84;
+  --coral: #d4797f;
+  --coral-light: #fbeaea;
+  --amber: #c39550;
+  --amber-light: #f8f0dc;
+  --mint: #6aa895;
+  --mint-light: #e3f2ee;
+  --teal: #55806f;
+  --teal-light: #e2ede8;
+  --teal-dark: #3c6353;
+  --sage: #6f9179;
+  --sage-light: #e6efe9;
+  --sage-dark: #567a62;
+
+  --error: #cf3b3b;
+  --warm-bg: #fdf4e6;
+  --warm-text: #c05621;
+  --dot-short: #f0cdd6;
+
+  /* ── Surfaces: cool porcelain with a violet cast ── */
+  --bg: #f4f2f8;
+  --card: #ffffff;
+  --elevated: #ffffff;
+  --text: #1f1c2b;
+  --text-muted: #6b6780;
+  --border: #ddd9e6;
+  --border-soft: #eae7f1;
+
+  /* ── New in 1A.5: only what the visual system actually needs ── */
+  --glow-star: radial-gradient(circle, rgba(184, 86, 111, 0.16), transparent 70%);
+  --touch-target: 44px;
+
   --radius: 16px;
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 22px;
   --radius-full: 9999px;
+
   --space-card: 20px;
   --space-card-sm: 14px 16px;
   --space-section: 14px;
   --space-gap: 10px;
+
   --calendar-cell-radius: 16px;
-  --calendar-glow-period: 0 0 20px rgba(196, 90, 107, 0.25);
-  --calendar-glow-ovulation: 0 0 20px rgba(234, 179, 8, 0.25);
-  --calendar-glow-selected: 0 0 20px rgba(184, 151, 106, 0.3);
-  --calendar-hover-lift: 0 4px 12px rgba(196, 90, 107, 0.12);
-  --ring-period: #d4787e;
-  --ring-ovulation: #5e9baa;
-  --ring-fertile: #7ab8a0;
-  --ring-luteal: #b8a0c8;
-  --ring-follicular: #80a590;
-  --ring-predicted: rgba(180, 150, 150, 0.35);
-  --season-spring: #e8867c;
-  --season-summer: #c45a6b;
-  --season-autumn: #d49a5e;
-  --season-winter: #9a7ab0;
-  --shadow-inner-sm: inset 0 0 0 1px rgba(80, 40, 40, 0.04);
+  --calendar-glow-period: 0 0 20px rgba(184, 86, 111, 0.22);
+  --calendar-glow-ovulation: 0 0 20px rgba(214, 168, 90, 0.22);
+  --calendar-glow-selected: 0 0 20px rgba(176, 138, 79, 0.28);
+  --calendar-hover-lift: 0 4px 12px rgba(60, 50, 90, 0.1);
+
+  --ring-period: #c4647c;
+  --ring-ovulation: #6aa895;
+  --ring-fertile: #6f9179;
+  --ring-luteal: #8f7ac0;
+  --ring-follicular: #6d8f74;
+  --ring-predicted: rgba(120, 105, 150, 0.32);
+
+  --season-spring: #d4797f;
+  --season-summer: #b8566f;
+  --season-autumn: #c39550;
+  --season-winter: #8f7ac0;
+
+  /* ── Shadows: soft, low-contrast, violet-tinted (never grey/black) ── */
+  --shadow-inner-sm: inset 0 0 0 1px rgba(60, 50, 90, 0.04);
   --shadow-xs:
-    0 0 0.5px rgba(80, 40, 40, 0.06), 0 1px 1px rgba(80, 40, 40, 0.04);
+    0 0 0.5px rgba(40, 32, 70, 0.06), 0 1px 1px rgba(40, 32, 70, 0.04);
   --shadow-sm:
-    0 1px 3px rgba(80, 40, 40, 0.07), 0 1px 2px rgba(80, 40, 40, 0.04);
+    0 1px 3px rgba(40, 32, 70, 0.07), 0 1px 2px rgba(40, 32, 70, 0.04);
   --shadow-md:
-    0 4px 12px rgba(80, 40, 40, 0.06), 0 2px 6px rgba(80, 40, 40, 0.04);
+    0 4px 14px rgba(40, 32, 70, 0.07), 0 2px 6px rgba(40, 32, 70, 0.04);
   --shadow-lg:
-    0 8px 24px rgba(80, 40, 40, 0.08), 0 4px 12px rgba(80, 40, 40, 0.04);
+    0 10px 28px rgba(40, 32, 70, 0.09), 0 4px 12px rgba(40, 32, 70, 0.05);
   --shadow-xl:
-    0 16px 40px rgba(80, 40, 40, 0.1), 0 8px 20px rgba(80, 40, 40, 0.05);
-  --shadow-glow: 0 0 20px rgba(196, 90, 107, 0.08);
-  --fab-shadow: 0 6px 22px rgba(196, 90, 107, 0.28);
+    0 18px 44px rgba(40, 32, 70, 0.11), 0 8px 20px rgba(40, 32, 70, 0.05);
+  --shadow-glow: 0 0 20px rgba(184, 86, 111, 0.08);
+  --fab-shadow: 0 6px 22px rgba(184, 86, 111, 0.26);
+
   --font:
     -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
   --blur: blur(14px) saturate(1.05);
   --blur-heavy: blur(24px) saturate(1.08);
+
   --text-xs: 0.62rem;
   --text-sm: 0.7rem;
   --text-base: 0.86rem;
@@ -88,37 +122,126 @@
   --text-lg: 1.1rem;
   --text-xl: 1.4rem;
   --text-2xl: 1.9rem;
-  --gradient-rose: linear-gradient(135deg, #fdf0f3, #faf0f2);
-  --gradient-card: linear-gradient(145deg, #fdf8f5 0%, #fffbfa 100%);
-  --gradient-warm: linear-gradient(135deg, #fdf0f3, #f5ede8);
-  --gradient-gold: linear-gradient(145deg, #faf3ef 0%, #fdf0f3 150%);
-  --gradient-teal: linear-gradient(135deg, #e0efe8, #d4eae0);
-  --gradient-love: linear-gradient(135deg, #c45a6b, #a34455);
+
+  --gradient-rose: linear-gradient(135deg, #fbf1f5, #f6eef6);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #fbfafd 100%);
+  --gradient-warm: linear-gradient(135deg, #fbf1f5, #f2eef6);
+  --gradient-gold: linear-gradient(145deg, #faf5ee 0%, #fbf1f5 150%);
+  --gradient-teal: linear-gradient(135deg, #e2ede8, #dcebe6);
+  --gradient-love: linear-gradient(135deg, #b8566f, #a3455d);
+}
+
+/* ── Midnight — the reference design ──────────────────────────────────────
+   Moved here from the bottom of css/calendar.css, where it was being shadowed
+   by load order. Every variable that block defined is preserved so nothing
+   downstream goes undefined; the values are retuned to the night-indigo room. */
+[data-theme="dark"] {
+  --primary: #c96a86;
+  --primary-hover: #d97d97;
+  --primary-light: #2b1f2c;
+  --rose: #c96a86;
+  --rose-dark: #d97d97;
+  --rose-light: #241c2a;
+  --rose-mist: #2a2131;
+  --love: #c96a86;
+
+  --lavender: #a996cf;
+  --lavender-dark: #8f7ac0;
+  --lavender-light: #221d33;
+
+  --lipa: #7fb095;
+  --dust: #383349;
+  --gold: #c9a468;
+  --gold-light: #2e2820;
+  --gold-muted: #8d7f63;
+  --teal: #7fb0a0;
+  --teal-light: #16262a;
+  --sage: #7fb095;
+  --sage-light: #182a24;
+  --coral: #d4797f;
+  --coral-light: #2c1f24;
+  --amber: #c9a468;
+  --amber-light: #2c2418;
+  --mint: #7fb0a0;
+  --mint-light: #16262a;
+
+  --error: #ef6b6b;
+  --warm-bg: #2e2214;
+  --warm-text: #e0a86a;
+  --dot-short: #4a2c38;
+
+  /* Deep night indigo — the room, not a blacker black */
+  --bg: #0f1220;
+  --card: #191d2e;
+  --elevated: #21263a;
+  --text: #eae7f2;
+  --text-muted: #9d9ab0;
+  --border: #2e3348;
+  --border-soft: #232840;
+
+  --glow-star: radial-gradient(circle, rgba(201, 106, 134, 0.2), transparent 70%);
+
+  /* Deep and soft, so nothing glows like a screen in a dark room */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.26);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.34), 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.26);
+  --shadow-xl: 0 20px 52px rgba(0, 0, 0, 0.46), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-inner-sm: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-glow: 0 0 26px rgba(201, 106, 134, 0.16);
+  --fab-shadow: 0 6px 22px rgba(201, 106, 134, 0.3);
+
+  --calendar-glow-period: 0 0 20px rgba(201, 106, 134, 0.2);
+  --calendar-glow-ovulation: 0 0 20px rgba(201, 164, 104, 0.16);
+  --calendar-glow-selected: 0 0 20px rgba(201, 164, 104, 0.2);
+  --calendar-hover-lift: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  --blur: blur(14px) saturate(1.1);
+  --blur-heavy: blur(24px) saturate(1.15);
+
+  --ring-period: #c96a86;
+  --ring-ovulation: #7fb0a0;
+  --ring-fertile: #7fb095;
+  --ring-luteal: #a996cf;
+  --ring-follicular: #7fb095;
+  --ring-predicted: rgba(157, 154, 176, 0.22);
+
+  --season-spring: #d4797f;
+  --season-summer: #c96a86;
+  --season-autumn: #c9a468;
+  --season-winter: #a996cf;
+
+  --gradient-rose: linear-gradient(135deg, #241c2a, #1a1722);
+  --gradient-card: linear-gradient(145deg, #1e2233 0%, #171b2a 100%);
+  --gradient-warm: linear-gradient(135deg, #2a2131, #262232);
+  --gradient-gold: linear-gradient(145deg, #2b251c 0%, #262231 100%);
+  --gradient-teal: linear-gradient(135deg, #16262a, #142430);
+  --gradient-love: linear-gradient(135deg, #c96a86, #b8566f);
 }
 
 :root {
-  --phase1: #e8877b;
-  --phase1-light: #fde8e4;
-  --phase1-dark: #d46b5e;
-  --phase1-grad: linear-gradient(135deg, #e8877b, #d46b5e);
-  --phase2: #f0985c;
-  --phase2-light: #fef0e2;
-  --phase2-dark: #d97d3e;
-  --phase2-grad: linear-gradient(135deg, #f0985c, #e88340);
-  --phase3: #4eb8b0;
-  --phase3-light: #e0f5f3;
-  --phase3-dark: #3a9b94;
-  --phase3-grad: linear-gradient(135deg, #4eb8b0, #3aa59c);
-  --phase4: #e8919c;
-  --phase4-light: #fde8eb;
-  --phase4-dark: #d47280;
-  --phase4-grad: linear-gradient(135deg, #e8919c, #d47786);
-  --phase5: #9b7ec4;
-  --phase5-light: #ede6f6;
-  --phase5-dark: #7e61b0;
-  --phase5-grad: linear-gradient(135deg, #9b7ec4, #8568b8);
-  --phase6: #d4a843;
-  --phase6-light: #f8f0da;
-  --phase6-dark: #b88e2e;
-  --phase6-grad: linear-gradient(135deg, #d4a843, #c49a35);
+  --phase1: #d4797f;
+  --phase1-light: #fbeaea;
+  --phase1-dark: #c4647c;
+  --phase1-grad: linear-gradient(135deg, #d4797f, #c4647c);
+  --phase2: #d89a68;
+  --phase2-light: #fbf0e4;
+  --phase2-dark: #c48450;
+  --phase2-grad: linear-gradient(135deg, #d89a68, #c98a55);
+  --phase3: #559b96;
+  --phase3-light: #e2f0ef;
+  --phase3-dark: #44837f;
+  --phase3-grad: linear-gradient(135deg, #559b96, #4a8b86);
+  --phase4: #cf8296;
+  --phase4-light: #fbe9ee;
+  --phase4-dark: #bd6c82;
+  --phase4-grad: linear-gradient(135deg, #cf8296, #c07588);
+  --phase5: #8f7ac0;
+  --phase5-light: #efeaf8;
+  --phase5-dark: #7a63ab;
+  --phase5-grad: linear-gradient(135deg, #8f7ac0, #8269b5);
+  --phase6: #c9a468;
+  --phase6-light: #f8f0dc;
+  --phase6-dark: #b08a4f;
+  --phase6-grad: linear-gradient(135deg, #c9a468, #bd9557);
 }

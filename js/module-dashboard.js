@@ -148,7 +148,7 @@
       qAnswer: 'Odgovori \u{2192}',
       homeQuote: 'Od Pekinga do Vojvodine \u{2014} 7.000 km, jedno srce.',
       togetherLead: 'Na\u{0161} prostor — ovde ostavljamo jedno drugom.',
-      daysTogether: 'dana zajedno'
+      daysSinceMet: '{n} dana od susreta'
     },
     'zh-CN': {
       herCycle: '\u{1F338} \u{5979}\u{7684}\u{5468}\u{671F}',
@@ -157,7 +157,7 @@
       qAnswer: '\u{53BB}\u{56DE}\u{7B54} \u{2192}',
       homeQuote: '\u{4ECE}\u{5317}\u{4EAC}\u{5230}\u{4F0F}\u{4F0A}\u{4F0F}\u{4E01}\u{90A3} \u{2014} 7000 \u{516C}\u{91CC}\u{FF0C}\u{4E00}\u{9897}\u{5FC3}\u{3002}',
       togetherLead: '\u{6211}\u{4EEC}\u{7684}\u{7A7A}\u{95F4} \u{2014}\u{2014} \u{5728}\u{8FD9}\u{91CC}\u{7ED9}\u{5F7C}\u{6B64}\u{7559}\u{4E0B}\u{4E1C}\u{897F}\u{3002}',
-      daysTogether: '\u{5929}\u{5728}\u{4E00}\u{8D77}'
+      daysSinceMet: '\u{76F8}\u{8BC6} {n} \u{5929}'
     },
     en: {
       herCycle: '\u{1F338} Her cycle',
@@ -166,7 +166,7 @@
       qAnswer: 'Answer \u{2192}',
       homeQuote: 'Beijing to Vojvodina \u{2014} 7,000 km, one heart.',
       togetherLead: 'Our space \u{2014} where we leave things for each other.',
-      daysTogether: 'days together'
+      daysSinceMet: '{n} days since we met'
     }
   };
 
@@ -412,7 +412,7 @@
     }
     var _ann = typeof annDateMet !== 'undefined' ? annDateMet : '2026-03-19';
     var _days = Math.round((Date.now() - new Date(_ann).getTime()) / 86400000);
-    el.textContent = _greet + ' ' + _icon + ' \u{00B7} ' + _days + ' ' + v2('daysTogether');
+    el.textContent = _greet + ' ' + _icon + ' \u{00B7} ' + v2('daysSinceMet').replace('{n}', _days);
   }
 
   /* Labels are written on every render rather than baked into the skeleton,

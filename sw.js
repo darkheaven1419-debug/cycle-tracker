@@ -29,6 +29,7 @@ const STATIC_ASSETS = [
   './app.js' + V,
   './css/tokens.css',
   './css/calendar.css',
+  './css/v2.css',
   './js/i18n.js' + V,
   './js/auth.js' + V,
   './js/weather.js' + V,
