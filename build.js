@@ -1,4 +1,18 @@
-// build.js — 将 30+ 个 JS 文件打包为一个 bundle
+// ⚠️ 已废弃（Phase 2D，commit fb85041）——不要运行，不要“修复”下面的 FILES 清单。
+//
+// 这个脚本是应用早期的手工打包工具，唯一产物是 dist/bundle/app.bundle.js。
+// 应用从不加载 bundle（index.html 逐个 <script> 引入），Phase 2D 已把
+// dist/bundle/ 整个删掉，并且 tests/test-phase2d-cleanup.js 的 D4 明确断言
+// 它必须保持不存在、既不被 index.html 加载也不被 sw.js 预缓存。
+// 因此：运行它 = 立刻打破 D4。没有任何流程依赖它（package.json 没有 scripts，
+// 仓库没有 CI），保留它只是为了不删除历史文件。
+//
+// 下面的 FILES 是 Phase 2D 当时的一次性快照，不是当前加载顺序的清单 —— 它
+// 已经不包含此后新增的模块（如 js/module-memories.js），这是预期的，不要
+// 为了“清单看起来一致”而往里加文件：那只会让一个已死的工具显得仍在维护，
+// 并引诱后人重新生成被禁止的 bundle。当前真实的加载顺序以 index.html 为准。
+//
+// build.js — 将 30+ 个 JS 文件打包为一个 bundle（历史文件，见上）
 // 运行：node build.js
 // 需要 esbuild：npm install esbuild
 // 输出：dist/bundle/app.bundle.js（压缩）+ dist/bundle/app.bundle.min.js（压缩）

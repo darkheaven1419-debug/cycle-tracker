@@ -544,9 +544,325 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   transform: scale(0.94);
 }
 
+/* ══ Phase 1C — Our Story (回忆) ═════════════════════════════════════════
+   The 回忆 panel now leads with the couple's story and hands off to the daily
+   writing loop under its own heading (§八). Everything below is scoped to
+   .mem-* and .dash-story-line, so nothing the diary already owned changes shape.
+
+   The direction stays Midnight Couple: the time axis carries the page — month
+   rules, a tabular date column, generous vertical rhythm — rather than card
+   chrome per entry. Entries deliberately get no card of their own; a stack of
+   bordered boxes reads as a database table, which §4 rules out.
+
+   Every colour here is a token, so both themes follow with no duplicate block —
+   tokens.css owns the dark values. */
+
+.mem-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+  margin-bottom: var(--space-section);
+}
+
+.mem-sub {
+  margin-top: 4px;
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Featured memory (§五) ───────────────────────────────────────────────── */
+.mem-feat {
+  position: relative;
+  overflow: hidden;
+  padding: 18px var(--space-card) 16px;
+  border-color: var(--border);
+  background:
+    radial-gradient(120% 90% at 12% 0%, var(--rose-light) 0%, transparent 58%),
+    var(--gradient-card);
+  animation: memRise 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+/* One restrained glint in the corner — the 克制的星光 the direction asks for,
+   drawn in CSS so it needs no asset and costs no request. */
+.mem-feat::after {
+  content: '';
+  position: absolute;
+  top: -28px;
+  right: -28px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-light) 0%, transparent 70%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+@keyframes memRise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.mem-feat-kicker {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.mem-feat-kind {
+  margin-top: 8px;
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--love);
+}
+.mem-feat-text {
+  margin-top: 6px;
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--text);
+  word-break: break-word;
+}
+.mem-feat-ago {
+  margin-top: 10px;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ── Timeline (§四) ──────────────────────────────────────────────────────── */
+.mem-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.mem-month {
+  display: flex;
+  flex-direction: column;
+}
+.mem-month-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+.mem-month-label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+/* The rule fades out rather than stopping dead: a full-width hairline reads as
+   a table border, a fading one reads as a timeline. */
+.mem-month-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+}
+
+.mem-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 2px;
+  border-top: 1px solid var(--border-soft);
+}
+.mem-month .mem-row:first-of-type {
+  border-top: 0;
+}
+.mem-row-ico {
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.mem-row-body {
+  flex: 1;
+  min-width: 0;
+}
+.mem-row-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+.mem-row-kind {
+  font-weight: 650;
+}
+.mem-row-who {
+  color: var(--love);
+}
+.mem-row-day {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+.mem-row-text {
+  margin-top: 2px;
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--text);
+  word-break: break-word;
+}
+.mem-more {
+  padding-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ── Our Song (§九) — undated, so it is not placed on the axis ───────────── */
+.mem-song {
+  padding: var(--space-card-sm);
+}
+.mem-song-kicker {
+  margin-bottom: 6px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.mem-song-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0;
+}
+.mem-song-who {
+  flex: 0 0 auto;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+.mem-song-title {
+  font-size: var(--text-base);
+  color: var(--text);
+  word-break: break-word;
+}
+
+/* ── Empty state (§十一) ─────────────────────────────────────────────────── */
+.mem-empty {
+  padding: 26px var(--space-card);
+  text-align: center;
+}
+.mem-empty-ico {
+  font-size: 1.5rem;
+  opacity: 0.85;
+}
+.mem-empty-title {
+  margin-top: 8px;
+  font-size: var(--text-md);
+  font-weight: 650;
+  color: var(--text);
+}
+.mem-empty-text {
+  margin-top: 4px;
+  font-size: var(--text-base);
+  color: var(--text-muted);
+}
+
+/* ── The seam between our story and my own record (§八) ──────────────────── */
+.mem-diary-head {
+  margin: 6px 0 -2px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--text-md);
+  font-weight: 650;
+  color: var(--text);
+}
+
+/* ── Home resurfacing (§六): one line. No badge, no unread state, no push. ─ */
+.dash-story-line {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: var(--touch-target);
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease;
+}
+.dash-story-line[hidden] {
+  display: none;
+}
+@media (hover: hover) {
+  .dash-story-line:hover {
+    border-color: var(--gold-muted);
+  }
+}
+.dash-story-line:active {
+  transform: scale(0.99);
+}
+/* 底栏是 fixed、高 66px + 14px 边距，而 .app 在文档末尾预留的尾部空间在手机
+   宽度下只有 20px（80px 那条规则在 @media (min-width:768px) 里）。结果是
+   「滚到底」时文档最后一个元素的底边仍停在导航顶边下方 21px —— 实测 320×800
+   与 375×812 都是 gap:-21、命中 DIV.tabs。这个缺口是既有问题（HEAD 上的
+   .dash-links 同样差 21px），但 Phase 1C 的「From Our Story」正好是最后一个
+   元素，于是它成了唯一一个在手机上点不到的入口。这里只给这一行补足自身需要的
+   收尾空间，不去改共享的 .app 尾部留白（那会影响所有面板，属于另一个问题）。
+   只在窄屏补：≥768px 时滚动余量本来就够（实测 gap +96），补了只会在卡片里
+   留出一块空白。 */
+@media (max-width: 480px) {
+  .dash-story-line {
+    margin-bottom: 32px;
+  }
+}
+.dsl-kicker {
+  flex: 0 0 auto;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+/* Single line, ellipsised: Home stays a summary. The nowrap is what guarantees
+   no horizontal overflow at 320 rather than a width measurement. */
+.dsl-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-base);
+  color: var(--text);
+}
+.dsl-ago {
+  flex: 0 0 auto;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+/* At 320 the kicker would leave the memory itself a few characters wide. The
+   Memories page states it in full, so the line drops to the memory + when. */
+@media (max-width: 380px) {
+  .dsl-kicker {
+    display: none;
+  }
+}
+
+/* ── Two permanently empty shells leave the 回忆 panel ────────────────────
+   Both are provably dead rather than merely unused: #diaryTimelineList and
+   #mailboxList have no renderer anywhere in js/ — those ids appear only in
+   index.html — the sdTimeline* strings in js/i18n.js have no reader, and the
+   export/import pair inside the mailbox card is already force-hidden by
+   js/fix-css.js. On a Memories page they rendered as two empty cards, which is
+   the "database" impression §17 rejects, so they go. Scoped to direct children
+   of the panel: the classes themselves are left in place in case anything ever
+   keys off them. */
+#panel-diary > .diary-timeline-section,
+#panel-diary > .card:has(> #mailboxList) {
+  display: none;
+}
+
 /* §9 requires reduced-motion to be honoured. calendar.css has two such blocks;
    everything added here is covered by this one — including the Phase 1B
-   reaction pop and the send-button press. */
+   reaction pop, the send-button press, and the Phase 1C featured-memory rise. */
 @media (prefers-reduced-motion: reduce) {
   .panel.active,
   .card,
@@ -558,7 +874,9 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   .grat-echo-btn.just-sent,
   .dq-send,
   .km-fb,
-  .dhc-more.dhc-more-ico {
+  .dhc-more.dhc-more-ico,
+  .mem-feat,
+  .dash-story-line {
     animation: none !important;
     transition: none !important;
     transform: none !important;

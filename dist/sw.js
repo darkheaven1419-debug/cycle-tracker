@@ -12,20 +12,21 @@
 const APP_VERSION = '7.3.0';
 const V = '?v=' + APP_VERSION;
 
-// Phase 1B.5：v30 → v31。改的还是同一批 cache-first 文件 —— ./css/v2.css
-// （回应行的排版、刷新图标）、./js/sync.js（mergeKnowMe）、./js/render-love.js、
-// ./js/module-dashboard.js —— 不换这个名字，已装 SW 的客户端在部署后仍会拿旧文件，
-// 这次抛光对老客户端就不可见。activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，
-// 所以改名即完成刷新。
-// （Phase 1B 用同一机制刷新过同一批：v29 → v30；Phase 2C 刷新过
-//  ./app.js 与 ./js/fix-stats.js：v28 → v29。）
-const CACHE_STATIC = 'ciklus-static-v31';
+// Phase 1C：v31 → v32。改的是 ./css/v2.css（Our Story 的整段新样式）、
+// ./index.html（新增一个 script 标签）、以及一个全新的 cache-first 文件
+// ./js/module-memories.js —— 不换这个名字，已装 SW 的客户端在部署后仍会拿旧
+// 文件，整个 Memories 页对老客户端就不可见。activate 会删掉所有不在
+// CURRENT_CACHES 里的旧 cache，所以改名即完成刷新。
+// （Phase 1B.5 刷新过 ./css/v2.css、./js/sync.js、./js/render-love.js、
+//  ./js/module-dashboard.js：v30 → v31；Phase 1B 同一批：v29 → v30；
+//  Phase 2C 刷新过 ./app.js 与 ./js/fix-stats.js：v28 → v29。）
+const CACHE_STATIC = 'ciklus-static-v32';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
 // 之前这里是清一色的裸路径，而 index.html 有 23 个脚本带 ?v=7.3.0 ——
 // cache key 对不上，install 阶段的预缓存对那 23 个文件等于没做。
-// 反过来，不带 ?v= 的 10 个 module-*.js / fix-*.js 才是真正命中的那批。
+// 反过来，不带 ?v= 的 11 个 module-*.js / fix-*.js 才是真正命中的那批。
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -63,6 +64,7 @@ const STATIC_ASSETS = [
   './js/module-stats.js',
   './js/fix-css.js',
   './js/fix-diary.js',
+  './js/module-memories.js',
   './js/fix-stats.js',
   './js/fix-all.js',
   './js/fix-panel.js',
