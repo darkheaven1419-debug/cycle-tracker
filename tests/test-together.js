@@ -261,9 +261,10 @@ const sendAnswer = async (page, text) => {
   }
 
   // ---- D6: merge — a pull brings the partner's answer in WITHOUT erasing mine ----
-  // This is why dailyQ is append-only and merged by (qKey|from) rather than a
-  // whole-object-replace key like knowme: replace semantics would drop whichever
-  // side wrote second.
+  // This is why dailyQ is append-only and merged by (qKey|from) rather than
+  // written wholesale: replace semantics would drop whichever side wrote second.
+  // (knowme used to be the counter-example named here; Phase 1B.5 gave it its own
+  // field-wise merge — see M1..M6 — so it is no longer one.)
   {
     const s = await scenario(browser, { 'ct-app-key': APP_KEY });
     await sendAnswer(s.page, 'moj odgovor');
@@ -421,6 +422,320 @@ const sendAnswer = async (page, text) => {
     const s = await scenario(browser, { 'ct-app-key': APP_KEY });
     const keys = await s.page.evaluate(() => Object.keys(localStorage).filter((k) => /score|points|streak|level|badge|xp/i.test(k)));
     check('K3 no score / points / streak / level key exists', keys.length === 0, JSON.stringify(keys));
+    await s.ctx.close();
+  }
+
+  // ══ §1 (Phase 1B.5) — the reply affordance is on the first screen ══════════
+  // Measured before this phase: the reaction row sat at y≈1375, two screens below
+  // the fold, because it lives inside the Gratitude card. The row is now hung off
+  // the note it answers, inside #together-new, which is the second child of
+  // #together-body — so it is on the first screen by construction, not by luck.
+  const REPLY_SEED = {
+    'ct-app-key': APP_KEY,
+    'cycle-last-open-andjela': String(Date.now() - 3600000),
+    'shared-gratitude': [
+      { text: 'Hvala ti što si jutros bio tu', from: 'barry', time: Date.now() - 300000 },
+      { text: 'stara beleska van prozora', from: 'barry', time: T1 },
+    ],
+  };
+
+  const replyProbe = (page) => page.evaluate(() => {
+    const host = document.getElementById('together-new');
+    const react = host.querySelector('.tnew-react');
+    const rows = Array.from(host.querySelectorAll('.tnew-row'));
+    // Walk back past the .tnew-ask line when it is present: the block belongs to
+    // the nearest PRECEDING row, which is not literally the previous sibling.
+    let reactRow = react ? react.previousElementSibling : null;
+    while (reactRow && !reactRow.classList.contains('tnew-row')) reactRow = reactRow.previousElementSibling;
+    const box = react ? react.getBoundingClientRect() : null;
+    return {
+      hidden: host.hidden,
+      head: host.querySelector('.tnew-head') ? host.querySelector('.tnew-head').textContent : '',
+      top: host.getBoundingClientRect().top,
+      reactCount: host.querySelectorAll('.tnew-react').length,
+      btns: react ? react.querySelectorAll('.grat-echo-btn').length : 0,
+      /* The bubble guard: a button nested inside .tnew-row would bubble its click
+         to the row's switchToTab() and navigate away mid-tap. */
+      nestedInRow: host.querySelectorAll('.tnew-row .grat-echo-btn').length,
+      reactAboveFold: box ? box.top + box.height <= window.innerHeight : false,
+      ask: host.querySelector('.tnew-ask') ? host.querySelector('.tnew-ask').textContent : null,
+      isRowSibling: !!reactRow && rows.indexOf(reactRow) !== -1,
+      rowText: reactRow ? reactRow.textContent : '',
+    };
+  });
+
+  // ---- E1: the row is rendered, on the first screen, with all five reactions ----
+  {
+    const s = await scenario(browser, REPLY_SEED);
+    const p = await replyProbe(s.page);
+    check('E1 the reactions are rendered inside #together-new, above the fold',
+      p.reactCount === 1 && p.btns === 5 && p.reactAboveFold === true && p.hidden === false,
+      `count=${p.reactCount} btns=${p.btns} aboveFold=${p.reactAboveFold} top=${Math.round(p.top)}`);
+    await s.ctx.close();
+  }
+
+  // ---- E2: they are siblings of the row, never children of it ----
+  {
+    const s = await scenario(browser, REPLY_SEED);
+    const p = await replyProbe(s.page);
+    check('E2 the reaction block is a sibling of .tnew-row, not nested inside it',
+      p.nestedInRow === 0 && p.isRowSibling === true && p.rowText.indexOf('Hvala') !== -1,
+      `nested=${p.nestedInRow} sibling=${p.isRowSibling} row="${p.rowText.slice(0, 40)}"`);
+    await s.ctx.close();
+  }
+
+  // ---- E3: tapping one records the echo and does NOT navigate ----
+  {
+    const s = await scenario(browser, REPLY_SEED);
+    const before = await s.page.evaluate(() => document.querySelector('.panel.active').id);
+    await s.page.click('#together-new .tnew-react .grat-echo-btn');
+    await s.page.waitForTimeout(400);
+    const after = await s.page.evaluate((t) => {
+      const echo = JSON.parse(localStorage.getItem('shared-gratitude-echo') || '[]');
+      return { panel: document.querySelector('.panel.active').id, echo: echo, noteTime: t };
+    }, Date.now() - 300000);
+    check('E3 tapping a reaction in the new row records the echo and stays on Together',
+      after.panel === before && after.panel === 'panel-together' &&
+      after.echo.length === 1 && after.echo[0].from === 'andjela' &&
+      String(after.echo[0].noteFrom) === 'barry' && after.echo[0].emoji === '❤️',
+      `panel=${after.panel} (was ${before}) echo=${JSON.stringify(after.echo)}`);
+    await s.ctx.close();
+  }
+
+  // ---- E4: once answered, the prompt goes quiet but the row stays usable ----
+  {
+    // noteTime must be the SAME number the note was seeded with, or the echo
+    // points at nothing and the prompt stays up. Take it from the seed rather
+    // than calling Date.now() again.
+    const noteT = REPLY_SEED['shared-gratitude'][0].time;
+    const s = await scenario(browser, Object.assign({}, REPLY_SEED, {
+      'shared-gratitude-echo': [{
+        noteFrom: 'barry', noteTime: noteT, from: 'andjela', emoji: '🫂', time: noteT + 60000,
+      }],
+    }));
+    const p = await replyProbe(s.page);
+    check('E4 after I have reacted the "you can reply" line is gone and the buttons remain',
+      p.ask === null && p.btns === 5 && p.reactCount === 1,
+      `ask=${p.ask} btns=${p.btns}`);
+    await s.ctx.close();
+  }
+
+  // ---- E5: §9 symmetry — Barry gets his own phrasing, about her note ----
+  {
+    const s = await scenario(browser, Object.assign({}, REPLY_SEED, {
+      'shared-gratitude': [{ text: 'Hvala ti za pesmu', from: 'andjela', time: Date.now() - 300000 }],
+      'cycle-last-open-barry': String(Date.now() - 3600000),
+    }), 'barry');
+    const p = await replyProbe(s.page);
+    check('E5 as Barry the prompt addresses her note in his own language',
+      p.reactCount === 1 && p.btns === 5 && p.ask !== null && p.ask.indexOf('回应她') !== -1 &&
+      p.rowText.indexOf('Hvala ti za pesmu') !== -1,
+      `ask="${p.ask}" row="${p.rowText.slice(0, 40)}"`);
+    await s.ctx.close();
+  }
+
+  // ---- E6: the affordance survives the note being pushed out of the top 3 ----
+  // Four newer partner events (echo, daily answer, diary, todo) outrank the note,
+  // so it is not one of the three rows shown. "You can reply" must not vanish
+  // just because three other things happened.
+  {
+    const noteTime = Date.now() - 600000;
+    const s = await scenario(browser, Object.assign({}, REPLY_SEED, {
+      'shared-gratitude': [{ text: 'Hvala ti za sve', from: 'barry', time: noteTime }],
+      'shared-gratitude-echo': [
+        { noteFrom: 'barry', noteTime: T1, from: 'barry', emoji: '✨', time: Date.now() - 5000 },
+      ],
+      'shared-daily-q': [{ qKey: QK, from: 'barry', answer: 'njen odgovor', time: Date.now() - 4000 }],
+      'shared-diary': (() => {
+        const d = new Date().toISOString().slice(0, 10);
+        return { [d]: { barry: { happy: 'bio sam srecan', time: Date.now() - 3000 } } };
+      })(),
+      'shared-todolist': [
+        { text: 'kupi mleko', author: 'barry', completed: false, createdAt: new Date().toISOString().slice(0, 10) },
+      ],
+    }));
+    const p = await replyProbe(s.page);
+    check('E6 the reply block still renders when the note is not among the three shown rows',
+      p.reactCount === 1 && p.btns === 5 && p.ask !== null,
+      `count=${p.reactCount} btns=${p.btns} ask="${p.ask}"`);
+    await s.ctx.close();
+  }
+
+  // ══ §2 (Phase 1B.5) — Know Me is merged field-wise, not replaced ═══════════
+  // One [day][person] slot has two writers that never touch each other's fields:
+  // the owner writes answer/time, the partner writes fb/fbTime. Whole-object
+  // replace lets whichever snapshot lands last erase the other field, so
+  // "Barry edits his guess and Anđela's ❤️ disappears" — or the reverse.
+  // M1..M5 are unit tests on the exposed merge; M6 is the end-to-end path.
+
+  // Bare `SyncModule`, not `window.SyncModule`: js/sync.js declares it with
+  // `const` at script top level, which lands in the global *lexical* scope and
+  // never becomes a window property.
+  const kmMerge = (page, local, remote) => page.evaluate((a) => {
+    return SyncModule.mergeKnowMe(a.local, a.remote);
+  }, { local, remote });
+
+  // ---- M1: the partner's verdict survives a snapshot that lacks it ----
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY });
+    const out = await kmMerge(s.page,
+      { '2026-09-19': { barry: { answer: 'Kikinda', time: 10 } } },
+      { '2026-09-19': { barry: { answer: 'Kikinda', time: 10, fb: 'yes', fbTime: 99 } } });
+    check("M1 a snapshot carrying the partner's verdict keeps it, answer intact",
+      out['2026-09-19'].barry.answer === 'Kikinda' && out['2026-09-19'].barry.fb === 'yes' &&
+      out['2026-09-19'].barry.fbTime === 99,
+      JSON.stringify(out));
+    await s.ctx.close();
+  }
+
+  // ---- M2: and in the other direction (local has it, remote does not) ----
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY });
+    const out = await kmMerge(s.page,
+      { '2026-09-19': { barry: { answer: 'Kikinda', time: 10, fb: 'almost', fbTime: 99 } } },
+      { '2026-09-19': { barry: { answer: 'Kikinda', time: 10 } } });
+    check("M2 a snapshot without the verdict does not erase the one I hold",
+      out['2026-09-19'].barry.fb === 'almost' && out['2026-09-19'].barry.fbTime === 99,
+      JSON.stringify(out));
+    await s.ctx.close();
+  }
+
+  // ---- M3: the two fields are judged independently ----
+  // Newer answer on one side, newer verdict on the other: both must win, which is
+  // only possible if they are merged as separate fields rather than as a slot.
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY });
+    const out = await kmMerge(s.page,
+      { d: { barry: { answer: 'novi odgovor', time: 50, fb: 'yes', fbTime: 1 } } },
+      { d: { barry: { answer: 'stari odgovor', time: 10, fb: 'almost', fbTime: 80 } } });
+    check('M3 newer answer and newer verdict both win, from opposite sides',
+      out.d.barry.answer === 'novi odgovor' && out.d.barry.time === 50 &&
+      out.d.barry.fb === 'almost' && out.d.barry.fbTime === 80,
+      JSON.stringify(out));
+    await s.ctx.close();
+  }
+
+  // ---- M4: legacy and half-formed records ----
+  // Pre-1B.5 data has no fb/fbTime at all; a record may also carry fb with no
+  // fbTime. Neither may be read as "newer than" a real verdict, and a tie has to
+  // resolve the same way every time or two devices disagree forever.
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY });
+    const legacy = await kmMerge(s.page,
+      { d: { andjela: { answer: 'staro', time: 5 } } },
+      { d: { andjela: { answer: 'novo', time: 9 } } });
+    const half = await kmMerge(s.page,
+      { d: { barry: { answer: 'a', time: 5, fb: 'yes' } } },
+      { d: { barry: { answer: 'a', time: 5, fb: 'almost', fbTime: 3 } } });
+    const tie = await kmMerge(s.page,
+      { d: { barry: { answer: 'lokalno', time: 7, fb: 'yes', fbTime: 7 } } },
+      { d: { barry: { answer: 'udaljeno', time: 7, fb: 'almost', fbTime: 7 } } });
+    check('M4 legacy records merge by answer time; a missing fbTime never outranks a real one',
+      legacy.d.andjela.answer === 'novo' && legacy.d.andjela.time === 9 &&
+      half.d.barry.fb === 'almost' && half.d.barry.fbTime === 3,
+      `legacy=${JSON.stringify(legacy.d.andjela)} half=${JSON.stringify(half.d.barry)}`);
+    check('M4b an exact tie resolves to local, deterministically',
+      tie.d.barry.answer === 'lokalno' && tie.d.barry.fb === 'yes',
+      JSON.stringify(tie.d.barry));
+    await s.ctx.close();
+  }
+
+  // ---- M5: no field of either side is dropped, and no empty day shells appear ----
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY });
+    const out = await kmMerge(s.page,
+      { d1: { barry: { answer: 'b', time: 1 } } },
+      { d2: { andjela: { answer: 'a', time: 2 } } });
+    const days = Object.keys(out).sort();
+    check('M5 the day keys union, both people survive, nothing extra is invented',
+      JSON.stringify(days) === JSON.stringify(['d1', 'd2']) &&
+      !!out.d1.barry && !!out.d2.andjela &&
+      JSON.stringify(out) === JSON.stringify({
+        d1: { barry: { answer: 'b', time: 1 } },
+        d2: { andjela: { answer: 'a', time: 2 } },
+      }),
+      JSON.stringify(out));
+    await s.ctx.close();
+  }
+
+  // ---- M6: the real path — a pull landing on top of a fresh local answer ----
+  // Barry answers; Anđela's snapshot arrives carrying her verdict on that very
+  // answer plus her own guess. Both halves must survive the pull, and a reload.
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY }, 'barry');
+    const answered = await s.page.evaluate((t) => {
+      const d = fmtDate(today());
+      localStorage.setItem('shared-knowme', JSON.stringify({ [d]: { barry: { answer: 'Kikinda', time: t } } }));
+      renderKnowMe();
+      return d;
+    }, Date.now() - 60000);
+
+    s.remote.state = {
+      knowme: {
+        [answered]: {
+          // Her copy of his answer is the older one; the verdict is newer than his
+          // write, which is exactly the interleaving that used to lose data.
+          barry: { answer: 'Kikinda', time: Date.now() - 60000, fb: 'yes', fbTime: Date.now() - 1000 },
+          andjela: { answer: 'Beograd', time: Date.now() - 30000 },
+        },
+      },
+    };
+    await s.page.evaluate(() => window.pullAllSharedData());
+    await s.page.waitForTimeout(900);
+
+    const merged = await s.page.evaluate((d) => {
+      const km = JSON.parse(localStorage.getItem('shared-knowme') || '{}');
+      const box = document.getElementById('knowMeContent');
+      return {
+        barry: km[d] && km[d].barry,
+        andjela: km[d] && km[d].andjela,
+        buttons: box ? box.querySelectorAll('.km-fb').length : -1,
+        text: box ? box.textContent : '',
+      };
+    }, answered);
+    check("M6 a pull merges her verdict onto my answer instead of replacing the slot",
+      merged.barry && merged.barry.answer === 'Kikinda' && merged.barry.fb === 'yes' &&
+      typeof merged.barry.fbTime === 'number' &&
+      merged.andjela && merged.andjela.answer === 'Beograd',
+      JSON.stringify({ barry: merged.barry, andjela: merged.andjela }));
+
+    /* Two separate things must be true, and they are the two halves of §5:
+       his own answer now wears her verdict (no buttons on it — it is judged),
+       and her answer still carries buttons (he has not judged it yet). */
+    check('M6b the card shows her verdict on his answer and still lets him judge hers',
+      merged.buttons === 2 && merged.text.indexOf('❤️ 正确！') !== -1 &&
+      merged.text.indexOf('Beograd') !== -1,
+      `buttons=${merged.buttons} text="${merged.text.replace(/\s+/g, ' ').slice(0, 90)}"`);
+
+    // "刷新后保持": the merge has to be persisted, not just rendered.
+    await s.page.reload({ waitUntil: 'domcontentloaded' });
+    await s.page.waitForSelector('.tab[data-panel="together"]', { timeout: 15000 });
+    const after = await s.page.evaluate((d) => {
+      const km = JSON.parse(localStorage.getItem('shared-knowme') || '{}');
+      return km[d] && km[d].barry;
+    }, answered);
+    check('M6c both facts survive a reload',
+      after && after.answer === 'Kikinda' && after.fb === 'yes',
+      JSON.stringify(after));
+    await s.ctx.close();
+  }
+
+  // ---- M7: the state this device pushes carries the merged record, not a stub ----
+  // If collect() or the push path rebuilt the slot, the next device would receive
+  // the loss the merge just prevented.
+  {
+    const s = await scenario(browser, { 'ct-app-key': APP_KEY }, 'barry');
+    const pushed = await s.page.evaluate((t) => {
+      const d = fmtDate(today());
+      localStorage.setItem('shared-knowme', JSON.stringify({
+        [d]: { barry: { answer: 'Kikinda', time: t, fb: 'yes', fbTime: t + 1 } },
+      }));
+      const st = window.collectSharedState ? window.collectSharedState() : null;
+      return st ? st.knowme[d] && st.knowme[d].barry : null;
+    }, T1);
+    check('M7 the pushed snapshot still carries both the answer and the verdict',
+      pushed && pushed.answer === 'Kikinda' && pushed.fb === 'yes',
+      JSON.stringify(pushed));
     await s.ctx.close();
   }
 

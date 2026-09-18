@@ -212,6 +212,66 @@ const SyncModule = (function () {
     return mergeByTimeKey(local, remote, _dqKey, _dqTime, DAILY_Q_CAP);
   }
 
+  // ── Know Me：既有的整对象替换会吃掉对方的字段 ──
+  // 存储键 shared-knowme，形状 {"<YYYY-MM-DD>": {barry: {...}, andjela: {...}}}
+  // 每条记录 {answer, time} 是本人对自己那道题的猜测；{fb, fbTime} 是对方给这条
+  // 答案的判定（render-love.js 的 rateKnowMe 写的是 o[day][partner]）。
+  //
+  // 所以同一个 [day][person] 槽位有两个不同的写者，各写各的字段：
+  //   本人改答案 → 写 answer/time；对方判定 → 写 fb/fbTime。
+  // 整对象替换会让最后到达的那份快照把另一个字段抹掉：「Barry 刚改完答案，
+  // Anđela 给他的 ❤️ 就没了」，或反过来「Anđela 判定完，Barry 的答案退回旧版本」。
+  //
+  // 合并规则（逐字段，不是逐人）：
+  //   * 日期键取并集；
+  //   * answer / time 取 time 较大的一侧；相同则本地胜；
+  //   * fb / fbTime 取 fbTime 较大的一侧；相同则本地胜。
+  // 两个判断互相独立，因为两个写者从不写对方那一对字段。
+  //
+  // 向后兼容：老数据没有 fb/fbTime，缺失按 0 处理 —— 于是「有判定的一侧」自然胜出，
+  // 不需要迁移、也不新增字段。载体是已有的 fbTime，没有它就只能靠「非空即真」，
+  // 那样对方撤销判定就表达不出来了。
+  function _kmTime(rec) {
+    return (rec && typeof rec.time === 'number' && isFinite(rec.time)) ? rec.time : 0;
+  }
+  function _kmFbTime(rec) {
+    return (rec && typeof rec.fbTime === 'number' && isFinite(rec.fbTime)) ? rec.fbTime : 0;
+  }
+  /** 合并一个 {answer,time,fb?,fbTime?} 槽位；两侧都可能是 undefined。 */
+  function _kmSlot(localRec, remoteRec) {
+    var l = (localRec && typeof localRec === 'object') ? localRec : null;
+    var r = (remoteRec && typeof remoteRec === 'object') ? remoteRec : null;
+    if (!l) return r ? JSON.parse(JSON.stringify(r)) : undefined;
+    if (!r) return JSON.parse(JSON.stringify(l));
+    // answer 一侧胜出者做底：它可能还带着以后新增的字段，照抄不丢。
+    var base = _kmTime(l) >= _kmTime(r) ? JSON.parse(JSON.stringify(l)) : JSON.parse(JSON.stringify(r));
+    var fbSrc = _kmFbTime(l) >= _kmFbTime(r) ? l : r;
+    if (fbSrc.fb) { base.fb = fbSrc.fb; base.fbTime = _kmFbTime(fbSrc); }
+    return base;
+  }
+  function mergeKnowMe(local, remote) {
+    if (!remote || typeof remote !== 'object') return local || {};
+    if (!local || typeof local !== 'object') return remote || {};
+    var out = {};
+    var days = {};
+    Object.keys(local).forEach(function (d) { days[d] = 1; });
+    Object.keys(remote).forEach(function (d) { days[d] = 1; });
+    Object.keys(days).forEach(function (d) {
+      var ld = local[d], rd = remote[d];
+      var day = {};
+      var who = {};
+      if (ld && typeof ld === 'object') Object.keys(ld).forEach(function (p) { who[p] = 1; });
+      if (rd && typeof rd === 'object') Object.keys(rd).forEach(function (p) { who[p] = 1; });
+      Object.keys(who).forEach(function (p) {
+        var slot = _kmSlot(ld && ld[p], rd && rd[p]);
+        if (slot !== undefined) day[p] = slot;
+      });
+      // 两个人都没答、且两侧都没有可识别槽位时不要留下空壳日期键。
+      if (Object.keys(day).length) out[d] = day;
+    });
+    return out;
+  }
+
   // ── 应用远程状态到本地 ──
   function apply(state) {
     if (!state) return;
@@ -305,7 +365,15 @@ const SyncModule = (function () {
     if (state.learningPoints) localStorage.setItem('shared-learning-points', JSON.stringify(state.learningPoints));
     if (state.voiceData) localStorage.setItem('shared-voice-data', JSON.stringify(state.voiceData));
     if (state.sunCounter) localStorage.setItem('shared-sun-counter', JSON.stringify(state.sunCounter));
-    if (state.knowme) localStorage.setItem('shared-knowme', JSON.stringify(state.knowme));
+    // Know Me 不是「其他数据」：同一天同一个人的槽位有两个写者（本人写 answer，
+    // 对方写 fb），整对象替换会互相抹掉，所以走 mergeKnowMe 逐字段合并。
+    if (state.knowme) {
+      var localKm = getJSON('shared-knowme', {});
+      var mergedKm = mergeKnowMe(localKm, state.knowme);
+      localStorage.setItem('shared-knowme', JSON.stringify(mergedKm));
+      console.log('[同步] Know Me 合并完成 本地=' + Object.keys(localKm).length + ' 天 远程=' + Object.keys(state.knowme).length + ' 天 合并后=' + Object.keys(mergedKm).length + ' 天');
+      if (typeof renderKnowMe === 'function') renderKnowMe();
+    }
     if (state.calendarMarkers) {
       localStorage.setItem('shared-calendar-markers', JSON.stringify(state.calendarMarkers));
       if (typeof renderCalendar === 'function') renderCalendar();
@@ -358,6 +426,15 @@ const SyncModule = (function () {
       var mdq = mergeDailyQ(ldq, remoteState.dailyQ);
       localStorage.setItem('shared-daily-q', JSON.stringify(mdq));
       console.log('[同步] 推送前合并 Daily Question 本地=' + ldq.length + ' 远程=' + _asArray(remoteState.dailyQ).length + ' 合并后=' + mdq.length);
+    }
+    // Phase 1B.5：Know Me 以前不在这里 —— 它走的是 apply() 里的整对象替换，
+    // 而推送前的这次合并必须与 apply() 用同一套语义，否则「推送前的 GET」与
+    // 「409 冲突重试」两条路径会把对方刚写的 fb 抹掉。
+    if (remoteState.knowme) {
+      var lkm = getJSON('shared-knowme', {});
+      var mkm = mergeKnowMe(lkm, remoteState.knowme);
+      localStorage.setItem('shared-knowme', JSON.stringify(mkm));
+      console.log('[同步] 推送前合并 Know Me 本地=' + Object.keys(lkm).length + ' 天 远程=' + Object.keys(remoteState.knowme).length + ' 天 合并后=' + Object.keys(mkm).length + ' 天');
     }
   }
 
@@ -599,6 +676,7 @@ const SyncModule = (function () {
     mergeGratitude: mergeGratitude,
     mergeEcho: mergeEcho,
     mergeDailyQ: mergeDailyQ,
+    mergeKnowMe: mergeKnowMe,
     updateBadge: updateBadge,
     stopAutoPull: _stopAutoPull,
     startAutoPull: _startAutoPull

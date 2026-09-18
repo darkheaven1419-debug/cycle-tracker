@@ -17,7 +17,9 @@
       goDiary: '\u{1F4DD} Dnevnik',
       goCalendar: '\u{1F4C5} Kalendar',
       connectQ: '\u{1F4AD} Pitanje dana',
-      refreshQ: '\u{1F504} Drugo pitanje',
+      /* Phase 1B.5：图标现在是内联 SVG（见 _refreshIcon），这里只留纯文本 ——
+         这个键只用作 aria-label，读屏软件不该再念一遍 emoji 的名字。 */
+      refreshQ: 'Drugo pitanje',
       todayPhase: 'Trenutna faza',
       todayMoodDash: 'Raspolo\u{017E}enje',
       todayStreak: 'Niz dana',
@@ -31,7 +33,7 @@
       goDiary: '\u{1F4DD} \u{5199}\u{65E5}\u{8BB0}',
       goCalendar: '\u{1F4C5} \u{67E5}\u{770B}\u{65E5}\u{5386}',
       connectQ: '\u{1F4AD} \u{4ECA}\u{5929}\u{7684}\u{5BF9}\u{8BDD}',
-      refreshQ: '\u{1F504} \u{6362}\u{4E00}\u{4E2A}\u{95EE}\u{9898}',
+      refreshQ: '\u{6362}\u{4E00}\u{4E2A}\u{95EE}\u{9898}',
       todayPhase: '\u{4ECA}\u{65E5}\u{9636}\u{6BB5}',
       todayMoodDash: '\u{4ECA}\u{65E5}\u{5FC3}\u{60C5}',
       todayStreak: '\u{8FDE}\u{7EED}\u{6253}\u{5361}',
@@ -45,7 +47,7 @@
       goDiary: '\u{1F4DD} Diary',
       goCalendar: '\u{1F4C5} Calendar',
       connectQ: "\u{1F4AD} Today's question",
-      refreshQ: '\u{1F504} Another question',
+      refreshQ: 'Another question',
       todayPhase: 'Current phase',
       todayMoodDash: 'Mood',
       todayStreak: 'Day streak',
@@ -106,7 +108,11 @@
       yesterday: 'ju\u{010D}e', days: 'pre {n} dana',
       mood: 'raspolo\u{017E}enje', hug: 'zagrljaj', diary: 'dnevnik',
       sleep: 'san', voice: 'snimak', todo: 'zadatak',
-      grat: 'zahvalnost', song: 'pesma', knowme: 'odgovor'
+      grat: 'zahvalnost', song: 'pesma', knowme: 'odgovor',
+      /* §9：两个人是对称的，所以提示语按「对方是谁」分男女两种说法，
+         不写成「回应她」——那会让 Barry 变成唯一的查看者。 */
+      askF: 'Mo\u{017E}e\u{0161} da joj odgovori\u{0161}',
+      askM: 'Mo\u{017E}e\u{0161} da mu odgovori\u{0161}'
     },
     en: {
       f: '\u{1F48C} Something from her',
@@ -118,7 +124,9 @@
       yesterday: 'yesterday', days: '{n}d ago',
       mood: 'mood', hug: 'a hug', diary: 'diary',
       sleep: 'sleep', voice: 'voice note', todo: 'to-do',
-      grat: 'a thank-you', song: 'a song', knowme: 'an answer'
+      grat: 'a thank-you', song: 'a song', knowme: 'an answer',
+      askF: 'You can reply to her',
+      askM: 'You can reply to him'
     },
     'zh-CN': {
       f: '\u{1F48C} \u{6709}\u{5979}\u{7684}\u{4E1C}\u{897F}',
@@ -130,7 +138,9 @@
       yesterday: '\u{6628}\u{5929}', days: '{n}\u{5929}\u{524D}',
       mood: '\u{5FC3}\u{60C5}', hug: '\u{62E5}\u{62B1}', diary: '\u{65E5}\u{8BB0}',
       sleep: '\u{7761}\u{7720}', voice: '\u{5F55}\u{97F3}', todo: '\u{5F85}\u{529E}',
-      grat: '\u{611F}\u{6069}', song: '\u{70B9}\u{6B4C}', knowme: '\u{56DE}\u{7B54}'
+      grat: '\u{611F}\u{6069}', song: '\u{70B9}\u{6B4C}', knowme: '\u{56DE}\u{7B54}',
+      askF: '\u{4F60}\u{53EF}\u{4EE5}\u{56DE}\u{5E94}\u{5979}',
+      askM: '\u{4F60}\u{53EF}\u{4EE5}\u{56DE}\u{5E94}\u{4ED6}'
     }
   };
 
@@ -639,27 +649,96 @@
   }
   window.renderDailyQ = _renderDailyQ;
 
+  /* §3（Phase 1B.5）：原来这里是 🔄 这个 emoji。它在 Windows / Android 上会落到
+     系统字体，画出来是饱和的蓝色，跟 Midnight Couple 的 --text-muted 完全不搭，
+     而且颜色由系统决定、CSS 管不到。改成内联 SVG 就跟着 currentColor 走。
+     路径用的是 Feather 的 rotate-cw（MIT），跟项目里 .tb-icon 那套是同一个来源
+     —— 不引图标库，不加依赖，只是把同一段 path 搬过来。 */
+  function _refreshIcon() {
+    return '<svg class="dhc-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M23 4v6h-6"/>' +
+      '<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>' +
+      '</svg>';
+  }
+
   /* ── §3 "New from your partner" ─────────────────────────────────────────
      不是未读系统。复用 Home 上已经在用的「自上次打开以来的窗口」
      （LAST_OPEN_KEY + 自己的 profile，见 _initTodayWindow）：窗口之内对方留
      下的东西就显示，看见即消费。两个人的窗口各存各的、不同步，所以不存在
      会产生同步冲突的全局 unread 字段。两处共用同一份 _collectTodayEvents，
      §3 要求的对称性因此是结构性的，而不是两处各写一遍。 */
+  /* §1（Phase 1B.5）：「她留了东西」是一句话，「你可以回应她」才是一个动作。
+     只把东西列出来，Barry 仍然要滑到下面那张感恩卡才有按钮可按（实测 y≈1375，
+     而这张卡在 320px 下 top≈223）。所以把回应行接在最新一条可回应的便签下面。
+
+     刻意不新建任何东西：渲染的还是同一条 shared-gratitude 记录，点下去走的还是
+     reactGratitude()，身份仍由 gratEchoRow 按 (note.from, note.time) 判定 ——
+     没有第二份状态、没有新的同步字段、也没有 unread 计数。 */
+  function _replyTarget(partner, since) {
+    var grat = _readJSON('shared-gratitude', []);
+    if (!Array.isArray(grat)) return null;
+    var best = null;
+    grat.forEach(function (g) {
+      if (!g || g.from !== partner) return;
+      /* gratEchoRow 对没有可用时间戳的条目返回空串（无法与回应一一对应），
+         所以这里也用同一条件筛，免得选中一条渲染不出按钮的便签。 */
+      if (typeof g.time !== 'number' || !isFinite(g.time)) return;
+      if (g.time <= since) return;
+      if (!best || g.time > best.time) best = g;
+    });
+    return best;
+  }
+
+  /** 我在这条便签上回应过没有 —— 查的是 gratEchoRow 用的同一个 key。 */
+  function _iEchoed(note) {
+    var me = _todayCtx().me;
+    var list = (typeof gratEchoList === 'function') ? gratEchoList() : [];
+    return list.some(function (x) {
+      return x && String(x.noteFrom) === String(note.from) &&
+        x.noteTime === note.time && String(x.from) === me;
+    });
+  }
+
   function _renderTogetherNew() {
     var host = document.getElementById('together-new');
     if (!host) return;
     var ctx = _todayCtx();
     var S = ctx.S;
-    var items = _collectTodayEvents(_initTodayWindow());
+    var since = _initTodayWindow();
+    var items = _collectTodayEvents(since);
     if (!items.length) { host.hidden = true; host.innerHTML = ''; return; }
     host.hidden = false;
+
+    var target = (typeof gratEchoRow === 'function') ? _replyTarget(ctx.partner, since) : null;
+    var echoed = target ? _iEchoed(target) : false;
+
+    /* 回应块是 <div class="tnew-row"> 的兄弟节点，不是子节点：行本身带
+       onclick="switchToTab()"，按钮嵌进去的话点击会冒泡到行上，刚点出来的
+       反馈会被跳转 + 重渲染吃掉。 */
+    function replyBlock() {
+      return (echoed ? '' : '<div class="tnew-ask">' +
+          esc(ctx.partner === 'barry' ? S.askM : S.askF) + ' \u{2193}</div>') +
+        '<div class="tnew-react">' + gratEchoRow(target) + '</div>';
+    }
+
+    var placed = false;
+    /* 列表按时间倒序，只展示三条。对方最新的那条便签可能被更新的 echo /
+       一问 / 日记挤出这三条之外 —— 那种情况下回应块接在最后一行后面，
+       因为「可以回应」这件事不该因为多了三条别的动态就消失。 */
     var rows = items.slice(0, 3).map(function (it) {
-      return '<div class="tnew-row" onclick="switchToTab(\'' + it.tab + '\')">' +
+      var row = '<div class="tnew-row" onclick="switchToTab(\'' + it.tab + '\')">' +
         '<span class="tnew-e">' + it.e + '</span>' +
         '<span class="tnew-x">' + esc(it.x ? String(it.x).slice(0, 90) : (S[it.l] || '')) + '</span>' +
         '<span class="tnew-t">' + esc(_relTime(it.t, S)) + '</span>' +
         '</div>';
+      /* 💌 只有感恩便签在用，所以「这一行就是那条便签」可以只看 emoji + 时间。 */
+      if (!target || placed || it.e !== '\u{1F48C}' || it.t !== target.time) return row;
+      placed = true;
+      return row + replyBlock();
     }).join('');
+
+    if (target && !placed) rows += replyBlock();
+
     host.innerHTML = '<div class="tnew-head">' + esc(ctx.partner === 'barry' ? S.m : S.f) + '</div>' + rows;
   }
   window.renderTogetherNew = _renderTogetherNew;
@@ -679,7 +758,7 @@
         '<div class="card dash-card" id="together-new" hidden></div>' +
         '<div class="card" id="together-daily">' +
           '<div class="dhc-head"><span class="dhc-title">' + esc(v2('qOfDay')) + '</span>' +
-          '<button class="dhc-more" onclick="renderDailyQ()" aria-label="' + esc(dl('refreshQ')) + '">\u{1F504}</button></div>' +
+          '<button class="dhc-more dhc-more-ico" onclick="renderDailyQ()" aria-label="' + esc(dl('refreshQ')) + '">' + _refreshIcon() + '</button></div>' +
           '<div id="togetherDailyQ"></div>' +
         '</div>';
       _togetherBuilt = true;
