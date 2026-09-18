@@ -276,17 +276,34 @@ function fire(handlers, url, opts) {
 
   // S14 — and install (the other half) fills the NEW bucket with the precache
   // list. S13 evicts, S14 re-populates; together they are the refresh.
+  //
+  // 2026-09-18 (Phase 0-E): the expected keys are now derived from what the page
+  // actually requests. Cache API keys are full URLs including the query string,
+  // so the previous bare './app.js' entry could never be matched by an
+  // index.html that asks for 'app.js?v=…' — the precache for it was inert.
+  // STATIC_ASSETS was aligned with the real request URLs; the version is read
+  // out of sw.js so a future bump cannot silently re-break the match.
   {
+    const swSrc = fs.readFileSync(SW_FILE, 'utf8');
+    const verMatch = swSrc.match(/const APP_VERSION = '([^']+)'/);
+    check('S14a sw.js exposes a single APP_VERSION constant',
+      !!verMatch, `match=${verMatch ? verMatch[1] : 'none'}`);
+
+    const ver = verMatch ? verMatch[1] : '0';
+    // app.js carries ?v= in index.html. js/fix-stats.js is one of the 10 scripts
+    // index.html loads WITHOUT ?v=, so it must stay bare here.
+    const expected = [`./app.js?v=${ver}`, './js/fix-stats.js'];
+
     const named = createNamedCaches();
     const h = loadSw(named.api).handlers;
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
     const got = named.contents('ciklus-static-v29');
-    const missing = ['./app.js', './js/fix-stats.js'].filter((f) => got.indexOf(f) === -1);
-    check('S14 install precaches app.js and fix-stats.js into the new bucket',
+    const missing = expected.filter((f) => got.indexOf(f) === -1);
+    check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,
-      `entries=${got.length} missing=${missing.join(',') || 'none'}`);
+      `entries=${got.length} expected=${expected.join(',')} missing=${missing.join(',') || 'none'}`);
   }
 
   const failed = results.filter((r) => !r.pass);

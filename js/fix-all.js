@@ -8,10 +8,9 @@ var SYNC_DEBOUNCE_MS = 1500;
 var SYNC_INTERVAL_MS = 120000;
 
 window.CalState={year:2026,month:6,view:"month",weekOffset:0};
-var APP_VERSION = (function () {
-  var meta = document.querySelector('meta[name="version"]');
-  return meta ? meta.content : '7.2.0';
-})();
+// 这里曾有一个读 <meta name="version"> 的 APP_VERSION（兜底值 '7.2.0'）。
+// 它在全仓库从未被引用过，却是一个会静默过期的版本号来源 —— 已删除。
+// 版本号唯一来源见 sw.js 的 APP_VERSION，由 tests/test-version-consistency.js 强制校验。
 
 (function () {
   function _fmtDate(d) {

@@ -56,7 +56,11 @@
     '.floating-stars .star { will-change: transform, opacity !important; }' +
     'body { margin: 0 !important; overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; display: flex !important; justify-content: center !important; }' +
     'main { width: 100%; margin: 0; display: flex; justify-content: center; }' +
-    '.app { width: 100% !important; max-width: 420px !important; margin: 0 auto !important; }' +
+    // 这里曾有一条 `max-width: 420px !important`，它压过 calendar.css 里
+    // >=600/768/1024/1400px 的 .app 响应式阶梯（540/620/700/760px），
+    // 使桌面端永远停在 420px。移除该上限后桌面阶梯恢复生效；
+    // width/margin 两条保留，移动端（视口 < 420px）行为完全不变。
+    '.app { width: 100% !important; margin: 0 auto !important; }' +
     '.calendar { width: 100% !important; margin: 0 auto !important; box-sizing: border-box !important; }' +
     '.days { grid-template-columns: repeat(7, 1fr) !important; gap: 3px !important; }' +
     '@media (max-width: 420px) { .days { gap: 2px !important; } .day { min-width: 0 !important; } }' +

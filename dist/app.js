@@ -359,9 +359,16 @@ function loadPerProfileSettings() {
   // Default languages: Anđela → Serbian, Barry → Chinese
   const defaultLang = activeProfile === 'barry' ? 'zh-CN' : 'sr';
   let savedLang = localStorage.getItem(profileKey('cycle-lang'));
-  // Cleanse: if saved lang is the WRONG profile's default, reset
-  if (activeProfile === 'barry' && savedLang === 'sr') savedLang = null;
-  if (activeProfile === 'andjela' && savedLang === 'zh-CN') savedLang = null;
+  // Cleanse only while this profile has never been given an explicit choice.
+  // The old check fired on any saved value equal to the OTHER profile's default,
+  // so it also threw away a deliberate pick (Barry choosing Serbian on his own
+  // device). setLang() now records that the picker was used, which is the state
+  // the cleanse was written for: a shared device inheriting the other person's
+  // default before anyone has chosen anything.
+  if (!localStorage.getItem(profileKey('cycle-lang-chosen'))) {
+    if (activeProfile === 'barry' && savedLang === 'sr') savedLang = null;
+    if (activeProfile === 'andjela' && savedLang === 'zh-CN') savedLang = null;
+  }
   const validLangs = { sr: 1, 'zh-CN': 1, en: 1 };
   window.lang = savedLang && validLangs[savedLang] ? savedLang : defaultLang;
   // ALWAYS save the corrected lang
@@ -375,6 +382,9 @@ function setLang(l) {
   document.documentElement.setAttribute('lang', l);
   localStorage.setItem(profileKey('cycle-lang'), l);
   localStorage.setItem('cycle-lang', l);
+  // Marks that this profile made a deliberate choice, so loadPerProfileSettings()
+  // stops cleansing it back to the profile default.
+  localStorage.setItem(profileKey('cycle-lang-chosen'), '1');
 }
 // applyTheme(), switchTheme() — extracted to js/theme.js
 

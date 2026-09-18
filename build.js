@@ -43,7 +43,18 @@ var FILES = [
   'dist/js/fix-panel.js',
 ];
 
-var VERSION = process.env.APP_VERSION || '7.2.0';
+// 版本号唯一来源是 sw.js 的 APP_VERSION。这里曾硬编码兜底 '7.2.0'，
+// 一旦 sw.js 升版就会在 bundle banner 里写下错误的版本号。
+// 改为直接读 sw.js；env 变量仍可覆盖（CI 需要时用）。
+var VERSION = process.env.APP_VERSION || (function () {
+  try {
+    var m = fs.readFileSync(path.join(__dirname, 'sw.js'), 'utf8')
+      .match(/const APP_VERSION = '([^']+)'/);
+    return m ? m[1] : 'unknown';
+  } catch (e) {
+    return 'unknown';
+  }
+})();
 var banner = '// Anđelin Ciklus v' + VERSION + ' | Built ' + new Date().toISOString().slice(0, 10) + '\n\n';
 
 var bundle = banner;

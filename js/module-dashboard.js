@@ -3,8 +3,28 @@
 (function () {
   console.log('[module-dashboard] 已加载');
 
+  // Keyed by language, not by identity.
+  // This was previously {barry: <Chinese>, andjela: <Serbian>} — the two keys
+  // were just the Chinese and Serbian columns of the same 12 labels, with no
+  // per-person text. That conflated "who is signed in" with "what language",
+  // so an English user silently got Serbian. Keying by language matches the
+  // rest of the app (see js/i18n.js: sr / 'zh-CN' / en).
   var DASH_I18N = {
-    barry: {
+    sr: {
+      dashTitle: '\u{1F3E0} Po\u{010D}etna',
+      welcomeBack: 'Dobrodo\u{0161}la,',
+      todayCulture: 'Dana\u{0161}nje kulturno znanje',
+      goDiary: '\u{1F4DD} Dnevnik',
+      goCalendar: '\u{1F4C5} Kalendar',
+      connectQ: '\u{1F4AD} Pitanje dana',
+      refreshQ: '\u{1F504} Drugo pitanje',
+      todayPhase: 'Trenutna faza',
+      todayMoodDash: 'Raspolo\u{017E}enje',
+      todayStreak: 'Niz dana',
+      todayCycles: 'Ukupno ciklusa',
+      avgAbbr: 'Prosek'
+    },
+    'zh-CN': {
       dashTitle: '\u{1F3E0} \u{4E3B}\u{9875}',
       welcomeBack: '\u{65E9}\u{4E0A}\u{597D}\u{FF0C}',
       todayCulture: '\u{4ECA}\u{65E5}\u{6587}\u{5316}\u{77E5}\u{8BC6}',
@@ -18,19 +38,19 @@
       todayCycles: '\u{5468}\u{671F}\u{603B}\u{6570}',
       avgAbbr: '\u{5E73}\u{5747}'
     },
-    andjela: {
-      dashTitle: '\u{1F3E0} Po\u{010D}etna',
-      welcomeBack: 'Dobrodo\u{0161}la,',
-      todayCulture: 'Dana\u{0161}nje kulturno znanje',
-      goDiary: '\u{1F4DD} Dnevnik',
-      goCalendar: '\u{1F4C5} Kalendar',
-      connectQ: '\u{1F4AD} Pitanje dana',
-      refreshQ: '\u{1F504} Drugo pitanje',
-      todayPhase: 'Trenutna faza',
-      todayMoodDash: 'Raspolo\u{017E}enje',
-      todayStreak: 'Niz dana',
-      todayCycles: 'Ukupno ciklusa',
-      avgAbbr: 'Prosek'
+    en: {
+      dashTitle: '\u{1F3E0} Home',
+      welcomeBack: 'Good morning,',
+      todayCulture: "Today's culture note",
+      goDiary: '\u{1F4DD} Diary',
+      goCalendar: '\u{1F4C5} Calendar',
+      connectQ: "\u{1F4AD} Today's question",
+      refreshQ: '\u{1F504} Another question',
+      todayPhase: 'Current phase',
+      todayMoodDash: 'Mood',
+      todayStreak: 'Day streak',
+      todayCycles: 'Total cycles',
+      avgAbbr: 'Avg'
     }
   };
 
@@ -286,9 +306,13 @@
   var _initialized = false;
 
   function dl(key) {
-    var profile = (lang || '').indexOf('zh') === 0 ? 'barry' : 'andjela';
-    var p = DASH_I18N[profile] || DASH_I18N.andjela;
-    return p[key] || DASH_I18N.andjela[key] || key;
+    // Was: var profile = lang startsWith 'zh' ? 'barry' : 'andjela' — which sent
+    // every non-Chinese language, English included, to the Serbian column.
+    // Now: resolve by language, with the same 'sr' fallback the rest of the app
+    // uses. Unknown/absent lang degrades to Serbian rather than to a key name.
+    var L = (typeof lang !== 'undefined' && lang) ? lang : 'sr';
+    var p = DASH_I18N[L] || DASH_I18N[L.split('-')[0]] || DASH_I18N.sr;
+    return p[key] || DASH_I18N.sr[key] || key;
   }
 
   function getDailyQuestion() {
