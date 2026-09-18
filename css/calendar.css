@@ -864,27 +864,34 @@ body {
 }
 .weekdays {
   display: grid;
-  grid-template-columns: 28px repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   text-align: center;
   font-size: 0.62rem;
   font-weight: 600;
   color: var(--text-muted);
   margin-bottom: 10px;
-  padding: 0 2px;
+  padding: 0;
+  gap: 3px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   opacity: 0.7;
 }
-.weekdays span:nth-child(7),
-.weekdays span:nth-child(8) {
+.weekdays span:nth-child(6),
+.weekdays span:nth-child(7) {
   color: var(--rose);
   opacity: 0.75;
   font-weight: 700;
 }
 .days {
   display: grid;
-  grid-template-columns: 28px repeat(7, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+@media (max-width: 420px) {
+  .weekdays,
+  .days {
+    gap: 2px;
+  }
 }
 .week-num {
   display: flex;
@@ -901,6 +908,7 @@ body {
 }
 .day {
   aspect-ratio: 1/1;
+  max-width: 100%;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -5798,6 +5806,18 @@ body {
   }
   .lang-switch {
     gap: 0;
+  }
+}
+@media (max-width: 360px) {
+  .cal-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cal-nav .month-label {
+    order: -1;
+    flex: 1 1 100%;
+    white-space: nowrap;
+    font-size: 1.05rem;
   }
 }
 @media (max-width: 360px) {

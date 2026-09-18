@@ -1090,7 +1090,6 @@ function updateLangUI() {
   let weekdaysEl = document.getElementById('weekdaysRow');
   weekdaysEl.setAttribute('role', 'row');
   weekdaysEl.innerHTML =
-    '<span role="gridcell" aria-hidden="true"></span>' +
     wd
       .map(function (d, i) {
         return '<span role="columnheader" scope="col"' + (i >= 5 ? ' style="color:var(--rose);opacity:.6"' : '') + '>' + d + '</span>';

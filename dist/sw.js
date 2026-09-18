@@ -12,20 +12,20 @@
 const APP_VERSION = '7.3.0';
 const V = '?v=' + APP_VERSION;
 
-// Phase 1D · 周期中心重组：v33 → v34。改的是 ./index.html（#panel-stats 从 19 个
-// 子节点重排为「标题 → 日历 → 摘要 → 症状入口 → 趋势/历史 → 预测 → 情绪图」，并把 9 个遗留的
-// 情侣卡片移到 #panel-together，删掉 #diaryCard）、./css/v2.css（.cycle-head）、
-// ./js/i18n.js 与 ./app.js（新标题的三语文案）。index.html 与 v2.css 都以裸路径
-// 进 STATIC_ASSETS，cache key 永不变 —— 不换名字，已装 SW 的客户端会一直拿到旧的那份，
-// 周期页还是老样子。
-// （Phase 1D 前半刷新过 ./css/tokens.css、./css/calendar.css、./app.js 与
-//  ./js/fix-all.js：v32 → v33；Phase 1C 刷新过 ./css/v2.css、./index.html 与
-//  ./js/module-memories.js：v31 → v32；Phase 1B.5 刷新过 ./css/v2.css、
-//  ./js/sync.js、./js/render-love.js、./js/module-dashboard.js：v30 → v31；
-//  Phase 1B 同一批：v29 → v30；Phase 2C 刷新过 ./app.js 与 ./js/fix-stats.js：
-//  v28 → v29。activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，所以改名即
-//  完成刷新。）
-const CACHE_STATIC = 'ciklus-static-v34';
+// Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
+// 月份视图的星期表头和日期网格一直对不齐：.days 被 index.html 内联样式和 js/fix-css.js
+// 两层 !important 压成 7 轨，而 .weekdays 还留着 28px 的周数列 + 8 个 span（首个子元素是
+// app.js 里那个空的周数占位）。占位列其实早就死了 —— js/fix-css.js 用 !important 把
+// .week-num 全局 display:none —— 但表头仍然为它留了一轨，于是 768/1440 下整行星期
+// 左移 28px，320 下「日」被挤到第二行。现在把表头的占位 span 去掉、两侧轨道都写成
+// repeat(7,1fr)，.week-num 的样式与 .days.week-view（周视图，另有 28px 列，未测）保持原样。
+// 同一轮还修了 320 下格子互相重叠（.day 的 aspect-ratio 由 min-height:44px 反推出 44px 宽，
+// 超出 37px 的轨道 —— 加 max-width:100% 把它夹回轨道内）与月份标题被挤成三行
+// （≤360px 让标题独占一行、按钮换到下一行）。这两个文件都在 STATIC_ASSETS 里且 cache-first，
+// calendar.css 还是裸路径，cache key 永不变 —— 不换名字，已装 SW 的客户端看到的还是歪的日历。
+// （Phase 1D 前半：v33 → v34，周期中心重组；再前半 v32 → v33，日历调色板。
+//  activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，所以改名即完成刷新。）
+const CACHE_STATIC = 'ciklus-static-v35';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

@@ -233,8 +233,9 @@ function fire(handlers, url, opts) {
       newLookups > 0, `cacheLookups=${newLookups}`);
   }
 
-  // ── S11..S14 — Phase 1D bumped CACHE_STATIC twice: v32 → v33 for the calendar
-  // palette, then v33 → v34 for the panel restructure (Phase 1C did v31 → v32,
+  // ── S11..S14 — Phase 1D bumped CACHE_STATIC three times: v32 → v33 for the
+  // calendar palette, v33 → v34 for the panel restructure, then v34 → v35 for
+  // the calendar structural alignment (Phase 1C did v31 → v32,
   // Phase 1B.5 v30 → v31, Phase 1B v29 → v30 and Phase 2C v28 → v29, the same
   // way). The bump is the only thing that makes a deploy reach a client
   // that already has the old SW installed: these assets sit in STATIC_ASSETS
@@ -243,10 +244,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV34 = /const CACHE_STATIC = 'ciklus-static-v34';/.test(src);
-    const hasV33 = /ciklus-static-v33/.test(src);
+    const hasV35 = /const CACHE_STATIC = 'ciklus-static-v35';/.test(src);
+    const hasV34 = /ciklus-static-v34/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV34 && !hasV33, `v34=${hasV34} v33StillPresent=${hasV33}`);
+      hasV35 && !hasV34, `v35=${hasV35} v34StillPresent=${hasV34}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -270,14 +271,18 @@ function fire(handlers, url, opts) {
       // Phase 1D's second commit: the panel restructure, its stylesheet, and
       // the three-language copy for the header it added.
       './js/i18n.js',
+      // Phase 1D has no fourth group: its third commit changed './app.js' and
+      // './css/calendar.css' again — the weekday gutter span it stops emitting
+      // and the grid tracks it corrected — and both are already listed above,
+      // so the v35 name re-fetches them without adding an entry.
     ];
     const missing = changed.filter((f) => src.indexOf("'" + f + "'") === -1);
     check('S12 every asset the bump exists to refresh is in STATIC_ASSETS',
       missing.length === 0, `missing=${missing.join(',') || 'none'}`);
   }
 
-  // S13 — an installed client still holds v33, one two generations back holds
-  // v32 (and three back, v31). Run the real activate handler: every stale
+  // S13 — an installed client still holds v34; one generation back holds v33,
+  // two back v32 and three back v31. Run the real activate handler: every stale
   // bucket must be deleted, the current one must survive. This is the step that
   // actually evicts the old copies of the cache-first assets.
   {
@@ -287,16 +292,18 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v32');
     await named.api.open('ciklus-static-v33');
     await named.api.open('ciklus-static-v34');
+    await named.api.open('ciklus-static-v35');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31+v32+v33 buckets and keeps v34 + fonts',
+    check('S13 activate evicts the stale v31+v32+v33+v34 buckets and keeps v35 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
-      names.indexOf('ciklus-static-v34') !== -1 &&
+      names.indexOf('ciklus-static-v34') === -1 &&
+      names.indexOf('ciklus-static-v35') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -327,7 +334,7 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v34');
+    const got = named.contents('ciklus-static-v35');
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,
