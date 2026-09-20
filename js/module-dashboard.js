@@ -177,7 +177,12 @@
       qLeadHasF: 'Ve\u{0107} je odgovorila',
       qLeadHasM: 'Ve\u{0107} je odgovorio',
       qLeadLookF: 'Pogledaj njen odgovor \u{2193}',
-      qLeadLookM: 'Pogledaj njegov odgovor \u{2193}'
+      qLeadLookM: 'Pogledaj njegov odgovor \u{2193}',
+      /* §Phase 2B.2：Home 的按钮文案。和引子分开是因为箭头指的不是同一处 ——
+         引子的 ↓ 指的是它下方那段答案，而 Home 上没有答案，答案在 Together 里，
+         所以按钮用 →，指向它真正做的那个跳转。 */
+      qCtaLookF: 'Pogledaj njen odgovor \u{2192}',
+      qCtaLookM: 'Pogledaj njegov odgovor \u{2192}'
     },
     'zh-CN': {
       herCycle: '\u{1F338} \u{5979}\u{7684}\u{5468}\u{671F}',
@@ -199,7 +204,9 @@
       qLeadHasF: '\u{5979}\u{5DF2}\u{7ECF}\u{56DE}\u{7B54}\u{4E86}',
       qLeadHasM: '\u{4ED6}\u{5DF2}\u{7ECF}\u{56DE}\u{7B54}\u{4E86}',
       qLeadLookF: '\u{770B}\u{770B}\u{5979}\u{600E}\u{4E48}\u{7B54} \u{2193}',
-      qLeadLookM: '\u{770B}\u{770B}\u{4ED6}\u{600E}\u{4E48}\u{7B54} \u{2193}'
+      qLeadLookM: '\u{770B}\u{770B}\u{4ED6}\u{600E}\u{4E48}\u{7B54} \u{2193}',
+      qCtaLookF: '\u{770B}\u{770B}\u{5979}\u{600E}\u{4E48}\u{7B54} \u{2192}',
+      qCtaLookM: '\u{770B}\u{770B}\u{4ED6}\u{600E}\u{4E48}\u{7B54} \u{2192}'
     },
     en: {
       herCycle: '\u{1F338} Her cycle',
@@ -221,7 +228,9 @@
       qLeadHasF: "She's answered",
       qLeadHasM: "He's answered",
       qLeadLookF: 'See what she said \u{2193}',
-      qLeadLookM: 'See what he said \u{2193}'
+      qLeadLookM: 'See what he said \u{2193}',
+      qCtaLookF: 'See what she said \u{2192}',
+      qCtaLookM: 'See what he said \u{2192}'
     }
   };
 
@@ -524,11 +533,13 @@
 
   /* Labels are written on every render rather than baked into the skeleton,
      because switchLanguage() re-runs applyAllUI without rebuilding the panel —
-     a baked label would keep the previous language until a reload. */
+     a baked label would keep the previous language until a reload.
+     §Phase 2B.2：`dash-q-cta` 从这里移走了。它的文案现在取决于「她答了没有」，
+     所以归 _updateConnectCard 管（同一个 renderDashboard 里紧接着这次调用之后
+     执行，顺序见 :602/:606），否则状态化的文案会被这里的静态赋值当场覆盖。 */
   function _updateV2Labels() {
     var set = function (id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; };
     set('dash-q-title', v2('qOfDay'));
-    set('dash-q-cta', v2('qAnswer'));
     set('dash-quote-text', v2('homeQuote'));
     set('dash-her-cycle-title', v2('herCycle'));
     set('dash-link-diary', dl('goDiary'));
@@ -557,9 +568,40 @@
   function _updateConnectCard(panel) {
     var el = document.getElementById('dash-connect');
     if (!el) return;
-    var q = getDailyQuestion();
     var cq = el.querySelector('#dailyConnectQ');
-    if (cq) cq.textContent = q;
+    if (cq) cq.textContent = getDailyQuestion();
+
+    /* §Phase 2B.2：这张卡的按钮过去恒为「去回答 →」，不管交流走到哪一步 —— 于是
+       最该产生「我想知道她怎么答」的那一刻（她答完了、我还没答、她的答案就在一次
+       跳转之外），看起来和两个人都还没开口时一模一样，读起来只是今天的任务。
+       §七 明确不要那个读法，所以这里把真实状态说出来：她答完了就先说这件事，按钮
+       指向她的答案，而不是再催一次回答。用的是 _renderDailyQ 上方那条引子的同一组
+       词（qLeadHas* / qCtaLook*），不新增机制。
+
+       引子只在「她答了、我没答」时出现。另外两处刻意留白，与 _renderDailyQ 的取舍
+       同源：双方都答完时它只是把 dq-both 已经说过的事再说一遍，而且那一刻已经没有
+       悬念；我答了她没答时则没有新闻。
+       数据只经 _dqCurrent/_dqEntries 这两个既有读取器：不新增存储键、不新增同步
+       字段、不新增状态机。 */
+    var ctx = _todayCtx();
+    var both = _dqEntries(_dqCurrent().qKey);
+    var mine = both[ctx.me] || null;
+    var theirs = both[ctx.partner] || null;
+    var g = ctx.partner === 'barry' ? 'M' : 'F';
+
+    var lead = document.getElementById('dash-q-lead');
+    if (lead) {
+      var curious = !!theirs && !mine;
+      lead.textContent = curious ? v2('qLeadHas' + g) : '';
+      /* `hidden` 是给辅助技术的语义，inline display 是渲染上的保证：v2.css 里
+         .dq-lead 带 margin，靠属性单挡的话，任何一条后代 display 规则都会让它
+         带着 6px 边距继续占位。 */
+      lead.hidden = !curious;
+      lead.style.display = curious ? '' : 'none';
+    }
+
+    var cta = document.getElementById('dash-q-cta');
+    if (cta) cta.textContent = v2(theirs ? 'qCtaLook' + g : (mine ? 'qUpdate' : 'qAnswer'));
   }
 
   /* V2 Home order — the couple's identity, then what she left for him, then the
@@ -576,6 +618,10 @@
       '<div class="card dash-card" id="dash-connect">' +
         '<div class="dhc-head"><span class="dhc-title" id="dash-q-title"></span>' +
         '<button class="dhc-more" onclick="switchToTab(\'together\')" aria-label="' + esc(v2('qAnswer')) + '">\u{203A}</button></div>' +
+        /* §Phase 2B.2：状态引子。放在问题上方，和 Together 那条同构，复用 v2.css 里
+           已有的 .dq-lead / .dq-lead-sub，所以两个面看起来是同一件事的两种呈现。
+           默认 hidden —— 没有悬念时它必须完全不占位。 */
+        '<div class="dq-lead" id="dash-q-lead" hidden></div>' +
         '<div class="dash-q-text" id="dailyConnectQ"></div>' +
         '<button class="dash-link-btn dash-q-cta" id="dash-q-cta" onclick="switchToTab(\'together\')"></button>' +
       '</div>' +

@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.3.5';
+const APP_VERSION = '7.3.6';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——

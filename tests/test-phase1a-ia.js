@@ -202,8 +202,13 @@ const enKeys = keysOf('en');
    Raised 14 -> 20 in Phase 2A §1, when the status lead above the question added
    qLeadWaitF/M, qLeadHasF/M, qLeadLookF/M — six keys, gendered the same way
    askF/askM already were, and present in all three columns (the parity check
-   right below is what proves that half). */
-const V2_KEYS_PER_LANG = 20;
+   right below is what proves that half).
+   Raised 20 -> 22 in Phase 2B.2, when Home's Daily Question card stopped being a
+   constant and started reading the exchange state: qCtaLookF/M are the button
+   wording for "she/he has answered", kept separate from qLeadLookF/M because the
+   arrow points somewhere else (↓ at the answer below on Together, → at the tab
+   switch Home actually performs). */
+const V2_KEYS_PER_LANG = 22;
 check('V2_I18N was found with all its keys', v2body.length > 0 && srKeys.length === V2_KEYS_PER_LANG,
   `keys=${srKeys.length}`);
 check('V2_I18N sr / zh-CN / en declare the same keys',
