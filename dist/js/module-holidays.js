@@ -131,14 +131,27 @@
   }
   window.loadCalendarData = loadCalendarData;
 
-  function ensureSolarTermData() {
+  // Phase 1.9 §七：数据是异步到达的，而调用方（render-calendar.js 的节气块）需要
+  // 知道「什么时候可以重绘」。原来这个函数没有完成回调，数据到达后没有任何通知机制，
+  // 于是首次渲染若早于数据到达，节气标签会永久缺失（空数据启动时必现）。
+  // cb 只在缓存真正被填满时调用一次；缓存已就绪时直接 return，不会递归。
+  function ensureSolarTermData(cb) {
     if (window.solarTermsCache && window.solarTermsCache.length > 0) return;
     var cached = localStorage.getItem('cycle-solarterms');
     if (cached) {
-      try { window.solarTermsCache = JSON.parse(cached); if (window.solarTermsCache.length > 0) return; } catch (e) {}
+      try {
+        window.solarTermsCache = JSON.parse(cached);
+        if (window.solarTermsCache.length > 0) { if (cb) setTimeout(cb, 0); return; }
+      } catch (e) {}
     }
     fetch('calendar-data.json').then(function (r) { return r.json(); })
-      .then(function (d) { if (d && d.solarTerms) { window.solarTermsCache = d.solarTerms; localStorage.setItem('cycle-solarterms', JSON.stringify(window.solarTermsCache)); } })
+      .then(function (d) {
+        if (d && d.solarTerms) {
+          window.solarTermsCache = d.solarTerms;
+          localStorage.setItem('cycle-solarterms', JSON.stringify(window.solarTermsCache));
+          if (cb) setTimeout(cb, 0);
+        }
+      })
       .catch(function () { /*console.warn('[holidays] 数据加载失败');*/ });
   }
   window.ensureSolarTermData = ensureSolarTermData;

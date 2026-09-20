@@ -2,41 +2,19 @@
 (function () {
   console.log('[fix-stats] 已加载');
 
-  // ── 数据初始化：默认经期记录 ──
-  (function () {
-    function _seed() {
-      if (typeof window.state === 'undefined') { setTimeout(_seed, 200); return; }
-      if (window.state.records && window.state.records.length >= 2) {
-        console.log('[数据初始化] 已有' + window.state.records.length + '条记录，跳过注入');
-        return;
-      }
-      var defaultRecords = [new Date(2026, 4, 28), new Date(2026, 5, 24)];
-      var defaultPeriodEnds = {'2026-05-28': '2026-06-04', '2026-06-24': '2026-07-02'};
-      if (!window.state.records) window.state.records = [];
-      var seen = {};
-      for (var i = 0; i < window.state.records.length; i++) {
-        var k = typeof fmtDate === 'function' ? fmtDate(window.state.records[i]) : window.state.records[i].toISOString().slice(0, 10);
-        seen[k] = true;
-      }
-      for (var j = 0; j < defaultRecords.length; j++) {
-        var dk = typeof fmtDate === 'function' ? fmtDate(defaultRecords[j]) : defaultRecords[j].toISOString().slice(0, 10);
-        if (!seen[dk]) {
-          window.state.records.push(defaultRecords[j]);
-        }
-      }
-      window.state.periodEnds = window.state.periodEnds || {};
-      for (var pk in defaultPeriodEnds) {
-        if (!window.state.periodEnds[pk]) window.state.periodEnds[pk] = defaultPeriodEnds[pk];
-      }
-      window.state.settings = window.state.settings || { cycleLength: 28, periodLength: 7 };
-      if (typeof saveState === 'function') saveState();
-      setTimeout(function() {
-        if (typeof renderCalendar === 'function') renderCalendar();
-      }, 300);
-      console.log('[数据初始化] 已注入默认周期记录');
-    }
-    setTimeout(_seed, 200);
-  })();
+  // ── 数据初始化：默认经期记录 —— Phase 1.9 已移除 ──
+  // 这里原本有一个 IIFE：当 state.records.length < 2 时，向 state 注入两条硬编码的
+  // 2026 年记录（05-28 / 06-24）、补上对应的 periodEnds，然后调用 saveState()。
+  // 它的危害不在「补了个默认值」，而在写入路径：saveState() 会把 records 写进
+  // shared-cycle-data，并在 1500ms 后触发 pushAllSharedData() —— 一次普通页面加载
+  // 就能把两条用户从未输入过的周期记录同步给对方。周期是健康数据，这条路径等于
+  // 让应用替用户捏造生理事实。
+  //
+  // 移除规则（Phase 1.9 §二）：任何自动修复逻辑都不得在用户没有明确输入的情况下
+  // 向 shared state 写入周期记录。不存在「自动猜测经期」这种功能。
+  //
+  // 移除只阻止未来注入：设备 localStorage 与 shared-cycle-data 里已有的记录保持原样，
+  // 不回滚、不清理。空状态由各渲染层自行处理（空日历 / 空图表），不靠造数据。
 
   // ── 进度条修复 ──
   (function(){

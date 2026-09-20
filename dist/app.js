@@ -37,6 +37,45 @@ const MOOD_EMOJI_MAP = Object.fromEntries(
 let MOOD_NAME_MAP = {}; // populated lazily after i18n loads
 
 /* ================================================================
+   ANNIVERSARY DATES — single canonical source (Phase 1.9 §四)
+   ================================================================
+   Before this, one pair of dates was resolved independently in four
+   places: the two globals near the INIT section, a raw re-read inside
+   getSpecialDate(), a third helper in js/module-memories.js (_annDate),
+   and a fourth in js/fix-diary.js that read the #annDateMet /
+   #annDateLove *input elements* — so before Settings had ever rendered,
+   that panel badged the HTML attribute's date instead of the real one.
+   The two defaults were also copy-pasted as bare literals in six places.
+
+   These constants and getAnnDates() are now the only place either date,
+   or either default, is spelled out in app.js. The values are
+   pre-existing real dates and are deliberately unchanged (§四).
+
+   Declared up here rather than beside the globals because
+   loadPerProfileSettings() is reachable from switchProfile(), and a
+   `const` in the temporal dead zone would throw at that call site.
+
+   SCOPE, stated so nobody mistakes this for a fix it is not: this makes
+   one DEVICE internally consistent. It does NOT make two devices agree.
+   cycle-ann-met / cycle-ann-love are plain localStorage keys, never part
+   of shared-* and never carried by collect()/apply() in js/sync.js, so
+   nothing about them is ever synced. Converging them across devices
+   would mean adding a key to collect() and a merge branch to apply() —
+   a sync-protocol change §四 forbids without proof the current
+   architecture cannot solve it. Reported, not attempted.
+   ================================================================ */
+const ANN_KEY_MET = 'cycle-ann-met';
+const ANN_KEY_LOVE = 'cycle-ann-love';
+const ANN_DEFAULT_MET = '2026-03-19';
+const ANN_DEFAULT_LOVE = '2026-05-07';
+function getAnnDates() {
+  return {
+    met: localStorage.getItem(ANN_KEY_MET) || ANN_DEFAULT_MET,
+    love: localStorage.getItem(ANN_KEY_LOVE) || ANN_DEFAULT_LOVE,
+  };
+}
+
+/* ================================================================
    EXTRACTED to js/ui-core.js
    safeParse(), $(), clearElCache(), debounce()
    ================================================================ */
@@ -109,7 +148,6 @@ function switchProfile(p) {
       if (p === 'barry') {
         renderCalendar();
         renderBarrySymptomView();
-        renderTips();
       }
       renderHug();
       renderGratitude();
@@ -198,8 +236,13 @@ function loadState() {
   } catch (e) {
     if (DEBUG) console.warn('[state] Failed to migrate old state:', e.message);
   }
+  // Phase 1.9 §二：全新安装不再预置任何经期记录（详见 js/fix-stats.js 顶部说明）。
+  // 原实现为 andjela 预置一条硬编码的 2026-05-28 记录，与 fix-stats.js 的注入器合起来凑满
+  // 「两条」，好让空状态下的进度条 / 图表 / 日历有东西可画。代价是应用替用户伪造生理
+  // 事实，并且会经 saveState() → shared-cycle-data → pushAllSharedData() 同步给对方。
+  // 空状态改由各渲染层自行处理。
   return {
-    records: activeProfile === 'andjela' ? [new Date(2026, 4, 28)] : [],
+    records: [],
     periodEnds: {},
     symptoms: {},
     moods: {},
@@ -381,8 +424,9 @@ function loadPerProfileSettings() {
   // ALWAYS save the corrected lang
   if (!savedLang) localStorage.setItem(profileKey('cycle-lang'), lang);
   theme = localStorage.getItem(profileKey('cycle-theme')) || 'light';
-  annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
-  annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+  const _ann = getAnnDates();
+  annDateMet = _ann.met;
+  annDateLove = _ann.love;
 }
 function setLang(l) {
   window.lang = l;
@@ -407,10 +451,16 @@ function setLang(l) {
 // window.lang is set in i18n.js (loaded before app.js)
 window.lang = localStorage.getItem('cycle-lang') || 'sr';
 let theme = localStorage.getItem('cycle-theme') || 'light';
-let annDateMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
-let annDateLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+const _annInitial = getAnnDates();
+let annDateMet = _annInitial.met;
+let annDateLove = _annInitial.love;
 
-// exportAllData(), importAllData() — defined in js/render-settings.js
+// Phase 1.9 §三：这里原本写着「exportAllData(), importAllData() — defined in
+// js/render-settings.js」。那句话是错的——js/render-settings.js 从未被提交，
+// 两个函数在整个代码库中都不存在，而 Settings 面板上的两个按钮却直接
+// onclick 调用它们，点一下就抛 ReferenceError。按钮已移除，注释改为记录
+// 这件事本身。已有的 exportData() / importData()（本文件内）是这对功能的
+// 真实实现，仍然可用；跨设备"全部数据"备份的缺口见阶段报告。
 
 // getFestivalTheme(), applyFestivalTheme(), applySeasonalDecor() — extracted to js/theme.js
 function setupOfflineDetection() {
@@ -501,7 +551,7 @@ function setupUpdatePrompt() {
       if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     };
   }
-  navigator.serviceWorker.register('sw.js?v=7.3.0')
+  navigator.serviceWorker.register('sw.js?v=7.3.1')
     .then(function (reg) {
       // A new version installed on an earlier visit and is still parked
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg);
@@ -662,7 +712,6 @@ async function bootApp() {
         if (activeProfile === 'barry') {
           renderCalendar();
           renderBarrySymptomView();
-          renderTips();
         }
         renderHug();
         renderGratitude();
@@ -698,7 +747,7 @@ async function bootApp() {
     symTab.style.opacity = activeProfile === 'barry' ? '' : '0.45';
     symTab.title = activeProfile === 'barry' ? '' : t('profileOnly') || 'Only Barry can view this';
   }
-  randomThinkingOfYou();
+  // Phase 1.9 §一：这里原本调用 randomThinkingOfYou()，该函数已删除（原因见其墓碑注释）。
 
   // Modal keyboard trap: Escape closes, Tab traps focus
   const modalKeydown = function (e) {
@@ -951,32 +1000,20 @@ function renderTea() {
    CALENDAR DATA LOADER — rich stories + solar terms
    ================================================================ */
 let calendarExtraData = null;
-function randomThinkingOfYou() {
-  if (activeProfile !== 'andjela') return;
-  if (Math.random() > 0.18) return; // 18% chance
-  const msgs =
-    lang === 'sr'
-      ? [
-          'Upravo sam pomislio na tebe ♥',
-          'Nadam se da se osećaš dobro danas ✨',
-          'Tvoj osmeh mi je najdraža st let 🌸',
-          'Mislim na tebe... uvek 💫',
-          'Barry je upravo pomislio na tebe 💝',
-        ]
-      : lang === 'en'
-        ? [
-            'Just thought of you ♥',
-            'Hope you are feeling good today ✨',
-            'Your smile is my favorite thing 🌸',
-            'Thinking of you... always 💫',
-            'Barry was just thinking of you 💝',
-          ]
-        : ['刚刚在想你 ♥', '希望你今天心情好 ✨', '你的笑容是我最喜欢的 🌸', '一直在想你 💫', 'Barry 刚刚想到了你 💝'];
-  const msg = msgs[Math.floor(Math.random() * msgs.length)];
-  setTimeout(function () {
-    toast(msg);
-  }, 3000);
-}
+// ── randomThinkingOfYou() —— Phase 1.9 §一 已删除 ──
+// 这里原本有一个函数：以 18% 概率在加载后 3 秒弹出一条 toast，只对 Anđela 显示。
+// 三语各 5 条消息，**每一条都是系统在替 Barry 声称他的内心活动**：
+//   'Upravo sam pomislio na tebe' / 'Tvoj osmeh mi je najdraža stvar' / 'Mislim na tebe... uvek'
+//   以及直接点名的 'Barry je upravo pomislio na tebe 💝'。
+// 前四条是第一人称，读者只会理解成 Barry 说的；第五条干脆署名 Barry。
+// 两条都不成立：Barry 没有输入过任何内容，也无法编辑这些常量。
+//
+// 没有"去掉冒充部分"的改法——删掉人名后剩下的仍然是同一句伪造的内心独白。因此整体删除，
+// 而不是改写成应用口吻：应用无法诚实地宣称"我在想你"。
+//
+// 真正成立的同类体验属于 Phase 2A：当 Anđela 真的留下东西（shared-gratitude-echo）时，
+// 系统可以如实提示"她给你留了一条"。那是事实，不是编造。
+// 由 tests/test-phase19-attribution.js 守住，不得以任何署名形式恢复。
 
 /* ================================================================
    GREETING OVERLAY
@@ -1200,24 +1237,33 @@ function updateLangUI() {
   document.getElementById('export-btn').textContent = st.export;
   document.getElementById('import-btn').textContent = st.import;
   document.getElementById('clear-btn').textContent = st.clear;
-  // Settings extras
-  document.getElementById('export-all-label').textContent = t('settingsExportAll');
-  document.getElementById('import-all-label').textContent = t('settingsImportAll');
-  document.getElementById('clear-diary-btn').innerHTML = t('settingsClearDiary');
+  // Phase 1.9 §三：这里原本给三个按钮写标签——export-all-label /
+  // import-all-label / clear-diary-btn。它们各自的 onclick 指向
+  // exportAllData / importAllData / clearAllDiaries，而这三个函数在整个代码库
+  // 中都不存在：注释说它们"defined in js/render-settings.js"以及
+  // "extracted to js/render-diary.js"，但这两个文件从未被提交（见 js/ 目录）。
+  // 于是三个按钮一点就抛 ReferenceError。
+  // 按钮已随 index.html 一并移除，这三行必须同时删——否则 getElementById
+  // 返回 null，同一个错误会从"点击时"提前到"每次渲染 Settings 面板时"。
+  // 已有的 exportData() / importData()（就在本文件内）不受影响，仍然可用，
+  // 它们才是这对功能的真实实现。跨设备"全部数据"备份能力见阶段报告。
   // Diary panel i18n
   const ta = document.getElementById('diaryTextarea');
   if (ta) ta.placeholder = t('diary.placeholder');
-  document.getElementById('sd-export').textContent = st.export;
-  document.getElementById('sd-import').textContent = st.import;
+  // Phase 1.9 §三：这一段原有四行给"必报错"的按钮做本地化，已随按钮一并删除：
+  //   sd-export / sd-import —— 那两行没有 null 保护（document.getElementById(...).textContent），
+  //     而 index.html 里对应的两个按钮 onclick 指向 exportSharedDiary / showImportModal，
+  //     这两个函数全仓无实现，按钮已移除。元素一删，这两行就会从"点击时报错"
+  //     变成"每次渲染都报错"，所以必须同时删。
+  //   shiftDiaryCalMonth(-1)/(1) 的 aria-label —— 那两个 .nav-btn 同样指向不存在的函数，
+  //     已随按钮移除。querySelector 本来有 null 保护，删掉是因为它们再也匹配不到任何元素。
+  // 保留：diaryTextarea 占位符、scrollDiaryStrip 的两个 aria-label、footer-credit、
+  // diary-cal-btn（toggleDiaryCalendar() 是存在的）。
   // Diary aria-labels
   const dsp = document.querySelector('.date-strip-arrow[onclick*="scrollDiaryStrip(-1)"]');
   if (dsp) dsp.setAttribute('aria-label', t('diaryDateStripPrev'));
   const dsn = document.querySelector('.date-strip-arrow[onclick*="scrollDiaryStrip(1)"]');
   if (dsn) dsn.setAttribute('aria-label', t('diaryDateStripNext'));
-  const cpm = document.querySelector('.nav-btn[onclick*="shiftDiaryCalMonth(-1)"]');
-  if (cpm) cpm.setAttribute('aria-label', t('diaryCalPrevMonth'));
-  const cpn = document.querySelector('.nav-btn[onclick*="shiftDiaryCalMonth(1)"]');
-  if (cpn) cpn.setAttribute('aria-label', t('diaryCalNextMonth'));
   // Footer credit
   const fc = document.querySelector('.footer-credit');
   if (fc) fc.textContent = t('diaryFooterCredit');
@@ -1296,9 +1342,12 @@ function applyAllUI(what) {
     renderSleepCard();
     renderGratitude();
   }
-  if (all || what === 'tips' || (Array.isArray(what) && what.indexOf('tips') >= 0)) {
-    if (document.getElementById('panel-tips').classList.contains('active')) renderTips();
-  }
+  // Phase 1.9 §五：这里原有 `if (what === 'tips') { if
+  // (document.getElementById('panel-tips').classList.contains('active'))
+  // renderTips(); }`。整段删除，原因见 renderTips() 原址的说明。
+  // 这一行还是全仓唯一一处无保护的 #panel-tips 解引用 —— markup 删掉之后
+  // 它会立刻抛 TypeError，所以必须和 markup 同批删除，而不是留着。
+  // applyAllUI('tips') 现在是无害的 no-op。
   if (all || what === 'barry' || (Array.isArray(what) && what.indexOf('barry') >= 0)) {
     if (activeProfile === 'barry') renderBarrySymptomView();
   }
@@ -2413,65 +2462,30 @@ function updateSharedCycleInfo() {
   else if (phase === 'luteal') cat = 'luteal';
   localStorage.setItem('shared-cycle-info', JSON.stringify({ phase: cat, nextStart: pred.nextStart ? fmtDate(pred.nextStart) : null, updated: Date.now() }));
 }
-function renderTips() {
-  let cat = 'period';
-  let tips = [];
-  if (activeProfile === 'barry') {
-    // Barry's tips — read shared cycle info from Anđela
-    const shared = getSharedCyclePhase();
-    if (shared && shared.phase) cat = shared.phase;
-    else cat = 'general';
-    const tipKey = 'barryTips' + cat.charAt(0).toUpperCase() + cat.slice(1);
-    tips = t(tipKey) || t('barryTipsGeneral');
-    const phaseNames = {
-      period: t('barryPhasePeriod'),
-      follicular: t('barryPhaseFollicular'),
-      ovulation: t('barryPhaseOvulation'),
-      luteal: t('barryPhaseLuteal'),
-      general: t('barryPhaseGeneral'),
-    };
-    const title = t('barryTipsTitle');
-    document.getElementById('tips-list').innerHTML =
-      '<div style="text-align:center;padding:8px 0;font-size:.78rem;font-weight:700;color:var(--text)">' +
-      title +
-      '</div><div style="text-align:center;font-size:.68rem;color:var(--gold);margin-bottom:8px">' +
-      phaseNames[cat] +
-      '</div>' +
-      tips
-        .map(function (tip) {
-          return (
-            '<div class="tip-card" style="border-left:3px solid var(--teal)"><span class="tip-icon">' +
-            tip.icon +
-            '</span><div class="tip-body"><span class="tip-text">' +
-            tip.text +
-            '</span></div></div>'
-          );
-        })
-        .join('');
-    return;
-  }
-  // Anđela's tips (original)
-  const pred = predict();
-  const td = today();
-  const phase = getPhase(td, pred);
-  if (phase === 'period-on' || phase === 'period-mid') cat = 'period';
-  else if (phase === 'ovulation' || phase === 'fertile') cat = 'ovulation';
-  else if (phase === 'follicular') cat = 'follicular';
-  else if (phase === 'luteal') cat = 'luteal';
-  const names = {
-    period: t('phasePeriod'),
-    follicular: t('phaseFollicular'),
-    ovulation: t('phaseOvulation'),
-    luteal: t('phaseLuteal'),
-  };
-  tips = t('tips.' + cat);
-  document.getElementById('tips-list').innerHTML = tips
-    .map(
-      (tip) =>
-        `<div class="tip-card ${tip.tcm ? 'tcm' : (tip.source && tip.source.includes('Srpska')) || tip.source.includes('Serbian') ? 'serbian' : ''}"><span class="tip-icon">${tip.icon}</span><div class="tip-body"><span class="tip-phase-label">${names[cat]} · ${t('tabs')[2]}</span><span class="tip-text">${tip.text}</span>${tip.source ? `<span class="tip-source">${tip.source}</span>` : ''}</div></div>`
-    )
-    .join('');
-}
+/* Phase 1.9 §五 — renderTips() 已删除。
+ * 它只往 #tips-list 里写 HTML，而 #panel-tips 从来没有任何 tab 按钮指向它：
+ * index.html 的 tab 栏只有 dashboard / together / diary / stats / settings /
+ * symptoms 六个 data-panel，switchToTab() 也只会被这四个名字调用
+ * （diary / stats / symptoms / together）。没有任何代码给它加 .active，
+ * 唯一提到它的 app.js:1348 也是在「读」.contains('active')，不是写。
+ * 也就是说它每次都白算一遍，然后写进一个 CSS 永远不会显示的容器。
+ *
+ * 需要说明的是：它并非绝对不可达。#tips 这个 URL hash 会走到
+ * app.js:784 的 getElementById('panel-' + initTab)，照样能激活它 ——
+ * 只是界面上没有任何入口能到那里。删除 markup 之后，#tips 会退化成
+ * 静默 no-op（那行有 null 保护），不会报错。
+ *
+ * 一并删掉的还有四处调用（原 151 / 716 / 1348 / 2836 行）。其中 2836 是在
+ * dashboard 面板里调的，所以每次回到首页都会跑一次这个白工。
+ *
+ * js/sync.js:598 不动：那一行是 `if (typeof renderTips === 'function')`，
+ * 对未定义的名字是安全的，函数删掉后自然变成 no-op。这样这个 diff 不必碰
+ * 任何同步相关文件（§六）。
+ *
+ * 遗留（仅在报告里记录，不在本阶段处理）：i18n 里的 'tips.*' / 'barryTips*' /
+ * 'barryPhase*' 键、css/calendar.css 的 .tip-* 规则、以及 .tip-source
+ * 的取色，全都随这次删除变成孤儿。
+ * 见 tests/test-phase19-integrity.js 的 E 段。 */
 function exportData() {
   const blob = new Blob(
     [
@@ -2534,7 +2548,12 @@ function clearAllData() {
   updateFab();
   toast(t('toast.cleared'));
 }
-// clearAllDiaries() extracted to js/render-diary.js
+// Phase 1.9 §三：这里原本写着「clearAllDiaries() extracted to js/render-diary.js」。
+// js/render-diary.js 从未被提交，clearAllDiaries 在整个代码库中都不存在，而
+// Settings 面板上的「🗑️ 清空所有日记」按钮直接 onclick 调用它——点一下就抛
+// ReferenceError。按阶段约定，破坏性数据写入若没有安全方案（需先确认、需防误触、
+// 需正确处理 Worker 数据架构、且不得绕过 Worker 直连 GitHub），宁可移除按钮。
+// 按钮已随 index.html 移除，本注释记录原因，避免日后有人"顺手补回功能"。
 
 /* ================================================================
    NAVIGATION
@@ -2780,7 +2799,6 @@ document.querySelectorAll('.tab').forEach((btn) => {
     }
     if (id === 'dashboard') {
       initDashboard();
-      renderTips();
     }
     if (id === 'stats') {
       renderStatsPanel();
@@ -3244,8 +3262,14 @@ function updateSharedSymptoms() {
 // Special badge for Anđela
 // Sleep Tracker
 function getSpecialDate(d) {
-  const annMet = localStorage.getItem('cycle-ann-met') || '2026-03-19';
-  const annLove = localStorage.getItem('cycle-ann-love') || '2026-05-07';
+  // Phase 1.9 §四 — route through the canonical accessor instead of re-reading
+  // the two keys here. This was the per-calendar-cell duplicate: getSpecialDate()
+  // runs for every rendered day, so it re-resolved the same pair dozens of times
+  // per repaint and could disagree with the globals if a default ever changed in
+  // one place but not the other.
+  const _ann = getAnnDates();
+  const annMet = _ann.met;
+  const annLove = _ann.love;
   const mmdd = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const metMMDD = annMet.slice(5);
   const loveMMDD = annLove.slice(5);
@@ -3346,10 +3370,12 @@ function renderSpecialBadge() {
   badge.style.display = '';
   const texts =
     lang === 'sr'
-      ? ['Ti si jedinstvena ✨', 'Najlepša na svetu 🌸', 'Barryjeva ljubav 💝', 'Jedna jedina 💫']
+      // Phase 1.9 §一：第三句原为 'Barryjeva ljubav 💝' / "Barry's love 💝" / 'Barry 的爱 💝'。
+      // 那是系统在替 Barry 声明感情——他没写过这句话，也无法编辑它。改为不指名的中性表达。
+      ? ['Ti si jedinstvena ✨', 'Najlepša na svetu 🌸', 'Voljena si 💝', 'Jedna jedina 💫']
       : lang === 'en'
-        ? ['You are unique ✨', 'Most beautiful 🌸', "Barry's love 💝", 'One and only 💫']
-        : ['独一无二的你 ✨', '最美的人 🌸', 'Barry 的爱 💝', '世界上唯一的你 💫'];
+        ? ['You are unique ✨', 'Most beautiful 🌸', 'You are loved 💝', 'One and only 💫']
+        : ['独一无二的你 ✨', '最美的人 🌸', '被爱着的你 💝', '世界上唯一的你 💫'];
   document.getElementById('specialBadgeText').textContent = texts[Math.floor(Math.random() * texts.length)];
 }
 

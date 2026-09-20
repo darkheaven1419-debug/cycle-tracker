@@ -229,8 +229,15 @@ function _renderDiaryDateStrip(centerDate) {
   try { sd = JSON.parse(localStorage.getItem('shared-diary')||'{}'); } catch(e) {}
   var user = (typeof activeProfile !== 'undefined') ? activeProfile : 'andjela';
   // 读取纪念日
-  var _annMet = document.getElementById('annDateMet'); var annMet = _annMet ? _annMet.value : '';
-  var _annLove = document.getElementById('annDateLove'); var annLove = _annLove ? _annLove.value : '';
+  // Phase 1.9 §四 — read the canonical accessor, not the input elements.
+  // This used to be `document.getElementById('annDateMet').value`, i.e. whatever
+  // js/module-settings.js loadSettingsUI() had last written into the Settings
+  // input. Until that had run, the value was the static HTML attribute, so this
+  // panel badged the wrong day purely because of render order. getAnnDates()
+  // resolves the same two localStorage keys the rest of the app uses, and the
+  // guard keeps this file loadable standalone (it is not a module).
+  var _ann = (typeof getAnnDates === 'function') ? getAnnDates() : { met: '', love: '' };
+  var annMet = _ann.met, annLove = _ann.love;
   var annDays = {}; if (annMet) annDays[annMet] = '⭐'; if (annLove) annDays[annLove] = '\u{1F495}';
   var html = '';
   for (var i = -3; i <= 3; i++) {

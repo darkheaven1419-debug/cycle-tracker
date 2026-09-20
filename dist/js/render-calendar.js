@@ -224,6 +224,16 @@ var CalendarRenderer = (function () {
         if (!solarTerm.story && typeof ensureSolarTermData === 'function') {
           ensureSolarTermData();
         }
+      } else if (isInMonth && typeof ensureSolarTermData === 'function') {
+        // Phase 1.9 §七：缓存为空时也必须触发懒加载，并在数据到达后重绘一次。
+        // 原实现的 ensureSolarTermData() 只写在 solarTerm 为真的分支里，而 solarTerm
+        // 依赖同一个缓存 —— 缓存为空时它永远不会被调用，于是首次渲染若早于
+        // calendar-data.json 到达，节气标签就永久缺失且再无重绘。
+        // 之前被 js/fix-stats.js 注入的两条伪造记录触发的额外重绘掩盖了这个问题。
+        // 见 tests/test-phase19-emptystate.js。
+        ensureSolarTermData(function () {
+          if (typeof window.renderCalendar === 'function') window.renderCalendar();
+        });
       }
     }
 

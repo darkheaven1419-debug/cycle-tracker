@@ -313,8 +313,12 @@ function measure(cfg) {
   const browser = await chromium.launch();
 
   // The selectors that exist without seeding. Each is a rule the sweep touched.
+  // Phase 1.9 §五: '.tip-source' removed — its only producer was renderTips()
+  // writing into #panel-tips, and both are gone. It had to go rather than stay:
+  // measure() reports a non-match instead of failing, so a selector with no
+  // source would have silently probed nothing on every future run.
   const PROBED = ['.footer-credit', '.andjelin-label', '.day .lunar-date.lunar-fifteen',
-    '.solar-term-label', '.tip-source'];
+    '.solar-term-label'];
 
   for (const theme of ['light', 'dark']) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -348,10 +352,11 @@ function measure(cfg) {
       collect(m.contrasts);
       last = m;
     }
-    // #panel-tips has no tab; it is reached from inside Cycle. Then one pass that
-    // also accepts unpainted-but-resolved elements, so every probed rule is
-    // accounted for rather than silently skipped.
-    await page.evaluate(() => { if (typeof window.renderTips === 'function') window.renderTips(); });
+    // Phase 1.9 §五: the forced renderTips() pass is gone — renderTips() no
+    // longer exists, and #panel-tips (which held .tip-source, the one selector
+    // that needed forcing because it had no tab) has been deleted. The pass
+    // below still accepts unpainted-but-resolved elements, so every remaining
+    // probed rule is accounted for rather than silently skipped.
     await page.waitForTimeout(300);
     collect((await page.evaluate(measure, { selectors: PROBED, includeHidden: false })).contrasts);
     collect((await page.evaluate(measure, { selectors: PROBED, includeHidden: true })).contrasts);

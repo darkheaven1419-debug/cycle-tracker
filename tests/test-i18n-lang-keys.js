@@ -78,8 +78,31 @@ check('js/social.js: renderKnowMe widens to the base language',
   const items = src.match(/\{zh:"[^"]*",sr:"[^"]*",en:"[^"]*"\}/g) || [];
   check('js/weather.js: every daily love message now carries en',
     items.length === 12, `with_en=${items.length} expected=12`);
+  // Phase 1.9 §一 re-pin. This assertion used to pin the literal
+  // '0===(lang||"").indexOf("en")?(h.en||h.zh):h.sr', which lived inside the
+  // #dailyLoveMsg write — an auto-generated message that appeared under Barry's
+  // name on every page load. That write was removed because the product must not
+  // speak as a real person, and the literal it pinned went with it.
+  //
+  // A first attempt at re-pinning matched the write syntactically
+  // (dailyLoveMsg") . textContent =) and was vacuous: at HEAD the write went
+  // through a variable, y=document.getElementById("dailyLoveMsg");y&&(y.
+  // textContent=…), so it never matched. Negative-controlled against HEAD, which
+  // is what caught it. The invariant below is behavioural instead: weather.js has
+  // no business touching that element at all any more, so *any* reintroduction —
+  // direct, through a variable, or via querySelector — must bring the id string
+  // back and fail here. HEAD fails it; the current tree passes.
+  //
+  // Block comments are stripped first, and that is load-bearing rather than
+  // tidiness: the tombstone at the foot of weather.js names the removed element
+  // on purpose, so a raw substring scan would flag the documentation of the fix
+  // as the bug. Only /* */ is stripped — weather.js is minified and its code is
+  // full of '//' inside API URLs, so a line-comment pass would eat live code.
+  const code = src.replace(/\/\*[\s\S]*?\*\//g, '');
+  const loveWrite = code.includes('dailyLoveMsg');
   check('js/weather.js: the English branch cannot render undefined',
-    src.includes('0===(lang||"").indexOf("en")?(h.en||h.zh):h.sr'));
+    !loveWrite && items.length === 12,
+    `dailyLoveMsgRef=${loveWrite} with_en=${items.length}`);
 }
 
 // ── 3. DASH_I18N is keyed by language, not by identity ─────────────────
