@@ -42,6 +42,10 @@ function _refreshEchoSurfaces(){
   if(typeof renderGratitude==="function")renderGratitude();
   if(typeof renderTogetherNew==="function")renderTogetherNew();
   if(typeof renderDashboard==="function")renderDashboard(false);
+  /* §Phase 2B.4：Know Me 的判定现在也能从 Home 上点（_knowMeAffordanceHtml），
+     点完之后那张引子必须消失 —— 只重绘 Know Me 卡的话，Home 上的按钮会停在
+     点击之前的样子。与 echo 那条同理，四个面都重绘。 */
+  if(typeof renderKnowMe==="function")renderKnowMe();
 }
 /* 一次点击完成：同一 emoji 再点不改变状态（幂等），换一个 emoji 就是改自己的回应。 */
 function reactGratitude(e,t,n){
@@ -108,10 +112,12 @@ function knowMeFb(l){
     '<button class="km-fb" onclick="rateKnowMe(\'yes\')">'+knowMeFbText(yes)+"</button>"+
     '<button class="km-fb" onclick="rateKnowMe(\'almost\')">'+knowMeFbText(almost)+"</button></div>"
 }
-/** 只改对方那条记录上的 fb —— 不碰 answer，也不碰我自己那条。 */
+/** 只改对方那条记录上的 fb —— 不碰 answer，也不碰我自己那条。
+    §Phase 2B.4：判定可以从 Home 或 Together 上点，所以重绘走 _refreshEchoSurfaces
+    而不是只重绘本卡 —— 否则点过的那处引子会留在原地。 */
 function rateKnowMe(v){
   if(v!=="yes"&&v!=="almost")return;
   const d=fmtDate(today()),o=getKnowMeData(),p="andjela"===activeProfile?"barry":"andjela";
   if(!o[d]||!o[d][p])return;
-  o[d][p].fb=v,o[d][p].fbTime=Date.now(),saveKnowMeData(o),pushAllSharedData(),renderKnowMe()
+  o[d][p].fb=v,o[d][p].fbTime=Date.now(),saveKnowMeData(o),pushAllSharedData(),_refreshEchoSurfaces()
 }function renderSong(){const e=document.getElementById("song-title");if(!e)return;e.textContent=t("songTitle");const n=loadSong(activeProfile),a="andjela"===activeProfile?"barry":"andjela",o=loadSong(a),r="andjela"===a?"🌸 Anđela":"👦 Barry";let i="";i+=n?'<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">'+t("songMyLabel")+'</span><div class="song-title">🎶 '+esc(n.title)+"</div>"+(n.note?'<div class="song-note">'+esc(n.note)+"</div>":"")+"</div>":'<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="'+t("songTitlePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="'+t("songNotePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 '+t("songSave")+"</button></div>",o&&(i+='<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+r+" "+t("songPartnerLabel")+'</span><div class="song-title">🎶 '+esc(o.title)+"</div>"+(o.note?'<div class="song-note">'+esc(o.note)+"</div>":"")+"</div>"),document.getElementById("songContent").innerHTML=i||'<span class="song-icon">🎶</span><div class="song-note">'+t("songEmpty")+"</div>"}function renderRelTips(){if("andjela"!==activeProfile)return void(document.getElementById("relTipCard").style.display="none");const e=REL_TIPS[lang]||REL_TIPS.sr,t=e[Math.floor(Math.random()*e.length)];document.getElementById("relTipIcon").textContent=t.icon,document.getElementById("relTipText").textContent=t.text,document.getElementById("relTipCard").style.display=""}

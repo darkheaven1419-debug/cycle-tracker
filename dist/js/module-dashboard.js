@@ -411,11 +411,13 @@
 
     var target = _replyTarget(ctx.partner, since);
     var echoed = target ? _iEchoed(target) : false;
+    /* §Phase 2B.4：她猜了我而我没判，也是一件「我现在能做的事」。 */
+    var kmHtml = _knowMeAffordanceHtml(ctx);
 
     /* §Phase 2B：没有新动态、但有一条我还没回应的便签时，这不是「空态」——
        「她给我留了东西 → 我可以马上回应」的后半句必须还在。空态文案只在真的无事
        可做时才出现，否则「还没有新消息」会和「你可以回应」同时挂着，自相矛盾。 */
-    if (!items.length && !target) {
+    if (!items.length && !target && !kmHtml) {
       host.innerHTML = wrap('var(--border)',
         '<div style="font-size:.72rem;font-weight:700;color:var(--text-muted)">' + esc(S.empty) + '</div>' +
         '<div style="font-size:.64rem;color:var(--text-muted);margin-top:4px;line-height:1.5">' + esc(S.emptyHint) + '</div>');
@@ -425,7 +427,7 @@
       host.innerHTML = wrap('var(--love)',
         '<div style="font-size:.74rem;font-weight:700;color:var(--love);margin-bottom:2px">' +
         esc(ctx.partner === 'barry' ? S.m : S.f) + '</div>' +
-        _replyAffordanceHtml(ctx, S, target, echoed));
+        _replyAffordanceHtml(ctx, S, target, echoed) + kmHtml);
       return;
     }
 
@@ -448,8 +450,10 @@
     }).join('');
 
     /* 那条便签被别的动态挤出了这四条之外时，回应行仍然接在最后 ——
-       「可以回应」不该因为多了几条动态就消失。 */
+       「可以回应」不该因为多了几条动态就消失。Know Me 的判定同理，且它按 emoji
+       认不了行（见 _knowMeAffordanceHtml），所以一律追加在列表之后。 */
     if (target && !placed) rows += _replyAffordanceHtml(ctx, S, target, echoed);
+    rows += kmHtml;
 
     var more = items.length > 4
       ? '<div style="font-size:.6rem;color:var(--text-muted);padding-top:6px">+ ' + (items.length - 4) + ' ' + esc(S.more) + '</div>'
@@ -839,6 +843,45 @@
       '<div class="tnew-react">' + gratEchoRow(target) + '</div>';
   }
 
+  /* ── §Phase 2B.4：Home 上的 Know Me 一键判定 ─────────────────────────────
+     2B.1 把「她留了东西 → 我可以马上回应」接通到了感恩便签上，但那条路径只看
+     shared-gratitude。Know Me 的判定（❤️ Tačno / 😌 Skoro）是同一类的一键回应
+     —— 她猜了我，只有我能判对错 —— 而它的按钮原本只存在于 Together 的 Know Me
+     卡上，实测那张卡是 Together 里第 6 张（共 12 张），手机上 top≈1333 而
+     vh=844。于是 2B.3 修好的只是「打开那张卡之后」的体验：
+     「Barry 第一眼知道」早就成立（_collectTodayEvents 一直把她今天的猜测列进
+     Home），「Barry 可以一键回应」却不成立 —— 与 2B.1 修掉的感恩卡问题同形。
+
+     刻意不改 _replyTarget：R8 钉住它的两分支结构，而且它的行内匹配靠 💌 + 时间，
+     Know Me 与 Daily Question 在 _collectTodayEvents 里共用 💭 与 'knowme' 标签，
+     按 emoji 认行本来就有歧义。所以这里另起一段、追加在动态列表之后：
+     同一份 shared-knowme、同一个 knowMeLead、同一个 knowMeFb、同一个
+     rateKnowMe —— 没有第二份 state，没有新的同步字段，也没有 unread 计数。
+
+     不加 .tnew-ask 外壳：knowMeLead 产出的 .km-lead 本来就是这一行的引子，且
+     与 Together 上那张卡用的是同一条，两个面因此说的是同一句话。 */
+  function _newestUnjudgedGuess(partner) {
+    var km = _readJSON('shared-knowme', {});
+    var best = null;
+    Object.keys(km || {}).forEach(function (d) {
+      var r = km[d] && km[d][partner];
+      /* 没有可用时间戳的条目无法判定「哪条更新」，与 gratEchoRow 同一条件。 */
+      if (!r || typeof r.time !== 'number' || !isFinite(r.time)) return;
+      /* 判过就不再是「可回应」—— 靠动作清除，不靠时间，与感恩那条一致。 */
+      if (r.fb) return;
+      if (!best || r.time > best.time) best = { date: d, note: r, time: r.time };
+    });
+    return best;
+  }
+
+  function _knowMeAffordanceHtml(ctx) {
+    if (typeof knowMeFb !== 'function' || typeof knowMeLead !== 'function') return '';
+    var t = _newestUnjudgedGuess(ctx.partner);
+    if (!t) return '';
+    return knowMeLead(null, t.note) +
+      '<div class="tnew-react tnew-react-km">' + knowMeFb(t.note) + '</div>';
+  }
+
   function _renderTogetherNew() {
     var host = document.getElementById('together-new');
     if (!host) return;
@@ -848,9 +891,12 @@
     var items = _collectTodayEvents(since);
     var target = _replyTarget(ctx.partner, since);
     var echoed = target ? _iEchoed(target) : false;
+    /* §Phase 2B.4：与 Home 共用同一个 _knowMeAffordanceHtml，所以这条对称性和
+       感恩那条一样是结构性的，而不是两处各写一遍。 */
+    var kmHtml = _knowMeAffordanceHtml(ctx);
     /* §Phase 2B：与 Home 同一条规则 —— 手上还有一条没回应的便签，就不算「无事可做」。
        两处共用 _replyTarget，所以这条对称性是结构性的，不是各写一遍。 */
-    if (!items.length && !target) { host.hidden = true; host.innerHTML = ''; return; }
+    if (!items.length && !target && !kmHtml) { host.hidden = true; host.innerHTML = ''; return; }
     host.hidden = false;
 
     var placed = false;
@@ -870,6 +916,7 @@
     }).join('');
 
     if (target && !placed) rows += _replyAffordanceHtml(ctx, S, target, echoed);
+    rows += kmHtml;
 
     host.innerHTML = '<div class="tnew-head">' + esc(ctx.partner === 'barry' ? S.m : S.f) + '</div>' + rows;
   }

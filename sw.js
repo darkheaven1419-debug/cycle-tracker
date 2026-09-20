@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.3.7';
+const APP_VERSION = '7.3.8';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -55,7 +55,36 @@ const V = '?v=' + APP_VERSION;
 // 因此改由容器 #lunarInfo / #cultureCard 选中）。
 // 日历格 37x44 与日记日期条 38x44 保持不动 —— 那是 320px 下七列能给出的全部宽度，
 // v2.css 早有说明，既有测试也已接受。周期算法与数据结构仍未动。
-const CACHE_STATIC = 'ciklus-static-v40';
+// Phase 1.9 起 · v38 → v39。./js/module-dashboard.js 与 ./app.js 的改动。
+//
+// ⚠️ 这一代际记录了一段真实的缺口，写在这里而不是抹掉：
+// v39（由 8b09bb8 引入，到 bd2c3be 结束）期间一共有 **6 个 commit** 改了
+// STATIC_ASSETS 里的**裸路径**资产，却只抬了 APP_VERSION、没有换 CACHE_STATIC：
+//   88a043c  css/v2.css, js/module-dashboard.js
+//   e6d0eb0  index.html
+//   9764cab  index.html
+//   228a6d7  data/holidays.json, index.html, js/module-dashboard.js
+//   39b8d9c  index.html, js/module-dashboard.js
+//   0122578  index.html, js/module-dashboard.js
+// 裸路径的 cache key 就是路径本身，永远不会动，而 SW 对它们是 cache-first：
+// APP_VERSION 只决定 ?v= 查询串，对裸路径完全无效。后果是，凡是已经装了 v39 的
+// 客户端，activate 会保留 v39 桶，于是 index.html / module-dashboard.js / v2.css /
+// holidays.json 一直吐旧副本 —— 这些 commit 的改动对它们是不可见的。
+// 直到 bd2c3be（Phase 2B.3）把 v39 → v40，才连带把它们重新取了一遍；缺口是那样被
+// 顺带补上的，而不是被发现的。也不是「6 个 commit 都错了」这么简单：其中只有 3 个
+// 改的是 module-dashboard.js，另外 3 个错在 index.html / v2.css / holidays.json 上，
+// 所以靠肉眼看 diff 很难发现 —— 这正是它需要一条自动断言而不是靠自觉的原因。
+// tests/test-phase2a-sw.js 的 S15 现在从**当前代际**往回逐个 commit 校验这条不变量：
+// 它盯的是「commit 有没有碰裸路径资产」，而不是「改了哪个文件」。
+// 教训：判断该抬哪根轴，看的是文件在 STATIC_ASSETS 里**怎么被列的**，不是「改了文件」。
+// Phase 2B.3 · v39 → v40。这一轮改 ./css/v2.css（新增 .km-lead）与 ./js/render-love.js。
+// v2.css 又是裸路径，同一个老问题：不改名字，装了旧 SW 的客户端永远拿不到新规则，
+// 卡片的状态引子会一直以正文字号、正文颜色渲染。render-love.js 带 ?v=，由 APP_VERSION 管。
+// Phase 2B.4 · v40 → v41。这一轮改 ./js/module-dashboard.js（Home 与 Together 共用
+// 新的 _knowMeAffordanceHtml，让她的 Know Me 猜测在首页就能一键判定）与
+// ./js/render-love.js（rateKnowMe 改走 _refreshEchoSurfaces）。前者是裸路径，所以必须
+// 抬这一代际；后者由 7.3.8 管。两轴同抬，和 2B.3 一样的判断方式。
+const CACHE_STATIC = 'ciklus-static-v41';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

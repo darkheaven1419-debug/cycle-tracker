@@ -246,6 +246,11 @@ function fire(handlers, url, opts) {
   // bare-path hazard as v38: './css/v2.css' is precached WITHOUT a ?v= suffix,
   // so its cache key never moves on its own and an installed client would keep
   // serving the unstyled lead for good.
+  // v40 → v41 in Phase 2B.4, for './js/module-dashboard.js' — also a bare path.
+  // v38 → v39 (Phase 1.9) is the generation where this invariant was MISSED
+  // three times running: 228a6d7, 39b8d9c and 0122578 all changed
+  // ./js/module-dashboard.js and bumped only APP_VERSION, which does nothing for
+  // a bare path. S15 below exists because of that; see the sw.js comment chain.
   // The bump is the only thing that makes a deploy reach a client
   // that already has the old SW installed: these assets sit in STATIC_ASSETS
   // and are served cache-first, so without a new cache name the stale copies
@@ -253,10 +258,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV40 = /const CACHE_STATIC = 'ciklus-static-v40';/.test(src);
-    const hasV39 = /ciklus-static-v39/.test(src);
+    const hasV41 = /const CACHE_STATIC = 'ciklus-static-v41';/.test(src);
+    const hasV40 = /ciklus-static-v40/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV40 && !hasV39, `v40=${hasV40} v39StillPresent=${hasV39}`);
+      hasV41 && !hasV40, `v41=${hasV41} v40StillPresent=${hasV40}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -315,12 +320,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v38');
     await named.api.open('ciklus-static-v39');
     await named.api.open('ciklus-static-v40');
+    await named.api.open('ciklus-static-v41');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v39 buckets and keeps v40 + fonts',
+    check('S13 activate evicts the stale v31..v40 buckets and keeps v41 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -330,7 +336,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v37') === -1 &&
       names.indexOf('ciklus-static-v38') === -1 &&
       names.indexOf('ciklus-static-v39') === -1 &&
-      names.indexOf('ciklus-static-v40') !== -1 &&
+      names.indexOf('ciklus-static-v40') === -1 &&
+      names.indexOf('ciklus-static-v41') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -361,11 +368,102 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v40');
+    const got = named.contents('ciklus-static-v41');
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,
       `entries=${got.length} expected=${expected.join(',')} missing=${missing.join(',') || 'none'}`);
+  }
+
+  // ── S15 — "did you bump the RIGHT axis?" is a question about a commit, not
+  // about a file, so this walks git history instead of reading sw.js text.
+  //
+  // For every commit since the one that introduced the CURRENT generation name:
+  // if it changed an asset that STATIC_ASSETS lists as a BARE path, it must also
+  // have moved CACHE_STATIC. Nothing else can make an installed client re-fetch a
+  // bare asset — its cache key is the path, which never moves, and the SW serves
+  // it cache-first. APP_VERSION is the wrong lever for it and does nothing at all.
+  //
+  // This is the check v38 → v39 needed and did not have: 228a6d7, 39b8d9c and
+  // 0122578 each changed ./js/module-dashboard.js — a bare path — and bumped only
+  // APP_VERSION, so an installed client kept the older copy for the whole of that
+  // generation. Anchoring at the current generation keeps those three out of scope
+  // by construction (they predate the name) while making the next one fail here.
+  {
+    const git = (args) => require('child_process')
+      .execSync('git ' + args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+
+    /** The paths STATIC_ASSETS lists WITHOUT a version suffix — the other axis. */
+    const barePaths = () => {
+      const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+      const start = src.indexOf('const STATIC_ASSETS');
+      const block = src.slice(start, src.indexOf('];', start));
+      const bare = [];
+      block.split('\n').forEach((line) => {
+        if (/\+\s*V/.test(line)) return; // versioned: APP_VERSION's axis, not this one
+        const m = line.match(/'\.\/([^']+)'/);
+        if (m && m[1]) bare.push(m[1]);
+      });
+      return bare;
+    };
+
+    let violations = [];
+    let inspected = 0;
+    let generation = 'unknown';
+    let anchor = 'unknown';
+    try {
+      const bare = barePaths();
+      const headSw = git('show HEAD:sw.js');
+      const genMatch = headSw.match(/const CACHE_STATIC = '([^']+)'/);
+      generation = genMatch ? genMatch[1] : 'unknown';
+
+      // NOTE: deliberately no `^` or `~` in any git call below. execSync on
+      // Windows goes through cmd.exe, where `^` is the ESCAPE character — so
+      // `sha^..HEAD` silently collapses to `sha..HEAD`, the range comes back
+      // empty, and this check passes vacuously instead of going red. That is the
+      // precise failure mode it exists to catch, so the range is built in JS and
+      // parents are read from rev-list rather than spelled with `^`.
+      // Commits older than sw.js itself have no such blob, so every read of it
+      // goes through this rather than throwing on the first ancestor of its
+      // creation. generation is `ciklus-static-vNN` — no quoting needed, which
+      // matters because cmd.exe treats single quotes as literal characters.
+      const safeShow = (rev) => {
+        try { return git('show ' + rev + ':sw.js'); } catch (e) { return ''; }
+      };
+
+      const all = git('log --format=%H HEAD').trim().split('\n').filter(Boolean);
+      // -S returns every commit whose change to sw.js altered that string's
+      // count; the OLDEST of them is the one that introduced the name.
+      const introducing = git('log -S' + generation + ' --format=%H -- sw.js')
+        .trim().split('\n').filter(Boolean).pop();
+      anchor = introducing || 'none';
+      if (!introducing) throw new Error('no commit carries ' + generation);
+
+      const commits = all.slice(0, all.indexOf(introducing) + 1);
+      inspected = commits.length;
+      commits.forEach((sha) => {
+        const changed = git('diff-tree --no-commit-id --name-only -r ' + sha)
+          .trim().split('\n').filter(Boolean);
+        const bareHit = changed.filter((f) => bare.indexOf(f) !== -1);
+        if (!bareHit.length) return;
+        const parents = git('rev-list --parents -n 1 ' + sha).trim().split(/\s+/).slice(1);
+        if (!parents.length) return; // root commit: no parent to compare with
+        const nameOf = (rev) => {
+          const m = safeShow(rev).match(/ciklus-static-v\d+/);
+          return m ? m[0] : null;
+        };
+        if (nameOf(parents[0]) === nameOf(sha)) {
+          violations.push(sha.slice(0, 7) + ' changed ' + bareHit.join(',') + ' without moving CACHE_STATIC');
+        }
+      });
+    } catch (e) {
+      violations.push('could not read history: ' + e.message.split('\n')[0]);
+    }
+
+    check('S15 no commit since the current generation changed a bare-precached asset without moving CACHE_STATIC',
+      violations.length === 0 && inspected > 0,
+      `generation=${generation} since=${anchor.slice(0, 7)} commits=${inspected} ` +
+      (violations.length ? violations.slice(0, 3).join(' | ') : 'violations=0'));
   }
 
   const failed = results.filter((r) => !r.pass);
