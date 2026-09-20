@@ -7,8 +7,8 @@
   "id": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#EDE4DD",
-  "theme_color": "#D47A8A",
+  "background_color": "#f4f2f8",
+  "theme_color": "#0f1220",
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>",

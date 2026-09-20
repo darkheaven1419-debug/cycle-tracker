@@ -117,13 +117,17 @@
     '[data-theme="dark"] .letter-paper-card{background:#2d2318!important;border-color:#4a3825!important}' +
     '[data-theme="dark"] .letter-paper-card::before{background:repeating-linear-gradient(0deg,transparent,transparent 27px,#4a3825 27px,#4a3825 28px)!important;opacity:.2!important}' +
     '.letter-paper-card .lpc-header{display:flex!important;justify-content:space-between!important;align-items:center!important;margin-bottom:10px!important;position:relative!important;z-index:1!important}' +
-    '.letter-paper-card .lpc-date{font-size:.72rem!important;color:#8a7a6a!important;font-weight:600!important}' +
-    '[data-theme="dark"] .letter-paper-card .lpc-date{color:#a09080!important}' +
+    // #8a7a6a on the paper was 3.82:1 -- under AA. --warm-ink is theme-aware,
+    // so the hardcoded light value and its separate dark override collapse into
+    // one rule that reads correctly in both rooms (5.40:1 light, 7.36:1 dark).
+    '.letter-paper-card .lpc-date{font-size:.72rem!important;color:var(--warm-ink)!important;font-weight:600!important}' +
     '.letter-paper-card .lpc-body{font-size:.85rem!important;line-height:28px!important;color:#3d3225!important;min-height:84px!important;white-space:pre-wrap!important;word-wrap:break-word!important;position:relative!important;z-index:1!important;padding:0 2px!important}' +
     '[data-theme="dark"] .letter-paper-card .lpc-body{color:#d0c0b0!important}' +
     '.letter-paper-card .lpc-footer{display:flex!important;justify-content:space-between!important;align-items:flex-end!important;margin-top:12px!important;padding-top:8px!important;border-top:1px dashed #d4bfa0!important;position:relative!important;z-index:1!important}' +
     '[data-theme="dark"] .letter-paper-card .lpc-footer{border-color:#4a3825!important}' +
-    '.letter-paper-card .lpc-sig{font-size:.7rem!important;color:#8a7a6a!important;font-style:italic!important;text-align:right!important}' +
+    // .lpc-sig never had a dark override, so #8a7a6a rendered on the dark paper
+    // too. It reads the same theme-aware ink as .lpc-date now.
+    '.letter-paper-card .lpc-sig{font-size:.7rem!important;color:var(--warm-ink)!important;font-style:italic!important;text-align:right!important}' +
     '.lpc-textarea{width:100%!important;padding:12px!important;border:1px solid #d4bfa0!important;border-radius:10px!important;font-size:.82rem!important;font-family:var(--font)!important;background:#fff8f0!important;color:#3d3225!important;line-height:28px!important;resize:vertical!important;box-sizing:border-box!important;min-height:90px!important;position:relative!important;z-index:1!important}' +
     '[data-theme="dark"] .lpc-textarea{background:#1a1410!important;color:#d0c0b0!important;border-color:#4a3825!important}' +
     '@media(max-width:600px){.lpc-row{flex-direction:column!important}}' +

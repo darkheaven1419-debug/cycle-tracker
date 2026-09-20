@@ -31,7 +31,18 @@ const V = '?v=' + APP_VERSION;
 // 改动本身只在页面侧：新增一条底部横幅，检测 waiting / updatefound 后提示用户，
 // 用户点了「更新」才 postMessage({type:'SKIP_WAITING'})。
 // sw.js 自身的策略没变 —— install 里依旧不 skipWaiting（见下），message 处理早已存在。
-const CACHE_STATIC = 'ciklus-static-v36';
+// Phase 1E · 产品级视觉统一：v36 → v37。这一轮改的是 ./css/tokens.css、./css/calendar.css、
+// ./css/v2.css、./js/fix-css.js、./index.html、./offline.html 与 ./manifest.json —— 七个
+// 全部在 STATIC_ASSETS 里，而且 tokens.css / calendar.css / v2.css / offline.html /
+// manifest.json 都是裸路径，cache key 永不变，不换名字已装 SW 的客户端会一直用旧配色。
+// 改动内容：三支 accent 的 -ink 文本层全部落位 —— 原 accent 色是给填充调的，当文字用
+// 全部低于 AA（light 下 --gold 2.88:1、--sage 3.15:1），calendar.css 里最后 17 条仍拿
+// 填充色画文字的规则统一换成 -ink，并去掉两处 opacity:.6 的稀释。跨主题安全：dark 的
+// --gold/--sage 本就等于各自的 -ink，这一轮在 dark 下是空操作。另有：控件统一 44px
+// 触摸目标与 color:var(--text)、letter-paper 的硬编码暖灰换成主题感知的 --warm-ink、
+// Cycle 图例改 flex-start 消除居中换行、Memories 精选卡居中并限宽 46ch、manifest 主题色
+// 统一到 Midnight Couple。周期算法与数据结构未动。
+const CACHE_STATIC = 'ciklus-static-v37';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

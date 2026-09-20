@@ -501,7 +501,7 @@ body {
 }
 .footer-credit {
   font-size: 0.7rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-style: italic;
 }
 ::-webkit-scrollbar {
@@ -638,10 +638,10 @@ body {
   color: var(--text-muted);
 }
 .text-love {
-  color: var(--love);
+  color: var(--love-ink);
 }
 .text-gold {
-  color: var(--gold);
+  color: var(--gold-ink);
 }
 .text-rose {
   color: var(--rose);
@@ -650,7 +650,7 @@ body {
   color: var(--teal);
 }
 .text-sage {
-  color: var(--sage);
+  color: var(--sage-ink);
 }
 .fw-600 {
   font-weight: 600;
@@ -772,7 +772,7 @@ body {
 }
 .cal-nav .nav-btn:hover {
   background: var(--rose-light);
-  color: var(--love);
+  color: var(--love-ink);
   opacity: 1;
   transform: scale(1.08);
 }
@@ -812,7 +812,7 @@ body {
 .cal-nav .today-pill {
   font-size: 0.62rem;
   font-weight: 600;
-  color: var(--love);
+  color: var(--love-ink);
   padding: 6px 14px;
   border-radius: 20px;
   background: 0 0;
@@ -1150,7 +1150,7 @@ body {
   top: 0;
   right: 2px;
   font-size: 0.45rem;
-  color: var(--love);
+  color: var(--love-ink);
   opacity: 0.7;
 }
 .day.birthday {
@@ -1270,13 +1270,13 @@ body {
   opacity: 0.65;
 }
 .day .lunar-date.lunar-first {
-  color: var(--love);
+  color: var(--love-ink);
   opacity: 0.7;
   font-weight: 700;
 }
 .day .lunar-date.lunar-fifteen {
-  color: var(--gold);
-  opacity: 0.6;
+  color: var(--gold-ink);
+  opacity: 1;
   font-weight: 600;
 }
 .day .lunar-date.lunar-newyear {
@@ -1292,10 +1292,10 @@ body {
   transform: translateX(-50%);
   font-size: 0.44rem;
   font-weight: 600;
-  color: var(--sage);
+  color: var(--sage-ink);
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 1;
   z-index: 1;
   max-width: calc(100% - 10px);
   overflow: hidden;
@@ -1344,7 +1344,13 @@ body {
   margin-bottom: 12px;
   font-size: 0.62rem;
   color: var(--text-muted);
-  justify-content: center;
+  /* Phase 1E: flex-start, not center. The key never fits on one line at any
+     supported width (nine items need ~900px; the panel tops out at 546px of
+     content at 768), so it always wraps to a short last row — and with centring
+     that row floats mid-panel with equal slack on both sides (measured 153/153
+     at 768, 79/79 at 320). Ragged on both edges reads as a layout break; ragged
+     on the right only reads as a list. Every row now shares the left edge. */
+  justify-content: flex-start;
   padding: 10px 16px;
   background: var(--gradient-warm, linear-gradient(135deg, #f9eef0, #f5ede8));
   border-radius: 14px;
@@ -1397,7 +1403,7 @@ body {
 .legend .l-heart::before {
   content: "\2665";
   background: 0 0;
-  color: var(--love);
+  color: var(--love-ink);
   font-size: 0.6rem;
   line-height: 1;
   width: auto;
@@ -1542,7 +1548,7 @@ body {
 }
 .cal-view-btn.active {
   background: var(--rose-light);
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 700;
 }
 .cal-view-btn:hover:not(.active) {
@@ -1794,7 +1800,7 @@ body {
 .progress-num {
   font-size: 2.2rem;
   font-weight: 800;
-  color: var(--love);
+  color: var(--love-ink);
   line-height: 1;
   font-feature-settings: "tnum";
   letter-spacing: -0.02em;
@@ -1942,7 +1948,7 @@ body {
 .andjelin-label {
   text-align: center;
   font-size: 0.68rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-style: italic;
   margin-top: 2px;
   letter-spacing: 0.02em;
@@ -2072,7 +2078,7 @@ body {
 .symptom-mini .sym-chip.on {
   border-color: var(--love);
   background: var(--rose-light);
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 600;
 }
 .symptom-grid {
@@ -2167,7 +2173,7 @@ body {
 }
 .tip-source {
   font-size: 0.6rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-style: italic;
   margin-top: 2px;
   display: block;
@@ -2299,7 +2305,7 @@ body {
 }
 .btn-outline {
   background: 0 0;
-  color: var(--love);
+  color: var(--love-ink);
   border: 2px solid var(--love);
   border-radius: var(--radius-md);
 }
@@ -2368,7 +2374,7 @@ body {
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 16px;
-  color: var(--love);
+  color: var(--love-ink);
 }
 .modal .info-row {
   display: flex;
@@ -2679,7 +2685,7 @@ body {
 .greeting-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--love);
+  color: var(--love-ink);
   margin-bottom: 8px;
   font-style: italic;
 }
@@ -2690,7 +2696,7 @@ body {
 }
 .greeting-sub {
   font-size: 0.7rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   margin-top: 8px;
 }
 .feather {
@@ -2704,7 +2710,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 0.65rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-weight: 500;
 }
 .moon-icon {
@@ -2805,7 +2811,7 @@ body {
 }
 .cycle-celebration .celeb-text {
   font-size: 0.8rem;
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 600;
   margin-top: 4px;
 }
@@ -2906,7 +2912,7 @@ body {
 }
 .love-note-signature {
   font-size: 0.68rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   margin-top: 10px;
 }
 .mood-picker {
@@ -2966,7 +2972,7 @@ body {
 .streak-num {
   font-size: 1.4rem;
   font-weight: 800;
-  color: var(--love);
+  color: var(--love-ink);
   font-feature-settings: "tnum";
 }
 .streak-label {
@@ -3165,7 +3171,7 @@ body {
 }
 .garden-streak-hint {
   font-size: 0.62rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   margin-top: 4px;
 }
 .points-toast {
@@ -3380,14 +3386,14 @@ body {
 }
 .tea-room-msg {
   font-size: 0.66rem;
-  color: var(--love);
+  color: var(--love-ink);
   margin-top: 4px;
   font-style: italic;
   line-height: 1.4;
 }
 .tea-room-title {
   font-size: 0.62rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-style: italic;
   letter-spacing: 0.03em;
 }
@@ -3415,7 +3421,7 @@ body {
   color: var(--text);
 }
 .holiday-name:hover {
-  color: var(--love);
+  color: var(--love-ink);
 }
 .holiday-detail {
   display: none;
@@ -3461,7 +3467,7 @@ body {
 }
 .dash-unread {
   font-size: 0.72rem;
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 600;
   margin-bottom: 8px;
   padding: 8px;
@@ -3492,7 +3498,7 @@ body {
 }
 .dash-link-btn:hover {
   border-color: var(--love);
-  color: var(--love);
+  color: var(--love-ink);
 }
 .dash-link-btn:active {
   transform: scale(0.95);
@@ -3521,7 +3527,7 @@ body {
 }
 .holiday-countdown {
   font-size: 0.68rem;
-  color: var(--love);
+  color: var(--love-ink);
   text-align: center;
   padding: 6px 12px;
   margin: 4px 0 8px;
@@ -3909,7 +3915,7 @@ body {
 .prediction-highlight .pred-main {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--love);
+  color: var(--love-ink);
   margin-bottom: 4px;
 }
 .prediction-highlight .pred-sub {
@@ -4022,7 +4028,7 @@ body {
 }
 .culture-card .poem-title {
   font-weight: 700;
-  color: var(--love);
+  color: var(--love-ink);
   font-size: 0.8rem;
 }
 .culture-card .poem-body {
@@ -4123,7 +4129,7 @@ body {
 .culture-card-zh {
   font-size: 1.3rem;
   font-weight: 800;
-  color: var(--love);
+  color: var(--love-ink);
   text-align: center;
   margin-bottom: 4px;
 }
@@ -4186,7 +4192,7 @@ body {
 }
 .culture-nav-btn:hover {
   border-color: var(--love);
-  color: var(--love);
+  color: var(--love-ink);
 }
 .culture-nav-btn:active {
   transform: scale(0.9);
@@ -4276,7 +4282,7 @@ body {
 }
 .hug-text {
   font-size: 0.84rem;
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 700;
   margin-top: 6px;
 }
@@ -4354,7 +4360,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 0.64rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-weight: 600;
   margin-bottom: 8px;
   background: rgba(212, 167, 106, 0.1);
@@ -4415,7 +4421,7 @@ body {
   border-bottom: none;
 }
 .gratitude-heart {
-  color: var(--love);
+  color: var(--love-ink);
   flex-shrink: 0;
 }
 /* 每条便签 + 它的 emoji 回应行包在一个块里；分隔线与内边距移到块上，
@@ -4504,7 +4510,7 @@ body {
 .cq-opt.picked {
   border-color: var(--love);
   background: var(--rose-light);
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 600;
 }
 .song-card {
@@ -4524,7 +4530,7 @@ body {
 }
 .song-card .song-for {
   font-size: 0.68rem;
-  color: var(--gold);
+  color: var(--gold-ink);
   font-style: italic;
 }
 .song-card .song-note {
@@ -4894,7 +4900,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 0.64rem;
-  color: var(--sage);
+  color: var(--sage-ink);
   font-weight: 600;
   opacity: 0;
   transform: translateY(-6px);
@@ -5019,7 +5025,7 @@ body {
 }
 .timeline-load-more button:hover {
   border-color: var(--love);
-  color: var(--love);
+  color: var(--love-ink);
 }
 .diary-date-strip-wrap {
   display: flex;
@@ -5300,7 +5306,7 @@ body {
 }
 .diary-timeline-more button:hover {
   border-color: var(--love);
-  color: var(--love);
+  color: var(--love-ink);
   background: var(--rose-light);
 }
 .mini-cal {
@@ -5399,7 +5405,7 @@ body {
   align-items: center;
   gap: 4px;
   font-size: var(--text-xs);
-  color: var(--sage);
+  color: var(--sage-ink);
   font-weight: 600;
   opacity: 0;
   transform: translateY(-6px);
@@ -5415,7 +5421,7 @@ body {
   align-items: center;
   margin-bottom: 10px;
   font-size: var(--text-xs);
-  color: var(--gold);
+  color: var(--gold-ink);
 }
 .mood-tags {
   display: flex;
@@ -5550,7 +5556,7 @@ body {
 .letter-signature {
   text-align: right;
   font-size: var(--text-sm);
-  color: var(--love);
+  color: var(--love-ink);
   font-style: italic;
   margin-top: 12px;
 }
@@ -6111,7 +6117,7 @@ body.festival-victory {
   color: var(--text);
 }
 .dch-x {
-  color: var(--love);
+  color: var(--love-ink);
   font-weight: 400;
   margin: 0 6px;
   opacity: 0.75;
@@ -6149,7 +6155,7 @@ body.festival-victory {
   touch-action: manipulation;
 }
 .dhc-more:hover {
-  color: var(--love);
+  color: var(--love-ink);
 }
 .dhc-more:active {
   transform: scale(0.92);
