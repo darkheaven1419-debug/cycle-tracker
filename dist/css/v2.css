@@ -900,9 +900,88 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   .km-fb,
   .dhc-more.dhc-more-ico,
   .mem-feat,
-  .dash-story-line {
+  .dash-story-line,
+  .update-banner,
+  .update-btn {
     animation: none !important;
     transition: none !important;
     transform: none !important;
   }
+}
+
+/* == Phase 1F . PWA new-version prompt ================================
+   sw.js no longer calls skipWaiting unconditionally, so a new version parks
+   in waiting until the user says so. This bar is the only thing that tells
+   them. It sits directly above the bottom nav -- which is fixed, max-width
+   420px, z-index 60 -- so it never covers page content and stays reachable
+   with a thumb. z-index 61 clears the nav but stays under .offline-banner
+   (9999). Visibility is animated rather than display-toggled so the bar can
+   fade; the reduced-motion block above disables that transition.
+
+   The quick-add FAB lives in the same band: css/calendar.css pins it at
+   right:20px / bottom:calc(80px + safe-area), 56x56, z-index 70 -- i.e. ABOVE
+   this bar's 61. Below 548px the centred bar and the FAB overlap, and the FAB
+   lands exactly on the Update button, which makes the only control that can
+   accept the update unclickable on a phone. Raising z-index would merely invert
+   the problem and wall off a core action, so on narrow screens the bar stacks
+   above the FAB instead: 80 (FAB bottom) + 56 (FAB) + 10 (gap), carrying the
+   same safe-area term the FAB itself uses. Above 548px the two never meet, so
+   the bar keeps sitting straight on the nav. */
+.update-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 74px;
+  margin: 0 auto;
+  width: calc(100% - 24px);
+  max-width: 396px;
+  z-index: 61;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px 9px 14px;
+  border-radius: var(--radius-md);
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  color: var(--text);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+}
+@media (max-width: 560px) {
+  .update-banner {
+    bottom: calc(146px + env(safe-area-inset-bottom, 0px));
+  }
+}
+.update-banner.show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.update-banner span {
+  flex: 1 1 auto;
+  text-align: left;
+  line-height: 1.35;
+}
+.update-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  background: var(--love);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.update-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

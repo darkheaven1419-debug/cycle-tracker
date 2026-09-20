@@ -454,6 +454,69 @@ function setupPWABanner() {
   document.getElementById('pwa-text').textContent = t('pwaInstallText');
 }
 
+// == Phase 1F . PWA new-version prompt ================================
+// sw.js deliberately does NOT skipWaiting in install: an unconditional wait
+// would let a new SW take over a page that still holds references to the old
+// cache, which activate then deletes (old page + new SW). So the new SW parks
+// in waiting and this is the only place that tells the user about it.
+// Three constraints:
+//   1) a first install has no controller, so it is not an update -> no prompt;
+//   2) reload ONLY after the user clicks Update -- otherwise controllerchange
+//      fires on the first activate (clients.claim) and reloads a live page;
+//   3) reload at most once -- controllerchange can fire more than once.
+const UPDATE_TEXT = {
+  'zh-CN': { msg: '有新版本可用', btn: '更新' },
+  en: { msg: 'A new version is available', btn: 'Update' },
+  sr: { msg: 'Nova verzija je dostupna', btn: 'Ažuriraj' },
+};
+function renderUpdateBanner() {
+  const banner = document.getElementById('updateBanner');
+  if (!banner) return;
+  const known = typeof window.lang !== 'undefined' && UPDATE_TEXT[window.lang];
+  const copy = UPDATE_TEXT[known ? window.lang : 'sr'];
+  const txt = document.getElementById('updateText');
+  const btn = document.getElementById('updateBtn');
+  if (txt) txt.textContent = copy.msg;
+  if (btn && !btn.disabled) btn.textContent = copy.btn;
+}
+let _updateAsked = false;
+let _updateReloading = false;
+function setupUpdatePrompt() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (!_updateAsked || _updateReloading) return;
+    _updateReloading = true;
+    location.reload();
+  });
+  function offer(reg) {
+    const banner = document.getElementById('updateBanner');
+    const btn = document.getElementById('updateBtn');
+    if (!banner || !btn) return;
+    renderUpdateBanner();
+    banner.classList.add('show');
+    btn.onclick = function () {
+      if (_updateAsked) return;
+      _updateAsked = true;
+      btn.disabled = true;
+      if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    };
+  }
+  navigator.serviceWorker.register('sw.js?v=7.3.0')
+    .then(function (reg) {
+      // A new version installed on an earlier visit and is still parked
+      if (reg.waiting && navigator.serviceWorker.controller) offer(reg);
+      reg.addEventListener('updatefound', function () {
+        const sw = reg.installing;
+        if (!sw) return;
+        sw.addEventListener('statechange', function () {
+          // A controller means this is an update, not a first install
+          if (sw.state === 'installed' && navigator.serviceWorker.controller) offer(reg);
+        });
+      });
+    })
+    .catch(function () {});
+}
+
 // ===== DASHBOARD =====
 // Daily conversation starters — rotating questions to deepen understanding
 const CONVERSATION_QUESTIONS = {
@@ -548,9 +611,7 @@ async function bootApp() {
     );
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=7.3.0').catch(function () {});
-  }
+  setupUpdatePrompt();
   loadPerProfileSettings();
 
   // Load data in background (do NOT await — never block the UI)
@@ -1066,6 +1127,8 @@ let selectedDate = null,
    UI UPDATE
    ================================================================ */
 function updateLangUI() {
+  // Phase 1F: keep the new-version prompt in the current language
+  renderUpdateBanner();
   document.getElementById('h-title').textContent = t('appTitle');
   document.getElementById('todayBtn').textContent = t('today');
   document.querySelectorAll('.tb-label').forEach((el, i) => {

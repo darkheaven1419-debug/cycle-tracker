@@ -25,7 +25,13 @@ const V = '?v=' + APP_VERSION;
 // calendar.css 还是裸路径，cache key 永不变 —— 不换名字，已装 SW 的客户端看到的还是歪的日历。
 // （Phase 1D 前半：v33 → v34，周期中心重组；再前半 v32 → v33，日历调色板。
 //  activate 会删掉所有不在 CURRENT_CACHES 里的旧 cache，所以改名即完成刷新。）
-const CACHE_STATIC = 'ciklus-static-v35';
+// Phase 1F · 「有新版本」提示：v35 → v36。这一轮改的是 ./index.html、./app.js 与
+// ./css/v2.css —— 三个都在 STATIC_ASSETS 里且 cache key 永不变（index.html 与 v2.css
+// 是裸路径，app.js 挂的是固定的 APP_VERSION），不换名字老客户端就永远看不到新横幅。
+// 改动本身只在页面侧：新增一条底部横幅，检测 waiting / updatefound 后提示用户，
+// 用户点了「更新」才 postMessage({type:'SKIP_WAITING'})。
+// sw.js 自身的策略没变 —— install 里依旧不 skipWaiting（见下），message 处理早已存在。
+const CACHE_STATIC = 'ciklus-static-v36';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
