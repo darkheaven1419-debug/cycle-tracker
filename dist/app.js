@@ -551,7 +551,7 @@ function setupUpdatePrompt() {
       if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     };
   }
-  navigator.serviceWorker.register('sw.js?v=7.3.1')
+  navigator.serviceWorker.register('sw.js?v=7.3.2')
     .then(function (reg) {
       // A new version installed on an earlier visit and is still parked
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg);
@@ -1013,7 +1013,7 @@ let calendarExtraData = null;
 //
 // 真正成立的同类体验属于 Phase 2A：当 Anđela 真的留下东西（shared-gratitude-echo）时，
 // 系统可以如实提示"她给你留了一条"。那是事实，不是编造。
-// 由 tests/test-phase19-attribution.js 守住，不得以任何署名形式恢复。
+// 由 tests/test-phase19-integrity.js 的 C 段守住，不得以任何署名形式恢复。
 
 /* ================================================================
    GREETING OVERLAY

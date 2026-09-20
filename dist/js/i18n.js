@@ -5,5 +5,5 @@
  * Barry 或 Anđela 的第一人称口吻（如 “— Tvoj Barry” / “— 爱你的 Barry” / “Barry，为了我早点睡！”），
  * 但它们是硬编码常量，两位真人都没写过、也无法编辑——那是在替真人伪造言行。
  * 现一律改为应用自身身份 “Anđelin Ciklus”，或中性的陈述句。
- * 由 tests/test-phase19-attribution.js 守住，不得再改回人名署名。
+ * 由 tests/test-phase19-integrity.js 的 C 段守住，不得再改回人名署名。
  */

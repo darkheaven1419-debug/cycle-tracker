@@ -265,7 +265,12 @@ async function boot(browser, opts) {
   // quote the very strings being banned, so a raw scan would flag the
   // documentation as the bug — the same trap A4 avoids for the seed date.
   {
-    const CONTENT_FILES = ['app.js', 'js/weather.js', 'js/render-misc.js',
+    // js/i18n.js is in this list deliberately. It holds the largest concentration
+    // of system-generated user-facing copy in the product (loveNoteSig,
+    // sleepLateMsg, greeting.*), so it is where a well-meaning copy change would
+    // land — and it was the one shipped file the C1/C4 scans did not read. C5
+    // already covers its signatures; C1/C4 now cover its speaker attributions too.
+    const CONTENT_FILES = ['app.js', 'js/i18n.js', 'js/weather.js', 'js/render-misc.js',
       'js/render-mood.js', 'js/render-love.js', 'js/module-dashboard.js',
       'js/social.js', 'js/module-memories.js'];
     // Both comment styles have to go. app.js writes its tombstones as // lines
@@ -351,6 +356,46 @@ async function boot(browser, opts) {
     check('C5 card signatures resolve to the app, not to a person',
       sigs.length >= 3 && namedSig.length === 0,
       `signatures=${sigs.length} namingAPerson=${namedSig.length} value=${sigs[0] || 'none'}`);
+
+    // C5b/C5c — the love note, which §一 names first. This is the one surface
+    // C1/C4 could not see, and the reason is structural rather than an oversight:
+    // LOVE_NOTES held 150 hardcoded lines, every one of them first person and in
+    // Barry's voice addressing Anđela, two of them naming him outright — and not
+    // one carried a 'Barry kaže:' / 'Barry says:' prefix, because the entire
+    // conceit is that he is the one speaking. C1 scans for attributive prefixes,
+    // so it is blind to this shape by construction. C5 got close (it reads the
+    // note's signature) but the signature was already correct: the app signed it
+    // '— Anđelin Ciklus'. The lie was never in the signature. It was in the body.
+    //
+    // renderLoveNote() now hides the card rather than filling it, so there are two
+    // properties to hold. C5b is that the copy has no caller left: the constant
+    // survives in js/i18n.js as a corpse, and a corpse cannot speak — but only for
+    // as long as nothing re-wires it, which is what scanning every other file for
+    // the name establishes. js/i18n.js is excluded because that is where the
+    // definition lives; it is the single occurrence of the identifier in the
+    // shipped tree. C5c is the belt to that suspenders: the card is not populated
+    // at all, so hiding it is not the only thing between those lines and a screen.
+    // C5c also asserts the region is non-empty, so deleting renderLoveNote()
+    // outright fails here instead of passing as a vacuous clean scan.
+    const wired = CONTENT_FILES
+      .filter((f) => f !== 'js/i18n.js')
+      .filter((f) => /LOVE_NOTES/.test(code[f]));
+    check('C5b the retired love-note copy has no caller in any shipped file',
+      wired.length === 0, wired.join(', ') || 'none');
+
+    const loveNoteBody = (() => {
+      const src = code['js/render-mood.js'];
+      const i = src.indexOf('function renderLoveNote');
+      if (i === -1) return '';
+      const rest = src.slice(i);
+      const end = rest.indexOf('function ', 10);
+      return end === -1 ? rest.slice(0, 800) : rest.slice(0, end);
+    })();
+    const writesText = /loveNoteText/.test(loveNoteBody);
+    check('C5c the love-note card is not populated with system-authored text',
+      loveNoteBody.length > 0 && !writesText && /loveNoteCard/.test(loveNoteBody),
+      `bodyLen=${loveNoteBody.length} writesText=${writesText} ` +
+        `stillHidesCard=${/loveNoteCard/.test(loveNoteBody)}`);
   }
 
   // ── B. behaviour across four boot states ──
