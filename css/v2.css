@@ -1058,6 +1058,30 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
   min-height: var(--touch-target);
 }
 
+/* The todo filter row is built in js/fix-stats.js with inline padding, so its
+   height comes from the button rule above but its WIDTH is whatever the label
+   measures -- "Sve" lands at 38px. Text-labelled, so it takes only the width
+   floor and keeps its own padding. */
+#todoFilterBar button {
+  min-width: var(--touch-target);
+}
+
+/* Two culture affordances are spans, not buttons, and are generated inside
+   js/calendar-culture.js as minified inline HTML -- so they carry no class and
+   the button rule above cannot see them. The cycle panel's lunar row ends in an
+   "i" glyph that opens the explainer and measures 16x16, and the poem card ends
+   in a "what is all this?" link measuring 80x17. Both are real controls, reached
+   only from Cycle, so they are named by their container rather than by editing
+   the minified source to add a hook. */
+#lunarInfo span[onclick],
+#cultureCard span[onclick] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+}
+
 /* ── 1E-D: a focus ring, once ─────────────────────────────────────────────
    The app shipped none, so a keyboard or switch user could not see where they
    were. :where() holds this at zero specificity, so every component rule wins

@@ -264,6 +264,33 @@ function measure(cfg) {
     (cal.match(/var\(--touch-target\)/g) || []).length;
   check('E12 the touch target token is actually applied', touchUses > 0, `${touchUses} uses`);
 
+  // E12b — the reason this follow-up exists. v2.css states the floor once, as
+  // `button, select, ... { min-height: var(--touch-target) }`. That is an
+  // ELEMENT selector (0,0,1), so any CLASS rule naming one of these controls
+  // outranks it whatever the load order -- and css/calendar.css had two legacy
+  // media queries (<=420px, <=360px) re-pinning .lang-btn and .theme-btn at
+  // 36px and 32px. The floor was therefore declared and then quietly overridden
+  // on exactly the narrow screen it exists for.
+  //
+  // A literal px here is that hole reopening, so none is allowed: these controls
+  // must express their size as var(--touch-target). The two documented
+  // exceptions are divs those rules never matched (.day and .diary-date-btn,
+  // 37x44 / 38x44 at 320px because that is all seven columns leave) and are
+  // deliberately not named below.
+  const smallPins = [];
+  for (const [file, css] of [['calendar.css', cal], ['v2.css', v2]]) {
+    const rule = /\.(lang-btn|theme-btn|today-pill)[^{]*\{([^}]*)\}/g;
+    let m;
+    while ((m = rule.exec(css))) {
+      for (const decl of m[2].matchAll(/(?:min-)?(?:width|height)\s*:\s*(\d+)px/g)) {
+        if (Number(decl[1]) < 44) smallPins.push(`${file} .${m[1]}: ${decl[0].trim()}`);
+      }
+    }
+  }
+  check('E12b no rule re-pins a control below the 44px touch target',
+    smallPins.length === 0,
+    smallPins.join(', ') || 'lang-btn / theme-btn / today-pill all express 44px via the token');
+
   const manifest = JSON.parse(read('manifest.json'));
   check('E13 manifest theme colour is Midnight Couple, not the old rose',
     manifest.theme_color === '#0f1220' && manifest.background_color === '#f4f2f8',

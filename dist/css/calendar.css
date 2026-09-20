@@ -816,8 +816,8 @@ body {
   padding: 6px 14px;
   border-radius: 20px;
   background: 0 0;
-  min-width: 40px;
-  min-height: 36px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   border: 1.5px solid rgba(184, 72, 90, 0.15);
   cursor: pointer;
   flex-shrink: 0;
@@ -5729,15 +5729,21 @@ body {
     gap: 2px;
     padding: 2px 3px;
   }
+  /* These two used to shrink here (36px) and again at <=360px (32px). Both are
+     class selectors, so they outrank v2.css's `button { min-height:
+     var(--touch-target) }` on specificity whatever the load order -- the 44px
+     floor was being declared and then quietly overridden on exactly the device
+     it exists for. The header absorbs it by shrinking the gaps instead;
+     measured no overflow at 320/360/390/420. */
   .lang-btn {
-    min-width: 36px;
-    min-height: 36px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     padding: 4px 7px;
     font-size: 0.58rem;
   }
   .theme-btn {
-    width: 36px;
-    height: 36px;
+    width: var(--touch-target);
+    height: var(--touch-target);
     font-size: 0.85rem;
   }
   .profile-pill {
@@ -5805,8 +5811,8 @@ body {
     font-size: 0.95rem;
   }
   .lang-btn {
-    min-width: 32px;
-    min-height: 32px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     padding: 3px 6px;
     font-size: 0.55rem;
   }

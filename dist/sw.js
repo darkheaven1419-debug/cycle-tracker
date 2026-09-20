@@ -42,7 +42,20 @@ const V = '?v=' + APP_VERSION;
 // 触摸目标与 color:var(--text)、letter-paper 的硬编码暖灰换成主题感知的 --warm-ink、
 // Cycle 图例改 flex-start 消除居中换行、Memories 精选卡居中并限宽 46ch、manifest 主题色
 // 统一到 Midnight Couple。周期算法与数据结构未动。
-const CACHE_STATIC = 'ciklus-static-v37';
+// Phase 1E 续 · 触摸目标补齐：v37 → v38。这一轮只改 ./css/calendar.css 与 ./css/v2.css，
+// 两个都是 STATIC_ASSETS 里的裸路径，cache key 永不变，不换名字老客户端拿不到新规则。
+// 起因是 1E-D 的 44px 底线被旧媒体查询按特异性压了回去：v2.css 里
+// `button{min-height:var(--touch-target)}` 是元素选择器（0,0,1），而 calendar.css 中
+// ≤420px / ≤360px 两条媒体查询里的 `.lang-btn{min-height:36px/32px}` 与
+// `.theme-btn{width:36px;height:36px}` 是类选择器（0,1,0）—— 类永远赢，与加载顺序无关。
+// 于是语言切换与主题按钮在最需要 44px 的 320 屏上恰恰最小。现在这几处就地改成
+// var(--touch-target)，并补上 .today-pill（原本就是 min-height:36px）、待办筛选按钮
+// （内联 padding 使宽度随文字，最短的「Sve」只有 38px 宽）、以及 Cycle 文化卡里两个
+// span 按钮（ℹ️ 16x16、🌿 80x17，生成自压缩过的 js/calendar-culture.js，没有类名，
+// 因此改由容器 #lunarInfo / #cultureCard 选中）。
+// 日历格 37x44 与日记日期条 38x44 保持不动 —— 那是 320px 下七列能给出的全部宽度，
+// v2.css 早有说明，既有测试也已接受。周期算法与数据结构仍未动。
+const CACHE_STATIC = 'ciklus-static-v38';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
