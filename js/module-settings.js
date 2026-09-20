@@ -130,6 +130,228 @@
   }
   window.clearAppSecret = clearAppSecret;
 
+  // ── Phase 2B.5 · 纪念日同步状态（只读诊断）──────────────────────────────
+  // 起因：冲突标记（shared-ann-conflict）此前只能靠开发者工具翻 localStorage
+  // 才看得见，于是「线上到底有没有真实冲突」既无法由代码断言，也无法由
+  // Barry / Anđela 自己确认。这一块把同一批数据搬到 Settings 里。
+  //
+  // 四条边界（本轮授权原文：只做只读诊断 UI，不改变 anniversary 同步协议，
+  // 不改变 canonical 值，不自动 resolve，不清除 conflict）：
+  //   1. 不写任何键 —— 不写 canonical、不清 conflict、不动 pending；
+  //   2. 不改协议、不发网络请求。remote 值取自 sync.js 已经写好的
+  //      shared-ann-remote 留痕，那段留痕由现有 pull 流程维护，因此这里既
+  //      不需要新的读取路径，也不可能绕过认证；
+  //   3. 完全不碰凭据 —— 不读、不显示、不记录 App Secret / GH_PAT；
+  //   4. 结论只由**标记**决定，绝不比较日期。「本机日期 ≠ 远端日期 ⇒ 冲突」
+  //      等于系统替两个人选一边，是被 §2.3 明确禁止的。冲突的唯一来源是
+  //      sync.js 写下的 shared-ann-conflict，本文件只把它读出来。
+  //
+  // 键名归 js/sync.js 所有（见其 ANN_SHARED 一段）。这里按本文件既有惯例
+  // （见上方 APP_KEY_STORAGE / WORKER_URL）复述字面量，而不去改 sync.js ——
+  // 同步协议本轮不动。
+  var ANN_K_MET = 'cycle-ann-met';
+  var ANN_K_LOVE = 'cycle-ann-love';
+  var ANN_K_CANON = 'shared-anniversaries';
+  var ANN_K_REMOTE = 'shared-ann-remote';
+  var ANN_K_CONFLICT = 'shared-ann-conflict';
+  var ANN_K_PENDING = 'shared-ann-pending';
+
+  var _ANN_RE_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+  function _annLs(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function _annJson(key) {
+    var raw = _annLs(key);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+  function _annDate(v) {
+    return (typeof v === 'string' && _ANN_RE_DATE.test(v)) ? v : null;
+  }
+  /** {met,love} 成对才算合法 —— 与 js/sync.js _annValid 同一形状。 */
+  function _annPair(v) {
+    if (!v || typeof v !== 'object') return null;
+    return (_annDate(v.met) && _annDate(v.love)) ? { met: v.met, love: v.love } : null;
+  }
+
+  /**
+   * 本机生效日期。优先 getAnnDates()：app.js 是默认值的唯一来源，这里不复制
+   * 日期字面量，只在 getAnnDates 不可用时退回 ANN_DEFAULT_*（同样是 app.js 的）。
+   */
+  function _annDiagLocal() {
+    if (typeof getAnnDates === 'function') {
+      try {
+        var d = getAnnDates();
+        if (d && _annDate(d.met) && _annDate(d.love)) return d;
+      } catch (e) { /* 忽略，走下面的兜底 */ }
+    }
+    var def = null;
+    try {
+      if (typeof ANN_DEFAULT_MET === 'string' && typeof ANN_DEFAULT_LOVE === 'string') {
+        def = { met: ANN_DEFAULT_MET, love: ANN_DEFAULT_LOVE };
+      }
+    } catch (e) { /* TDZ：app.js 尚未执行 */ }
+    return {
+      met: _annDate(_annLs(ANN_K_MET)) || (def && def.met) || null,
+      love: _annDate(_annLs(ANN_K_LOVE)) || (def && def.love) || null,
+    };
+  }
+
+  function _annDiagConflict() {
+    var c = null;
+    try { if (typeof getAnnConflict === 'function') c = getAnnConflict(); } catch (e) { /* 忽略 */ }
+    if (c && typeof c === 'object') return c;
+    var raw = _annJson(ANN_K_CONFLICT);
+    return (raw && typeof raw === 'object') ? raw : null;
+  }
+
+  /**
+   * 远端 canonical 的最后一次观测值（写于 js/sync.js _annRememberRemote）：
+   *   {met,love} 已观测到的远端 canonical
+   *   'none'     已确认远端还没有 canonical —— 这是事实，不是读取失败
+   *   null       本机从未成功读取过远端 → 结论 D
+   */
+  function _annDiagRemote() {
+    var raw = _annJson(ANN_K_REMOTE);
+    if (raw === 'none') return 'none';
+    return _annPair(raw) || null;
+  }
+
+  /** 纯读取。返回值是快照，调用它不产生任何副作用。 */
+  function annSyncDiagnostics() {
+    var local = _annDiagLocal();
+    var d = {
+      localMet: local.met,
+      localLove: local.love,
+      canonical: _annPair(_annJson(ANN_K_CANON)),
+      remote: _annDiagRemote(),
+      conflict: _annDiagConflict(),
+      pending: _annLs(ANN_K_PENDING) === '1',
+    };
+    /* 优先级：冲突 > 待同步 > remote 不可读 > 正常。
+       注意这里没有任何一条分支去看日期是否相等 —— 见文件头第 4 条边界。 */
+    if (d.conflict) d.status = 'B';
+    else if (d.pending) d.status = 'C';
+    else if (!d.remote) d.status = 'D';
+    else d.status = 'A';
+    return d;
+  }
+  window.annSyncDiagnostics = annSyncDiagnostics;
+
+  // 内联三语，与上方 tokenSecurityWarning / testTokenBtn 的写法一致。
+  // 不走 js/i18n.js：那里的 t() 在键缺失时不回落到第二参数，而这里的文案
+  // 需要随本区块一起演进，不适合塞进全局表。
+  var _ANN_DIAG_COPY = {
+    sr: {
+      title: 'Sinhronizacija datuma',
+      A: 'U redu — nema sukoba',
+      B: 'Potrebna potvrda — pronađena oznaka sukoba',
+      C: 'Čeka slanje — neposlata izmena na ovom uređaju',
+      D: 'Status sa servera nije pročitan',
+      canon: 'Zajednička vrednost (ovaj uređaj)',
+      remote: 'Zajednička vrednost (server)',
+      fConflict: 'Oznaka sukoba',
+      fPending: 'Neposlata izmena',
+      empty: 'nema',
+      unread: 'nije pročitano',
+      yes: 'da',
+      no: 'ne',
+      note: 'Prikaz je samo uvid. Ništa se ne menja automatski i nijedan datum se ne bira umesto vas.',
+    },
+    'zh-CN': {
+      title: '纪念日同步状态',
+      A: '正常 — 当前没有发现冲突',
+      B: '待确认 — 检测到冲突标记',
+      C: '待同步 — 本机存在未推送修改',
+      D: '无法读取服务器状态',
+      canon: '共享值（本机）',
+      remote: '共享值（服务器）',
+      fConflict: '冲突标记',
+      fPending: '未推送修改',
+      empty: '无',
+      unread: '未读取',
+      yes: '有',
+      no: '无',
+      note: '此区域只做展示：不会自动修改任何值，也不会替你选择日期。',
+    },
+    en: {
+      title: 'Anniversary sync status',
+      A: 'OK — no conflict found',
+      B: 'Needs confirmation — conflict flag present',
+      C: 'Pending — unsent change on this device',
+      D: 'Server status unavailable',
+      canon: 'Shared value (this device)',
+      remote: 'Shared value (server)',
+      fConflict: 'Conflict flag',
+      fPending: 'Unsent change',
+      empty: 'none',
+      unread: 'not read',
+      yes: 'yes',
+      no: 'no',
+      note: 'This panel only reports. Nothing changes automatically and no date is chosen for you.',
+    },
+  };
+  function _annCopy() {
+    return _ANN_DIAG_COPY[typeof lang !== 'undefined' ? lang : 'sr'] || _ANN_DIAG_COPY.sr;
+  }
+
+  /* 值虽然已被 _annDate 的正则夹过，但仍然统一转义：这一段是 innerHTML 拼的，
+     而 conflict 里的 reason 是自由字符串。 */
+  function _annEsc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function _annRow(label, value, muted) {
+    return '<div class="stat-row ann-sync-row"><span class="ann-sync-k">' + _annEsc(label) +
+      '</span><span class="val' + (muted ? ' ann-sync-muted' : '') + '">' + _annEsc(value) + '</span></div>';
+  }
+
+  /** 一对日期 → 一行文本。'none' 与 null 是两种不同的事实，分开说。 */
+  function _annPairText(p, t) {
+    if (p === 'none') return t.empty;
+    if (!p) return t.unread;
+    return p.met + ' · ' + p.love;
+  }
+
+  function _annChip(label, value, alert) {
+    return '<span class="ann-sync-chip' + (alert ? ' ann-sync-chip-alert' : '') + '">' +
+      _annEsc(label) + ': <b>' + _annEsc(value) + '</b></span>';
+  }
+
+  function renderAnnSyncStatus() {
+    var host = document.getElementById('annSyncPanel');
+    var body = document.getElementById('annSyncBody');
+    var name = document.getElementById('annSyncName');
+    var pill = document.getElementById('annSyncPill');
+    if (!host || !body || !name || !pill) return;
+
+    var t = _annCopy();
+    var d = annSyncDiagnostics();
+    /* 前两行的标签直接复用上方纪念日卡片的既有文案，避免同一件事出现两套说法。 */
+    var metLabel = document.getElementById('ann-met-label');
+    var loveLabel = document.getElementById('ann-love-label');
+    var rows = _annRow(metLabel ? metLabel.textContent : ANN_K_MET, d.localMet || t.unread);
+    rows += _annRow(loveLabel ? loveLabel.textContent : ANN_K_LOVE, d.localLove || t.unread);
+    rows += _annRow(t.canon, _annPairText(d.canonical, t), !d.canonical);
+    rows += _annRow(t.remote, _annPairText(d.remote, t), !d.remote || d.remote === 'none');
+    rows += '<div class="ann-sync-flags">' +
+      _annChip(t.fConflict, d.conflict ? t.yes : t.no, !!d.conflict) +
+      _annChip(t.fPending, d.pending ? t.yes : t.no, false) +
+      '</div>';
+    body.innerHTML = rows + '<p class="ann-sync-note">' + _annEsc(t.note) + '</p>';
+
+    name.textContent = t.title;
+    pill.textContent = t[d.status];
+    pill.className = 'ann-sync-pill ann-sync-pill-' + d.status.toLowerCase();
+    host.setAttribute('data-ann-status', d.status);
+    /* 只有 B（真冲突）自动展开 —— 其余保持收起，做到低打扰。 */
+    if (d.status === 'B') host.open = true;
+  }
+  window.renderAnnSyncStatus = renderAnnSyncStatus;
+
   function loadSettingsUI() {
     document.getElementById('set-cycle').value = (state && state.settings) ? state.settings.cycleLength : 28;
     document.getElementById('set-period').value = (state && state.settings) ? state.settings.periodLength : 7;
@@ -160,6 +382,9 @@
     if (clearBtn) clearBtn.textContent = '🗑️ ' + (lang === 'zh-CN' ? '清除密钥' : lang === 'en' ? 'Clear key' : 'Obriši ključ');
     if (typeof updateAnniversaryCount === 'function') updateAnniversaryCount();
     if (typeof updateSyncStatusBadge === 'function') updateSyncStatusBadge();
+    /* Phase 2B.5 —— 每次打开设置页重算一次诊断，因此 remote 留痕、conflict
+       标记、pending 都是当下的值，不需要用户手动刷新。 */
+    renderAnnSyncStatus();
   }
   window.loadSettingsUI = loadSettingsUI;
 

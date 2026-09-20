@@ -1145,3 +1145,114 @@ textarea,
    Both are now fixed at source in css/calendar.css, together with the other 15
    rules that painted text in the fill hue, so the overrides were deleted rather
    than left here as a second, later word on the same properties. */
+
+/* ── 2B.5 · 纪念日同步状态（只读诊断）─────────────────────────────────────
+   这一块要看起来像 Settings 里的一张卡，而不是一个调试面板 —— 所以它复用
+   上方纪念日卡片的 .stat-row / .val（定义在 css/calendar.css），只补自己的
+   外壳：一个 <details>、一枚状态小标、一行结论。
+
+   颜色全部走 -ink 记号（--sage-ink / --love-ink / --gold-ink）。按本文件
+   1E-L 那条的结论，accent 原色是给填充调的，当文字用达不到 AA，所以文字一律
+   用 ink 变体；边框用 currentColor 跟着走，不需要第二套值。
+
+   收起时只露「标题 + 状态」，因此低打扰；只有真冲突（B）由 JS 展开。
+   本文件里没有 --duration-* 记号，所以时长写字面量。 */
+.ann-sync {
+  margin: 0 0 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  overflow: hidden;
+}
+.ann-sync-sum {
+  display: flex;
+  align-items: center;
+  /* 320 下必须能换行：结论胶囊（"Potrebna potvrda — pronađena oznaka sukoba"
+     等）单颗就有 232px，而摘要内容盒只有 266px，标题已占去 110px。不换行时
+     胶囊被挤出卡片，再由 .ann-sync 的 overflow:hidden 裁掉 —— 页面级横向溢出
+     检测抓不到它，因为被裁掉的正是要读的那句话本身。换行后胶囊整颗落到第二行
+     （232 ≤ 266 放得下），单行放得下时行为与原来完全一致。 */
+  flex-wrap: wrap;
+  gap: 8px;
+  row-gap: 6px;
+  min-height: var(--touch-target);
+  padding: 8px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.8rem;
+  color: var(--text);
+}
+.ann-sync-sum::-webkit-details-marker {
+  display: none;
+}
+.ann-sync-sum::after {
+  content: "\25BE";
+  margin-left: auto;
+  color: var(--text-muted);
+  transition: transform 150ms ease;
+}
+.ann-sync[open] .ann-sync-sum::after {
+  transform: rotate(180deg);
+}
+.ann-sync-name {
+  font-weight: 600;
+}
+.ann-sync-pill {
+  font-size: 0.62rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.ann-sync-pill-a {
+  color: var(--sage-ink);
+}
+.ann-sync-pill-b {
+  color: var(--love-ink);
+}
+.ann-sync-pill-c {
+  color: var(--gold-ink);
+}
+.ann-sync-pill-d {
+  color: var(--text-muted);
+}
+.ann-sync-body {
+  padding: 0 12px 10px;
+}
+.ann-sync-row {
+  font-size: 0.76rem;
+  padding: 8px 0;
+}
+.ann-sync-k {
+  color: var(--text-muted);
+}
+/* 未读取 / 无 —— 压成次要色，让真正的日期值先跳出来。 */
+.ann-sync-row .val.ann-sync-muted {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.ann-sync-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0 2px;
+}
+.ann-sync-chip {
+  font-size: 0.62rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: var(--border-soft);
+  color: var(--text-muted);
+}
+.ann-sync-chip-alert {
+  background: transparent;
+  border: 1px solid var(--love-ink);
+  color: var(--love-ink);
+}
+.ann-sync-note {
+  margin: 8px 0 0;
+  font-size: 0.62rem;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--text-muted);
+}

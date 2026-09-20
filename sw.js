@@ -84,7 +84,13 @@ const V = '?v=' + APP_VERSION;
 // 新的 _knowMeAffordanceHtml，让她的 Know Me 猜测在首页就能一键判定）与
 // ./js/render-love.js（rateKnowMe 改走 _refreshEchoSurfaces）。前者是裸路径，所以必须
 // 抬这一代际；后者由 7.3.8 管。两轴同抬，和 2B.3 一样的判断方式。
-const CACHE_STATIC = 'ciklus-static-v41';
+// Phase 2B.5 · v41 → v42。这一轮改 ./index.html、./css/v2.css 与 ./js/module-settings.js ——
+// Settings 页新增「纪念日同步状态」只读诊断区（把「冲突只能靠 DevTools 手查 localStorage」
+// 变成打开设置页就能看）。三个全是裸路径，同一个老问题：不换名字，装了旧 SW 的客户端
+// 永远看不到这个面板，而它要显示的恰恰是「当前有没有冲突」——一个显示不出来的诊断
+// 等于没有诊断。没有任何带 ?v= 的资产被改，所以 APP_VERSION 保持 7.3.8 不动，
+// 本轮只抬这一轴。判断依据仍是文件在 STATIC_ASSETS 里**怎么被列的**，不是「改了文件」。
+const CACHE_STATIC = 'ciklus-static-v42';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
