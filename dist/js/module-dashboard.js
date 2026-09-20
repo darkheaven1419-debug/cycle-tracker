@@ -400,15 +400,26 @@
       return '<div class="card dash-card" style="border-left:3px solid ' + accent + '">' + inner + '</div>';
     };
 
-    if (!items.length) {
+    var target = _replyTarget(ctx.partner, since);
+    var echoed = target ? _iEchoed(target) : false;
+
+    /* §Phase 2B：没有新动态、但有一条我还没回应的便签时，这不是「空态」——
+       「她给我留了东西 → 我可以马上回应」的后半句必须还在。空态文案只在真的无事
+       可做时才出现，否则「还没有新消息」会和「你可以回应」同时挂着，自相矛盾。 */
+    if (!items.length && !target) {
       host.innerHTML = wrap('var(--border)',
         '<div style="font-size:.72rem;font-weight:700;color:var(--text-muted)">' + esc(S.empty) + '</div>' +
         '<div style="font-size:.64rem;color:var(--text-muted);margin-top:4px;line-height:1.5">' + esc(S.emptyHint) + '</div>');
       return;
     }
+    if (!items.length) {
+      host.innerHTML = wrap('var(--love)',
+        '<div style="font-size:.74rem;font-weight:700;color:var(--love);margin-bottom:2px">' +
+        esc(ctx.partner === 'barry' ? S.m : S.f) + '</div>' +
+        _replyAffordanceHtml(ctx, S, target, echoed));
+      return;
+    }
 
-    var target = _replyTarget(ctx.partner, since);
-    var echoed = target ? _iEchoed(target) : false;
     var placed = false;
 
     var rows = items.slice(0, 4).map(function (it) {
@@ -735,16 +746,26 @@
   function _replyTarget(partner, since) {
     var grat = _readJSON('shared-gratitude', []);
     if (!Array.isArray(grat)) return null;
-    var best = null;
+    var best = null, unanswered = null;
     grat.forEach(function (g) {
       if (!g || g.from !== partner) return;
       /* gratEchoRow 对没有可用时间戳的条目返回空串（无法与回应一一对应），
          所以这里也用同一条件筛，免得选中一条渲染不出按钮的便签。 */
       if (typeof g.time !== 'number' || !isFinite(g.time)) return;
-      if (g.time <= since) return;
       if (!best || g.time > best.time) best = g;
+      /* §Phase 2B：窗口只该限制「列出什么」，不该限制「能回应什么」。
+         原实现把 g.time <= since 的便签直接丢掉，于是回应机会是被「看过」消耗掉
+         的：pagehide / visibilitychange 会推进窗口（:443-446），Barry 打开看一眼
+         就退出，那条他从没回过的便签从此在第一屏再也点不到。
+         这与本文件 :430-432 自己写下的意图矛盾 —— 「『可以回应』不该因为多了几条
+         动态就消失」—— 那里只堵了「被挤出前四条」这一种消失原因，漏了「窗口推进」。
+         所以分两支：窗口内最新一条优先（这一支行为与改动前逐字相同，R4/E4 钉的
+         就是它），窗口内一条都没有时，才退回「我还没回应过的最新一条」。
+         回应过就真的消失 —— 靠动作清除，不靠时间。 */
+      if (!_iEchoed(g) && (!unanswered || g.time > unanswered.time)) unanswered = g;
     });
-    return best;
+    if (best && best.time > since) return best;
+    return unanswered;
   }
 
   /** 我在这条便签上回应过没有 —— 查的是 gratEchoRow 用的同一个 key。 */
@@ -779,11 +800,12 @@
     var S = ctx.S;
     var since = _initTodayWindow();
     var items = _collectTodayEvents(since);
-    if (!items.length) { host.hidden = true; host.innerHTML = ''; return; }
-    host.hidden = false;
-
     var target = _replyTarget(ctx.partner, since);
     var echoed = target ? _iEchoed(target) : false;
+    /* §Phase 2B：与 Home 同一条规则 —— 手上还有一条没回应的便签，就不算「无事可做」。
+       两处共用 _replyTarget，所以这条对称性是结构性的，不是各写一遍。 */
+    if (!items.length && !target) { host.hidden = true; host.innerHTML = ''; return; }
+    host.hidden = false;
 
     var placed = false;
     /* 列表按时间倒序，只展示三条。对方最新的那条便签可能被更新的 echo /
