@@ -1829,6 +1829,19 @@ function updateFab() {
     fab.classList.add('hidden');
     return;
   }
+  /* Phase 2A.5：FAB 标记的是经期，属于 Cycle 页。fixed 元素没法靠内容 padding
+     让位 —— 320x800 下回应行最右边的 ✨ 就被它压住（量到 45x54 的重叠）。把周期
+     操作留在周期页是从源头消除遮挡，而不是给某一个按钮加内缩。
+
+     不能用 querySelector('.panel.active') 判断：切页时旧面板为了跑完滑出动画会
+     继续保留 .active 最多 400ms（见下面的 _outTimer 兜底），所以它可能返回正在
+     退场的那个。stats -> settings 会因此被判成「还在 Cycle」而留下 FAB —— 这是
+     实测到的失败，不是推测。以切页时记下的目标面板为准，查询只作为兜底。 */
+  const shownId = window.__activePanel || (document.querySelector('.panel.active') || {}).id;
+  if (shownId && shownId !== 'panel-stats') {
+    fab.classList.add('hidden');
+    return;
+  }
   fab.classList.remove('hidden');
   const openStart = getOpenPeriodStart();
   if (openStart) {
@@ -2786,6 +2799,10 @@ document.querySelectorAll('.tab').forEach((btn) => {
     // Scroll position preserved per user request
     // Scroll position preserved per user request
     // Scroll position preserved per user request
+    // Phase 2A.5：FAB 只在 Cycle 页出现。这里记下目标面板再判定 —— 这是唯一给
+    // .active 赋值的地方，而旧面板还会挂着 .active 退场，所以必须由这里说了算。
+    window.__activePanel = 'panel-' + id;
+    updateFab();
     if (id === 'settings') loadSettingsUI();
     if (id === 'symptoms') {
       // Phase 2B：症状页拉取伴侣数据，属于 Pull，凭据是 App Secret
