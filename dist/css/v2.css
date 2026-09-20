@@ -551,6 +551,14 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
 /* ── §5 Know Me feedback ─────────────────────────────────────────────────
    Two buttons, not a scoreboard. Sized to the same 44px target as everything
    else the partner is expected to tap. */
+/* §Phase 2B.3：卡片的状态引子，和 Daily Question 那条 .dq-lead 同构 —— 说的是
+   对方现在怎么样，所以用 muted 而不是主色，免得读成又一个要点的东西。 */
+.km-lead {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 8px;
+}
 .km-fb {
   min-height: var(--touch-target);
   padding: 0 14px;

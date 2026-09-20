@@ -221,8 +221,8 @@ async function bootWithLegacyPat(browser, opts) {
 
   // ── D. source/dist consistency and the SW version (§九: keep it current —
   // Phase 2D pinned v29, Phase 1B carried it to v30, Phase 1B.5 to v31,
-  // Phase 1C to v32, Phase 1D took it to v35, Phase 1E to v37 and the 1E
-  // follow-up to v38) ──
+  // Phase 1C to v32, Phase 1D took it to v35, Phase 1E to v37, the 1E
+  // follow-up to v38 and Phase 2B.3 to v40) ──
   {
     const drift = ['app.js', 'js/fix-all.js', 'js/module-settings.js', 'index.html', 'sw.js']
       .filter((f) => read(f) !== read('dist/' + f));
@@ -231,8 +231,8 @@ async function bootWithLegacyPat(browser, opts) {
 
     const sw = read('sw.js');
     check('D8 CACHE_STATIC is the current name and no older one survives',
-      /const CACHE_STATIC = 'ciklus-static-v39';/.test(sw) && sw.indexOf('ciklus-static-v38') === -1,
-      `v39=${/ciklus-static-v39/.test(sw)} v38=${sw.indexOf('ciklus-static-v38') !== -1}`);
+      /const CACHE_STATIC = 'ciklus-static-v40';/.test(sw) && sw.indexOf('ciklus-static-v39') === -1,
+      `v40=${/ciklus-static-v40/.test(sw)} v39=${sw.indexOf('ciklus-static-v39') !== -1}`);
 
     // The files 2D changed must still be covered by the precache list, or a
     // later cache-name bump would not refresh them.

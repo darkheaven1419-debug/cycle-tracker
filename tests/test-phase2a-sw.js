@@ -241,7 +241,11 @@ function fire(handlers, url, opts) {
   // for the product-wide visual unification (accent ink, control sizing, and the
   // theme/manifest chrome colour all landing in one commit), then v37 → v38 when
   // the review found 1E-D's 44px floor was still being overridden by two legacy
-  // media queries in css/calendar.css.
+  // media queries in css/calendar.css, then v39 → v40 in Phase 2B.3 when
+  // css/v2.css gained the Know Me lead rule (.km-lead). That one is the same
+  // bare-path hazard as v38: './css/v2.css' is precached WITHOUT a ?v= suffix,
+  // so its cache key never moves on its own and an installed client would keep
+  // serving the unstyled lead for good.
   // The bump is the only thing that makes a deploy reach a client
   // that already has the old SW installed: these assets sit in STATIC_ASSETS
   // and are served cache-first, so without a new cache name the stale copies
@@ -249,10 +253,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV39 = /const CACHE_STATIC = 'ciklus-static-v39';/.test(src);
-    const hasV38 = /ciklus-static-v38/.test(src);
+    const hasV40 = /const CACHE_STATIC = 'ciklus-static-v40';/.test(src);
+    const hasV39 = /ciklus-static-v39/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV39 && !hasV38, `v39=${hasV39} v38StillPresent=${hasV38}`);
+      hasV40 && !hasV39, `v40=${hasV40} v39StillPresent=${hasV39}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -310,12 +314,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v37');
     await named.api.open('ciklus-static-v38');
     await named.api.open('ciklus-static-v39');
+    await named.api.open('ciklus-static-v40');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v38 buckets and keeps v39 + fonts',
+    check('S13 activate evicts the stale v31..v39 buckets and keeps v40 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -324,7 +329,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v36') === -1 &&
       names.indexOf('ciklus-static-v37') === -1 &&
       names.indexOf('ciklus-static-v38') === -1 &&
-      names.indexOf('ciklus-static-v39') !== -1 &&
+      names.indexOf('ciklus-static-v39') === -1 &&
+      names.indexOf('ciklus-static-v40') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -355,7 +361,7 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v39');
+    const got = named.contents('ciklus-static-v40');
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,

@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.3.6';
+const APP_VERSION = '7.3.7';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -55,7 +55,7 @@ const V = '?v=' + APP_VERSION;
 // 因此改由容器 #lunarInfo / #cultureCard 选中）。
 // 日历格 37x44 与日记日期条 38x44 保持不动 —— 那是 320px 下七列能给出的全部宽度，
 // v2.css 早有说明，既有测试也已接受。周期算法与数据结构仍未动。
-const CACHE_STATIC = 'ciklus-static-v39';
+const CACHE_STATIC = 'ciklus-static-v40';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
