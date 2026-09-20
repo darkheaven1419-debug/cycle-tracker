@@ -346,6 +346,64 @@ async function boot(browser, opts) {
     check('C4 no system-generated string is attributed to Anđela as its speaker',
       andjelaHits.length === 0, andjelaHits.join(', ') || 'none');
 
+    // C8/C9 — the shapes C1/C4 are blind to BY CONSTRUCTION. C1/C4 match a
+    // SPEAKER prefix ('Barry says:'), so they say nothing about a system string
+    // that attributes an ACT, an AUTHORSHIP or a FEELING to one of the two
+    // people: "Barry's tip: …", "Barry prati svaki tvoj ciklus", "Barry 陪着你
+    // 走过每一个周期", "已标记 ✓ Barry在守护着你". All four shipped, and the
+    // prefix scan reported clean the entire time — which is the reason these
+    // checks exist rather than a fifth entry in the C1 list. The defect is the
+    // same one §一 names: a real person did not write it and is not doing what
+    // it claims.
+    // 'Anđelin Ciklus' (the app's own name) is deliberately not a match: it does
+    // not contain 'Anđela prati' / 'Anđela je uz tebe' as a substring, the same
+    // trick C4 relies on.
+    const actHits = scan([
+      [/Barry['’]s\s+(tip|note|message|advice|words)/i, "Barry's tip"],
+      [/Barry prati/, 'Barry prati'], [/Barry te čuva/, 'Barry te čuva'],
+      [/Barry je uz tebe/, 'Barry je uz tebe'],
+      [/Barry (is with you|walks with you|is watching over you|is looking after you)/i, 'Barry is with you'],
+      [/Barry\s*(陪着你|在守护着你|守护着你)/, 'Barry 陪着你'],
+    ]);
+    check('C8 no system-generated string attributes an act, a tip or a feeling to Barry',
+      actHits.length === 0, actHits.join(', ') || 'none');
+
+    const andjelaActHits = scan([
+      [/Anđela['’]s\s+(tip|note|message|advice|words)/i, "Anđela's tip"],
+      [/Anđela prati/, 'Anđela prati'], [/Anđela te čuva/, 'Anđela te čuva'],
+      [/Anđela je uz tebe/, 'Anđela je uz tebe'],
+      [/Anđela (is with you|walks with you|is watching over you|is looking after you)/i, 'Anđela is with you'],
+      [/Anđela\s*(陪着你|在守护着你|守护着你)/, 'Anđela 陪着你'],
+    ]);
+    check('C9 no system-generated string attributes an act, a tip or a feeling to Anđela',
+      andjelaActHits.length === 0, andjelaActHits.join(', ') || 'none');
+
+    // C10 — the largest surface of this defect was not JavaScript at all.
+    // data/holidays.json carried system-authored `desc` copy that narrated the
+    // two of them doing and saying things they never did, and no scan reached
+    // it: CONTENT_FILES is JavaScript, and this is content. The invariant is
+    // stated absolutely rather than as another pattern list, because a holiday
+    // description has no legitimate reason to name either person — it describes
+    // the holiday, not the couple. If a future edit wants to mention them, this
+    // should stop it and force the conversation rather than let it through on a
+    // pattern nobody updated.
+    const HOLIDAY_FILES = ['data/holidays.json', 'dist/data/holidays.json'];
+    const holidayBad = [];
+    for (const f of HOLIDAY_FILES) {
+      let raw;
+      try { raw = read(f); } catch (e) { holidayBad.push(f + ':unreadable'); continue; }
+      const named = (raw.match(/Barry|Anđela/g) || []).length;
+      if (named > 0) holidayBad.push(f + ':' + named + ' name(s)');
+      let parsed = null;
+      try { parsed = JSON.parse(raw); } catch (e) { holidayBad.push(f + ':unparseable'); continue; }
+      const entries = (parsed && parsed.holidays) || [];
+      if (!entries.length) { holidayBad.push(f + ':no entries'); continue; }
+      const thin = entries.filter((h) => !h || !h.desc || !h.desc.sr || !h.desc.zh || !h.desc.en);
+      if (thin.length) holidayBad.push(f + ':' + thin.length + ' entry(s) missing a language');
+    }
+    check('C10 the holiday copy names neither person and stays complete in all three languages',
+      holidayBad.length === 0, holidayBad.join(', ') || `checked ${HOLIDAY_FILES.length} files`);
+
     // C5 — a card signature must resolve to the app, not to a person. The love
     // note quotes classical verse (Su Shi, the Book of Songs); those lines are
     // quoted literature, so the signature is what tells the reader who is
@@ -382,6 +440,28 @@ async function boot(browser, opts) {
       .filter((f) => /LOVE_NOTES/.test(code[f]));
     check('C5b the retired love-note copy has no caller in any shipped file',
       wired.length === 0, wired.join(', ') || 'none');
+
+    // C5d — C5b generalised to the rest of the retired first-person family.
+    // LOVE_NOTES is not the only corpse: these four are the other constants §一
+    // was about, and each is a define-only symbol with exactly one home. "No file
+    // other than its own may name it" catches a re-wire from anywhere at all
+    // without hard-coding where that re-wire would happen, and — like C5b — it
+    // allows the definitions to stay. The corpse may exist; it may not speak.
+    const RETIRED = [
+      ['loveNoteDefault', 'js/i18n.js'],
+      ['specialBadgeTexts', 'js/i18n.js'],
+      ['DAILY_LOVE_MESSAGES', 'js/weather.js'],
+      ['getTodaysLoveMessage', 'js/weather.js'],
+    ];
+    const reWired = [];
+    for (const [name, home] of RETIRED) {
+      for (const f of CONTENT_FILES) {
+        if (f === home) continue;
+        if (new RegExp('\\b' + name + '\\b').test(code[f])) reWired.push(name + ' <- ' + f);
+      }
+    }
+    check('C5d every retired first-person constant is read by no file but its own',
+      reWired.length === 0, reWired.join(', ') || `checked ${RETIRED.length} symbols`);
 
     const loveNoteBody = (() => {
       const src = code['js/render-mood.js'];

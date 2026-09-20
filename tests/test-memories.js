@@ -156,14 +156,17 @@ const AGO = (n) => Date.now() - n * DAY;
   check('M7 the module has no storage write path at all', writes.length === 0,
     `writes=${writes.length}`);
 
-  /* §十三: no new synced field. The contract is the same 18 names
-     tests/test-phase2c-state.js pins in COLLECT_KEYS. Match the object literal's
+  /* §十三: no new memories field. The contract is the same 19 names
+     tests/test-phase2c-state.js pins in COLLECT_KEYS — 17 pinned by Phase 2C,
+     + dailyQ (Phase 1B), + anniversaries (Phase 1.9 §2.2, the shared canonical
+     相识/相恋 dates). Match the object literal's
      own indentation (6 spaces) so the nested songs/checkins pairs, which sit at
      8, cannot be mistaken for top-level fields. */
   const COLLECT_KEYS = [
     'diary', 'cycleInfo', 'symptoms', 'gratitude', 'gratitudeEcho', 'dailyQ', 'hug',
     'songs', 'sleep', 'checkins', 'learningProgress', 'learningComments',
-    'learningPoints', 'voiceData', 'sunCounter', 'knowme', 'calendarMarkers', 'updated',
+    'learningPoints', 'voiceData', 'sunCounter', 'knowme', 'calendarMarkers',
+    'anniversaries', 'updated',
   ];
   const collectBody = SYNC_SRC.slice(SYNC_SRC.indexOf('function collect()'));
   const collect = collectBody.slice(0, collectBody.indexOf('\n  }'));
@@ -171,8 +174,8 @@ const AGO = (n) => Date.now() - n * DAY;
     .map((s) => s.trim().replace(/:$/, ''));
   const gone = COLLECT_KEYS.filter((k) => names.indexOf(k) === -1);
   const added = names.filter((k) => COLLECT_KEYS.indexOf(k) === -1);
-  check('M8 §十三 the sync contract is untouched — collect() still returns the same 18 fields',
-    names.length === 18 && gone.length === 0 && added.length === 0,
+  check('M8 §十三 the sync contract carries the reviewed 19 fields (18 + anniversaries)',
+    names.length === 19 && gone.length === 0 && added.length === 0,
     `n=${names.length} gone=${gone.join(',') || 'none'} added=${added.join(',') || 'none'}`);
   check('M9 sync.js gained no memories key',
     !/memor|ourStory|featured/i.test(SYNC_SRC), 'no memories vocabulary in sync.js');
@@ -599,10 +602,15 @@ const RICH = {
         mile: items.filter((i) => i.kind === 'milestone').map((m) => m.text),
       };
     });
+    // §2.6 fixes the Serbian anniversary vocabulary: met -> upoznavanje (相识),
+    // love -> zaljubljenost (相恋). The literals this check used to require
+    // ('od prvog susreta', 'dana zajedno') were the exact wording §2.6 bans, so
+    // the expectation moves to the new contract. The assertion is not relaxed:
+    // it still demands two locale-specific phrases, both of them required.
     check('M42 Serbian locale renders its own title and milestone wording',
       /uspomene/i.test(t.sub) &&
-      t.mile.some((m) => /od prvog susreta/.test(m)) &&
-      t.mile.some((m) => /dana zajedno/.test(m)),
+      t.mile.some((m) => /od upoznavanja/.test(m)) &&
+      t.mile.some((m) => /dana zaljubljenosti/.test(m)),
       `sub="${t.sub}" mile=${JSON.stringify(t.mile)}`);
     await ctx.close();
   }

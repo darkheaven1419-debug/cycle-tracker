@@ -78,6 +78,209 @@ const SyncModule = (function () {
     return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
   }
 
+  /* ── Phase 1.9 §四/§2.2–§2.5 —— 纪念日 canonical ─────────────────────────
+     纪念日不是普通并发文本。它们是关于两个真实的人的两个真实日期，一次静默
+     覆盖在界面上和一个 bug 无法区分，所以这里刻意不采用「最后写入者获胜」，
+     也不看时间戳（§2.4 明确禁止）。
+
+     canonical 只有两个合法来源：
+       1. 首次迁移（情况 A）—— 两端各自独立算出同一个确定性默认值。
+          因为默认值是常量，两端结果必然相同，所以「谁赢」这个问题不成立。
+       2. 用户在 Settings 里主动改日期 —— app.js saveAnniversaries() 由 input 的
+          onchange 触发，只有真人操作才会走到，是一次明确、可追踪的
+          「我正在修改共享纪念日」行为。
+
+     collect() 发出去的始终是这里保存的 canonical，而不是现读的 cycle-ann-met /
+     cycle-ann-love。这一点是关键：普通 push / 自动 sync / fix 脚本因此都无法改变
+     canonical —— 它们只能重新声明已经确立的值。
+
+     app.js 是默认值与本地生效日期的唯一来源（§四）。sync.js 只在调用时按名字读取，
+     读不到就不初始化 —— 安全优先，绝不复制日期字面量到这里。
+     ──────────────────────────────────────────────────────────────────────── */
+  var ANN_SHARED = 'shared-anniversaries';
+  var ANN_LOCAL_MET = 'cycle-ann-met';
+  var ANN_LOCAL_LOVE = 'cycle-ann-love';
+  // 「本机有一次尚未推送成功的主动修改」——用来挡住一个真实的竞态：
+  // 用户刚在 Settings 改完日期，紧接着的推送前 GET 会拿回**对方尚未更新**的旧
+  // canonical；若不加区分地采纳远端，用户刚做的修改会被无声回滚。
+  // 这不是时间戳猜测，而是一个显式的待发布标记，推送成功即清除。
+  var ANN_PENDING = 'shared-ann-pending';
+  /* 「本机最后观测到的远端 canonical」。只读留痕，永远不代表本机意见，作用只有一个：
+     Worker 的 PUT 是整文件替换（worker/src/index.js ghWrite 直接 stringify 整个
+     payload），所以「本机没有意见」**不能**写成 null —— 那会把对方已建立的 canonical
+     抹掉，随后任何一台新设备都会用默认值重新初始化，真实日期就永久消失了。
+     没有本机 canonical 时，collect() 改为重新声明这个观测值（对服务端是等价写入）。
+     取值：JSON {met,love}，或字符串 'none' = 已完成合并、远端确实还没有 canonical。 */
+  var ANN_REMOTE = 'shared-ann-remote';
+  // 需要人工决定时留痕（§2.3 情况 B / 情况 D）。绝不替 Barry 或 Anđela 选日期。
+  // 必须持久化：内存里留痕的话，用户一刷新页面「需要人工确认」就消失了，等于没报告。
+  var ANN_CONFLICT = 'shared-ann-conflict';
+  var _annConflict = null;
+  function _annFlag(conflict) {
+    _annConflict = conflict;
+    try { localStorage.setItem(ANN_CONFLICT, JSON.stringify(conflict)); } catch (e) { /* 忽略 */ }
+  }
+  function _annClearFlag() {
+    _annConflict = null;
+    try { localStorage.removeItem(ANN_CONFLICT); } catch (e) { /* 忽略 */ }
+  }
+  function getAnnConflict() {
+    if (_annConflict) return _annConflict;
+    try {
+      var raw = localStorage.getItem(ANN_CONFLICT);
+      if (!raw) return null;
+      var v = JSON.parse(raw);
+      return v && typeof v === 'object' ? v : null;
+    } catch (e) { return null; }
+  }
+  function _annSeen() {
+    try { return getJSON(ANN_REMOTE, null); } catch (e) { return null; }
+  }
+  /** 记下这次观测到的远端 canonical。非 valid → 'none'，表示远端确实还没有。 */
+  function _annRememberRemote(remote) {
+    try {
+      localStorage.setItem(ANN_REMOTE, JSON.stringify(_annValid(remote)
+        ? { met: remote.met, love: remote.love }
+        : 'none'));
+    } catch (e) { /* 忽略 */ }
+  }
+
+  function _annValid(v) {
+    return !!v && typeof v === 'object' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(v.met) && /^\d{4}-\d{2}-\d{2}$/.test(v.love);
+  }
+  function _annEqual(a, b) {
+    return _annValid(a) && _annValid(b) && a.met === b.met && a.love === b.love;
+  }
+  /** app.js 的 ANN_DEFAULT_MET/LOVE 是默认值唯一来源。取不到就返回 null（不初始化）。 */
+  function _annDefaults() {
+    try {
+      if (typeof ANN_DEFAULT_MET === 'string' && typeof ANN_DEFAULT_LOVE === 'string') {
+        return { met: ANN_DEFAULT_MET, love: ANN_DEFAULT_LOVE };
+      }
+    } catch (e) { /* TDZ：app.js 尚未执行 */ }
+    return null;
+  }
+  /** 本机生效日期，语义与 app.js getAnnDates() 一致：缺键即默认值。 */
+  function _annLocalDates(def) {
+    var met = null, love = null;
+    try {
+      met = localStorage.getItem(ANN_LOCAL_MET);
+      love = localStorage.getItem(ANN_LOCAL_LOVE);
+    } catch (e) { /* 隐私模式等 */ }
+    return { met: met || (def && def.met) || null, love: love || (def && def.love) || null };
+  }
+  function _annPending() {
+    try { return localStorage.getItem(ANN_PENDING) === '1'; } catch (e) { return false; }
+  }
+  /** 把 canonical 落到本机：存 canonical 本身，并把本地生效日期一并更新。 */
+  function _annAdopt(v) {
+    localStorage.setItem(ANN_SHARED, JSON.stringify({ met: v.met, love: v.love }));
+    localStorage.setItem(ANN_LOCAL_MET, v.met);
+    localStorage.setItem(ANN_LOCAL_LOVE, v.love);
+    if (typeof refreshAnnDates === 'function') refreshAnnDates();
+  }
+
+  /**
+   * 用户主动修改共享纪念日（§2.4）。只应由 app.js saveAnniversaries() 调用 ——
+   * 那个函数挂在两个 date input 的 onchange 上，只有真人在 Settings 里改日期
+   * 才会触发（loadSettingsUI() 用 .value = 回填不会触发 onchange）。因此这是
+   * 唯一一条「明确的、可追踪的修改共享纪念日」路径。写 canonical 并置待发布
+   * 标记；标记由 _putState 推送成功后清除。
+   */
+  function _annSetCanonical(met, love) {
+    if (!_annValid({ met: met, love: love })) return false;
+    localStorage.setItem(ANN_SHARED, JSON.stringify({ met: met, love: love }));
+    localStorage.setItem(ANN_PENDING, '1');
+    // 真人已经在 Settings 明确表态了，冲突随之解除。
+    _annClearFlag();
+    return true;
+  }
+
+  /**
+   * 解析远程共享状态里的纪念日。返回本机最终采纳的 canonical（未变则 undefined）。
+   * 冲突时只留痕、不写 —— 绝不静默替 Barry 或 Anđela 选日期。
+   */
+  function resolveAnniversaries(remote) {
+    var local = getJSON(ANN_SHARED, null);
+    if (!_annValid(local)) local = null;
+    // 无论走哪条分支，先记下这次观测到的远端值：collect() 在没有本机 canonical 时
+    // 要靠它把对方的 canonical 原样重新声明出去，而不是发 null 抹掉它。
+    _annRememberRemote(remote);
+
+    // 用户在 Settings 主动改过、且还没推送成功 —— 本机 canonical 是权威的，
+    // 这一轮不采纳任何远端值，交给随后的 PUT 发布出去。
+    if (local && _annPending()) {
+      // 但若远端也有 canonical 且与本机不同，那是两个真人的修改撞在一起。
+      // §2.3/§2.4 不允许按推送先后静默决定谁赢（先前的写法在这里直接 return，
+      // 连冲突都不会被记录，于是后推送的一方会无声覆盖先推送的一方）→ 留痕交人工。
+      if (_annValid(remote) && !_annEqual(local, remote)) {
+        _annFlag({ reason: 'pending-vs-remote', local: local, remote: remote });
+        console.warn('[同步] 纪念日需要人工确认（本机待发布的修改与远端 canonical 不同）—— 未做任何修改');
+      }
+      return local;
+    }
+
+    if (!_annValid(remote)) {
+      // ── 情况 A / B：共享状态还没有 canonical ──
+      if (local) return local;                 // 已经建立过，不重复初始化
+      var def = _annDefaults();
+      if (!def) return undefined;              // 取不到默认值：不猜
+      var cur = _annLocalDates(def);
+      if (cur.met === def.met && cur.love === def.love) {
+        _annAdopt(def);                        // 情况 A：两端算出同一个值 → 必然收敛
+        return def;
+      }
+      // 情况 B：本机是自定义值，而共享状态沉默。无法可靠判断对方是否也改过，
+      // §2.3 禁止替两个人选日期 → 两侧一律不动，留痕待人工决定。
+      _annFlag({ reason: 'customized-local-no-remote', local: cur, remote: null });
+      console.warn('[同步] 纪念日需要人工确认（本机已自定义，共享状态为空）—— 未做任何修改');
+      return undefined;
+    }
+
+    // ── 共享状态已有 canonical ──
+    if (_annEqual(local, remote)) return local; // 已一致
+
+    if (local) {
+      // 情况 C：canonical 为准。远端 canonical 只会因为对方在 Settings 主动保存
+      // 而改变 —— 那是被许可的显式路径，不是静默覆盖。
+      _annAdopt(remote);
+      return remote;
+    }
+
+    // 本机尚无 canonical。仍是默认值 → 采纳无损（情况 C）；
+    // 已自定义且与远端不同 → 情况 D，首次初始化分歧，不静默覆盖、不猜。
+    var def2 = _annDefaults();
+    var d = _annLocalDates(def2);
+    var customized = !!def2 && (d.met !== def2.met || d.love !== def2.love);
+    if (customized && !_annEqual(d, remote)) {
+      _annFlag({ reason: 'divergent-first-init', local: d, remote: remote });
+      console.warn('[同步] 纪念日需要人工确认（两端首次初始化且值不同）—— 未做任何修改');
+      return undefined;
+    }
+    _annAdopt(remote);
+    return remote;
+  }
+
+  /**
+   * 本次 push 要发出去的 anniversaries 值。绝不发 null 去抹掉对方的 canonical：
+   * 整文件替换的语义下，null 会真的把共享 canonical 清空，随后新设备会用默认值
+   * 重新初始化 —— 真人选的日期就此永久消失。所以顺序是：
+   *   1) 本机有 canonical → 发它（本机意见，唯一权威）
+   *   2) 没见过远端任何东西 → 只能发 null（首次初始化前的极窄窗口；在首次成功
+   *      合并之前不会 push，这与 collect() 其它字段的既有前提一致）
+   *   3) 已确认远端为空 → 发 null（这是事实，不是抹除）
+   *   4) 见过远端 canonical → 原样重新声明它（等价写入，既不改也不抹）
+   */
+  function _annOutbound() {
+    var mine = getJSON(ANN_SHARED, null);
+    if (_annValid(mine)) return mine;
+    var seen = _annSeen();
+    if (seen === 'none') return null;
+    if (_annValid(seen)) return seen;
+    return null;
+  }
+
   // ── 收集全部本地状态 ──
   function collect() {
     var ce = getJSON('shared-cycle-data', null);
@@ -106,6 +309,11 @@ const SyncModule = (function () {
       sunCounter: getJSON('shared-sun-counter', {}),
       knowme: getJSON('shared-knowme', {}),
       calendarMarkers: getJSON('shared-calendar-markers', {}),
+      // §2.2/§2.4 —— 发出去的是本机保存的 canonical，不是现读的 cycle-ann-met /
+      // cycle-ann-love。canonical 只在首次迁移或用户在 Settings 主动保存时改变，
+      // 普通 push 只是重新声明它，因此永远无法覆盖它。_annOutbound() 保证在没有
+      // 本机 canonical 时也绝不会发 null 抹掉对方的值。
+      anniversaries: _annOutbound(),
       updated: Date.now()
     };
   }
@@ -378,6 +586,10 @@ const SyncModule = (function () {
       localStorage.setItem('shared-calendar-markers', JSON.stringify(state.calendarMarkers));
       if (typeof renderCalendar === 'function') renderCalendar();
     }
+    // §2.3/§2.4 —— 纪念日不走「其他数据：直接替换」。它不是并发文本，而是一对
+    // 关于两个真实的人的真实日期，静默覆盖与 bug 在界面上无法区分。这里只做
+    // canonical 的建立 / 采纳，冲突时留痕不写。
+    resolveAnniversaries(state.anniversaries);
   }
 
   // ── 三语错误提示 ──
@@ -436,6 +648,9 @@ const SyncModule = (function () {
       localStorage.setItem('shared-knowme', JSON.stringify(mkm));
       console.log('[同步] 推送前合并 Know Me 本地=' + Object.keys(lkm).length + ' 天 远程=' + Object.keys(remoteState.knowme).length + ' 天 合并后=' + Object.keys(mkm).length + ' 天');
     }
+    // §2.3/§2.4 —— 纪念日不是普通合并：没有「并集」，只有 canonical 的建立与采纳。
+    // 两条路径（推送前 GET 与 409 冲突重试）共用这里，语义与 apply() 严格一致。
+    resolveAnniversaries(remoteState.anniversaries);
   }
 
   // ── PUT /state 并处理全部响应分支（含 409 CAS 冲突重试） ──
@@ -458,6 +673,9 @@ const SyncModule = (function () {
 
       if (putResp.ok) {
         localStorage.setItem('shared-last-sync', Date.now());
+        // 本机的主动修改已经发布成功，撤掉待发布标记：此后远端 canonical
+        // 恢复权威，对方若再改，本机才会跟着走（情况 C）。
+        try { localStorage.removeItem(ANN_PENDING); } catch (e) { /* 忽略 */ }
         _clearError();
         console.log('[同步] 推送成功 ✓');
         updateBadge();
@@ -679,7 +897,12 @@ const SyncModule = (function () {
     mergeKnowMe: mergeKnowMe,
     updateBadge: updateBadge,
     stopAutoPull: _stopAutoPull,
-    startAutoPull: _startAutoPull
+    startAutoPull: _startAutoPull,
+    // Phase 1.9 §2.4 —— 纪念日 canonical 接口。键名（shared-anniversaries /
+    // shared-ann-pending）只在本文件出现，app.js 通过这里写入，避免两处字面量漂移。
+    setAnniversaryCanonical: _annSetCanonical,
+    resolveAnniversaries: resolveAnniversaries,
+    getAnnConflict: getAnnConflict
   };
 })();
 
@@ -693,3 +916,8 @@ pushAllSharedData = SyncModule.push;
 pullAllSharedData = SyncModule.pull;
 collectSharedState = SyncModule.collect;
 applySharedState = SyncModule.apply;
+// Phase 1.9 §2.4 —— 纪念日 canonical。app.js 的 saveAnniversaries() 调
+// setAnniversaryCanonical()，这是唯一由真人操作触发的 canonical 写入路径。
+resolveAnniversaries = SyncModule.resolveAnniversaries;
+getAnnConflict = SyncModule.getAnnConflict;
+setAnniversaryCanonical = SyncModule.setAnniversaryCanonical;

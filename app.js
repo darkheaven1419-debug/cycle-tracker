@@ -55,14 +55,17 @@ let MOOD_NAME_MAP = {}; // populated lazily after i18n loads
    loadPerProfileSettings() is reachable from switchProfile(), and a
    `const` in the temporal dead zone would throw at that call site.
 
-   SCOPE, stated so nobody mistakes this for a fix it is not: this makes
-   one DEVICE internally consistent. It does NOT make two devices agree.
-   cycle-ann-met / cycle-ann-love are plain localStorage keys, never part
-   of shared-* and never carried by collect()/apply() in js/sync.js, so
-   nothing about them is ever synced. Converging them across devices
-   would mean adding a key to collect() and a merge branch to apply() —
-   a sync-protocol change §四 forbids without proof the current
-   architecture cannot solve it. Reported, not attempted.
+   SCOPE. This was originally written to say that making two devices agree
+   would need a sync-protocol change, and that such a change was out of
+   bounds. That is no longer the position: the owner explicitly authorized
+   exactly one controlled extension of the front-end shared-state contract
+   (Phase 1.9 §2, "方案 A"), so the dates ARE now synced — via a single
+   canonical value carried as the `anniversaries` field in js/sync.js,
+   adopted through resolveAnniversaries() and moved only by an explicit
+   save in Settings. The authorization covers the front-end contract only:
+   the Worker, the secrets, the PAT, CAS and the Todo tombstone are still
+   untouched (§2.7). This comment records that history so a later reader
+   does not conclude the change was made without permission.
    ================================================================ */
 const ANN_KEY_MET = 'cycle-ann-met';
 const ANN_KEY_LOVE = 'cycle-ann-love';
@@ -73,6 +76,28 @@ function getAnnDates() {
     met: localStorage.getItem(ANN_KEY_MET) || ANN_DEFAULT_MET,
     love: localStorage.getItem(ANN_KEY_LOVE) || ANN_DEFAULT_LOVE,
   };
+}
+
+/** 纪念日必须是 YYYY-MM-DD（§2.2 的格式约定）。畸形输入一律拒收，不落盘。 */
+function isValidAnnDate(s) {
+  return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
+}
+
+/**
+ * Phase 1.9 §四/§2.3 —— 采纳共享 canonical 之后刷新本机 UI。
+ * js/sync.js 的 _annAdopt() 写完 cycle-ann-met / cycle-ann-love 后按名字调用
+ * （typeof 守卫）。判定逻辑留在 sync.js，DOM 刷新留在 app.js。
+ */
+function refreshAnnDates() {
+  try {
+    const d = getAnnDates();
+    annDateMet = d.met;
+    annDateLove = d.love;
+  } catch (e) {
+    return; // 初始化尚未完成（annDateMet 还在 TDZ）—— 启动时 getAnnDates() 会再读一次
+  }
+  updateAnniversaryCount();
+  if (typeof renderCalendar === 'function') renderCalendar();
 }
 
 /* ================================================================
@@ -551,7 +576,7 @@ function setupUpdatePrompt() {
       if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     };
   }
-  navigator.serviceWorker.register('sw.js?v=7.3.2')
+  navigator.serviceWorker.register('sw.js?v=7.3.4')
     .then(function (reg) {
       // A new version installed on an earlier visit and is still parked
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg);
@@ -852,13 +877,26 @@ loadHolidays();
 
 /** Holiday lookup with O(1) cache — replaces O(n) .filter() per cell */
 let _holidayCache = null;
+/* Phase 1.9 §2.4 —— 这是「我明确要修改共享纪念日」的唯一入口。
+   它只挂在 #annDateMet / #annDateLove 的 onchange 上，而 onchange 只在真人操作
+   时触发（loadSettingsUI() 用 .value = 回填不会触发 onchange），所以页面加载、
+   自动 sync、fix 脚本都走不到这里。它同时更新本机生效日期与 shared canonical、
+   置上待发布标记，然后推送；对方下次拉取时按情况 C 跟着更新。 */
 function saveAnniversaries() {
-  annDateMet = document.getElementById('annDateMet').value;
-  annDateLove = document.getElementById('annDateLove').value;
-  localStorage.setItem('cycle-ann-met', annDateMet);
-  localStorage.setItem('cycle-ann-love', annDateLove);
+  const met = document.getElementById('annDateMet').value;
+  const love = document.getElementById('annDateLove').value;
+  // 畸形输入不写本机，更不写 canonical。
+  if (!isValidAnnDate(met) || !isValidAnnDate(love)) return;
+  annDateMet = met;
+  annDateLove = love;
+  localStorage.setItem(ANN_KEY_MET, met);
+  localStorage.setItem(ANN_KEY_LOVE, love);
+  // canonical 随主动修改更新；待发布标记挡住「推送前 GET 拿回对方旧 canonical」
+  // 的竞态 —— 否则用户刚改的日期会被无声回滚。
+  if (typeof setAnniversaryCanonical === 'function') setAnniversaryCanonical(met, love);
   updateAnniversaryCount();
   renderCalendar();
+  if (typeof pushAllSharedData === 'function') pushAllSharedData();
 }
 function updateAnniversaryCount() {
   const el = document.getElementById('ann-count');

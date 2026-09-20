@@ -10,9 +10,9 @@
       "country": "cn",
       "icon": "🎉",
       "desc": {
-        "zh": "元旦是新年的第一天，象征着新的开始。Barry在北京，Anđela在贝尔格莱德，他们有七小时的时差。当北京的午夜钟声敲响时，贝尔格莱德正是傍晚。但他们总能在零点准时互相发送新年祝福。距离让钟声不同步，却让心靠得更近。新的一年，愿所有的等待都值得。",
-        "sr": "Nova Godina — Barry u Pekingu, Anđela u Kikindi. Sedam sati razlike. Srca kucaju istim ritmom. Ljubav ne poznaje granice.",
-        "en": "New Year — Barry in Beijing, Anđela in Serbia. Seven hours apart. Hearts beat as one. Love knows no borders."
+        "sr": "Nova Godina je prvi dan u godini i u Kini je državni praznik. Ljudi se odmaraju, čestitaju jedni drugima i dočekuju ponoć uz vatromet.",
+        "zh": "元旦是新年的第一天，象征着新的开始，在中国是法定假日，放假一天。人们互致新年祝福，许多城市会举办倒计时和跨年活动。",
+        "en": "New Year's Day is the first day of the calendar year and a public holiday in China. People take the day off, exchange good wishes, and many cities hold countdown events and fireworks."
       }
     },
     {
@@ -25,9 +25,9 @@
       "country": "cn",
       "icon": "🏮",
       "desc": {
-        "zh": "除夕是春节的前夜，全家吃年夜饭守岁。Barry给Anđela视频展示满桌的年夜饭。Anđela笑着说她学会了用筷子。除夕夜最温暖的时刻就是视频那头传来她的笑声。",
-        "sr": "Badnje veče kineske Nove Godine — porodica se okuplja uz bogatu večeru. Barry pokazuje Anđeli specijalitete. Anđela uči da koristi štapiće. Najlepši trenutak je njen smeh.",
-        "en": "Lunar New Year's Eve — family dinner and staying up late. Barry shows Anđela the feast. She laughs learning chopsticks. Her laughter through the screen is the warmest gift."
+        "sr": "Badnje veče kineske Nove Godine — porodica se okuplja uz najbogatiju večeru u godini i ostaje budna do ponoći. Na trpezi su riba, simbol izobilja, i knedle.",
+        "zh": "除夕是春节的前夜，全家人围坐吃年夜饭、守岁迎接新年。年夜饭是一年中最丰盛的一餐，鱼寓意年年有余，北方人家还要包饺子。",
+        "en": "Lunar New Year's Eve — the whole family gathers for the richest meal of the year and stays up to welcome the New Year. Fish on the table stands for abundance, and dumplings are a northern staple."
       }
     },
     {
@@ -40,9 +40,9 @@
       "country": "cn",
       "icon": "🧧",
       "desc": {
-        "sr": "Kineska Nova Godina je najvažniji praznik u Kini. Barry svake godine deli ovaj praznik sa Anđelom preko video poziva — iako su udaljeni 7.000 km, njihova ljubav ne poznaje granice. Dva sveta, jedno srce.",
-        "zh": "春节是中国最重要的传统节日。家家户户贴春联、放鞭炮、吃年夜饭。Barry每年和Anđela视频一起看春晚，虽然时差不同，但新年的钟声同时敲响。跨越七千公里的爱，让这个春节更加特别。",
-        "en": "Spring Festival is China's most important holiday. Barry and Anđela celebrate via video call across 7,000 km — proof that love transcends distance. Two worlds, one heart."
+        "sr": "Kineska Nova Godina je najvažniji praznik u Kini. Domaći se kite crvenim ukrasima, pale se petarde, porodica večera zajedno, a stariji deci daruju crvene koverte.",
+        "zh": "春节是中国最重要的传统节日。家家户户贴春联、放鞭炮、吃年夜饭，长辈给孩子发红包，人们走亲访友、互道祝福。春节标志着农历新年的开始，也是中国假期最长的节日。",
+        "en": "Spring Festival is China's most important traditional holiday. Homes are decorated with red couplets, firecrackers are set off, families share the reunion dinner, and elders give children red envelopes. It marks the start of the lunar new year."
       }
     },
     {
@@ -55,9 +55,9 @@
       "country": "cn",
       "icon": "🏮",
       "desc": {
-        "sr": "Festival lampiona označava kraj Nove Godine. Ljudi šetaju sa lampionima i jedu tangjuan. Barry kaže da Anđelin osmeh podseća na pun mesec. Ista luna sija iznad Kine i Srbije.",
-        "zh": "元宵节是春节的尾声，人们赏花灯、猜灯谜、吃汤圆。圆形的汤圆象征团圆。Barry说Anđela的笑容像元宵节的满月一样明亮。虽然相隔千里，同一轮明月照耀着中国和塞尔维亚。",
-        "en": "The Lantern Festival ends New Year celebrations with lanterns and tangyuan. Barry says Anđela's smile is like the full moon. The same moon shines over both China and Serbia."
+        "sr": "Festival lampiona označava kraj Nove Godine. Ljudi šetaju sa lampionima, rešavaju zagonetke ispisane na njima i jedu tangjuan — lepljive kuglice od pirinča koje simbolizuju okupljanje.",
+        "zh": "元宵节是春节的尾声，人们赏花灯、猜灯谜、吃汤圆。圆形的汤圆象征团圆，正月十五也是新年的第一个满月之夜。",
+        "en": "The Lantern Festival ends the New Year celebrations. People stroll among lanterns, solve riddles written on them, and eat tangyuan — round glutinous rice balls that stand for family reunion."
       }
     },
     {
@@ -70,9 +70,9 @@
       "country": "cn",
       "icon": "🌿",
       "desc": {
-        "zh": "清明节是祭祖扫墓的日子，也是踏青时节。人们清扫墓地献花烧纸钱。Barry说这是关于记忆的节日，正如塞尔维亚人在历史纪念日缅怀先人。虽然习俗不同，对逝去亲人的思念是一样的。",
-        "sr": "Qingming je dan sećanja na pretke. Ljudi čiste grobove. Barry kaže da je ovo praznik sećanja — kao što Srbi pamte svoje heroje. Isti osećaj, različiti običaji.",
-        "en": "Qingming Festival honors ancestors by cleaning graves. Barry explains it's about remembrance — like Serbian memorial days. Different customs, same love for those gone."
+        "sr": "Qingming je dan sećanja na pretke. Ljudi čiste grobove i prinose cveće i papirni novac, a istovremeno izlaze u prirodu jer je to i jedan od 24 kineska solarna termina.",
+        "zh": "清明节是祭祖扫墓的日子，也是踏青时节。人们清扫墓地、献上鲜花和纸钱，同时也在春光里外出踏青。清明既是节日，也是中国二十四节气之一。",
+        "en": "Qingming Festival is a day for honouring ancestors: families sweep graves and make offerings of flowers and paper money. It is also one of the 24 Chinese solar terms, so people go out to enjoy the spring greenery."
       }
     },
     {
@@ -85,9 +85,9 @@
       "country": "cn",
       "icon": "🌿",
       "desc": {
-        "zh": "劳动节在中国是七天长假，人们出游旅行。Barry和Anđela虽然不能一起旅行，但他们有自己的小传统：互相分享各自城市天空的照片。北京的天空和贝尔格莱德的天空其实是同一片天空——就像他们的思念，飘过云层，最终抵达对方。",
-        "sr": "Praznik rada u Srbiji znači piknik i roštilj u prirodi. Barry kaže više voli srpski način — jednostavno, tiho, savršeno kad je Anđela tu.",
-        "en": "Labor Day in Serbia means picnics outdoors. Barry prefers the Serbian version — simple, peaceful, perfect if Anđela is there."
+        "sr": "Praznik rada je u Kini državni praznik sa višednevnim odmorom. Mnogi ga koriste za putovanja, pa je to jedno od najprometnijih turističkih razdoblja u godini.",
+        "zh": "劳动节是法定假日，在中国通常连休数天，很多人趁假期出游旅行，这也是全年出行最集中的时段之一。",
+        "en": "Labour Day is a public holiday in China with several days off. Many people travel, which makes it one of the busiest tourism periods of the year."
       }
     },
     {
@@ -100,9 +100,9 @@
       "country": "cn",
       "icon": "🎋",
       "desc": {
-        "sr": "Festival zmajevih čamaca slavi pesnika Qu Yuana trkama i zongzijem. Anđela prepoznaje sličnosti sa srpskim epskim pesmama. Dva naroda, dve tradicije, jedno razumevanje.",
-        "zh": "端午节纪念爱国诗人屈原，人们赛龙舟、吃粽子。Anđela发现这个故事让她想起塞尔维亚的史诗诗歌。两个民族都用诗歌和美食铭记历史。跨越文化的理解，让每一片粽叶都裹着双重的爱。",
-        "en": "Dragon Boat Festival honors poet Qu Yuan. Anđela sees parallels with Serbian epic poetry. Love bridges these ancient traditions."
+        "sr": "Festival zmajevih čamaca slavi pesnika Qu Yuana. Održavaju se trke zmajevih čamaca, a jede se zongzi — pirinač umotan u bambusov list.",
+        "zh": "端午节纪念爱国诗人屈原，人们赛龙舟、吃粽子。粽子用粽叶包裹糯米，南方多咸、北方多甜。",
+        "en": "Dragon Boat Festival honours the poet Qu Yuan with boat races and zongzi — glutinous rice wrapped in bamboo leaves, savoury in the south and sweet in the north."
       }
     },
     {
@@ -115,9 +115,9 @@
       "country": "cn",
       "icon": "💫",
       "desc": {
-        "zh": "七夕是中国传统情人节——牛郎织女隔着银河相望，每年鹊桥相会一次。Barry说这就是他们的故事——隔着七千公里，靠视频通话这座鹊桥每天相会。所爱隔山海，山海皆可平。",
-        "sr": "Qixi je kineski Dan zaljubljenih — legenda o pastiru i tkalji razdvojenim Mlečnim putem. Barry kaže da je to priča o njima — razdvojeni kilometrima, povezani ljubavlju.",
-        "en": "Qixi is Chinese Valentine's Day — lovers separated by the Milky Way meet once yearly on a magpie bridge. Barry says this is their story — separated by distance but connected by love."
+        "sr": "Qixi je kineski Dan zaljubljenih — legenda o pastiru i tkalji koje razdvaja Mlečni put, a spaja most svraka jednom godišnje. Devojke su nekada na taj dan molile za veštinu i sreću u ljubavi.",
+        "zh": "七夕是中国传统情人节——牛郎织女隔着银河相望，每年鹊桥相会一次。旧时姑娘们在这一天乞求巧手与良缘，所以七夕又叫乞巧节。",
+        "en": "Qixi is Chinese Valentine's Day — the legend of the cowherd and the weaver girl, separated by the Milky Way and reunited once a year on a bridge of magpies. Girls traditionally prayed on this day for skill and a good match."
       }
     },
     {
@@ -130,9 +130,9 @@
       "country": "cn",
       "icon": "🥮",
       "desc": {
-        "sr": "Festival sredine jeseni je praznik porodičnog okupljanja. Barry i Anđela gledaju isti mesec preko video poziva. Mesečev kolač uz rakiju — spajanje istoka i zapada, baš kao i oni.",
-        "zh": "中秋节是团圆的节日，全家人赏月、吃月饼。Barry和Anđela视频通话，看着同一轮明月。塞尔维亚的月亮和中国的月亮其实是同一个——就像他们的心，紧紧相连。月饼配rakija，东西方的融合就像他们的爱情。",
-        "en": "Mid-Autumn Festival celebrates reunion under the full moon. Barry and Anđela share the same moon via video call. Mooncake with rakija — East meets West, like their love."
+        "sr": "Festival sredine jeseni je praznik porodičnog okupljanja. Uz pun mesec dele se mesečevi kolači, a u Kini je to i državni praznik.",
+        "zh": "中秋节是团圆的节日，全家人赏月、吃月饼。月饼圆如满月，象征团圆，中秋之夜也是一年中月亮最圆最亮的时刻之一。",
+        "en": "Mid-Autumn Festival celebrates family reunion. Families admire the full moon and share mooncakes, whose round shape stands for togetherness."
       }
     },
     {
@@ -145,9 +145,9 @@
       "country": "cn",
       "icon": "🇨🇳",
       "desc": {
-        "sr": "Dan Republike Kine obeležava osnivanje NR Kine. Anđela sanja o Kineskom zidu i vatrometu. Barry je obećao da će je odvesti.",
-        "zh": "国庆节纪念中华人民共和国成立。天安门广场举行盛大阅兵式。Anđela希望有一天站在长城上看国庆烟花。Barry答应了一定带她去——一起看长城，一起看他们的未来。",
-        "en": "National Day commemorates the PRC's founding. Anđela dreams of watching fireworks from the Great Wall. Barry promised to take her."
+        "sr": "Dan Republike Kine obeležava osnivanje NR Kine 1949. godine. Na Trgu Tiananmen održava se vojna parada, a praznik traje nedelju dana i zove se Zlatna nedelja.",
+        "zh": "国庆节纪念中华人民共和国成立，天安门广场举行盛大阅兵式。国庆假期通常连休七天，被称为黄金周，是全国出行与旅游的高峰。",
+        "en": "National Day commemorates the founding of the People's Republic of China in 1949. A military parade is held on Tiananmen Square, and the week-long break is known as Golden Week."
       }
     },
     {
@@ -161,7 +161,7 @@
       "icon": "🎆",
       "desc": {
         "sr": "Uz vatromet, rakiju i tople zagrljaje — nova godina stiže.",
-        "zh": "元旦是新年的第一天，象征着新的开始。Barry在北京，Anđela在贝尔格莱德，他们有七小时的时差。当北京的午夜钟声敲响时，贝尔格莱德正是傍晚。但他们总能在零点准时互相发送新年祝福。距离让钟声不同步，却让心靠得更近。新的一年，愿所有的等待都值得。",
+        "zh": "元旦是新年的第一天，象征着新的开始，在中国是法定假日，放假一天。人们互致新年祝福，许多城市会举办倒计时和跨年活动。",
         "en": "With fireworks, rakija, and warm embraces — a fresh year begins."
       }
     },
@@ -175,9 +175,9 @@
       "country": "rs",
       "icon": "🎄",
       "desc": {
-        "sr": "Božić je najvažniji verski praznik u Srbiji. Na Badnji dan pale se badnjaci. Porodica se okuplja. Barry voli srpski Božić jer ga Anđela čini posebnim.",
-        "zh": "东正教圣诞节是塞尔维亚最重要的宗教节日之一，按儒略历在1月7日庆祝。平安夜准备橡树枝象征新生。家庭享用传统美食。Barry说塞尔维亚的圣诞更温暖质朴——因为那里有Anđela。",
-        "en": "Orthodox Christmas (Jan 7) features the badnjak ceremony. Barry loves Serbian Christmas for its warmth — because Anđela is there."
+        "sr": "Božić je najvažniji verski praznik u Srbiji i slavi se 7. januara po julijanskom kalendaru. Na Badnji dan se unosi i pali badnjak, a porodica se okuplja za prazničnom trpezom.",
+        "zh": "东正教圣诞节是塞尔维亚最重要的宗教节日之一，按儒略历在1月7日庆祝。平安夜准备橡树枝（badnjak）象征新生，家庭享用传统美食，人们互致问候“Hristos se rodi”（基督诞生了）。",
+        "en": "Orthodox Christmas is Serbia's most important religious holiday, celebrated on 7 January by the Julian calendar. On Christmas Eve the badnjak oak branch is brought in and burned, and the family gathers for a festive meal."
       }
     },
     {
@@ -190,9 +190,9 @@
       "country": "rs",
       "icon": "📚",
       "desc": {
-        "sr": "Sveti Sava — osnivač Srpske crkve. Deca recituju pesme. Barry vidi paralelu sa Konfučijem. Obe kulture cene obrazovanje. Anđela: znanje je moć, ljubav još veća.",
-        "zh": "圣萨瓦日是塞尔维亚最重要的文化节日之一，纪念塞尔维亚东正教的创始人圣萨瓦。他是教育家、作家和宗教领袖。每年这一天，塞尔维亚的孩子们会朗诵诗歌、表演文艺节目。Barry说这让他想起中国对孔子的尊崇——两种文化都如此深重地尊重教育和知识。Anđela说圣萨瓦教会她：知识就是力量，而爱是更大的力量。",
-        "en": "Saint Sava — Serbia's greatest educator. Children recite poems. Barry sees parallel with Confucius. Anđela: knowledge is power, love is greater."
+        "sr": "Sveti Sava — osnivač Srpske pravoslavne crkve, prosvetitelj, pisac i duhovni vođa. Deca tog dana recituju pesme, a škole ga obeležavaju kao svoju slavu.",
+        "zh": "圣萨瓦日是塞尔维亚最重要的文化节日之一，纪念塞尔维亚东正教的创始人圣萨瓦。他是教育家、作家和宗教领袖。每年这一天，塞尔维亚的孩子们会朗诵诗歌、表演文艺节目，学校也把这一天当作自己的校庆日（slava）。",
+        "en": "Saint Sava Day honours the founder of the Serbian Orthodox Church — an educator, writer and spiritual leader. Children recite poems and perform, and schools mark the day as their slava."
       }
     },
     {
@@ -205,9 +205,9 @@
       "country": "rs",
       "icon": "🇷🇸",
       "desc": {
-        "sr": "Dan državnosti — ustanak 1804. Anđela kaže njena ljubav sa Barryjem je ustanak protiv udaljenosti. Svaki video poziv je pobeda.",
-        "zh": "塞尔维亚国庆日纪念1804年第一次塞尔维亚起义，是全国最重要的爱国节日。这一天塞尔维亚人挥舞三色旗，缅怀为自由而战的先辈。Anđela说她和Barry之间也有一种特殊的起义——反抗距离和时差的起义。每一次视频通话，都是他们的小小胜利。爱情，就是每天跨越七千公里的起义。",
-        "en": "Statehood Day — 1804 uprising. Anđela says her love with Barry is an uprising against distance. Every video call is a victory."
+        "sr": "Dan državnosti (Sretenje) obeležava početak Prvog srpskog ustanka 1804. i Sretenjski ustav iz 1835. Proslava uključuje trobojku, polaganje venaca i sećanje na pretke.",
+        "zh": "塞尔维亚国庆日纪念1804年第一次塞尔维亚起义和1835年颁布的《斯雷滕耶宪法》，是全国最重要的爱国节日。这一天塞尔维亚人挥舞三色旗、敬献花圈，缅怀为自由而战的先辈。",
+        "en": "Statehood Day marks the start of the First Serbian Uprising in 1804 and the Sretenje Constitution of 1835. It is the country's main national holiday, observed with the tricolour, wreath-laying and remembrance."
       }
     },
     {
@@ -220,9 +220,9 @@
       "country": "rs",
       "icon": "🥚",
       "desc": {
-        "sr": "Vaskrs — crvena jaja simbolizuju Hristovu krv. Barry primećuje: crveno je boja nade i u Kini i u Srbiji. Hristos vaskrse!",
-        "zh": "东正教复活节是基督教最神圣的日子，庆祝耶稣基督的复活。塞尔维亚人将鸡蛋染成红色，象征基督的宝血，见面时互相说Hristos vaskrse（基督复活了）。Barry注意到红色的彩蛋和春节的红色有异曲同工之妙——在两种文化中，红色都是希望、生命和新生的颜色。",
-        "en": "Orthodox Easter — red eggs symbolize Christ's blood. Barry notes red is hope's color in both cultures. Christ is risen!"
+        "sr": "Vaskrs — crvena jaja simbolizuju Hristovu krv i novi život. Vernici se pozdravljaju rečima „Hristos vaskrse!“ i odgovaraju „Vaistinu vaskrse!“",
+        "zh": "东正教复活节是基督教最神圣的日子，庆祝耶稣基督的复活。塞尔维亚人将鸡蛋染成红色，象征基督的宝血和新生，见面时互相说“Hristos vaskrse”（基督复活了），对方回答“Vaistinu vaskrse”（确实复活了）。",
+        "en": "Orthodox Easter — red eggs symbolize Christ's blood and new life. Believers greet each other with “Christ is risen!” and answer “Truly he is risen!”"
       }
     },
     {
@@ -235,9 +235,9 @@
       "country": "rs",
       "icon": "🌿",
       "desc": {
-        "sr": "Praznik rada u Srbiji znači piknik i roštilj u prirodi. Barry kaže više voli srpski način — jednostavno, tiho, savršeno kad je Anđela tu.",
-        "zh": "劳动节在中国是七天长假，人们出游旅行。Barry和Anđela虽然不能一起旅行，但他们有自己的小传统：互相分享各自城市天空的照片。北京的天空和贝尔格莱德的天空其实是同一片天空——就像他们的思念，飘过云层，最终抵达对方。",
-        "en": "Labor Day in Serbia means picnics outdoors. Barry prefers the Serbian version — simple, peaceful, perfect if Anđela is there."
+        "sr": "Praznik rada u Srbiji tradicionalno znači piknik i roštilj u prirodi; u Kini je to državni praznik sa višednevnim odmorom i putovanjima.",
+        "zh": "劳动节是国际性的工人节日。在塞尔维亚，人们传统上到郊外野餐、烧烤；在中国则是法定长假，很多人选择出游旅行。",
+        "en": "Labour Day in Serbia traditionally means a picnic and a barbecue outdoors; in China it is a longer public holiday when many people travel."
       }
     },
     {
@@ -250,9 +250,9 @@
       "country": "rs",
       "icon": "🕊️",
       "desc": {
-        "zh": "胜利日纪念二战胜利。Barry和Anđela分享各自祖父的故事——Barry的爷爷参加过抗战，Anđela的祖父也是老兵。历史硝烟散去，和平的珍贵被两国共同铭记。",
-        "sr": "Dan pobede — kraj Drugog svetskog rata. Barry i Anđela dele priče o dedovima koji su ratovali. Iako na različitim stranama sveta, isti dan pobede ih povezuje.",
-        "en": "Victory Day marks WWII's end. Barry and Anđela share grandfathers' war stories. Though on different sides of the world, the same victory connects them."
+        "sr": "Dan pobede — kraj Drugog svetskog rata u Evropi. U Srbiji se tog dana odaje počast žrtvama rata i podseća na vrednost mira.",
+        "zh": "胜利日纪念第二次世界大战在欧洲战场的结束。塞尔维亚在这一天缅怀战争中的牺牲者，也提醒人们和平的珍贵。",
+        "en": "Victory Day marks the end of the Second World War in Europe. In Serbia it is a day of remembrance for the victims of war and a reminder of the value of peace."
       }
     },
     {
@@ -265,9 +265,9 @@
       "country": "rs",
       "icon": "🏛️",
       "desc": {
-        "sr": "Vidovdan je sećanje na Kosovsku bitku 1389. Barry vidi sličnost sa kineskim Qingming festivalom. Dva naroda, ista potreba za sećanjem.",
-        "zh": "维多夫丹纪念1389年科索沃战役。塞尔维亚人用诗歌铭记历史。Barry觉得这和中国的清明节相似。两个民族用不同的方式记住自己是谁——就像Barry和Anđela记住为什么相爱。",
-        "en": "Vidovdan marks the 1389 Battle of Kosovo. Barry sees parallels with China's Qingming. Two peoples, different traditions, the same need to remember."
+        "sr": "Vidovdan je sećanje na Kosovsku bitku 1389. i dan svetog Vita u srpskom crkvenom kalendaru. Narodna tradicija vezuje ovaj datum za mnoge važne događaje u srpskoj istoriji.",
+        "zh": "维多夫丹纪念1389年科索沃战役，也是塞尔维亚东正教纪念圣维特的日子。塞尔维亚人用史诗诗歌铭记这段历史，这个节日承载着民族的记忆。",
+        "en": "Vidovdan marks the 1389 Battle of Kosovo and the feast of Saint Vitus. Serbian epic poetry keeps the memory of that day alive, and the date is bound up with national remembrance."
       }
     },
     {
@@ -280,9 +280,9 @@
       "country": "rs",
       "icon": "🌸",
       "desc": {
-        "zh": "双十一是中国的光棍节，如今已成为全球最大的购物节。它起源于大学校园里自嘲单身文化的玩笑，后来演变成全民购物狂欢。Barry每年双十一都会给Anđela买礼物，从塞尔维亚红酒到中国茶叶。Anđela笑着说最好的礼物就是每天能和他聊天说话。",
-        "sr": "11.11 — Dan samaca i najveći šoping praznik. Barry kupuje poklone za Anđelu. Njen najbolji poklon je svaki dan kada mogu da pričaju.",
-        "en": "Singles' Day (11.11) became the world's largest shopping day. Barry buys Anđela gifts. Her best gift is every day she gets to talk to him."
+        "sr": "11. novembar je Dan primirja u Prvom svetskom ratu, koji se u Srbiji obeležava sećanjem na žrtve. U Kini je isti datum postao najveći šoping dan, nastao od studentskog praznika samaca.",
+        "zh": "11月11日是第一次世界大战的停战日，塞尔维亚在这一天缅怀战争中的牺牲者。同一天在中国是双十一购物节，它起源于大学校园里的光棍节，如今成为全民购物狂欢。",
+        "en": "11 November is Armistice Day, marking the end of the First World War, observed in Serbia as a day of remembrance. In China the same date became Singles' Day, the world's largest online shopping event."
       }
     },
     {
@@ -295,9 +295,9 @@
       "country": "cn",
       "icon": "💝",
       "desc": {
-        "zh": "情人节是全世界表达爱意的日子。Barry准备特别的礼物——用塞尔维亚语写的小诗或吉他弹唱。Anđela收到他手写的塞尔维亚语诗时哭了。最美的语言是他念她名字时的声音。",
-        "sr": "Dan zaljubljenih — Barry priprema pesmu na srpskom ili svirku na gitari. Anđela je plakala kad je dobila njegovu rukom pisanu pesmu. Najlepši jezik je zvuk njegovog glasa.",
-        "en": "Valentine's Day — Barry prepares a Serbian poem or guitar song. Anđela cried at his handwritten poem. The most beautiful language is his voice saying her name."
+        "sr": "Dan zaljubljenih — širom sveta se poklanjaju cveće, čokolade i čestitke. U Kini se i tradicionalni Qixi slavi kao praznik ljubavi.",
+        "zh": "情人节是全世界表达爱意的日子，人们互赠鲜花、巧克力与贺卡。在中国，除了2月14日，传统的七夕也被当作情人节来庆祝。",
+        "en": "Valentine's Day is celebrated worldwide with flowers, chocolate and cards. In China the traditional Qixi festival is also observed as a day of love."
       }
     },
     {
@@ -310,9 +310,9 @@
       "country": "cn",
       "icon": "👩",
       "desc": {
-        "zh": "妇女节在中国是半天假期和收礼物。Barry给妈妈和Anđela各送一束花。Anđela喜欢中国尊重女性的传统。两个国家都懂得女性的力量让世界更美好。",
-        "sr": "Dan žena — Barry šalje cveće majci i Anđeli. Dve kulture, isto poštovanje prema ženama koje čine svet lepšim.",
-        "en": "Women's Day — Barry sends flowers to his mother and Anđela. Two cultures, same respect for women who make the world beautiful."
+        "sr": "Dan žena — 8. mart. U Kini žene dobijaju pola dana slobodno i poklone, a praznik potiče iz borbe za prava žena početkom 20. veka.",
+        "zh": "妇女节是女性的节日，在中国女性通常享有半天假期，也会收到鲜花和礼物。这个节日源于20世纪初争取女性权益的运动。",
+        "en": "Women's Day (8 March) has its roots in the early 20th-century struggle for women's rights. In China women usually get a half day off and receive flowers and gifts."
       }
     },
     {
@@ -325,9 +325,9 @@
       "country": "cn",
       "icon": "🤡",
       "desc": {
-        "zh": "愚人节是开玩笑的日子。Barry曾骗Anđela买了去贝尔格莱德的机票——她激动了十分钟才发现是玩笑。但那一刻她眼中的期待让Barry发誓：总有一天这玩笑会成真。",
-        "sr": "Aprilski dani — Barry je prevario Anđelu da je kupio kartu za Beograd. Bila je uzbuđena deset minuta. Barry je obećao sebi: jednog dana, ovo će postati stvarno.",
-        "en": "April Fools' — Barry tricked Anđela about a Belgrade ticket. She was excited for ten minutes. Barry promised himself: one day, this will come true."
+        "sr": "Prvi april — dan šale i bezazlenih podvala. Običaj potiče iz Evrope, a danas se neguje u mnogim zemljama.",
+        "zh": "愚人节是开玩笑、互相捉弄的日子。这个节日源于欧洲，如今在包括中国在内的许多国家都很流行。",
+        "en": "April Fools' Day is a day for jokes and harmless pranks. The custom originated in Europe and is now marked in many countries."
       }
     },
     {
@@ -340,9 +340,9 @@
       "country": "cn",
       "icon": "🌍",
       "desc": {
-        "zh": "世界地球日提醒我们保护共同的家园。Barry和Anđela虽然生活在不同的国家、不同的时区，但他们共享同一个地球。他们约定每年地球日一起做一件环保小事——少用一个塑料袋、种一盆花、关灯一小时。爱地球，也就是爱彼此的未来。",
-        "sr": "Dan planete — Barry i Anđela svake godine urade nešto malo za planetu. Manje plastike, zasađena biljka. Volimo Zemlju i jedno drugo.",
-        "en": "Earth Day — Barry and Anđela do one eco-friendly thing yearly. Love the Earth, love each other."
+        "sr": "Dan planete Zemlje podseća na važnost zaštite životne sredine. Širom sveta organizuju se akcije: manje plastike, sadnja drveća, štednja energije.",
+        "zh": "世界地球日提醒我们保护共同的家园。这一天全球各地举办环保活动，倡导减少塑料、节约能源、植树护绿。",
+        "en": "Earth Day is a reminder to protect the planet. It is marked worldwide with environmental action: less plastic, tree planting, saving energy."
       }
     },
     {
@@ -355,9 +355,9 @@
       "country": "cn",
       "icon": "👩‍👧",
       "desc": {
-        "zh": "母亲节是向母亲表达感谢的日子。Barry在中国给妈妈做了一顿饭，拍了照片发给Anđela。Anđela说塞尔维亚的母亲节同样温馨，孩子们会亲手制作礼物送给妈妈。虽然两国的日期和庆祝方式不同，但对母亲那份深沉的爱是完全相同的。",
-        "sr": "Majčin dan — Barry skuvao ručak mami. U Srbiji deca prave ručne radove. Isti osećaj, različiti običaji.",
-        "en": "Mother's Day — Barry cooked for his mom. Serbian kids make handmade gifts. Same love, different ways."
+        "sr": "Majčin dan — prilika da se majkama zahvali cvećem, poklonom ili zajedničkim ručkom. U Srbiji deca često za taj dan prave ručne radove.",
+        "zh": "母亲节是向母亲表达感谢的日子，人们送花、送礼物或陪母亲吃一顿饭。塞尔维亚也庆祝母亲节，孩子们会亲手制作礼物送给妈妈；两国的日期和方式不同，心意却是相同的。",
+        "en": "Mother's Day is a day to thank mothers with flowers, a gift or a shared meal. In Serbia children often make handmade presents for the occasion."
       }
     },
     {
@@ -370,9 +370,9 @@
       "country": "cn",
       "icon": "👨‍👩‍👧‍👦",
       "desc": {
-        "zh": "国际家庭日提醒我们家庭的重要性。Barry和Anđela来自不同的文化背景——在中国，家庭意味着团圆和热闹；在塞尔维亚，家庭意味着热情好客和世代相传的传统。但他们有一个共同的愿望：组建一个融合两种文化的小家庭，让爱跨越东西方。",
-        "sr": "Dan porodice — kineska porodica ceni okupljanje, srpska gostoljubivost. Oboje sanjaju o porodici koja spaja istok i zapad.",
-        "en": "Family Day — Chinese families value reunion, Serbian ones hospitality. They dream of a family bridging East and West."
+        "sr": "Dan porodice — kineska porodica ceni okupljanje i zajedničke trpeze, a srpska gostoljubivost i tradiciju koja se prenosi s kolena na koleno.",
+        "zh": "国际家庭日提醒我们家庭的重要性。在中国，家庭意味着团圆和热闹；在塞尔维亚，家庭意味着热情好客和世代相传的传统。",
+        "en": "International Day of Families highlights the importance of family life. Chinese families value reunion and shared meals; Serbian families are known for hospitality and traditions passed down through generations."
       }
     },
     {
@@ -385,8 +385,8 @@
       "country": "cn",
       "icon": "🧒",
       "desc": {
-        "zh": "六一儿童节是中国孩子们最期待的节日之一。Barry回忆自己小时候最开心的就是儿童节去游乐园。Anđela说塞尔维亚也有儿童节，但在秋天而不是六月。虽然日期不同，但孩子的笑容、纯真和快乐是全世界共通的语言。",
         "sr": "Dečiji dan u Kini — najradosniji praznik za decu. U Srbiji se slavi u jesen. Dečiji osmesi su univerzalni.",
+        "zh": "六一儿童节是中国孩子们最期待的节日之一，学校会组织演出和游园活动。塞尔维亚也在秋天庆祝儿童节。孩子的笑容、纯真和快乐是全世界共通的语言。",
         "en": "Children's Day — the happiest day for Chinese kids. Serbia celebrates in autumn. Children's smiles are universal."
       }
     },
@@ -400,9 +400,9 @@
       "country": "cn",
       "icon": "👨",
       "desc": {
-        "zh": "父亲节是感恩父亲的节日。Barry在北京陪父亲喝茶下棋，他说中国父亲的表达方式含蓄而深沉——不说爱你但每个行动都是爱。Anđela说塞尔维亚的父亲们更外向热情，会紧紧拥抱孩子。两种父爱，方式不同，却同样温暖人心。",
-        "sr": "Dan očeva — Barry pije čaj sa ocem u Kini. Kineski očevi suzdržani, srpski otvoreniji. Dva načina ista ljubav.",
-        "en": "Father's Day — Barry drinks tea with his dad. Chinese fathers reserved, Serbian ones open. Two styles, same love."
+        "sr": "Dan očeva — prilika da se očevi počaste poklonom ili zajedničkim ručkom. U Kini se obeležava 8. avgusta, u Srbiji u januaru.",
+        "zh": "父亲节是感恩父亲的节日，人们送礼物或陪父亲吃一顿饭。中国民间把8月8日定为父亲节，取“爸爸”的谐音；塞尔维亚等地的东正教传统中，父亲节在1月庆祝。",
+        "en": "Father's Day is a day to honour fathers with a gift or a shared meal. China marks it on 8 August; in Serbia it falls in January."
       }
     },
     {
@@ -415,9 +415,9 @@
       "country": "cn",
       "icon": "📚",
       "desc": {
-        "zh": "教师节是尊师重教的体现。Barry说老师在中国如父母般受尊敬。Anđela说她最喜欢的塞尔维亚语文学老师教会她用文字表达爱。也许正是这些文字让她能写出给Barry最动人的情书。",
-        "sr": "Dan učitelja u Kini — učenici pokazuju zahvalnost. Anđelin omiljeni profesor srpskog jezika naučio ju je kako da izrazi ljubav rečima.",
-        "en": "Teachers' Day in China honors educators. Anđela's favorite Serbian literature teacher taught her to express love through words — the words she uses to write Barry's love letters."
+        "sr": "Dan učitelja u Kini — učenici iskazuju zahvalnost nastavnicima čestitkama i poklonima, a škole priređuju svečanosti.",
+        "zh": "教师节是尊师重教的体现。在中国，老师如父母般受到尊敬，学生会在这一天给老师送贺卡和小礼物，学校也会举行庆祝活动。",
+        "en": "Teachers' Day in China honours educators: students give cards and small gifts, and schools hold celebrations."
       }
     },
     {
@@ -430,9 +430,9 @@
       "country": "cn",
       "icon": "🏔️",
       "desc": {
-        "zh": "重阳节是登高望远敬老的日子。人们登高赏菊饮菊花酒。Barry给远方父母打电话，告诉Anđela要爱家人。Anđela说塞尔维亚也有类似传统——斯拉瓦，每个家庭守护神的纪念日。",
-        "sr": "Chongyang je dan poštovanja starijih. Ljudi se penju na planine. Barry i Anđela dele priče o porodičnim tradicijama — Chongyang i srpska Slava slave porodicu.",
-        "en": "Double Ninth Festival honors elders. Barry and Anđela share family traditions — China's Chongyang and Serbia's Slava, both celebrating family and heritage."
+        "sr": "Chongyang je dan poštovanja starijih — ljudi se penju na planine, gledaju hrizanteme i piju vino od hrizantema. Srpska Slava je takođe praznik porodične tradicije.",
+        "zh": "重阳节是登高望远、敬老的日子。人们登高赏菊、饮菊花酒，如今重阳也被视为中国的敬老节。塞尔维亚的斯拉瓦（Slava）同样是家庭传承的节日。",
+        "en": "Double Ninth Festival is a day for climbing to high places and honouring elders, with chrysanthemum viewing and chrysanthemum wine. Serbia's Slava is likewise a festival of family tradition."
       }
     },
     {
@@ -445,9 +445,9 @@
       "country": "cn",
       "icon": "🎃",
       "desc": {
-        "zh": "万圣节虽然不是中国传统节日，但在中国年轻人中越来越流行，大家开化妆派对、雕刻南瓜灯。Barry和Anđela会在视频通话中分享各自节日的装扮照片。Anđela说塞尔维亚的万圣节也是近年才开始流行。戴上南瓜面具，谁也看不出他们在跨国恋爱。",
-        "sr": "Noć veštica — Barry i Anđela dele kostime. Pod maskom od bundeve niko ne vidi da su zaljubljeni.",
-        "en": "Halloween — Barry and Anđela share costume photos. Behind masks nobody sees they're in love."
+        "sr": "Noć veštica nije tradicionalni kineski praznik, ali je među mladima sve popularnija — kostimi, žurke i izrezbarene bundeve.",
+        "zh": "万圣节虽然不是中国传统节日，但在中国年轻人中越来越流行，大家开化妆派对、雕刻南瓜灯。",
+        "en": "Halloween is not a traditional Chinese holiday, but it has grown popular among young people — costumes, parties and carved pumpkins."
       }
     },
     {
@@ -460,9 +460,9 @@
       "country": "rs",
       "icon": "🎅",
       "desc": {
-        "zh": "圣尼古拉节塞尔维亚孩子最期待的日子——圣尼古拉给好孩子带礼物。Barry觉得像圣诞老人但更具宗教意义。Anđela记得在靴子里找到糖果的喜悦。",
-        "sr": "Sveti Nikola — zaštitnik dece. Deca ostavljaju čizme i nalaze poklone. Barry kaže podseća na Deda Mraza.",
-        "en": "St. Nicholas Day — children leave boots for gifts. Barry notes resemblance to Santa but deeper meaning."
+        "sr": "Sveti Nikola — zaštitnik dece. Deca ostavljaju čizme i ujutru u njima nalaze poklone. Mnogim srpskim porodicama to je krsna slava.",
+        "zh": "圣尼古拉节是塞尔维亚孩子最期待的日子——圣尼古拉给好孩子带礼物。孩子们在前一晚把靴子放在窗边，第二天早上会在里面找到糖果和小礼物。这个节日也是许多塞尔维亚家庭的斯拉瓦。",
+        "en": "St. Nicholas Day — children leave their boots out and find sweets and small gifts in them the next morning. Many Serbian families keep it as their krsna slava."
       }
     },
     {
@@ -475,9 +475,9 @@
       "country": "rs",
       "icon": "👨",
       "desc": {
-        "zh": "塞尔维亚的东正教父亲节在1月庆祝，而中国的父亲节在8月8日。Anđela笑着说这样更好——一年可以庆祝两次父亲节，给两位父亲双倍的祝福和爱。跨越文化的爱情，连节日祝福都是双份的。爱让两个家庭、两种传统紧紧相连。",
-        "sr": "Dan očeva u januaru u Srbiji, u Kini avgusta. Anđela se smeje — duplo više ljubavi za očeve.",
-        "en": "Serbia's Father's Day in January, China's in August. Double the love for their fathers."
+        "sr": "Dan očeva u januaru u Srbiji, u Kini avgusta. Različiti datumi, ista zahvalnost očevima.",
+        "zh": "塞尔维亚的东正教父亲节在1月庆祝，中国民间则把父亲节定在8月8日。两国的日期不同，但都是感谢父亲的日子。",
+        "en": "Serbia's Father's Day falls in January, China's on 8 August. Different dates, the same gratitude."
       }
     },
     {
@@ -490,8 +490,8 @@
       "country": "rs",
       "icon": "🕯️",
       "desc": {
-        "zh": "亡灵节Dušni dan是塞尔维亚纪念逝者的重要日子，人们去墓地扫墓、点燃蜡烛、为逝者祈祷。这和中国的清明节非常相似——两个节日都是关于记忆、爱与告别的时刻。Barry和Anđela在这一天都会给自己的家人打电话，告诉他们珍惜当下、珍惜彼此。",
         "sr": "Dušni dan — sećanje na preminule. Slično kineskom Qingmingu. Život je kratak, ali ljubav je večna.",
+        "zh": "亡灵节Dušni dan是塞尔维亚纪念逝者的重要日子，人们去墓地扫墓、点燃蜡烛、为逝者祈祷。这和中国的清明节非常相似——两个节日都是关于记忆、爱与告别的时刻。",
         "en": "All Souls' Day — remembering the departed. Similar to China's Qingming. Life is short but love is eternal."
       }
     },
@@ -505,9 +505,9 @@
       "country": "cn",
       "icon": "🥣",
       "desc": {
-        "zh": "腊八节是春节序幕，人们喝腊八粥——八种食材熬制。每种食材有寓意。Anđela说八种食材就像八种爱的方式：温柔坚定想念等待理解包容守护和期待。",
-        "sr": "Laba festival uvodi Novu Godinu. Kaša od osam sastojaka — svaki ima značenje. Kao osam načina ljubavi: nežnost vera čežnja strpljenje razumevanje prihvatanje zaštita iščekivanje.",
-        "en": "Laba Festival introduces New Year with eight-ingredient porridge. Eight ingredients like eight ways of loving: tenderness, faith, longing, patience, understanding, acceptance, protection, anticipation."
+        "sr": "Laba festival uvodi Novu Godinu. Tog dana jede se kaša od osam sastojaka — laba kaša — a svaki sastojak ima svoje značenje.",
+        "zh": "腊八节是春节的序幕，人们喝腊八粥——用八种食材熬制，每种食材各有寓意。过了腊八，年味就一天天浓起来。",
+        "en": "Laba Festival opens the run-up to the New Year. It is marked with eight-ingredient porridge, each ingredient carrying its own meaning."
       }
     },
     {
@@ -520,9 +520,9 @@
       "country": "rs",
       "icon": "🐎",
       "desc": {
-        "zh": "圣乔治节Đurđevdan标志着塞尔维亚春天的真正到来。人们用鲜花装饰家门年轻人唱歌跳舞。传说Đurđevdan清晨采摘的花朵能带来爱情好运。Anđela希望Barry能在这一天为她采一朵花。",
-        "sr": "Đurđevdan označava početak proleća. Kuće se kite cvećem. Legenda kaže da cveće ubrano u zoru donosi sreću u ljubavi. Anđela bi volela da joj Barry ubere cvet na Đurđevdan.",
-        "en": "Đurđevdan marks spring's arrival in Serbia. Legend says flowers picked at dawn bring luck in love. Anđela wishes Barry could pick her a flower on this day."
+        "sr": "Đurđevdan označava početak proleća. Kuće se kite cvećem, peva se i igra. Legenda kaže da cveće ubrano u zoru donosi sreću u ljubavi, a to je i jedna od najčešćih krsnih slava.",
+        "zh": "圣乔治节Đurđevdan标志着塞尔维亚春天的真正到来。人们用鲜花装饰家门，年轻人唱歌跳舞。传说Đurđevdan清晨采摘的花朵能带来爱情好运，这个节日也是许多家庭的斯拉瓦。",
+        "en": "Đurđevdan marks the arrival of spring in Serbia. Houses are decorated with flowers and people sing and dance. Legend says flowers picked at dawn bring luck in love; it is also one of the most common krsna slavas."
       }
     },
     {
@@ -535,9 +535,9 @@
       "country": "rs",
       "icon": "🔑",
       "desc": {
-        "zh": "圣彼得节Petrovdan是塞尔维亚重要的东正教节日，许多家庭庆祝Slava守护神日。用鱼和传统食物庆祝夏日的盛大节日。Barry隔着屏幕都能想象Anđela家满桌塞尔维亚美食的香味。",
-        "sr": "Petrovdan — praznik svetih Petra i Pavla. Mnoge porodice slave krsnu slavu uz ribu. Barry zamišlja trpezu punu srpskih specijaliteta i oseća toplinu Anđelinog doma.",
-        "en": "St. Peter's Day honors Saints Peter and Paul. Many Serbian families celebrate their Slava with fish dishes. Barry imagines the table full of Serbian food and feels the warmth of Anđela's home."
+        "sr": "Petrovdan — praznik svetih Petra i Pavla. Mnoge porodice ga slave kao krsnu slavu, uz ribu i tradicionalna jela.",
+        "zh": "圣彼得节Petrovdan是塞尔维亚重要的东正教节日，许多家庭在这一天庆祝守护神日（slava），用鱼和传统食物庆祝这个夏日的节日。",
+        "en": "St. Peter's Day honours Saints Peter and Paul. Many Serbian families keep it as their krsna slava, with fish and traditional dishes."
       }
     },
     {
@@ -550,9 +550,9 @@
       "country": "rs",
       "icon": "🙏",
       "desc": {
-        "zh": "圣母安息节纪念圣母玛利亚安息。东正教信徒前往教堂祈祷。Barry说这让他想起中国对母亲的尊重——无私的爱是相通的。Anđela相信圣母会保佑他们的远距离爱情。",
-        "sr": "Uspenje Bogorodice — vernici odlaze u crkvu. Barry kaže podseća na kinesko poštovanje majki. Anđela veruje da Bogorodica čuva njihovu ljubav.",
-        "en": "Dormition of Mary — the faithful attend church. Barry says it parallels China's reverence for mothers. Anđela believes Mary watches over their long-distance love."
+        "sr": "Uspenje Bogorodice — vernici odlaze u crkvu, a mnoge porodice ovaj praznik slave kao krsnu slavu.",
+        "zh": "圣母安息节纪念圣母玛利亚安息。东正教信徒前往教堂祈祷，这一天也是许多家庭的斯拉瓦。对母亲的敬重与感恩，在许多文化中都能找到共鸣。",
+        "en": "Dormition of the Theotokos — the faithful attend church, and many families keep the feast as their krsna slava."
       }
     },
     {
@@ -565,9 +565,9 @@
       "country": "rs",
       "icon": "👶",
       "desc": {
-        "zh": "圣母圣诞日庆祝玛利亚诞生。东正教信徒特别敬拜圣母。Barry说中国虽无此节日但每人心中都有神圣的母亲形象。Anđela相信圣母理解他们分隔两地的思念。",
-        "sr": "Mala Gospojina — rođenje Bogorodice. Barry kaže u Kini nema ovaj praznik ali svi imaju svetu figuru majke. Anđela veruje Bogorodica razume njihovu ljubav.",
-        "en": "Nativity of Mary — Orthodox believers venerate the Mother of God. Barry says China has no such feast but everyone carries a sacred mother figure in their heart."
+        "sr": "Mala Gospojina — rođenje Bogorodice. Vernici joj iskazuju posebno poštovanje, a mnoge porodice je slave kao krsnu slavu.",
+        "zh": "圣母圣诞日庆祝玛利亚诞生。东正教信徒特别敬拜圣母，这一天也是许多家庭的斯拉瓦。",
+        "en": "Nativity of the Theotokos — Orthodox believers venerate the Mother of God, and many families keep the feast as their krsna slava."
       }
     },
     {
@@ -580,9 +580,9 @@
       "country": "rs",
       "icon": "🎅",
       "desc": {
-        "sr": "Sveti Nikola — zaštitnik dece. Deca ostavljaju čizme i nalaze poklone. Barry kaže podseća na Deda Mraza.",
-        "zh": "圣尼古拉节塞尔维亚孩子最期待的日子——圣尼古拉给好孩子带礼物。Barry觉得像圣诞老人但更具宗教意义。Anđela记得在靴子里找到糖果的喜悦。",
-        "en": "St. Nicholas Day — children leave boots for gifts. Barry notes resemblance to Santa but deeper meaning."
+        "sr": "Sveti Nikola — zaštitnik dece. Deca ostavljaju čizme i ujutru u njima nalaze poklone. Mnogim srpskim porodicama to je krsna slava.",
+        "zh": "圣尼古拉节是塞尔维亚孩子最期待的日子——圣尼古拉给好孩子带礼物。孩子们在前一晚把靴子放在窗边，第二天早上会在里面找到糖果和小礼物。这个节日也是许多塞尔维亚家庭的斯拉瓦。",
+        "en": "St. Nicholas Day — children leave their boots out and find sweets and small gifts in them the next morning. Many Serbian families keep it as their krsna slava."
       }
     },
     {
@@ -595,9 +595,9 @@
       "country": "cn",
       "icon": "💝",
       "desc": {
-        "zh": "520情人节——520谐音我爱你。Barry在午夜准时给Anđela发520红包附言不只是今天每一天都爱你。Anđela说是最甜蜜的数字情书。",
-        "sr": "520 — kineski Dan zaljubljenih. Broj 520 zvuči kao volim te. Barry je poslao 520 juana uz poruku \"Ne samo danas\". Anđela kaže najslađe ljubavno pismo.",
-        "en": "520 Day — 520 sounds like \"I love you\" in Chinese. Barry sent 520 yuan with \"Not just today.\" Anđela says it's the sweetest digital love letter."
+        "sr": "520 — kineski Dan zaljubljenih. Broj 520 zvuči kao „volim te“, pa se tog dana poklanjaju cveće, pokloni i crvene koverte.",
+        "zh": "520情人节——520谐音“我爱你”。这一天在中国被视为网络情人节，人们通过红包、鲜花和礼物表达爱意。",
+        "en": "520 Day — 520 sounds like “I love you” in Chinese, so 20 May has become an online day of romance, marked with red envelopes, flowers and gifts."
       }
     },
     {
@@ -610,9 +610,9 @@
       "country": "cn",
       "icon": "🎊",
       "desc": {
-        "sr": "11.11 — Dan samaca postao najveći šoping praznik. Barry kupuje poklone Anđeli. Njen najbolji poklon je svaki dan kada pričaju.",
-        "zh": "双十一是中国的光棍节，如今已成为全球最大的购物节。它起源于大学校园里自嘲单身文化的玩笑，后来演变成全民购物狂欢。Barry每年双十一都会给Anđela买礼物，从塞尔维亚红酒到中国茶叶。Anđela笑着说最好的礼物就是每天能和他聊天说话。",
-        "en": "Singles' Day became world's largest shopping day. Her best gift is every day they talk."
+        "sr": "11.11 — Dan samaca postao je najveći šoping praznik na svetu. Nastao je kao studentska šala o samcima, a danas obara rekorde prodaje.",
+        "zh": "双十一是中国的光棍节，如今已成为全球最大的购物节。它起源于大学校园里自嘲单身文化的玩笑，后来演变成全民购物狂欢。",
+        "en": "Singles' Day (11.11) began as a campus joke about being single and has grown into the world's largest shopping day."
       }
     },
     {
@@ -625,9 +625,9 @@
       "country": "cn",
       "icon": "🎄",
       "desc": {
-        "zh": "平安夜——塞尔维亚人准备圣诞晚宴装饰家庭。Barry每年视频帮Anđela装饰圣诞树。最温暖的平安夜礼物是看到她对镜头说Srećan Božić。",
-        "sr": "Badnje veče — Srbi pripremaju večeru. Barry pomaže Anđeli da kiti jelku preko video poziva. Najlepši poklon je njen osmeh dok peva božićnu pesmu.",
-        "en": "Christmas Eve — Serbs prepare the festive dinner. Barry helps Anđela decorate the tree via video. The best gift is her smile singing a Christmas carol."
+        "sr": "Badnje veče — u Srbiji se priprema posna večera i kiti dom, a u crkvi se služi badnja služba.",
+        "zh": "平安夜是圣诞节前夜。在塞尔维亚，人们准备圣诞晚宴、装饰家庭并参加教堂礼拜；在中国，平安夜也成了年轻人互赠苹果、聚会庆祝的日子。",
+        "en": "Christmas Eve — in Serbia families prepare a fasting dinner and decorate the home, and the faithful attend the Christmas Eve service."
       }
     },
     {
@@ -640,9 +640,9 @@
       "country": "cn",
       "icon": "🎁",
       "desc": {
-        "zh": "圣诞节（公历）——Barry和Anđela分享各自最喜欢的圣诞歌曲。他弹吉他录了Jingle Bells她唱塞尔维亚民歌。两种文化一个节日。",
-        "sr": "Božić (katolički) — Barry i Anđela razmenjuju božićne pesme. On svira gitaru, ona peva srpsku pesmu. Dve kulture, jedan praznik.",
-        "en": "Christmas — Barry and Anđela exchange favorite carols. He plays guitar, she sings a Serbian song. Two cultures, one holiday."
+        "sr": "Božić (katolički) — 25. decembar. U svetu se obeležava bogosluženjem i porodičnom trpezom, a u kineskim gradovima prazničnom dekoracijom i druženjem.",
+        "zh": "圣诞节是纪念耶稣诞生的节日，12月25日在世界许多地方庆祝。它在中国不是传统节日，但城市里常有圣诞装饰、商场活动和朋友聚会。",
+        "en": "Christmas Day — 25 December, celebrated with church services and family meals in much of the world, and in Chinese cities with decorations and get-togethers."
       }
     },
     {
@@ -655,8 +655,8 @@
       "country": "cn",
       "icon": "🎆",
       "desc": {
-        "zh": "跨年夜是一年中最热闹的夜晚。北京的酒吧街和贝尔格莱德的广场都挤满了庆祝的人群。Barry和Anđela会视频通话一起倒计时——他的午夜是她的下午五点。当北京的新年钟声敲响时，贝尔格莱德的夕阳正美。新的一年，新的希望，他们的故事还在继续书写。",
         "sr": "Doček Nove Godine — 7 sati razlike. Ponoć u Pekingu, zalazak u Beogradu. Nova godina, nova nada.",
+        "zh": "跨年夜是一年中最热闹的夜晚，北京的街头和贝尔格莱德的广场都挤满了庆祝的人群。贝尔格莱德比北京晚七个小时，当北京的新年钟声敲响时，贝尔格莱德还是傍晚。",
         "en": "New Year's Eve — 7 hours apart. Midnight in Beijing, sunset in Belgrade. New year, new hope."
       }
     },
@@ -670,9 +670,9 @@
       "country": "cn",
       "icon": "🏮",
       "desc": {
-        "zh": "2027除夕——Barry和Anđela已经在视频中度过好几个除夕了。每一年感情更深距离更近。也许明年除夕他们不用隔着屏幕而是一起吃年夜饭。",
-        "sr": "Badnje veče 2027. Već nekoliko puta dočekali Novu Godinu preko video poziva. Svake godine bliži. Možda sledeće godine neće biti razdvojeni ekranom.",
-        "en": "2027 New Year's Eve — several New Years via video call. Each year closer. Maybe next year, no screen between them."
+        "sr": "Badnje veče 2027 — porodica se okuplja uz svečanu večeru i dočekuje Novu godinu.",
+        "zh": "2027年除夕是农历新年的前夜，家家团聚吃年夜饭、守岁迎新。",
+        "en": "2027 Lunar New Year's Eve — families gather for the reunion dinner and stay up to welcome the new year."
       }
     },
     {
@@ -685,9 +685,9 @@
       "country": "cn",
       "icon": "🧧",
       "desc": {
-        "zh": "2027鸡年——鸡象征勤奋和守信。Barry说Anđela就像鸡年出生的人一样诚实勇敢。她笑着说那她会每天早起给他打电话像公鸡打鸣一样准时。",
-        "sr": "2027 — godina petla. Petao simbolizuje marljivost. Barry kaže Anđela je hrabra i iskrena kao petao. Ona se smeje: budiću te svako jutro!",
-        "en": "2027 Year of the Rooster — rooster symbolizes diligence. Barry says Anđela is brave and honest like a rooster. She laughs: I'll wake you every morning!"
+        "sr": "2027 — godina petla. Petao simbolizuje marljivost i pouzdanost. Kineska Nova Godina počinje 6. februara.",
+        "zh": "2027年是农历鸡年——鸡象征勤奋和守信。春节是农历新年的开始，人们贴春联、放鞭炮、走亲访友，互道新年祝福。",
+        "en": "2027 is the Year of the Rooster — the rooster stands for diligence and reliability. Chinese New Year begins on 6 February, welcomed with couplets, firecrackers and visits to relatives."
       }
     },
     {
@@ -700,9 +700,9 @@
       "country": "cn",
       "icon": "🥮",
       "desc": {
-        "zh": "2027中秋——他们的异地恋又坚持了一年。月圆人未圆心却圆了。等见到她要带她吃最好的月饼喝最烈的rakija看最圆的月亮。等待越久重逢越美。",
-        "sr": "Festival sredine jeseni 2027. Još jedna godina ljubavi na daljinu. Mesec pun iako nisu zajedno. Kada se sretnu ješće najbolji mesečev kolač pod najpunijim mesecom.",
-        "en": "2027 Mid-Autumn — another year of long-distance love endured. The moon is full though they're apart. When they meet, they'll share the best mooncake under the fullest moon."
+        "sr": "Festival sredine jeseni — praznik okupljanja porodice, punog meseca i mesečevih kolača.",
+        "zh": "2027年中秋——中秋节是家人团聚、赏月吃月饼的日子，圆月象征团圆。",
+        "en": "Mid-Autumn Festival is a time for family reunion, moon viewing and mooncakes."
       }
     },
     {
@@ -715,9 +715,9 @@
       "country": "rs",
       "icon": "🕌",
       "desc": {
-        "sr": "Velika Gospojina — Anđela pali sveću za porodicu i Barryja.",
-        "zh": "圣母升天节是东正教重要节日，纪念圣母玛利亚被接升天。塞尔维亚东正教信徒在这天前往教堂参加礼拜，纪念圣母的奉献与牺牲。Barry说圣母玛利亚的故事让他想起中国传统文化中对母亲的尊重和感恩——无私的爱在任何文化中都是相通的。Anđela每年点燃蜡烛为他们的爱情祈福。",
-        "en": "Assumption of Mary — Anđela lights a candle for her family and Barry."
+        "sr": "Velika Gospojina — vernici idu u crkvu na praznik Uspenja Bogorodice, a mnoge porodice ga slave kao krsnu slavu.",
+        "zh": "圣母升天节是东正教重要节日，纪念圣母玛利亚被接升天。塞尔维亚东正教信徒在这天前往教堂参加礼拜，纪念圣母的奉献与牺牲。",
+        "en": "Assumption of Mary — Orthodox believers attend church for the feast of the Dormition, which many Serbian families keep as their krsna slava."
       }
     },
     {
@@ -730,9 +730,9 @@
       "country": "rs",
       "icon": "🕯️",
       "desc": {
-        "sr": "Svi Sveti — Anđela veruje oni koje volimo nisu daleko — kao Barry u njenom srcu.",
-        "zh": "诸圣节是纪念所有已故圣徒的节日。塞尔维亚人在这一天前往墓地扫墓、点亮烛光、追思已故的亲人。这个节日提醒人们生命的短暂和爱的不朽。Anđela常说，她相信那些我们深爱的人从未真正离开——就像Barry虽然远在千里之外，却永远在她的心里最温暖的角落。",
-        "en": "All Saints' Day — Anđela believes those we love are never far — like Barry in her heart."
+        "sr": "Svi Sveti — dan sećanja na sve svete i na preminule. Veruje se da oni koje volimo nisu daleko.",
+        "zh": "诸圣节是纪念所有已故圣徒的节日。塞尔维亚人在这一天前往墓地扫墓、点亮烛光、追思已故的亲人。这个节日提醒人们生命的短暂和爱的不朽。",
+        "en": "All Saints' Day — a day to remember all the saints and one's departed loved ones. It reminds us that life is short and love endures."
       }
     }
   ],

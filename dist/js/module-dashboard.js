@@ -161,7 +161,7 @@
       qAnswer: 'Odgovori \u{2192}',
       homeQuote: 'Od Pekinga do Vojvodine \u{2014} 7.000 km, jedno srce.',
       togetherLead: 'Na\u{0161} prostor — ovde ostavljamo jedno drugom.',
-      daysSinceMet: '{n} dana od susreta',
+      daysSinceMet: '{n} dana od upoznavanja',
       qYours: 'Tvoj odgovor',
       qPlaceholder: 'Napi\u{0161}i odgovor\u{2026}',
       qSend: 'Po\u{0161}alji',

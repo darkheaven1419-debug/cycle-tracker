@@ -45,11 +45,17 @@ const SHA_C = 'c'.repeat(40);
  *  migration not to change it; Phase 1B adds exactly one, `dailyQ` — the pair's
  *  answers to the Daily Question. It is append-only and merged by (qKey|from)
  *  in sync.js, so it cannot be a whole-object-replace key like `knowme`: that
- *  shape would let a pull erase the answer the other person just wrote. */
+ *  shape would let a pull erase the answer the other person just wrote.
+ *
+ *  Phase 1.9 §2.2 adds exactly one more, `anniversaries` — the shared canonical
+ *  相识/相恋 dates ({met, love}, YYYY-MM-DD), so both devices render the same two
+ *  counters. 17 -> 18 (Phase 1B) -> 19 (Phase 1.9) is the reviewed contract each
+ *  time; tests/test-memories.js M8 mirrors this list and must move with it. */
 const COLLECT_KEYS = [
   'diary', 'cycleInfo', 'symptoms', 'gratitude', 'gratitudeEcho', 'dailyQ', 'hug',
   'songs', 'sleep', 'checkins', 'learningProgress', 'learningComments',
-  'learningPoints', 'voiceData', 'sunCounter', 'knowme', 'calendarMarkers', 'updated',
+  'learningPoints', 'voiceData', 'sunCounter', 'knowme', 'calendarMarkers',
+  'anniversaries', 'updated',
 ];
 
 const results = [];
@@ -335,8 +341,8 @@ const tick = () => new Promise((r) => setTimeout(r, 20));
     const state = d.S.collect();
     const missing = COLLECT_KEYS.filter((k) => !(k in state));
     const extra = Object.keys(state).filter((k) => COLLECT_KEYS.indexOf(k) === -1);
-    check('C18 collect() returns exactly the pinned key set (17 + dailyQ)',
-      missing.length === 0 && extra.length === 0 && Object.keys(state).length === 18,
+    check('C18 collect() returns exactly the pinned key set (17 + dailyQ + anniversaries)',
+      missing.length === 0 && extra.length === 0 && Object.keys(state).length === 19,
       `keys=${Object.keys(state).length} missing=[${missing.join(',')}] extra=[${extra.join(',')}]`);
   }
 
