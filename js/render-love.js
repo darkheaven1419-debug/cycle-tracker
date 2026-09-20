@@ -34,6 +34,15 @@ function gratEchoRow(note){
     .map(function(o){return'<span class="grat-echo-btn grat-echo-old">'+o.em+'<span class="grat-echo-n">'+o.n+"</span></span>"}).join("");
   return'<div class="grat-echo">'+btns+legacy+"</div>"
 }
+/* Phase 2A §2：回应行现在同时出现在 Home 与 Together，两处共用同一份
+   shared-gratitude-echo。点完之后只重绘 #gratList 的话，被点的那一行会停在
+   点击之前的样子 —— 所以在这同一条 shared state 上把三个界面都重绘一遍。
+   三者都是可选的（typeof 守卫）：模块还没加载时点击不应抛错。 */
+function _refreshEchoSurfaces(){
+  if(typeof renderGratitude==="function")renderGratitude();
+  if(typeof renderTogetherNew==="function")renderTogetherNew();
+  if(typeof renderDashboard==="function")renderDashboard(false);
+}
 /* 一次点击完成：同一 emoji 再点不改变状态（幂等），换一个 emoji 就是改自己的回应。 */
 function reactGratitude(e,t,n){
   if(-1===GRAT_EMOJI.indexOf(n))return;
@@ -42,7 +51,7 @@ function reactGratitude(e,t,n){
   const i=o.findIndex(function(e){return gratEchoKey(e)===r});
   if(i>=0&&o[i].emoji===n)return;
   const s={noteFrom:String(e),noteTime:t,from:a,emoji:n,time:Date.now()};
-  i>=0?o[i]=s:o.push(s),localStorage.setItem("shared-gratitude-echo",JSON.stringify(o)),renderGratitude(),pushAllSharedData();
+  i>=0?o[i]=s:o.push(s),localStorage.setItem("shared-gratitude-echo",JSON.stringify(o)),_refreshEchoSurfaces(),pushAllSharedData();
   echoSentFeedback(e,t,n)
 }
 /* §7：点击后的轻微反馈——按钮 pop 一下，旁边出现"已发送给 X"。

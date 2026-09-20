@@ -101,8 +101,11 @@
     sr: {
       f: '\u{1F48C} Ima ne\u{0161}to od nje',
       m: '\u{1F48C} Ima ne\u{0161}to od njega',
-      empty: 'Za sada ni\u{0161}ta novo',
-      emptyHint: 'Ostavi poruku u Dnevniku \u{2014} pojavi\u{0107}e se ovde.',
+      /* §3（Phase 2A）：空态说的不是「今天没任务」，而是「这个空间还空着，
+         等你们留下东西」。刻意用对称的「你们」，不写成「等她给你留」——
+         那会把 Barry 放回查看者的位置（§9）。 */
+      empty: 'Jo\u{0161} nema novih porukica',
+      emptyHint: 'Ovaj prostor \u{010D}eka da ne\u{0161}to ostavite.',
       more: 'jo\u{0161}',
       justNow: 'upravo', min: 'pre {n} min', hour: 'pre {n} h',
       yesterday: 'ju\u{010D}e', days: 'pre {n} dana',
@@ -117,8 +120,8 @@
     en: {
       f: '\u{1F48C} Something from her',
       m: '\u{1F48C} Something from him',
-      empty: 'Nothing new yet',
-      emptyHint: 'Leave a note in the Diary \u{2014} it will show up here.',
+      empty: 'No new little notes yet',
+      emptyHint: 'This space is waiting for something from you two.',
       more: 'more',
       justNow: 'just now', min: '{n}m ago', hour: '{n}h ago',
       yesterday: 'yesterday', days: '{n}d ago',
@@ -131,8 +134,8 @@
     'zh-CN': {
       f: '\u{1F48C} \u{6709}\u{5979}\u{7684}\u{4E1C}\u{897F}',
       m: '\u{1F48C} \u{6709}\u{4ED6}\u{7684}\u{4E1C}\u{897F}',
-      empty: '\u{8FD8}\u{6CA1}\u{6709}\u{65B0}\u{7684}',
-      emptyHint: '\u{53BB}\u{65E5}\u{8BB0}\u{91CC}\u{7559}\u{4E00}\u{53E5}\u{8BDD}\u{FF0C}\u{5C31}\u{4F1A}\u{51FA}\u{73B0}\u{5728}\u{8FD9}\u{91CC}\u{3002}',
+      empty: '\u{4ECA}\u{5929}\u{8FD8}\u{6CA1}\u{6709}\u{65B0}\u{7684}\u{5C0F}\u{7EB8}\u{6761}',
+      emptyHint: '\u{8FD9}\u{4E2A}\u{7A7A}\u{95F4}\u{8FD8}\u{5728}\u{7B49}\u{4F60}\u{4EEC}\u{7559}\u{4E0B}\u{70B9}\u{4EC0}\u{4E48}\u{3002}',
       more: '\u{6761}',
       justNow: '\u{521A}\u{521A}', min: '{n}\u{5206}\u{949F}\u{524D}', hour: '{n}\u{5C0F}\u{65F6}\u{524D}',
       yesterday: '\u{6628}\u{5929}', days: '{n}\u{5929}\u{524D}',
@@ -165,7 +168,16 @@
       qUpdate: 'Sa\u{010D}uvaj izmenu',
       qSaved: '\u{2713} Sa\u{010D}uvano',
       qWaiting: 'jo\u{0161} nije odgovorio/la',
-      qBoth: '\u{2728} Oboje ste odgovorili'
+      qBoth: '\u{2728} Oboje ste odgovorili',
+      /* §1（Phase 2A 方案 A）：问题区上方的状态引子。说的是「对方现在怎么样」，
+         不是「你还欠什么」—— 要制造的是「我想看她怎么答」，不是待办。
+         按性别分写法与 askF/askM 同一个理由：sr / zh 都得变格或换字。 */
+      qLeadWaitF: 'Jo\u{0161} nije odgovorila na dana\u{0161}nje pitanje',
+      qLeadWaitM: 'Jo\u{0161} nije odgovorio na dana\u{0161}nje pitanje',
+      qLeadHasF: 'Ve\u{0107} je odgovorila',
+      qLeadHasM: 'Ve\u{0107} je odgovorio',
+      qLeadLookF: 'Pogledaj njen odgovor \u{2193}',
+      qLeadLookM: 'Pogledaj njegov odgovor \u{2193}'
     },
     'zh-CN': {
       herCycle: '\u{1F338} \u{5979}\u{7684}\u{5468}\u{671F}',
@@ -181,7 +193,13 @@
       qUpdate: '\u{66F4}\u{65B0}\u{56DE}\u{7B54}',
       qSaved: '\u{2713} \u{5DF2}\u{4FDD}\u{5B58}',
       qWaiting: '\u{8FD8}\u{6CA1}\u{6709}\u{56DE}\u{7B54}',
-      qBoth: '\u{2728} \u{4F60}\u{4EEC}\u{90FD}\u{56DE}\u{7B54}\u{4E86}'
+      qBoth: '\u{2728} \u{4F60}\u{4EEC}\u{90FD}\u{56DE}\u{7B54}\u{4E86}',
+      qLeadWaitF: '\u{5979}\u{8FD8}\u{6CA1}\u{56DE}\u{7B54}\u{4ECA}\u{5929}\u{7684}\u{95EE}\u{9898}',
+      qLeadWaitM: '\u{4ED6}\u{8FD8}\u{6CA1}\u{56DE}\u{7B54}\u{4ECA}\u{5929}\u{7684}\u{95EE}\u{9898}',
+      qLeadHasF: '\u{5979}\u{5DF2}\u{7ECF}\u{56DE}\u{7B54}\u{4E86}',
+      qLeadHasM: '\u{4ED6}\u{5DF2}\u{7ECF}\u{56DE}\u{7B54}\u{4E86}',
+      qLeadLookF: '\u{770B}\u{770B}\u{5979}\u{600E}\u{4E48}\u{7B54} \u{2193}',
+      qLeadLookM: '\u{770B}\u{770B}\u{4ED6}\u{600E}\u{4E48}\u{7B54} \u{2193}'
     },
     en: {
       herCycle: '\u{1F338} Her cycle',
@@ -197,7 +215,13 @@
       qUpdate: 'Update answer',
       qSaved: '\u{2713} Saved',
       qWaiting: "hasn't answered yet",
-      qBoth: '\u{2728} You both answered'
+      qBoth: '\u{2728} You both answered',
+      qLeadWaitF: "She hasn't answered today's question",
+      qLeadWaitM: "He hasn't answered today's question",
+      qLeadHasF: "She's answered",
+      qLeadHasM: "He's answered",
+      qLeadLookF: 'See what she said \u{2193}',
+      qLeadLookM: 'See what he said \u{2193}'
     }
   };
 
@@ -360,12 +384,18 @@
     return host;
   }
 
+  /* §2（Phase 2A）：Home 要回答的不只是「她有没有留下东西」，还有「我现在能
+     做什么」。所以最新那条可回应便签下面直接接上回应行 —— 用的是 Together
+     那一份 _replyAffordanceHtml，同一条记录、同一组按钮，只是不再让 Barry 滑
+     到另一屏才有得点。没有复制内容：这一行本来就是 _collectTodayEvents 里的
+     那一条，不是把 Together 的卡片搬过来；也没有第二份 state。 */
   function _renderTodayCard() {
     var host = document.getElementById('dash-today');
     if (!host) return;
     var ctx = _todayCtx();
     var S = ctx.S;
-    var items = _collectTodayEvents(_initTodayWindow());
+    var since = _initTodayWindow();
+    var items = _collectTodayEvents(since);
     var wrap = function (accent, inner) {
       return '<div class="card dash-card" style="border-left:3px solid ' + accent + '">' + inner + '</div>';
     };
@@ -377,15 +407,29 @@
       return;
     }
 
+    var target = _replyTarget(ctx.partner, since);
+    var echoed = target ? _iEchoed(target) : false;
+    var placed = false;
+
     var rows = items.slice(0, 4).map(function (it) {
       var body = it.x ? String(it.x).slice(0, 90) : (S[it.l] || '');
-      return '<div onclick="switchToTab(\'' + it.tab + '\')" ' +
+      var row = '<div onclick="switchToTab(\'' + it.tab + '\')" ' +
         'style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;cursor:pointer;border-top:1px solid var(--border)">' +
         '<span style="font-size:.95rem;flex-shrink:0;line-height:1.3">' + it.e + '</span>' +
         '<span style="flex:1;min-width:0;font-size:.72rem;color:var(--text);line-height:1.4;word-break:break-word">' + esc(body) + '</span>' +
         '<span style="font-size:.56rem;color:var(--text-muted);flex-shrink:0;white-space:nowrap;margin-top:2px">' + esc(_relTime(it.t, S)) + '</span>' +
         '</div>';
+      /* 💌 只有感恩便签在用，所以「这一行就是那条便签」可以只看 emoji + 时间，
+         判据与 Together 完全相同。回应块是这一行的兄弟节点：行上带
+         onclick="switchToTab()"，按钮嵌进去的话点击会冒泡到行上被跳转吃掉。 */
+      if (!target || placed || it.e !== '\u{1F48C}' || it.t !== target.time) return row;
+      placed = true;
+      return row + _replyAffordanceHtml(ctx, S, target, echoed);
     }).join('');
+
+    /* 那条便签被别的动态挤出了这四条之外时，回应行仍然接在最后 ——
+       「可以回应」不该因为多了几条动态就消失。 */
+    if (target && !placed) rows += _replyAffordanceHtml(ctx, S, target, echoed);
 
     var more = items.length > 4
       ? '<div style="font-size:.6rem;color:var(--text-muted);padding-top:6px">+ ' + (items.length - 4) + ' ' + esc(S.more) + '</div>'
@@ -631,7 +675,21 @@
         '</div>';
     }
 
+    /* §1（Phase 2A 方案 A）：问题区上方一行状态引子。只说对方现在的状态，
+       不重排输入顺序、不新增状态、不新增 unread —— mine / theirs 就是上面
+       已经读好的那两个变量。
+       双方都答完时这里刻意不出现：dq-both 已经在说同一件事，再说一遍就是
+       重复，而且那一刻已经没有「想看对方怎么答」的悬念了。 */
+    var lead = '';
+    if (!(mine && theirs)) {
+      var g = ctx.partner === 'barry' ? 'M' : 'F';
+      lead = '<div class="dq-lead">' + esc(v2(theirs ? 'qLeadHas' + g : 'qLeadWait' + g)) +
+        (theirs ? ' <span class="dq-lead-sub">' + esc(v2('qLeadLook' + g)) + '</span>' : '') +
+        '</div>';
+    }
+
     host.innerHTML =
+      lead +
       '<div class="dq-q" id="togetherDailyQText"></div>' +
       '<textarea class="dq-input" id="dqInput" rows="2" maxlength="280" ' +
         'placeholder="' + esc(v2('qPlaceholder')) + '" aria-label="' + esc(v2('qYours')) + '">' +
@@ -699,6 +757,21 @@
     });
   }
 
+  /* §2（Phase 2A）：Home 与 Together 共用同一段「她留了东西 → 我可以回应」。
+     这里原样产出 .tnew-ask + .tnew-react 两层，不加包裹层 ——
+     tests/test-together.js 钉的就是这个结构，而且点的是
+     #together-new .tnew-react .grat-echo-btn。
+     两边共用的是同一条 shared-gratitude 记录、同一个 gratEchoRow、同一个
+     shared-gratitude-echo 键：不是把 Together 的内容抄一份到 Home，也没有
+     第二份 state，更没有 unread 计数。
+     target 缺失或 gratEchoRow 未加载时返回空串，调用方因此不必再判一次。 */
+  function _replyAffordanceHtml(ctx, S, target, echoed) {
+    if (!target || typeof gratEchoRow !== 'function') return '';
+    return (echoed ? '' : '<div class="tnew-ask">' +
+        esc(ctx.partner === 'barry' ? S.askM : S.askF) + ' \u{2193}</div>') +
+      '<div class="tnew-react">' + gratEchoRow(target) + '</div>';
+  }
+
   function _renderTogetherNew() {
     var host = document.getElementById('together-new');
     if (!host) return;
@@ -709,17 +782,8 @@
     if (!items.length) { host.hidden = true; host.innerHTML = ''; return; }
     host.hidden = false;
 
-    var target = (typeof gratEchoRow === 'function') ? _replyTarget(ctx.partner, since) : null;
+    var target = _replyTarget(ctx.partner, since);
     var echoed = target ? _iEchoed(target) : false;
-
-    /* 回应块是 <div class="tnew-row"> 的兄弟节点，不是子节点：行本身带
-       onclick="switchToTab()"，按钮嵌进去的话点击会冒泡到行上，刚点出来的
-       反馈会被跳转 + 重渲染吃掉。 */
-    function replyBlock() {
-      return (echoed ? '' : '<div class="tnew-ask">' +
-          esc(ctx.partner === 'barry' ? S.askM : S.askF) + ' \u{2193}</div>') +
-        '<div class="tnew-react">' + gratEchoRow(target) + '</div>';
-    }
 
     var placed = false;
     /* 列表按时间倒序，只展示三条。对方最新的那条便签可能被更新的 echo /
@@ -734,10 +798,10 @@
       /* 💌 只有感恩便签在用，所以「这一行就是那条便签」可以只看 emoji + 时间。 */
       if (!target || placed || it.e !== '\u{1F48C}' || it.t !== target.time) return row;
       placed = true;
-      return row + replyBlock();
+      return row + _replyAffordanceHtml(ctx, S, target, echoed);
     }).join('');
 
-    if (target && !placed) rows += replyBlock();
+    if (target && !placed) rows += _replyAffordanceHtml(ctx, S, target, echoed);
 
     host.innerHTML = '<div class="tnew-head">' + esc(ctx.partner === 'barry' ? S.m : S.f) + '</div>' + rows;
   }

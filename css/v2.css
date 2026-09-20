@@ -402,6 +402,14 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   border-top: 0;
   padding-top: 0;
 }
+/* §2（Phase 2A）：同一段回应块现在也出现在 Home 的卡片里。在 Together 它后面
+   还有 .tnew-row，那条 border-bottom 是分隔线；在 Home 它是卡片里最后一样
+   东西，留着就只是一根悬空的细线。 */
+.dash-card .tnew-react:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
 
 /* ── §4 Daily Question ───────────────────────────────────────────────────
    §8: this is the card that answers "what can I do for her right now", so the
@@ -523,6 +531,21 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   font-size: var(--text-sm);
   font-weight: 650;
   text-align: center;
+}
+
+/* §1（Phase 2A 方案 A）：问题区上方的状态引子。
+   它比 .dq-q 小一档，这样视线仍然先落在问题上 —— 引子是「她那边怎么样了」，
+   问题才是要回答的东西。语气也必须轻：它不催谁完成任务，所以不上色块、
+   不加边框、不放图标（§4 明确排除分数/徽章/连胜，这里同理）。
+   只有 .dq-lead-sub 那半句用主色，因为它是唯一一个动作指向。 */
+.dq-lead {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.dq-lead-sub {
+  color: var(--primary);
+  font-weight: 650;
 }
 
 /* ── §5 Know Me feedback ─────────────────────────────────────────────────

@@ -198,8 +198,12 @@ const enKeys = keysOf('en');
 /* Pinned to the real count: `> 0` is what let the brace-capture bug above pass
    as "same keys in all 3 languages" while only ever seeing one key. Raised 7 -> 14
    in Phase 1B, when the Daily Question card added its own copy (qYours,
-   qPlaceholder, qSend, qUpdate, qSaved, qWaiting, qBoth) to all three columns. */
-const V2_KEYS_PER_LANG = 14;
+   qPlaceholder, qSend, qUpdate, qSaved, qWaiting, qBoth) to all three columns.
+   Raised 14 -> 20 in Phase 2A §1, when the status lead above the question added
+   qLeadWaitF/M, qLeadHasF/M, qLeadLookF/M — six keys, gendered the same way
+   askF/askM already were, and present in all three columns (the parity check
+   right below is what proves that half). */
+const V2_KEYS_PER_LANG = 20;
 check('V2_I18N was found with all its keys', v2body.length > 0 && srKeys.length === V2_KEYS_PER_LANG,
   `keys=${srKeys.length}`);
 check('V2_I18N sr / zh-CN / en declare the same keys',

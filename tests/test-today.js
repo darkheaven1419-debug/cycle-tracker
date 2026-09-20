@@ -260,11 +260,16 @@ const todayText = (page) => page.evaluate(() => {
   }
 
   // ---- T2: empty state when the partner has produced nothing ----
+  // Phase 2A §3：空态从「Za sada ništa novo」（工具感：像今天没任务）改成情侣
+  // 空间的措辞。这里跟着换的是被钉住的文案本身，判据没有放宽 —— 仍然是「空态
+  // 分支被渲染出来了」，只是它现在说的是「这个空间还在等你们留下点什么」。
   {
     const s = await scenario(browser, {});
     await openDashboard(s.page);
     const txt = await todayText(s.page);
-    check('T2 empty state shown when nothing from partner', txt.includes('Za sada ništa novo'), txt.slice(0, 60));
+    check('T2 empty state shown when nothing from partner',
+      txt.includes('Još nema novih porukica') && txt.includes('Ovaj prostor čeka da nešto ostavite.'),
+      txt.slice(0, 80));
     await s.ctx.close();
   }
 
@@ -275,7 +280,8 @@ const todayText = (page) => page.evaluate(() => {
     });
     await openDashboard(s.page);
     const txt = await todayText(s.page);
-    check('T3 own content excluded', !txt.includes('MOJA PORUKA') && txt.includes('Za sada ništa novo'), txt.slice(0, 60));
+    check('T3 own content excluded',
+      !txt.includes('MOJA PORUKA') && txt.includes('Još nema novih porukica'), txt.slice(0, 80));
     await s.ctx.close();
   }
 
