@@ -75,8 +75,14 @@
   --warm-text: #c05621;
   --dot-short: #f0cdd6;
 
-  /* ── Surfaces: cool porcelain with a violet cast ── */
-  --bg: #f4f2f8;
+  /* ── Surfaces: warm cream, not cool porcelain ──
+     Phase 2B.9: was #f4f2f8, a cool violet-cast near-white that read as
+     "white-pink" once it covered the whole page. #f7efe9 is deliberately not a
+     new colour: it is the lightest stop of the warm radial gradient that
+     css/calendar.css:6251 already paints on body at >=768px. Sharing the value
+     means the first frame at every width is the same colour family, so nothing
+     has to cross-fade during boot. Dark mode is untouched. */
+  --bg: #f7efe9;
   --card: #ffffff;
   --elevated: #ffffff;
   --text: #1f1c2b;

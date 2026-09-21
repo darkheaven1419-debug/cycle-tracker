@@ -132,7 +132,37 @@ const V = '?v=' + APP_VERSION;
 // 是 cache-first。不换名字，装了旧 SW 的客户端既拿不到这条入口的样式（v2.css），
 // 也拿不到入口本身（module-memories.js）—— 而这条改动恰恰只存在于渲染结果里，
 // 没有新文件名、没有新 URL 可供它察觉。
-const CACHE_STATIC = 'ciklus-static-v45';
+// Phase 2B.9 · v45 → v46，只抬这一轴。这一轮改六条裸路径：./index.html、
+// ./offline.html、./css/tokens.css、./manifest.json、./js/module-memories.js 与
+// ./css/v2.css —— 六者都没有 ?v= 查询串，cache key 就是路径本身、永远不会动，
+// 而 SW 对它们一律 cache-first。没有任何带 ?v= 的资产被改，所以 APP_VERSION 保持
+// 7.3.9 不动。这一轮的两件事同一次提交发布，所以只抬一次名字：一次 cache key 变化
+// 就足以让客户端同时换掉这六条路径，分两次抬只会凭空多一个中间版本号。
+// 改动只有一件事：浅色模式的页面底色从冷转暖。css/tokens.css 里的 --bg 原本是
+// #f4f2f8（偏冷的淡紫灰），现在改成 #f7efe9 —— 与 css/calendar.css:6251 早就给
+// >=768px 的 body 铺的那层暖色径向渐变（#f7efe9 → #f0e5dd → #e7d8cf）对上，
+// 宽屏下首屏渐变与页面底色不再是两种色温。同一个值还要一起落在 ./index.html 与
+// ./offline.html 的浅色 theme-color、以及 ./manifest.json 的 background_color
+// 上，否则离线页与安装后的启动底色仍是冷的。
+// 同时 ./index.html 里那条 setTimeout(...,3000) 内联脚本被删掉：它原本在三秒后
+// 用 !important 把 document.body 的 background 强行写回 var(--bg)，
+// 于是第一帧是暖的（渲染的是渐变）、第三秒反而转冷（被 --bg 的旧值盖了回去）。
+// 删掉它，底色就只由 --bg 一处决定，不再有「暖 → 冷」的二次落色。
+// 老问题照旧：这六条路径全是裸路径，不换名字，装了旧 SW 的客户端拿到的仍是旧
+// tokens.css（冷底色）、旧 index.html（三秒后转冷的脚本）、旧 offline.html 与旧
+// manifest.json —— 而这一轮改的恰恰就是底色本身，没有新文件名、没有新 URL
+// 可供它察觉。
+//
+// 第二件事是回忆页那条写日记入口的行为改了：2B.8 里它是把人滚到面板底部的编辑器
+// 去（_goToDiary + scrollIntoView），现在改成把那三个节点本身 —— 日期条、
+// #diaryFullCal、#diaryWriteCard —— 就地搬进 #memWriteHost，原地展开，页面一动
+// 不动。借出去的仍然是 index.html 里那同一个写卡：没有第二套编辑器、没有新数据
+// 模型，保存路径仍是 saveDiaryEntry() → localStorage['shared-diary'] →
+// pushAllSharedData()，sync 协议一个字没改。这一改动只落在
+// ./js/module-memories.js（借还逻辑与入口）与 ./css/v2.css（host 与展开态样式）
+// 两条路径上 —— 两条也都是裸路径，不换名字，客户端拿到的仍是「点一下把人送到面板
+// 底部」的旧引擎与旧样式，而改动恰恰只存在于渲染结果里，没有新文件名可供它察觉。
+const CACHE_STATIC = 'ciklus-static-v46';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

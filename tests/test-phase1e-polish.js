@@ -293,7 +293,7 @@ function measure(cfg) {
 
   const manifest = JSON.parse(read('manifest.json'));
   check('E13 manifest theme colour is Midnight Couple, not the old rose',
-    manifest.theme_color === '#0f1220' && manifest.background_color === '#f4f2f8',
+    manifest.theme_color === '#0f1220' && manifest.background_color === '#f7efe9',
     `theme=${manifest.theme_color} bg=${manifest.background_color}`);
 
   /* ── static: dist mirrors ──────────────────────────────────────────────── */

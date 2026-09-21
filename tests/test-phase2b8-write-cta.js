@@ -293,18 +293,25 @@ const DIARY_FLOW = async function (sentence) {
     // The listener is bound, not inlined — an innerHTML rebuild drops the old
     // node with its listener, so a bound handler can never stack.
     check('W4 the click handler is bound with addEventListener (no inline onclick)',
-      /var cta = document\.getElementById\('memWriteCta'\);[\s\S]{0,120}addEventListener\('click', _goToDiary\)/.test(memSrc) &&
-      memSrc.indexOf('onclick="_goToDiary') === -1 &&
-      memSrc.indexOf("onclick='_goToDiary") === -1,
+      /var cta = document\.getElementById\('memWriteCta'\);[\s\S]{0,200}addEventListener\('click', _toggleWrite\)/.test(memSrc) &&
+      memSrc.indexOf('onclick="_toggleWrite') === -1 &&
+      memSrc.indexOf("onclick='_toggleWrite") === -1,
       'bound=true inline=false');
 
-    // It scrolls to the diary the panel already owns, and does nothing else.
-    const go = memSrc.match(/function _goToDiary\(\) \{[\s\S]*?\n  \}/);
-    const goSrc = go ? go[0] : '';
-    check('W5 the handler targets the existing #diaryWriteCard only',
-      goSrc.indexOf("getElementById('diaryWriteCard')") !== -1 &&
-      goSrc.indexOf('scrollIntoView') !== -1,
-      `targetsWriteCard=${goSrc.indexOf("getElementById('diaryWriteCard')") !== -1} scrolls=${goSrc.indexOf('scrollIntoView') !== -1}`);
+    /* Phase 2B.9 changed the mechanism, not the boundary. 2B.8 sent the reader
+       down to the editor (_goToDiary + scrollIntoView); 2B.9 borrows the editor
+       up to the reader. What must still hold is the thing this check was really
+       protecting: exactly ONE editor exists, it is the one index.html already
+       owns, and nothing new was built to stand beside it. */
+    const toggle = memSrc.match(/function _toggleWrite\(\) \{[\s\S]*?\n  \}/);
+    const toggleSrc = toggle ? toggle[0] : '';
+    const expand = memSrc.match(/function _expandWrite\(\) \{[\s\S]*?\n  \}/);
+    const expandSrc = expand ? expand[0] : '';
+    check('W5 the handler borrows the existing #diaryWriteCard instead of building a second editor',
+      toggleSrc.indexOf('_expandWrite()') !== -1 && toggleSrc.indexOf('_collapseWrite()') !== -1 &&
+      expandSrc.indexOf("getElementById('diaryWriteCard')") !== -1 &&
+      expandSrc.indexOf('innerHTML') === -1 && expandSrc.indexOf('createElement') === -1,
+      `toggles=${toggleSrc.indexOf('_expandWrite()') !== -1} targetsWriteCard=${expandSrc.indexOf("getElementById('diaryWriteCard')") !== -1} builds=${expandSrc.indexOf('createElement') !== -1}`);
 
     // No new scroll state and no data writes: the module must not remember,
     // restore or synthesise anything. This is the "no new state" boundary.
@@ -316,13 +323,12 @@ const DIARY_FLOW = async function (sentence) {
     check('W6 the module writes no storage and adds no scroll state',
       writes.length === 0, `found=${writes.join(',') || 'none'}`);
 
-    // No auto-scroll anywhere: scrollIntoView must appear only inside the
-    // handler the tap reaches. The tab's own "keep the scroll position" rule is
-    // untouched, which is what makes this safe.
+    // 2B.9 took scrolling out of this module entirely: the editor comes to the
+    // reader, so there is no tap-reachable scroll left either. Zero is the
+    // correct count now, and it is a stronger statement than the old one.
     const occurrences = memSrc.split('scrollIntoView').length - 1;
-    const outsideHandler = memSrc.replace(goSrc, '').indexOf('scrollIntoView') !== -1;
-    check('W6b nothing in the module scrolls except the tapped handler',
-      occurrences > 0 && !outsideHandler, `occurrences=${occurrences} outsideHandler=${outsideHandler}`);
+    check('W6b the module no longer scrolls at all — the editor comes to the reader',
+      occurrences === 0, `occurrences=${occurrences}`);
 
     // The dist mirrors are hand-maintained; a missed copy ships the old engine.
     const drift = ['js/module-memories.js', 'css/v2.css', 'sw.js']
@@ -466,8 +472,17 @@ const DIARY_FLOW = async function (sentence) {
       return { y: Math.round(window.scrollY), cardTop: wc ? Math.round(wc.getBoundingClientRect().top) : null };
     });
     await page.click('#memWriteCta');
+    /* Sampled twice on purpose: right after the tap, and again well past the
+       1200ms second render initSharedDiaryTab schedules. 2B.9 has to survive
+       BOTH. An editor that opens and then shuts itself is not "in front of you",
+       and a fast reader would never get a character down. */
+    const after = await page.evaluate(() => {
+      const host = document.getElementById('memWriteHost');
+      return { y: Math.round(window.scrollY), open: !!(host && host.classList.contains('is-open')) };
+    });
     await page.waitForTimeout(1600);
     const landed = await page.evaluate(() => {
+      const host = document.getElementById('memWriteHost');
       const wc = document.getElementById('diaryWriteCard');
       const strip = document.querySelector('#panel-diary .diary-date-strip');
       if (!wc) return { inView: false };
@@ -475,6 +490,9 @@ const DIARY_FLOW = async function (sentence) {
       const s = strip ? strip.getBoundingClientRect() : null;
       return {
         y: Math.round(window.scrollY),
+        open: !!(host && host.classList.contains('is-open')),
+        inHost: !!(host && host.contains(wc)),
+        stripInHost: !!document.querySelector('#memWriteHost .diary-date-strip'),
         cardTop: Math.round(b.top),
         cardBottom: Math.round(b.bottom),
         inView: b.top < window.innerHeight && b.bottom > 0,
@@ -482,11 +500,12 @@ const DIARY_FLOW = async function (sentence) {
         vh: window.innerHeight,
       };
     });
-    check('W18 tapping the row scrolls the existing write card into view',
-      landed.inView && landed.y > start.y,
-      `from=${start.y} to=${landed.y} cardTop=${landed.cardTop} cardBottom=${landed.cardBottom} vh=${landed.vh} inView=${landed.inView}`);
-    check('W18b the date strip comes along, so the day can be changed without a second trip',
-      landed.stripInView, `stripInView=${landed.stripInView}`);
+    check('W18 tapping the row opens the editor in place without moving the page',
+      landed.inView && landed.open && landed.inHost && landed.y === after.y,
+      `from=${start.y} justAfter=${after.y} at1600=${landed.y} open=${landed.open} inHost=${landed.inHost} cardTop=${landed.cardTop} cardBottom=${landed.cardBottom} vh=${landed.vh} inView=${landed.inView}`);
+    check('W18b the date strip comes along, and the second render does not shut the editor',
+      landed.stripInView && landed.stripInHost && landed.open,
+      `stripInView=${landed.stripInView} stripInHost=${landed.stripInHost} open=${landed.open}`);
 
     // The tap must not create or alter anything.
     const untouched = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('shared-diary') || '{}')).length);

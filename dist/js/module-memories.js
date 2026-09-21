@@ -17,8 +17,16 @@
    (measured at 320x800: +415px with 0 entries, +6822px with 100). Diary is where
    you actively keep something from today; Memories is where you look back at what
    is already there. This row restores the signpost to the first one and does not
-   make it an annex of the second. Nothing was deleted, duplicated or moved, the
-   button writes no state, and it scrolls only after a real tap.
+   make it an annex of the second.
+
+   Phase 2B.9 keeps the row and changes what it does: instead of travelling down
+   to the editor, the row BRINGS the editor up to itself. The three nodes the
+   panel owns for writing — .diary-date-strip-wrap, #diaryFullCal and
+   #diaryWriteCard — are moved (never copied) into a host inside #memRoot, then
+   moved back before the next rebuild. One editor, one DOM, one data model; the
+   two sentences Phase 2B.8 pinned still hold, and the third one now reads
+   "nothing was duplicated, nothing was moved permanently, and nothing scrolls
+   at all". Diary keeps its own copy of nothing.
 
    §三 forbids a second data model, so every memory here is DERIVED at render
    time from keys that already exist, and this module writes nothing: no new
@@ -60,6 +68,10 @@
          替情侣说话（「今天想留下什么？」那种句子是在替他们提问）。它只说明
          这里能做什么。三个语种都放在 MEM_I18N 里，没有第二套 i18n 机制。 */
       writeCta: 'Napiši dnevnik',
+      /* Phase 2B.9 — 展开之后同一行换成的说法。同一个按钮、同一行，只是它此刻
+         表示「已经在写了，收起来吧」，所以措辞就是 writeCta 的反面，不再另起
+         一套说法。三个语种都放在 MEM_I18N 里，没有第二套 i18n 机制。 */
+      writeCollapse: 'Sakrij dnevnik',
       emptyTitle: 'Ovde još nema mnogo priča.',
       emptyText: 'Polako ćemo je ispunjavati. ❤️',
       kDiary: 'Dnevnik', kGrat: 'Zahvalnost', kDQ: 'Pitanje dana',
@@ -79,6 +91,7 @@
       featured: '来自我们的故事',
       myDiary: '我的日记',
       writeCta: '写一篇日记',
+      writeCollapse: '收起日记',
       emptyTitle: '这里还没有很多故事。',
       emptyText: '我们会慢慢把它填满。 ❤️',
       kDiary: '日记', kGrat: '感恩', kDQ: '今日一问',
@@ -96,6 +109,7 @@
       featured: 'A little memory from us',
       myDiary: 'My diary',
       writeCta: 'Write a diary entry',
+      writeCollapse: 'Hide the diary',
       emptyTitle: "There aren't many stories here yet.",
       emptyText: "We'll fill it up slowly. ❤️",
       kDiary: 'Diary', kGrat: 'Gratitude', kDQ: 'Daily Question',
@@ -413,37 +427,139 @@
      它是 <button> 而不是 <a>：没有新路由、没有新状态、没有新数据，只是把一个
      已经存在的编辑器重新指出来。位置在「故事的开头」之后、精选卡之前 —— 先说
      故事从哪里开始，再说你也可以往下写。没有故事时 _anchorHtml 返回空串，它
-     自然上移，不留空档。 */
+     自然上移，不留空档。
+
+     Phase 2B.9 — 同一行后面多了 #memWriteHost，就是那块借来的编辑器将来的位置。
+     收起时它是空的、display:none、零高，这一行看起来和 2B.8 完全一样；展开时
+     _expandWrite 才把那三个节点搬进来。host 挂在按钮之后而不是包住按钮：按钮
+     本身从头到尾都在 #memRoot 里、从没被搬动过，所以两态之间只有内容在变。 */
   function _writeCtaHtml() {
     return '<button type="button" class="mem-write-cta" id="memWriteCta">' +
       '<span class="mem-write-cta-ico" aria-hidden="true">\u{270D}\u{FE0F}</span>' +
       '<span class="mem-write-cta-text">' + _esc(mem('writeCta')) + '</span>' +
       '<span class="mem-write-cta-more" aria-hidden="true">\u{203A}</span>' +
-      '</button>';
+      '</button>' +
+      '<div class="mem-write-host" id="memWriteHost"></div>';
   }
 
-  /* 只有用户真的点了才滚动。不 focus、不改 tabindex、不写任何 storage：
-     本模块对 #panel-diary 的承诺是「不编辑面板自身的标记」（见文件头），
-     给 #diaryWriteCard 加属性就会破坏它，所以这里只做滚动这一件事。
+  /* Phase 2B.9 — 就地展开，不再滚动。
 
-     app.js 里「切换 Tab 不动滚动位置」是既定产品决策，那条规则约束的是自动
-     行为；用户点这一下不属于它，也没有绕过它 —— 本模块没有新增任何 scroll
-     状态，没有记录、没有恢复、没有定时器。
+     Phase 2B.8 的那条入口是把人送到下面去；这一轮改成把下面那一小块搬上来。
+     搬的是 index.html 里那三个节点本身（.diary-date-strip-wrap / #diaryFullCal
+     / #diaryWriteCard），不是副本：§三 不许第二套数据模型，也不许第二个编辑器，
+     所以 DOM 只有这一份，谁都没有被重新实现，保存路径也一个字没改 —— 写卡还是
+     那个写卡，还是 saveDiaryEntry() → localStorage['shared-diary'] → pushAllSharedData()。
 
-     block:'center' 而不是 'start'：写卡上方还有日期条，居中之后日期条也一起
-     落在视野里，用户可以顺手换日期再写。prefers-reduced-motion 下走 'auto'，
-     与 css/v2.css 那个 reduced-motion 块同一个判据。 */
-  function _goToDiary() {
-    var t = document.getElementById('diaryWriteCard') || document.getElementById(PANEL_ID);
-    if (!t || typeof t.scrollIntoView !== 'function') return;
-    var reduce = false;
-    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-    try {
-      t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-    } catch (e2) {
-      /* 不认 options 对象的实现：退回无参形式，等价于 behavior:'auto'。 */
-      t.scrollIntoView();
+     日期条必须跟着走：它才是「补写昨天」那条路，留下它等于把入口修好又留下另外
+     一半 —— 人已经到了编辑器旁边，却发现改日期要先滚回面板底部。日期条上那个 📅
+     按钮同理，所以 #diaryFullCal 也一起过来：那张日历必须开在按钮旁边，否则它会
+     开在屏幕外的面板底部。搬完之后这一行所指的编辑器，能力与在原位时完全一样。
+
+     `_borrowed` 是这三个节点的原始顺序，null 表示「当前没有展开」。它是唯一的
+     展开状态标记 —— 不写 storage、不加 body class、不动 URL、不记滚动位置。
+     状态跟着节点走，所以它不可能和 DOM 的真实状况不一致。 */
+  var _borrowed = null;
+
+  /* 把三个节点放回 #panel-diary，紧跟在 #memRoot 之后。
+
+     这一条必须在 _render() 重建 innerHTML 之前跑。那三个节点一旦还在 #memRoot
+     里时撞上 `host.innerHTML = ...`，它们会和写卡一起被销毁，此后每一次
+     getElementById('diaryWriteCard') 都返回 null —— 整个日记功能静默失效，
+     而且不报任何错。这是本轮唯一真正危险的地方。
+
+     放回的位置是 #memRoot 之后，不是面板最前面：#memRoot 是面板的第一个子元素，
+     日记这些节点原本就紧跟在它后面；插到最前面会把日记整块挪到回忆上方，面板的
+     信息架构就反了。同理 `at` 只算一次 —— 每次 insertBefore 都插在同一个参照节点
+     之前，正好还原原始先后。
+
+     每一项记的是 {el, home} 而不是裸节点：写卡的家常常不是面板本身（见
+     _expandWrite），它必须回到当初那个容器里，否则「借出去再还回来」就变成了
+     「顺手改了结构」。home 已经不在面板底下时退回面板，仍然插在 `at` 之前。 */
+  function _parkDiaryNodes() {
+    if (!_borrowed) return;
+    var panel = document.getElementById(PANEL_ID);
+    if (!panel) return;
+    var root = document.getElementById('memRoot');
+    var at = (root && root.parentNode === panel) ? root.nextSibling : panel.firstChild;
+    for (var i = 0; i < _borrowed.length; i++) {
+      var b = _borrowed[i];
+      if (!b || !b.el) continue;
+      var home = (b.home && b.home.parentNode === panel) ? b.home : panel;
+      if (b.el.parentNode === home) continue;
+      home.insertBefore(b.el, home === panel ? at : home.firstChild);
     }
+    _borrowed = null;
+  }
+
+  /* 展开：把那三个节点按原顺序搬进 #memWriteHost。
+
+     任何一个找不到就地退出（返回 false），这一行就仍然只是一行不响应的字，
+     而不是坏掉的东西 —— 宁可不展开，也不能把半截 DOM 留在外面。
+
+     写卡的「家」不一定是面板本身。index.html 里它是 #panel-diary 的直接子节点，
+     但 js/fix-diary.js 的 _applyLetterPaperLayout 会在运行时把它和对方的信一起
+     包进一个 .lpc-row（实测：面板的子节点是 #memRoot / .diary-date-strip-wrap /
+     #diaryFullCal / .lpc-row / .diary-timeline-section / .card，写卡的父节点是
+     .lpc-row）。只认面板本身会让这一行永远打不开，所以这里记住它此刻真正的父
+     节点，判据放宽成「那个父节点自己还挂在面板底下」—— 再远就说明写卡已经被搬到
+     别处，这时候不该动它。借走的是写卡本身，不是 .lpc-row：对方那封信必须留在
+     原位，它不在这一轮的范围里。
+
+     日期条按 class 在面板的直接子节点里找：不给它加 id（index.html 这一轮不动），
+     也不用 :scope —— 那两样都只是为了少写一个循环，代价是多一个必须同步的契约。 */
+  function _expandWrite() {
+    var host = document.getElementById('memWriteHost');
+    var panel = document.getElementById(PANEL_ID);
+    var card = document.getElementById('diaryWriteCard');
+    if (!host || !panel || !card) return false;
+    var home = card.parentNode;
+    if (!home || (home !== panel && home.parentNode !== panel)) return false;
+    var wrap = null, kids = panel.children;
+    for (var i = 0; i < kids.length; i++) {
+      if (kids[i].classList && kids[i].classList.contains('diary-date-strip-wrap')) { wrap = kids[i]; break; }
+    }
+    var cal = document.getElementById('diaryFullCal');
+    if (wrap && wrap.parentNode !== panel) wrap = null;
+    if (cal && cal.parentNode !== panel) cal = null;
+    /* appendChild 会顺带把节点从原来的位置摘掉，不留空位；按原始顺序追加即可。
+       数组里允许出现 null（缺日期条或缺日历）—— _parkDiaryNodes 会跳过它们，
+       那一格也就留给别人。 */
+    _borrowed = [
+      wrap ? { el: wrap, home: panel } : null,
+      cal ? { el: cal, home: panel } : null,
+      { el: card, home: home }
+    ];
+    if (wrap) host.appendChild(wrap);
+    if (cal) host.appendChild(cal);
+    host.appendChild(card);
+    host.classList.add('is-open');
+    _setCtaLabel(true);
+    return true;
+  }
+
+  function _collapseWrite() {
+    _parkDiaryNodes();
+    var host = document.getElementById('memWriteHost');
+    if (host) host.classList.remove('is-open');
+    _setCtaLabel(false);
+  }
+
+  /* 同一个按钮、同一行，只是它此刻表示「已经在写了，收起来吧」。aria-expanded
+     是这件事的可访问名以外的唯一新属性 —— 它描述的是这一行现在的状态，不是
+     面板自身标记的一部分，所以文件头那条「不编辑面板标记」的承诺仍然成立。 */
+  function _setCtaLabel(open) {
+    var cta = document.getElementById('memWriteCta');
+    if (!cta) return;
+    var t = cta.querySelector('.mem-write-cta-text');
+    if (t) t.textContent = open ? mem('writeCollapse') : mem('writeCta');
+    if (open) cta.classList.add('is-open'); else cta.classList.remove('is-open');
+    cta.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  /* 一行两态：借出去的东西还在手里就是展开的，放回去了就是收起的。 */
+  function _toggleWrite() {
+    if (_borrowed) _collapseWrite();
+    else _expandWrite();
   }
 
   function _featuredHtml(it) {
@@ -539,6 +655,16 @@
          this block is what separates the two (§八). */
       panel.insertBefore(host, panel.firstChild);
     }
+    /* 借出去的那三个节点必须先还回来 —— 下一行会重建这棵子树，写卡若还在
+       #memRoot 里就会连着被销毁。见 _parkDiaryNodes。
+
+       还回来之前先记住这一行是不是开着的：重建之后要把展开态接回去（见本函数
+       末尾）。不接的话，凡是打字期间撞上一次 render，编辑器都会在用户眼前自己
+       合上 —— 而 initSharedDiaryTab 在打开标签页 1200ms 后还有第二趟 render，
+       所以点得快的人根本写不上字。「点一下就在眼前写」这条体验的全部价值，就在
+       于它不会自己消失。 */
+    var wasOpen = !!_borrowed;
+    _parkDiaryNodes();
     var now = Date.now();
     var all = _items(now);
     /* The pick is rendered once, at the top of the page. Filtering it out of
@@ -559,9 +685,27 @@
       '<h2 class="mem-diary-head">\u{270D}\u{FE0F} ' + _esc(mem('myDiary')) + '</h2>';
     /* 监听器在每次渲染后现绑，而不是内联 onclick：innerHTML 每次都换掉这棵
        子树，旧节点连着旧监听器一起被丢弃，所以它不可能叠加，也不需要任何
-       「已绑过」的标记。写卡的 id 属于 index.html，本模块从不创建它。 */
+       「已绑过」的标记。写卡的 id 属于 index.html，本模块从不创建它 ——
+       Phase 2B.9 也没有加任何 id：借来的那三个节点用它原有的 id 和 class 被找出来。
+
+       2B.9 这里多一句 _setCtaLabel(false)：重建之后这一行一定是收起态（节点刚
+       被 _parkDiaryNodes 还回去，host 是空的），label 和 aria-expanded 要跟着
+       回到收起态，而不是留在上一次展开时写的那个字符串上。
+
+       紧接着若是刚才开着的，就把展开态接回去。安全性来自同一个事实：写卡从来
+       没有进过 #memRoot —— 它是在 .lpc-row 里被还回去的，所以上面那行
+       host.innerHTML 根本没碰过它，节点、textarea 里还没保存的字、以及它挂着的
+       事件都还在。_expandWrite 只是再把它搬进来一次，和新点一下走同一条路。
+
+       顺序不能反：_setCtaLabel(false) 先跑，_expandWrite 成功时自己会再设开展开
+       态；重建后若找不到节点它会返回 false，这一行就老实停在收起态，而不是留下
+       一个写着「收起」却什么也没展开的按钮。 */
     var cta = document.getElementById('memWriteCta');
-    if (cta) cta.addEventListener('click', _goToDiary);
+    if (cta) {
+      cta.addEventListener('click', _toggleWrite);
+      _setCtaLabel(false);
+      if (wasOpen) _expandWrite();
+    }
     return true;
   }
 

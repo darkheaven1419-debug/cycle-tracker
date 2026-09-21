@@ -276,6 +276,17 @@ function fire(handlers, url, opts) {
   // file, no new URL a client could notice on its own. An installed client that
   // never receives v45 keeps the old engine AND the old stylesheet — which is the
   // same as no fix at all.
+  // v45 → v46 in Phase 2B.9, for './index.html', './offline.html',
+  // './css/tokens.css' and './manifest.json' — all four bare, so only this axis
+  // moved again (APP_VERSION stayed 7.3.9). It lands on the light-mode page
+  // background, which becomes warm cream: --bg in css/tokens.css was #f4f2f8 and
+  // is now #f7efe9, matching the warm radial gradient css/calendar.css already
+  // paints on body at >=768px, and index.html loses the 3-second inline script
+  // that forced document.body back to var(--bg) with !important — the reason the
+  // first frame was warm and the third second cool. A bare path has no cache key
+  // that can move, so a stale tokens.css, index.html, offline.html or
+  // manifest.json keeps the cool background for good: the change is the colour
+  // value itself, with no new file and no new URL a client could notice.
   // v38 → v39 (Phase 1.9) is the generation where this invariant was MISSED
   // three times running: 228a6d7, 39b8d9c and 0122578 all changed
   // ./js/module-dashboard.js and bumped only APP_VERSION, which does nothing for
@@ -287,10 +298,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV45 = /const CACHE_STATIC = 'ciklus-static-v45';/.test(src);
-    const hasV44 = /ciklus-static-v44/.test(src);
+    const hasV46 = /const CACHE_STATIC = 'ciklus-static-v46';/.test(src);
+    const hasV45 = /ciklus-static-v45/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV45 && !hasV44, `v45=${hasV45} v44StillPresent=${hasV44}`);
+      hasV46 && !hasV45, `v46=${hasV46} v45StillPresent=${hasV45}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -336,17 +347,21 @@ function fire(handlers, url, opts) {
       // entry — which is the point: the bump, not the list, is the refresh.
       // Phase 2B.8 changed './js/module-memories.js' and './css/v2.css' — both
       // already listed above (module-memories.js via Phase 1C, v2.css via Phase
-      // 1D), so the v45 name re-fetches both without a new entry either. Which is
+      // 1D), so its v45 name re-fetched both without a new entry either. Which is
       // why this assertion sits next to S11 rather than replacing it: the bump is
       // the refresh, and the list only proves the assets are precached at all.
+      // Phase 2B.9 changed './index.html', './offline.html', './css/tokens.css'
+      // and './manifest.json' — all four are already listed above (index.html via
+      // Phase 1C, offline.html and manifest.json via Phase 1E, tokens.css via
+      // Phase 1D), so the v46 name re-fetches them with no new entry either.
     ];
     const missing = changed.filter((f) => src.indexOf("'" + f + "'") === -1);
     check('S12 every asset the bump exists to refresh is in STATIC_ASSETS',
       missing.length === 0, `missing=${missing.join(',') || 'none'}`);
   }
 
-  // S13 — an installed client still holds v45; one generation back holds v44,
-  // with v43..v31 further back. Run the real activate handler: every stale
+  // S13 — an installed client still holds v46; one generation back holds v45,
+  // with v44..v31 further back. Run the real activate handler: every stale
   // bucket must be deleted, the current one must survive. This is the step that
   // actually evicts the old copies of the cache-first assets.
   {
@@ -367,12 +382,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v43');
     await named.api.open('ciklus-static-v44');
     await named.api.open('ciklus-static-v45');
+    await named.api.open('ciklus-static-v46');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v44 buckets and keeps v45 + fonts',
+    check('S13 activate evicts the stale v31..v45 buckets and keeps v46 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -387,7 +403,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v42') === -1 &&
       names.indexOf('ciklus-static-v43') === -1 &&
       names.indexOf('ciklus-static-v44') === -1 &&
-      names.indexOf('ciklus-static-v45') !== -1 &&
+      names.indexOf('ciklus-static-v45') === -1 &&
+      names.indexOf('ciklus-static-v46') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -418,7 +435,7 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v45');
+    const got = named.contents('ciklus-static-v46');
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,

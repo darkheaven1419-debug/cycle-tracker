@@ -728,6 +728,35 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   font-weight: 700;
   line-height: 1;
   color: var(--gold);
+  transition: transform 160ms ease;
+}
+
+/* ── Phase 2B.9 · 就地展开的编辑器 ─────────────────────────────────────────
+   2B.8 那条入口是把人送到下面去；2B.9 改成把下面那一小块搬上来，于是按钮后面
+   多了一个 host，收起时是空的。
+
+   收起态要的是「不存在」，不是「很小」：display:none 同时给出零高、零宽、不响应
+   点击、不进 Tab 序列，所以这一行看起来和 2B.8 一字不差。展开后它只是普通块级流，
+   里面三个节点各自带着自己的间距 —— .diary-date-strip-wrap 与 .diary-full-cal 各
+   margin-bottom 10px、.diary-write-card 14px —— 和它们在 #panel-diary 底下时是
+   同一套排版（面板是 display:block，不是带 gap 的 flex 列）。所以这里一条间距都
+   不加：加了就是第二套间距，改一处、两处不同步。
+
+   刻意不给 host 底色、边框、圆角、内边距：写卡的信纸感来自 .diary-write-card 自己
+   的 .card 规则，这里再包一层就会变成「回忆里贴了一个面板」。宽度交给块级流，
+   320 下不会有横向溢出。
+
+   颜色一个都没在这里定义，两个主题自动跟随；这一块只做布局，不管外观。 */
+.mem-write-host {
+  display: none;
+}
+.mem-write-host.is-open {
+  display: block;
+}
+/* 展开后这一行从「指路」变成「收起」，› 转成向下：同一个字，只是它现在指的是
+   下面那个已经打开的东西。transform 是合成器属性，不引起重排。 */
+.mem-write-cta.is-open .mem-write-cta-more {
+  transform: rotate(90deg);
 }
 
 /* ── Featured memory (§五) ───────────────────────────────────────────────── */
@@ -1090,6 +1119,7 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   .dhc-more.dhc-more-ico,
   .mem-feat,
   .mem-write-cta,
+  .mem-write-cta-more,
   .dash-story-line,
   .update-banner,
   .update-btn {
