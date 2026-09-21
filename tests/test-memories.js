@@ -546,6 +546,7 @@ const RICH = {
         hasFeatured: !!document.getElementById('memFeatured'),
         rows: document.querySelectorAll('#memRoot .mem-row').length,
         mile: items.filter((i) => i.kind === 'milestone').map((m) => m.text),
+        anchorDates: [...document.querySelectorAll('#memAnchor .mem-anchor-day')].map((n) => n.textContent),
         hasDiaryHead: !!document.querySelector('#memRoot .mem-diary-head'),
         dateStrip: !!document.querySelector('#panel-diary .diary-date-strip-wrap, #panel-diary .diary-date-strip'),
         writeCard: !!document.querySelector('#panel-diary textarea, #panel-diary .diary-write, #panel-diary #diaryText'),
@@ -562,6 +563,18 @@ const RICH = {
     check('M40 §八 the diary writing loop survives a story with no entries of its own',
       e.hasDiaryHead && e.dateStrip && e.writeCard && e.rootInPanel,
       `strip=${e.dateStrip} write=${e.writeCard}`);
+
+    /* §八 of the phase brief (the "our story has a beginning" half): a brand-new
+       install has no diary, but it does have two real dates the app already
+       stores. Before the anchor strip the page opened straight onto 相识 X 天
+       at the BOTTOM of a newest-first timeline — the beginning of the story was
+       the last thing reachable. The anchor states it at the top. Falling back
+       to the shipped defaults is the point: this asserts the dates come from
+       the same canonical keys the milestones read, with no data seeded. */
+    check('M49 §八 a fresh install states the beginning of the story at the top of the page',
+      e.anchorDates.length === 2 &&
+      e.anchorDates[0] === '2026.03.19' && e.anchorDates[1] === '2026.05.07',
+      `dates=${JSON.stringify(e.anchorDates)}`);
     await fresh.ctx.close();
 
     /* The zero-item branch, reached by dating both milestones into the future. */
@@ -581,6 +594,7 @@ const RICH = {
         hasFeatured: !!document.getElementById('memFeatured'),
         hasTimeline: !!document.getElementById('memTimeline'),
         hasSong: !!document.getElementById('memSong'),
+        hasAnchor: !!document.getElementById('memAnchor'),
         hasDiaryHead: !!document.querySelector('#memRoot .mem-diary-head'),
         rootInPanel: !!(root && root.parentElement === document.getElementById('panel-diary')),
       };
@@ -589,6 +603,14 @@ const RICH = {
       z.n === 0 && z.hasEmpty && !z.hasFeatured && !z.hasTimeline && !z.hasSong &&
       /还没有很多故事/.test(z.emptyText) && /填满/.test(z.emptyText) && z.hasDiaryHead && z.rootInPanel,
       `n=${z.n} "${z.emptyText}"`);
+
+    /* The anchor is gated on the same condition the milestones use — 相识 must
+       already be in the past. Without that gate a future-dated pair would print
+       a future date in the past tense and a negative day count under it, i.e.
+       the page would assert a story that has not started. The caption lives
+       inside #memAnchor, so the element's absence covers both. */
+    check('M50 §八 the anchor is withheld while the story has not begun yet',
+      z.hasAnchor === false, `hasAnchor=${z.hasAnchor}`);
     await blank.ctx.close();
   }
 
@@ -613,6 +635,96 @@ const RICH = {
       t.mile.some((m) => /dana zaljubljenosti/.test(m)),
       `sub="${t.sub}" mile=${JSON.stringify(t.mile)}`);
     await ctx.close();
+  }
+
+  /* ── M44..M48: the story's beginning, and the way back into it ───────────
+     The timeline is newest-first, so the two milestones that ARE the beginning
+     sat at its very bottom: the page opened on a random old moment and only
+     reached 相识 X 天 after a full scroll. The anchor states the origin at the
+     top so everything below reads as "since then" — and it is the only place on
+     the page carrying full YYYY.MM.DD dates. */
+  {
+    const { ctx, page } = await open(RICH);
+    const a = await page.evaluate(() => {
+      const root = document.getElementById('memRoot');
+      const anchor = document.getElementById('memAnchor');
+      const kids = Array.prototype.slice.call(root ? root.children : []);
+      const line = document.getElementById('dash-story-line');
+      const more = document.querySelector('#dash-story-line .dsl-more');
+      return {
+        inRoot: !!(anchor && root && root.contains(anchor)),
+        labels: Array.prototype.map.call(
+          document.querySelectorAll('#memAnchor .mem-anchor-label'), (n) => n.textContent.trim()),
+        caption: ((document.querySelector('#memAnchor .mem-anchor-line') || {}).textContent || '').trim(),
+        anchorIdx: kids.findIndex((k) => k.id === 'memAnchor'),
+        featIdx: kids.findIndex((k) => k.id === 'memFeatured'),
+        timelineIdx: kids.findIndex((k) => k.id === 'memTimeline'),
+        moreText: more ? more.textContent : null,
+        moreCount: document.querySelectorAll('#dash-story-line .dsl-more').length,
+        lineCount: document.querySelectorAll('#dash-story-line').length,
+      };
+    });
+
+    check('M44 §八 the anchor sits inside the story block, above everything it frames',
+      a.inRoot && a.anchorIdx >= 0 && a.timelineIdx > a.anchorIdx &&
+      (a.featIdx === -1 || a.featIdx > a.anchorIdx),
+      `inRoot=${a.inRoot} anchor=${a.anchorIdx} featured=${a.featIdx} timeline=${a.timelineIdx}`);
+
+    /* §2.6 fixes the vocabulary (met -> 相识, love -> 相恋) and bans the vague
+       alternatives. The labels come from the central table, so this asserts both
+       that the module still reads those keys and that what a person sees is the
+       approved wording — not a re-authored string that drifted. */
+    check('M45 §2.6 the anchor speaks the approved 相识/相恋 vocabulary, never 相遇/在一起',
+      /annMetLabel/.test(MEM_SRC) && /annLoveLabel/.test(MEM_SRC) &&
+      /初次相识/.test(a.labels.join('|')) && /相恋的日子/.test(a.labels.join('|')) &&
+      !/相遇|在一起/.test(a.labels.join('|') + a.caption),
+      `labels=${JSON.stringify(a.labels)} caption="${a.caption}"`);
+
+    check('M46 §八 the caption counts the real 相识→相恋 interval',
+      /49/.test(a.caption), `caption="${a.caption}"`);
+
+    check('M47 §六 the way back into the story is still one line, and now says so',
+      a.lineCount === 1 && a.moreCount === 1 && a.moreText === '›',
+      `lines=${a.lineCount} more=${a.moreCount} text=${JSON.stringify(a.moreText)}`);
+    await ctx.close();
+
+    /* The dates must come from the canonical keys, so the strip and the
+       milestones can never disagree about when the story started. */
+    const seeded = await open(Object.assign({}, RICH, {
+      'cycle-ann-met': '2025-11-02', 'cycle-ann-love': '2026-01-15',
+    }));
+    const b = await seeded.page.evaluate(() => ({
+      dates: [...document.querySelectorAll('#memAnchor .mem-anchor-day')].map((n) => n.textContent),
+      mile: window.__memories.items(Date.now())
+        .filter((i) => i.kind === 'milestone').map((m) => m.text),
+    }));
+    check('M48 §八 the anchor reads the canonical keys, not a literal in the module',
+      b.dates.length === 2 && b.dates[0] === '2025.11.02' && b.dates[1] === '2026.01.15',
+      `dates=${JSON.stringify(b.dates)} mile=${JSON.stringify(b.mile)}`);
+    await seeded.ctx.close();
+
+    /* The defect the Home fallback closes: a story written yesterday is not yet
+       old enough to be Featured (7 days), and the line used to hide instead —
+       the one way back into the story disappearing exactly when there was
+       something new to come back for. Milestones are not eligible: the header
+       already carries those day counts. */
+    const freshOnly = await open({
+      'cycle-lang': 'zh-CN', 'ct-app-key': 'memories-test-key-not-a-real-one',
+      'shared-gratitude': [{ text: 'Sveža stvar', from: 'barry', time: AGO(2) }],
+    });
+    const h = await freshOnly.page.evaluate(() => {
+      const line = document.getElementById('dash-story-line');
+      const f = window.__memories.featured(window.__memories.items(Date.now()), Date.now());
+      return {
+        hidden: line ? line.hidden : null,
+        text: line ? line.textContent.trim() : null,
+        featured: f ? f.id : null,
+      };
+    });
+    check('M51 §六 a story too new to be Featured still reaches Home',
+      h.hidden === false && h.featured === null && /Sveža/.test(h.text || ''),
+      `hidden=${h.hidden} featured=${h.featured} text="${(h.text || '').slice(0, 60)}"`);
+    await freshOnly.ctx.close();
   }
 
   await browser.close();

@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.3.8';
+const APP_VERSION = '7.3.9';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -90,7 +90,19 @@ const V = '?v=' + APP_VERSION;
 // 永远看不到这个面板，而它要显示的恰恰是「当前有没有冲突」——一个显示不出来的诊断
 // 等于没有诊断。没有任何带 ?v= 的资产被改，所以 APP_VERSION 保持 7.3.8 不动，
 // 本轮只抬这一轴。判断依据仍是文件在 STATIC_ASSETS 里**怎么被列的**，不是「改了文件」。
-const CACHE_STATIC = 'ciklus-static-v42';
+// Phase 2B.6 · v42 → v43，两轴同抬。这一轮改四个文件，恰好两条轴各占一半：
+//   · ./js/module-memories.js（第 137 行，裸路径）与 ./css/v2.css（第 107 行，同样是裸路径）
+//     —— 页面顶部新增「故事的开头」日期条（.mem-anchor*），并把 Home 的
+//     「来自我们的故事」那行补上 .dsl-more。裸路径，所以必须抬这一代际，
+//     否则装了旧 SW 的客户端永远拿不到这条新规则和这句新文案。
+//   · ./js/render-love.js（第 127 行）与 ./js/social.js（第 121 行）—— 两者都带 ?v=，
+//     由 APP_VERSION 管：修的是 sendHug 写 localStorage、renderHug 却读 sessionStorage
+//     的不一致（那个值还门控着「已发送、等待回应」分支，所以该状态以前根本无法出现），
+//     以及 Know Me 引子与 knowMeFb 里重复问的同一句话。这两处都要么全改、要么全不改：
+//     两个文件各有一份重复实现，谁赢得加载顺序决定哪一份是活的，所以必须同步，
+//     并且两者都必须真的送达客户端 —— 只修一份或只抬一根轴都会留下半修状态。
+// 判断依据仍是文件在 STATIC_ASSETS 里**怎么被列的**，不是「改了文件」。
+const CACHE_STATIC = 'ciklus-static-v43';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

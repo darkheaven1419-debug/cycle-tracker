@@ -252,6 +252,13 @@ function fire(handlers, url, opts) {
   // bare, so the same hazard a fourth time. It lands on the one surface whose
   // whole purpose is to be looked at: a diagnostic an installed client never
   // receives is indistinguishable from no conflict having been found.
+  // v42 → v43 in Phase 2B.6, for './js/module-memories.js' and './css/v2.css' —
+  // both bare, so the same hazard a fifth time. It lands on the story's own
+  // opening: the date strip at the top of Memories and the trailer on the Home
+  // line. The two hug/Know Me fixes in that round ride the OTHER axis
+  // (APP_VERSION 7.3.8 → 7.3.9, for './js/render-love.js' and './js/social.js',
+  // which are listed with + V), and the two axes moved together — the first
+  // round in a while where both were needed.
   // v38 → v39 (Phase 1.9) is the generation where this invariant was MISSED
   // three times running: 228a6d7, 39b8d9c and 0122578 all changed
   // ./js/module-dashboard.js and bumped only APP_VERSION, which does nothing for
@@ -263,10 +270,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV42 = /const CACHE_STATIC = 'ciklus-static-v42';/.test(src);
-    const hasV41 = /ciklus-static-v41/.test(src);
+    const hasV43 = /const CACHE_STATIC = 'ciklus-static-v43';/.test(src);
+    const hasV42 = /ciklus-static-v42/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV42 && !hasV41, `v42=${hasV42} v41StillPresent=${hasV41}`);
+      hasV43 && !hasV42, `v43=${hasV43} v42StillPresent=${hasV42}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -332,12 +339,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v40');
     await named.api.open('ciklus-static-v41');
     await named.api.open('ciklus-static-v42');
+    await named.api.open('ciklus-static-v43');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v41 buckets and keeps v42 + fonts',
+    check('S13 activate evicts the stale v31..v42 buckets and keeps v43 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -349,7 +357,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v39') === -1 &&
       names.indexOf('ciklus-static-v40') === -1 &&
       names.indexOf('ciklus-static-v41') === -1 &&
-      names.indexOf('ciklus-static-v42') !== -1 &&
+      names.indexOf('ciklus-static-v42') === -1 &&
+      names.indexOf('ciklus-static-v43') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -380,7 +389,7 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v42');
+    const got = named.contents('ciklus-static-v43');
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,

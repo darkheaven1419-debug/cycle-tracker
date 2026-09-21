@@ -223,7 +223,10 @@ async function bootWithLegacyPat(browser, opts) {
   // Phase 2D pinned v29, Phase 1B carried it to v30, Phase 1B.5 to v31,
   // Phase 1C to v32, Phase 1D took it to v35, Phase 1E to v37, the 1E
   // follow-up to v38, Phase 1.9 to v39, Phase 2B.3 to v40, Phase 2B.4 to v41
-  // and Phase 2B.5 to v42) ──
+  // and Phase 2B.5 to v42, Phase 2B.6 to v43 — that last one moved both axes at
+  // once: CACHE_STATIC for the bare './js/module-memories.js' and './css/v2.css',
+  // APP_VERSION 7.3.8 → 7.3.9 for the versioned './js/render-love.js' and
+  // './js/social.js') ──
   {
     const drift = ['app.js', 'js/fix-all.js', 'js/module-settings.js', 'index.html', 'sw.js']
       .filter((f) => read(f) !== read('dist/' + f));
@@ -232,8 +235,8 @@ async function bootWithLegacyPat(browser, opts) {
 
     const sw = read('sw.js');
     check('D8 CACHE_STATIC is the current name and no older one survives',
-      /const CACHE_STATIC = 'ciklus-static-v42';/.test(sw) && sw.indexOf('ciklus-static-v41') === -1,
-      `v42=${/ciklus-static-v42/.test(sw)} v41=${sw.indexOf('ciklus-static-v41') !== -1}`);
+      /const CACHE_STATIC = 'ciklus-static-v43';/.test(sw) && sw.indexOf('ciklus-static-v42') === -1,
+      `v43=${/ciklus-static-v43/.test(sw)} v42=${sw.indexOf('ciklus-static-v42') !== -1}`);
 
     // The files 2D changed must still be covered by the precache list, or a
     // later cache-name bump would not refresh them.

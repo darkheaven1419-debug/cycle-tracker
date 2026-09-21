@@ -46,6 +46,9 @@
       kKM: 'Ono što znam o tebi', kMile: 'Prekretnica',
       song: 'Naša pesma',
       fromStory: 'Iz naše priče',
+      /* Phase 2B.6 — 故事开头那一条。§2.6 fixes met → upoznavanje and
+         love → zaljubljenost, so those two words are the only ones used. */
+      anchorGap: 'Od upoznavanja do zaljubljenosti prošlo je {n} dana',
       today: 'danas', yesterday: 'juče',
       daysAgo: 'pre {n} dana', weeksAgo: 'pre {n} nedelje',
       monthsAgo: 'pre {n} meseca', yearsAgo: 'pre {n} godine',
@@ -61,6 +64,7 @@
       kKM: '我了解的你', kMile: '里程碑',
       song: '我们的歌',
       fromStory: '来自我们的故事',
+      anchorGap: '从相识到相恋，我们走了 {n} 天',
       today: '今天', yesterday: '昨天',
       daysAgo: '{n} 天前', weeksAgo: '{n} 周前',
       monthsAgo: '{n} 个月前', yearsAgo: '{n} 年前',
@@ -76,6 +80,7 @@
       kKM: 'What I know about you', kMile: 'Milestone',
       song: 'Our Song',
       fromStory: 'From Our Story',
+      anchorGap: 'From meeting to falling in love — {n} days',
       today: 'today', yesterday: 'yesterday',
       daysAgo: '{n} days ago', weeksAgo: '{n} weeks ago',
       monthsAgo: '{n} months ago', yearsAgo: '{n} years ago',
@@ -122,6 +127,9 @@
   function _pad(n) { return (n < 10 ? '0' : '') + n; }
   function _dayKey(d) { return d.getFullYear() + '-' + _pad(d.getMonth() + 1) + '-' + _pad(d.getDate()); }
   function _mmdd(d) { return d.getFullYear() + '.' + _pad(d.getMonth() + 1); }
+  /* The story's two dates are the only place a full YYYY.MM.DD appears; the
+     timeline's month headers stay at YYYY.MM. */
+  function _ymd(d) { return _mmdd(d) + '.' + _pad(d.getDate()); }
 
   /* Local-midnight parse. new Date('2026-03-19') is UTC midnight, which lands on
      the previous local day west of Greenwich and shifts every day count by one —
@@ -313,6 +321,50 @@
       '<div class="mem-sub">' + _esc(mem('title')) + '</div>';
   }
 
+  /* Phase 2B.6 — 故事的开头。
+     The timeline reads newest-first, so the two milestones that ARE the
+     beginning sit at its very bottom: the page opened on one random old moment
+     and only reached 「相识 X 天」 after a full scroll. This strip states where
+     the story starts, at the top, so everything below it reads as "since then".
+
+     It is the only place on this page that carries the two actual dates — the
+     milestone rows carry day counts, not days. The labels come from the central
+     table's annMetLabel / annLoveLabel, the same strings index.html and the
+     Settings panel already render, so §2.6's approved vocabulary (相识 / 相恋)
+     is reused rather than re-authored; the escapes are only the last-resort
+     fallback _t()'s contract asks for.
+
+     Shown only once 相识 is really in the past — the same condition
+     _milestones() uses. Before that there is nothing to be continuous from and
+     a negative span would be a lie, so this strip and the milestone rows can
+     never disagree about whether the story has begun. */
+  function _anchorHtml(now) {
+    var met = _annDate('cycle-ann-met', '2026-03-19');
+    if (!met || met.getTime() > now) return '';
+    var love = _annDate('cycle-ann-love', '2026-05-07');
+    if (love && love.getTime() > now) love = null;
+
+    function cell(label, d) {
+      return '<span class="mem-anchor-date">' +
+        '<span class="mem-anchor-label">' + _esc(label) + '</span>' +
+        '<span class="mem-anchor-day">' + _esc(_ymd(d)) + '</span></span>';
+    }
+
+    var dates = cell(_t('annMetLabel', '\u{2728} \u{521D}\u{6B21}\u{76F8}\u{8BC6}'), met);
+    var line = '';
+    if (love) {
+      dates += '<span class="mem-anchor-sep" aria-hidden="true">\u{00B7}</span>' +
+        cell(_t('annLoveLabel', '\u{2665} \u{76F8}\u{604B}\u{7684}\u{65E5}\u{5B50}'), love);
+      var gap = Math.round((love.getTime() - met.getTime()) / 864e5);
+      if (gap > 0) {
+        line = '<p class="mem-anchor-line">' +
+          _esc(mem('anchorGap').replace('{n}', String(gap))) + '</p>';
+      }
+    }
+    return '<div class="mem-anchor" id="memAnchor">' +
+      '<div class="mem-anchor-dates">' + dates + '</div>' + line + '</div>';
+  }
+
   function _featuredHtml(it) {
     if (!it) return '';
     var meta = KIND[it.kind] || KIND.diary;
@@ -406,10 +458,26 @@
     var now = Date.now();
     var all = _items(now);
     host.innerHTML = _headHtml() +
+      _anchorHtml(now) +
       _featuredHtml(_featured(all, now)) +
       (all.length ? _timelineHtml(all) + _songHtml() : _emptyHtml()) +
       '<h2 class="mem-diary-head">\u{270D}\u{FE0F} ' + _esc(mem('myDiary')) + '</h2>';
     return true;
+  }
+
+  /* Phase 2B.6 — 回流。 The featured pick is deliberately never from this week
+     (FEATURED_MIN_AGE, §五), which meant the Home line stayed hidden for a
+     brand-new story and — the real defect — kept showing a months-old memory
+     while something written yesterday sat one tap away. So when nothing is old
+     enough to be featured yet, the line falls back to the newest memory instead
+     of disappearing: it then always points at the most recent thing they wrote.
+     Milestones are excluded from the fallback on purpose — the header already
+     carries those day counts, and this line exists to resurface a memory. */
+  function _homeItem(items, now) {
+    var f = _featured(items, now);
+    if (f) return f;
+    var rest = items.filter(function (it) { return it.kind !== 'milestone'; });
+    return rest.length ? rest[0] : null;
   }
 
   /* §六: a single line on Home, not a second Memories page. It reuses the same
@@ -430,13 +498,20 @@
       card.appendChild(el);
     }
     var now = Date.now();
-    var it = _featured(_items(now), now);
+    var it = _homeItem(_items(now), now);
     if (!it) { el.hidden = true; return true; }
     var meta = KIND[it.kind] || KIND.diary;
     el.hidden = false;
+    /* Phase 2B.6 — 去处。 The line was already a button but read as a plain row
+       of text, so nothing said it leads anywhere. This is the same › the
+       dashboard's "Njen ciklus" header uses, which is already this app's word
+       for "there is more behind this". Decorative — the button's own text is
+       its accessible name. Still ONE row, so the clearance M43 measures at 320
+       is untouched. */
     el.innerHTML = '<span class="dsl-kicker">\u{2726} ' + _esc(mem('fromStory')) + '</span>' +
       '<span class="dsl-text">' + meta.e + ' ' + _esc(_clip(it.text, 64)) + '</span>' +
-      '<span class="dsl-ago">' + _esc(_ago(it.ts)) + '</span>';
+      '<span class="dsl-ago">' + _esc(_ago(it.ts)) + '</span>' +
+      '<span class="dsl-more" aria-hidden="true">\u{203A}</span>';
   }
 
   // ── wiring ───────────────────────────────────────────────────────────────
