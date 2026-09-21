@@ -156,6 +156,27 @@ const AGO = (n) => Date.now() - n * DAY;
   check('M7 the module has no storage write path at all', writes.length === 0,
     `writes=${writes.length}`);
 
+  /* The Featured pick is shown at the top, so it must not be repeated in the
+     timeline below it. The removal is a render-time filter by id — it must
+     never become a second selection path, which is why the wiring itself is
+     pinned here: the pick is computed from the FULL list (`all`) and only the
+     timeline is handed the filtered one (`rest`). Asserting the rendered page
+     alone could not tell those two apart on a day the pick happens to survive
+     a pre-filtered pool. */
+  check('M7b the render filters the timeline by id, and never the Featured pool',
+    /_featured\(all,\s*now\)/.test(MEM_SRC) &&
+    /_timelineHtml\(rest,\s*now\)/.test(MEM_SRC) &&
+    !/_featured\(rest/.test(MEM_SRC),
+    'pick from `all`, timeline from `rest`');
+  /* B: relative day labels are drawn from the strings the module already had,
+     so the day-number path has to stay as the fallback rather than be
+     replaced — an older row keeps its two-digit day. */
+  check('M7c the timeline falls back to the day number when no relative label applies',
+    /_relDay\(it\.ts,\s*now\)/.test(MEM_SRC) &&
+    /when \|\| _pad\(day\.getDate\(\)\)/.test(MEM_SRC) &&
+    /var REL_DAYS = \d+;/.test(MEM_SRC),
+    'relative label first, day number as the fallback');
+
   /* §十三: no new memories field. The contract is the same 19 names
      tests/test-phase2c-state.js pins in COLLECT_KEYS — 17 pinned by Phase 2C,
      + dailyQ (Phase 1B), + anniversaries (Phase 1.9 §2.2, the shared canonical
@@ -221,6 +242,26 @@ const RICH = {
   /* §九: {title, note} and nothing else — no timestamp to place on a timeline. */
   'shared-song-barry': { title: 'Naša pesma', note: 'uz kafu' },
   'shared-song-andjela': { title: 'Zvuci Beograda', note: '' },
+};
+
+/* The fixture for the relative day labels. Every entry here sits OUTSIDE
+   Featured's 7..400-day window — four too new, one far too old — so the pick is
+   null and nothing is filtered out of the timeline. That is deliberate: it
+   keeps these assertions about labels from depending on which entry the date
+   hash happens to select (the RICH fixture covers the removal instead).
+   The five rows are also the whole label vocabulary in one page: 今天, 昨天,
+   N 天前, and the two-digit day number an older entry keeps. */
+const NEAR = {
+  'ct-app-key': 'memories-test-key-not-a-real-one',
+  'cycle-ann-met': '2026-03-19',
+  'cycle-ann-love': '2026-05-07',
+  'shared-diary': {
+    [dayKeyAgo(0)]: { andjela: { text: 'Danas smo šetali' } },
+    [dayKeyAgo(1)]: { barry: { text: 'Juče smo kuvali' } },
+    [dayKeyAgo(3)]: { andjela: { text: 'Pre tri dana' } },
+    [dayKeyAgo(6)]: { barry: { text: 'Pre šest dana' } },
+    [dayKeyAgo(500)]: { andjela: { text: 'Odavno' } },
+  },
 };
 
 (async () => {
@@ -725,6 +766,178 @@ const RICH = {
       h.hidden === false && h.featured === null && /Sveža/.test(h.text || ''),
       `hidden=${h.hidden} featured=${h.featured} text="${(h.text || '').slice(0, 60)}"`);
     await freshOnly.ctx.close();
+  }
+
+  /* ── A + B: one copy of the Featured memory, and a timeline that says "how
+     long ago" for the last few days ─────────────────────────────────────────
+     A: the pick was rendered at the top AND left in the timeline, so a single
+     diary entry appeared twice on one page with nothing saying they were the
+     same record. It is now filtered out of the timeline by id (the wiring is
+     pinned statically as M7b).
+     B: the newest rows read 今天 / 昨天 / N 天前 instead of a bare day number.
+     Display only — timestamps, order and month grouping are untouched, and an
+     older row keeps its day number. */
+  {
+    const LABELS = {
+      'zh-CN': { now: '今天', yest: '昨天', d3: '3 天前', d6: '6 天前' },
+      sr: { now: 'danas', yest: 'juče', d3: 'pre 3 dana', d6: 'pre 6 dana' },
+      en: { now: 'today', yest: 'yesterday', d3: '3 days ago', d6: '6 days ago' },
+    };
+    for (const L of ['zh-CN', 'sr', 'en']) {
+      const want = LABELS[L];
+      /* 320 is also this block's overflow question: the relative strings are
+         longer than the two digits they replace, and 320 is where that has to
+         still fit. The label text does not depend on width, so one context per
+         locale answers both. */
+      const { ctx, page } = await open(NEAR, L, { width: 320, height: 800 });
+      const n = await page.evaluate(() => {
+        const items = window.__memories.items(Date.now());
+        const mid = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+        const pairs = [...document.querySelectorAll('#memRoot .mem-row')].map((r) => ({
+          text: ((r.querySelector('.mem-row-text') || {}).textContent || '').trim(),
+          day: ((r.querySelector('.mem-row-day') || {}).textContent || '').trim(),
+        }));
+        const labelFor = (re) => (pairs.filter((r) => re.test(r.text))[0] || {}).day || null;
+        const metas = [...document.querySelectorAll('#memRoot .mem-row-meta')];
+        const sameLine = (e) => new Set(
+          [...e.children].map((c) => Math.round(c.getBoundingClientRect().top))).size;
+        return {
+          itemCount: items.length,
+          rowCount: pairs.length,
+          featured: window.__memories.featured(items, Date.now()) ? 1 : 0,
+          /* B must not have moved the data: the newest entry is still dated at
+             today's local midnight, i.e. the label changed and nothing else. */
+          todayTsIsMidnight: (function () {
+            const it = items.filter((i) => /Danas/.test(i.text))[0];
+            return !!it && it.ts === mid(it.ts) &&
+              Math.round((mid(Date.now()) - it.ts) / 864e5) === 0;
+          })(),
+          labelNow: labelFor(/Danas/), labelYest: labelFor(/Juče/),
+          label3: labelFor(/tri dana/), label6: labelFor(/šest dana/),
+          labelOld: labelFor(/Odavno/),
+          labels: pairs.map((r) => r.day),
+          doc: document.documentElement.scrollWidth,
+          metaOverflow: metas.filter((e) => e.scrollWidth > e.clientWidth + 1)
+            .map((e) => e.textContent.trim()),
+          metaWrapped: metas.filter((e) => sameLine(e) > 1).map((e) => e.textContent.trim()),
+        };
+      });
+
+      check(`M52·${L} the newest rows read as "how long ago"; an older row keeps its day number`,
+        n.labelNow === want.now && n.labelYest === want.yest &&
+        n.label3 === want.d3 && n.label6 === want.d6 && /^\d{2}$/.test(n.labelOld || ''),
+        `now=${JSON.stringify(n.labelNow)} yest=${JSON.stringify(n.labelYest)} ` +
+        `d3=${JSON.stringify(n.label3)} d6=${JSON.stringify(n.label6)} ` +
+        `old=${JSON.stringify(n.labelOld)} all=${JSON.stringify(n.labels)}`);
+
+      check(`M53·${L} the relative label changes the wording only — rows, order and dates are untouched`,
+        n.itemCount === 7 && n.rowCount === 7 && n.featured === 0 && n.todayTsIsMidnight,
+        `items=${n.itemCount} rows=${n.rowCount} picked=${n.featured} todayAtMidnight=${n.todayTsIsMidnight}`);
+
+      check(`M54·${L} no horizontal overflow at 320 with the longer day labels`,
+        n.doc <= 321 && n.metaOverflow.length === 0,
+        `scrollWidth=${n.doc} overflowingMetas=${JSON.stringify(n.metaOverflow)} ` +
+        `wrappedMetas=${JSON.stringify(n.metaWrapped)}`);
+      await ctx.close();
+    }
+  }
+
+  /* ── A: the pick is rendered once, and a pick outside the cap is a no-op ── */
+  {
+    const { ctx, page } = await open(RICH);
+    const a = await page.evaluate(() => {
+      const items = window.__memories.items(Date.now());
+      const f = window.__memories.featured(items, Date.now());
+      const clip = (s, n) => {
+        const t = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+        return t.length > n ? t.slice(0, n - 1) + '…' : t;
+      };
+      const rows = [...document.querySelectorAll('#memRoot .mem-row .mem-row-text')]
+        .map((e) => e.textContent.trim());
+      const rootText = (document.getElementById('memRoot') || {}).textContent || '';
+      const featText = clip(f ? f.text : '', 220);
+      return {
+        n: items.length,
+        rowCount: rows.length,
+        featShown: ((document.querySelector('#memFeatured .mem-feat-text') || {}).textContent || '').trim(),
+        featText,
+        rowHasPick: rows.indexOf(clip(f ? f.text : '', 160)) !== -1,
+        occurrences: featText ? rootText.split(featText).length - 1 : -1,
+      };
+    });
+
+    check('M55 the Featured memory is not repeated in the timeline',
+      a.featShown === a.featText && a.rowCount === a.n - 1 && a.rowHasPick === false,
+      `items=${a.n} rows=${a.rowCount} rowStillHasPick=${a.rowHasPick} ` +
+      `featured="${a.featShown.slice(0, 40)}"`);
+    check('M56 the pick\'s text appears exactly once inside the story block',
+      a.occurrences === 1, `occurrences=${a.occurrences}`);
+    await ctx.close();
+
+    /* A pick the capped timeline never contained. 80 gratitude entries dated in
+       the FUTURE are the 80 newest, so they take the whole 80-row budget; the
+       age gate ((now - ts) / DAY) makes every one of them ineligible, which
+       leaves the single 20-day-old entry as the entire Featured pool. So the
+       pick sits outside the timeline, and removing it has to be a no-op: the
+       cap stays 80 and the overflow line still counts the same two entries.
+       It also puts 80 future-dated rows through the day-label helper, which
+       must fall back to the day number rather than print a negative one. */
+    const futureItems = [];
+    for (let i = 1; i <= 80; i++) {
+      futureItems.push({ text: 'Budućnost ' + i, from: 'barry', time: Date.now() + i * DAY });
+    }
+    const big = await open({
+      'cycle-lang': 'zh-CN', 'ct-app-key': 'memories-test-key-not-a-real-one',
+      'cycle-ann-met': '2026-03-19', 'cycle-ann-love': '2026-05-07',
+      'shared-gratitude': futureItems,
+      'shared-diary': { [dayKeyAgo(20)]: { andjela: { text: 'Dvadeset dana' } } },
+    });
+    const o = await big.page.evaluate(() => {
+      const items = window.__memories.items(Date.now());
+      const f = window.__memories.featured(items, Date.now());
+      const labels = [...document.querySelectorAll('#memRoot .mem-row-day')]
+        .map((e) => e.textContent.trim());
+      return {
+        n: items.length,
+        rows: labels.length,
+        picked: f ? f.id : null,
+        featText: ((document.querySelector('#memFeatured .mem-feat-text') || {}).textContent || '').trim(),
+        more: ((document.querySelector('#memRoot .mem-more') || {}).textContent || '').trim(),
+        badLabels: labels.filter((l) => !/^\d{2}$/.test(l)).length,
+      };
+    });
+    check('M57 a Featured pick outside the 80-row cap is a no-op, and future dates keep a day number',
+      o.rows === 80 && o.more === '还有 2 条' && o.badLabels === 0 &&
+      o.picked === 'diary:' + dayKeyAgo(20) + ':andjela' && /Dvadeset/.test(o.featText),
+      `items=${o.n} rows=${o.rows} more="${o.more}" badLabels=${o.badLabels} picked=${o.picked}`);
+    await big.ctx.close();
+
+    /* The one-item edge the filter creates: the only memory is also the pick,
+       so the timeline is empty while the story is not. It must not fall back to
+       the empty card (that would say "there are no stories yet" directly under
+       a rendered story) and it must not render a stray empty timeline. */
+    const fp = (x) => (x < 10 ? '0' : '') + x;
+    const fDate = new Date(TODAY.getTime() + 400 * DAY);
+    const only = await open({
+      'cycle-lang': 'zh-CN', 'ct-app-key': 'memories-test-key-not-a-real-one',
+      'cycle-ann-met': fDate.getFullYear() + '-' + fp(fDate.getMonth() + 1) + '-' + fp(fDate.getDate()),
+      'cycle-ann-love': fDate.getFullYear() + '-' + fp(fDate.getMonth() + 1) + '-' + fp(fDate.getDate()),
+      'shared-diary': { [dayKeyAgo(20)]: { andjela: { text: 'Jedina uspomena' } } },
+    });
+    const one = await only.page.evaluate(() => ({
+      n: window.__memories.items(Date.now()).length,
+      hasFeatured: !!document.getElementById('memFeatured'),
+      hasTimeline: !!document.getElementById('memTimeline'),
+      hasEmpty: !!document.getElementById('memEmpty'),
+      rows: document.querySelectorAll('#memRoot .mem-row').length,
+      featText: ((document.querySelector('#memFeatured .mem-feat-text') || {}).textContent || '').trim(),
+    }));
+    check('M58 a story whose only memory is the pick shows it once, with no empty timeline or empty card',
+      one.n === 1 && one.hasFeatured && !one.hasTimeline && !one.hasEmpty &&
+      one.rows === 0 && /Jedina uspomena/.test(one.featText),
+      `items=${one.n} featured=${one.hasFeatured} timeline=${one.hasTimeline} ` +
+      `emptyCard=${one.hasEmpty} rows=${one.rows}`);
+    await only.ctx.close();
   }
 
   await browser.close();

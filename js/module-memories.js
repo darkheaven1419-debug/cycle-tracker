@@ -34,6 +34,13 @@
   var FEATURED_MAX_AGE = 400;     // days — beyond this it is an archive, not a nudge
   var CLIP_FEATURED = 220;
   var CLIP_ROW = 160;
+  /* How many days back a timeline row says "N 天前" instead of its day number.
+     A week is where "how long ago" stops locating the memory better than
+     "which day" does — past it the month header is the more useful anchor, and
+     the row keeps the two-digit day it always had. Only the three tiers the
+     module already carried for the Featured card are used, so this added no
+     new wording in any locale. */
+  var REL_DAYS = 7;
 
   var MEM_I18N = {
     sr: {
@@ -141,7 +148,8 @@
     d.setHours(0, 0, 0, 0);
     return isNaN(d.getTime()) ? null : d;
   }
-  function _midnight() { var d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+  function _atMidnight(t) { var d = new Date(t); d.setHours(0, 0, 0, 0); return d; }
+  function _midnight() { return _atMidnight(Date.now()); }
   function _daysSince(d) { return Math.round((_midnight().getTime() - d.getTime()) / 864e5); }
 
   /* The central table owns this vocabulary. §十 is explicit that the milestone
@@ -155,6 +163,21 @@
       }
     } catch (e) {}
     return fb;
+  }
+
+  /* The timeline's own "how long ago". Calendar days, not elapsed hours: a
+     memory written at 23:00 yesterday is 昨天, not 今天. _ago's elapsed-hours
+     form is right for the Featured card — nothing there replaces a calendar
+     date — but a row's label stands where a date used to be, so it has to agree
+     with the month and day it sits under. A future-dated row (clock skew, or an
+     entry typed with the wrong date) returns null and keeps its day number
+     rather than printing a negative span. */
+  function _relDay(ts, now) {
+    var d = Math.round((_atMidnight(now).getTime() - _atMidnight(ts).getTime()) / 864e5);
+    if (d === 0) return mem('today');
+    if (d === 1) return mem('yesterday');
+    if (d > 1 && d < REL_DAYS) return mem('daysAgo').replace('{n}', String(d));
+    return null;
   }
 
   function _ago(ts) {
@@ -377,15 +400,18 @@
       '</section>';
   }
 
-  function _rowHtml(it) {
+  /* The day cell is the relative label while one applies, and the two-digit day
+     otherwise — so a row older than the window is exactly what it was before. */
+  function _rowHtml(it, now) {
     var meta = KIND[it.kind] || KIND.diary;
     var day = new Date(it.ts);
+    var when = _relDay(it.ts, now);
     var who = it.from ? '<span class="mem-row-who">' + _esc(_name(it.from)) + '</span>' : '';
     return '<article class="mem-row">' +
       '<span class="mem-row-ico" aria-hidden="true">' + meta.e + '</span>' +
       '<div class="mem-row-body">' +
         '<div class="mem-row-meta"><span class="mem-row-kind">' + _esc(mem(meta.k)) + '</span>' +
-          who + '<span class="mem-row-day">' + _esc(_pad(day.getDate())) + '</span></div>' +
+          who + '<span class="mem-row-day">' + _esc(when || _pad(day.getDate())) + '</span></div>' +
         '<p class="mem-row-text">' + _esc(_clip(it.text, CLIP_ROW)) + '</p>' +
       '</div></article>';
   }
@@ -393,7 +419,7 @@
   /* Months are the only grouping, in the shape of the phase's own example:
      2026.09 ──── then its rows. The rule is a decorative span rather than a
      border, so it can stay a hairline at every width without a media query. */
-  function _timelineHtml(items) {
+  function _timelineHtml(items, now) {
     if (!items.length) return '';
     var groups = [], cur = null;
     items.forEach(function (it) {
@@ -405,7 +431,7 @@
     var html = '<div class="mem-timeline" id="memTimeline">', budget = TIMELINE_CAP, shown = 0;
     for (var g = 0; g < groups.length && budget > 0; g++) {
       var take = Math.min(groups[g].list.length, budget), rows = '';
-      for (var k = 0; k < take; k++) rows += _rowHtml(groups[g].list[k]);
+      for (var k = 0; k < take; k++) rows += _rowHtml(groups[g].list[k], now);
       html += '<div class="mem-month">' +
         '<div class="mem-month-head"><span class="mem-month-label">' + _esc(groups[g].m) + '</span>' +
         '<span class="mem-month-rule" aria-hidden="true"></span></div>' + rows + '</div>';
@@ -457,10 +483,20 @@
     }
     var now = Date.now();
     var all = _items(now);
+    /* The pick is rendered once, at the top of the page. Filtering it out of
+       the timeline by id is what makes that true, and it is a no-op whenever
+       the pick is older than the 80-row budget — a capped timeline never
+       contained it. The pool is never filtered: _featured still chooses from
+       the full list, so which memory gets picked cannot depend on this.
+       The gate below stays on `all`, not on `rest`: a story whose only memory
+       is the pick is still a story, and must not show the empty card under a
+       rendered memory. */
+    var feat = _featured(all, now);
+    var rest = feat ? all.filter(function (it) { return it.id !== feat.id; }) : all;
     host.innerHTML = _headHtml() +
       _anchorHtml(now) +
-      _featuredHtml(_featured(all, now)) +
-      (all.length ? _timelineHtml(all) + _songHtml() : _emptyHtml()) +
+      _featuredHtml(feat) +
+      (all.length ? _timelineHtml(rest, now) + _songHtml() : _emptyHtml()) +
       '<h2 class="mem-diary-head">\u{270D}\u{FE0F} ' + _esc(mem('myDiary')) + '</h2>';
     return true;
   }
