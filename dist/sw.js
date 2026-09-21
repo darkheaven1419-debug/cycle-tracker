@@ -162,7 +162,33 @@ const V = '?v=' + APP_VERSION;
 // ./js/module-memories.js（借还逻辑与入口）与 ./css/v2.css（host 与展开态样式）
 // 两条路径上 —— 两条也都是裸路径，不换名字，客户端拿到的仍是「点一下把人送到面板
 // 底部」的旧引擎与旧样式，而改动恰恰只存在于渲染结果里，没有新文件名可供它察觉。
-const CACHE_STATIC = 'ciklus-static-v46';
+//
+// ── Phase 2C：回忆页拆成「我们的故事 | 📖 日记」两种模式 ──────────────────────
+// 这一轮改动的裸路径：./index.html、./css/v2.css、./js/fix-diary.js、
+// ./js/module-memories.js。没有任何带 ?v= 的资产被改，所以 APP_VERSION 保持
+// 7.3.9 不动 —— 与上面同一个道理，变了名字的只有 CACHE_STATIC 一个。
+// 下面按「为什么老客户端必须换」逐条写：
+//
+// 1. ./css/v2.css — 新增 .mem-mode-bar / .mem-mode-btn / .mem-row-ref，以及
+//    #panel-diary.mem-mode-story 与 .mem-mode-diary 两组显隐规则。**这两组规则
+//    决定这一页能看到什么**：旧样式下 #memRoot 与日记那几块会同时显示、两种模式
+//    叠在一起，页面比改动前更乱。这是本轮最必须换的一条。
+// 2. ./js/fix-diary.js — 写作锁整条删掉（_updatePartnerLetter 里那条
+//    `if (!myEntry || !myEntry.text)` 分支连同 #letterLocked 的 UI 一起消失），
+//    签名从 user 改成 partner（此前「她的信」落款取的是读信人自己的签名），新增
+//    _latestDiaryDate()（默认落点）与 #diaryTodayBtn（回到今天）。旧引擎仍会在
+//    对方没写的那天把整封信藏起来 —— 而这恰恰是本轮要修的那件事。
+// 3. ./js/module-memories.js — 模式状态机、DIARY_REF_CAP = 6 的日记引用上限、
+//    时间轴上的可点 .mem-row-ref。旧引擎没有这两个模式，也没有那条上限。
+// 4. ./index.html — #letterLocked 节点删除、信箱卡加 diary-mailbox-card 类。
+//    留着旧 HTML 而换了新引擎，锁的 UI 会留在页面上没有东西再管它（新引擎已经不
+//    碰它了，所以它会**永久显示**在那封信本该出现的位置）。反向组合（新 HTML +
+//    旧引擎）则会让 `document.getElementById('letterLocked')` 恒为 null —— 旧引擎
+//    每处都判了空，不报错，只是锁没了，恰好是想要的结果。
+//
+// 老问题照旧：这几条全是裸路径，不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
+// 旧引擎、旧 index.html —— 而变化恰恰只存在于渲染结果里，没有新文件名可供它察觉。
+const CACHE_STATIC = 'ciklus-static-v47';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

@@ -236,7 +236,12 @@ async function bootWithLegacyPat(browser, opts) {
   // moved only CACHE_STATIC again, to v46, for the four bare paths
   // './css/tokens.css', './index.html', './offline.html' and './manifest.json':
   // the light-mode page background becomes warm cream, and './index.html' loses
-  // its 3-second inline background override. APP_VERSION stayed 7.3.9 there.) ──
+  // its 3-second inline background override. APP_VERSION stayed 7.3.9 there. Phase
+  // 2C moved only CACHE_STATIC once more, to v47, for the four bare paths
+  // './index.html', './css/v2.css', './js/fix-diary.js' and
+  // './js/module-memories.js': the 回忆 panel splits into 「我们的故事 | 📖 日记」,
+  // the diary write-lock is removed and the letter is signed by its author.
+  // APP_VERSION stayed 7.3.9 there too.) ──
   {
     const drift = ['app.js', 'js/fix-all.js', 'js/module-settings.js', 'index.html', 'sw.js']
       .filter((f) => read(f) !== read('dist/' + f));
@@ -245,8 +250,8 @@ async function bootWithLegacyPat(browser, opts) {
 
     const sw = read('sw.js');
     check('D8 CACHE_STATIC is the current name and no older one survives',
-      /const CACHE_STATIC = 'ciklus-static-v46';/.test(sw) && sw.indexOf('ciklus-static-v45') === -1,
-      `v46=${/ciklus-static-v46/.test(sw)} v45=${sw.indexOf('ciklus-static-v45') !== -1}`);
+      /const CACHE_STATIC = 'ciklus-static-v47';/.test(sw) && sw.indexOf('ciklus-static-v46') === -1,
+      `v47=${/ciklus-static-v47/.test(sw)} v46=${sw.indexOf('ciklus-static-v46') !== -1}`);
 
     // The files 2D changed must still be covered by the precache list, or a
     // later cache-name bump would not refresh them.

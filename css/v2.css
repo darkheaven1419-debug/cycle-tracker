@@ -1425,3 +1425,104 @@ textarea,
   font-style: italic;
   color: var(--text-muted);
 }
+
+/* ── Phase 2C · 回忆面板的两种模式 ────────────────────────────────────────
+   「我们的故事 | 📖 日记」。两个模式不是两个页面、不是两套 DOM，而是**同一个
+   #panel-diary 上的一对 class**：`.mem-mode-story` / `.mem-mode-diary`。
+
+   为什么是显隐而不是搬节点（原先批准的方案是搬进 #memDiaryRoot）：js/fix-diary.js
+   :160 的 `.lpc-row` 守卫是 `wc.parentNode === panel && pc.parentNode === panel`。
+   写卡一旦被搬进任何新容器，这个条件永远为假，信纸那一行就**再也不会生成**，
+   而且不报错 —— 静默失效。所以这里一个节点都不动：显隐只改 paint，不改结构，
+   守卫恒真，2B.9 那一整类「借出去 / 还回来 / 重建时被 innerHTML 销毁」的风险
+   连同它的机制一起消失。
+
+   两边的选择器都列到了具体节点，不只列父级：`.lpc-row` 只在守卫为真时才存在，
+   守卫为假时写卡和信卡是面板的直接子节点，只藏 `.lpc-row` 会漏掉它们。
+   `.mem-diary-head` 在 #memRoot **里面**（它是 _storyHtml 的最后一项），日记模式下
+   #memRoot 整体隐藏，所以它实际只在故事模式下需要被压掉 —— 那下面已经没有任何
+   编辑器了，悬一个「我的日记」标题会指向不存在的东西。 */
+#panel-diary.mem-mode-story .diary-date-strip-wrap,
+#panel-diary.mem-mode-story #diaryFullCal,
+#panel-diary.mem-mode-story .lpc-row,
+#panel-diary.mem-mode-story #diaryWriteCard,
+#panel-diary.mem-mode-story #letterPartnerCard,
+#panel-diary.mem-mode-story .diary-timeline-section,
+#panel-diary.mem-mode-story .diary-mailbox-card,
+#panel-diary.mem-mode-story #memRoot .mem-diary-head {
+  display: none;
+}
+#panel-diary.mem-mode-diary #memRoot {
+  display: none;
+}
+
+/* 二级切换条。挂在 #memModeBar（面板的第一个子节点），所以日记模式下它也必须
+   留在外面 —— 它在 #memRoot 外，天然不会被上面那条规则牵连。
+   走的是 tablist 语义：两个 tab 里同时只有一个 content 在场上。 */
+.mem-mode-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: var(--space-section);
+  padding: 3px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--card);
+}
+.mem-mode-btn {
+  flex: 1 1 0;
+  min-height: var(--touch-target);
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: calc(var(--radius-md) - 3px);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+@media (hover: hover) {
+  .mem-mode-btn:hover {
+    color: var(--text);
+  }
+}
+.mem-mode-btn.is-active {
+  background: var(--border-soft);
+  color: var(--text);
+}
+/* 焦点环不在这里加 —— 1E-D 的 :where(button):focus-visible 已经覆盖全部 button。 */
+
+/* 时间轴上的日记引用。它是**路标不是日记**：一句 90 字的摘录加一个日期，
+   点进去才落在 📖 日记 的那一天。做成一整行 button 而不是 article，是因为它
+   真的可点 —— 视觉上仍然是一条时间轴行，不是卡片、不是链接色。 */
+.mem-row-ref {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.mem-row-ref .mem-row-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.mem-row-ref .mem-row-go {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+}
+@media (hover: hover) {
+  .mem-row-ref:hover .mem-row-go {
+    color: var(--gold-muted);
+  }
+}
+.mem-row-ref:active {
+  transform: scale(0.995);
+}

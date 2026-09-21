@@ -214,6 +214,13 @@ const MEASURE = function () {
  * about which day the strip happens to default to.
  */
 const DIARY_FLOW = async function (sentence) {
+  /* Phase 2C — the date strip and the editor live in 📖 日记 mode now. In the
+     default story mode they are still in the DOM but `display: none`, so their
+     buttons exist and cannot be clicked. Switch modes through the module's own
+     entry point first — the same one the CTA tap uses — rather than clicking a
+     hidden element. */
+  if (window.__memories && window.__memories.setMode) window.__memories.setMode('diary');
+  await new Promise((r) => setTimeout(r, 600));
   const p = (x) => (x < 10 ? '0' : '') + x;
   const d = new Date();
   const today = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
@@ -293,25 +300,39 @@ const DIARY_FLOW = async function (sentence) {
     // The listener is bound, not inlined — an innerHTML rebuild drops the old
     // node with its listener, so a bound handler can never stack.
     check('W4 the click handler is bound with addEventListener (no inline onclick)',
-      /var cta = document\.getElementById\('memWriteCta'\);[\s\S]{0,200}addEventListener\('click', _toggleWrite\)/.test(memSrc) &&
-      memSrc.indexOf('onclick="_toggleWrite') === -1 &&
-      memSrc.indexOf("onclick='_toggleWrite") === -1,
+      /var cta = document\.getElementById\('memWriteCta'\);[\s\S]{0,200}addEventListener\('click',/.test(memSrc) &&
+      memSrc.indexOf('onclick="_openDiary') === -1 &&
+      memSrc.indexOf("onclick='_openDiary") === -1,
       'bound=true inline=false');
 
-    /* Phase 2B.9 changed the mechanism, not the boundary. 2B.8 sent the reader
-       down to the editor (_goToDiary + scrollIntoView); 2B.9 borrows the editor
-       up to the reader. What must still hold is the thing this check was really
-       protecting: exactly ONE editor exists, it is the one index.html already
-       owns, and nothing new was built to stand beside it. */
-    const toggle = memSrc.match(/function _toggleWrite\(\) \{[\s\S]*?\n  \}/);
-    const toggleSrc = toggle ? toggle[0] : '';
-    const expand = memSrc.match(/function _expandWrite\(\) \{[\s\S]*?\n  \}/);
-    const expandSrc = expand ? expand[0] : '';
-    check('W5 the handler borrows the existing #diaryWriteCard instead of building a second editor',
-      toggleSrc.indexOf('_expandWrite()') !== -1 && toggleSrc.indexOf('_collapseWrite()') !== -1 &&
-      expandSrc.indexOf("getElementById('diaryWriteCard')") !== -1 &&
-      expandSrc.indexOf('innerHTML') === -1 && expandSrc.indexOf('createElement') === -1,
-      `toggles=${toggleSrc.indexOf('_expandWrite()') !== -1} targetsWriteCard=${expandSrc.indexOf("getElementById('diaryWriteCard')") !== -1} builds=${expandSrc.indexOf('createElement') !== -1}`);
+    /* Phase 2C is the third mechanism for the same promise, and the only one
+       that removed the previous mechanism outright. 2B.8 sent the reader down to
+       the editor (_goToDiary + scrollIntoView); 2B.9 borrowed the editor up to
+       the reader; 2C switches 回忆 into 📖 日记 mode, which is a class on
+       #panel-diary. What must survive every one of those is the boundary this
+       check was really protecting: exactly ONE editor exists, it is the one
+       index.html already owns, and nothing new was built to stand beside it.
+       So assert the new path (the tap routes through _openDiary, the same entry
+       point a reference row uses) and the absence of the old one (no
+       #memWriteHost, no node movement) in the same breath. */
+    /* The absence checks below run on the source with comments stripped: the
+       honest way to record a deletion in this repo is a comment naming what was
+       deleted, so the bare identifiers `memWriteHost` / `_toggleWrite` /
+       `_expandWrite` survive in prose. Testing raw source would measure the
+       comment rather than the code. */
+    const memCode = memSrc.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^[ \t]*\/\/.*$/gm, '');
+    const bind = memCode.match(/var cta = document\.getElementById\('memWriteCta'\);[\s\S]{0,300}?\n  \}/);
+    const bindSrc = bind ? bind[0] : '';
+    check('W5 the handler switches to diary mode via _openDiary; it builds no second editor and moves no node',
+      bindSrc.indexOf('_openDiary(') !== -1 &&
+      bindSrc.indexOf('createElement') === -1 &&
+      bindSrc.indexOf('innerHTML') === -1 &&
+      bindSrc.indexOf('appendChild') === -1 &&
+      /function _openDiary\(dateKey\) \{/.test(memCode) &&
+      memCode.indexOf('memWriteHost') === -1 &&
+      memCode.indexOf('_toggleWrite') === -1 &&
+      memCode.indexOf('_expandWrite') === -1,
+      `opensDiary=${bindSrc.indexOf('_openDiary(') !== -1} builds=${bindSrc.indexOf('createElement') !== -1} host=${memCode.indexOf('memWriteHost') !== -1} toggle=${memCode.indexOf('_toggleWrite') !== -1}`);
 
     // No new scroll state and no data writes: the module must not remember,
     // restore or synthesise anything. This is the "no new state" boundary.
@@ -330,8 +351,11 @@ const DIARY_FLOW = async function (sentence) {
     check('W6b the module no longer scrolls at all — the editor comes to the reader',
       occurrences === 0, `occurrences=${occurrences}`);
 
-    // The dist mirrors are hand-maintained; a missed copy ships the old engine.
-    const drift = ['js/module-memories.js', 'css/v2.css', 'sw.js']
+    /* The dist mirrors are hand-maintained; a missed copy ships the old engine.
+       Phase 2C changed two more runtime files than 2B.9 did — index.html lost
+       the write-lock markup and js/fix-diary.js lost the code behind it — so
+       both are pinned here now. */
+    const drift = ['js/module-memories.js', 'js/fix-diary.js', 'css/v2.css', 'index.html', 'sw.js']
       .filter((f) => read(f) !== read('dist/' + f));
     check('W7 the changed files have byte-identical dist mirrors',
       drift.length === 0, `drift=${drift.join(',') || 'none'}`);
@@ -476,36 +500,41 @@ const DIARY_FLOW = async function (sentence) {
        1200ms second render initSharedDiaryTab schedules. 2B.9 has to survive
        BOTH. An editor that opens and then shuts itself is not "in front of you",
        and a fast reader would never get a character down. */
-    const after = await page.evaluate(() => {
-      const host = document.getElementById('memWriteHost');
-      return { y: Math.round(window.scrollY), open: !!(host && host.classList.contains('is-open')) };
-    });
+    const after = await page.evaluate(() => ({
+      y: Math.round(window.scrollY),
+      mode: document.getElementById('panel-diary').classList.contains('mem-mode-diary'),
+    }));
     await page.waitForTimeout(1600);
     const landed = await page.evaluate(() => {
-      const host = document.getElementById('memWriteHost');
+      const panel = document.getElementById('panel-diary');
       const wc = document.getElementById('diaryWriteCard');
       const strip = document.querySelector('#panel-diary .diary-date-strip');
+      const shown = (el) => {
+        if (!el) return false;
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      };
       if (!wc) return { inView: false };
       const b = wc.getBoundingClientRect();
-      const s = strip ? strip.getBoundingClientRect() : null;
       return {
         y: Math.round(window.scrollY),
-        open: !!(host && host.classList.contains('is-open')),
-        inHost: !!(host && host.contains(wc)),
-        stripInHost: !!document.querySelector('#memWriteHost .diary-date-strip'),
+        mode: panel.classList.contains('mem-mode-diary'),
+        storyHidden: !shown(document.getElementById('memRoot')),
+        cardShown: shown(wc),
+        stripShown: shown(strip),
+        editors: document.querySelectorAll('#diaryTextarea').length,
         cardTop: Math.round(b.top),
         cardBottom: Math.round(b.bottom),
         inView: b.top < window.innerHeight && b.bottom > 0,
-        stripInView: !!(s && s.top < window.innerHeight && s.bottom > 0),
         vh: window.innerHeight,
       };
     });
-    check('W18 tapping the row opens the editor in place without moving the page',
-      landed.inView && landed.open && landed.inHost && landed.y === after.y,
-      `from=${start.y} justAfter=${after.y} at1600=${landed.y} open=${landed.open} inHost=${landed.inHost} cardTop=${landed.cardTop} cardBottom=${landed.cardBottom} vh=${landed.vh} inView=${landed.inView}`);
-    check('W18b the date strip comes along, and the second render does not shut the editor',
-      landed.stripInView && landed.stripInHost && landed.open,
-      `stripInView=${landed.stripInView} stripInHost=${landed.stripInHost} open=${landed.open}`);
+    check('W18 tapping the row switches 回忆 into 📖 日记 with the editor in view, without moving the page',
+      landed.mode && landed.cardShown && landed.inView && landed.y === after.y,
+      `from=${start.y} justAfter=${after.y} at1600=${landed.y} mode=${landed.mode} cardShown=${landed.cardShown} cardTop=${landed.cardTop} cardBottom=${landed.cardBottom} vh=${landed.vh} inView=${landed.inView}`);
+    check('W18b the story half gives way, the strip arrives, and exactly one editor exists',
+      landed.storyHidden && landed.stripShown && landed.editors === 1,
+      `storyHidden=${landed.storyHidden} stripShown=${landed.stripShown} textareas=${landed.editors}`);
 
     // The tap must not create or alter anything.
     const untouched = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('shared-diary') || '{}')).length);

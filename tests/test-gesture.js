@@ -116,6 +116,12 @@ function check(name, pass, detail) {
   await page.waitForSelector('.tab[data-panel="diary"]', { timeout: 15000 });
 
   await gotoTab(page, 'diary');
+  /* Phase 2C — 回忆页现在是「我们的故事 | 📖 日记」两种模式，默认落在故事那一半，
+     日期条属于日记那一半，默认 display:none。这个套件测的正是日期条上的手势，
+     所以先切到 📖 日记 再等它可见 —— 否则 waitForSelector 会等一个永远不会
+     visible 的元素（它一直在 DOM 里，只是被 CSS 藏着）。 */
+  await page.waitForSelector('#memModeDiary', { timeout: 15000 });
+  await page.click('#memModeDiary');
   await page.waitForSelector('#diaryDateStrip .diary-date-btn', { timeout: 15000 });
 
   // ---- A1: horizontal drag on the strip must scroll it, not switch tabs ----

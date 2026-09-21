@@ -92,10 +92,10 @@ var DD = {
     export: '\u{1F4E4} \u{5206}\u{4EAB}', import: '\u{1F4E5} \u{5BFC}\u{5165}',
     edit: '\u{270F}\u{FE0F} \u{7F16}\u{8F91}',
     diaryPlaceholder: '\u{5199}\u{5427}\u{FF0C}\u{4EB2}\u{7231}\u{7684}... \u{270D}\u{FE0F}',
-    lockText: '\u{1F512} \u{5199}\u{5B8C}\u{81EA}\u{5DF1}\u{7684}\u{65E5}\u{8BB0}\u{624D}\u{80FD}\u{67E5}\u{770B}\u{4ED6}/\u{5979}\u{7684}\u{54E6} \u{1F48C}',
     navPrev: '\u{25C2} \u{4E0A}\u{4E00}\u{5468}', navNext: '\u{4E0B}\u{4E00}\u{5468} \u{25B8}',
     calTitle: '\u{65E5}\u{5386}', writeDatePrefix: '\u{1F48C} ',
     translateBtn: '\u{1F310} \u{7FFB}\u{8BD1}',
+    today: '\u{1F4C5} \u{4ECA}\u{5929}', todayTitle: '\u{56DE}\u{5230}\u{4ECA}\u{5929}',
   },
   sr: {
     partnerTitle: '\u{1F338} An\u{0111}elino pismo', barryTitle: '\u{1F466} Barryjevo pismo',
@@ -104,10 +104,10 @@ var DD = {
     export: '\u{1F4E4} Podeli', import: '\u{1F4E5} Uvezi',
     edit: '\u{270F}\u{FE0F} Uredi',
     diaryPlaceholder: 'Pi\u{0161}i, du\u{0161}o moja... \u{270D}\u{FE0F}',
-    lockText: '\u{1F512} Napi\u{0161}i svoje pismo da otklju\u{010D}a\u{0161} partnerovo \u{1F48C}',
     navPrev: '\u{25C2} Prethodna nedelja', navNext: 'Slede\u{0107}a nedelja \u{25B8}',
     calTitle: 'Kalendar', writeDatePrefix: '\u{1F48C} ',
     translateBtn: '\u{1F310} Prevedi',
+    today: '\u{1F4C5} Danas', todayTitle: 'Nazad na danas',
   },
   en: {
     partnerTitle: '\u{1F338} An\u{0111}ela\'s Letter', barryTitle: '\u{1F466} Barry\'s Letter',
@@ -116,10 +116,10 @@ var DD = {
     export: '\u{1F4E4} Share', import: '\u{1F4E5} Import',
     edit: '\u{270F}\u{FE0F} Edit',
     diaryPlaceholder: 'Write, my dear... \u{270D}\u{FE0F}',
-    lockText: '\u{1F512} Write your diary first to unlock your partner\'s \u{1F48C}',
     navPrev: '\u{25C2} Previous Week', navNext: 'Next Week \u{25B8}',
     calTitle: 'Calendar', writeDatePrefix: '\u{1F48C} ',
     translateBtn: '\u{1F310} Translate',
+    today: '\u{1F4C5} Today', todayTitle: 'Back to today',
   }
 };
 function _dd(key) {
@@ -132,7 +132,7 @@ function _updateDiaryLang() {
   var map = {
     'letter-partner-title': _dd('partnerTitle'), 'diary-timeline-title': _dd('allEntries'),
     'mailbox-title': _dd('mailbox'), 'diary-save-text': _dd('save'),
-    'letter-saved-text': _dd('saved'), 'letter-lock-text': _dd('lockText'),
+    'letter-saved-text': _dd('saved'),
     'sd-export': _dd('export'), 'sd-import': _dd('import'), 'modalDiaryEditText': _dd('edit'),
   };
   for (var id in map) { var el = document.getElementById(id); if (el) el.textContent = map[id]; }
@@ -146,6 +146,8 @@ function _updateDiaryLang() {
   if (arrows.length >= 2) { arrows[0].setAttribute('aria-label', _dd('navPrev')); arrows[1].setAttribute('aria-label', _dd('navNext')); }
   var calBtn = document.querySelector('.diary-cal-btn');
   if (calBtn) calBtn.title = _dd('calTitle');
+  var todayBtn2 = document.getElementById('diaryTodayBtn');
+  if (todayBtn2) { todayBtn2.innerHTML = _dd('today'); todayBtn2.title = _dd('todayTitle'); }
   _renderDiaryDateStrip(_diaryViewDate);
   _applyLetterPaperLayout();
 }
@@ -290,6 +292,36 @@ function _setDiaryDate(dateKey) {
 }
 window._setDiaryDate = _setDiaryDate;
 
+/* Phase 2C — 「她的信」入口打开时该落在哪一天。
+   回忆面板里切到 📖 日记，如果永远停在今天，那么明天打开就是一片空白，
+   而这个人写了一年的日记 —— 她是空的这件事会被读成「这里什么都没有」。
+   所以默认落到**最近一个真的有人写过东西的日期**（我或她，任一）。
+   三条规矩：
+   1. 只认 `YYYY-MM-DD` 形状的 key —— 这个 localStorage 里混过别的东西，
+      不筛的话 `Object.keys().sort().pop()` 会把 "zzz" 之类的垃圾日期当成最新一天。
+   2. 不认未来日期 —— 往前翻能翻到明天（日期条 ±7 天），一篇写给明天的日记
+      不该变成入口的默认落点。
+   3. 要求这一天至少有一侧有 text —— 只存了 mood 或空对象的壳不算「有内容」。
+   都没有就回今天：空日记本上也该让人立刻能写。 */
+function _latestDiaryDate() {
+  var today = _formatDateKey(new Date());
+  var best = null;
+  try {
+    var sd = JSON.parse(localStorage.getItem('shared-diary') || '{}') || {};
+    Object.keys(sd).forEach(function (k) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+      if (k > today) return;
+      var slot = sd[k] || {};
+      var b = slot.barry, a = slot.andjela;
+      var hasText = (b && b.text) || (a && a.text);
+      if (!hasText) return;
+      if (!best || k > best) best = k;
+    });
+  } catch (e) {}
+  return best || today;
+}
+window._latestDiaryDate = _latestDiaryDate;
+
 window.scrollDiaryStrip = function(direction) {
   if (direction !== -1 && direction !== 1) return;
   var currentKey = _diaryViewDate;
@@ -337,6 +369,31 @@ window.initSharedDiaryTab = function() {
   var badge=document.getElementById('letterSavedBadge'); if(badge)badge.style.display='none';
   setTimeout(_updateDiaryLang,300);
   setTimeout(_updateSigBtnText,350);
+  // ── 注入「今天」按钮 ──
+  /* Phase 2C — 日期条能往回翻 7 天、月历能挑 30 天，但**回今天**这条最短的路
+     原来不存在：翻到半个月前之后只能一天一天点回来。默认落点会变（见 _latestDiaryDate），
+     落点一旦不是今天，这个按钮就是唯一的「一步回家」。
+     走 _onDateBtnClick 而不是只 _setDiaryDate —— 后者只换日期和日期条，
+     不把这一天的内容（她的信、我的草稿、签名）一起装回来。 */
+  (function(){
+    if(document.getElementById('diaryTodayBtn'))return;
+    var wrap0=document.querySelector('.diary-date-strip-wrap');
+    if(!wrap0)return;
+    var todayBtn=document.createElement('button');
+    todayBtn.id='diaryTodayBtn';
+    todayBtn.type='button';
+    todayBtn.innerHTML=_dd('today');
+    todayBtn.title=_dd('todayTitle');
+    // 44px 最小高度：这是拇指目标，不是排版装饰。
+    todayBtn.style.cssText='min-height:44px;padding:4px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:.72rem;cursor:pointer;margin-left:4px;white-space:nowrap';
+    todayBtn.onclick=function(){
+      var d=new Date();
+      var dk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      if(typeof window._onDateBtnClick==='function')window._onDateBtnClick(dk);
+      else _setDiaryDate(dk);
+    };
+    wrap0.appendChild(todayBtn);
+  })();
   // ── 注入同步刷新按钮 + 状态指示器 ──
   (function(){
     if(document.getElementById('diarySyncBtn'))return;
@@ -441,7 +498,9 @@ function _renderOwnSignature() {
 }
 function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
 
-// === 日记终极功能包：写作锁 + 翻译 + 签名 ===
+// === 日记终极功能包：伴侣的信 + 翻译 + 签名 ===
+/* Phase 2C — 这个包原来叫「写作锁 + 翻译 + 签名」，现在锁没了（见 _updatePartnerLetter），
+   名字跟着改：它只剩「显示她的信 / 翻译 / 签名」三件事。 */
 (function(){
   console.log('[日记终极包] 已加载');
   window._updatePartnerLetter = function(dateKey) {
@@ -451,12 +510,24 @@ function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); 
       var user=(typeof activeProfile!=='undefined')?activeProfile:'barry';
       var partner=user==='barry'?'andjela':'barry';
       var dayData=sd[dateKey]||{};
-      var myEntry=dayData[user], partnerEntry=dayData[partner];
-      var contentEl=document.getElementById('letterPartnerContent'), lockedEl=document.getElementById('letterLocked'), transBtn=document.getElementById('letterTranslateBtn');
-      if (!myEntry||!myEntry.text) { if(lockedEl)lockedEl.style.display=''; if(contentEl)contentEl.style.display='none'; if(transBtn)transBtn.style.display='none'; }
-      else if (!partnerEntry||!partnerEntry.text) { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';contentEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">📭 '+(window.lang==='zh-CN'?'Ta还没有写，稍后再来看看 💌':window.lang==='en'?'Your partner hasn\'t written yet 💌':'Partner još nije pisao 💌')+'</div>';} if(transBtn)transBtn.style.display='none'; }
-      else { if(lockedEl)lockedEl.style.display='none'; if(contentEl){contentEl.style.display='';var _html='<div style="padding:12px;font-size:.85rem;line-height:1.8;white-space:pre-wrap">'+escHtml(partnerEntry.text)+'</div>';if(partnerEntry.mood)_html+='<div style="text-align:right;font-size:1.2rem;margin-top:8px">'+partnerEntry.mood+'</div>';var _sigData=localStorage.getItem(user+'-signature-'+(dateKey||''));if(!_sigData&&typeof _getLatestSignature==='function')_sigData=_getLatestSignature(user);if(_sigData)_html+='<div style="text-align:right;margin-top:12px"><img src="'+_sigData+'" style="max-height:50px;max-width:150px;opacity:.8;border-radius:4px" alt="signature"></div>';else _html+='<div style="text-align:right;margin-top:12px;font-family:cursive,serif;font-style:italic;font-size:1.05rem;color:var(--text-muted,#8a7a78)">—— '+(user==='barry'?'Barry':'Anđela')+' ✍️</div>';contentEl.innerHTML=_html;}if(transBtn){transBtn.style.display='';transBtn.style.marginTop='10px';if(transBtn.parentNode!==contentEl.parentNode){contentEl.parentNode.appendChild(transBtn);}}}
-    } catch(e) { console.warn('[写作锁] 更新失败:', e.message); }
+      var partnerEntry=dayData[partner];
+      var contentEl=document.getElementById('letterPartnerContent'), transBtn=document.getElementById('letterTranslateBtn');
+      /* Phase 2C — 写作锁取消。
+         这里原本还有一条 `if (!myEntry || !myEntry.text)` 的分支：当天自己没写，她的信
+         就完全不渲染，只留一堵 🔒「先写你的信才能解锁她的」。它和 myEntry 一起删掉了 ——
+         读对方的信不该以先写一篇为前提，而这道门槛恰好挡在「我只想看看她写了什么」
+         那条最短路径上。现在只有两种状态：她写了（显示信），她没写（空状态）。
+         我这一天的日记在旁边的编辑器里，两栏互不设条件。
+         index.html 里那个 #letterLocked 一并删除 —— 锁没有了，锁的 UI 不该留在页面里。
+         顺带修一处真 bug：署名原本取 user，也就是**读信人自己**的签名，所以她写给你
+         的信落款是你的名字。签名和兜底署名一并改成 partner。 */
+      /* 空状态文案对**读信人**是中性的：写这段的时候 activeProfile 可能是
+         andjela，那时对面是 Barry，写「她还没有写」就是错的。中文沿用这套代码
+         里既有的中性说法「Ta」（旧文案就是「Ta还没有写」），塞尔维亚语换成不带
+         性别分词的句式，英语本来就是中性的。 */
+      if (!partnerEntry||!partnerEntry.text) { if(contentEl){contentEl.style.display='';contentEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">📭 '+(window.lang==='zh-CN'?'Ta \u{8FD9}\u{4E00}\u{5929}\u{8FD8}\u{6CA1}\u{6709}\u{5199} \u{1F48C}':window.lang==='en'?'Nothing from your partner on this day \u{1F48C}':'Ovog dana jo\u{0161} nema ni\u{0161}ta od partnera \u{1F48C}')+'</div>';} if(transBtn)transBtn.style.display='none'; }
+      else { if(contentEl){contentEl.style.display='';var _html='<div style="padding:12px;font-size:.85rem;line-height:1.8;white-space:pre-wrap">'+escHtml(partnerEntry.text)+'</div>';if(partnerEntry.mood)_html+='<div style="text-align:right;font-size:1.2rem;margin-top:8px">'+partnerEntry.mood+'</div>';var _sigData=localStorage.getItem(partner+'-signature-'+(dateKey||''));if(!_sigData&&typeof _getLatestSignature==='function')_sigData=_getLatestSignature(partner);if(_sigData)_html+='<div style="text-align:right;margin-top:12px"><img src="'+_sigData+'" style="max-height:50px;max-width:150px;opacity:.8;border-radius:4px" alt="signature"></div>';else _html+='<div style="text-align:right;margin-top:12px;font-family:cursive,serif;font-style:italic;font-size:1.05rem;color:var(--text-muted,#8a7a78)">—— '+(partner==='barry'?'Barry':'Anđela')+' ✍️</div>';contentEl.innerHTML=_html;}if(transBtn){transBtn.style.display='';transBtn.style.marginTop='10px';if(transBtn.parentNode!==contentEl.parentNode){contentEl.parentNode.appendChild(transBtn);}}}
+    } catch(e) { console.warn('[伴侣的信] 更新失败:', e.message); }
   };
   window.translatePartnerLetter = function() {
     var contentEl=document.getElementById('letterPartnerContent'), btn=document.getElementById('letterTranslateBtn');
@@ -485,7 +556,7 @@ function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); 
     saveBtn.onclick=function(){var dataUrl=canvas.toDataURL('image/png');var user2=(typeof activeProfile!=='undefined')?activeProfile:'barry';var _dateKey=_diaryViewDate||(function(){var _d=new Date();return _d.getFullYear()+'-'+String(_d.getMonth()+1).padStart(2,'0')+'-'+String(_d.getDate()).padStart(2,'0');})();localStorage.setItem(user2+'-signature-'+_dateKey,dataUrl);overlay.remove();_renderOwnSignature();if(typeof _updatePartnerLetter==='function')_updatePartnerLetter(_dateKey);console.log('[签名] 已保存 ('+user2+', '+_dateKey+')');};
     btnRow.appendChild(clearBtn); btnRow.appendChild(saveBtn); pad.appendChild(btnRow); overlay.appendChild(pad); document.body.appendChild(overlay);
   };
-  console.log('[日记终极包] 写作锁+翻译+签名 已就绪');
+  console.log('[日记终极包] 伴侣的信+翻译+签名 已就绪');
 })();
 
 function _updateSigBtnText() { var sb=document.getElementById('diarySigBtn'); if(!sb)return; var _l=window.lang||'sr'; sb.textContent=_l==='zh-CN'?'✍️ 设置签名':_l==='en'?'✍️ Set Signature':'✍️ Potpis'; }

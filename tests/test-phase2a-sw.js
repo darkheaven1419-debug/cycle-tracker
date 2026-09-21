@@ -287,6 +287,17 @@ function fire(handlers, url, opts) {
   // that can move, so a stale tokens.css, index.html, offline.html or
   // manifest.json keeps the cool background for good: the change is the colour
   // value itself, with no new file and no new URL a client could notice.
+  // v46 → v47 in Phase 2C, for './index.html', './css/v2.css',
+  // './js/fix-diary.js' and './js/module-memories.js' — all four bare, so only
+  // this axis moved again (APP_VERSION stayed 7.3.9). It lands on the whole
+  // shape of the 回忆 panel, which becomes two modes: the stylesheet carries the
+  // show/hide rules that decide whether #memRoot or the diary furniture is the
+  // one on screen, the diary engine loses its write-lock and gains the default
+  // landing date, the memories module gains the mode state machine and the
+  // six-reference diary cap, and index.html drops the #letterLocked node. A
+  // stale client would run the new engine against the old stylesheet — both
+  // halves of the panel visible at once — so this generation name is what
+  // re-fetches all four.
   // v38 → v39 (Phase 1.9) is the generation where this invariant was MISSED
   // three times running: 228a6d7, 39b8d9c and 0122578 all changed
   // ./js/module-dashboard.js and bumped only APP_VERSION, which does nothing for
@@ -298,10 +309,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV46 = /const CACHE_STATIC = 'ciklus-static-v46';/.test(src);
-    const hasV45 = /ciklus-static-v45/.test(src);
+    const hasV47 = /const CACHE_STATIC = 'ciklus-static-v47';/.test(src);
+    const hasV46 = /ciklus-static-v46/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV46 && !hasV45, `v46=${hasV46} v45StillPresent=${hasV45}`);
+      hasV47 && !hasV46, `v47=${hasV47} v46StillPresent=${hasV46}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -360,8 +371,8 @@ function fire(handlers, url, opts) {
       missing.length === 0, `missing=${missing.join(',') || 'none'}`);
   }
 
-  // S13 — an installed client still holds v46; one generation back holds v45,
-  // with v44..v31 further back. Run the real activate handler: every stale
+  // S13 — an installed client still holds v47; one generation back holds v46,
+  // with v45..v31 further back. Run the real activate handler: every stale
   // bucket must be deleted, the current one must survive. This is the step that
   // actually evicts the old copies of the cache-first assets.
   {
@@ -383,12 +394,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v44');
     await named.api.open('ciklus-static-v45');
     await named.api.open('ciklus-static-v46');
+    await named.api.open('ciklus-static-v47');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v45 buckets and keeps v46 + fonts',
+    check('S13 activate evicts the stale v31..v46 buckets and keeps v47 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -404,7 +416,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v43') === -1 &&
       names.indexOf('ciklus-static-v44') === -1 &&
       names.indexOf('ciklus-static-v45') === -1 &&
-      names.indexOf('ciklus-static-v46') !== -1 &&
+      names.indexOf('ciklus-static-v46') === -1 &&
+      names.indexOf('ciklus-static-v47') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -435,7 +448,7 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v46');
+    const got = named.contents('ciklus-static-v47');
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,

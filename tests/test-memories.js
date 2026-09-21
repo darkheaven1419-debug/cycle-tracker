@@ -163,11 +163,13 @@ const AGO = (n) => Date.now() - n * DAY;
      timeline is handed the filtered one (`rest`). Asserting the rendered page
      alone could not tell those two apart on a day the pick happens to survive
      a pre-filtered pool. */
-  check('M7b the render filters the timeline by id, and never the Featured pool',
+  check('M7b the render filters the timeline by id, cap included, and never the Featured pool',
     /_featured\(all,\s*now\)/.test(MEM_SRC) &&
-    /_timelineHtml\(rest,\s*now\)/.test(MEM_SRC) &&
+    /var shown = _capDiaryRefs\(rest\);/.test(MEM_SRC) &&
+    /_timelineHtml\(shown,\s*now\)/.test(MEM_SRC) &&
+    !/_featured\(shown/.test(MEM_SRC) &&
     !/_featured\(rest/.test(MEM_SRC),
-    'pick from `all`, timeline from `rest`');
+    'pick from `all`, timeline from the capped `shown`');
   /* B: relative day labels are drawn from the strings the module already had,
      so the day-number path has to stay as the fallback rather than be
      replaced — an older row keeps its two-digit day. */
@@ -368,8 +370,12 @@ const NEAR = {
           document.querySelectorAll('#memSong .mem-song-row'),
           (r) => r.textContent.trim()),
 
-        /* §四: structure and order. */
-        rootFirst: !!(root && panel && panel.firstElementChild === root),
+        /* §四: structure and order. Phase 2C put #memModeBar in front of
+           #memRoot, so "the story leads" is now two nodes deep. */
+        modeBarFirst: !!(panel && panel.firstElementChild &&
+          panel.firstElementChild.id === 'memModeBar'),
+        rootSecond: !!(root && panel && root.previousElementSibling &&
+          root.previousElementSibling.id === 'memModeBar'),
         hasHead: !!document.querySelector('#memRoot .dch-names'),
         headText: (document.querySelector('#memRoot .dch-names') || {}).textContent || '',
         hasFeatured: !!document.getElementById('memFeatured'),
@@ -426,8 +432,15 @@ const NEAR = {
       d.mile.some((m) => m.id === 'mile:love' && /^相恋 \d+ 天$/.test(m.text)),
       JSON.stringify(d.mile));
 
-    check('M24 §四 the story block is #panel-diary\'s first child',
-      d.rootFirst && d.title.length > 0, `firstChildIsRoot=${d.rootFirst} title="${d.title}"`);
+    /* Phase 2C moved this by one node: #memModeBar is inserted immediately
+       before #memRoot, so the story block is no longer the panel's first child —
+       it is the first child of the *story half* of the panel. What §四 was really
+       protecting (the story leads, the diary furniture follows it) still holds,
+       so the claim is restated as "the mode bar is first, and #memRoot is
+       directly after it" rather than dropped. */
+    check('M24 §四 the mode bar is #panel-diary\'s first child and the story block follows it',
+      d.modeBarFirst && d.rootSecond && d.title.length > 0,
+      `modeBarFirst=${d.modeBarFirst} rootSecond=${d.rootSecond} title="${d.title}"`);
     check('M25 §四 couple header renders Barry × Anđela',
       d.hasHead && /Barry/.test(d.headText) && /Anđela/.test(d.headText),
       `"${d.headText}"`);
