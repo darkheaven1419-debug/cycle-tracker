@@ -11,6 +11,15 @@
    Everything the diary already owned — date strip, write card, partner letter —
    is untouched below that heading; the panel's markup is not edited at all.
 
+   Phase 2B.8 added one row at the top of that host: a "写一篇日记" button that
+   scrolls down to the existing write card. It exists because the story grows —
+   #memRoot is the panel's first child, so the editor sinks as the couple writes
+   (measured at 320x800: +415px with 0 entries, +6822px with 100). Diary is where
+   you actively keep something from today; Memories is where you look back at what
+   is already there. This row restores the signpost to the first one and does not
+   make it an annex of the second. Nothing was deleted, duplicated or moved, the
+   button writes no state, and it scrolls only after a real tap.
+
    §三 forbids a second data model, so every memory here is DERIVED at render
    time from keys that already exist, and this module writes nothing: no new
    storage key, no flag, no copy of any entry. That is also why there is no
@@ -47,6 +56,10 @@
       title: 'Naše uspomene',
       featured: 'Mali podsetnik na nas',
       myDiary: 'Moj dnevnik',
+      /* Phase 2B.8 — 去写日记那条入口。措辞刻意朴素：不文学化，也不让系统
+         替情侣说话（「今天想留下什么？」那种句子是在替他们提问）。它只说明
+         这里能做什么。三个语种都放在 MEM_I18N 里，没有第二套 i18n 机制。 */
+      writeCta: 'Napiši dnevnik',
       emptyTitle: 'Ovde još nema mnogo priča.',
       emptyText: 'Polako ćemo je ispunjavati. ❤️',
       kDiary: 'Dnevnik', kGrat: 'Zahvalnost', kDQ: 'Pitanje dana',
@@ -65,6 +78,7 @@
       title: '我们的回忆',
       featured: '来自我们的故事',
       myDiary: '我的日记',
+      writeCta: '写一篇日记',
       emptyTitle: '这里还没有很多故事。',
       emptyText: '我们会慢慢把它填满。 ❤️',
       kDiary: '日记', kGrat: '感恩', kDQ: '今日一问',
@@ -81,6 +95,7 @@
       title: 'Our Memories',
       featured: 'A little memory from us',
       myDiary: 'My diary',
+      writeCta: 'Write a diary entry',
       emptyTitle: "There aren't many stories here yet.",
       emptyText: "We'll fill it up slowly. ❤️",
       kDiary: 'Diary', kGrat: 'Gratitude', kDQ: 'Daily Question',
@@ -388,6 +403,49 @@
       '<div class="mem-anchor-dates">' + dates + '</div>' + line + '</div>';
   }
 
+  /* Phase 2B.8 — 去写日记的入口。
+     Diary 本身什么都没少：日期条、写卡、对方的信都在下面原位，功能也完好
+     （已端到端实测：输入 → 保存 → shared-diary 落盘 → Worker PUT）。缺的不是
+     功能，是距离。#memRoot 是 #panel-diary 的第一个子元素，故事越长它越高，
+     写卡就离页顶越远 —— 实测 320×800：0 条时写卡在 +415px（第一屏内），100 条
+     时 +6822px（8.5 屏）。两人越是认真写，那个入口就越是自己沉下去。
+
+     它是 <button> 而不是 <a>：没有新路由、没有新状态、没有新数据，只是把一个
+     已经存在的编辑器重新指出来。位置在「故事的开头」之后、精选卡之前 —— 先说
+     故事从哪里开始，再说你也可以往下写。没有故事时 _anchorHtml 返回空串，它
+     自然上移，不留空档。 */
+  function _writeCtaHtml() {
+    return '<button type="button" class="mem-write-cta" id="memWriteCta">' +
+      '<span class="mem-write-cta-ico" aria-hidden="true">\u{270D}\u{FE0F}</span>' +
+      '<span class="mem-write-cta-text">' + _esc(mem('writeCta')) + '</span>' +
+      '<span class="mem-write-cta-more" aria-hidden="true">\u{203A}</span>' +
+      '</button>';
+  }
+
+  /* 只有用户真的点了才滚动。不 focus、不改 tabindex、不写任何 storage：
+     本模块对 #panel-diary 的承诺是「不编辑面板自身的标记」（见文件头），
+     给 #diaryWriteCard 加属性就会破坏它，所以这里只做滚动这一件事。
+
+     app.js 里「切换 Tab 不动滚动位置」是既定产品决策，那条规则约束的是自动
+     行为；用户点这一下不属于它，也没有绕过它 —— 本模块没有新增任何 scroll
+     状态，没有记录、没有恢复、没有定时器。
+
+     block:'center' 而不是 'start'：写卡上方还有日期条，居中之后日期条也一起
+     落在视野里，用户可以顺手换日期再写。prefers-reduced-motion 下走 'auto'，
+     与 css/v2.css 那个 reduced-motion 块同一个判据。 */
+  function _goToDiary() {
+    var t = document.getElementById('diaryWriteCard') || document.getElementById(PANEL_ID);
+    if (!t || typeof t.scrollIntoView !== 'function') return;
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    try {
+      t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    } catch (e2) {
+      /* 不认 options 对象的实现：退回无参形式，等价于 behavior:'auto'。 */
+      t.scrollIntoView();
+    }
+  }
+
   function _featuredHtml(it) {
     if (!it) return '';
     var meta = KIND[it.kind] || KIND.diary;
@@ -495,9 +553,15 @@
     var rest = feat ? all.filter(function (it) { return it.id !== feat.id; }) : all;
     host.innerHTML = _headHtml() +
       _anchorHtml(now) +
+      _writeCtaHtml() +
       _featuredHtml(feat) +
       (all.length ? _timelineHtml(rest, now) + _songHtml() : _emptyHtml()) +
       '<h2 class="mem-diary-head">\u{270D}\u{FE0F} ' + _esc(mem('myDiary')) + '</h2>';
+    /* 监听器在每次渲染后现绑，而不是内联 onclick：innerHTML 每次都换掉这棵
+       子树，旧节点连着旧监听器一起被丢弃，所以它不可能叠加，也不需要任何
+       「已绑过」的标记。写卡的 id 属于 index.html，本模块从不创建它。 */
+    var cta = document.getElementById('memWriteCta');
+    if (cta) cta.addEventListener('click', _goToDiary);
     return true;
   }
 

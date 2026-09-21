@@ -116,7 +116,23 @@ const V = '?v=' + APP_VERSION;
 // 老问题照旧：裸路径的 cache key 就是路径本身，永远不会动，而 SW 对它是 cache-first。
 // 不换名字，装了旧 SW 的客户端会一直看到一个既重复、又只显示两位日号的时间轴，
 // 而这条改动恰恰只存在于渲染结果里 —— 没有新文件名、没有新 URL 可供它察觉。
-const CACHE_STATIC = 'ciklus-static-v44';
+// Phase 2B.8 · v44 → v45，只抬这一轴。这一轮改 ./js/module-memories.js（第 163 行，
+// 裸路径）与 ./css/v2.css（第 133 行，同样是裸路径），没有任何带 ?v= 的资产被改，
+// 所以 APP_VERSION 保持 7.3.9 不动。
+// 改动内容：回忆页顶部、「故事的开头」之后、精选卡之前，新增一条「写一篇日记」
+// 入口（.mem-write-cta），点击后由用户手势滚动到既有的 #diaryWriteCard。
+// 起因不是功能缺失 —— 编辑器、日期切换、保存、Worker 同步全部完好（已端到端实测：
+// 输入 → 保存 → shared-diary 落盘 → Worker PUT）—— 而是距离：#memRoot 是
+// #panel-diary 的第一个子元素，故事越长写卡越靠下（320×800 实测 0 条 +415px、
+// 100 条 +6822px），两人越认真写，入口越自己沉下去。
+// 边界：文案进的是 MEM_I18N（三语各一条），没有第二套 i18n 机制；没有新数据模型、
+// 没有新 storage key、没有自动滚动；app.js 里「切换 Tab 不动滚动位置」的规则未改，
+// 用户点这一下不属于自动行为。Diary 仍然不是 Memories 的附属工具。
+// 老问题照旧：两个文件都是裸路径，cache key 就是路径本身、永远不会动，而 SW 对它们
+// 是 cache-first。不换名字，装了旧 SW 的客户端既拿不到这条入口的样式（v2.css），
+// 也拿不到入口本身（module-memories.js）—— 而这条改动恰恰只存在于渲染结果里，
+// 没有新文件名、没有新 URL 可供它察觉。
+const CACHE_STATIC = 'ciklus-static-v45';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
