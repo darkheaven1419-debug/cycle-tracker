@@ -13,12 +13,24 @@
  * The seven things the round was specified to get right are the seven things
  * asserted here:
  *   1. every historical diary date is still reachable
- *   2. the story timeline shows at most DIARY_REF_CAP = 6 diary references
- *   3. tapping a reference lands on exactly that date
- *   4. the 6-cap does not restrict 📖 日记 — it is a render budget on one list
+ *   2. the story half shows one card and no list (see the Phase 2E note)
+ *   3. the story half's remaining door into 📖 日记 lands in diary mode
+ *   4. the story trim is display only — 📖 日记 keeps its own navigation, and
+ *      _items() still reads every day
  *   5. the partner's letter is readable without writing anything first
  *   6. text being edited is not wiped by a story re-render
  *   7. 320 / 768 / 1440 in three languages, light and dark
+ *
+ * RE-TARGETED BY PHASE 2E, NOT WEAKENED. The 极简 Memories round deleted the
+ * story timeline that points 2 and 3 were originally written against:
+ * DIARY_REF_CAP / _capDiaryRefs / the date-reference rows are gone from the
+ * engine, and .diary-timeline-section / .diary-mailbox-card / .mem-diary-head
+ * are gone from index.html. Each check that named one of them was moved onto
+ * what still exists rather than dropped, because what those checks were really
+ * protecting — that the diary half is untouched and that every day is still
+ * reachable through it — is exactly what that round's §十 point 13 asks about.
+ * Point 2 is now the single-card assertion; point 3 is the 「📖 看全部日记」
+ * door.
  *
  * Touches nothing: reads the repo over local HTTP into a throwaway browser
  * context and seeds synthetic storage. Every Worker request is fulfilled
@@ -53,7 +65,6 @@ const TYPED = 'Synthetic unsaved paragraph — not a real memory.';
 /* Twelve diary days, all inside the last 24 days so the month picker (30 days
    back) can reach every one of them. The newest belongs to andjela alone. */
 const DIARY_DAYS = 12;
-const REF_CAP = 6;
 
 const results = [];
 function check(name, pass, detail) {
@@ -211,24 +222,25 @@ const MEASURE = function () {
     stripShown: shown(document.querySelector('#panel-diary .diary-date-strip-wrap')),
     writeCardShown: shown(document.getElementById('diaryWriteCard')),
     letterShown: shown(document.getElementById('letterPartnerCard')),
-    timelineSectionShown: shown(document.querySelector('#panel-diary .diary-timeline-section')),
-    mailboxShown: shown(document.querySelector('#panel-diary .diary-mailbox-card')),
-    diaryHeadShown: shown(document.querySelector('#memRoot .mem-diary-head')),
+    /* §一 deleted these nodes, so "is it shown" would be vacuously false for
+       all three of them whatever the code did. Existence is the honest question
+       now: the claim is that the display layer left the markup. */
+    timelineSection: !!document.querySelector('#panel-diary .diary-timeline-section'),
+    mailboxCard: !!document.querySelector('#panel-diary .diary-mailbox-card'),
+    diaryHead: !!document.querySelector('#memRoot .mem-diary-head'),
     storyTabText: storyBtn ? storyBtn.textContent.trim() : '',
     diaryTabText: modeBtn ? modeBtn.textContent.trim() : '',
     storyTabActive: storyBtn ? storyBtn.classList.contains('is-active') : null,
     diaryTabActive: modeBtn ? modeBtn.classList.contains('is-active') : null,
     storyTabAria: storyBtn ? storyBtn.getAttribute('aria-selected') : null,
     diaryTabAria: modeBtn ? modeBtn.getAttribute('aria-selected') : null,
+    /* §一 threw the long list away. Both of these must read 0 in story mode:
+       the date references, and the non-diary rows that used to share the
+       timeline with them. */
     refCount: document.querySelectorAll('#memRoot .mem-row-ref').length,
-    refDates: Array.prototype.map.call(
-      document.querySelectorAll('#memRoot .mem-row-ref'), (b) => b.getAttribute('data-date')),
-    /* Non-diary rows (gratitude, daily questions, milestones) are plain
-       `.mem-row` with no data-date. Reported for context only — they are not
-       what the cap governs. */
-    otherRows: Array.prototype.filter.call(
-      document.querySelectorAll('#memRoot .mem-row'),
-      (r) => !r.hasAttribute('data-date')).length,
+    otherRows: document.querySelectorAll('#memRoot .mem-row').length,
+    featCards: document.querySelectorAll('#memRoot .mem-feat').length,
+    featText: ((document.querySelector('#memRoot .mem-feat-text') || {}).textContent || '').trim(),
     writeDate: (document.getElementById('diaryWriteDate') || {}).textContent || '',
     textarea: (document.getElementById('diaryTextarea') || {}).value || null,
     hasTextarea: !!document.getElementById('diaryTextarea'),
@@ -254,22 +266,24 @@ const MEASURE = function () {
     const memCode = code(memSrc);
     const fixCode = code(fixSrc);
 
-    // C1 — the cap is a named constant and it is exactly six.
-    check('C1 DIARY_REF_CAP is 6 and is a named constant, not a literal in the render',
-      /var DIARY_REF_CAP = 6;/.test(memSrc) && REF_CAP === 6,
-      `declared=${/var DIARY_REF_CAP = 6;/.test(memSrc)}`);
+    // C1 — §一 removed the story timeline, and with it the render budget that
+    // used to govern it. Gone from the code, not hidden behind a flag: the
+    // checks read comment-stripped source because this repo documents its
+    // deletions in prose, so the bare identifiers survive in comments.
+    check('C1 §一 DIARY_REF_CAP, _capDiaryRefs and the timeline renderers are gone',
+      !/DIARY_REF_CAP|_capDiaryRefs/.test(memCode) &&
+      !/_timelineHtml|_rowHtml|_songHtml|_relDay/.test(memCode),
+      `cap=${/DIARY_REF_CAP/.test(memCode)} helper=${/_capDiaryRefs/.test(memCode)}`);
 
-    // C2 — and it is applied to the RENDERED list only. `_items()` and
-    // `_featured()` must both still see everything, or the cap would have
-    // silently become a data limit and point 4 would be false in a way no
-    // screenshot could show.
-    check('C2 the cap is a render budget: _items() and _featured() never see it',
-      /function _capDiaryRefs\(items\)/.test(memSrc) &&
-      /var shown = _capDiaryRefs\(rest\);/.test(memSrc) &&
-      !/_capDiaryRefs\(all\)/.test(memSrc) &&
-      !/_capDiaryRefs\(_items/.test(memSrc) &&
-      !/_featured\(shown/.test(memSrc),
-      'applied to rest, at render');
+    // C2 — but the trim is display only (§一: 展示层简化). `_items()` must still
+    // read the whole diary. If that read ever grew a cap, the trim would have
+    // quietly become a data limit, and 📖 日记 would be what broke — which is
+    // the one thing this round promised not to do.
+    check('C2 §一 the trim is display only: the read path has no cap on diary days',
+      /function _items\(now\)/.test(memCode) &&
+      /localStorage\.getItem\(key\)/.test(memCode) &&
+      !/_items\([^)]*\)\s*\.\s*(slice|filter)\(/.test(memCode),
+      'full read, no slice/filter at the call site');
 
     // C3 — nothing moves. If any of the diary nodes ever gets appended into a
     // new container, fix-diary.js's `.lpc-row` guard goes permanently false and
@@ -372,21 +386,24 @@ const MEASURE = function () {
     // Point 1, first half — 回忆 opens on the story, with the diary half off.
     check(`C12 [${vp.tag}] 回忆 opens in story mode, with the diary half hidden`,
       m0.modeStory && m0.memRootShown && !m0.stripShown && !m0.writeCardShown &&
-      !m0.letterShown && !m0.timelineSectionShown && !m0.mailboxShown &&
+      !m0.letterShown &&
       m0.storyTabActive && !m0.diaryTabActive,
       `story=${m0.modeStory} root=${m0.memRootShown} strip=${m0.stripShown} write=${m0.writeCardShown} letter=${m0.letterShown}`);
 
-    // The closing 「我的日记」 heading is inside #memRoot, so in story mode it
-    // must be suppressed — it would otherwise point at an editor that is not
-    // there.
-    check(`C12b [${vp.tag}] the "my diary" heading is not left dangling in story mode`,
-      !m0.diaryHeadShown, `shown=${m0.diaryHeadShown}`);
+    // §一 — the two containers the story half used to hand the diary's own
+    // nodes to are gone from the markup entirely. Now that they are deleted,
+    // "hidden" and "absent" look the same on screen; only existence tells them
+    // apart, and only absence is what was asked for.
+    check(`C12b [${vp.tag}] §一 the timeline and mailbox containers are gone from the DOM`,
+      !m0.timelineSection && !m0.mailboxCard && !m0.diaryHead,
+      `timeline=${m0.timelineSection} mailbox=${m0.mailboxCard} head=${m0.diaryHead}`);
 
-    // Point 2 — at most six diary references, and here exactly six. Twelve
-    // days are seeded, so a cap that silently did nothing would read 12.
-    check(`C13 [${vp.tag}] the story timeline shows exactly DIARY_REF_CAP diary references`,
-      m0.refCount === REF_CAP,
-      `refs=${m0.refCount}/${DIARY_DAYS} seeded days, otherRows=${m0.otherRows}`);
+    // Point 2, retargeted §二 — the story half holds exactly one content card
+    // and no list at all. Twelve days are seeded, so a list that survived would
+    // read 12 here, and the old cap that would have made it 6 is gone by C1.
+    check(`C13 [${vp.tag}] §二 the story half is one card and no list`,
+      m0.featCards === 1 && m0.refCount === 0 && m0.otherRows === 0 && m0.featText.length > 0,
+      `cards=${m0.featCards} refs=${m0.refCount} rows=${m0.otherRows} of ${DIARY_DAYS} seeded days, text=${m0.featText.length}B`);
 
     await ctx.close();
     check(`C14 [${vp.tag}] no page errors during boot`, errs.length === 0,
@@ -427,26 +444,31 @@ const MEASURE = function () {
       letter.todayBtnShown && letter.todayBtnH >= 44 && afterToday.writeDate.indexOf(todayKey) !== -1,
       `shown=${letter.todayBtnShown} h=${letter.todayBtnH} date="${afterToday.writeDate}"`);
 
-    // Point 3 — a reference lands on exactly its own date.
+    /* Point 3, retargeted §六 — the reference rows that used to carry a date and
+       land on it are gone, and the story half's remaining door into 📖 日记 is
+       「📖 看全部日记」. The round trip is worth as much as the door: coming back
+       to story mode must rebuild the single card, which is what returning to
+       the reference list used to prove. */
     await page.click('#memModeStory');
     await page.waitForTimeout(300);
-    const refInfo = await page.evaluate(() => {
-      const b = document.querySelector('#memRoot .mem-row-ref');
-      if (!b) return null;
-      return { date: b.getAttribute('data-date'), label: b.getAttribute('aria-label') || '' };
-    });
-    check('C18 the reference row carries the date it points at, and says so accessibly',
-      !!refInfo && /^\d{4}-\d{2}-\d{2}$/.test(refInfo.date) &&
-      refInfo.label.indexOf(refInfo.date) !== -1,
-      `data-date=${refInfo && refInfo.date} label="${refInfo && refInfo.label}"`);
+    const back = await page.evaluate(MEASURE);
+    check('C18 returning to story mode rebuilds the card and hides the diary half again',
+      back.modeStory && back.memRootShown && back.featCards === 1 &&
+      !back.stripShown && !back.writeCardShown,
+      `mode=${back.modeStory} cards=${back.featCards} strip=${back.stripShown}`);
 
-    await page.click('#memRoot .mem-row-ref');
+    await page.click('#memRoot .mem-feat-all');
     await page.waitForTimeout(500);
     const landed = await page.evaluate(MEASURE);
-    check('C19 point 3 — tapping a reference enters 📖 日记 on exactly that date',
+    /* Deliberately not asserting WHICH date: §六 hands the date to 📖 日记's own
+       navigation, and this block has just sent it to today via the 「今天」
+       button, so the door is only obliged to land on a real date. C20 walks
+       every seeded day from here. */
+    check('C19 point 3 — 「📖 看全部日记」 enters 📖 日记, editor and all',
       landed.modeDiary && !landed.memRootShown && landed.stripShown &&
-      landed.writeDate.indexOf(refInfo.date) !== -1,
-      `date="${landed.writeDate}" ref=${refInfo.date} diaryMode=${landed.modeDiary}`);
+      landed.writeCardShown && landed.hasTextarea &&
+      /\d{4}-\d{2}-\d{2}/.test(landed.writeDate),
+      `diaryMode=${landed.modeDiary} strip=${landed.stripShown} write=${landed.writeCardShown} date="${landed.writeDate}"`);
 
     // Point 1 — every seeded day is reachable, including the ones the 6-cap
     // dropped from the timeline, and each one loads its own text.
@@ -474,23 +496,39 @@ const MEASURE = function () {
       });
     }
     const unreachable = walk.filter((w) => !(w.landed && w.content)).map((w) => w.k);
-    check('C20 point 1 — all twelve diary days are reachable, including the six the story cap drops',
+    /* This is the check that survives §一 intact, and it is the one that
+       matters: the story half may show a single card, but nothing may become
+       unreachable. The old wording counted the six days the cap dropped from
+       the timeline; the cap is gone, the twelve days are not. */
+    check('C20 point 1 — all twelve seeded diary days are still reachable through 📖 日记',
       unreachable.length === 0 && walk.length === DIARY_DAYS,
       `reached=${walk.length - unreachable.length}/${DIARY_DAYS} unreachable=${unreachable.join(',') || 'none'}`);
 
-    // Point 4, second half — and the cap really is a render budget: the module
-    // still hands the full list to anyone who asks.
+    // Point 4, second half — the trim really is display only. The module still
+    // hands the full list to anyone who asks, and the featured card is a pick
+    // out of that same list rather than a second, narrower read of storage.
     const counts = await page.evaluate(() => {
-      const all = window.__memories.items();
+      /* All three take (items, now) — and `now` is not optional in practice:
+         the pool's age window is `now - it.ts`, so an undefined now makes every
+         comparison NaN and the pool reads 0 rather than erroring. Passing one
+         clock through all three is what makes the last clause meaningful. */
+      const now = Date.now();
+      const all = window.__memories.items(now);
+      const pool = window.__memories.pool(all, now);
+      const feat = window.__memories.featured(all, now);
       return {
         total: all.length,
         diary: all.filter((i) => i.kind === 'diary').length,
-        capped: window.__memories.capDiaryRefs(all).filter((i) => i.kind === 'diary').length,
+        inPool: pool.length,
+        featKind: feat && feat.kind,
+        featIsPooled: !!feat && pool.indexOf(feat) !== -1,
       };
     });
-    check('C21 point 4 — the 6-cap does not limit the data: 12 diary items exist, 6 survive the cap',
-      counts.diary === DIARY_DAYS && counts.capped === REF_CAP,
-      `items=${counts.total} diary=${counts.diary} afterCap=${counts.capped}`);
+    check('C21 point 4 — the story trim does not limit the data: all 12 diary days still reachable',
+      counts.diary === DIARY_DAYS && counts.total > counts.diary &&
+      counts.inPool >= 1 && counts.featIsPooled &&
+      ['diary', 'grat', 'km'].indexOf(counts.featKind) !== -1,
+      `items=${counts.total} diary=${counts.diary} pool=${counts.inPool} feat=${counts.featKind} pooled=${counts.featIsPooled}`);
 
     // …and 📖 日记 itself is not filtered at all: it keeps its own navigation.
     const stripButtons = await page.evaluate(() => {

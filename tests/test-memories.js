@@ -9,12 +9,23 @@
  * between the two phones. None of those break the page, so none of them would
  * be caught by looking at it. They are asserted here instead.
  *
+ * Phase 2E deleted the timeline, the diary reference rows and the song card, so
+ * 「我们的故事」 is now one card: 「✦ 今天想起」 picks a single real entry, 「再看看
+ * 一个」 steps through that day's fixed order, 「📖 看全部日记」 hands the reader to
+ * 📖 日记. Browsing a history is Diary's job now; Memories stopped duplicating it.
+ * The assertions that pinned the timeline are gone, replaced by the properties
+ * the new shape actually has to hold: exactly one card (never a long list), a
+ * pick that is a pure function of the calendar plus the entry ids and does not
+ * repeat within a week, and a step-through order that is stable for the day and
+ * cannot show the same entry twice running.
+ *
  * Two halves:
  *   1. static — read the sources and prove the invariants that no rendering can
  *      demonstrate (locale parity, reduced-motion coverage, the absence of any
- *      write path, the sync contract still at 18 fields).
- *   2. browser — seed real localStorage shapes and assert what reaches the
- *      timeline, with the timestamps the data actually has.
+ *      write path, the sync contract still at 19 fields, and the absence of the
+ *      renderers this phase deleted).
+ *   2. browser — seed real localStorage shapes and assert what the card shows,
+ *      with the timestamps the data actually has.
  *
  * Run: node tests/test-memories.js
  */
@@ -37,6 +48,14 @@ const MIME = {
 const MEM_SRC = fs.readFileSync(path.join(ROOT, 'js/module-memories.js'), 'utf8');
 const V2_CSS = fs.readFileSync(path.join(ROOT, 'css/v2.css'), 'utf8');
 const SYNC_SRC = fs.readFileSync(path.join(ROOT, 'js/sync.js'), 'utf8');
+
+/* This repo documents deletions in comments, so a deleted identifier survives in
+   prose ("Phase 2E — _rowHtml 与 _timelineHtml 在这里，已删除"). Any assertion
+   that something is ABSENT must read the code, not the explanation of why it is
+   gone — otherwise the check passes on the comment that says it was removed. */
+const MEM_CODE = MEM_SRC
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/^[ \t]*\/\/.*$/gm, '');
 
 function serve() {
   return new Promise((resolve) => {
@@ -106,12 +125,18 @@ const AGO = (n) => Date.now() - n * DAY;
     `onlyZh=${zh.filter((k) => sr.indexOf(k) === -1).join(',') || 'none'}`);
 
   /* A parity check alone would pass on three empty-ish tables; the phase's own
-     wording is the thing §十一 and §四 pin, so assert it is really there. */
+     wording is the thing §十一 and §四 pin, so assert it is really there.
+
+     Read from MEM_CODE, not MEM_SRC: a plain absence test over the raw source
+     reads the comments too, and this repo's convention is to explain deletions in
+     prose. Phase 2E's own header says "Nothing is stored and no data is touched"
+     — which is a sentence about the design, and tripped this check the moment it
+     was written. The rule being asserted is about the STRINGS THE MODULE SHIPS. */
   check('M3 §十一 empty-state wording is the "not much here yet" phrasing, not "no data"',
-    /Ovde još nema mnogo priča\./.test(MEM_SRC) &&
-    /这里还没有很多故事。/.test(MEM_SRC) &&
-    /There aren't many stories here yet\./.test(MEM_SRC) &&
-    !/没有数据|Nema podataka|No data/i.test(MEM_SRC),
+    /Ovde još nema mnogo priča\./.test(MEM_CODE) &&
+    /这里还没有很多故事。/.test(MEM_CODE) &&
+    /There aren't many stories here yet\./.test(MEM_CODE) &&
+    !/没有数据|Nema podataka|No data/i.test(MEM_CODE),
     'empty strings present, no "no data" phrasing');
 }
 
@@ -156,28 +181,29 @@ const AGO = (n) => Date.now() - n * DAY;
   check('M7 the module has no storage write path at all', writes.length === 0,
     `writes=${writes.length}`);
 
-  /* The Featured pick is shown at the top, so it must not be repeated in the
-     timeline below it. The removal is a render-time filter by id — it must
-     never become a second selection path, which is why the wiring itself is
-     pinned here: the pick is computed from the FULL list (`all`) and only the
-     timeline is handed the filtered one (`rest`). Asserting the rendered page
-     alone could not tell those two apart on a day the pick happens to survive
-     a pre-filtered pool. */
-  check('M7b the render filters the timeline by id, cap included, and never the Featured pool',
-    /_featured\(all,\s*now\)/.test(MEM_SRC) &&
-    /var shown = _capDiaryRefs\(rest\);/.test(MEM_SRC) &&
-    /_timelineHtml\(shown,\s*now\)/.test(MEM_SRC) &&
-    !/_featured\(shown/.test(MEM_SRC) &&
-    !/_featured\(rest/.test(MEM_SRC),
-    'pick from `all`, timeline from the capped `shown`');
-  /* B: relative day labels are drawn from the strings the module already had,
-     so the day-number path has to stay as the fallback rather than be
-     replaced — an older row keeps its two-digit day. */
-  check('M7c the timeline falls back to the day number when no relative label applies',
-    /_relDay\(it\.ts,\s*now\)/.test(MEM_SRC) &&
-    /when \|\| _pad\(day\.getDate\(\)\)/.test(MEM_SRC) &&
-    /var REL_DAYS = \d+;/.test(MEM_SRC),
-    'relative label first, day number as the fallback');
+  /* Phase 2E §一 — the timeline is deleted, and this pins the deletion at the
+     level that matters: the renderers are gone from the CODE, and no second
+     selection path took their place. The pick is computed from the full list
+     once, in _renderFeatured, and there is exactly one place that turns an item
+     into markup. Asserting only the rendered page could not tell "one card" from
+     "one card above a list that happens to be empty today". */
+  check('M7b §一 the timeline renderers are gone, not merely unreachable',
+    !/_timelineHtml|_rowHtml|_capDiaryRefs|_songHtml|_relDay\s*\(/.test(MEM_CODE) &&
+    !/TIMELINE_CAP|DIARY_REF_CAP|CLIP_ROW|CLIP_REF|REL_DAYS/.test(MEM_CODE),
+    'no timeline / ref-cap / relative-day helper left in the code');
+  check('M7c the pick is computed once, from the full list',
+    /function _renderFeatured\(\)/.test(MEM_CODE) &&
+    /_featuredPool\(_items\(now\),\s*now\)/.test(MEM_CODE) &&
+    (MEM_CODE.match(/= _featuredHtml\(/g) || []).length === 1,
+    'one renderer, one pool, one call site');
+  /* §五 — the card's date line reads as "how long ago", from the strings the
+     module already had. This is the only dating the card does: the entry's own
+     real timestamp, never a re-authored one. */
+  check('M7d the card dates itself with _ago, off the entry\'s real timestamp',
+    /_esc\(_ago\(it\.ts\)\)/.test(MEM_CODE) &&
+    /function _ago\(ts\)/.test(MEM_CODE) &&
+    /var d = Math\.floor\(\(Date\.now\(\) - ts\) \/ 864e5\)/.test(MEM_CODE),
+    'floor-days since the real ts, through the locale table');
 
   /* §十三: no new memories field. The contract is the same 19 names
      tests/test-phase2c-state.js pins in COLLECT_KEYS — 17 pinned by Phase 2C,
@@ -241,28 +267,28 @@ const RICH = {
   'shared-knowme': {
     [dayKeyAgo(20)]: { barry: { answer: 'Beograd', time: AGO(20) } },
   },
-  /* §九: {title, note} and nothing else — no timestamp to place on a timeline. */
+  /* §七: {title, note} and nothing else — no timestamp, and no card any more. The
+     two keys stay in the fixture precisely so the suite can prove the data is
+     still there after the display layer stopped reading it. */
   'shared-song-barry': { title: 'Naša pesma', note: 'uz kafu' },
   'shared-song-andjela': { title: 'Zvuci Beograda', note: '' },
 };
 
-/* The fixture for the relative day labels. Every entry here sits OUTSIDE
-   Featured's 7..400-day window — four too new, one far too old — so the pick is
-   null and nothing is filtered out of the timeline. That is deliberate: it
-   keeps these assertions about labels from depending on which entry the date
-   hash happens to select (the RICH fixture covers the removal instead).
-   The five rows are also the whole label vocabulary in one page: 今天, 昨天,
-   N 天前, and the two-digit day number an older entry keeps. */
-const NEAR = {
+/* The fixture for the card's own date line, one context per locale. Exactly ONE
+   entry sits inside Featured's 7..400-day window — aged 10 days, so the label is
+   the day-count branch of _ago and no month boundary is involved — which makes
+   the pool a single item and the 4-day-old and 900-day-old entries provably
+   ineligible. A pool of one is deliberate twice over: the card is deterministic
+   without knowing the date hash, and 「再看看一个」 must be absent (there is no
+   second candidate, and a button that does nothing is worse than no button). */
+const AGED = {
   'ct-app-key': 'memories-test-key-not-a-real-one',
   'cycle-ann-met': '2026-03-19',
   'cycle-ann-love': '2026-05-07',
   'shared-diary': {
-    [dayKeyAgo(0)]: { andjela: { text: 'Danas smo šetali' } },
-    [dayKeyAgo(1)]: { barry: { text: 'Juče smo kuvali' } },
-    [dayKeyAgo(3)]: { andjela: { text: 'Pre tri dana' } },
-    [dayKeyAgo(6)]: { barry: { text: 'Pre šest dana' } },
-    [dayKeyAgo(500)]: { andjela: { text: 'Odavno' } },
+    [dayKeyAgo(10)]: { andjela: { text: 'Šetnja pored reke, deset dana kasnije' } },
+    [dayKeyAgo(4)]: { barry: { text: 'Pre četiri dana' } },
+    [dayKeyAgo(900)]: { barry: { text: 'Odavno, ali zapisano' } },
   },
 };
 
@@ -326,7 +352,13 @@ const NEAR = {
     return { ctx, page, errs };
   }
 
-  /* ── M12..M29: the timeline and what feeds it ─────────────────────────── */
+  /* ── M12..M29: the one card, and the pool behind it ───────────────────────
+     Phase 2E §一 replaced "what reaches the timeline" with "what reaches the
+     card". The data-level claims the old M12..M19 made are unchanged — the items
+     are still derived from the same keys with the same timestamps — so they are
+     kept and only re-labelled; what is new is that only three kinds may be
+     candidates at all, that the card is the ONLY thing the story renders, and
+     that the song is neither a memory nor a card any more. */
   {
     const { ctx, page, errs } = await open(RICH);
     const d = await page.evaluate(() => {
@@ -343,6 +375,9 @@ const NEAR = {
       const root = document.getElementById('memRoot');
       const panel = document.getElementById('panel-diary');
       const kids = Array.prototype.slice.call(root ? root.children : []);
+      const txt = (sel, scope) => ((scope || document).querySelector(sel) || {}).textContent || '';
+      const ls = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+      const pool = window.__memories.pool(items, Date.now());
       return {
         keys: items.map((i) => i.id),
         diaryN: diary.length,
@@ -363,12 +398,17 @@ const NEAR = {
         legacyJoined: (one('diary:' + dk(40) + ':barry') || {}).text || '',
         wishJoined: (one('diary:' + dk(45) + ':andjela') || {}).text || '',
 
-        /* §九: the song is not a dated memory. */
-        songOnTimeline: items.some((i) => /Naša pesma|Zvuci Beograda/.test(i.text)),
+        /* §七: the song is not a memory and no longer a card either — but the
+           data it came from must be exactly where it was. */
+        songInItems: items.some((i) => /Naša pesma|Zvuci Beograda/.test(i.text)),
         songCard: !!document.getElementById('memSong'),
-        songRows: Array.prototype.map.call(
-          document.querySelectorAll('#memSong .mem-song-row'),
-          (r) => r.textContent.trim()),
+        songData: [ls('shared-song-barry'), ls('shared-song-andjela')],
+
+        /* §三: which kinds may be candidates, and which may not. */
+        poolKinds: [...new Set(pool.map((i) => i.kind))].sort(),
+        poolHasDq: pool.some((i) => i.kind === 'dq'),
+        poolHasMile: pool.some((i) => i.kind === 'milestone'),
+        poolIds: pool.map((i) => i.id),
 
         /* §四: structure and order. Phase 2C put #memModeBar in front of
            #memRoot, so "the story leads" is now two nodes deep. */
@@ -378,25 +418,45 @@ const NEAR = {
           root.previousElementSibling.id === 'memModeBar'),
         hasHead: !!document.querySelector('#memRoot .dch-names'),
         headText: (document.querySelector('#memRoot .dch-names') || {}).textContent || '',
-        hasFeatured: !!document.getElementById('memFeatured'),
-        featuredText: ((document.getElementById('memFeatured') || {}).textContent || '').trim(),
-        timelineRows: document.querySelectorAll('#memRoot .mem-row').length,
-        monthCount: document.querySelectorAll('#memRoot .mem-month').length,
-        monthLabels: Array.prototype.map.call(
-          document.querySelectorAll('#memRoot .mem-month-label'), (e) => e.textContent),
-        diaryHeadIdx: kids.findIndex((k) => k.classList && k.classList.contains('mem-diary-head')),
-        timelineIdx: kids.findIndex((k) => k.id === 'memTimeline'),
-        hasDiaryHead: !!document.querySelector('#memRoot .mem-diary-head'),
         title: (document.querySelector('#memRoot .mem-sub') || {}).textContent || '',
-        dqText: (by('dq')[0] || {}).text || '',
-        feat: (function () {
+
+        /* §一/§二: exactly one card, and nothing list-shaped under it. */
+        hasFeatured: !!document.getElementById('memFeatured'),
+        featuredId: (function () {
           const f = window.__memories.featured(items, Date.now());
-          return f ? { id: f.id, text: f.text } : null;
+          return f ? f.id : null;
         })(),
+        featText: txt('#memFeatured .mem-feat-text').trim(),
+        featKicker: txt('#memFeatured .mem-feat-kicker').trim(),
+        featKind: txt('#memFeatured .mem-feat-kind').trim(),
+        featActs: [...document.querySelectorAll('#memFeatured button')].map((b) => b.textContent.trim()),
+        /* What the kind line should say, derived from whichever entry the date
+           hash happened to pick — the pick is not fixed per run, so asserting a
+           literal "日记" here would only pass on the days it happens to be one. */
+        featKindOf: (function () {
+          const f = window.__memories.featured(items, Date.now());
+          if (!f) return null;
+          return {
+            kind: f.kind,
+            want: { diary: '日记', grat: '感恩', km: '我了解的你' }[f.kind] || null,
+            from: f.from === 'barry' ? 'Barry' : 'Anđela',
+            age: window.__memories.ago(f.ts),
+          };
+        })(),
+        hasMoreBtn: !!document.querySelector('#memFeatured .mem-feat-more'),
+        hasAllBtn: !!document.querySelector('#memFeatured .mem-feat-all'),
+        cards: document.querySelectorAll('#memRoot .card').length,
+        listBits: document.querySelectorAll(
+          '#memRoot .mem-timeline, #memRoot .mem-month, #memRoot .mem-row,' +
+          '#memRoot .mem-month-label, #memRoot #memTimeline').length,
+        diaryHead: !!document.querySelector('#memRoot .mem-diary-head, #memRoot #memDiaryHead'),
+        featuredIdx: kids.findIndex((k) => k.id === 'memFeaturedBox'),
+        anchorIdx: kids.findIndex((k) => k.id === 'memAnchor'),
+        dqText: (by('dq')[0] || {}).text || '',
       };
     });
 
-    check('M12 diary entries reach the timeline off their YYYY-MM-DD key',
+    check('M12 diary entries are derived off their YYYY-MM-DD key',
       d.diaryN === 4 && d.keys.indexOf('diary:' + dayKeyAgo(35) + ':andjela') !== -1,
       `diary=${d.diaryN}`);
     check('M13 a diary slot with no `time` still lands on its own date',
@@ -404,10 +464,15 @@ const NEAR = {
       `ts=${d.noTimeTs} expected=${d.expect35}`);
     check('M14 a contradictory `time` is ignored — the key wins',
       d.badTime === d.expect50, `ts=${d.badTime} expected=${d.expect50}`);
-    check('M15 gratitude reaches the timeline', d.grat === 2, `grat=${d.grat}`);
-    check('M16 Daily Question reaches the timeline',
-      d.dq === 1 && /nasmeješ/.test(d.dqText), `dq=${d.dq} text=${d.dqText}`);
-    check('M17 Know Me reaches the timeline', d.km === 1, `km=${d.km}`);
+    check('M15 gratitude is read', d.grat === 2, `grat=${d.grat}`);
+    check('M16 Know Me is read', d.km === 1, `km=${d.km}`);
+
+    /* §三 — the daily question is deliberately NOT a candidate: its answer has no
+       question attached, so shown alone it is a fragment. It is still read (the
+       data is untouched) which is what makes this a filter and not a deletion. */
+    check('M17 §三 the daily question is still read but never enters the pool',
+      d.dq === 1 && /nasmeješ/.test(d.dqText) && !d.poolHasDq && d.poolKinds.indexOf('dq') === -1,
+      `dq=${d.dq} inPool=${d.poolHasDq}`);
 
     check('M18 §二 physical discomfort is not part of the story',
       !d.uncomfLeaked && /kafi/.test(d.legacyJoined),
@@ -416,14 +481,15 @@ const NEAR = {
       /cveće/.test(d.wishJoined) && /ovakvih/.test(d.wishJoined),
       `joined="${d.wishJoined}"`);
 
-    check('M20 §九 the song carries no date and is NOT placed on the timeline',
-      !d.songOnTimeline && d.timelineRows > 0,
-      `onTimeline=${d.songOnTimeline} rows=${d.timelineRows}`);
-    check('M21 §九 Our Song is shown as its own undated card, one row per person',
-      d.songCard && d.songRows.length === 2 &&
-      d.songRows.join('|').indexOf('Naša pesma') !== -1 &&
-      d.songRows.join('|').indexOf('Zvuci Beograda') !== -1,
-      `rows=${JSON.stringify(d.songRows)}`);
+    /* §七 — the song card is deleted from the display layer and the song itself
+       is not a memory; the two storage keys are byte-for-byte where they were. */
+    check('M20 §七 the song is not a memory and has no card, but its data is untouched',
+      !d.songInItems && !d.songCard && d.songData[0] !== null && d.songData[1] !== null &&
+      /Naša pesma/.test(d.songData[0]) && /Zvuci Beograda/.test(d.songData[1]),
+      `inItems=${d.songInItems} card=${d.songCard} data=${JSON.stringify(d.songData)}`);
+    check('M21 §三 the pool holds diary, gratitude and know-me — and nothing else',
+      d.poolKinds.join(',') === 'diary,grat,km',
+      `kinds=${JSON.stringify(d.poolKinds)} n=${d.poolIds.length}`);
 
     check('M22 §十 annDateMet produces the 相识 milestone from the central table',
       d.mile.some((m) => m.id === 'mile:met' && /^相识 \d+ 天$/.test(m.text)),
@@ -431,6 +497,11 @@ const NEAR = {
     check('M23 §十 annDateLove produces the 相恋 milestone from the central table',
       d.mile.some((m) => m.id === 'mile:love' && /^相恋 \d+ 天$/.test(m.text)),
       JSON.stringify(d.mile));
+    /* §三 — milestones are dates, not moments, so they live in the anchor only.
+       Being derived is what M22/M23 prove; this proves they never became cards. */
+    check('M23b §三 milestones are anchored, never candidates',
+      !d.poolHasMile && d.poolKinds.indexOf('milestone') === -1,
+      `inPool=${d.poolHasMile}`);
 
     /* Phase 2C moved this by one node: #memModeBar is inserted immediately
        before #memRoot, so the story block is no longer the panel's first child —
@@ -444,54 +515,110 @@ const NEAR = {
     check('M25 §四 couple header renders Barry × Anđela',
       d.hasHead && /Barry/.test(d.headText) && /Anđela/.test(d.headText),
       `"${d.headText}"`);
-    check('M26 §四 Featured Memory renders above the timeline',
-      d.hasFeatured && d.timelineIdx > 0 && d.featuredText.length > 0,
-      `featured="${d.featuredText.slice(0, 60)}"`);
-    check('M27 the timeline is grouped by month',
-      d.monthCount >= 2 && d.monthLabels.every((l) => /^\d{4}\.\d{2}$/.test(l)),
-      `months=${JSON.stringify(d.monthLabels)}`);
-    check('M28 §八 the diary keeps its own heading, below the story',
-      d.hasDiaryHead && d.diaryHeadIdx > d.timelineIdx,
-      `diaryHeadIdx=${d.diaryHeadIdx} timelineIdx=${d.timelineIdx}`);
-    check('M29 no page errors while rendering the story', errs.length === 0,
-      errs.join(' | ') || 'none');
+
+    /* §一/§二 — the whole point of the phase: one card, and no list. Both halves
+       are asserted, because "the timeline is empty today" and "the timeline does
+       not exist" look identical in a screenshot. */
+    check('M26 §二 exactly one card is rendered, above nothing',
+      d.hasFeatured && d.featuredIdx > d.anchorIdx && d.featText.length > 0,
+      `featured=${d.featuredIdx} anchor=${d.anchorIdx} text="${d.featText.slice(0, 50)}"`);
+    check('M27 §一 no timeline, no month grouping, no rows',
+      d.listBits === 0, `list-shaped nodes=${d.listBits}`);
+    /* §五 — the card's four lines, and the regression they now guard: the kind
+       line must name the picked entry's real kind, its real author and a real
+       age. "NaN 年前" is what a mistyped render produced once (the sequence handed
+       back pool indices instead of items), and it is invisible unless asserted. */
+    check('M28 §五 the card carries the kicker, the real content, and the two exits',
+      /✦/.test(d.featKicker) && /今天想起/.test(d.featKicker) &&
+      !!d.featKindOf && !!d.featKindOf.want &&
+      d.featKind.indexOf(d.featKindOf.want) !== -1 &&
+      d.featKind.indexOf(d.featKindOf.from) !== -1 &&
+      d.featKind.indexOf(d.featKindOf.age) !== -1 &&
+      d.featKind.indexOf('NaN') === -1 &&
+      d.hasAllBtn && /看全部日记/.test(d.featActs.join('|')),
+      `kicker="${d.featKicker}" kind="${d.featKind}" ` +
+      `want=${JSON.stringify(d.featKindOf)} acts=${JSON.stringify(d.featActs)}`);
+
+    /* Phase 2C's second heading is gone with the timeline it closed. What §八 of
+       the ORIGINAL layout protected — that the story and the diary are visibly
+       two things — is now carried by #memModeBar, which M24 pins. */
+    check('M29 no page errors while rendering the story, and no stray second heading',
+      errs.length === 0 && !d.diaryHead,
+      (errs.join(' | ') || 'none') + ` diaryHead=${d.diaryHead}`);
 
     /* ── M30..M32: Featured determinism, in the pure function ───────────── */
     const det = await page.evaluate(() => {
-      const items = window.__memories.items(Date.now());
+      const M = window.__memories;
+      const items = M.items(Date.now());
       const now = Date.now();
-      const a = window.__memories.featured(items, now);
-      const b = window.__memories.featured(items.slice().reverse(), now);
+      const a = M.featured(items, now);
+      const b = M.featured(items.slice().reverse(), now);
       /* Simulate the other phone: identical content, different insertion order.
          Nothing in the pick may depend on the order the entries happen to sit
          in on one device. */
-      const c = window.__memories.featured(items.slice().sort((x, y) => (x.id < y.id ? 1 : -1)), now);
+      const c = M.featured(items.slice().sort((x, y) => (x.id < y.id ? 1 : -1)), now);
 
-      const pool = items.filter((i) => {
-        const age = (now - i.ts) / 864e5;
-        return i.kind !== 'milestone' && age >= 7 && age <= 400;
-      }).sort((x, y) => x.ts - y.ts || (x.id < y.id ? -1 : 1));
+      const pool = M.pool(items, now);
+      const n = pool.length;
       const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
       const p = (v) => (v < 10 ? '0' : '') + v;
       const key = (t) => t.getFullYear() + '-' + p(t.getMonth() + 1) + '-' + p(t.getDate());
+      const keyAgo = (d) => key(new Date(midnight.getTime() - d * 864e5));
+
+      /* Every index the last FEATURED_LOOKBACK days would have picked. Those are
+         exactly the ones today may not land on — the old rule only compared with
+         yesterday, which repeats whenever the pool is small. */
+      const recent = [];
+      for (let d = 1; d <= M.lookback; d++) recent.push(M.hash(keyAgo(d)) % n);
+      const yKind = n ? pool[M.hash(keyAgo(1)) % n].kind : null;
+      const todayIdx = M.dailyIndex(pool, now);
       return {
-        n: pool.length,
+        n: n,
+        lookback: M.lookback,
         sameOrder: !!a && !!b && a.id === b.id,
         sameShuffled: !!a && !!c && a.id === c.id,
+        picked: a ? a.id : null,
         idx: pool.findIndex((i) => a && i.id === a.id),
-        todayIdx: window.__memories.hash(key(midnight)) % pool.length,
-        yestIdx: window.__memories.hash(key(new Date(midnight.getTime() - 864e5))) % pool.length,
+        dailyIdx: todayIdx,
+        todayKind: n ? pool[todayIdx].kind : null,
+        yKind: yKind,
+        otherKindExists: pool.some((i) => i.kind !== yKind),
+        repeatsRecent: recent.indexOf(todayIdx) !== -1,
+        recent: recent,
+        /* §三: whatever today happens to select, it is always from the pool. */
+        pickedInPool: !!a && pool.some((i) => i.id === a.id),
+        pickedFeaturable: !!a && M.featurable(a),
+        /* Regression guard: the day's order must hold ITEMS, not pool indices.
+           It held indices once, and the card rendered "NaN 年前" over an empty
+           body — or vanished entirely when the index happened to be 0. */
+        seqAreItems: (function () {
+          const s = M.sequence(pool, now);
+          return s.length === 0 ||
+            s.every((x) => x && typeof x.id === 'string' && typeof x.ts === 'number');
+        })(),
+        seqLen: M.sequence(pool, now).length,
       };
     });
 
     check('M30 §五 the Featured pick is a pure function of the date and the item ids',
-      det.sameOrder && det.sameShuffled && det.n > 0,
-      `n=${det.n} sameOrder=${det.sameOrder} sameShuffled=${det.sameShuffled}`);
+      det.sameOrder && det.sameShuffled && det.n > 0 && det.pickedInPool && det.pickedFeaturable &&
+      det.seqAreItems && det.seqLen === det.n,
+      `n=${det.n} sameOrder=${det.sameOrder} sameShuffled=${det.sameShuffled} ` +
+      `inPool=${det.pickedInPool} seqItems=${det.seqAreItems} seqLen=${det.seqLen}`);
     check('M31 the pick is the one the date hash selects (no hidden state)',
-      det.idx === det.todayIdx, `picked=${det.idx} expected=${det.todayIdx}`);
-    check('M32 §五 "no two days running" is derived, not remembered',
-      det.n < 2 || det.idx !== det.yestIdx,
-      `today=${det.idx} yesterday=${det.yestIdx} n=${det.n}`);
+      det.idx === det.dailyIdx, `picked=${det.idx} expected=${det.dailyIdx}`);
+    /* §五 新增 — the window widened from "not yesterday" to "not the last seven
+       days". Only assertable when the pool is bigger than the window: with
+       fewer candidates than days there is nothing left to move to. */
+    check('M32 §五 the pick does not repeat any of the last seven days',
+      det.n <= det.lookback || det.repeatsRecent === false,
+      `picked=${det.idx} recent=${JSON.stringify(det.recent)} n=${det.n}`);
+    /* §五 新增 — "昨天是日记，今天也还是日记" is the重复 a person actually notices,
+       so when the pool holds another kind the pick switches. Guarded the same way:
+       a pool of one kind cannot diversify. */
+    check('M32b §五 a same-kind run is broken when another kind is available',
+      !det.otherKindExists || det.todayKind !== det.yKind,
+      `yesterday=${det.yKind} today=${det.todayKind} otherAvailable=${det.otherKindExists}`);
 
     /* ── M33/M34: §六 Home line ─────────────────────────────────────────── */
     const home = await page.evaluate(() => {
@@ -505,7 +632,7 @@ const NEAR = {
         dupes: document.querySelectorAll('#dash-links-card #dash-story-line').length,
       };
     });
-    const it = d.feat;
+    const it = d.featText ? { id: d.featuredId, text: d.featText } : null;
     check('M33 §六 Home carries exactly one From Our Story line, inside the links card',
       home.inCard && home.dupes === 1 && home.kicker,
       `inCard=${home.inCard} dupes=${home.dupes}`);
@@ -596,27 +723,35 @@ const NEAR = {
       return {
         bodyText: (root || {}).textContent || '',
         hasEmpty: !!document.getElementById('memEmpty'),
-        hasTimeline: !!document.getElementById('memTimeline'),
         hasFeatured: !!document.getElementById('memFeatured'),
-        rows: document.querySelectorAll('#memRoot .mem-row').length,
+        cards: document.querySelectorAll('#memRoot .card').length,
+        rows: document.querySelectorAll('#memRoot .mem-row, #memRoot .mem-month').length,
         mile: items.filter((i) => i.kind === 'milestone').map((m) => m.text),
         anchorDates: [...document.querySelectorAll('#memAnchor .mem-anchor-day')].map((n) => n.textContent),
-        hasDiaryHead: !!document.querySelector('#memRoot .mem-diary-head'),
         dateStrip: !!document.querySelector('#panel-diary .diary-date-strip-wrap, #panel-diary .diary-date-strip'),
         writeCard: !!document.querySelector('#panel-diary textarea, #panel-diary .diary-write, #panel-diary #diaryText'),
         rootInPanel: !!(root && root.parentElement === document.getElementById('panel-diary')),
       };
     });
+    /* The honest first screen: no denial, no empty card, and the story's real
+       beginning stated. It is NOT "two cards" — the header and the anchor are not
+       .card, and asserting a count would pin the stylesheet rather than the
+       behaviour. */
     check('M38 §十一 first use never reads as "no data"',
-      !/没有数据|Nema podataka|No data/i.test(e.bodyText) && e.hasTimeline,
-      `hasEmpty=${e.hasEmpty} rows=${e.rows}`);
+      !/没有数据|Nema podataka|No data/i.test(e.bodyText) && !e.hasEmpty &&
+      e.anchorDates.length === 2 && /Barry/.test(e.bodyText),
+      `hasEmpty=${e.hasEmpty} dates=${JSON.stringify(e.anchorDates)}`);
+    /* §三 finishes what §十一 started: with only the two milestones derived and
+       nothing old enough to be a card, the honest first screen is the header, the
+       anchor and the write CTA — never an empty-state card denying the story, and
+       never a list. */
     check('M39 §十一 a fresh install opens on the real milestones, not a table of nothing',
-      e.rows === 2 && e.mile.length === 2 &&
+      e.mile.length === 2 && e.rows === 0 && !e.hasFeatured &&
       e.mile.some((m) => /^相识 \d+ 天$/.test(m)) && e.mile.some((m) => /^相恋 \d+ 天$/.test(m)),
-      `rows=${e.rows} mile=${JSON.stringify(e.mile)}`);
-    check('M40 §八 the diary writing loop survives a story with no entries of its own',
-      e.hasDiaryHead && e.dateStrip && e.writeCard && e.rootInPanel,
-      `strip=${e.dateStrip} write=${e.writeCard}`);
+      `rows=${e.rows} featured=${e.hasFeatured} mile=${JSON.stringify(e.mile)}`);
+    check('M40 §九 the diary writing loop survives a story with no entries of its own',
+      e.dateStrip && e.writeCard && e.rootInPanel,
+      `strip=${e.dateStrip} write=${e.writeCard} rootInPanel=${e.rootInPanel}`);
 
     /* §八 of the phase brief (the "our story has a beginning" half): a brand-new
        install has no diary, but it does have two real dates the app already
@@ -646,17 +781,16 @@ const NEAR = {
         hasEmpty: !!document.getElementById('memEmpty'),
         emptyText: ((document.getElementById('memEmpty') || {}).textContent || '').trim(),
         hasFeatured: !!document.getElementById('memFeatured'),
-        hasTimeline: !!document.getElementById('memTimeline'),
-        hasSong: !!document.getElementById('memSong'),
         hasAnchor: !!document.getElementById('memAnchor'),
-        hasDiaryHead: !!document.querySelector('#memRoot .mem-diary-head'),
+        listBits: document.querySelectorAll(
+          '#memRoot .mem-timeline, #memRoot .mem-month, #memRoot .mem-row, #memRoot .mem-song').length,
         rootInPanel: !!(root && root.parentElement === document.getElementById('panel-diary')),
       };
     });
     check('M41 §十一 with nothing at all, the empty card carries the "we will fill it" wording',
-      z.n === 0 && z.hasEmpty && !z.hasFeatured && !z.hasTimeline && !z.hasSong &&
-      /还没有很多故事/.test(z.emptyText) && /填满/.test(z.emptyText) && z.hasDiaryHead && z.rootInPanel,
-      `n=${z.n} "${z.emptyText}"`);
+      z.n === 0 && z.hasEmpty && !z.hasFeatured && z.listBits === 0 &&
+      /还没有很多故事/.test(z.emptyText) && /填满/.test(z.emptyText) && z.rootInPanel,
+      `n=${z.n} "${z.emptyText}" listBits=${z.listBits}`);
 
     /* The anchor is gated on the same condition the milestones use — 相识 must
        already be in the past. Without that gate a future-dated pair would print
@@ -711,18 +845,23 @@ const NEAR = {
           document.querySelectorAll('#memAnchor .mem-anchor-label'), (n) => n.textContent.trim()),
         caption: ((document.querySelector('#memAnchor .mem-anchor-line') || {}).textContent || '').trim(),
         anchorIdx: kids.findIndex((k) => k.id === 'memAnchor'),
-        featIdx: kids.findIndex((k) => k.id === 'memFeatured'),
-        timelineIdx: kids.findIndex((k) => k.id === 'memTimeline'),
+        featIdx: kids.findIndex((k) => k.id === 'memFeaturedBox'),
+        writeIdx: kids.findIndex((k) => k.id === 'memWriteCta'),
         moreText: more ? more.textContent : null,
         moreCount: document.querySelectorAll('#dash-story-line .dsl-more').length,
         lineCount: document.querySelectorAll('#dash-story-line').length,
       };
     });
 
+    /* §二 — the anchor is the first thing the story says, and the card sits
+       under it. Phase 2E removed the timeline this used to be measured against,
+       so the claim is now the stronger one: the anchor precedes EVERY other
+       block in #memRoot's order, and it is the only place carrying full dates. */
     check('M44 §八 the anchor sits inside the story block, above everything it frames',
-      a.inRoot && a.anchorIdx >= 0 && a.timelineIdx > a.anchorIdx &&
-      (a.featIdx === -1 || a.featIdx > a.anchorIdx),
-      `inRoot=${a.inRoot} anchor=${a.anchorIdx} featured=${a.featIdx} timeline=${a.timelineIdx}`);
+      a.inRoot && a.anchorIdx >= 0 &&
+      (a.featIdx === -1 || a.featIdx > a.anchorIdx) &&
+      (a.writeIdx === -1 || a.writeIdx > a.anchorIdx),
+      `inRoot=${a.inRoot} anchor=${a.anchorIdx} featured=${a.featIdx} write=${a.writeIdx}`);
 
     /* §2.6 fixes the vocabulary (met -> 相识, love -> 相恋) and bans the vague
        alternatives. The labels come from the central table, so this asserts both
@@ -781,81 +920,105 @@ const NEAR = {
     await freshOnly.ctx.close();
   }
 
-  /* ── A + B: one copy of the Featured memory, and a timeline that says "how
-     long ago" for the last few days ─────────────────────────────────────────
-     A: the pick was rendered at the top AND left in the timeline, so a single
-     diary entry appeared twice on one page with nothing saying they were the
-     same record. It is now filtered out of the timeline by id (the wiring is
-     pinned statically as M7b).
-     B: the newest rows read 今天 / 昨天 / N 天前 instead of a bare day number.
-     Display only — timestamps, order and month grouping are untouched, and an
-     older row keeps its day number. */
+  /* ── the card's own date line, in each locale, at 320 ─────────────────────
+     The card says "Anđela · 2 个月前" and that number comes from the entry's REAL
+     timestamp through the module's existing strings — no AI summary, no rewritten
+     sentence, no invented fact (§五). Display only: the item is still dated at its
+     own local midnight, i.e. the label changed and nothing else. */
   {
     const LABELS = {
-      'zh-CN': { now: '今天', yest: '昨天', d3: '3 天前', d6: '6 天前' },
-      sr: { now: 'danas', yest: 'juče', d3: 'pre 3 dana', d6: 'pre 6 dana' },
-      en: { now: 'today', yest: 'yesterday', d3: '3 days ago', d6: '6 days ago' },
+      'zh-CN': { ago: '10 天前', kicker: '今天想起', all: '看全部日记' },
+      sr: { ago: 'pre 10 dana', kicker: 'Danas se setih', all: 'Svi dnevni unosi' },
+      en: { ago: '10 days ago', kicker: 'Today I remember', all: 'See all diary entries' },
     };
     for (const L of ['zh-CN', 'sr', 'en']) {
       const want = LABELS[L];
-      /* 320 is also this block's overflow question: the relative strings are
-         longer than the two digits they replace, and 320 is where that has to
-         still fit. The label text does not depend on width, so one context per
-         locale answers both. */
-      const { ctx, page } = await open(NEAR, L, { width: 320, height: 800 });
+      /* 320 is also this block's overflow question: the card carries the longest
+         strings the module owns (kicker + kind + age + the two exits), so 320 is
+         where they have to still fit. */
+      const { ctx, page } = await open(AGED, L, { width: 320, height: 800 });
       const n = await page.evaluate(() => {
         const items = window.__memories.items(Date.now());
+        const M = window.__memories;
+        const now = Date.now();
         const mid = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
-        const pairs = [...document.querySelectorAll('#memRoot .mem-row')].map((r) => ({
-          text: ((r.querySelector('.mem-row-text') || {}).textContent || '').trim(),
-          day: ((r.querySelector('.mem-row-day') || {}).textContent || '').trim(),
-        }));
-        const labelFor = (re) => (pairs.filter((r) => re.test(r.text))[0] || {}).day || null;
-        const metas = [...document.querySelectorAll('#memRoot .mem-row-meta')];
-        const sameLine = (e) => new Set(
-          [...e.children].map((c) => Math.round(c.getBoundingClientRect().top))).size;
+        const pool = M.pool(items, now);
+        const f = M.featured(items, now);
+        const txt = (sel) => ((document.querySelector(sel) || {}).textContent || '').trim();
+        const card = document.getElementById('memFeatured');
         return {
           itemCount: items.length,
-          rowCount: pairs.length,
-          featured: window.__memories.featured(items, Date.now()) ? 1 : 0,
-          /* B must not have moved the data: the newest entry is still dated at
-             today's local midnight, i.e. the label changed and nothing else. */
-          todayTsIsMidnight: (function () {
-            const it = items.filter((i) => /Danas/.test(i.text))[0];
-            return !!it && it.ts === mid(it.ts) &&
-              Math.round((mid(Date.now()) - it.ts) / 864e5) === 0;
-          })(),
-          labelNow: labelFor(/Danas/), labelYest: labelFor(/Juče/),
-          label3: labelFor(/tri dana/), label6: labelFor(/šest dana/),
-          labelOld: labelFor(/Odavno/),
-          labels: pairs.map((r) => r.day),
+          poolCount: pool.length,
+          poolIds: pool.map((i) => i.id),
+          picked: f ? f.id : null,
+          /* The card must not have moved the data: the pick is still dated at its
+             own local midnight. */
+          tsIsMidnight: !!f && f.ts === mid(f.ts),
+          ageDays: f ? Math.floor((now - f.ts) / 864e5) : null,
+          kicker: txt('#memFeatured .mem-feat-kicker'),
+          kind: txt('#memFeatured .mem-feat-kind'),
+          text: txt('#memFeatured .mem-feat-text'),
+          allText: txt('#memFeatured .mem-feat-all'),
+          hasMore: !!document.querySelector('#memFeatured .mem-feat-more'),
+          cards: document.querySelectorAll('#memRoot .card').length,
+          listBits: document.querySelectorAll(
+            '#memRoot .mem-timeline, #memRoot .mem-month, #memRoot .mem-row, #memRoot .mem-song').length,
+          /* Real overflow, measured as a rectangle leaving the viewport.
+
+             NOT scrollWidth > clientWidth. That heuristic is wrong for this
+             stylesheet: `.card` is a pre-existing Phase 1A.5 component whose
+             padding makes scrollWidth exceed clientWidth on every card in the
+             app, while documentElement.scrollWidth is exactly the viewport — so
+             it reports an overflow that no one can see, on a node this phase did
+             not create. A rect outside the viewport is a fact; a padded box is a
+             measurement artefact. */
           doc: document.documentElement.scrollWidth,
-          metaOverflow: metas.filter((e) => e.scrollWidth > e.clientWidth + 1)
-            .map((e) => e.textContent.trim()),
-          metaWrapped: metas.filter((e) => sameLine(e) > 1).map((e) => e.textContent.trim()),
+          over: [card, document.getElementById('memWriteCta'), card && card.querySelector('.mem-feat-text')]
+            .filter((e) => e)
+            .map((e) => ({ e: e, r: e.getBoundingClientRect() }))
+            .filter((x) => x.r.width > 0 && (x.r.right > window.innerWidth + 1 || x.r.left < -1))
+            .map((x) => (x.e.className || x.e.id) + ':' + Math.round(x.r.left) + '..' + Math.round(x.r.right)),
         };
       });
 
-      check(`M52·${L} the newest rows read as "how long ago"; an older row keeps its day number`,
-        n.labelNow === want.now && n.labelYest === want.yest &&
-        n.label3 === want.d3 && n.label6 === want.d6 && /^\d{2}$/.test(n.labelOld || ''),
-        `now=${JSON.stringify(n.labelNow)} yest=${JSON.stringify(n.labelYest)} ` +
-        `d3=${JSON.stringify(n.label3)} d6=${JSON.stringify(n.label6)} ` +
-        `old=${JSON.stringify(n.labelOld)} all=${JSON.stringify(n.labels)}`);
+      check(`M52·${L} the card dates the entry from its real timestamp, in this locale`,
+        n.poolCount === 1 && n.picked === 'diary:' + dayKeyAgo(10) + ':andjela' &&
+        n.ageDays === 10 && n.tsIsMidnight &&
+        n.kicker.indexOf(want.kicker) !== -1 &&
+        /* The literal đ, not \u{0111}: without the /u flag that escape is read as
+           the literal text "u{0111}", so the assertion silently never matched. */
+        /Anđela/.test(n.kind) && n.kind.indexOf(want.ago) !== -1 &&
+        /Šetnja pored reke/.test(n.text) && n.allText.indexOf(want.all) !== -1,
+        `picked=${n.picked} age=${n.ageDays} midnight=${n.tsIsMidnight} ` +
+        `kicker="${n.kicker}" kind="${n.kind}" text="${n.text}" all="${n.allText}"`,
+      );
 
-      check(`M53·${L} the relative label changes the wording only — rows, order and dates are untouched`,
-        n.itemCount === 7 && n.rowCount === 7 && n.featured === 0 && n.todayTsIsMidnight,
-        `items=${n.itemCount} rows=${n.rowCount} picked=${n.featured} todayAtMidnight=${n.todayTsIsMidnight}`);
+      /* §三 — only the 10-day-old entry is a candidate. The 4-day-old one is too
+         new and the 900-day-old one is an archive; both are still READ, which is
+         what makes the window a filter rather than a deletion. Five items: three
+         diary slots plus the two milestones the anchor derives. */
+      check(`M53·${L} the age window excludes without deleting, and one candidate means no advance button`,
+        n.itemCount === 5 && n.poolCount === 1 &&
+        n.poolIds.indexOf('diary:' + dayKeyAgo(4) + ':barry') === -1 &&
+        n.poolIds.indexOf('diary:' + dayKeyAgo(900) + ':barry') === -1 &&
+        n.hasMore === false && n.listBits === 0,
+        `items=${n.itemCount} pool=${JSON.stringify(n.poolIds)} more=${n.hasMore} ` +
+        `cards=${n.cards} listBits=${n.listBits}`,
+      );
 
-      check(`M54·${L} no horizontal overflow at 320 with the longer day labels`,
-        n.doc <= 321 && n.metaOverflow.length === 0,
-        `scrollWidth=${n.doc} overflowingMetas=${JSON.stringify(n.metaOverflow)} ` +
-        `wrappedMetas=${JSON.stringify(n.metaWrapped)}`);
+      check(`M54·${L} no horizontal overflow at 320 with the card's longer strings`,
+        n.doc <= 321 && n.over.length === 0,
+        `scrollWidth=${n.doc} overflowing=${JSON.stringify(n.over)}`,
+      );
       await ctx.close();
     }
   }
 
-  /* ── A: the pick is rendered once, and a pick outside the cap is a no-op ── */
+  /* ── M55/M56: the pick is rendered exactly once ────────────────────────────
+     §二 asks for one card, and the failure this guards against is the one the
+     timeline caused: the same entry appearing twice on one page with nothing
+     saying the two were the same record. Now it is stronger — not "not repeated
+     in the list" but "not repeated anywhere in the story block". */
   {
     const { ctx, page } = await open(RICH);
     const a = await page.evaluate(() => {
@@ -865,36 +1028,217 @@ const NEAR = {
         const t = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
         return t.length > n ? t.slice(0, n - 1) + '…' : t;
       };
-      const rows = [...document.querySelectorAll('#memRoot .mem-row .mem-row-text')]
-        .map((e) => e.textContent.trim());
       const rootText = (document.getElementById('memRoot') || {}).textContent || '';
       const featText = clip(f ? f.text : '', 220);
       return {
         n: items.length,
-        rowCount: rows.length,
+        poolCount: window.__memories.pool(items, Date.now()).length,
         featShown: ((document.querySelector('#memFeatured .mem-feat-text') || {}).textContent || '').trim(),
         featText,
-        rowHasPick: rows.indexOf(clip(f ? f.text : '', 160)) !== -1,
+        cards: document.querySelectorAll('#memRoot .card').length,
+        rootText: rootText.length,
         occurrences: featText ? rootText.split(featText).length - 1 : -1,
+        /* No other entry's text may appear on this page either: the card shows
+           exactly one memory, not a preview of several. */
+        othersShown: items.filter((i) => {
+          if (!f || i.id === f.id) return false;
+          const t = clip(i.text, 60);
+          return t.length > 8 && rootText.indexOf(t) !== -1;
+        }).map((i) => i.id),
       };
     });
 
-    check('M55 the Featured memory is not repeated in the timeline',
-      a.featShown === a.featText && a.rowCount === a.n - 1 && a.rowHasPick === false,
-      `items=${a.n} rows=${a.rowCount} rowStillHasPick=${a.rowHasPick} ` +
-      `featured="${a.featShown.slice(0, 40)}"`);
-    check('M56 the pick\'s text appears exactly once inside the story block',
+    check('M55 §二 the pick is the card, and it is the only memory on the page',
+      a.featShown === a.featText && a.n > 0 && a.poolCount > 0 &&
+      a.cards <= 4 && a.othersShown.length === 0,
+      `items=${a.n} pool=${a.poolCount} cards=${a.cards} alsoShown=${JSON.stringify(a.othersShown)}`);
+    check('M56 §二 the pick\'s text appears exactly once inside the story block',
       a.occurrences === 1, `occurrences=${a.occurrences}`);
     await ctx.close();
+  }
 
-    /* A pick the capped timeline never contained. 80 gratitude entries dated in
-       the FUTURE are the 80 newest, so they take the whole 80-row budget; the
-       age gate ((now - ts) / DAY) makes every one of them ineligible, which
-       leaves the single 20-day-old entry as the entire Featured pool. So the
-       pick sits outside the timeline, and removing it has to be a no-op: the
-       cap stays 80 and the overflow line still counts the same two entries.
-       It also puts 80 future-dated rows through the day-label helper, which
-       must fall back to the day number rather than print a negative one. */
+  /* ── N1..N6: 「再看看一个」, the cursor, and 📖 看全部日记 ──────────────────
+     §四's step-through and §六's exit, both of which need a real click rather
+     than a pure-function call. The RICH fixture has seven candidates, so the
+     whole order fits in one pass and the wrap-around is observable. */
+  {
+    const { ctx, page } = await open(RICH);
+    const walk = await page.evaluate(async () => {
+      const M = window.__memories;
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const shown = () => ((document.querySelector('#memFeatured .mem-feat-text') || {})
+        .textContent || '').trim();
+      const items = M.items(Date.now());
+      const pool = M.pool(items, Date.now());
+      const byText = (t) => (pool.filter((i) => i.text === t)[0] || {}).id || null;
+      const first = shown();
+      const seen = [first];
+      const cursorBefore = M.cursor();
+      const hits = [];
+      /* One full lap plus one: the eighth click must land back on the first. */
+      for (let i = 0; i < pool.length + 1; i++) {
+        const btn = document.querySelector('#memFeatured .mem-feat-more');
+        if (!btn) { hits.push('NO_BUTTON'); break; }
+        btn.click();
+        await sleep(30);
+        seen.push(shown());
+        hits.push(document.querySelector('#memFeatured .mem-feat-more') ? 'ok' : 'NO_BUTTON');
+      }
+      return {
+        poolIds: pool.map((i) => i.id),
+        poolLen: pool.length,
+        first: first,
+        firstId: byText(first),
+        seen: seen,
+        seenIds: seen.map(byText),
+        unique: [...new Set(seen.slice(0, pool.length))].length,
+        consecutiveDupes: seen.slice(1).filter((t, i) => t === seen[i]).length,
+        /* seen[0] is the card before any click, so seen[pool.length] is the one
+           after a full lap: it must be the first entry again, and the click after
+           that must carry on to the second — a wrap, not a reset. */
+        wrapped: seen[pool.length] === first && seen[pool.length + 1] === seen[1],
+        cursorBefore: cursorBefore,
+        cursorAfter: M.cursor(),
+        hits: hits,
+      };
+    });
+
+    check('N1 §四 「再看看一个」 walks the day\'s whole order without repeating',
+      walk.poolLen >= 3 && walk.unique === walk.poolLen && walk.consecutiveDupes === 0,
+      `pool=${walk.poolLen} unique=${walk.unique} dupesInARow=${walk.consecutiveDupes}`);
+    check('N2 §四 the order is fixed for the day, and it wraps rather than sticking',
+      walk.wrapped === true && walk.cursorAfter === walk.cursorBefore + walk.poolLen + 1,
+      `first="${walk.first.slice(0, 24)}" wrapped=${walk.wrapped} ` +
+      `cursor=${walk.cursorBefore}->${walk.cursorAfter}`);
+    /* The default (the card a refresh shows) is the date-hash pick, which is what
+       the cursor starts on — the two cannot disagree. */
+    check('N3 §四 the walk starts on the daily pick, not on an arbitrary entry',
+      walk.firstId === walk.seenIds[0] && !!walk.firstId,
+      `first=${walk.firstId}`);
+
+    /* §六 + point 8 of the brief: 「📖 看全部日记」 lands in the real Diary, with
+       the full diary furniture reachable — not a filtered or read-only view. */
+    const exit = await page.evaluate(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const btn = document.querySelector('#memFeatured .mem-feat-all');
+      const before = window.__memories.mode();
+      if (btn) btn.click();
+      await sleep(500);
+      const panel = document.getElementById('panel-diary');
+      const cs = (sel) => {
+        const e = document.querySelector(sel);
+        if (!e) return null;
+        const s = getComputedStyle(e);
+        return { display: s.display, visible: !!(e.offsetWidth || e.offsetHeight) };
+      };
+      return {
+        before: before,
+        mode: window.__memories.mode(),
+        panelClass: panel ? panel.className : '',
+        tabActive: !!document.querySelector('#memModeDiary.is-active'),
+        storyHidden: cs('#memRoot'),
+        strip: cs('#panel-diary .diary-date-strip-wrap'),
+        write: cs('#panel-diary #diaryWriteCard'),
+        textarea: !!document.getElementById('diaryTextarea'),
+        calendar: !!document.querySelector('#panel-diary #diaryFullCal'),
+      };
+    });
+    check('N4 §六 「📖 看全部日记」 switches to the full Diary, not to a copy',
+      exit.before === 'story' && exit.mode === 'diary' &&
+      /mem-mode-diary/.test(exit.panelClass) && exit.tabActive &&
+      exit.storyHidden && exit.storyHidden.display === 'none' &&
+      exit.strip && exit.strip.display !== 'none' &&
+      exit.write && exit.write.display !== 'none' &&
+      exit.textarea && exit.calendar,
+      `mode=${exit.mode} panel="${exit.panelClass}" strip=${JSON.stringify(exit.strip)} ` +
+      `write=${JSON.stringify(exit.write)}`);
+
+    /* Point 4 of the brief. A diary too short to carry a card on its own is still
+       a diary: it is not deleted, not filtered out of the data, and it still opens
+       in 📖 日记 with its text in the editor. The length floor is a rule about
+       what may be the ONE thing on screen, nothing else. */
+    const before = await page.evaluate(() => window.__memories.pool(
+      window.__memories.items(Date.now()), Date.now()).length);
+    await ctx.close();
+
+    const short = await open(Object.assign({}, RICH, {
+      'shared-diary': Object.assign({}, RICH['shared-diary'], {
+        [dayKeyAgo(20)]: { barry: { text: 'Ljubav' } },
+      }),
+    }));
+    const s = await short.page.evaluate(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const M = window.__memories;
+      const items = M.items(Date.now());
+      const id = 'diary:' + (function () {
+        const d = new Date(); d.setHours(0, 0, 0, 0);
+        d.setTime(d.getTime() - 20 * 864e5);
+        const p = (v) => (v < 10 ? '0' : '') + v;
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+      })() + ':barry';
+      const it = items.filter((i) => i.id === id)[0] || null;
+      const pool = M.pool(items, Date.now());
+      /* Open the real Diary on that exact date and read the editor back. */
+      M.openDiary(id.split(':')[1]);
+      await sleep(700);
+      const ta = document.getElementById('diaryTextarea');
+      const stored = (function () {
+        try { return JSON.parse(localStorage.getItem('shared-diary')); } catch (e) { return null; }
+      })();
+      return {
+        inItems: !!it,
+        textLen: it ? it.text.length : null,
+        minLen: M.minDiaryLen,
+        featurable: it ? M.featurable(it) : null,
+        inPool: pool.some((i) => i.id === id),
+        storedText: stored && stored[id.split(':')[1]] && stored[id.split(':')[1]].barry
+          ? stored[id.split(':')[1]].barry.text : null,
+        editorText: ta ? ta.value : null,
+        mode: M.mode(),
+      };
+    });
+    check('N5 §三 a diary shorter than the floor is not a candidate — and is not touched',
+      s.inItems && s.textLen === 6 && s.textLen < s.minLen &&
+      s.featurable === false && s.inPool === false && s.storedText === 'Ljubav',
+      `len=${s.textLen}/${s.minLen} featurable=${s.featurable} inPool=${s.inPool} ` +
+      `stored="${s.storedText}"`);
+    check('N5b §九 that same short diary still opens in 📖 日记 with its text',
+      s.mode === 'diary' && s.editorText === 'Ljubav',
+      `mode=${s.mode} editor="${s.editorText}"`);
+    await short.ctx.close();
+
+    /* Point 7 of the brief: the cursor lives in memory only. A fresh context is
+       the honest test — it is what a refresh gives — and it must land back on the
+       daily pick with no storage written anywhere. */
+    const fresh = await open(RICH);
+    const r = await fresh.page.evaluate(() => ({
+      cursor: window.__memories.cursor(),
+      shown: ((document.querySelector('#memFeatured .mem-feat-text') || {})
+        .textContent || '').trim(),
+      expected: (function () {
+        const M = window.__memories;
+        const now = Date.now();
+        const pool = M.pool(M.items(now), now);
+        const f = M.featured(M.items(now), now);
+        return f ? f.text.slice(0, 40) : null;
+      })(),
+      keysTouched: Object.keys(localStorage).filter((k) => /cursor|memory|story/i.test(k)),
+    }));
+    check('N6 §四 a refresh restores the day\'s default, and the cursor is never stored',
+      r.cursor === 0 && !!r.expected && r.shown.indexOf(r.expected) !== -1 &&
+      r.keysTouched.length === 0,
+      `cursor=${r.cursor} shown="${r.shown.slice(0, 30)}" keys=${JSON.stringify(r.keysTouched)} ` +
+      `(pool before the short-diary context: ${before})`);
+    await fresh.ctx.close();
+  }
+
+  /* ── M57: 80 ineligible entries, and the one that is eligible ──────────────
+     The cap this used to test is gone, so the fixture now tests the window from
+     the other side: 80 gratitude entries dated in the FUTURE are all outside
+     7..400 days, which leaves the single 20-day-old entry as the entire pool. It
+     is the pick, nothing else is, and 80 future timestamps reach _ago without
+     producing a negative day count anywhere on the page. */
+  {
     const futureItems = [];
     for (let i = 1; i <= 80; i++) {
       futureItems.push({ text: 'Budućnost ' + i, from: 'barry', time: Date.now() + i * DAY });
@@ -906,29 +1250,37 @@ const NEAR = {
       'shared-diary': { [dayKeyAgo(20)]: { andjela: { text: 'Dvadeset dana' } } },
     });
     const o = await big.page.evaluate(() => {
-      const items = window.__memories.items(Date.now());
-      const f = window.__memories.featured(items, Date.now());
-      const labels = [...document.querySelectorAll('#memRoot .mem-row-day')]
-        .map((e) => e.textContent.trim());
+      const M = window.__memories;
+      const items = M.items(Date.now());
+      const now = Date.now();
+      const f = M.featured(items, now);
+      const pool = M.pool(items, now);
+      const rootText = (document.getElementById('memRoot') || {}).textContent || '';
       return {
         n: items.length,
-        rows: labels.length,
+        poolLen: pool.length,
         picked: f ? f.id : null,
         featText: ((document.querySelector('#memFeatured .mem-feat-text') || {}).textContent || '').trim(),
-        more: ((document.querySelector('#memRoot .mem-more') || {}).textContent || '').trim(),
-        badLabels: labels.filter((l) => !/^\d{2}$/.test(l)).length,
+        kinds: [...new Set(pool.map((i) => i.kind))],
+        futureInPool: pool.some((i) => i.ts > now),
+        /* A negative age would read as a fabricated date; nothing on the page may
+           carry one. */
+        negDays: /-\d+\s*(天|dana|days)/.test(rootText),
+        listBits: document.querySelectorAll(
+          '#memRoot .mem-timeline, #memRoot .mem-row, #memRoot .mem-month, #memRoot .mem-more').length,
+        cards: document.querySelectorAll('#memRoot .card').length,
       };
     });
-    check('M57 a Featured pick outside the 80-row cap is a no-op, and future dates keep a day number',
-      o.rows === 80 && o.more === '还有 2 条' && o.badLabels === 0 &&
-      o.picked === 'diary:' + dayKeyAgo(20) + ':andjela' && /Dvadeset/.test(o.featText),
-      `items=${o.n} rows=${o.rows} more="${o.more}" badLabels=${o.badLabels} picked=${o.picked}`);
+    check('M57 §三 80 future-dated entries are ineligible; the one in-window entry is the pick',
+      o.n === 83 && o.poolLen === 1 && !o.futureInPool &&
+      o.picked === 'diary:' + dayKeyAgo(20) + ':andjela' && /Dvadeset/.test(o.featText) &&
+      o.negDays === false && o.listBits === 0,
+      `items=${o.n} pool=${o.poolLen} picked=${o.picked} kinds=${JSON.stringify(o.kinds)} ` +
+      `negDays=${o.negDays} listBits=${o.listBits} cards=${o.cards}`);
     await big.ctx.close();
 
-    /* The one-item edge the filter creates: the only memory is also the pick,
-       so the timeline is empty while the story is not. It must not fall back to
-       the empty card (that would say "there are no stories yet" directly under
-       a rendered story) and it must not render a stray empty timeline. */
+    /* The one-item edge: the only memory is also the pick, so the story is not
+       empty while a naive implementation would render the empty card under it. */
     const fp = (x) => (x < 10 ? '0' : '') + x;
     const fDate = new Date(TODAY.getTime() + 400 * DAY);
     const only = await open({
@@ -940,17 +1292,88 @@ const NEAR = {
     const one = await only.page.evaluate(() => ({
       n: window.__memories.items(Date.now()).length,
       hasFeatured: !!document.getElementById('memFeatured'),
-      hasTimeline: !!document.getElementById('memTimeline'),
       hasEmpty: !!document.getElementById('memEmpty'),
-      rows: document.querySelectorAll('#memRoot .mem-row').length,
+      hasMore: !!document.querySelector('#memFeatured .mem-feat-more'),
+      listBits: document.querySelectorAll(
+        '#memRoot .mem-timeline, #memRoot .mem-row, #memRoot .mem-month').length,
       featText: ((document.querySelector('#memFeatured .mem-feat-text') || {}).textContent || '').trim(),
     }));
-    check('M58 a story whose only memory is the pick shows it once, with no empty timeline or empty card',
-      one.n === 1 && one.hasFeatured && !one.hasTimeline && !one.hasEmpty &&
-      one.rows === 0 && /Jedina uspomena/.test(one.featText),
-      `items=${one.n} featured=${one.hasFeatured} timeline=${one.hasTimeline} ` +
-      `emptyCard=${one.hasEmpty} rows=${one.rows}`);
+    check('M58 a story whose only memory is the pick shows it once, with no empty card or list',
+      one.n === 1 && one.hasFeatured && !one.hasEmpty && !one.hasMore &&
+      one.listBits === 0 && /Jedina uspomena/.test(one.featText),
+      `items=${one.n} featured=${one.hasFeatured} emptyCard=${one.hasEmpty} ` +
+      `more=${one.hasMore} listBits=${one.listBits}`);
     await only.ctx.close();
+  }
+
+  /* ── N7: 3 locales × 3 widths × 2 themes ──────────────────────────────────
+     Points 10..12 of the brief in one sweep. One context per locale, resized and
+     re-themed in place: the card is the same DOM at all eighteen combinations, so
+     re-navigating for each cell would test the server, not the layout. Every cell
+     asserts the same five things — the card is there, its own box does not
+     overflow, nothing list-shaped appeared, the theme actually applied, and the
+     ✦「今天想起」 kicker is in the right language — which is what makes a
+     regression at one width in one theme visible. */
+  {
+    const KICKER = { 'zh-CN': '今天想起', sr: 'Danas se setih', en: 'Today I remember' };
+    const ALLDIARY = { 'zh-CN': '看全部日记', sr: 'Svi dnevni unosi', en: 'See all diary entries' };
+    for (const L of ['zh-CN', 'sr', 'en']) {
+      const { ctx, page } = await open(RICH, L, { width: 320, height: 800 });
+      const bad = [];
+      for (const w of [320, 768, 1440]) {
+        for (const theme of ['light', 'dark']) {
+          await page.setViewportSize({ width: w, height: 800 });
+          await page.evaluate((t) => {
+            document.documentElement.setAttribute('data-theme', t);
+            try { localStorage.setItem('cycle-theme', t); } catch (e) {}
+          }, theme);
+          await page.waitForTimeout(220);
+          const c = await page.evaluate(() => {
+            const card = document.getElementById('memFeatured');
+            const t = (sel) => ((document.querySelector(sel) || {}).textContent || '').trim();
+            /* Scoped to the card and the CTA — the nodes this phase owns. A sweep
+               over every descendant would also catch the pre-existing furniture
+               (the anchor strip, the mode bar), which this phase did not touch and
+               must not be blamed for. Measured as a rect leaving the viewport, not
+               as scrollWidth > clientWidth: `.card`'s own padding trips that
+               heuristic on every card in the app. */
+            const mine = card
+              ? [...card.querySelectorAll('*'), card,
+                  ...[...document.querySelectorAll('#memWriteCta, #memWriteCta *')]]
+              : [];
+            const overflowing = mine
+              .map((e) => ({ e: e, r: e.getBoundingClientRect() }))
+              .filter((x) => x.r.width > 0 &&
+                (x.r.right > window.innerWidth + 1 || x.r.left < -1))
+              .map((x) => (x.e.className || x.e.id || x.e.tagName) + ':' +
+                Math.round(x.r.left) + '..' + Math.round(x.r.right));
+            return {
+              hasCard: !!card,
+              kicker: t('#memFeatured .mem-feat-kicker'),
+              text: t('#memFeatured .mem-feat-text'),
+              all: t('#memFeatured .mem-feat-all'),
+              doc: document.documentElement.scrollWidth,
+              inner: window.innerWidth,
+              listBits: document.querySelectorAll(
+                '#memRoot .mem-timeline, #memRoot .mem-row, #memRoot .mem-month, #memRoot .mem-song').length,
+              overflowing: overflowing,
+              theme: document.documentElement.getAttribute('data-theme'),
+            };
+          });
+          const ok = c.hasCard && c.text.length > 0 && c.listBits === 0 &&
+            c.theme === theme && c.doc <= w + 1 && c.overflowing.length === 0 &&
+            c.kicker.indexOf(KICKER[L]) !== -1 && c.all.indexOf(ALLDIARY[L]) !== -1;
+          if (!ok) {
+            bad.push(`${L}/${w}/${theme}: doc=${c.doc} over=${JSON.stringify(c.overflowing)} ` +
+              `card=${c.hasCard} list=${c.listBits} theme=${c.theme} ` +
+              `kicker="${c.kicker}" all="${c.all}"`);
+          }
+        }
+      }
+      check(`N7·${L} the card holds at 320/768/1440 in both themes`,
+        bad.length === 0, bad.length ? bad.join(' || ') : '18/18 cells clean');
+      await ctx.close();
+    }
   }
 
   await browser.close();

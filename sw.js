@@ -188,7 +188,33 @@ const V = '?v=' + APP_VERSION;
 //
 // 老问题照旧：这几条全是裸路径，不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
 // 旧引擎、旧 index.html —— 而变化恰恰只存在于渲染结果里，没有新文件名可供它察觉。
-const CACHE_STATIC = 'ciklus-static-v47';
+//
+// ── Phase 2E：极简 Memories（只简化显示层）────────────────────────────────
+// v47 → v48。这一轮改动的裸路径是三条：./index.html、./css/v2.css、
+// ./js/module-memories.js。**js/fix-diary.js 这一轮一个字没改**，仍是 Phase 2C
+// 的版本。没有任何带 ?v= 的资产被改，所以 APP_VERSION 保持 7.3.9 不动，变的只有
+// CACHE_STATIC —— 与上面每一次同一个道理。
+//
+// 这一轮**不动任何数据**：shared-diary / shared-gratitude / shared-knowme /
+// anniversaries 的 schema 一个字没改，模块全程只有 getItem、没有写入路径，
+// 保存路径仍是 saveDiaryEntry() → localStorage['shared-diary'] →
+// pushAllSharedData()。删掉的全部是渲染层。逐条说为什么老客户端必须换：
+// 1. ./js/module-memories.js — 「我们的故事」不再画时间轴长列表：整个列表渲染层
+//    （_timelineHtml / _rowHtml / _capDiaryRefs / DIARY_REF_CAP = 6 / _songHtml，
+//    连同相对日期 _relDay 与 REL_DAYS）删除，story 半边只剩一张「✦ 今天想起」卡、
+//    一个「再看看一个 ›」和一个「📖 看全部日记 →」。旧引擎会把那条长列表继续
+//    画出来 —— 而这正是本轮要删掉的那件东西；旧引擎的今日选取规则也不同（本轮
+//    新增 7–400 天窗口、最近 7 日避重、昨日同类则优先换类）。
+// 2. ./index.html — .diary-timeline-section 与信箱卡（.diary-mailbox-card）两个
+//    容器整块删除，#diaryFullCalGrid 一并清掉。新引擎不再往这两个容器里放任何
+//    东西，留着旧 HTML 只会得到两个空壳加一段残留结构。
+// 3. ./css/v2.css — 时间轴 / 歌曲 / .mem-diary-head / .mem-row-ref 的样式块删除，
+//    新增 .mem-feat-*（卡片正文与两个动作按钮）。旧样式下新卡片没有排版；
+//    反向组合（新 CSS + 旧引擎）下旧时间轴的类名已经没有规则了。
+//
+// 老问题照旧：三条全是裸路径，不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
+// 旧引擎、旧 index.html —— 而变化恰恰只存在于渲染结果里，没有新文件名可供它察觉。
+const CACHE_STATIC = 'ciklus-static-v48';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

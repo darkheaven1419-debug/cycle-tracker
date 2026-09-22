@@ -32,9 +32,10 @@
 
    Phase 2C gives the panel two modes instead of one long page — 我们的故事 and
    📖 日记 — switched by a bar above #memRoot. The story keeps its header, the
-   featured pick, the timeline and the song; diary entries reach that timeline
+   featured pick, the timeline and the song; diary entries reached that timeline
    only as at most DIARY_REF_CAP clickable references (§七), never as the diary
-   itself, so a couple's diary can no longer stretch the page without limit.
+   itself, so a couple's diary could no longer stretch the page without limit.
+   (Phase 2E then removed the timeline and the song card outright — below.)
    📖 日记 shows the date strip, the write card and the partner's letter exactly
    where they already were: the two modes are one panel carrying a class, so
    nothing is moved and no second editor exists. 2B.9's borrow machinery is
@@ -42,6 +43,17 @@
    longer holds, and its one real hazard, the write card being destroyed by
    #memRoot's innerHTML, goes away with it. Not moving anything is also what
    keeps js/fix-diary.js's .lpc-row guard true; see the mode block below.
+
+   Phase 2E stops 我们的故事 from being a history browser at all. A month-grouped
+   timeline mixing diary, gratitude, know-me and milestones into one long list
+   tested as "what is this module even for" — the shape said *database*, not
+   *memory*. So the timeline, its diary reference rows and the song card are all
+   deleted from the display layer, and what is left is one 「✦ 今天想起」 card
+   showing a single real entry, plus 「再看看一个」 to step through that day's
+   order and 「📖 看全部日记」 to hand the reader to 📖 日记 — which is where
+   browsing a history actually belongs. Diary keeps every capability it had;
+   Memories stops duplicating it. Nothing is stored and no data is touched: this
+   module still only ever calls getItem. See the featured block below.
 
    §三 forbids a second data model, so every memory here is DERIVED at render
    time from keys that already exist, and this module writes nothing: no new
@@ -61,30 +73,33 @@
   'use strict';
 
   var PANEL_ID = 'panel-diary';
-  var TIMELINE_CAP = 80;          // DOM ceiling for a multi-year history
   var FEATURED_MIN_AGE = 7;       // days — "a while ago", never this week
   var FEATURED_MAX_AGE = 400;     // days — beyond this it is an archive, not a nudge
   var CLIP_FEATURED = 220;
-  var CLIP_ROW = 160;
-  /* Phase 2C. 日记引用在时间轴上是一条路标，不是日记本身。六条足够说明「你俩一直
-     在写」，又不至于让故事变回一份更难用的日期列表 —— 那正是它上一轮变成的样子。
-     这个上限只管「我们的故事」里的引用条数：📖 日记 通过日期条和月历到达任何一个
-     存在过的日期，所以这里少显示几条，不会让任何一篇变得够不着。见 _capDiaryRefs。 */
-  var DIARY_REF_CAP = 6;
-  var CLIP_REF = 90;
-  /* How many days back a timeline row says "N 天前" instead of its day number.
-     A week is where "how long ago" stops locating the memory better than
-     "which day" does — past it the month header is the more useful anchor, and
-     the row keeps the two-digit day it always had. Only the three tiers the
-     module already carried for the Featured card are used, so this added no
-     new wording in any locale. */
-  var REL_DAYS = 7;
+  /* Phase 2E §三 — 长度门槛，不是语义门槛。一条只写「我爱你」的日记仍然是真的、
+     仍然完整地留在 📖 日记 里，但它单独成卡时没有上下文，看起来像渲染失败。所以
+     门槛只管「能不能单独当主角」这一件事：短于此的条目不进候选池，不删除、不影响
+     日记模式、不影响任何历史数据。
+
+     刻意不做关键词过滤：三个语种的关键词表不可能穷尽，而且那是在替他们判断哪句
+     感情算数。数字是唯一不需要翻译、也不会腐烂的门槛。 */
+  var DIARY_MIN_LEN = 12;
+  /* 今天不能重复的天数。原来只和昨天比，池子小的时候（感恩上限 20 条、日记稀疏期）
+     会出现「隔两天又见同一条」——「今天想起」一旦可预测就不再是想起。 */
+  var FEATURED_LOOKBACK = 7;
+  /* §三 — 候选池只有这三种。daily-q 的 answer 本身不带问题文本，单独展示是断片；
+     milestone / anniversary 是日期不是瞬间，只留在纪念日锚点里。 */
+  var FEATURED_KINDS = ['diary', 'grat', 'km'];
 
   var MEM_I18N = {
     sr: {
       title: 'Naše uspomene',
-      featured: 'Mali podsetnik na nas',
-      myDiary: 'Moj dnevnik',
+      /* Phase 2E §五 — 卡片上只需要这三个词：kicker、翻下一条、以及交给 📖 日记
+         的那条出口。2C 的 openRef / song / more / myDiary 随它们唯一的使用者
+         （_rowHtml / _songHtml / _timelineHtml / 收尾标题）一起删除。 */
+      featuredToday: 'Danas se setih',
+      another: 'Pogledaj još jednu',
+      allDiary: 'Svi dnevni unosi',
       /* Phase 2B.8 — 去写日记那条入口。措辞刻意朴素：不文学化，也不让系统
          替情侣说话（「今天想留下什么？」那种句子是在替他们提问）。它只说明
          这里能做什么。三个语种都放在 MEM_I18N 里，没有第二套 i18n 机制。 */
@@ -92,59 +107,51 @@
       /* Phase 2C — 二级切换的两个名字。右半边直接复用 kDiary：模式名和条目标签
          在所有三个语种里本来就是同一个词，所以不再写第二份，也就不会哪天分叉。 */
       modeStory: 'Naša priča',
-      /* 一条日记引用被读屏念出来的句子 —— 这一行本身是 <button>。 */
-      openRef: 'Otvori dnevnik za {d}',
       emptyTitle: 'Ovde još nema mnogo priča.',
       emptyText: 'Polako ćemo je ispunjavati. ❤️',
       kDiary: 'Dnevnik', kGrat: 'Zahvalnost', kDQ: 'Pitanje dana',
       kKM: 'Ono što znam o tebi', kMile: 'Prekretnica',
-      song: 'Naša pesma',
       fromStory: 'Iz naše priče',
       /* Phase 2B.6 — 故事开头那一条。§2.6 fixes met → upoznavanje and
          love → zaljubljenost, so those two words are the only ones used. */
       anchorGap: 'Od upoznavanja do zaljubljenosti prošlo je {n} dana',
       today: 'danas', yesterday: 'juče',
       daysAgo: 'pre {n} dana', weeksAgo: 'pre {n} nedelje',
-      monthsAgo: 'pre {n} meseca', yearsAgo: 'pre {n} godine',
-      more: 'i još {n}'
+      monthsAgo: 'pre {n} meseca', yearsAgo: 'pre {n} godine'
     },
     'zh-CN': {
       title: '我们的回忆',
-      featured: '来自我们的故事',
-      myDiary: '我的日记',
+      featuredToday: '今天想起',
+      another: '再看看一个',
+      allDiary: '看全部日记',
       writeCta: '写一篇日记',
       modeStory: '我们的故事',
-      openRef: '打开 {d} 的日记',
       emptyTitle: '这里还没有很多故事。',
       emptyText: '我们会慢慢把它填满。 ❤️',
       kDiary: '日记', kGrat: '感恩', kDQ: '今日一问',
       kKM: '我了解的你', kMile: '里程碑',
-      song: '我们的歌',
       fromStory: '来自我们的故事',
       anchorGap: '从相识到相恋，我们走了 {n} 天',
       today: '今天', yesterday: '昨天',
       daysAgo: '{n} 天前', weeksAgo: '{n} 周前',
-      monthsAgo: '{n} 个月前', yearsAgo: '{n} 年前',
-      more: '还有 {n} 条'
+      monthsAgo: '{n} 个月前', yearsAgo: '{n} 年前'
     },
     en: {
       title: 'Our Memories',
-      featured: 'A little memory from us',
-      myDiary: 'My diary',
+      featuredToday: 'Today I remember',
+      another: 'Show me another',
+      allDiary: 'See all diary entries',
       writeCta: 'Write a diary entry',
       modeStory: 'Our Story',
-      openRef: 'Open the diary for {d}',
       emptyTitle: "There aren't many stories here yet.",
       emptyText: "We'll fill it up slowly. ❤️",
       kDiary: 'Diary', kGrat: 'Gratitude', kDQ: 'Daily Question',
       kKM: 'What I know about you', kMile: 'Milestone',
-      song: 'Our Song',
       fromStory: 'From Our Story',
       anchorGap: 'From meeting to falling in love — {n} days',
       today: 'today', yesterday: 'yesterday',
       daysAgo: '{n} days ago', weeksAgo: '{n} weeks ago',
-      monthsAgo: '{n} months ago', yearsAgo: '{n} years ago',
-      more: 'and {n} more'
+      monthsAgo: '{n} months ago', yearsAgo: '{n} years ago'
     }
   };
 
@@ -216,21 +223,6 @@
       }
     } catch (e) {}
     return fb;
-  }
-
-  /* The timeline's own "how long ago". Calendar days, not elapsed hours: a
-     memory written at 23:00 yesterday is 昨天, not 今天. _ago's elapsed-hours
-     form is right for the Featured card — nothing there replaces a calendar
-     date — but a row's label stands where a date used to be, so it has to agree
-     with the month and day it sits under. A future-dated row (clock skew, or an
-     entry typed with the wrong date) returns null and keeps its day number
-     rather than printing a negative span. */
-  function _relDay(ts, now) {
-    var d = Math.round((_atMidnight(now).getTime() - _atMidnight(ts).getTime()) / 864e5);
-    if (d === 0) return mem('today');
-    if (d === 1) return mem('yesterday');
-    if (d > 1 && d < REL_DAYS) return mem('daysAgo').replace('{n}', String(d));
-    return null;
   }
 
   function _ago(ts) {
@@ -361,27 +353,113 @@
     return h >>> 0;
   }
 
-  /* Deterministic by construction: the pick is a function of the calendar date
-     and the item ids alone, so both people independently land on the same
-     memory without any synced random state (§五), and nothing has to be stored.
-     The pool is sorted first, so it does not matter that the two devices may
-     hold their entries in different orders.
+  /* §三 — 一条内容能不能单独当「今天想起」的主角。这是候选池的唯一入口，
+     _featured 和 _homeItem 都走它，所以「什么算候选」只有一处定义。 */
+  function _isFeaturable(it) {
+    if (FEATURED_KINDS.indexOf(it.kind) === -1) return false;
+    /* 长度门槛只作用于日记。感恩和「我了解的你」本来就短，给它们也设一条会把
+       整个源排除掉 —— 而那两个正是最不容易重复的源。 */
+    if (it.kind === 'diary' && String(it.text).length < DIARY_MIN_LEN) return false;
+    return true;
+  }
 
-     "No two days running" is derived the same way rather than remembered:
-     yesterday's pick is recomputed with the identical function, and on a
-     collision today steps one forward. Still date-only, still stateless. */
-  function _featured(items, now) {
-    var pool = items.filter(function (it) {
+  /* The candidates for one day, in a stable order: oldest first, ties broken by
+     id. Sorting is what makes the pick order-independent — the two devices may
+     hold the same entries in different orders, and an index is only meaningful
+     against a fixed sequence. */
+  function _featuredPool(items, now) {
+    return items.filter(function (it) {
+      if (!_isFeaturable(it)) return false;
       var age = (now - it.ts) / 864e5;
-      return it.kind !== 'milestone' && age >= FEATURED_MIN_AGE && age <= FEATURED_MAX_AGE;
+      return age >= FEATURED_MIN_AGE && age <= FEATURED_MAX_AGE;
     }).sort(function (a, b) { return a.ts - b.ts || (a.id < b.id ? -1 : 1); });
-    if (!pool.length) return null;
+  }
 
-    var today = _dayKey(_midnight());
-    var yest = _dayKey(new Date(_midnight().getTime() - 864e5));
-    var i = _hash(today) % pool.length;
-    if (pool.length > 1 && _hash(yest) % pool.length === i) i = (i + 1) % pool.length;
-    return pool[i];
+  function _keyAgo(now, d) { return _dayKey(_atMidnight(now - d * 864e5)); }
+
+  /* 某一天「自然」指到的下标。纯函数：只有日历日期和池子参与，所以两个人各自
+     算出来的结果必然相同，没有任何需要同步的随机状态（§五）。 */
+  function _baseIndex(pool, now) { return _hash(_dayKey(_atMidnight(now))) % pool.length; }
+
+  /* 今天该看第几条。三道约束，全部由日期推出，没有一条需要存储：
+
+       1. 自然下标 = hash(今天) % n
+       2. 最近 FEATURED_LOOKBACK 天各自算过的自然下标，今天一律避开
+       3. 若昨天那一类就是自然下标指到的那一类，优先跳到别的类
+
+     2 是 2C「只和昨天比」的扩展。原来池子一小（感恩上限 20 条、日记稀疏期）就会
+     出现「隔两天又见同一条」，而「今天想起」一旦可预测就不再是想起。3 是同一形状
+     的守卫：日记条数天然压过另外两个源，没有它，卡片会连着好几天都是日记。
+
+     避不开时（池子比 FEATURED_LOOKBACK 还小）回落到自然下标 —— 宁可重复，也不能
+     返回空：一张空卡片比一条重复的旧内容更糟。 */
+  function _dailyIndex(pool, now) {
+    var n = pool.length;
+    var start = _baseIndex(pool, now);
+    if (n === 1) return 0;
+
+    var forbid = [];
+    for (var d = 1; d <= FEATURED_LOOKBACK; d++) forbid.push(_hash(_keyAgo(now, d)) % n);
+
+    /* 昨天「以为」自己看到的那一类。之所以是近似而非精确：精确值要递归重算昨天
+       那一整条链路，深度是 7 的幂。这里只需要一个启发式 —— 类别多样性是「尽量」，
+       不是必须成立的约束，近似足够，而且永远不会算错到返回空。 */
+    var yKind = pool[_hash(_keyAgo(now, 1)) % n].kind;
+
+    var firstFree = -1;
+    for (var s = 0; s < n; s++) {
+      var i = (start + s) % n;
+      if (forbid.indexOf(i) !== -1) continue;
+      if (firstFree === -1) firstFree = i;
+      if (pool[i].kind !== yKind) return i;
+    }
+    return firstFree !== -1 ? firstFree : start;
+  }
+
+  /* 某一天的确定性排列。同一个池子 + 同一天 = 同一个顺序，两台设备一致 —— 这也是
+     「再看看一个」不需要任何同步状态的原因。线性探测解决碰撞；每一步都还能找到
+     一个空槽，所以放满 n 个位置必然终止。 */
+  function _order(pool, dayKey) {
+    var n = pool.length, used = {}, out = [];
+    for (var k = 0; k < n; k++) {
+      var i = _hash(dayKey + ':' + k) % n;
+      while (used[i]) i = (i + 1) % n;
+      used[i] = 1; out.push(i);
+    }
+    return out;
+  }
+
+  /* 当天默认看到的那一条。 */
+  function _featured(items, now) {
+    now = now || Date.now();
+    var pool = _featuredPool(items, now);
+    return pool.length ? pool[_dailyIndex(pool, now)] : null;
+  }
+
+  /* 「再看看一个」走的顺序：以当天默认那一条开头，再沿当天的排列往下走。因为
+     _order 是一个真排列，转完一圈之前不会重复 —— 这正是不用 Math.random() 的
+     原因：随机会立刻撞回上一条，而那恰恰是要防的事。
+
+     游标只在内存里。刷新 = 新会话 = 回到当天默认那一条；日期翻篇时排列整个重排，
+     所以游标必须跟着归零，否则它会指向一条已经被排到别处的内容。 */
+  var _cursor = 0, _cursorDay = null;
+
+  /* 当天固定的走查顺序，返回的是**条目**而不是下标。
+
+     这个区分是真的踩过的坑：_order() 排的是下标，第一版直接把它的结果当条目交出去，
+     于是 _featuredHtml() 收到一个数字 —— `it.kind` 是 undefined（回落到 diary），
+     `it.ts` 是 undefined（日期行渲染成「NaN 年前」），`it.text` 是 undefined（正文
+     空）。更糟的是下标 0 是假值，轮到它时 _featuredHtml 的 `if (!it) return ''` 直接
+     返回空串：卡片整个消失，连「再看看一个」按钮都不在，点不动也刷不出来。
+
+     所以顺序在这里就落到条目上，调用方拿到的永远是可以直接渲染的东西。 */
+  function _sequence(pool, now) {
+    var dayKey = _dayKey(_atMidnight(now));
+    if (_cursorDay !== dayKey) { _cursorDay = dayKey; _cursor = 0; }
+    if (!pool.length) return [];
+    var perm = _order(pool, dayKey);
+    var at = perm.indexOf(_dailyIndex(pool, now));
+    return perm.slice(at).concat(perm.slice(0, at)).map(function (i) { return pool[i]; });
   }
 
   // ── rendering ────────────────────────────────────────────────────────────
@@ -581,111 +659,63 @@
     if (d) d.textContent = '\u{1F4D6} ' + mem('kDiary');
   }
 
-  /* 时间轴上只保留最近 DIARY_REF_CAP 条日记引用。items 是新的在前，所以「最近」
-     就是前六条 —— 不需要排序，也不需要记住任何东西。
+  /* Phase 2E — 整页唯一的主角。§五 要的元素：kicker「✦ 今天想起」、类别 + 谁 +
+     多久以前、真实内容本身，以及两个出口。
 
-     这一步只过滤**渲染**：_items() 和 _featured() 拿到的永远是完整列表，精选照旧
-     可能选中一篇日记（§七 明确允许），选中的那篇也不会因为引用上限而消失。
+     卡片上的每一个字都来自 shared-* 里真实存在的内容：不改写、不总结、不补句，也
+     不替他们说话。_clip 只在过长时截断，截断处是省略号 —— 它删字，但不加字。
 
-     📖 日记 完全不经过这里：它通过日期条 / 月历 / ±7 天读取 shared-diary 的每一个
-     日期。上限只减少「我们的故事」这一屏上显示几条路标，历史上任何一篇日记都仍然
-     从日记模式可达 —— 这条边界就是那句「绝对不能限制、删除或影响 📖 日记 模式对
-     完整历史 Diary 的访问」。 */
-  function _capDiaryRefs(items) {
-    var seen = 0;
-    return items.filter(function (it) {
-      if (it.kind !== 'diary') return true;
-      seen++;
-      return seen <= DIARY_REF_CAP;
-    });
-  }
-
-  function _featuredHtml(it) {
+     「再看看一个」只在池子里真的还有第二条时才出现。只有一条时它是个按下去没有
+     反应的按钮 —— 那是假的 affordance，比没有更糟。 */
+  function _featuredHtml(it, canAdvance) {
     if (!it) return '';
     var meta = KIND[it.kind] || KIND.diary;
     var who = it.from ? ' \u{00B7} ' + _esc(_name(it.from)) : '';
+    var more = canAdvance
+      ? '<button type="button" class="mem-feat-more">' + _esc(mem('another')) +
+        '<span class="mem-feat-arrow" aria-hidden="true">\u{203A}</span></button>'
+      : '';
     return '<section class="card mem-feat" id="memFeatured">' +
-      '<div class="mem-feat-kicker">\u{2726} ' + _esc(mem('featured')) + '</div>' +
-      '<div class="mem-feat-kind">' + meta.e + ' ' + _esc(mem(meta.k)) + who + '</div>' +
+      '<div class="mem-feat-kicker">\u{2726} ' + _esc(mem('featuredToday')) + '</div>' +
+      '<div class="mem-feat-kind">' + meta.e + ' ' + _esc(mem(meta.k)) + who +
+        ' \u{00B7} ' + _esc(_ago(it.ts)) + '</div>' +
       '<p class="mem-feat-text">' + _esc(_clip(it.text, CLIP_FEATURED)) + '</p>' +
-      '<div class="mem-feat-ago">' + _esc(_ago(it.ts)) + '</div>' +
+      '<div class="mem-feat-acts">' + more +
+        '<button type="button" class="mem-feat-all">\u{1F4D6} ' + _esc(mem('allDiary')) +
+        '<span class="mem-feat-arrow" aria-hidden="true">\u{2192}</span></button>' +
+      '</div>' +
       '</section>';
   }
 
-  /* The day cell is the relative label while one applies, and the two-digit day
-     otherwise — so a row older than the window is exactly what it was before.
-
-     Phase 2C — 一条日记引用是一条路标（§七），所以它渲染成 <button> 而不是
-     <article>：整行可点，键盘也到得了（<button> 自带 Enter / Space），点它就切到
-     📖 日记 并落到那一天。其余四种条目仍然不可点 —— 它们没有「更完整的一处」可去，
-     做成按钮只会是一个假的 affordance。
-
-     data-date 直接取这一行的日期，和 id 里那个 key 同源（'diary:'+k+':'+who），
-     所以行上标的日期和它指向的日期不可能对不上。
-
-     文本比普通行短（CLIP_REF < CLIP_ROW）：这是引文，不是内容本身。读全文是点进去
-     之后的事，也正是 §二 要的「Diary 的少量引用 / 精选」。 */
-  function _rowHtml(it, now) {
-    var meta = KIND[it.kind] || KIND.diary;
-    var day = new Date(it.ts);
-    var when = _relDay(it.ts, now);
-    var who = it.from ? '<span class="mem-row-who">' + _esc(_name(it.from)) + '</span>' : '';
-    var isRef = it.kind === 'diary';
-    var body = '<span class="mem-row-ico" aria-hidden="true">' + meta.e + '</span>' +
-      '<div class="mem-row-body">' +
-        '<div class="mem-row-meta"><span class="mem-row-kind">' + _esc(mem(meta.k)) + '</span>' +
-          who + '<span class="mem-row-day">' + _esc(when || _pad(day.getDate())) + '</span></div>' +
-        '<p class="mem-row-text">' + _esc(_clip(it.text, isRef ? CLIP_REF : CLIP_ROW)) + '</p>' +
-      '</div>';
-    if (!isRef) return '<article class="mem-row">' + body + '</article>';
-    var dk = _dayKey(day);
-    return '<button type="button" class="mem-row mem-row-ref" data-date="' + _esc(dk) + '"' +
-      ' aria-label="' + _esc(mem('openRef').replace('{d}', dk)) + '">' + body +
-      '<span class="mem-row-go" aria-hidden="true">\u{203A}</span></button>';
+  /* 只重建那一张卡，不是整棵 #memRoot：点「再看看一个」时重渲染整页会让锚点和
+     CTA 一起闪一下，而它们一个像素都没变。两个按钮走 #memRoot 上的事件委托，所以
+     换掉 innerHTML 不会连监听器一起丢掉（和 2C 的 .mem-row-ref 同一条路）。 */
+  function _renderFeatured() {
+    var box = document.getElementById('memFeaturedBox');
+    if (!box) return;
+    var now = Date.now();
+    var pool = _featuredPool(_items(now), now);
+    var seq = _sequence(pool, now);
+    box.innerHTML = _featuredHtml(seq.length ? seq[_cursor % seq.length] : null, seq.length > 1);
   }
 
-  /* Months are the only grouping, in the shape of the phase's own example:
-     2026.09 ──── then its rows. The rule is a decorative span rather than a
-     border, so it can stay a hairline at every width without a media query. */
-  function _timelineHtml(items, now) {
-    if (!items.length) return '';
-    var groups = [], cur = null;
-    items.forEach(function (it) {
-      var m = _mmdd(new Date(it.ts));
-      if (!cur || cur.m !== m) { cur = { m: m, list: [] }; groups.push(cur); }
-      cur.list.push(it);
-    });
+  /* Phase 2E — _rowHtml 与 _timelineHtml 在这里，已删除。
 
-    var html = '<div class="mem-timeline" id="memTimeline">', budget = TIMELINE_CAP, shown = 0;
-    for (var g = 0; g < groups.length && budget > 0; g++) {
-      var take = Math.min(groups[g].list.length, budget), rows = '';
-      for (var k = 0; k < take; k++) rows += _rowHtml(groups[g].list[k], now);
-      html += '<div class="mem-month">' +
-        '<div class="mem-month-head"><span class="mem-month-label">' + _esc(groups[g].m) + '</span>' +
-        '<span class="mem-month-rule" aria-hidden="true"></span></div>' + rows + '</div>';
-      budget -= take; shown += take;
-    }
-    html += '</div>';
-    if (items.length > shown) {
-      html += '<div class="mem-more">' + _esc(mem('more').replace('{n}', String(items.length - shown))) + '</div>';
-    }
-    return html;
-  }
+     Timeline 把 Diary、Gratitude、Know Me、Milestone 按月混成一条长列表，实测
+     反馈是「我不知道这个模块有什么用」—— 它长得像数据库，而不像回忆。§一 要求
+     彻底取消这一层展示，所以月分组头、日记引用行（.mem-row-ref）、以及「还有 N 条」
+     的收尾一起走，连同只服务它们的 CLIP_ROW / CLIP_REF / TIMELINE_CAP /
+     DIARY_REF_CAP / REL_DAYS / _relDay()。
 
-  /* Song carries no date at all, so it is not placed on a dated timeline — it
-     gets its own undated card, one line per person, which is also the honest
-     shape of the data. §九 asks for the title, not a player. */
-  function _songHtml() {
-    var rows = ['barry', 'andjela'].map(function (who) {
-      var s = _j('shared-song-' + who, null);
-      if (!s || !s.title) return '';
-      return '<div class="mem-song-row"><span class="mem-song-who">' + _esc(_name(who)) + '</span>' +
-        '<span class="mem-song-title">' + _esc(_clip(s.title, 80)) + '</span></div>';
-    }).join('');
-    if (!rows) return '';
-    return '<section class="card mem-song" id="memSong">' +
-      '<div class="mem-song-kicker">\u{1F3B5} ' + _esc(mem('song')) + '</div>' + rows + '</section>';
-  }
+     删掉的是**展示层**：_items() 仍然读到全部真实条目，📖 日记 仍然通过日期条和
+     月历到达任何一个存在过的日期。本模块从头到尾只有 getItem，没有任何写入路径，
+     所以这一步不可能碰到数据。2C 那句「日记引用上限不会影响日记模式」的边界，现在
+     由「一条引用都不显示」直接保证。
+
+     原来这里还有 _songHtml。「我们的歌」已经有自己的可编辑卡片（social.js /
+     render-love.js 的 renderSong + saveMySong）和首页读点（module-dashboard.js），
+     这里是第三份只读拷贝，还渲染在整条时间轴之后 —— 三份里最没有价值的一份。歌曲
+     数据和歌曲功能一个都没动。 */
 
   /* §十一: the first run must not report a database as empty. */
   function _emptyHtml() {
@@ -709,13 +739,20 @@
          this block is what separates the two (§八). Phase 2C 之后它前面只有那一条
          二级切换，日记那几块仍然在它后面原位不动。 */
       panel.insertBefore(host, panel.firstChild);
-      /* 事件委托绑在 #memRoot 上，只绑一次：这个节点活得比任何一次重建都久，
-         而重建出来的 .mem-row-ref 是新的。写在创建处而不是每次渲染后，是因为
-         这里恰好是「这个节点是新造的」唯一为真的地方，不需要额外的「已绑过」标记。
-         写卡和日期条不在 #memRoot 里，它们的监听器由 fix-diary.js 自己持有。 */
+      /* 事件委托绑在 #memRoot 上，只绑一次：这个节点活得比任何一次重建都久，而
+         重建出来的按钮是新的。写在创建处而不是每次渲染后，是因为这里恰好是
+         「这个节点是新造的」唯一为真的地方，不需要额外的「已绑过」标记。
+         写卡和日期条不在 #memRoot 里，它们的监听器由 fix-diary.js 自己持有。
+
+         Phase 2E — 卡片上的两个按钮也走这条路。这正是「再看看一个」能只换
+         #memFeaturedBox 的 innerHTML、而不必重绑任何监听器的原因。 */
       host.addEventListener('click', function (e) {
-        var b = (e.target && e.target.closest) ? e.target.closest('.mem-row-ref') : null;
-        if (b && b.getAttribute('data-date')) _openDiary(b.getAttribute('data-date'));
+        if (!e.target || !e.target.closest) return;
+        /* 往前走一格。_sequence 是当天的真排列，所以走完一圈之前不会重复。 */
+        if (e.target.closest('.mem-feat-more')) { _cursor++; _renderFeatured(); return; }
+        /* 全部日记交给 📖 日记 —— 浏览历史是那一半的职责，回忆不再复制它。走
+           _setMode 而不是 _openDiary：这一条是「去看」，不是「去写今天」。 */
+        if (e.target.closest('.mem-feat-all')) _setMode('diary');
       });
     }
     /* Phase 2C — 重建的仍然只有这一棵子树。日记的写卡、日期条、对方的信都在
@@ -724,31 +761,19 @@
        事件，全都活着。这正是 2B.9 需要 _parkDiaryNodes 去救、现在不必再救的那件事。 */
     var now = Date.now();
     var all = _items(now);
-    /* The pick is rendered once, at the top of the page. Filtering it out of
-       the timeline by id is what makes that true, and it is a no-op whenever
-       the pick is older than the 80-row budget — a capped timeline never
-       contained it. The pool is never filtered: _featured still chooses from
-       the full list, so which memory gets picked cannot depend on this.
-       The gate below stays on `all`, not on `rest`: a story whose only memory
-       is the pick is still a story, and must not show the empty card under a
-       rendered memory. */
-    var feat = _featured(all, now);
-    var rest = feat ? all.filter(function (it) { return it.id !== feat.id; }) : all;
-    /* 引用上限只压这一屏的渲染：_items() / _featured() 拿到的仍是完整列表，
-       空态判据 all.length 和精选池都不受影响。见 _capDiaryRefs。 */
-    var shown = _capDiaryRefs(rest);
+    /* Phase 2E — 这一屏现在只有四块：身份头、纪念日锚点、写日记入口，和一张
+       「今天想起」。长时间轴、歌曲卡、以及 2C 那个收尾标题都删了（见上）。
+
+       空态只在真的什么都没有时出现。有内容但都还太新（没到 FEATURED_MIN_AGE）
+       时，锚点和 CTA 就是这一页的全部 —— 不摆一张「这里还没有很多故事」的卡片，
+       去否认他们刚刚写下的东西。 */
     host.innerHTML = _headHtml() +
       _anchorHtml(now) +
       _writeCtaHtml() +
-      _featuredHtml(feat) +
-      (all.length ? _timelineHtml(shown, now) + _songHtml() : _emptyHtml()) +
-      /* §八 那个收尾的标题。Phase 2C 之后它下面接的是日记那几块，而故事模式下
-         那几块被 CSS 藏了 —— 悬一个「我的日记」标题指着不存在的东西，比没有标题
-         更糟，所以它在故事模式下也被 CSS 压掉。
-         它在 #memRoot 里面，而日记模式下 #memRoot 整体隐藏，因此它实际永远不会
-         被看到。保留而不是删掉，是因为它标着「这一块讲的是什么」，将来若日记模式
-         改成内联在故事下面，它就该回来；现在删它属于 2C 范围外的清理。 */
-      '<h2 class="mem-diary-head">\u{270D}\u{FE0F} ' + _esc(mem('myDiary')) + '</h2>';
+      '<div id="memFeaturedBox"></div>' +
+      (all.length ? '' : _emptyHtml());
+    /* 卡片单独填：它要能被「再看看一个」局部重建，而不牵动上面那三块。 */
+    _renderFeatured();
     /* 监听器在每次渲染后现绑，而不是内联 onclick：innerHTML 每次都换掉这一行，
        旧节点连着旧监听器一起被丢弃，所以它不可能叠加，也不需要任何「已绑过」的
        标记。（.mem-row-ref 不同 —— 它每次都是新节点，所以走绑在 #memRoot 上的委托。）
@@ -770,12 +795,15 @@
      while something written yesterday sat one tap away. So when nothing is old
      enough to be featured yet, the line falls back to the newest memory instead
      of disappearing: it then always points at the most recent thing they wrote.
-     Milestones are excluded from the fallback on purpose — the header already
-     carries those day counts, and this line exists to resurface a memory. */
+     Phase 2E — the fallback now reuses _isFeaturable, so this line and the
+     「今天想起」 card agree on what counts at all; before, each carried its own
+     filter. Milestones and daily questions are out either way, which is right:
+     the header already carries the day counts, and a question answer without
+     its question is a fragment. */
   function _homeItem(items, now) {
     var f = _featured(items, now);
     if (f) return f;
-    var rest = items.filter(function (it) { return it.kind !== 'milestone'; });
+    var rest = items.filter(_isFeaturable);
     return rest.length ? rest[0] : null;
   }
 
@@ -870,8 +898,13 @@
   window.renderMemories = _render;
   window.__memories = {
     items: _items, featured: _featured, ago: _ago, parseDay: _parseDay, hash: _hash,
-    /* Phase 2C — 测试用的把手。引用上限是个纯函数，两种模式的状态也只有这里读得到。 */
-    capDiaryRefs: _capDiaryRefs, refCap: DIARY_REF_CAP,
+    /* Phase 2E — 测试用的把手。候选池、当天排列、日下标都是纯函数，游标是纯内存
+       状态，两者都只有这里读得到。2C 的 capDiaryRefs / refCap 随时间轴一起删除。 */
+    pool: _featuredPool, featurable: _isFeaturable, sequence: _sequence,
+    dailyIndex: _dailyIndex, kinds: FEATURED_KINDS,
+    minDiaryLen: DIARY_MIN_LEN, lookback: FEATURED_LOOKBACK,
+    cursor: function () { return _cursor; },
+    resetCursor: function () { _cursor = 0; },
     setMode: _setMode, openDiary: _openDiary, mode: function () { return _mode; },
     /* 「第一次进日记模式才落点」这条规矩只有这个标记读得到，所以它也得出来。 */
     entered: function () { return _diaryEntered; }

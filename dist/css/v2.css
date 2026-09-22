@@ -747,17 +747,11 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
    320 下不会有横向溢出。
 
    颜色一个都没在这里定义，两个主题自动跟随；这一块只做布局，不管外观。 */
-.mem-write-host {
-  display: none;
-}
-.mem-write-host.is-open {
-  display: block;
-}
-/* 展开后这一行从「指路」变成「收起」，› 转成向下：同一个字，只是它现在指的是
-   下面那个已经打开的东西。transform 是合成器属性，不引起重排。 */
-.mem-write-cta.is-open .mem-write-cta-more {
-  transform: rotate(90deg);
-}
+/* Phase 2E — .mem-write-host 与 .mem-write-cta.is-open 在这里，已删除。
+
+   host 是 2B.9「把写卡借进来就地展开」的容器，2C 把它连同整套借还机制一起删了；
+   .is-open 那条旋转是同一个机制剩下的最后一个选择器。两者都没有任何 JS 再加
+   这两个 class，规则留着只是永远不匹配的死代码。 */
 
 /* ── Featured memory (§五) ───────────────────────────────────────────────── */
 .mem-feat {
@@ -824,125 +818,62 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   max-width: 46ch;
   margin-inline: auto;
 }
-.mem-feat-ago {
-  margin-top: 10px;
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-}
-
-/* ── Timeline (§四) ──────────────────────────────────────────────────────── */
-.mem-timeline {
+/* Phase 2E §五 — 卡片底部那两个出口。都是 button，因为两条都真的可点：
+   「再看看一个」在左，「📖 看全部日记」在右。换行是给 320 留的 —— 两个词在窄屏
+   可能各占一行，而不是挤成一条读不了的横排。 */
+.mem-feat-acts {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 14px;
 }
-.mem-month {
-  display: flex;
-  flex-direction: column;
-}
-.mem-month-head {
-  display: flex;
+.mem-feat-more,
+.mem-feat-all {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 2px;
-}
-.mem-month-label {
+  gap: 4px;
+  min-height: var(--touch-target);
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
   font-size: var(--text-sm);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+/* 「看全部日记」是这一页唯一的出口，所以比「再看看一个」重一档：它有边框。两个
+   都不是主按钮 —— 这一页没有主按钮，主角是上面那段内容。 */
+.mem-feat-all {
+  border-color: var(--border-soft);
   color: var(--text);
 }
-/* The rule fades out rather than stopping dead: a full-width hairline reads as
-   a table border, a fading one reads as a timeline. */
-.mem-month-rule {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+@media (hover: hover) {
+  .mem-feat-more:hover {
+    color: var(--text);
+  }
+  .mem-feat-all:hover {
+    border-color: var(--border);
+  }
 }
-
-.mem-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 9px 2px;
-  border-top: 1px solid var(--border-soft);
-}
-.mem-month .mem-row:first-of-type {
-  border-top: 0;
-}
-.mem-row-ico {
-  flex: 0 0 auto;
-  font-size: 0.9rem;
-  line-height: 1.45;
-}
-.mem-row-body {
-  flex: 1;
-  min-width: 0;
-}
-.mem-row-meta {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-}
-.mem-row-kind {
-  font-weight: 650;
-}
-.mem-row-who {
-  color: var(--love-ink);
-}
-.mem-row-day {
-  /* No opacity. This used to carry opacity: 0.7, which put --text-muted at
-     3.44-3.92:1 in dark and 2.76-2.93:1 in light -- it failed AA in BOTH
-     themes, and light was the worse of the two, so this was not a dark-mode
-     bug. At full strength the token already clears AA (6.11:1 on --card dark,
-     5.42:1 light). */
-  margin-left: auto;
-  font-variant-numeric: tabular-nums;
-}
-.mem-row-text {
-  margin-top: 2px;
-  font-size: var(--text-base);
-  line-height: 1.5;
-  color: var(--text);
-  word-break: break-word;
-}
-.mem-more {
-  padding-top: 2px;
-  font-size: var(--text-xs);
+.mem-feat-arrow {
   color: var(--text-muted);
 }
 
-/* ── Our Song (§九) — undated, so it is not placed on the axis ───────────── */
-.mem-song {
-  padding: var(--space-card-sm);
-}
-.mem-song-kicker {
-  margin-bottom: 6px;
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-.mem-song-row {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 3px 0;
-}
-.mem-song-who {
-  flex: 0 0 auto;
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-}
-.mem-song-title {
-  font-size: var(--text-base);
-  color: var(--text);
-  word-break: break-word;
-}
+/* Phase 2E — 时间轴与歌曲卡在这里，已删除。
+
+   `.mem-timeline` / `.mem-month*` / `.mem-row*` / `.mem-more` 只服务
+   _timelineHtml（按月分组的完整历史列表），`.mem-song*` 只服务 _songHtml
+   （歌曲卡）—— 两者连同它们的 JS 一起走，见 js/module-memories.js 的 Phase 2E
+   注释。.mem-feat-ago 也在这里删除：多久以前现在长在 .mem-feat-kind 那一行里，
+   单独一行是重复。
+
+   `.mem-row-day` 那条 AA 备注（去掉 opacity 0.7，它在明暗两个主题里都不达标）
+   随选择器一起消失，但结论仍然有效 —— 新卡片的元信息行用的是同一个
+   --text-muted 全强度令牌，没有重新引入那个 0.7。 */
 
 /* ── Empty state (§十一) ─────────────────────────────────────────────────── */
 .mem-empty {
@@ -965,15 +896,11 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   color: var(--text-muted);
 }
 
-/* ── The seam between our story and my own record (§八) ──────────────────── */
-.mem-diary-head {
-  margin: 6px 0 -2px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-md);
-  font-weight: 650;
-  color: var(--text);
-}
+/* Phase 2E — .mem-diary-head 在这里，已删除。
+
+   它是「我的日记」那个收尾标题，2C 之后就已经被故事模式的规则压掉、实际永远
+   不可见（日记模式下 #memRoot 整体隐藏）。§八 要求清掉只服务旧展示层的东西，
+   而它连同它那条模式规则一起走 —— 悬一个标题指着不存在的东西，比没有标题更糟。 */
 
 /* ── Home resurfacing (§六): one line. No badge, no unread state, no push. ─ */
 .dash-story-line {
@@ -1064,19 +991,14 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   }
 }
 
-/* ── Two permanently empty shells leave the 回忆 panel ────────────────────
-   Both are provably dead rather than merely unused: #diaryTimelineList and
-   #mailboxList have no renderer anywhere in js/ — those ids appear only in
-   index.html — the sdTimeline* strings in js/i18n.js have no reader, and the
+/* ── Phase 2E: the two empty shells are gone from the markup, not hidden ──
+   2C proved them dead — #diaryTimelineList and #mailboxList have no renderer
+   anywhere in js/, the sdTimeline* strings in js/i18n.js have no reader, and the
    export/import pair inside the mailbox card is already force-hidden by
-   js/fix-css.js. On a Memories page they rendered as two empty cards, which is
-   the "database" impression §17 rejects, so they go. Scoped to direct children
-   of the panel: the classes themselves are left in place in case anything ever
-   keys off them. */
-#panel-diary > .diary-timeline-section,
-#panel-diary > .card:has(> #mailboxList) {
-  display: none;
-}
+   js/fix-css.js. It hid them with the two rules that used to sit here. §八 now
+   deletes the nodes themselves from index.html, so the rules go with them:
+   #diaryFullCalGrid went the same way, while #diaryFullCal and
+   toggleDiaryCalendar() stay — those the diary really does use. */
 
 /* ── Phase 1D: the Cycle panel’s own header ───────────────────────────────
    The panel opened straight onto a calendar, so nothing on screen said which
@@ -1439,17 +1361,16 @@ textarea,
 
    两边的选择器都列到了具体节点，不只列父级：`.lpc-row` 只在守卫为真时才存在，
    守卫为假时写卡和信卡是面板的直接子节点，只藏 `.lpc-row` 会漏掉它们。
-   `.mem-diary-head` 在 #memRoot **里面**（它是 _storyHtml 的最后一项），日记模式下
-   #memRoot 整体隐藏，所以它实际只在故事模式下需要被压掉 —— 那下面已经没有任何
-   编辑器了，悬一个「我的日记」标题会指向不存在的东西。 */
+   Phase 2E — 这里原有八条，现在剩五条。`.diary-timeline-section` 与
+   `.diary-mailbox-card` 的节点已经从 index.html 删除，`.mem-diary-head` 连它的
+   渲染代码和 CSS 一起删除，所以三条规则都没有对象了。剩下的五条仍然逐节点列出，
+   `.lpc-row` 那条尤其不能省：守卫为假时写卡和信卡是面板的直接子节点，只藏
+   `.lpc-row` 会漏掉它们。 */
 #panel-diary.mem-mode-story .diary-date-strip-wrap,
 #panel-diary.mem-mode-story #diaryFullCal,
 #panel-diary.mem-mode-story .lpc-row,
 #panel-diary.mem-mode-story #diaryWriteCard,
-#panel-diary.mem-mode-story #letterPartnerCard,
-#panel-diary.mem-mode-story .diary-timeline-section,
-#panel-diary.mem-mode-story .diary-mailbox-card,
-#panel-diary.mem-mode-story #memRoot .mem-diary-head {
+#panel-diary.mem-mode-story #letterPartnerCard {
   display: none;
 }
 #panel-diary.mem-mode-diary #memRoot {
@@ -1493,36 +1414,8 @@ textarea,
 }
 /* 焦点环不在这里加 —— 1E-D 的 :where(button):focus-visible 已经覆盖全部 button。 */
 
-/* 时间轴上的日记引用。它是**路标不是日记**：一句 90 字的摘录加一个日期，
-   点进去才落在 📖 日记 的那一天。做成一整行 button 而不是 article，是因为它
-   真的可点 —— 视觉上仍然是一条时间轴行，不是卡片、不是链接色。 */
-.mem-row-ref {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-height: var(--touch-target);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.mem-row-ref .mem-row-body {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.mem-row-ref .mem-row-go {
-  flex: 0 0 auto;
-  color: var(--text-muted);
-}
-@media (hover: hover) {
-  .mem-row-ref:hover .mem-row-go {
-    color: var(--gold-muted);
-  }
-}
-.mem-row-ref:active {
-  transform: scale(0.995);
-}
+/* Phase 2E — .mem-row-ref 在这里，已删除。
+
+   它是时间轴上那条可点的日记引用（2C §七 的路标）。时间轴整个取消之后没有对象
+   了。它想去的地方 —— 📖 日记 的某一天 —— 现在由卡片上的「📖 看全部日记」整体
+   承担：浏览历史是那一半的职责，回忆不再复制一条捷径。 */

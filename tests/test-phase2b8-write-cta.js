@@ -191,10 +191,15 @@ const MEASURE = function () {
     type: cta.getAttribute('type'),
     inlineOnclick: cta.hasAttribute('onclick'),
     /* The render chain must place it after the story's opening and before the
-       featured card, so its index among #memRoot's children sits between theirs. */
+       featured card, so its index among #memRoot's children sits between theirs.
+       Phase 2E fills the card into #memFeaturedBox instead of into the innerHTML
+       string, so the card is now a grandchild of #memRoot — the box is the child
+       whose position orders it. `hasFeaturedCard` keeps the ordering claim from
+       being satisfied by an empty box. */
     childIndex: root ? Array.prototype.indexOf.call(root.children, cta) : -1,
     anchorIndex: root ? Array.prototype.indexOf.call(root.children, document.getElementById('memAnchor')) : -1,
-    featuredIndex: root ? Array.prototype.indexOf.call(root.children, document.getElementById('memFeatured')) : -1,
+    featuredIndex: root ? Array.prototype.indexOf.call(root.children, document.getElementById('memFeaturedBox')) : -1,
+    hasFeaturedCard: !!document.getElementById('memFeatured'),
     writeCard: within(wc),
     dateStrip: within(strip),
     hasTextarea: !!document.getElementById('diaryTextarea'),
@@ -291,11 +296,17 @@ const DIARY_FLOW = async function (sentence) {
     const order = chainAt === -1 ? '' : memSrc.slice(chainAt, chainAt + 700);
     const iAnchor = order.indexOf('_anchorHtml(now)');
     const iCta = order.indexOf('_writeCtaHtml()');
-    const iFeat = order.indexOf('_featuredHtml(feat)');
+    /* Phase 2E: the card is no longer interpolated into this chain — it is
+       rendered into #memFeaturedBox just after, so the「再看看一个」button can
+       rebuild it alone. The order the round cares about is unchanged; the
+       element that pins it moved one level down, so this asserts the box's
+       position in the chain AND that the box is what the card is filled into. */
+    const iFeat = order.indexOf('memFeaturedBox');
     check('W3 the row renders after the story anchor and before the featured card',
       chainAt !== -1 && iAnchor !== -1 && iCta !== -1 && iFeat !== -1 &&
-      iAnchor < iCta && iCta < iFeat,
-      `chainAt=${chainAt} anchor=${iAnchor} cta=${iCta} featured=${iFeat}`);
+      iAnchor < iCta && iCta < iFeat &&
+      /getElementById\('memFeaturedBox'\)[\s\S]{0,400}?innerHTML = _featuredHtml\(/.test(memSrc),
+      `chainAt=${chainAt} anchor=${iAnchor} cta=${iCta} featuredBox=${iFeat}`);
 
     // The listener is bound, not inlined — an innerHTML rebuild drops the old
     // node with its listener, so a bound handler can never stack.
@@ -385,9 +396,9 @@ const DIARY_FLOW = async function (sentence) {
       `exists=${m.exists} inMemRoot=${m.insideMemRoot} tag=${m.tag} type=${m.type} inlineOnclick=${m.inlineOnclick}`);
 
     check(`W10 [${vp.tag}] it sits between the story anchor and the featured card`,
-      m.anchorIndex !== -1 && m.featuredIndex !== -1 &&
+      m.anchorIndex !== -1 && m.featuredIndex !== -1 && m.hasFeaturedCard &&
       m.anchorIndex < m.childIndex && m.childIndex < m.featuredIndex,
-      `anchor=${m.anchorIndex} cta=${m.childIndex} featured=${m.featuredIndex}`);
+      `anchor=${m.anchorIndex} cta=${m.childIndex} featuredBox=${m.featuredIndex} card=${m.hasFeaturedCard}`);
 
     check(`W11 [${vp.tag}] the tap target is at least 44px tall`,
       m.height >= 44, `height=${m.height}px top=${m.top}px`);
@@ -447,6 +458,13 @@ const DIARY_FLOW = async function (sentence) {
 
     await page.waitForTimeout(1800);
     const held = await settle(300);
+    /* Phase 2E shortened the story half to a single card (§一), and at these
+       three widths the document can now be short enough that window.scrollTo()
+       moves nothing. That makes the old `held > 0` precondition unsatisfiable
+       rather than false — measured here instead of assumed, so the check below
+       can say which case it was in. */
+    const fitsViewport = await page.evaluate(
+      () => document.documentElement.scrollHeight <= window.innerHeight + 1);
     await page.evaluate(() => window.initSharedDiaryTab());
     await page.waitForTimeout(1800);
     const heldAfter = await page.evaluate(() => {
@@ -457,9 +475,14 @@ const DIARY_FLOW = async function (sentence) {
         writeCardInView: !!(b && b.top < window.innerHeight && b.bottom > 0),
       };
     });
+    /* The claim this check exists for is "the re-render does not move the page",
+       and both branches test it: a scrollable page must keep the position it was
+       put at, and a page that fits the viewport must stay at 0. The branch is
+       named in the detail line so neither case can pass silently. */
     check(`W14c [${vp.tag}] re-rendering Memories (the tab-activation path) does not scroll the page`,
-      held > 0 && heldAfter.y === held && !heldAfter.writeCardInView,
-      `before=${held} after=${heldAfter.y} writeCardInView=${heldAfter.writeCardInView}`);
+      !heldAfter.writeCardInView &&
+      (fitsViewport ? held === 0 && heldAfter.y === 0 : held > 0 && heldAfter.y === held),
+      `${fitsViewport ? 'fits-viewport' : 'scrollable'} before=${held} after=${heldAfter.y} writeCardInView=${heldAfter.writeCardInView}`);
 
     const stillThere = await page.evaluate(MEASURE);
     check(`W15 [${vp.tag}] the diary editor is untouched below the story`,
