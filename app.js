@@ -576,7 +576,7 @@ function setupUpdatePrompt() {
       if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     };
   }
-  navigator.serviceWorker.register('sw.js?v=7.4.0')
+  navigator.serviceWorker.register('sw.js?v=7.4.1')
     .then(function (reg) {
       // A new version installed on an earlier visit and is still parked
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg);

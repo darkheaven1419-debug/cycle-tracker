@@ -352,6 +352,94 @@ const F1 = {
       'hidden guard present');
   }
 
+  /* ── F13 ⑬ the window is anchored on TODAY, not on the last period ───── */
+  {
+    /* Last start 2026-05-25, today 2026-09-23: months apart. Anchoring the
+       window on that stale start would end it 2026-08-25 — already in the past,
+       emitting nothing. Anchored on today it runs to 2026-12-23. */
+    const early = run({
+      records: ['2026-03-02', '2026-03-30', '2026-04-27', '2026-05-25'],
+      duration: 5, today: new HostDate(2026, 8, 23),
+    });
+    const f = early.pred.forecast;
+    const todayISO = early.api.fmtDate(early.api.today());
+    const starts = f.periods.map((p) => p.start);
+    const fromLastStart = early.api._addCalMonths(early.pred.lastStart, 3);
+
+    check('F13 horizonStart is today and horizonEnd is today + 3 calendar months',
+      early.api.fmtDate(f.horizonStart) === '2026-09-23' &&
+      early.api.fmtDate(f.horizonEnd) === '2026-12-23',
+      `${early.api.fmtDate(f.horizonStart)} -> ${early.api.fmtDate(f.horizonEnd)}`);
+
+    check('F13b a stale last period does not end the window early',
+      early.api.fmtDate(fromLastStart) === '2026-08-25' && f.horizonEnd > fromLastStart &&
+      starts.some((s) => s > fromLastStart),
+      `lastStart+3mo=${early.api.fmtDate(fromLastStart)} horizonEnd=${early.api.fmtDate(f.horizonEnd)} periods=${starts.length}`);
+
+    check('F13c every emitted period starts on or after today',
+      starts.length > 0 && starts.every((s) => early.api.fmtDate(s) >= todayISO),
+      `${starts.length} periods, first=${early.api.fmtDate(starts[0])}`);
+
+    /* The data really is stale, so the lower bound had work to do: one cycle
+       from the last start lands in the past and must not be emitted. */
+    const naive = early.api.addDays(early.pred.lastStart, early.pred.medianCycle);
+    check('F13d the unrolled first candidate was in the past, so the bound genuinely filtered',
+      early.api.fmtDate(naive) < todayISO,
+      `lastStart+medianCycle=${early.api.fmtDate(naive)} < today=${todayISO}`);
+  }
+
+  /* ── F14 ⑭ the far bound is inclusive ────────────────────────────────── */
+  {
+    /* 30-day spacing from 2026-09-24 lands exactly on 2026-12-23, which IS
+       today + 3 calendar months. It has to be shown: the rule is
+       `start <= horizonEnd`, not `<`. */
+    const edge = run({
+      records: ['2026-05-27', '2026-06-26', '2026-07-26', '2026-08-25'],
+      duration: 5, today: new HostDate(2026, 8, 23),
+    });
+    const f = edge.pred.forecast;
+    const starts = f.periods.map((p) => p.start);
+    const last = starts[starts.length - 1];
+    const next = edge.api.addDays(last, edge.pred.medianCycle);
+    const onBoundary = starts.filter((s) => s.getTime() === f.horizonEnd.getTime());
+
+    check('F14 a period starting exactly on horizonEnd is shown',
+      edge.api.fmtDate(f.horizonEnd) === '2026-12-23' && edge.api.fmtDate(last) === '2026-12-23' &&
+      onBoundary.length === 1,
+      `last=${edge.api.fmtDate(last)} horizonEnd=${edge.api.fmtDate(f.horizonEnd)} onBoundary=${onBoundary.length}`);
+
+    check('F14b nothing past horizonEnd is shown, and one more step really would be past it',
+      starts.every((s) => s <= f.horizonEnd) && next > f.horizonEnd,
+      `next would be ${edge.api.fmtDate(next)} > horizonEnd ${edge.api.fmtDate(f.horizonEnd)}`);
+
+    check('F14c the far bound is inclusive (<=), not exclusive (<)',
+      starts.length === 4 && edge.api.fmtDate(starts[0]) === '2026-09-24',
+      `${starts.length} periods: ${starts.map((s) => edge.api.fmtDate(s)).join(', ')}`);
+  }
+
+  /* ── F15 ⑮ shifting the window is still a pure computation ───────────── */
+  {
+    const stale = run({
+      records: ['2026-03-02', '2026-03-30', '2026-04-27', '2026-05-25'],
+      duration: 5, today: new HostDate(2026, 8, 23),
+    });
+
+    check('F15 the real history is byte-identical after predicting a stale-data window',
+      stale.before === stale.after, stale.before === stale.after ? 'unchanged' : 'state mutated');
+    check('F15b predicting writes nothing to storage',
+      stale.writes.length === 0, `writes=${stale.writes.length}`);
+    check('F15c horizonStart/horizonEnd live on the returned forecast, never on state',
+      !('forecast' in stale.state) && !('horizonStart' in stale.state) && !('horizonEnd' in stale.state) &&
+      stale.pred.forecast.horizonStart instanceof Date &&
+      stale.pred.forecast.horizonEnd instanceof Date,
+      Object.keys(stale.state).join(','));
+    check('F15d the emitted dates are derived, not references into the history',
+      stale.pred.forecast.periods.length > 0 &&
+      stale.pred.forecast.periods.every((p) =>
+        !stale.state.records.some((r) => r.getTime() === p.start.getTime())),
+      `${stale.pred.forecast.periods.length} periods`);
+  }
+
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} passed`);
   process.exit(failed.length ? 1 : 0);

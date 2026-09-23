@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.4.0';
+const APP_VERSION = '7.4.1';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -252,6 +252,24 @@ const V = '?v=' + APP_VERSION;
 //
 // 老问题照旧：裸路径那五条不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
 // 旧引擎、旧 index.html，而变化恰恰只存在于渲染结果里。
+//
+// ── Phase 2F.1：窗口锚点写实（只有 APP_VERSION 动，CACHE_STATIC 不动）──
+// 7.4.0 → 7.4.1。本轮只改 ./js/cycle-core.js 一个文件，而它带 ?v=，所以只推
+// APP_VERSION。**CACHE_STATIC 停在 v49** —— 没有任何裸路径资产变化，资源没变
+// 就不该为一次发布顺手 cache-bust。
+//
+// 改了什么：horizonEnd 本来就是 _addCalMonths(today(), 3)，不是从最近一次经期
+// 起算。这一轮把窗口**起点**也写实成 forecast.horizonStart = today，并让
+// futurePeriods 的入列同时判两端：st >= horizonStart 且 st <= horizonEnd。
+// 在此之前下界只由上面那段 overdue 回滚「顺带」保证（nextStart 恒 >= today），
+// 那是推论不是约束；现在它是一条判定 —— 回滚一旦被改动，过去的预测不会再悄悄
+// 混进 futurePeriods 被 getPhase() 拿去给日历上色。
+//
+// 坦白说：对现有输入这是**行为保持**的加固，不是一个正在发生的 bug 修复。
+// 最近一次经期早于今天时窗口不会提前结束（最近一次 9/1、今天 9/23 → 窗口仍是
+// 9/23…12/23，不是 …12/1）；落在 horizonEnd 当天的预测照旧显示（包含，不是排除）。
+// 但 cycle-core.js 这个文件确实变了，带 ?v= 的资源换了 URL 才会被重新拉取，
+// 所以 APP_VERSION 必须走。schema 依旧一个字没改，预测值依旧只活在返回值里。
 const CACHE_STATIC = 'ciklus-static-v49';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
