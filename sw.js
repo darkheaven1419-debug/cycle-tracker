@@ -253,10 +253,17 @@ const V = '?v=' + APP_VERSION;
 // 老问题照旧：裸路径那五条不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
 // 旧引擎、旧 index.html，而变化恰恰只存在于渲染结果里。
 //
-// ── Phase 2F.1：窗口锚点写实（只有 APP_VERSION 动，CACHE_STATIC 不动）──
-// 7.4.0 → 7.4.1。本轮只改 ./js/cycle-core.js 一个文件，而它带 ?v=，所以只推
-// APP_VERSION。**CACHE_STATIC 停在 v49** —— 没有任何裸路径资产变化，资源没变
-// 就不该为一次发布顺手 cache-bust。
+// ── Phase 2F.1：窗口锚点写实（两条轴都动，原因见下）────────────────────
+// 7.4.0 → 7.4.1，v49 → v50。本轮只改 ./js/cycle-core.js 的**行为**，但它引发
+// 的版本后果有两条，第二条容易漏：
+//   · ./js/cycle-core.js 带 ?v= → APP_VERSION 必须走（换了 URL 才会被重新拉取）。
+//   · ./index.html 在 STATIC_ASSETS 里是**裸路径**，而 test-version-consistency
+//     强制它的 23 个 ?v= 必须等于 APP_VERSION —— 所以抬 APP_VERSION 就必然
+//     改动 index.html。裸路径资产的 URL 不变，只有换 cache 名字才推得动它，
+//     CACHE_STATIC 因此必须一起抬。
+// 也就是说这两条轴在本仓库里是**绑定**的：凡动 APP_VERSION 必动 index.html，
+// 凡动 index.html 必动 CACHE_STATIC。tests/test-phase2a-sw.js 的 S15 就是这条
+// 不变量的守卫 —— 本轮第一次提交（0bbd0d6）只抬了 APP_VERSION，正是它抓出来的。
 //
 // 改了什么：horizonEnd 本来就是 _addCalMonths(today(), 3)，不是从最近一次经期
 // 起算。这一轮把窗口**起点**也写实成 forecast.horizonStart = today，并让
@@ -270,7 +277,7 @@ const V = '?v=' + APP_VERSION;
 // 9/23…12/23，不是 …12/1）；落在 horizonEnd 当天的预测照旧显示（包含，不是排除）。
 // 但 cycle-core.js 这个文件确实变了，带 ?v= 的资源换了 URL 才会被重新拉取，
 // 所以 APP_VERSION 必须走。schema 依旧一个字没改，预测值依旧只活在返回值里。
-const CACHE_STATIC = 'ciklus-static-v49';
+const CACHE_STATIC = 'ciklus-static-v50';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

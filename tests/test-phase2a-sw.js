@@ -309,10 +309,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV49 = /const CACHE_STATIC = 'ciklus-static-v49';/.test(src);
-    const hasV48 = /ciklus-static-v48/.test(src);
+    const hasV50 = /const CACHE_STATIC = 'ciklus-static-v50';/.test(src);
+    const hasV49 = /ciklus-static-v49/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV49 && !hasV48, `v49=${hasV49} v48StillPresent=${hasV48}`);
+      hasV50 && !hasV49, `v50=${hasV50} v49StillPresent=${hasV49}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -371,8 +371,8 @@ function fire(handlers, url, opts) {
       missing.length === 0, `missing=${missing.join(',') || 'none'}`);
   }
 
-  // S13 — an installed client still holds v47; one generation back holds v46,
-  // with v45..v31 further back. Run the real activate handler: every stale
+  // S13 — an installed client still holds v49; one generation back holds v48,
+  // with v47..v31 further back. Run the real activate handler: every stale
   // bucket must be deleted, the current one must survive. This is the step that
   // actually evicts the old copies of the cache-first assets.
   {
@@ -397,12 +397,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v47');
     await named.api.open('ciklus-static-v48');
     await named.api.open('ciklus-static-v49');
+    await named.api.open('ciklus-static-v50');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v48 buckets and keeps v49 + fonts',
+    check('S13 activate evicts the stale v31..v49 buckets and keeps v50 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -421,7 +422,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v46') === -1 &&
       names.indexOf('ciklus-static-v47') === -1 &&
       names.indexOf('ciklus-static-v48') === -1 &&
-      names.indexOf('ciklus-static-v49') !== -1 &&
+      names.indexOf('ciklus-static-v49') === -1 &&
+      names.indexOf('ciklus-static-v50') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
