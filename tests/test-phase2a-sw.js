@@ -309,10 +309,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV48 = /const CACHE_STATIC = 'ciklus-static-v48';/.test(src);
-    const hasV47 = /ciklus-static-v47/.test(src);
+    const hasV49 = /const CACHE_STATIC = 'ciklus-static-v49';/.test(src);
+    const hasV48 = /ciklus-static-v48/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV48 && !hasV47, `v48=${hasV48} v47StillPresent=${hasV47}`);
+      hasV49 && !hasV48, `v49=${hasV49} v48StillPresent=${hasV48}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -396,12 +396,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v46');
     await named.api.open('ciklus-static-v47');
     await named.api.open('ciklus-static-v48');
+    await named.api.open('ciklus-static-v49');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v47 buckets and keeps v48 + fonts',
+    check('S13 activate evicts the stale v31..v48 buckets and keeps v49 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -419,7 +420,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v45') === -1 &&
       names.indexOf('ciklus-static-v46') === -1 &&
       names.indexOf('ciklus-static-v47') === -1 &&
-      names.indexOf('ciklus-static-v48') !== -1 &&
+      names.indexOf('ciklus-static-v48') === -1 &&
+      names.indexOf('ciklus-static-v49') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }
@@ -450,7 +452,11 @@ function fire(handlers, url, opts) {
     let done = null;
     h.install({ waitUntil: (p) => { done = p; } });
     await done;
-    const got = named.contents('ciklus-static-v48');
+    /* Derived, not hardcoded: this literal was the one pin a generation bump
+       could silently leave behind, and did — it read a cache that install no
+       longer writes, so the assertion went to entries=0 instead of failing loudly. */
+    const cacheName = (swSrc.match(/const CACHE_STATIC = '([^']+)'/) || [])[1];
+    const got = named.contents(cacheName);
     const missing = expected.filter((f) => got.indexOf(f) === -1);
     check('S14b install precaches the exact URLs the page requests (app.js?vN, fix-stats.js)',
       got.length > 40 && missing.length === 0,

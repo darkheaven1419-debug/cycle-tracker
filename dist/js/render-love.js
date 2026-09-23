@@ -79,12 +79,94 @@ function echoSentFeedback(e,t,n){
   btn.parentNode.appendChild(tag);
   setTimeout(function(){tag.remove()},2200)
 }
-function renderGratitude(){const e=document.getElementById("grat-title"),n=document.getElementById("gratInput"),a=document.getElementById("gratList");if(!e||!n||!a)return;e.textContent=t("gratTitle"),n.placeholder=t("gratPlaceholder");const o=JSON.parse(localStorage.getItem("shared-gratitude")||"[]");0!==o.length?a.innerHTML=o.slice(-5).reverse().map(function(e,t){const n="andjela"===e.from?"🌸":"👦",a=e.from!==("andjela"===activeProfile?"andjela":"barry")?' <button onclick="translateGrat('+t+')" style="font-size:.55rem;padding:1px 6px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer">🌐</button>':"";return'<div class="grat-block"><div class="gratitude-item"><span class="gratitude-heart">'+n+'</span><span id="grat-txt-'+t+'">'+esc(e.text)+"</span>"+a+"</div>"+gratEchoRow(e)+"</div>"}).join(""):a.innerHTML=""}function translateGrat(e){_gratNotes||(_gratNotes=JSON.parse(localStorage.getItem("shared-gratitude")||"[]"));const t=_gratNotes[e];if(!t)return;const n="andjela"===t.from?"sr":"sr"===lang?"zh-CN":"sr",a="sr"===lang?"sr":"zh-CN"===lang?"zh-CN":"en";n!==a&&translateText(t.text,n,a).then(function(t){const n=document.getElementById("grat-txt-"+e);n&&(n.textContent=t)})}function saveCheckinAnswer(e,t){const n="shared-checkin-"+activeProfile,a=JSON.parse(localStorage.getItem(n)||"{}");a[e]=t,localStorage.setItem(n,JSON.stringify(a)),renderCheckin(),pushAllSharedData()}function getCheckinAnswers(e){return JSON.parse(localStorage.getItem("shared-checkin-"+e)||"{}")}function renderCheckin(){const e=(new Date).getDay();if(0!==e&&6!==e)return void(document.getElementById("checkinCard").style.display="none");document.getElementById("checkinCard").style.display="",document.getElementById("checkin-title").textContent=t("checkinTitle");const n=CHECKIN_QUESTIONS[lang]||CHECKIN_QUESTIONS.sr,a=getCheckinAnswers(activeProfile),o="andjela"===activeProfile?"barry":"andjela",r=getCheckinAnswers(o),i="andjela"===o?"🌸 Anđela":"👦 Barry";let s=n.map(function(e,t){const n=a[t]||"",o=r[t]||"",s=e.opts.map(function(e){return'<span class="cq-opt'+(n===e?" picked":"")+'" onclick="saveCheckinAnswer('+t+",'"+e.replace(/'/g,"\\'")+"')\">"+e+"</span>"}).join(""),l=o?'<div style="font-size:.62rem;color:var(--gold);margin-top:4px">'+i+": "+o+"</div>":"";return'<div class="checkin-q"><div class="cq-label"><span>'+e.q+'</span></div><div class="cq-options">'+s+"</div>"+l+"</div>"}).join("");0===Object.keys(a).length&&0===Object.keys(r).length&&(s+='<div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:8px">'+("sr"===lang?"Odgovori na pitanja — partner će videti tvoje odgovore ✨":"en"===lang?"Answer the questions — your partner will see your answers ✨":"回答问题——伴侣会看到你的答案 ✨")+"</div>"),document.getElementById("checkinContent").innerHTML=s}function saveMySong(){const e=document.getElementById("songInputTitle").value.trim();if(!e)return void toast(t("songSaveEmpty"));const n={title:e,note:document.getElementById("songInputNote").value.trim()||"",from:activeProfile,time:Date.now()};localStorage.setItem("shared-song-"+activeProfile,JSON.stringify(n)),renderSong(),pushAllSharedData(),toast(t("songSaved"))}function loadSong(e){return safeParse(localStorage.getItem("shared-song-"+e),null)}function getKnowMeData(){return safeParse(localStorage.getItem("shared-knowme"),{})}function saveKnowMeData(e){localStorage.setItem("shared-knowme",JSON.stringify(e))}function renderKnowMe(){if(!document.getElementById("knowMeCard"))return;document.getElementById("knowMe-title").textContent=t("knowMeTitle");const e=Math.floor(Date.now()/864e5)%KNOW_ME_QUESTIONS.length,n=KNOW_ME_QUESTIONS[e],a=n.q[lang]||n.q[lang.split("-")[0]]||n.q.sr,o=fmtDate(today()),r=getKnowMeData()[o]||{},i=r[activeProfile],s="andjela"===activeProfile?"barry":"andjela",l=r[s],d="andjela"===s?"🌹 Anđela":"👦 Barry",g="andjela"===activeProfile?"🌹 Anđela":"👦 Barry";let c="";c+=knowMeLead(i,l);c+='<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">'+a+"</div>",c+=i?'<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+g+" "+("sr"===lang?"odgovor":"en"===lang?" answer":"的回答")+'</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(i.answer)+"</div>"+(i.fb?'<div style="margin-top:6px;font-size:.7rem;font-weight:600;color:var(--love)">'+knowMeFbText(["andjela"===activeProfile?"On kaže: ":"Ona kaže: ","They say: ","对方："]):'')+(i.fb?knowMeFbText(i.fb==="yes"?["❤️ Tačno!","❤️ Correct!","❤️ 正确！"]:["😌 Skoro","😌 Almost","😌 差不多"])+"</div>":"")+"</div>":'<div style="margin-bottom:10px"><textarea id="knowMeInput" placeholder="'+("sr"===lang?"Tvoj odgovor...":"en"===lang?"Your answer...":"你的答案...")+'" style="width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);resize:none;min-height:44px" maxlength="120"></textarea><button class="btn btn-primary" onclick="saveKnowMeAnswer()" style="width:100%;font-size:.7rem;padding:8px;margin-top:6px">💭 '+("sr"===lang?"Odgovori":"en"===lang?"Answer":"回答")+"</button></div>",l?(c+='<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+d+t("knowMePartnerLabel")+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(l.answer)+"</div>"+knowMeFb(l)+"</div>",i&&l&&i.answer.trim().toLowerCase()===l.answer.trim().toLowerCase()&&(c+='<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:float-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">'+t("knowMeMatch")+"</div>")):i&&(c+='<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ '+t("knowMeWaiting")+"</div>"),document.getElementById("knowMeContent").innerHTML=c}function saveKnowMeAnswer(){const e=document.getElementById("knowMeInput");if(!e)return;const n=e.value.trim();if(!n)return;const a=fmtDate(today()),o=getKnowMeData();o[a]||(o[a]={});const pv=o[a][activeProfile]||{},nx={answer:n,time:Date.now()};if(pv.fb){nx.fb=pv.fb,nx.fbTime=pv.fbTime}o[a][activeProfile]=nx,saveKnowMeData(o),pushAllSharedData(),renderKnowMe(),toast(t("knowMeAnswerSaved"))}
+function renderGratitude(){const e=document.getElementById("grat-title"),n=document.getElementById("gratInput"),a=document.getElementById("gratList");if(!e||!n||!a)return;e.textContent=t("gratTitle"),n.placeholder=t("gratPlaceholder");const o=JSON.parse(localStorage.getItem("shared-gratitude")||"[]");0!==o.length?a.innerHTML=o.slice(-5).reverse().map(function(e,t){const n="andjela"===e.from?"🌸":"👦",a=e.from!==("andjela"===activeProfile?"andjela":"barry")?' <button onclick="translateGrat('+t+')" style="font-size:.55rem;padding:1px 6px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer">🌐</button>':"";return'<div class="grat-block"><div class="gratitude-item"><span class="gratitude-heart">'+n+'</span><span id="grat-txt-'+t+'">'+esc(e.text)+"</span>"+a+"</div>"+gratEchoRow(e)+"</div>"}).join(""):a.innerHTML=""}function translateGrat(e){_gratNotes||(_gratNotes=JSON.parse(localStorage.getItem("shared-gratitude")||"[]"));const t=_gratNotes[e];if(!t)return;const n="andjela"===t.from?"sr":"sr"===lang?"zh-CN":"sr",a="sr"===lang?"sr":"zh-CN"===lang?"zh-CN":"en";n!==a&&translateText(t.text,n,a).then(function(t){const n=document.getElementById("grat-txt-"+e);n&&(n.textContent=t)})}function saveCheckinAnswer(e,t){const n="shared-checkin-"+activeProfile,a=JSON.parse(localStorage.getItem(n)||"{}");a[e]=t,localStorage.setItem(n,JSON.stringify(a)),renderCheckin(),pushAllSharedData()}function getCheckinAnswers(e){return JSON.parse(localStorage.getItem("shared-checkin-"+e)||"{}")}function renderCheckin(){const e=(new Date).getDay();if(0!==e&&6!==e)return void(document.getElementById("checkinCard").style.display="none");document.getElementById("checkinCard").style.display="",document.getElementById("checkin-title").textContent=t("checkinTitle");const n=CHECKIN_QUESTIONS[lang]||CHECKIN_QUESTIONS.sr,a=getCheckinAnswers(activeProfile),o="andjela"===activeProfile?"barry":"andjela",r=getCheckinAnswers(o),i="andjela"===o?"🌸 Anđela":"👦 Barry";let s=n.map(function(e,t){const n=a[t]||"",o=r[t]||"",s=e.opts.map(function(e){return'<span class="cq-opt'+(n===e?" picked":"")+'" onclick="saveCheckinAnswer('+t+",'"+e.replace(/'/g,"\\'")+"')\">"+e+"</span>"}).join(""),l=o?'<div style="font-size:.62rem;color:var(--gold);margin-top:4px">'+i+": "+o+"</div>":"";return'<div class="checkin-q"><div class="cq-label"><span>'+e.q+'</span></div><div class="cq-options">'+s+"</div>"+l+"</div>"}).join("");0===Object.keys(a).length&&0===Object.keys(r).length&&(s+='<div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:8px">'+("sr"===lang?"Odgovori na pitanja — partner će videti tvoje odgovore ✨":"en"===lang?"Answer the questions — your partner will see your answers ✨":"回答问题——伴侣会看到你的答案 ✨")+"</div>"),document.getElementById("checkinContent").innerHTML=s}function saveMySong(){const e=document.getElementById("songInputTitle").value.trim();if(!e)return void toast(t("songSaveEmpty"));const n={title:e,note:document.getElementById("songInputNote").value.trim()||"",from:activeProfile,time:Date.now()};localStorage.setItem("shared-song-"+activeProfile,JSON.stringify(n)),renderSong(),pushAllSharedData(),toast(t("songSaved"))}function loadSong(e){return safeParse(localStorage.getItem("shared-song-"+e),null)}function getKnowMeData(){return safeParse(localStorage.getItem("shared-knowme"),{})}function saveKnowMeData(e){localStorage.setItem("shared-knowme",JSON.stringify(e))}function renderKnowMe(){if(!document.getElementById("knowMeCard"))return;document.getElementById("knowMe-title").textContent=t("knowMeTitle");const e=Math.floor(Date.now()/864e5)%KNOW_ME_QUESTIONS.length,n=KNOW_ME_QUESTIONS[e],a=n.q[lang]||n.q[lang.split("-")[0]]||n.q.sr,o=fmtDate(today()),r=getKnowMeData()[o]||{},i=r[activeProfile],s="andjela"===activeProfile?"barry":"andjela",l=r[s],d="andjela"===s?"🌹 Anđela":"👦 Barry",g="andjela"===activeProfile?"🌹 Anđela":"👦 Barry";/* §一 这里**不**插 knowMeGuessHtml：本卡下面已经把当天的题目单独显示了一行
+   （`c+='<div style="font-size:.78rem...'+a`），再插一次就是同一道题出现两遍 ——
+   正是本文件 §Phase 2B.6 记录过的「双引导叠字」。缺内容的是 Home 那张卡
+   （module-dashboard 的 _knowMeAffordanceHtml），那里才需要补。 */
+let c="";c+=knowMeLead(i,l);c+='<div style="font-size:.78rem;color:var(--love);font-weight:600;margin-bottom:12px;text-align:center;line-height:1.4">'+a+"</div>",c+=i?'<div style="background:var(--rose-light);border-radius:12px;padding:10px 14px;margin-bottom:8px"><span style="font-size:.62rem;color:var(--text-muted)">'+g+" "+("sr"===lang?"odgovor":"en"===lang?" answer":"的回答")+'</span><div style="font-size:.8rem;color:var(--text);margin-top:4px">'+esc(i.answer)+"</div>"+(i.fb?'<div style="margin-top:6px;font-size:.7rem;font-weight:600;color:var(--love)">'+knowMeFbText(["andjela"===activeProfile?"On kaže: ":"Ona kaže: ","They say: ","对方："]):'')+(i.fb?knowMeFbText(i.fb==="yes"?["❤️ Tačno!","❤️ Correct!","❤️ 正确！"]:["😌 Skoro","😌 Almost","😌 差不多"])+"</div>":"")+"</div>":'<div style="margin-bottom:10px"><textarea id="knowMeInput" placeholder="'+("sr"===lang?"Tvoj odgovor...":"en"===lang?"Your answer...":"你的答案...")+'" style="width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);resize:none;min-height:44px" maxlength="120"></textarea><button class="btn btn-primary" onclick="saveKnowMeAnswer()" style="width:100%;font-size:.7rem;padding:8px;margin-top:6px">💭 '+("sr"===lang?"Odgovori":"en"===lang?"Answer":"回答")+"</button></div>",l?(c+='<div style="padding-top:8px;border-top:1px solid var(--border);margin-top:4px"><span style="font-size:.62rem;color:var(--teal);font-weight:600">👀 '+d+t("knowMePartnerLabel")+'</span><div style="font-size:.82rem;color:var(--teal);margin-top:4px;font-style:italic;line-height:1.4">'+esc(l.answer)+"</div>"+knowMeFb(l)+"</div>",i&&l&&i.answer.trim().toLowerCase()===l.answer.trim().toLowerCase()&&(c+='<div style="text-align:center;margin-top:8px;font-size:1.5rem;animation:float-arrow .8s infinite">💞</div><div style="text-align:center;font-size:.7rem;color:var(--love);font-weight:600">'+t("knowMeMatch")+"</div>")):i&&(c+='<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:.68rem;font-style:italic">⏳ '+t("knowMeWaiting")+"</div>"),document.getElementById("knowMeContent").innerHTML=c,_kmQKey=n.key}function saveKnowMeAnswer(){const e=document.getElementById("knowMeInput");if(!e)return;const n=e.value.trim();if(!n)return;const a=fmtDate(today()),o=getKnowMeData();o[a]||(o[a]={});const pv=o[a][activeProfile]||{},nx={answer:n,time:Date.now(),qKey:_kmQKey||""};if(pv.fb){nx.fb=pv.fb,nx.fbTime=pv.fbTime}o[a][activeProfile]=nx,saveKnowMeData(o),pushAllSharedData(),renderKnowMe(),toast(t("knowMeAnswerSaved"))}
 /* ── §5 Know Me：猜完要有反馈，但保留自由文本 ──
    这道题问的是「对方」的事，所以两个人都在猜对方 —— 也就是说，对方的答案
    说的正是我，只有我能判它对不对。于是：对方的答案下面挂两个按钮（❤️ 正确 /
    😌 差不多），我的答案下面显示对方给我的判定。不是考试：没有分数、没有排名、
    不记录连对。判定存在被判定那条记录上（l.fb），所以两个人都看得见结果。 */
+/* ── §一 她到底猜了什么 ───────────────────────────────────────────────────
+   症状：Home 那张卡只说「她猜了你——猜对了吗？」，既不说是**关于什么**的猜测，
+   也不给她的原话。要显示内容，先得知道「那天问的是哪道题」。
+
+   恢复链三档，前两档可验证，第三档宁可含糊也不编：
+     ① 记录自带 qKey（本轮起写入的都带）—— 直接查表，最可靠；
+     ② 老记录没有 qKey，但每条都有 time（真实毫秒戳）。renderKnowMe 用
+        Math.floor(Date.now()/864e5) % QUESTIONS.length 选题，而 rec.time 与
+        渲染发生在**同一个 UTC 日**，所以 Math.floor(rec.time/864e5) % length
+        还原出的就是同一道题。
+        —— 不能用日期键（fmtDate(today())）还原：那是**本地**日期，UTC+2 下一天
+        里有大半时间比 UTC 日大 1，索引随之错位，会稳定地差一题。
+     ③ 两档都不可用（缺 time / time 非有限数）→ null。调用方必须降级成
+        「她对你的一个猜测」这种**准确但不具体**的说法。
+
+   ★ 三档都不允许从 answer 反推 question。answer 是自由文本，反推等于编造问题。
+     knowMeQuestionFor 返回 null 时只降级措辞，绝不降级成猜。
+
+   _kmQKey 是 renderKnowMe 当次真正渲染出来的那道题的 key：saveKnowMeAnswer 存
+   的是「我看到的题」，而不是「保存那一刻按 UTC 日重算出来的题」—— 页面跨午夜挂着
+   时这两者会不同。用 var 声明，免得在 renderKnowMe 里踩 TDZ。 */
+var _kmQKey=null;
+function knowMeQuestionFor(l){
+  if(!l)return null;
+  var k=String(l.qKey||"");
+  if(k){for(var i=0;i<KNOW_ME_QUESTIONS.length;i++)if(KNOW_ME_QUESTIONS[i].key===k)return KNOW_ME_QUESTIONS[i]}
+  if(typeof l.time!=="number"||!isFinite(l.time))return null;
+  return KNOW_ME_QUESTIONS[Math.floor(l.time/864e5)%KNOW_ME_QUESTIONS.length]||null
+}
+function knowMeQuestionText(q){return q&&q.q?(q.q[lang]||q.q[lang.split("-")[0]]||q.q.sr||""):""}
+/** 卡片的第一段。顺序是「他是冲着你来的 → 那天问的题 → 他的原话」：先让读的人
+    知道这事跟自己有关，再给内容。原话逐字保留，不改写、不翻译 —— 她写的是
+    塞尔维亚语就是塞尔维亚语，那正是这条信息的价值所在。 */
+function knowMeGuessHtml(l){
+  if(!l||!l.answer)return "";
+  var she="andjela"!==activeProfile,
+      kick=she?["Ona je nešto pogodila o tebi","She guessed something about you","她猜了一个关于你"]
+              :["On je nešto pogodio o tebi","He guessed something about you","他猜了一个关于你"],
+      gen=she?["Ona ima pretpostavku o tebi","She has a guess about you","她对你的一个猜测"]
+             :["On ima pretpostavku o tebi","He has a guess about you","他对你的一个猜测"],
+      pre=["Bilo je pitanje: ","The question was: ","那天的问题是："],
+      lab=she?["Njena pretpostavka","Her guess","她的猜测"]:["Njegova pretpostavka","His guess","他的猜测"],
+      qt=knowMeQuestionText(knowMeQuestionFor(l)),
+      h='<div class="km-guess">';
+  h+=qt?'<div class="km-guess-kicker">'+knowMeFbText(kick)+'</div><div class="km-guess-q">'+knowMeFbText(pre)+"<span>"+esc(qt)+"</span></div>"
+       :'<div class="km-guess-kicker">'+knowMeFbText(gen)+"</div>";
+  return h+'<div class="km-guess-label">'+knowMeFbText(lab)+"</div>"+
+    '<blockquote class="km-guess-text">'+esc(l.answer)+"</blockquote></div>"
+}
+/** 「谁在等我判」—— 全库只有这一份扫描。Home（module-dashboard 的
+    _newestUnjudgedGuess）与判定（rateKnowMe）共用它，所以「展示的那条」与
+    「点下去改的那条」必然是同一行 —— 这正是过去那个 bug 的根因。
+    筛选条件与原实现一致：有可用 time，且没有 fb。判过就靠 fb 这个**动作**清除，
+    不靠时间。 */
+function knowMePendingGuess(p){
+  var o=getKnowMeData(),best=null;
+  Object.keys(o||{}).forEach(function(d){
+    var r=o[d]&&o[d][p];
+    if(!r||typeof r.time!=="number"||!isFinite(r.time)||r.fb)return;
+    if(!best||r.time>best.time)best={date:d,note:r,time:r.time}
+  });
+  return best
+}
+/* §一 判完之后 Home 上那一块会被 knowMePendingGuess 过滤掉、整块消失 —— 消失本身
+   是反馈，但看不到「我选的是哪一个」。所以补一条回显：最近 ms 内判过的那条，交给
+   knowMeFb 的已判分支渲染成同形状的 .km-fb-on 药丸（按钮的「选中状态」）。
+   刻意不给它 .tnew-react：test-return-motivation.js:379 数的是 .tnew-react 的总数，
+   多一个就会把它算坏；.km-fb-on 也匹配不上 test-together.js 的 '.km-fb' 计数。 */
+function knowMeVerdictEcho(p,ms){
+  var o=getKnowMeData(),best=null;
+  Object.keys(o||{}).forEach(function(d){
+    var r=o[d]&&o[d][p];
+    if(!r||!r.fb||typeof r.fbTime!=="number"||!isFinite(r.fbTime))return;
+    if(!best||r.fbTime>best.fbTime)best=r
+  });
+  if(!best||Date.now()-best.fbTime>ms)return "";
+  return knowMeFb(best)
+}
 /** §Phase 2B.3 Know Me 的引子。卡片过去第一眼要么是我的输入框（还没答时）、
     要么是我自己的答案，读起来像当天的作业。§七 要的是「我想猜她」，所以先把
     这一轮真正活着的那件事说出来：
@@ -106,7 +188,9 @@ function knowMeLead(i,l){
 function knowMeFbText(k){return "sr"===lang?k[0]:"en"===lang?k[1]:k[2]}
 function knowMeFb(l){
   const yes=["❤️ Tačno!","❤️ Correct!","❤️ 正确！"],almost=["😌 Skoro","😌 Almost","😌 差不多"];
-  if(l.fb)return'<div style="margin-top:8px;font-size:.72rem;font-weight:600;color:var(--love)">'+knowMeFbText(l.fb==="yes"?yes:almost)+"</div>";
+  /* §一 判过之后这里不是「按钮消失了」，而是换成一颗同形状的药丸（.km-fb-on，
+     在 v2.css 里与 .km-fb 同宽同高同圆角 + 一次 pop）——「按钮显示选中状态」。 */
+  if(l.fb)return'<div class="km-fb-on" style="margin-top:8px;font-size:.72rem;font-weight:600;color:var(--love)">'+knowMeFbText(l.fb==="yes"?yes:almost)+"</div>";
   /* Phase 2B.6：这里原本还有一句
        knowMeFbText(["Da li je tačno?","Was that right?","猜对了吗？"])
      但引子（knowMeLead 的「她猜了你——猜对了吗？」/ "Ona je pogađala tebe — je li
@@ -127,7 +211,19 @@ function knowMeFb(l){
     而不是只重绘本卡 —— 否则点过的那处引子会留在原地。 */
 function rateKnowMe(v){
   if(v!=="yes"&&v!=="almost")return;
-  const d=fmtDate(today()),o=getKnowMeData(),p="andjela"===activeProfile?"barry":"andjela";
-  if(!o[d]||!o[d][p])return;
-  o[d][p].fb=v,o[d][p].fbTime=Date.now(),saveKnowMeData(o),pushAllSharedData(),_refreshEchoSurfaces()
+  const o=getKnowMeData(),p="andjela"===activeProfile?"barry":"andjela";
+  /* §一 这里过去写的是 fmtDate(today())，而 Home 展示的是**全库最新那条未判定**。
+     她昨天猜的、我今天从 Home 点下去，就会因为「今天没有她的记录」而静默 return：
+     按钮看起来能点，实际上什么都没发生 —— 用户报的正是这个。现在「展示的那条」
+     与「改的那条」由同一个 knowMePendingGuess 选出，不再可能分叉。 */
+  const g=knowMePendingGuess(p);
+  if(!g)return;
+  const r=o[g.date]&&o[g.date][p];
+  if(!r)return;
+  /* 幂等：重复点同一个值不再写、不再同步。连点两下不会产生第二份数据。 */
+  if(r.fb===v)return;
+  r.fb=v,r.fbTime=Date.now(),saveKnowMeData(o),pushAllSharedData(),_refreshEchoSurfaces();
+  /* 点下去必须**看得见**变化：卡片上的按钮换成判定结果（knowMeFb 的 l.fb 分支），
+     外加一句 toast。文案沿用本文件的内联三语数组写法，不进 i18n 表。 */
+  toast(knowMeFbText(["❤️ Zabeleženo","❤️ Noted","❤️ 已记下"]))
 }function renderSong(){const e=document.getElementById("song-title");if(!e)return;e.textContent=t("songTitle");const n=loadSong(activeProfile),a="andjela"===activeProfile?"barry":"andjela",o=loadSong(a),r="andjela"===a?"🌸 Anđela":"👦 Barry";let i="";i+=n?'<div style="margin-bottom:10px"><span style="font-size:.62rem;color:var(--text-muted)">'+t("songMyLabel")+'</span><div class="song-title">🎶 '+esc(n.title)+"</div>"+(n.note?'<div class="song-note">'+esc(n.note)+"</div>":"")+"</div>":'<div style="margin-bottom:10px"><input id="songInputTitle" placeholder="'+t("songTitlePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><input id="songInputNote" placeholder="'+t("songNotePlaceholder")+'" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:12px;font-size:.74rem;font-family:var(--font);background:var(--card);color:var(--text);margin-bottom:6px"><button class="btn btn-primary" onclick="saveMySong()" style="width:100%;font-size:.7rem;padding:8px">🎵 '+t("songSave")+"</button></div>",o&&(i+='<div style="padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:.62rem;color:var(--text-muted)">'+r+" "+t("songPartnerLabel")+'</span><div class="song-title">🎶 '+esc(o.title)+"</div>"+(o.note?'<div class="song-note">'+esc(o.note)+"</div>":"")+"</div>"),document.getElementById("songContent").innerHTML=i||'<span class="song-icon">🎶</span><div class="song-note">'+t("songEmpty")+"</div>"}function renderRelTips(){if("andjela"!==activeProfile)return void(document.getElementById("relTipCard").style.display="none");const e=REL_TIPS[lang]||REL_TIPS.sr,t=e[Math.floor(Math.random()*e.length)];document.getElementById("relTipIcon").textContent=t.icon,document.getElementById("relTipText").textContent=t.text,document.getElementById("relTipCard").style.display=""}

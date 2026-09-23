@@ -254,8 +254,8 @@ async function bootWithLegacyPat(browser, opts) {
 
     const sw = read('sw.js');
     check('D8 CACHE_STATIC is the current name and no older one survives',
-      /const CACHE_STATIC = 'ciklus-static-v48';/.test(sw) && sw.indexOf('ciklus-static-v47') === -1,
-      `v48=${/ciklus-static-v48/.test(sw)} v47=${sw.indexOf('ciklus-static-v47') !== -1}`);
+      /const CACHE_STATIC = 'ciklus-static-v49';/.test(sw) && sw.indexOf('ciklus-static-v48') === -1,
+      `v49=${/ciklus-static-v49/.test(sw)} v48=${sw.indexOf('ciklus-static-v48') !== -1}`);
 
     // The files 2D changed must still be covered by the precache list, or a
     // later cache-name bump would not refresh them.

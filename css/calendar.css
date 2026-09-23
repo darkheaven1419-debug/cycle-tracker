@@ -3953,6 +3953,38 @@ body {
   color: var(--text);
   opacity: 0.65;
 }
+/* §二 「接下来三个月」预测块（Phase 2F）。数据来自 predict().forecast，纯计算、
+   不落盘；reliable=false 时这里只有一句引导，一个日期都不给。
+   [hidden] 守卫是必须的：.pred3mo 一旦被哪条规则给了 display，
+   就会盖掉 UA 样式表对 [hidden] 的 display:none，空占位块会留在卡里。 */
+.pred3mo {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-soft);
+  text-align: left;
+}
+.pred3mo[hidden] {
+  display: none;
+}
+.pred3mo-head {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+.pred3mo-row {
+  font-size: 0.72rem;
+  color: var(--text);
+  padding: 3px 0;
+  font-feature-settings: "tnum";
+}
+.pred3mo-note {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
 .timeline-header {
   display: flex;
   justify-content: space-between;

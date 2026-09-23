@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.3.9';
+const APP_VERSION = '7.4.0';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -214,7 +214,45 @@ const V = '?v=' + APP_VERSION;
 //
 // 老问题照旧：三条全是裸路径，不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
 // 旧引擎、旧 index.html —— 而变化恰恰只存在于渲染结果里，没有新文件名可供它察觉。
-const CACHE_STATIC = 'ciklus-static-v48';
+// ── Phase 2F：她猜了什么 + 三个月预测（两条轴同时动）────────────────────
+// v48 → v49，APP_VERSION 7.3.9 → 7.4.0 —— 这是自 Phase 2B.8 以来第一次两条轴
+// 同时推进，因为本轮同时改了裸路径与带 ?v= 的资产：
+//   裸路径（CACHE_STATIC 的轴）：./index.html、./css/calendar.css、
+//     ./css/v2.css、./js/module-dashboard.js、./js/fix-panel.js。
+//   带 ?v=（APP_VERSION 的轴）：./js/cycle-core.js、./js/render-love.js。
+// 两条轴各推各的：带 ?v= 的资产换了 URL，装旧 SW 的客户端本来就会重新下载；
+// 裸路径的资产 URL 不变，只有换 cache 名字才推得动它。任何一条不动，那一半就
+// 留在旧副本上。
+//
+// 逐条说为什么老客户端必须换：
+// 1. ./js/cycle-core.js — predict() 新增 forecast 块。周期基线由「历史默认
+//    cycleLength」改为「最近 3 个 start-to-start 间隔的中位数」，持续天数改为
+//    「最近 4 次 end-start+1 的中位数」，并只在「今天 起 3 个日历月」内生成
+//    预测。旧引擎给的是另一套数字与另一套日期，且不受窗口约束。
+// 2. ./js/render-love.js — Know Me 新增 knowMeQuestionFor（三层恢复：存的 qKey
+//    → 记录自身 time 反推 → 放弃）+ knowMeGuessHtml（把「她猜了什么」连同
+//    原话一起画出来）；rateKnowMe 的目标由 fmtDate(today()) 改为
+//    knowMePendingGuess()。旧引擎只有「她猜了你——猜对了吗？」加两个按钮，
+//    而且她昨天猜的、今天从首页点下去会静默无反应。
+// 3. ./js/module-dashboard.js — 首页与 Together 两处接线改走同一个
+//    knowMePendingGuess，并新增判定回显（.km-verdict-echo）。
+// 4. ./js/fix-panel.js — 新增 renderForecast3mo()，把 predict().forecast 画成
+//    「接下来三个月」；不足 4 次完整记录时只给一句引导，一个日期都不给。
+// 5. ./css/calendar.css — .pred3mo* 五条规则（含 [hidden] 守卫）。
+// 6. ./css/v2.css — .km-guess* 与 .km-fb-on（判定后的「选中」药丸）。
+// 7. ./index.html — 统计卡里新增 #predForecast3mo 容器；23 个脚本的 ?v= 与
+//    <meta name="version"> 同步到 7.4.0。
+//
+// 本轮**不动任何数据**：shared-knowme / shared-cycle / shared-diary /
+// shared-gratitude / anniversaries 的 schema 一个字没改。Know Me 只在对方那条
+// 记录上多写一个可选的 qKey（写入时记录「那天问的是哪题」，读到没有就退回
+// 时间反推，再没有就什么都不声称）——旧客户端读它不会有任何问题。预测值全程
+// 只存在于 predict() 的返回值里，不落盘、不进 state.records/periodEnds、不回写
+// shared cycle data，所以历史经期记录一个字节都没变。
+//
+// 老问题照旧：裸路径那五条不换名字，装了旧 SW 的客户端拿到的仍是旧 CSS、
+// 旧引擎、旧 index.html，而变化恰恰只存在于渲染结果里。
+const CACHE_STATIC = 'ciklus-static-v49';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

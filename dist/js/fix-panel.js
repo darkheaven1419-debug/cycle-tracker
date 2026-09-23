@@ -16,6 +16,42 @@
 
   function setEl(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
 
+  /* §二 「接下来三个月」。数据源是 predict().forecast —— 纯计算结果，不落盘、
+     不写回 shared cycle data、不进 state.records/periodEnds。
+       reliable=false → 只给一句引导，一个日期都不给（不假装有可靠预测）；
+       reliable=true  → 逐条列 forecast.periods。引擎已把它们裁到
+                        「今天 起 3 个日历月」以内，这里不需要再裁一次。
+     文案一律「预计」，不把推断写成确定事实。 */
+  function mdOf(d) {
+    var m = fmtDate(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m ? (+m[2]) + '/' + (+m[3]) : '--';
+  }
+
+  function renderForecast3mo(pred, L) {
+    var box = document.getElementById('predForecast3mo');
+    if (!box || !pred) return;
+    function pick(m) { return m[L] || m[String(L).split('-')[0]] || m['zh-CN']; }
+    var T = {
+      title: {'zh-CN':'接下来三个月','en':'Next three months','sr':'Sledeća tri meseca'},
+      est:   {'zh-CN':'预计','en':'Est.','sr':'Proc.'},
+      note:  {'zh-CN':'再记录几次，预测会更有参考价值',
+              'en':'Log a few more periods and the forecast gets more useful',
+              'sr':'Zabeleži još nekoliko ciklusa i prognoza će biti korisnija'}
+    };
+    var f = pred.forecast || {}, ps = Array.isArray(f.periods) ? f.periods : [];
+    if (!f.reliable || !ps.length) {
+      box.hidden = false;
+      box.innerHTML = '<div class="pred3mo-note">' + pick(T.note) + '</div>';
+      return;
+    }
+    var h = '<div class="pred3mo-head">' + pick(T.title) + '</div>';
+    for (var i = 0; i < ps.length; i++) {
+      h += '<div class="pred3mo-row">🩸 ' + pick(T.est) + ' ' + mdOf(ps[i].start) + ' – ' + mdOf(ps[i].end) + '</div>';
+    }
+    box.hidden = false;
+    box.innerHTML = h;
+  }
+
   function applyStatsFix() {
     var panel = document.getElementById('panel-stats');
     if (!panel || !panel.classList.contains('active')) return;
@@ -58,10 +94,14 @@
           setEl('predSubConf', (cm[pred.confidence || 'mid'] || cm.mid)[L]);
           setEl('predChipOv', fmtDate(pred.ovulation));
           setEl('predChipFert', pred.fertileStart ? fmtDate(pred.fertileStart) + ' ~ ' + fmtDate(pred.fertileEnd) : '--');
-          if (Array.isArray(pred.futurePeriods)) { setEl('predChipFuture', pred.futurePeriods.map(function(f) { return typeof f === 'object' ? fmtDate(f.start || f) : fmtDate(f); }).join(', ')); }
+          /* §二 futurePeriods 现在可能**故意为空**（完整记录不足 4 次时引擎不给列表）。
+             原来是「空数组 → join('') → 空白」，看着像坏了；改成显式的 '--'。 */
+          if (Array.isArray(pred.futurePeriods) && pred.futurePeriods.length > 0) { setEl('predChipFuture', pred.futurePeriods.map(function(f) { return typeof f === 'object' ? fmtDate(f.start || f) : fmtDate(f); }).join(', ')); } else { setEl('predChipFuture', '--'); }
           var rl = {'zh-CN':{high:'规律',mid:'较规律',low:'不规律'},'en':{high:'Regular',mid:'Fair',low:'Irregular'},'sr':{high:'Redovan',mid:'Srednji',low:'Neredovan'}};
           var regMap = rl[L] || rl['zh-CN'];
           setEl('predChipReg', (regMap[pred.regularity || 'mid'] || '') + ' ±' + (pred.stdDev || '0'));
+          /* §二 三个月预测块复用同一次 predict() 的结果，不额外再算一遍。 */
+          renderForecast3mo(pred, L);
         }
       }
 
@@ -108,6 +148,9 @@
       var sn = document.getElementById('chartCycleStability');
       if (!sn) { sn = document.createElement('div'); sn.id = 'chartCycleStability'; sn.style.cssText = 'text-align:center;font-size:.72rem;margin-top:6px;font-weight:600;'; var cc2 = document.getElementById('chartCycleTrend'); if (cc2) { var cp2 = cc2.closest('.chart-card'); if (cp2) cp2.appendChild(sn); } }
       if (tot >= 2 && typeof predict === 'function') { var p2 = predict(); if (p2 && p2.stdDev != null) { if (p2.stdDev <= 2) { sn.textContent = L === 'zh-CN' ? '✨ 你的周期非常规律' : L === 'en' ? '✨ Very regular' : '✨ Vrlo redovan'; sn.style.color = 'var(--sage)'; } else if (p2.stdDev <= 5) { sn.textContent = L === 'zh-CN' ? '📊 你的周期比较规律' : L === 'en' ? '📊 Fairly regular' : '📊 Prilicno redovan'; sn.style.color = 'var(--gold)'; } else { sn.textContent = L === 'zh-CN' ? '⚠️ 你的周期不太规律' : L === 'en' ? '⚠️ Irregular' : '⚠️ Neredovan'; sn.style.color = 'var(--rose)'; } } }
+    } else if (typeof state !== 'undefined' && typeof predict === 'function') {
+      /* §二 一条记录都没有：预测块也只给引导，不假装有预测。 */
+      renderForecast3mo(predict(), L);
     }
   }
 

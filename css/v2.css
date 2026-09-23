@@ -575,6 +575,74 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   transform: scale(0.94);
 }
 
+/* §一 她猜了什么：引子之上先摆内容 —— 她是冲着你来的、那天问的题、她的原话。
+   原话逐字保留，用引文块（左侧描边 + 斜体）与下面的「她的回答」区分开，免得被
+   读成卡片的又一个字段。overflow-wrap: anywhere 是为了 320 下超长单词不撑破。 */
+.km-guess {
+  margin-bottom: 10px;
+}
+.km-guess-kicker {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.km-guess-q {
+  font-size: var(--text-sm);
+  color: var(--love);
+  text-align: center;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+.km-guess-q span {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.km-guess-q-generic {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.km-guess-label {
+  font-size: var(--text-xs);
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.km-guess-text {
+  margin: 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--teal);
+  border-radius: 0 10px 10px 0;
+  background: var(--card);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-style: italic;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+/* §一 判完之后：两颗按钮换成一颗同形状的实心药丸 —— 读起来是「刚才那两个里选中
+   了这个」，而不是「按钮凭空消失了」。宽度、圆角、触摸高度与 .km-fb 一致。 */
+.km-fb-on {
+  display: inline-block;
+  min-height: var(--touch-target);
+  line-height: var(--touch-target);
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--rose-light);
+  border: 1px solid var(--love);
+  animation: kmFbPop 320ms ease-out;
+}
+@keyframes kmFbPop {
+  from {
+    transform: scale(0.86);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* ══ Phase 1C — Our Story (回忆) ═════════════════════════════════════════
    The 回忆 panel now leads with the couple's story and hands off to the daily
    writing loop under its own heading (§八). Everything below is scoped to
@@ -1038,6 +1106,7 @@ nav.tabs-nav .tabs .tab.active .tb-icon {
   .grat-echo-btn.just-sent,
   .dq-send,
   .km-fb,
+  .km-fb-on,
   .dhc-more.dhc-more-ico,
   .mem-feat,
   .mem-write-cta,

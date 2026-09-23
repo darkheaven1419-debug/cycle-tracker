@@ -860,25 +860,37 @@
 
      不加 .tnew-ask 外壳：knowMeLead 产出的 .km-lead 本来就是这一行的引子，且
      与 Together 上那张卡用的是同一条，两个面因此说的是同一句话。 */
+  /* §一 「谁在等我判」的唯一实现搬到了 js/render-love.js 的 knowMePendingGuess，
+     这里只转发，函数名保留（两处调用点与 test-phase2b-knowme-home.js 的 H8b 都认
+     这个名字）。为什么必须共用：判定函数 rateKnowMe 过去只看 fmtDate(today())，
+     而这里扫的是**全库最新那条未判定**——她昨天猜的、我今天从 Home 点下去，两边
+     指的不是同一行，于是点了毫无反应。合成一份，分叉就不可能再发生。 */
   function _newestUnjudgedGuess(partner) {
-    var km = _readJSON('shared-knowme', {});
-    var best = null;
-    Object.keys(km || {}).forEach(function (d) {
-      var r = km[d] && km[d][partner];
-      /* 没有可用时间戳的条目无法判定「哪条更新」，与 gratEchoRow 同一条件。 */
-      if (!r || typeof r.time !== 'number' || !isFinite(r.time)) return;
-      /* 判过就不再是「可回应」—— 靠动作清除，不靠时间，与感恩那条一致。 */
-      if (r.fb) return;
-      if (!best || r.time > best.time) best = { date: d, note: r, time: r.time };
-    });
-    return best;
+    if (typeof knowMePendingGuess !== 'function') return null;
+    return knowMePendingGuess(partner);
+  }
+
+  /* §一 判完之后 _newestUnjudgedGuess 返回 null，Home 上整块消失 —— 那是反馈，但
+     看不到「我选的是哪一个」。所以补一条回显：刚判过的（2 分钟内）用 .km-fb-on
+     渲染成同形状药丸。刻意不带 .tnew-react：test-return-motivation.js:379 数的是
+     .tnew-react 的总数，多一个就会把它算坏。 */
+  var KM_VERDICT_ECHO_MS = 120000;
+  function _recentVerdictHtml(ctx) {
+    if (typeof knowMeVerdictEcho !== 'function') return '';
+    var echo = knowMeVerdictEcho(ctx.partner, KM_VERDICT_ECHO_MS);
+    return echo ? '<div class="km-verdict-echo">' + echo + '</div>' : '';
   }
 
   function _knowMeAffordanceHtml(ctx) {
     if (typeof knowMeFb !== 'function' || typeof knowMeLead !== 'function') return '';
     var t = _newestUnjudgedGuess(ctx.partner);
-    if (!t) return '';
-    return knowMeLead(null, t.note) +
+    if (!t) return _recentVerdictHtml(ctx);
+    /* §一 阅读顺序就是需求本身：她猜了一个关于你 → 那天问的题 → 她的原话 →
+       「你觉得她猜得怎么样？」 → 两个按钮。过去只有最后两行，所以用户只看到
+       「她猜了你——猜对了吗？」，根本不知道猜的是什么。引子（.km-lead）与按钮的
+       相对位置一个字节没动，只是前面多了一段内容。 */
+    var guess = typeof knowMeGuessHtml === 'function' ? knowMeGuessHtml(t.note) : '';
+    return guess + knowMeLead(null, t.note) +
       '<div class="tnew-react tnew-react-km">' + knowMeFb(t.note) + '</div>';
   }
 
