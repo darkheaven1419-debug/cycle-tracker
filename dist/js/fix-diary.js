@@ -266,7 +266,24 @@ function _renderDiaryDateStrip(centerDate) {
   })();
 }
 
-window._onDateBtnClick = function(dateKey) {
+/* 「把视图切到这一天」＝ 换日期 + 装回她这一天的信 + 装回我这一天的草稿与签名。
+   P0 修复（落点对账）需要区分**是谁**在动视图，因为两条路的控制权不一样：
+     · 人手那条（日期条 / ±7 天 / 月历 / 「今天」 / 从引用跳进来）→ _onDateBtnClick
+       —— 人一动手就交还控制权，之后不再自动挪视图（_diaryUserPicked）。
+     · 程序那条（进日记的落点、拉取落地后的对账）→ _landDiaryTo / _reconcileDiaryLanding
+       —— 不立旗；否则「拉取落地后把落点纠正到今天」这条修复会把自己关掉。
+   两条路共用下面这一个实现，不产生第二份「切日期」的写法。 */
+var _diaryUserPicked = false;
+
+/* 正在这一天打字的人不能被挪走：拉取落地时的对账若在此时换天，编辑器里那行字
+   会从眼前消失（草稿按日期存着，但看不见就等于丢了）。所以一敲键盘就交还控制权。
+   _restoreDraft 是程序写 ta.value，不触发 input，不会误立旗。 */
+document.addEventListener('input', function (ev) {
+  var t = ev.target;
+  if (t && t.id === 'diaryTextarea') _diaryUserPicked = true;
+}, true);
+
+function _showDiaryDate(dateKey) {
   _setDiaryDate(dateKey); _updatePartnerLetter(dateKey); _renderOwnSignature();
   try {
     var sd = JSON.parse(localStorage.getItem('shared-diary')||'{}');
@@ -277,7 +294,15 @@ window._onDateBtnClick = function(dateKey) {
     var cc = document.getElementById('diaryCharCount');
     if (cc) { var ta2 = document.getElementById('diaryTextarea'); cc.textContent = (ta2?ta2.value.length:0)+'/500'; }
   } catch(e) {}
+}
+
+window._onDateBtnClick = function(dateKey) {
+  _diaryUserPicked = true;
+  _showDiaryDate(dateKey);
 };
+
+/* 程序化落点（进日记时算出来的那一天）：和点日期条走同一个实现，只是不立旗。 */
+window._landDiaryTo = function(dateKey) { _showDiaryDate(dateKey); };
 
 function _setDiaryDate(dateKey) {
   var dateEl = document.getElementById('diaryWriteDate');
@@ -301,10 +326,30 @@ window._setDiaryDate = _setDiaryDate;
    停在拉取前那一次渲染的结果上，读信的人看到的是「Ta 这一天还没有写」。
    谁是「当前这一天」只有这个文件知道（_diaryViewDate 是模块私有的），
    所以出口开在这里，而不是让 sync.js 去猜。 */
+/* ── 落点对账（P0 的真实成因在此，不在重画）────────────────────────────────
+   进日记那一刻的落点是**在那一刻的本地快照上**算出来的（_latestDiaryDate），
+   而启动拉取 / 切 tab 那次拉取几乎总还在路上：对方的「今天」此刻还没落地，
+   于是 _latestDiaryDate 退回**我自己上一次写的那天**，信卡显示
+   「Ta 这一天还没有写」—— 而她的今天就在云上，几秒后就会并进本地。
+   只「按当前这天重画」救不了它：重画的是**那一天**，落点本身错了就还是 📭。
+   所以每次拉取落地后重新算一次落点，只在
+     ① 用户自己没有亲手翻过日期、没有正在打字（_diaryUserPicked）
+     ② 新算出来的落点**比当前这天更新**
+   时才把视图挪过去。只往前挪 —— 正在读旧日记的人永远不会被拽回更早的一天，
+   而被前移到的那个位置一定是「现在真有内容的最新一天」，也就是对方刚写的那天。
+   窗口内不需要用户切 tab、不需要刷新、不需要自己改日期。 */
+function _reconcileDiaryLanding() {
+  if (_diaryUserPicked) return;
+  if (typeof window._latestDiaryDate !== 'function') return;
+  var want = window._latestDiaryDate();
+  if (want && want > _diaryViewDate) _showDiaryDate(want);
+}
+
 window._refreshDiaryView = function() {
   /* 日记还没被打开过就没有「当前这一天」可谈 —— 那时 initSharedDiaryTab /
      _onDateBtnClick 会用当时已落地的数据正确渲染一次，不需要在这里抢先画。 */
   if (!_diaryViewDate) return;
+  _reconcileDiaryLanding();
   _renderDiaryDateStrip(_diaryViewDate);
   _updatePartnerLetter(_diaryViewDate);
   _renderOwnSignature();

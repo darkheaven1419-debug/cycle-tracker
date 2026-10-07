@@ -285,7 +285,23 @@ const V = '?v=' + APP_VERSION;
 // js/fix-diary.js 与 js/module-memories.js 是裸路径 —— 不换代际名，只抬
 // APP_VERSION 对后两者无效，正是 0bbd0d6 漏掉裸路径资产的同类错误。
 // 数据一个字节没动：shared-diary 的 schema 与 mergeDiary 都没变。
-const CACHE_STATIC = 'ciklus-static-v51';
+// v51 → v52。这一轮改的是 ./js/fix-diary.js 与 ./js/module-memories.js，两个都是
+// STATIC_ASSETS 里的**裸路径**（第 331、332 行）—— 所以只抬 CACHE_STATIC，
+// APP_VERSION 保持 7.4.2（没有任何带 ?v= 的资产被改，./index.html 也一个字节没动）。
+// 改的是什么：v50 → v51 补的是「拉取之后重画伴侣信卡」，但重画的是**当前正在看的那
+// 一天**。1172577 之后真实用户仍然复现，因为错的是**落点**而不是重画：进日记那一刻
+// 的默认落点是 _latestDiaryDate() 在**当时的本地快照**上算出来的（Phase 2C 的规矩：
+// 最近一个真有内容的日期，都没有才回今天），而进日记时拉取几乎总还在路上 —— 对方的
+// 「今天」此刻还没落地，落点于是退回**我自己上一次写的那天**，信卡显示「Ta 这一天还
+// 没有写」，而她的今天就在云上，几秒后就并进了本地。两人各有各的历史，于是同时中招，
+// 看起来像服务器问题。既有套件测不到它，因为每个用例都把读者 seed 成空本地日记，
+// 而空历史会让落点恒等于今天 —— 变量是「读者有历史」，测试里恰好没有。
+// 现在的做法：拉取落地后按**新的**本地快照重算一次落点（fix-diary.js 的
+// _reconcileDiaryLanding），只在 ① 用户没有亲手翻过日期、没有正在打字
+// ② 新落点**比当前更晚** 时才前移视图。只往前挪 —— 正在读旧日记的人不会被拽走；
+// 落点本身仍是 Phase 2C 那条规矩，没有第二份「该落在哪天」的实现。
+// 数据依旧一个字节没动：shared-diary 的 schema、mergeDiary、Worker 与 sync 协议都没变。
+const CACHE_STATIC = 'ciklus-static-v52';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

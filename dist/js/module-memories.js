@@ -581,7 +581,13 @@
      唯一能去的一天，也仍然立刻能写。 */
   function _landDiary() {
     var dk = (typeof window._latestDiaryDate === 'function') ? window._latestDiaryDate() : _todayKey();
-    if (typeof window._onDateBtnClick === 'function') window._onDateBtnClick(dk);
+    /* 走 _landDiaryTo 而不是 _onDateBtnClick：落点是**程序算出来的**，不是人点的。
+       _onDateBtnClick 现在会立「用户自己翻过日期」那面旗（fix-diary.js 的
+       _diaryUserPicked），落点若走它，就会在落地的瞬间把「拉取到达后把落点
+       纠正到今天」这条 P0 修复自己关掉 —— 而进日记的那一刻拉取通常还在路上，
+       本地快照里根本没有对方的今天，落点必然退回我自己上次写的那天。 */
+    if (typeof window._landDiaryTo === 'function') window._landDiaryTo(dk);
+    else if (typeof window._onDateBtnClick === 'function') window._onDateBtnClick(dk);
     else if (typeof window._setDiaryDate === 'function') window._setDiaryDate(dk);
   }
 
