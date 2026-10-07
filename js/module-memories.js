@@ -609,7 +609,15 @@
     _mode = next;
     _applyMode();
     /* 只有从切换条进日记模式（而不是从 _openDiary 带着日期进来）才有「落点」这件事。 */
-    if (entering && !_diaryEntered) { _diaryEntered = true; _landDiary(); }
+    if (entering) {
+      if (!_diaryEntered) { _diaryEntered = true; _landDiary(); }
+      /* 第二次以后不再落点，但必须**原地重画**。上面那条「停在你上次待的那一天」
+         原来的实现是「什么都不做」，而信卡的 DOM 是上一次渲染留下的快照：离开
+         这段时间里若拉取把对方的条目并了进来，切回来看到的还是旧快照 ——
+         两个人最自然的「切回去看一眼」因此永远看到 📭。
+         停在哪一天 ≠ 不重画那一天。 */
+      else if (typeof window._refreshDiaryView === 'function') window._refreshDiaryView();
+    }
   }
 
   function _applyMode() {

@@ -179,8 +179,11 @@ function switchProfile(p) {
       renderSong();
       renderCheckin();
       renderKnowMe();
-      renderSharedDiary();
-      renderDateStrip();
+      /* renderSharedDiary() / renderDateStrip() 随 js/render-diary.js 在 dd01178 被删，
+         这里的裸调用是 ReferenceError —— 没有 .catch()，它只让这个 .then 的剩余部分
+         （updateSyncStatusBadge 等）静默不执行，并且**从不**重画伴侣的信卡。
+         换成真正存在的那一个出口。 */
+      if (typeof window._refreshDiaryView === 'function') window._refreshDiaryView();
       updateSyncStatusBadge();
     });
   }
@@ -576,7 +579,7 @@ function setupUpdatePrompt() {
       if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     };
   }
-  navigator.serviceWorker.register('sw.js?v=7.4.1')
+  navigator.serviceWorker.register('sw.js?v=7.4.2')
     .then(function (reg) {
       // A new version installed on an earlier visit and is still parked
       if (reg.waiting && navigator.serviceWorker.controller) offer(reg);
@@ -743,8 +746,10 @@ async function bootApp() {
         renderSong();
         renderCheckin();
         renderKnowMe();
-        renderSharedDiary();
-        renderDateStrip();
+        /* 同上：这两个函数不存在，抛出的 ReferenceError 会吃掉这个 .then 的余下部分
+           （renderDashboard / updateCycleCounter / updateSyncStatusBadge 全都不执行）。
+           一并换成真实的日记重画出口。 */
+        if (typeof window._refreshDiaryView === 'function') window._refreshDiaryView();
         renderDashboard(); // Refresh dashboard with synced data
         updateSyncStatusBadge();
         updateCycleCounter(predict().cycles.length);

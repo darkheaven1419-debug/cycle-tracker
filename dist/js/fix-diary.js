@@ -292,6 +292,24 @@ function _setDiaryDate(dateKey) {
 }
 window._setDiaryDate = _setDiaryDate;
 
+/* 「按当前正在看的那一天，原地重画日记」—— 所有拉取路径的统一出口。
+   原来的缺口：拉取（启动 / 切 profile / 手动同步 / 进日记 tab / 定时）在
+   js/sync.js 的 pull() 末尾确实有一段「触发重渲染」，但它调的是
+   renderSharedDiary() 与 renderDateStrip() —— 这两个名字随 js/render-diary.js
+   在 dd01178 那次回滚里一起被删掉了，只剩 typeof 守卫把它们变成**静默 no-op**。
+   于是对方的条目被并进 localStorage 之后，没有任何东西重画这张信卡：它永远
+   停在拉取前那一次渲染的结果上，读信的人看到的是「Ta 这一天还没有写」。
+   谁是「当前这一天」只有这个文件知道（_diaryViewDate 是模块私有的），
+   所以出口开在这里，而不是让 sync.js 去猜。 */
+window._refreshDiaryView = function() {
+  /* 日记还没被打开过就没有「当前这一天」可谈 —— 那时 initSharedDiaryTab /
+     _onDateBtnClick 会用当时已落地的数据正确渲染一次，不需要在这里抢先画。 */
+  if (!_diaryViewDate) return;
+  _renderDiaryDateStrip(_diaryViewDate);
+  _updatePartnerLetter(_diaryViewDate);
+  _renderOwnSignature();
+};
+
 /* Phase 2C — 「她的信」入口打开时该落在哪一天。
    回忆面板里切到 📖 日记，如果永远停在今天，那么明天打开就是一片空白，
    而这个人写了一年的日记 —— 她是空的这件事会被读成「这里什么都没有」。

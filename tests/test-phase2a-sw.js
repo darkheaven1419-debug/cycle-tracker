@@ -309,10 +309,10 @@ function fire(handlers, url, opts) {
   // mechanism, not just that a string changed.
   {
     const src = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const hasV50 = /const CACHE_STATIC = 'ciklus-static-v50';/.test(src);
-    const hasV49 = /ciklus-static-v49/.test(src);
+    const hasV51 = /const CACHE_STATIC = 'ciklus-static-v51';/.test(src);
+    const hasV50 = /ciklus-static-v50/.test(src);
     check('S11 CACHE_STATIC is the new name and the old one is fully gone',
-      hasV50 && !hasV49, `v50=${hasV50} v49StillPresent=${hasV49}`);
+      hasV51 && !hasV50, `v51=${hasV51} v50StillPresent=${hasV50}`);
 
     // The refresh only happens for files that are actually precached. Read the
     // list out of the source so a later edit that drops one of them fails here.
@@ -353,6 +353,13 @@ function fire(handlers, url, opts) {
       // './css/v2.css' are the other two files it changed, and both are already
       // listed (index.html via Phase 1C, v2.css via Phase 1D).
       './js/module-settings.js',
+      // Phase 2C.1 (P0) changed './app.js', './js/sync.js', './js/fix-diary.js'
+      // and './js/module-memories.js'. The first two are listed above with ?v=,
+      // module-memories.js via Phase 1C — but './js/fix-diary.js' appears here
+      // for the first time: it is a BARE path in STATIC_ASSETS and is now where
+      // the post-pull re-render seam lives, so a stale cached copy would keep
+      // the partner letter frozen exactly as before the fix.
+      './js/fix-diary.js',
       // Phase 2B.7 changed './js/module-memories.js' only, and it is already
       // listed above (via Phase 1C), so the v44 name re-fetches it with no new
       // entry — which is the point: the bump, not the list, is the refresh.
@@ -371,8 +378,8 @@ function fire(handlers, url, opts) {
       missing.length === 0, `missing=${missing.join(',') || 'none'}`);
   }
 
-  // S13 — an installed client still holds v49; one generation back holds v48,
-  // with v47..v31 further back. Run the real activate handler: every stale
+  // S13 — an installed client still holds v50; one generation back holds v49,
+  // with v48..v31 further back. Run the real activate handler: every stale
   // bucket must be deleted, the current one must survive. This is the step that
   // actually evicts the old copies of the cache-first assets.
   {
@@ -398,12 +405,13 @@ function fire(handlers, url, opts) {
     await named.api.open('ciklus-static-v48');
     await named.api.open('ciklus-static-v49');
     await named.api.open('ciklus-static-v50');
+    await named.api.open('ciklus-static-v51');
     await named.api.open('ciklus-fonts-v1');
     let done = null;
     h.activate({ waitUntil: (p) => { done = p; } });
     await done;
     const names = named.names();
-    check('S13 activate evicts the stale v31..v49 buckets and keeps v50 + fonts',
+    check('S13 activate evicts the stale v31..v50 buckets and keeps v51 + fonts',
       names.indexOf('ciklus-static-v31') === -1 &&
       names.indexOf('ciklus-static-v32') === -1 &&
       names.indexOf('ciklus-static-v33') === -1 &&
@@ -423,7 +431,8 @@ function fire(handlers, url, opts) {
       names.indexOf('ciklus-static-v47') === -1 &&
       names.indexOf('ciklus-static-v48') === -1 &&
       names.indexOf('ciklus-static-v49') === -1 &&
-      names.indexOf('ciklus-static-v50') !== -1 &&
+      names.indexOf('ciklus-static-v50') === -1 &&
+      names.indexOf('ciklus-static-v51') !== -1 &&
       names.indexOf('ciklus-fonts-v1') !== -1,
       `caches=${names.join(',')}`);
   }

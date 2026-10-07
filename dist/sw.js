@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.4.1';
+const APP_VERSION = '7.4.2';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -277,7 +277,15 @@ const V = '?v=' + APP_VERSION;
 // 9/23…12/23，不是 …12/1）；落在 horizonEnd 当天的预测照旧显示（包含，不是排除）。
 // 但 cycle-core.js 这个文件确实变了，带 ?v= 的资源换了 URL 才会被重新拉取，
 // 所以 APP_VERSION 必须走。schema 依旧一个字没改，预测值依旧只活在返回值里。
-const CACHE_STATIC = 'ciklus-static-v50';
+// v50 → v51。这一轮改的是 ./app.js、./js/sync.js、./js/fix-diary.js 与
+// ./js/module-memories.js：拉取之后没有任何东西按「当前正在看的那一天」重画
+// 伴侣的信卡（sync.js 里那两个 typeof 守卫指向 js/render-diary.js 在 dd01178
+// 删掉的 renderSharedDiary/renderDateStrip，一直是静默 no-op），于是双方都
+// 停在「Ta 这一天还没有写」。四个文件里 app.js 与 js/sync.js 带 ?v=，
+// js/fix-diary.js 与 js/module-memories.js 是裸路径 —— 不换代际名，只抬
+// APP_VERSION 对后两者无效，正是 0bbd0d6 漏掉裸路径资产的同类错误。
+// 数据一个字节没动：shared-diary 的 schema 与 mergeDiary 都没变。
+const CACHE_STATIC = 'ciklus-static-v51';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。

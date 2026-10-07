@@ -230,18 +230,17 @@ async function openPage(browser, seed) {
     check('U7 a Push runs off the App Secret against the Worker, and never reaches GitHub',
       pushed && seen.github.length === 0 && seen.worker.length > workerBeforePush,
       `pushed=${pushed} github=${seen.github.length} workerBefore=${workerBeforePush} workerAfter=${seen.worker.length}`);
-    // Pre-existing, and NOT a load-order artifact: renderSharedDiary is called
-    // unguarded at app.js:112 and app.js:600 but is defined nowhere in the tree
-    // (js/sync.js:455 is the only other call, and it is typeof-guarded; app.js:346
-    // lists the name among functions that no longer exist). The 2A browser run
-    // reported the same error, so it predates Phase 2B. Phase 2B must not fix it
-    // (that would be an unrelated change), so it is filtered by name here — any
-    // *other* page error still fails this assertion.
-    const KNOWN_NOISE = 'renderSharedDiary is not defined';
-    const unexpected = errors.filter((e) => e.indexOf(KNOWN_NOISE) === -1);
-    check('U8 no page error beyond the pre-existing renderSharedDiary ReferenceError',
-      unexpected.length === 0,
-      `unexpected=${JSON.stringify(unexpected)} knownNoise=${errors.length - unexpected.length}`);
+    // Phase 2C.1 — this assertion used to filter out one page error by name:
+    // 'renderSharedDiary is not defined'. That filter is why the P0 defect
+    // survived: the name is called unguarded in app.js and (typeof-guarded, so
+    // silently) in js/sync.js's post-pull re-render block, yet is defined
+    // nowhere in the tree — it went with js/render-diary.js in dd01178. The
+    // guarded call WAS the no-op that left the partner letter frozen at its
+    // pre-pull state, so the whitelist hid a real bug's symptom rather than
+    // tolerating noise. Both call sites now go through window._refreshDiaryView()
+    // (js/fix-diary.js), which exists. Nothing is filtered by name any more.
+    check('U8 no page error at all — the renderSharedDiary ReferenceError is gone',
+      errors.length === 0, `errors=${JSON.stringify(errors)}`);
 
     await ctx.close();
   }

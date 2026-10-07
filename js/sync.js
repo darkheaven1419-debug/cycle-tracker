@@ -815,8 +815,11 @@ const SyncModule = (function () {
         if (typeof renderCalendar === 'function') renderCalendar();
         if (typeof renderTips === 'function') renderTips();
       }
-      if (typeof renderSharedDiary === 'function') renderSharedDiary();
-      if (typeof renderDateStrip === 'function') renderDateStrip();
+      /* renderSharedDiary / renderDateStrip 随 js/render-diary.js 在 dd01178 被删，
+         这两个 typeof 守卫因此一直是**静默 no-op**：拉取成功、对方的日记已经并进
+         localStorage，却没有任何东西重画信卡 —— 读信的人停在「Ta 这一天还没有写」。
+         信卡与日期条现在统一由 js/fix-diary.js 的那一个出口按「当前正在看的那天」重画。 */
+      if (typeof window._refreshDiaryView === 'function') window._refreshDiaryView();
       // Today card — refreshed without replaying the entrance animation.
       if (typeof renderDashboard === 'function') renderDashboard(false);
       updateBadge();
