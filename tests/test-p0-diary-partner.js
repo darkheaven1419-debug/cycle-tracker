@@ -267,12 +267,23 @@ const measure = (page, dk) => page.evaluate(MEASURE, { dk: dk || TODAY });
       deadCalls.length === 0, `still calling=${deadCalls.join(',') || 'none'}`);
 
     /* Every path that can bring the partner's entry in must reach the seam:
-       two sites in app.js (profile switch, boot) and one in sync.js's pull().
+       two sites in app.js (profile switch, boot) and two in sync.js — pull(),
+       plus the push-side merge. That second one is the 2026-10-07 fix: the
+       merge writes the partner's line into localStorage from push()'s
+       pre-flight GET and from _putState's 409 retry, and until then neither
+       told the UI anything, so "I saved and it still says 📭" only healed on
+       the next 60s auto-pull.
        Count call sites, not mentions — each site names the seam twice. */
     const appHits = (appCode.match(/_refreshDiaryView\s*\(/g) || []).length;
     const syncHits = (syncCode.match(/_refreshDiaryView\s*\(/g) || []).length;
-    check('S3 boot, profile switch and pull all route through the one seam',
-      appHits === 2 && syncHits === 1, `app.js=${appHits} sync.js=${syncHits}`);
+    const mergeBody = syncCode.slice(
+      syncCode.indexOf('function _mergeRemoteIntoLocal'),
+      syncCode.indexOf('async function _putState')
+    );
+    const inMerge = /_refreshDiaryView\s*\(/.test(mergeBody);
+    check('S3 boot, profile switch, pull and the push-side merge all route through the one seam',
+      appHits === 2 && syncHits === 2 && inMerge,
+      `app.js=${appHits} sync.js=${syncHits} inMerge=${inMerge}`);
 
     check('S4 the Worker still never interprets the payload — no diary knowledge at all',
       !/diary/i.test(code(read('worker/src/index.js'))), 'worker is a pure CAS passthrough');

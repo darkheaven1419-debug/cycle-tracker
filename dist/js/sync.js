@@ -612,12 +612,32 @@ const SyncModule = (function () {
   // 推送前必须先取并集：本机推送不能抹掉对方刚写的日记 / 便签 / 刚产生的回应。
   // 迁移前这段逻辑内联在 push() 的 GET 分支里；现在「推送前的 GET」与「409 冲突重试」
   // 共用同一份实现，保证两条路径的合并语义严格一致。
+  /* 数「有人的格子」而不是数天：mergeDiary 只补缺失的格子，格子数只增不减，
+     用它判断这次合并到底有没有真的带进新内容。天数说明不了问题 —— 远端一个空的
+     日期壳也会让天数变大，而那种变化什么都画不出来。 */
+  function _countDiarySlots(diary) {
+    var n = 0;
+    if (!diary || typeof diary !== 'object') return 0;
+    for (var dk in diary) {
+      if (!diary.hasOwnProperty(dk)) continue;
+      var day = diary[dk];
+      if (!day || typeof day !== 'object') continue;
+      for (var u in day) { if (day.hasOwnProperty(u)) n++; }
+    }
+    return n;
+  }
+
   function _mergeRemoteIntoLocal(remoteState) {
     if (!remoteState || typeof remoteState !== 'object') return;
+    /* 这次合并有没有真的带进新日记 —— 只有真的变了才重画（见函数末尾）。
+       没有这个旗子，每一次推送（哪怕远端一个字都没动）都会重画一遍信卡。 */
+    var diaryChanged = false;
     if (remoteState.diary) {
       var remoteCount = Object.keys(remoteState.diary).length;
       var localDiary = getJSON('shared-diary', {});
+      var _slotsBefore = _countDiarySlots(localDiary);
       var merged = mergeDiary(localDiary, remoteState.diary);
+      diaryChanged = _countDiarySlots(merged) > _slotsBefore;
       localStorage.setItem('shared-diary', JSON.stringify(merged));
       console.log('[同步] 推送前合并远程 ✓ 本地=' + Object.keys(localDiary).length + ' 远程=' + remoteCount + ' 合并后=' + Object.keys(merged).length);
     }
@@ -651,6 +671,21 @@ const SyncModule = (function () {
     // §2.3/§2.4 —— 纪念日不是普通合并：没有「并集」，只有 canonical 的建立与采纳。
     // 两条路径（推送前 GET 与 409 冲突重试）共用这里，语义与 apply() 严格一致。
     resolveAnniversaries(remoteState.anniversaries);
+
+    /* 合并写进了 localStorage，但界面不会自己知道 —— 这是「保存后信卡仍显示
+       📭」的根因。saveDiaryEntry 不 await 推送，所以第 204 行那次
+       _updatePartnerLetter 是在远端内容到达之前跑的；而这里把对方的内容并进来
+       之后，从前**没有任何一处**通知界面。pull() 有它自己的重画（下面 pull 里
+       那次调用），但这条路上没有：_mergeRemoteIntoLocal 的两个调用点
+       （push() 的推送前 GET、_putState 的 409 重试）都不重画。
+       于是「我保存 → Worker 里她今天的内容被并进本机 → 界面停在空状态」一直等到
+       60 秒后的自动拉取才自愈。对方当天最早写的那些字，就是这么丢的。
+       只在真的并进了新日记时才重画：否则每次推送都会重画一遍信卡。
+       _refreshDiaryView 自己会在日记没打开时直接返回，所以这里不需要再判一次。 */
+    if (diaryChanged) {
+      if (typeof invalidateSDCache === 'function') invalidateSDCache();
+      if (typeof window._refreshDiaryView === 'function') window._refreshDiaryView();
+    }
   }
 
   // ── PUT /state 并处理全部响应分支（含 409 CAS 冲突重试） ──

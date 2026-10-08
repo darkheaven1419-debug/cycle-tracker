@@ -9,7 +9,7 @@
 // 注意：这与 CACHE_STATIC 的 vNN 是两回事 —— 前者是资源查询串（决定
 // 浏览器/SW 的 cache key），后者是 SW 自身的缓存代际（决定 activate 时
 // 删掉哪些旧 cache）。两者不要合并。
-const APP_VERSION = '7.4.2';
+const APP_VERSION = '7.4.3';
 const V = '?v=' + APP_VERSION;
 
 // Phase 1D · 日历结构对齐：v34 → v35。改的是 ./css/calendar.css 与 ./app.js ——
@@ -301,7 +301,18 @@ const V = '?v=' + APP_VERSION;
 // ② 新落点**比当前更晚** 时才前移视图。只往前挪 —— 正在读旧日记的人不会被拽走；
 // 落点本身仍是 Phase 2C 那条规矩，没有第二份「该落在哪天」的实现。
 // 数据依旧一个字节没动：shared-diary 的 schema、mergeDiary、Worker 与 sync 协议都没变。
-const CACHE_STATIC = 'ciklus-static-v52';
+// v52 → v53，APP_VERSION 7.4.2 → 7.4.3 —— 自 v48 → v49 以来**两条轴第一次同时走**。
+// 这一轮改的是 ./js/sync.js 的 _mergeRemoteIntoLocal：它把对方的日记并进 localStorage
+// 之后从**不通知界面**，而它的两个调用点（push() 的推送前 GET、_putState 的 409 重试）
+// 都不重画 —— 于是「我保存 → 她今天的内容被并进本机 → 信卡仍停在 📭」要等 60 秒后的
+// 自动拉取才自愈。修法：合并真的带进新日记时（数「有人的格子」，不数天）
+// invalidateSDCache() + window._refreshDiaryView()。
+// 为什么两条轴都要走：./js/sync.js 是 STATIC_ASSETS 里**带 + V 的版本化路径**，只有
+// APP_VERSION 变了它的 URL 才会变；而 ./index.html 是**裸路径**，只有 CACHE_STATIC
+// 变了代际名才会让已安装的客户端重新取它 —— 而 index.html 正是加载 sync.js 的地方。
+// 少了任何一条，装了旧 SW 的 Barry 手机上都收不到这个修复。
+// 数据依旧一个字节没动：shared-diary 的 schema、mergeDiary、日期 key、CAS 与 Worker 协议都没变。
+const CACHE_STATIC = 'ciklus-static-v53';
 const CACHE_FONTS = 'ciklus-fonts-v1';
 
 // 这个列表必须逐一等于 index.html 实际发出的请求 URL（含/不含 ?v= 都要一致）。
